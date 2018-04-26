@@ -1,5 +1,7 @@
 # Used to create a container manifest.
-# default scenarios is the latest image which will point to ubuntu-16.04 for linux and windowsservercore for windows
+# Prereq: you must login to $ContainerRegistery before running this script
+# default scenarios is to build a `latest` tag which will point to the `ubuntu-16.04` tag for linux
+# and the `windowsservercore` tag for windows
 param(
     [parameter(Mandatory)]
     [string]
