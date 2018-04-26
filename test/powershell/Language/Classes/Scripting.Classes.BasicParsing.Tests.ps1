@@ -571,11 +571,20 @@ Describe 'Hidden Members Test ' -Tags "CI" {
 
         It "Access hidden property should still work" { $instance.hiddenZ | Should -Be 42 }
 
-        # Formatting should not include hidden members by default
-        $tableOutput = $instance | Format-Table -HideTableHeaders -AutoSize | Out-String
-        It "Table formatting should not have included hidden member hiddenZ - should contain 10" { $tableOutput.Contains("10") | Should -BeTrue}
-        It "Table formatting should not have included hidden member hiddenZ- should contain 12" { $tableOutput.Contains("12") | Should -BeTrue}
-        It "Table formatting should not have included hidden member hiddenZ - should not contain 42" { $tableOutput.Contains("42") | Should -BeFalse}
+        It "Table formatting should not include hidden member hiddenZ" {
+            $expectedTable = @"
+
+visibleX visibleY
+-------- --------
+      10       12
+
+
+
+"@
+
+            $tableOutput = $instance | Format-Table -AutoSize | Out-String
+            $tableOutput | Should -BeExactly $expectedTable
+        }
 
         # Get-Member should not include hidden members by default
         $member = $instance | Get-Member hiddenZ

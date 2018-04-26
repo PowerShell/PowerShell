@@ -505,31 +505,33 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     $testCase = @(
-        @{ proxy_address = "http://127.0.0.1:9"; name = 'http_proxy'; protocol = 'http' }
-        @{ proxy_address = "http://127.0.0.1:9"; name = 'https_proxy'; protocol = 'https' }
+        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'http_proxy'; protocol = 'http' }
+        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'https_proxy'; protocol = 'https' }
     )
 
-    It "Validate Invoke-WebRequest error with -Proxy option set - '<name>'" -TestCases $testCase {
+    It "Validate Invoke-WebRequest with -Proxy option set - '<name>'" -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
-        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2 -Proxy '${proxy_address}' -SkipCertificateCheck"
-
+        # use external url, but with proxy the external url should not actually be called
+        $command = "Invoke-WebRequest -Uri ${protocol}://bing.com -Proxy '${protocol}://${proxy_address}' -SkipCertificateCheck"
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $command = "Invoke-WebRequest -Uri '${protocol}://${proxy_address}' -NoProxy"
+        $expectedResult = ExecuteWebCommand -command $command
+        $result.Output.Content | Should -BeExactly $expectedResult.Output.Content
     }
 
-    It "Validate Invoke-WebRequest error with environment proxy set - '<name>'" -Pending -TestCases $testCase {
+    It "Validate Invoke-WebRequest with environment proxy set - '<name>'" -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
         # Configure the environment variable.
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
-        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2 -SkipCertificateCheck"
-
+        # use external url, but with proxy the external url should not actually be called
+        $command = "Invoke-WebRequest -Uri ${protocol}://bing.com -SkipCertificateCheck"
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $command = "Invoke-WebRequest -Uri '${protocol}://${proxy_address}' -NoProxy"
+        $expectedResult = ExecuteWebCommand -command $command
+        $result.Output.Content | Should -BeExactly $expectedResult.Output.Content
     }
 
     It "Validate Invoke-WebRequest returns User-Agent where -NoProxy with envirionment proxy set - '<name>'" -TestCases $testCase {
@@ -1877,32 +1879,33 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     $testCase = @(
-        @{ proxy_address = "http://127.0.0.1:9"; name = 'http_proxy'; protocol = 'http' }
-        @{ proxy_address = "http://127.0.0.1:9"; name = 'https_proxy'; protocol = 'https' }
+        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'http_proxy'; protocol = 'http' }
+        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'https_proxy'; protocol = 'https' }
     )
 
-    It "Validate Invoke-RestMethod error with -Proxy option - '<name>'" -TestCases $testCase {
+    It "Validate Invoke-RestMethod with -Proxy option - '<name>'" -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
-        # A non-loopback URI is required but the external resource will not be accessed
-        $uri = 'http://httpbin.org'
-        $command = "Invoke-RestMethod -Uri '$uri' -Proxy '${proxy_address}'"
-
+        # use external url, but with proxy the external url should not actually be called
+        $command = "Invoke-RestMethod -Uri ${protocol}://bing.com -Proxy '${protocol}://${proxy_address}'"
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $command = "Invoke-RestMethod -Uri '${protocol}://${proxy_address}' -NoProxy"
+        $expectedResult = ExecuteWebCommand -command $command
+        $result.Output | Should -BeExactly $expectedResult.Output
     }
 
-    It "Validate Invoke-RestMethod error with environment proxy set - '<name>'" -Pending -TestCases $testCase {
+    It "Validate Invoke-RestMethod with environment proxy set - '<name>'" -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
         # Configure the environment variable.
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
-        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 2 -SkipCertificateCheck"
-
+        $uri = Get-WebListenerUrl -Test Get
+        $command = "Invoke-RestMethod -Uri ${protocol}://bing.com"
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $command = "Invoke-RestMethod -Uri '${protocol}://${proxy_address}' -NoProxy"
+        $expectedResult = ExecuteWebCommand -command $command
+        $result.Output | Should -BeExactly $expectedResult.Output
     }
 
     It "Validate Invoke-RestMethod returns User-Agent with option -NoProxy when environment proxy set - '<name>'" -TestCases $testCase {
