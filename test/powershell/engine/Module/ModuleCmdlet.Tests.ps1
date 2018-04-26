@@ -158,7 +158,7 @@ function Test-FirstModuleFunction
 
             $module.ExportedFunctions.Count | Should -Be 1
             $module.ExportedFunctions.Keys  | Should -Contain "Test-FirstModuleFunction"
-            $module.ExportedFunctions.Keys  | Should -Contain "Test-SecondModuleFunction"
+            $module.ExportedFunctions.Keys  | Should -Not -Contain "Test-SecondModuleFunction"
 
             $newModuleContent = (Get-Content $modData.Path | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }"
             Set-Content -Force -Path $modData.Path -Value $newModuleContent
