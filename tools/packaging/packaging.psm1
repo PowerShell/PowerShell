@@ -106,7 +106,7 @@ function Start-PSPackage {
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-            $Script:Options.Framework -ne "netcoreapp2.0")          ## Last build wasn't for CoreCLR
+            $Script:Options.Framework -ne "netcoreapp2.1")          ## Last build wasn't for CoreCLR
         {
             # It's possible that the most recent build doesn't satisfy the package requirement but
             # an earlier build does.
