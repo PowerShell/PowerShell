@@ -21,7 +21,6 @@ param(
     [ValidatePattern('^[abcdefghijklmnopqrstuvwxyz-]+$')]
     [string[]]
     $TagList = ('ubuntu-16.04', 'windowsservercore')
-
 )
 
 $manifestList = @()
