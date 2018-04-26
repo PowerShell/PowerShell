@@ -7,7 +7,9 @@ Describe "Start-Process" -Tags @("Feature") {
         $isIot = [System.Management.Automation.Platform]::IsIoT
         $isFullWin = $IsWindows -and !$isNanoServer -and !$isIot
         $extraArgs = @{}
-        if ($isFullWin) { $extraArgs.WindowStyle = "Hidden" }
+        if ($isFullWin) {
+            $extraArgs.WindowStyle = "Hidden"
+        }
 
         $pingCommand = (Get-Command -CommandType Application ping)[0].Definition
         $pingDirectory = Split-Path $pingCommand -Parent
@@ -127,19 +129,19 @@ Describe "Start-Process" -Tags @("Feature") {
     }
 
     It 'Should run without errors when -ArgumentList is $null' {
-         $process = Start-Process $pingCommand -ArgumentList $null -PassThru -WindowStyle Hidden
+         $process = Start-Process $pingCommand -ArgumentList $null -PassThru @extraArgs
          $process.Length      | Should -Be 1
          $process.Id          | Should -BeGreaterThan 1
     }
  
     It "Should run without errors when -ArgumentList is @()" {
-        $process = Start-Process $pingCommand -ArgumentList @() -PassThru -WindowStyle Hidden
+        $process = Start-Process $pingCommand -ArgumentList @() -PassThru @extraArgs
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
     }
 
     It "Should run without errors when -ArgumentList is ''" {
-        $process = Start-Process $pingCommand -ArgumentList '' -PassThru -WindowStyle Hidden
+        $process = Start-Process $pingCommand -ArgumentList '' -PassThru @extraArgs
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
     }
