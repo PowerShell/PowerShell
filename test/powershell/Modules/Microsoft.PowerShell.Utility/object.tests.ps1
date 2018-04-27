@@ -98,5 +98,13 @@ Describe "Object cmdlets" -Tags "CI" {
             $gmi = "abc",[Datetime]::Now | measure  -sum -max -ev err -ea silentlycontinue
             $gmi.Count | Should -Be 2
         }
+
+        It 'should only display fields that are set' {
+            $text = 1, 2, 3 | Measure-Object -Sum -Average | Format-List | Out-String
+            $text -match "min|max" | Should -BeFalse
+
+            $text = 1, 2, 3 | Measure-Object -Minimum -Maximum | Format-List | Out-String
+            $text -match "min|max" | Should -BeTrue
+        }
     }
 }

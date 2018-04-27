@@ -788,6 +788,24 @@ namespace System.Management.Automation
             ValueType = type;
         }
 
+        /// <summary>
+        /// Creates a DisplayEntry for the given scriptblock.
+        /// </summary>
+        /// <param name="scriptblock">The content of the scriptblock</param>
+        public static DisplayEntry CreateScriptBlockEntry(string scriptblock)
+        {
+            return new DisplayEntry(scriptblock, DisplayEntryValueType.ScriptBlock);
+        }
+
+        /// <summary>
+        /// Creates a DisplayEntry for the given property name.
+        /// </summary>
+        /// <param name="property">the name of the property</param>
+        public static DisplayEntry CreatePropertyEntry(string property)
+        {
+            return new DisplayEntry(property, DisplayEntryValueType.Property);
+        }
+
         /// <summary/>
         public override string ToString()
         {
