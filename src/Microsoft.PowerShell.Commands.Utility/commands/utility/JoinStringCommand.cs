@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands.Utility.commands.utility
         /// What to join with
         /// </summary>
         [Parameter(Position = 0)]
-        public string With = Environment.NewLine;
+        public string Separator = Environment.NewLine;
         
         /// <summary>
         /// Number of items to join in a batch
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands.Utility.commands.utility
                 ItemCache.Add(item);
                 if ((Count > 0) && (ItemCache.Count >= Count))
                 {
-                    WriteObject(String.Join(With, ItemCache));
+                    WriteObject(String.Join(Separator, ItemCache));
                     ItemCache.Clear();
                 }
             }
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands.Utility.commands.utility
         {
             if (ItemCache.Count > 0)
             {
-                WriteObject(String.Join(With, ItemCache));
+                WriteObject(String.Join(Separator, ItemCache));
                 ItemCache.Clear();
             }
         }

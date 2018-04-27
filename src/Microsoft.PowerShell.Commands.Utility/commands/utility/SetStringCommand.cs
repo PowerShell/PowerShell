@@ -18,19 +18,20 @@ namespace Microsoft.PowerShell.Commands.Utility.commands.utility
         /// What to replace
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
-        public string What;
+        public string OldValue;
         
         /// <summary>
         /// What to replace with
         /// </summary>
         [Parameter(Position = 1)]
-        public object With;
+        public object NewValue;
 
         /// <summary>
         /// Whether the simple string Replace() method should be used instead
         /// </summary>
         [Parameter(ParameterSetName = "simple")]
-        public SwitchParameter Simple;
+        [Alias("simple")]
+        public SwitchParameter DoNotUseRegex;
 
         /// <summary>
         /// The regex options to apply while replacing
@@ -68,11 +69,11 @@ namespace Microsoft.PowerShell.Commands.Utility.commands.utility
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (With == null)
+            if (NewValue == null)
                 StringValue = "";
-            else if (!Simple.ToBool() && (With is ScriptBlock))
+            else if (!DoNotUseRegex.ToBool() && (NewValue is ScriptBlock))
             {
-                ScriptBlockValue = (ScriptBlock)With;
+                ScriptBlockValue = (ScriptBlock)NewValue;
                 ScriptBlockEvaluator = match => {
                     var result = ScriptBlockValue.DoInvokeReturnAsIs(
                         useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
@@ -86,7 +87,7 @@ namespace Microsoft.PowerShell.Commands.Utility.commands.utility
                 };
             }
             else
-                StringValue = With.ToString();
+                StringValue = NewValue.ToString();
         }
 
         /// <summary>
@@ -96,12 +97,12 @@ namespace Microsoft.PowerShell.Commands.Utility.commands.utility
         {
             foreach (string item in InputString)
             {
-                if (Simple.ToBool())
-                    WriteObject(item.Replace(What, StringValue));
+                if (DoNotUseRegex.ToBool())
+                    WriteObject(item.Replace(OldValue, StringValue));
                 else if (ScriptBlockValue != null)
-                    WriteObject(Regex.Replace(item, What, ScriptBlockEvaluator, Options));
+                    WriteObject(Regex.Replace(item, OldValue, ScriptBlockEvaluator, Options));
                 else
-                    WriteObject(Regex.Replace(item, What, StringValue, Options));
+                    WriteObject(Regex.Replace(item, OldValue, StringValue, Options));
             }
         }
         #endregion Methods
