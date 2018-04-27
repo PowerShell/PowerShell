@@ -2,7 +2,7 @@ $RenameTesthook = "TestRenameComputer"
 $RenameResultName = "TestRenameComputerResults"
 $DefaultResultValue = 0
 
-try 
+try
 {
     # set up for testing
     $PSDefaultParameterValues["it:skip"] = ! $IsWindows
@@ -31,7 +31,7 @@ try
             $result.NewComputerName | should be $newname
         }
 
-        # we can't really look for the string "reboot" as it will change 
+        # we can't really look for the string "reboot" as it will change
         # when translated. We are guaranteed that the old computer name will
         # be present, so we'll look for that
         It "Should produce a reboot warning when renaming computer" {
