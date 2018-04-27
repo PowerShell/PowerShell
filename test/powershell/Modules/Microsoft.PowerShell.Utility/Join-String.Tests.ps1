@@ -1,7 +1,7 @@
 Describe "Join-String Unit Tests" -Tag "CI" {
 	It "Should have the designed for parameters & sets" {
 		(Get-Command Join-String).ParameterSets.Name | Should -Be "__AllParameterSets"
-		(Get-Command Join-String).Parameters.Keys | Should -Be "With", "Count", "InputString", "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction", "ErrorVariable", "WarningVariable", "InformationVariable", "OutVariable", "OutBuffer", "PipelineVariable"
+		(Get-Command Join-String).Parameters.Keys | Should -Be "Separator", "Count", "InputString", "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction", "ErrorVariable", "WarningVariable", "InformationVariable", "OutVariable", "OutBuffer", "PipelineVariable"
 	}
 	
 	It "Should properly join strings" {
