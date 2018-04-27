@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Get-SubString Unit Tests" -Tag "CI" {
 	It "Should have the designed for parameters & sets" {
 		(Get-Command Get-SubString).ParameterSets.Name | Should -Be "substring", "trim", "trimpartial"

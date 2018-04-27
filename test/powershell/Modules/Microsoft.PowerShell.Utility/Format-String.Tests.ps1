@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Format-String Unit Tests" -Tag "CI" {
 	It "Should have the designed for parameters & sets" {
 		(Get-Command Format-String).ParameterSets.Name | Should -Be "__AllParameterSets"
