@@ -4754,70 +4754,28 @@ end
 ";
 
         internal const string DefaultMoreFunctionText = @"
-[CmdletBinding()]
-[OutputType([string])]
-Param
-(
-    [Parameter(Mandatory=$false,
-               ValueFromPipelineByPropertyName=$true,
-               ValueFromPipeline=$false,
-               Position=0)]
-    $Paths,
-
-    [Parameter(Mandatory=$false,
-               ValueFromPipelineByPropertyName=$true,
-               ValueFromPipeline=$true)]
-    $Line
-)
-
-Begin
-{
-    # Nano needs to use Unicode, but Windows and Linux need the default
-    $OutputEncoding = if ([System.Management.Automation.Platform]::IsNanoServer -or [System.Management.Automation.Platform]::IsIoT) {
-        [System.Text.Encoding]::Unicode
-    } else {
-        [System.Console]::OutputEncoding
-    }
-
-    # Respect PAGER, use more on Windows, and use less on Linux
-    if (Test-Path env:PAGER) {
-        $moreCommand = (Get-Command -CommandType Application $env:PAGER | Select-Object -First 1).Definition
-    } elseif ($IsWindows) {
-        $moreCommand = (Get-Command -CommandType Application more | Select-Object -First 1).Definition
-    } else {
-        $moreCommand = (Get-Command -CommandType Application less | Select-Object -First 1).Definition
-    }
-
-    $process = [System.Diagnostics.Process]::new();
-
-    $process.StartInfo.FileName = 'C:\Windows\system32\more.com';
-    $process.StartInfo.UseShellExecute = $false;
-    $process.StartInfo.RedirectStandardInput = $true;
-
-    $process.Start();
-
-    $streamWriter = $process.StandardInput;
+param([string[]]$paths)
+# Nano needs to use Unicode, but Windows and Linux need the default
+$OutputEncoding = if ([System.Management.Automation.Platform]::IsNanoServer -or [System.Management.Automation.Platform]::IsIoT) {
+    [System.Text.Encoding]::Unicode
+} else {
+    [System.Console]::OutputEncoding
 }
 
-Process
-{
-    if ($Line) {
-        $streamWriter.WriteLine($Line)
-    }
+# Respect PAGER, use more on Windows, and use less on Linux
+if (Test-Path env:PAGER) {
+    $moreCommand = (Get-Command -CommandType Application $env:PAGER | Select-Object -First 1).Definition
+} elseif ($IsWindows) {
+    $moreCommand = (Get-Command -CommandType Application more | Select-Object -First 1).Definition
+} else {
+    $moreCommand = (Get-Command -CommandType Application less | Select-Object -First 1).Definition
 }
 
-End
-{
-    if($paths) {
-        foreach ($file in $paths) {
-            Get-Content $file | & $moreCommand
-        }
-    } else {
-        $streamWriter.Close()
-        $process.WaitForExit();
-        $process.Close()
+if($paths) {
+    foreach ($file in $paths) {
+        Get-Content $file | & $moreCommand
     }
-}
+} else { $input | & $moreCommand }
 ";
 
         internal const string DefaultSetDriveFunctionText = "Set-Location $MyInvocation.MyCommand.Name";
