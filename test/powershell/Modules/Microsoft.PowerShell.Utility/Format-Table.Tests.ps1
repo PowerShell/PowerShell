@@ -1,6 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Describe "Format-Table" -Tags "CI" {
+        It "my test" {
+            $result = @{'test'=1,2} | Format-Table
+            $resultStr = $result | Out-String
+            Write-Host "writing"
+            Write-Host $resultStr
+        }
         It "Should call format table on piped input without error" {
                 { Get-Date | Format-Table } | Should -Not -Throw
         }
@@ -30,38 +36,38 @@ Describe "Format-Table" -Tags "CI" {
                 $al = (0..255)
                 $info = @{}
                 $info.array = $al
-                $result = $info | Format-Table | Out-String -Width 80
+                $result = $info | Format-Table | Out-String -Width 120
                 $result | Should -Match "array\s+{0, 1, 2, 3...}"
         }
 
         It "Format-Table with Negative Count should work" {
                 $FormatEnumerationLimit = -1
-                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 80
+                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 120
                 $result | Should -Match "test\s+{1, 2}"
         }
 
         # Pending on issue#888
         It "Format-Table with Zero Count should work" -Pending {
                 $FormatEnumerationLimit = 0
-                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 80
+                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 120
                 $result | Should -Match "test\s+{...}"
         }
 
         It "Format-Table with Less Count should work" {
                 $FormatEnumerationLimit = 1
-                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 80
+                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 120
                 $result | Should -Match "test\s+{1...}"
         }
 
         It "Format-Table with More Count should work" {
                 $FormatEnumerationLimit = 10
-                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 80
+                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 120
                 $result | Should -Match "test\s+{1, 2}"
         }
 
         It "Format-Table with Equal Count should work" {
                 $FormatEnumerationLimit = 2
-                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 80
+                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 120
                 $result | Should -Match "test\s+{1, 2}"
         }
 
@@ -76,14 +82,14 @@ Describe "Format-Table" -Tags "CI" {
         It "Format-Table with Var Deleted should throw Exception" -Pending {
                 $FormatEnumerationLimit = 2
                 Remove-Variable FormatEnumerationLimit
-                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 80
+                $result = Format-Table -inputobject @{'test'= 1, 2} | Out-String -Width 120
                 $result | Should -Match "test\s+{1, 2}"
         }
 
         It "Format-Table with new line should work" {
                 $info = @{}
                 $info.name = "1\n2"
-                $result = $info | Format-Table | Out-String -Width 80
+                $result = $info | Format-Table | Out-String -Width 120
                 $result | Should -Match "name\s+1.+2"
         }
 
@@ -95,7 +101,7 @@ Describe "Format-Table" -Tags "CI" {
                 $IPs.Add($IP2)
                 $info = @{}
                 $info.test = $IPs
-                $result = $info | Format-Table | Out-String
+                $result = $info | Format-Table | Out-String -Width 120
                 $result | Should -Match "test\s+{1.1.1.1, 4fde::2:22:f376:ff3b:ab3f}"
         }
 
@@ -105,7 +111,7 @@ Describe "Format-Table" -Tags "CI" {
                 $IPs = New-Object System.Collections.ArrayList
                 $IPs.Add($IP1)
                 $IPs.Add($IP2)
-                $result = $IPs | Format-Table -Autosize | Out-String -Width 80
+                $result = $IPs | Format-Table -Autosize | Out-String -Width 120
                 $result | Should -Match "name size booleanValue"
                 $result | Should -Match "---- ---- ------------"
                 $result | Should -Match "Bob\s+1234\s+True"
@@ -117,7 +123,7 @@ Describe "Format-Table" -Tags "CI" {
             @{ testName = "null"       ; testObject = $null }
         ) {
             param ($testObject)
-                $result = $testObject | Format-Table -Property "foo","bar" | Out-String -Width 80
+                $result = $testObject | Format-Table -Property "foo","bar" | Out-String -Width 120
                 $result | Should -BeNullOrEmpty
         }
 
@@ -127,7 +133,7 @@ Describe "Format-Table" -Tags "CI" {
             @{ testName = "array"      ; testString = "line1","line2"      }
         ) {
             param ($testString)
-            $result = $testString | Format-Table -Property "foo","bar" -Force | Out-String -Width 80
+            $result = $testString | Format-Table -Property "foo","bar" -Force | Out-String -Width 120
             $result.Replace(" ","").Replace([Environment]::NewLine,"") | Should -BeExactly "foobar------"
         }
 
@@ -139,7 +145,7 @@ Describe "Format-Table" -Tags "CI" {
                 $info.arrayList = "string1","string2"
                 $info.enumerable = [MyDayOfWeek]$eto
                 $info.enumerableTestObject = $eto
-                $result = $info | Format-Table | Out-String -Width 80
+                $result = $info | Format-Table | Out-String -Width 120
                 $result | Should -Match "intArray\s+{1, 2, 3, 4}"
                 $result | Should -Match "arrayList\s+{string1, string2}"
                 $result | Should -Match "enumerable\s+Sun"
@@ -153,26 +159,26 @@ Describe "Format-Table" -Tags "CI" {
                 $objs.Add($obj1)
                 $objs.Add($obj2)
                 $mo = [PSCustomObject]@{name = "this is name";sub = $objs}
-                $result1 = $mo | Format-Table -Expand CoreOnly | Out-String -Width 80
+                $result1 = $mo | Format-Table -Expand CoreOnly | Out-String -Width 120
                 $result1 | Should -Match "name\s+sub"
                 $result1 | Should -Match "this is name"
 
-                $result2 = $mo | Format-Table -Expand EnumOnly | Out-String -Width 80
+                $result2 = $mo | Format-Table -Expand EnumOnly | Out-String -Width 120
                 $result2 | Should -Match "name\s+sub"
                 $result2 | Should -Match "this is name\s+{x 0 y 0, x 1 y 1}"
 
-                $result3 = $mo | Format-Table -Expand Both | Out-String -Width 80
+                $result3 = $mo | Format-Table -Expand Both | Out-String -Width 120
                 $result3 | Should -Match "name\s+sub"
                 $result3 | Should -Match "this is name\s+{x 0 y 0, x 1 y 1}"
         }
 
         It "Format-Table should not add trailing whitespace to the header" {
-            $out = "hello" | Format-Table -Property foo -Force | Out-String -Width 80
+            $out = "hello" | Format-Table -Property foo -Force | Out-String -Width 120
             $out.Replace([System.Environment]::NewLine, "") | Should -BeExactly "foo---"
         }
 
         It "Format-Table should not add trailing whitespace to rows" {
-            $out = [pscustomobject]@{a=1;b=2} | Format-Table -HideTableHeaders | Out-String -Width 80
+            $out = [pscustomobject]@{a=1;b=2} | Format-Table -HideTableHeaders | Out-String -Width 120
             $out.Replace([System.Environment]::NewLine, "") | Should -BeExactly "1 2"
         }
 
@@ -316,7 +322,7 @@ Left Center Right
                 param($ps1xmlPath,$view,$object)
                 Update-FormatData -AppendPath $ps1xmlPath
                 $object.PSObject.TypeNames.Insert(0,"Test.Format")
-                $object | Format-Table -View $view | Out-String
+                $object | Format-Table -View $view | Out-String -Width 120
             } ).AddArgument($ps1xmlPath).AddArgument($view).AddArgument($object) | Out-Null
             $output = $ps.Invoke()
             $output.Replace("`n","").Replace("`r","") | Should -BeExactly $expected
@@ -448,7 +454,7 @@ er
                 Update-FormatData -AppendPath $ps1xmlPath
                 $a = [PSCustomObject]@{First=1;Second=2;Third=3}
                 $a.PSObject.TypeNames.Insert(0,"Test.Format")
-                $a | Format-Table -View $view | Out-String
+                $a | Format-Table -View $view | Out-String -Width 120
             } ).AddArgument($ps1xmlPath).AddArgument($view) | Out-Null
             $output = $ps.Invoke()
             foreach ($e in $ps.Streams.Error)
@@ -461,7 +467,6 @@ er
 
         It "Format-Table should correctly render rows: <variation>" -TestCases @(
             @{ view = "Default"; widths = 4,7,5; variation = "narrow values"; values = [PSCustomObject]@{First=1;Second=2;Third=3}; wrap = $false; expectedTable = @"
-
 Long*Header2*Heade
 Long*********r3
 Head
@@ -653,7 +658,7 @@ er
                 param($ps1xmlPath, $view, $values, $wrap)
                 Update-FormatData -AppendPath $ps1xmlPath
                 $values.PSObject.TypeNames.Insert(0,"Test.Format")
-                $values | Format-Table -View $view -Wrap:$wrap | Out-String
+                $values | Format-Table -View $view -Wrap:$wrap | Out-String -Width 120
             } ).AddArgument($ps1xmlPath).AddArgument($view).AddArgument($values).AddArgument($wrap) | Out-Null
             $output = $ps.Invoke()
             foreach ($e in $ps.Streams.Error)
