@@ -4258,8 +4258,12 @@ param(
         $PSBoundParameters['Full'] = $true
     }
 
-    # Set the outputencoding to Console::OutputEncoding. More.com doesn't work well with Unicode.
-    $outputEncoding=[System.Console]::OutputEncoding
+    # Nano needs to use Unicode, but Windows and Linux need the default
+    $OutputEncoding = if ([System.Management.Automation.Platform]::IsNanoServer -or [System.Management.Automation.Platform]::IsIoT) {
+        [System.Text.Encoding]::Unicode
+    } else {
+        [System.Console]::OutputEncoding
+    }
 
     $help = Get-Help @PSBoundParameters
 
@@ -4270,7 +4274,16 @@ param(
     }
     else
     {
-        $help | more
+        # Respect PAGER, use more on Windows, and use less on Linux
+        if (Test-Path env:PAGER) {
+            $moreCommand = (Get-Command -CommandType Application $env:PAGER | Select-Object -First 1).Definition
+        } elseif ($IsWindows) {
+            $moreCommand = (Get-Command -CommandType Application more | Select-Object -First 1).Definition
+        } else {
+            $moreCommand = (Get-Command -CommandType Application less | Select-Object -First 1).Definition
+        }
+
+        $help | & $moreCommand
     }
 ";
         }
@@ -4753,31 +4766,6 @@ end
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
 
-        internal const string DefaultMoreFunctionText = @"
-param([string[]]$paths)
-# Nano needs to use Unicode, but Windows and Linux need the default
-$OutputEncoding = if ([System.Management.Automation.Platform]::IsNanoServer -or [System.Management.Automation.Platform]::IsIoT) {
-    [System.Text.Encoding]::Unicode
-} else {
-    [System.Console]::OutputEncoding
-}
-
-# Respect PAGER, use more on Windows, and use less on Linux
-if (Test-Path env:PAGER) {
-    $moreCommand = (Get-Command -CommandType Application $env:PAGER | Select-Object -First 1).Definition
-} elseif ($IsWindows) {
-    $moreCommand = (Get-Command -CommandType Application more | Select-Object -First 1).Definition
-} else {
-    $moreCommand = (Get-Command -CommandType Application less | Select-Object -First 1).Definition
-}
-
-if($paths) {
-    foreach ($file in $paths) {
-        Get-Content $file | & $moreCommand
-    }
-} else { $input | & $moreCommand }
-";
-
         internal const string DefaultSetDriveFunctionText = "Set-Location $MyInvocation.MyCommand.Name";
         internal static ScriptBlock SetDriveScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(DefaultSetDriveFunctionText, isProductCode: true);
 
@@ -4787,8 +4775,6 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("prompt", DefaultPromptFunctionText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("TabExpansion2", s_tabExpansionFunctionText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", GetClearHostFunctionText(), isProductCode: true),
-            // Porting note: we keep more because the function acts correctly on Linux
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("more", DefaultMoreFunctionText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true),
             // Porting note: we remove mkdir on Linux because it is a conflict
 #if !UNIX
