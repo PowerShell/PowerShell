@@ -683,7 +683,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion "4.2"
 }
 
 function Compress-TestContent {
@@ -992,11 +992,21 @@ function Start-PSPester {
         [switch]$IncludeFailingTest
     )
 
-    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue))
+    $getModuleResults = Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue
+    if (-not $getModuleResults)
     {
         Write-Warning @"
 Pester module not found.
 Restore the module to '$Pester' by running:
+    Restore-PSPester
+"@
+        return;
+    }
+
+    if (-not ($getModuleResults | Where-Object { $_.Version -ge "4.2" } )) {
+        Write-Warning @"
+No Pester module of version 4.2 and higher.
+Restore the required module version to '$Pester' by running:
     Restore-PSPester
 "@
         return;
