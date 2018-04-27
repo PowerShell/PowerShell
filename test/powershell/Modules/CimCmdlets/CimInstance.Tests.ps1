@@ -7,6 +7,7 @@ try {
 
     Describe "CimInstance cmdlet tests" -Tag @("CI") {
         BeforeAll {
+            if ( ! $IsWindows ) { return }
             $instance = Get-CimInstance CIM_ComputerSystem
         }
 
