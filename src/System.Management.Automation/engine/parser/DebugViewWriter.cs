@@ -13,7 +13,6 @@
  *
  * ***************************************************************************/
 
-
 #if ENABLE_BINDER_DEBUG_LOGGING
 
 using System.Linq.Expressions;
@@ -1114,7 +1113,6 @@ namespace System.Management.Automation.Language {
             );
             return node;
         }
-
 
         private void DumpLabel(LabelTarget target) {
             Out(String.Format(CultureInfo.CurrentCulture, ".LabelTarget {0}:", GetLabelTargetName(target)));

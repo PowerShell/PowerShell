@@ -5,7 +5,7 @@
 #bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-debian.sh) ARGUMENTS
 #bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-debian.sh) <ARGUMENTS>
 
-#Usage - if you do not have the ability to run scripts directly from the web, 
+#Usage - if you do not have the ability to run scripts directly from the web,
 #        pull all files in this repo folder and execute, this script
 #        automatically prefers local copies of sub-scripts
 
@@ -25,7 +25,7 @@ thisinstallerdistro=debian
 repobased=true
 gitscriptname="installpsh-debian.psh"
 
-echo ; 
+echo ;
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Current PowerShell Core Version: $currentpshversion"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
@@ -104,7 +104,8 @@ if [[ "$SUDO" -eq "sudo" && ! ("'$*'" =~ skip-sudo-check) ]]; then
 fi
 
 #Collect any variation details if required for this distro
-REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }'`
+. /etc/lsb-release
+DISTRIB_ID=`lowercase $DISTRIB_ID`
 #END Collect any variation details if required for this distro
 
 #If there are known incompatible versions of this distro, put the test, message and script exit here:
@@ -119,14 +120,46 @@ if ! hash curl 2>/dev/null; then
     echo "curl not found, installing..."
     $SUDO apt-get install -y curl
 fi
-release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v//g | sed s/,//g | sed s/\ //g`
+release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
 
 echo "*** Current version on git is: $currentversion, repo version may differ slightly..."
 echo "*** Setting up PowerShell Core repo..."
 # Import the public repository GPG keys
 curl https://packages.microsoft.com/keys/microsoft.asc | $SUDO apt-key add -
 #Add the Repo
-curl https://packages.microsoft.com/config/ubuntu/$REV/prod.list | $SUDO tee /etc/apt/sources.list.d/microsoft.list
+case $DISTRIB_ID in
+    ubuntu)
+        case $DISTRIB_RELEASE in
+            17.10|16.10|16.04|15.10|14.04)
+                curl https://packages.microsoft.com/config/ubuntu/$DISTRIB_RELEASE/prod.list | $SUDO tee /etc/apt/sources.list.d/microsoft.list
+            ;;
+            *)
+                echo "ERROR: unsupported Ubuntu version ($DISTRIB_RELEASE)." >&2
+                echo "Supported versions: 14.04, 15.10, 16.04, 16.10, 17.10." >&2
+                exit 1
+            ;;
+        esac
+    ;;
+    debian)
+        DISTRIB_RELEASE=${DISTRIB_RELEASE%%.*}
+        case $DISTRIB_RELEASE in
+            8|9)
+                curl https://packages.microsoft.com/config/debian/$DISTRIB_RELEASE/prod.list | $SUDO tee /etc/apt/sources.list.d/microsoft.list
+            ;;
+            *)
+                echo "ERROR: unsupported Debian version ($DISTRIB_RELEASE)." >&2
+                echo "Supported versions: 8, 9." >&2
+                exit 1
+            ;;
+        esac
+    ;;
+    *)
+        echo "ERROR: unsupported Debian-based distribution ($DISTRIB_ID)." >&2
+        echo "Supported distributions: Debian, Ubuntu." >&2
+        exit 1
+    ;;
+esac
+
 # Update apt-get
 $SUDO apt-get update
 # Install PowerShell
@@ -160,7 +193,7 @@ fi
 if [[ "'$*'" =~ -interactivetesting ]] ; then
     echo "*** Loading test code in VS Code"
     curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
-    code ./testpowershell.ps1        
+    code ./testpowershell.ps1
 fi
 
 if [[ "$repobased" == true ]] ; then

@@ -14,7 +14,6 @@
  * ***************************************************************************/
 
 using System.Diagnostics;
-using System.Reflection;
 
 namespace System.Management.Automation.Interpreter
 {
@@ -127,7 +126,7 @@ namespace System.Management.Automation.Interpreter
 
         public static Instruction Create(Type type)
         {
-            Debug.Assert(!type.GetTypeInfo().IsEnum);
+            Debug.Assert(!type.IsEnum);
             switch (type.GetTypeCode())
             {
                 case TypeCode.Int16: return s_int16 ?? (s_int16 = new MulInt16());
@@ -259,7 +258,7 @@ namespace System.Management.Automation.Interpreter
 
         public static Instruction Create(Type type)
         {
-            Debug.Assert(!type.GetTypeInfo().IsEnum);
+            Debug.Assert(!type.IsEnum);
             switch (type.GetTypeCode())
             {
                 case TypeCode.Int16: return s_int16 ?? (s_int16 = new MulOvfInt16());

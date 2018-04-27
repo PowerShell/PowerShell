@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -86,7 +89,6 @@ namespace System.Management.Automation
             returnValue.Properties.Add(new PSNoteProperty("CurrentUserCurrentHost", currentUserCurrentHost));
             return returnValue;
         }
-
 
         /// <summary>
         /// Gets an array of commands that can be run sequentially to set $profile and run the profile commands.
@@ -459,7 +461,6 @@ namespace System.Management.Automation
                 }
             }
 
-
             return returnSuggestions;
         }
 
@@ -640,7 +641,6 @@ namespace System.Management.Automation
             int saveCredentials = Convert.ToInt32(save);
             credUiInfo.cbSize = Marshal.SizeOf(credUiInfo);
             credUiInfo.hwndParent = parentHWND;
-
 
             CREDUI_FLAGS flags = CREDUI_FLAGS.DO_NOT_PERSIST;
 
@@ -943,7 +943,7 @@ namespace System.Management.Automation
                 [string] $PSEditFunction
             )
 
-            Register-EngineEvent -SourceIdentifier PSISERemoteSessionOpenFile -Forward
+            Register-EngineEvent -SourceIdentifier PSISERemoteSessionOpenFile -Forward -SupportEvent
 
             if ((Test-Path -Path 'function:\global:PSEdit') -eq $false)
             {
@@ -960,7 +960,7 @@ namespace System.Management.Automation
                 Remove-Item -Path 'function:\global:PSEdit' -Force
             }
 
-            Get-EventSubscriber -SourceIdentifier PSISERemoteSessionOpenFile -EA Ignore | Remove-Event
+            Unregister-Event -SourceIdentifier PSISERemoteSessionOpenFile -Force -ErrorAction Ignore
         ";
 
         /// <summary>

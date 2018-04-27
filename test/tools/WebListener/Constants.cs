@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using System;
 
 namespace mvc.Controllers
@@ -11,11 +13,5 @@ namespace mvc.Controllers
         public const string NoRelLinkHeader = "<url>; foo=\"bar\"";
         public const string NoUrlLinkHeader = "<>; rel=\"next\"";
 
-
-    }
-
-    internal static class StatusCodes
-    {
-        public const Int32 ApplicationError = 500;
     }
 }

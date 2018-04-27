@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -316,7 +315,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             } while (read != 0);
 
-
             if (cmdlet != null)
             {
                 ProgressRecord record = new ProgressRecord(ActivityId,
@@ -344,9 +342,20 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="cmdlet"></param>
         internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet)
         {
-            using (FileStream output = File.Create(filePath))
+            // If the web cmdlet should resume, append the file instead of overwriting.
+            if(cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume)
             {
-                WriteToStream(stream, output, cmdlet);
+                using (FileStream output = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
+                {
+                    WriteToStream(stream, output, cmdlet);
+                }
+            }
+            else
+            {
+                using (FileStream output = File.Create(filePath))
+                {
+                    WriteToStream(stream, output, cmdlet);
+                }
             }
         }
 

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
 
@@ -63,7 +62,6 @@ namespace System.Management.Automation.Internal
 
         #endregion
     }
-
 
     /// <summary>
     /// Abstract class which defines a CabinetExtractor loader. An implementation

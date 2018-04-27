@@ -1,41 +1,89 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Measure-Object" -Tags "CI" {
     BeforeAll {
         $testObject = 1,3,4
+        $testObject2 = 1..100
     }
 
     It "Should be able to be called without error" {
-        { Measure-Object | Out-Null } | Should Not Throw
+        { Measure-Object | Out-Null } | Should -Not -Throw
     }
 
     It "Should be able to call on piped input" {
-        { $testObject | Measure-Object } | Should Not Throw
+        { $testObject | Measure-Object } | Should -Not -Throw
     }
 
     It "Should be able to count the number of objects input to it" {
-        $($testObject | Measure-Object).Count | Should Be $testObject.Length
+        $($testObject | Measure-Object).Count | Should -Be $testObject.Length
+    }
+
+    It "Should calculate Standard Deviation" {
+        $actual = ($testObject | Measure-Object -StandardDeviation)
+        # We check this way since .StandardDeviation returns a double value
+        # 1.52752523165195 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
+        [Math]::abs($actual.StandardDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
+    }
+
+
+    It "Should calculate Standard Deviation" {
+        $actual = ($testObject2 | Measure-Object -StandardDeviation)
+        # We check this way since .StandardDeviation returns a double value
+        # 29.011491975882 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
+        [Math]::abs($actual.StandardDeviation - 29.011491975882) | Should -BeLessThan .0000000000001
+    }
+
+    It "Should calculate Standard Deviation with -Sum" {
+        $actual = ($testObject | Measure-Object -Sum -StandardDeviation)
+        # We check this way since .StandardDeviation returns a double value
+        $actual.Sum | Should Be 8
+        # 1.52752523165195 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
+        [Math]::abs($actual.StandardDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
+    }
+
+    It "Should calculate Standard Deviation with -Average" {
+        $actual = ($testObject | Measure-Object -Average -StandardDeviation)
+        # We check this way since .StandardDeviation returns a double value
+        [Math]::abs($actual.Average - 2.66666666666667) | Should -BeLessThan .00000000000001
+        # 1.52752523165195 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
+        [Math]::abs($actual.StandardDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
+    }
+
+    It "Should calculate Standard Deviation with -Sum -Average" {
+        $actual = ($testObject2 | Measure-Object -Sum -Average -StandardDeviation)
+        # We check this way since .StandardDeviation returns a double value
+        $actual.Sum | Should Be 5050
+        $actual.Average | Should Be 50.5
+        # 29.011491975882 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
+        [Math]::abs($actual.StandardDeviation - 29.011491975882) | Should -BeLessThan .0000000000001
     }
 
     It "Should be able to count using the Property switch" {
         $expected = $(Get-ChildItem $TestDrive).Length
         $actual   = $(Get-ChildItem $TestDrive | Measure-Object -Property Length).Count
 
-        $actual | Should Be $expected
+        $actual | Should -Be $expected
     }
 
     It "Should be able to use wildcards for the Property argument" {
         $data = [pscustomobject]@{ A1 = 1; A2 = 2; C3 = 3 },
                 [pscustomobject]@{ A1 = 1; A2 = 2; A3 = 3 }
         $actual = $data | Measure-Object -Property A* -Sum
-        $actual.Count       | Should Be 3
-        $actual[0].Property | Should Be A1
-        $actual[0].Sum      | Should Be 2
-        $actual[0].Count    | Should Be 2
-        $actual[1].Property | Should Be A2
-        $actual[1].Sum      | Should Be 4
-        $actual[1].Count    | Should Be 2
-        $actual[2].Property | Should Be A3
-        $actual[2].Sum      | Should Be 3
-        $actual[2].Count    | Should Be 1
+        $actual.Count       | Should -Be 3
+        $actual[0].Property | Should -Be A1
+        $actual[0].Sum      | Should -Be 2
+        $actual[0].Count    | Should -Be 2
+        $actual[1].Property | Should -Be A2
+        $actual[1].Sum      | Should -Be 4
+        $actual[1].Count    | Should -Be 2
+        $actual[2].Property | Should -Be A3
+        $actual[2].Sum      | Should -Be 3
+        $actual[2].Count    | Should -Be 1
     }
 
     Context "Numeric tests" {
@@ -48,7 +96,7 @@ Describe "Measure-Object" -Tags "CI" {
                 $expected += $obj
             }
 
-            $actual.Sum | Should Be $expected
+            $actual.Sum | Should -Be $expected
         }
 
         It "Should be able to average" {
@@ -62,7 +110,7 @@ Describe "Measure-Object" -Tags "CI" {
 
             $expected /= $testObject.length
 
-            $actual.Average | Should Be $expected
+            $actual.Average | Should -Be $expected
         }
 
         It "Should be able to return a minimum" {
@@ -77,7 +125,7 @@ Describe "Measure-Object" -Tags "CI" {
                 }
             }
 
-            $actual.Minimum | Should Be $expected
+            $actual.Minimum | Should -Be $expected
         }
 
         It "Should be able to return a minimum when multiple objects are the minimum" {
@@ -93,7 +141,7 @@ Describe "Measure-Object" -Tags "CI" {
                 }
             }
 
-            $actual.Minimum | Should Be $expected
+            $actual.Minimum | Should -Be $expected
         }
 
         It "Should be able to return a maximum" {
@@ -108,7 +156,7 @@ Describe "Measure-Object" -Tags "CI" {
                 }
             }
 
-            $actual.Maximum | Should Be $expected
+            $actual.Maximum | Should -Be $expected
         }
 
         It "Should be able to return a maximum when multiple objects are the maximum" {
@@ -124,7 +172,7 @@ Describe "Measure-Object" -Tags "CI" {
                 }
             }
 
-            $actual.Maximum | Should Be $expected
+            $actual.Maximum | Should -Be $expected
         }
     }
 
@@ -138,21 +186,21 @@ Describe "Measure-Object" -Tags "CI" {
             $expectedLength = $testString.Replace($nl,"").Split().length
             $actualLength   = $testString | Measure-Object -Word
 
-            $actualLength.Words | Should Be $expectedLength
+            $actualLength.Words | Should -Be $expectedLength
         }
 
         It "Should be able to count the number of characters in a string" {
             $expectedLength = $testString.length
             $actualLength   = $testString | Measure-Object -Character
 
-            $actualLength.Characters | Should Be $expectedLength
+            $actualLength.Characters | Should -Be $expectedLength
         }
 
         It "Should be able to count the number of lines in a string" {
             $expectedLength = $testString.Split($nl, [System.StringSplitOptions]::RemoveEmptyEntries).length
             $actualLength   = $testString | Measure-Object -Line
 
-            $actualLength.Lines | Should Be $expectedLength
+            $actualLength.Lines | Should -Be $expectedLength
         }
     }
 }
@@ -201,11 +249,11 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
         $testMax = ($flags -band [TestMeasureGeneric]::TestMax) -gt 0
         $testMin = ($flags -band [TestMeasureGeneric]::TestMin) -gt 0
         $result = $employees | Measure-Object -Sum:$testSum -Average:$testAverage -Max:$testMax -Min:$testMin -Prop $property
-        $result.Count   | Should Be 4
-        $result.Sum     | Should BeNullOrEmpty
-        $result.Average | Should BeNullOrEmpty
-        $result.Max     | Should BeNullOrEmpty
-        $result.Min     | Should BeNullOrEmpty
+        $result.Count   | Should -Be 4
+        $result.Sum     | Should -BeNullOrEmpty
+        $result.Average | Should -BeNullOrEmpty
+        $result.Max     | Should -BeNullOrEmpty
+        $result.Min     | Should -BeNullOrEmpty
         for ($i = 1; $i -lt 8 * 2; $i++)
         {
             $flags = [TestMeasureGeneric]$i
@@ -215,41 +263,41 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
             $testMax = ($flags -band [TestMeasureGeneric]::TestMax) -gt 0
             $testMin = ($flags -band [TestMeasureGeneric]::TestMin) -gt 0
             $result = $employees | Measure-Object -Sum:$testSum -Average:$testAverage -Max:$testMax -Min:$testMin -Prop $property
-            $result.Count | Should Be 4
+            $result.Count | Should -Be 4
             if($testSum)
             {
-                $result.Sum | Should Be 44
+                $result.Sum | Should -Be 44
             }
             else
             {
-                $result.Sum | Should BeNullOrEmpty
+                $result.Sum | Should -BeNullOrEmpty
             }
 
             if($testAverage)
             {
-                $result.Average | Should Be 11
+                $result.Average | Should -Be 11
             }
             else
             {
-                $result.Average | Should BeNullOrEmpty
+                $result.Average | Should -BeNullOrEmpty
             }
 
             if($testMax)
             {
-                $result.Maximum | Should Be 15
+                $result.Maximum | Should -Be 15
             }
             else
             {
-                $result.Maximum | Should BeNullOrEmpty
+                $result.Maximum | Should -BeNullOrEmpty
             }
 
             if($testMin)
             {
-                $result.Minimum | Should Be 5
+                $result.Minimum | Should -Be 5
             }
             else
             {
-                $result.Minimum | Should BeNullOrEmpty
+                $result.Minimum | Should -BeNullOrEmpty
             }
         }
     }
@@ -269,40 +317,40 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
             {
                 if($testIgnoreWS)
                 {
-                    $result.Characters | Should Be 25
+                    $result.Characters | Should -Be 25
                 }
                 else
                 {
-                    $result.Characters | Should Be 29
+                    $result.Characters | Should -Be 29
                 }
             }
             else
             {
-                $result.Characters | Should BeNullOrEmpty
+                $result.Characters | Should -BeNullOrEmpty
             }
 
             if($testWord)
             {
-                $result.Words | Should Be 6
+                $result.Words | Should -Be 6
             }
             else
             {
-                $result.Words | Should BeNullOrEmpty
+                $result.Words | Should -BeNullOrEmpty
             }
 
             if($testLine)
             {
-                $result.Lines | Should Be 4
+                $result.Lines | Should -Be 4
             }
             else
             {
-                $result.Lines | Should BeNullOrEmpty
+                $result.Lines | Should -BeNullOrEmpty
             }
         }
     }
 
     It "Measure-Object with multiple lines should work"{
         $result = "123`n4" | Measure-Object -Line
-        $result.Lines | Should Be 2
+        $result.Lines | Should -Be 2
     }
 }

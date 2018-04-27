@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -287,7 +286,7 @@ namespace Microsoft.PowerShell.Cim
 
             if (baseObject != null)
             {
-                for (Type type = baseObject.GetType(); type != null; type = type.GetTypeInfo().BaseType)
+                for (Type type = baseObject.GetType(); type != null; type = type.BaseType)
                 {
                     result.Add(type.FullName);
                 }

@@ -1,4 +1,7 @@
-﻿using System.Collections;
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -188,7 +191,6 @@ namespace System.Management.Automation
             return results;
         }
 
-
         internal void AddMembersByInferredTypesClrType(PSTypeName typename, bool isStatic, Func<object, bool> filter, Func<object, bool> filterToCall, List<object> results)
         {
             if (CurrentTypeDefinitionAst == null || CurrentTypeDefinitionAst.Type != typename.Type)
@@ -210,7 +212,7 @@ namespace System.Management.Automation
             else
             {
                 elementTypes = typename.Type.GetInterfaces().Where(
-                    t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+                    t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
             }
             foreach (var type in elementTypes.Prepend(typename.Type))
             {
@@ -303,7 +305,6 @@ namespace System.Management.Automation
             }
             results.AddRange(GetMembersByInferredType(new PSTypeName(typeof(object)), isStatic, filterToCall));
         }
-
 
         internal void AddMembersByInferredTypeCimType(PSTypeName typename, List<object> results, Func<object, bool> filterToCall)
         {
@@ -422,7 +423,7 @@ namespace System.Management.Automation
     {
         private readonly TypeInferenceContext _context;
 
-		private static readonly PSTypeName StringPSTypeName = new PSTypeName(typeof(string));
+        private static readonly PSTypeName StringPSTypeName = new PSTypeName(typeof(string));
 
         public TypeInferenceVisitor(TypeInferenceContext context)
         {
@@ -924,7 +925,7 @@ namespace System.Management.Automation
                 foreach (var t in InferTypes(previousPipelineElement))
                 {
                     var memberName = (((AstPair)argument).Argument as StringConstantExpressionAst)?.Value;
-                    
+
                     if (memberName != null)
                     {
                         var members = _context.GetMembersByInferredType(t, false, null);
@@ -1009,17 +1010,17 @@ namespace System.Management.Automation
             if (memberAsStringConst == null)
                 return Utils.EmptyArray<PSTypeName>();
 
-            var exprType = GetExpressionType(expression, isStatic);                
+            var exprType = GetExpressionType(expression, isStatic);
             if (exprType == null || exprType.Length == 0)
             {
                 return Utils.EmptyArray<PSTypeName>();
             }
-            
+
             var res = new List<PSTypeName>(10);
             bool isInvokeMemberExpressionAst = memberExpressionAst is InvokeMemberExpressionAst;
             var maybeWantDefaultCtor = isStatic
                 && isInvokeMemberExpressionAst
-                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");            
+                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");
 
             // We use a list of member names because we might discover aliases properties
             // and if we do, we'll add to the list.
@@ -1098,7 +1099,7 @@ namespace System.Management.Automation
                         {
                             var res = (from method in methodCacheEntry.methodInformationStructures
                                 select method.method as MethodInfo into methodInfo
-                                where methodInfo != null && !methodInfo.ReturnType.GetTypeInfo().ContainsGenericParameters
+                                where methodInfo != null && !methodInfo.ReturnType.ContainsGenericParameters
                                 select new PSTypeName(methodInfo.ReturnType));
                             result.AddRange(res);
                             return true;
@@ -1323,7 +1324,7 @@ namespace System.Management.Automation
                                     // We can't deduce much from IEnumerable, but we can if it's generic.
                                     var enumerableInterfaces = result.Type.GetInterfaces().Where(
                                         t =>
-                                            t.GetTypeInfo().IsGenericType &&
+                                            t.IsGenericType &&
                                             t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
                                     foreach (var i in enumerableInterfaces)
                                     {
@@ -1368,7 +1369,6 @@ namespace System.Management.Automation
                     yield return new PSTypeName(_context.CurrentTypeDefinitionAst);
                     yield break;
                 }
-
 
             // Look for our variable as a parameter or on the lhs of an assignment - hopefully we'll find either
             // a type constraint or at least we can use the rhs to infer the type.
@@ -1458,7 +1458,6 @@ namespace System.Management.Automation
                 }
             }
 
-
             PSTypeName evalTypeName;
             if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out evalTypeName))
             {
@@ -1484,11 +1483,11 @@ namespace System.Management.Automation
 
                     foreach (var iface in type.GetInterfaces())
                     {
-                        var isGenericType = iface.GetTypeInfo().IsGenericType;
+                        var isGenericType = iface.IsGenericType;
                         if (isGenericType && iface.GetGenericTypeDefinition() == typeof(IDictionary<,>))
                         {
                             var valueType = iface.GetGenericArguments()[1];
-                            if (!valueType.GetTypeInfo().ContainsGenericParameters)
+                            if (!valueType.ContainsGenericParameters)
                             {
                                 foundAny = true;
                                 yield return new PSTypeName(valueType);
@@ -1497,7 +1496,7 @@ namespace System.Management.Automation
                         else if (isGenericType && iface.GetGenericTypeDefinition() == typeof(IList<>))
                         {
                             var valueType = iface.GetGenericArguments()[0];
-                            if (!valueType.GetTypeInfo().ContainsGenericParameters)
+                            if (!valueType.ContainsGenericParameters)
                             {
                                 foundAny = true;
                                 yield return new PSTypeName(valueType);

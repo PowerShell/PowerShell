@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Verify approved aliases list" -Tags "CI" {
     BeforeAll {
         $FullCLR = !$isCoreCLR
@@ -435,9 +437,11 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Suspend-Job",                                        ,                     $($FullCLR                               )
 "Cmdlet", "Suspend-Service",                                    ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Tee-Object",                                         ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Test-Connection",                                    ,                     $(             $CoreWindows -or $CoreUnix)
 "Cmdlet", "Test-ComputerSecureChannel",                         ,                     $($FullCLR                               )
 "Cmdlet", "Test-FileCatalog",                                   ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Test-ModuleManifest",                                ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Test-Json",                                          ,                     $(             $CoreWindows -or $CoreUnix)
 "Cmdlet", "Test-Path",                                          ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Test-PSSessionConfigurationFile",                    ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Test-WSMan",                                         ,                     $($FullCLR -or $CoreWindows              )
@@ -487,7 +491,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
         # Below 'Should Be' don't show full list wrong aliases so we output them explicitly
         # if all aliases is Ok we output nothing
         $result | Write-Host
-        $result | Should Be $null
+        $result | Should -BeNullOrEmpty
     }
 
     It "All approved aliases have the correct 'AllScope' option" {
@@ -499,7 +503,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
         # Below 'Should Be' don't show full list wrong aliases so we output them explicitly
         # if all aliases is Ok we output nothing
         $result | Write-Host
-        $result | Should Be $null
+        $result | Should -BeNullOrEmpty
     }
 
     It "All approved aliases have the correct 'ReadOnly' option" {
@@ -511,7 +515,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
         # Below 'Should Be' don't show full list wrong aliases so we output them explicitly
         # if all aliases is Ok we output nothing
         $result | Write-Host
-        $result | Should Be $null
+        $result | Should -BeNullOrEmpty
     }
 
     It "All approved Cmdlets present (no new Cmdlets added, no Cmdlets removed)" {
@@ -523,10 +527,10 @@ Describe "Verify approved aliases list" -Tags "CI" {
         # Below 'Should Be' don't show full list wrong Cmdlets so we output them explicitly
         # if all Cmdlets is Ok we output nothing
         $result | Write-Host
-        $result | Should Be $null
+        $result | Should -BeNullOrEmpty
     }
 
     It "Should have 'more' as a function" {
-        Test-Path Function:more | Should Be $true
+        Test-Path Function:more | Should -BeTrue
     }
 }

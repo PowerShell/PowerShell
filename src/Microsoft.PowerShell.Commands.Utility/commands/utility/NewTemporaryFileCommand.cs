@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -18,18 +20,18 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             string filePath = null;
-            string tempPath = System.Environment.GetEnvironmentVariable("TEMP");
+            string tempPath = Path.GetTempPath();
             if (ShouldProcess(tempPath))
             {
                 try
                 {
                     filePath = Path.GetTempFileName();
                 }
-                catch (Exception e)
+                catch (IOException ioException)
                 {
-                    WriteError(
+                    ThrowTerminatingError(
                         new ErrorRecord(
-                            e,
+                            ioException,
                             "NewTemporaryFileWriteError",
                             ErrorCategory.WriteError,
                             tempPath));

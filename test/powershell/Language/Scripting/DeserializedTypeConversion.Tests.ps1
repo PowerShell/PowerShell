@@ -1,4 +1,6 @@
-﻿Describe "Tests conversion of deserialized types to original type using object properties." -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Tests conversion of deserialized types to original type using object properties." -Tags "CI" {
     BeforeAll {
         # Create new types and test functions.
         $type1,$type2,$type3,$type4 = Add-Type -PassThru -TypeDefinition @'
@@ -92,7 +94,7 @@
         }
 
         It 'Type casts should succeed.' {
-            { $tc1 = [test1]$dst1 }| Should not Throw
+            { $tc1 = [test1]$dst1 }| Should -Not -Throw
         }
 
         It 'Parameter bindings should succeed.' {
@@ -106,7 +108,7 @@
 
                 $test | Format-List | Out-String
             }
-            { test-1 $dst1 } | Should Not Throw
+            { test-1 $dst1 } | Should -Not -Throw
         }
     }
 
@@ -117,7 +119,7 @@
             $dst2 = [System.Management.Automation.PSSerializer]::Deserialize($s)
         }
         It 'Type casts should succeed.' {
-            { $tc2 = [test2]$dst2 } | Should Not Throw
+            { $tc2 = [test2]$dst2 } | Should -Not -Throw
         }
 
         It 'Parameter bindings should succeed.' {
@@ -130,7 +132,7 @@
 
                 $test | Format-List | Out-String
             }
-            { test-2 $dst2 } | Should Not Throw
+            { test-2 $dst2 } | Should -Not -Throw
         }
     }
 
@@ -149,7 +151,7 @@
                 Throw "Exception expected, execution should not have reached here"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should Be 'InvalidCastConstructorException'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastConstructorException'
             }
         }
 
@@ -171,7 +173,7 @@
                 Throw "Exception expected, execution should not have reached here"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentTransformationError,test-3'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'ParameterArgumentTransformationError,test-3'
             }
         }
     }
@@ -184,7 +186,7 @@
         }
 
         It 'Type casts should succeed.' {
-            { $tc4 = [test4]$dst4 } | Should Not Throw
+            { $tc4 = [test4]$dst4 } | Should -Not -Throw
         }
 
         It 'Parameter bindings should succeed.' {
@@ -197,7 +199,7 @@
 
                 $test | Format-List | Out-String
             }
-            { test-4 $dst4 } | Should Not Throw
+            { test-4 $dst4 } | Should -Not -Throw
         }
     }
 
@@ -216,7 +218,7 @@
 
         It 'Type casts should succeed.' {
 
-            { $tc5 = [PSClass1]$dst5 } | Should Not Throw
+            { $tc5 = [PSClass1]$dst5 } | Should -Not -Throw
         }
 
         It 'Parameter bindings should succeed.' {
@@ -229,7 +231,7 @@
 
                 $test | Format-List | Out-String
             }
-            { test-PSClass1 $dst5 } | Should Not Throw
+            { test-PSClass1 $dst5 } | Should -Not -Throw
         }
     }
 
@@ -253,7 +255,7 @@
         }
 
         It 'Type casts should succeed.' {
-            { $tc6 = [PSClass2]$dst6 } | Should Not Throw
+            { $tc6 = [PSClass2]$dst6 } | Should -Not -Throw
         }
 
         It 'Parameter bindings should succeed.' {
@@ -266,7 +268,7 @@
 
                 $test | Format-List | Out-String
             }
-            { test-PSClass2 $dst6 } | Should Not Throw
+            { test-PSClass2 $dst6 } | Should -Not -Throw
         }
     }
 }

@@ -1,6 +1,6 @@
 @{
 GUID="56D66100-99A0-4FFC-A12D-EEE9A6718AEF"
-Author="Microsoft Corporation"
+Author="PowerShell"
 CompanyName="Microsoft Corporation"
 Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="3.0.0.0"

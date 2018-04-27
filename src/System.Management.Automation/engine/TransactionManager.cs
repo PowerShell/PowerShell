@@ -1,8 +1,7 @@
-#pragma warning disable 1634, 1691
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+#pragma warning disable 1634, 1691
 
 using System.Collections.Generic;
 using System.Transactions;
@@ -743,5 +742,4 @@ namespace System.Management.Automation.Internal
         }
     }
 }
-
 

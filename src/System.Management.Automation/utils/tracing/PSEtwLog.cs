@@ -1,6 +1,6 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System.Globalization;
 using System.Management.Automation.Internal;
 using System.Collections.Generic;
@@ -28,6 +28,20 @@ namespace System.Management.Automation.Tracing
 #else
             provider = new PSEtwLogProvider();
 #endif
+        }
+
+        internal static void LogConsoleStartup()
+        {
+            Guid activityId = EtwActivity.GetActivityId();
+
+            if (activityId == Guid.Empty)
+            {
+                EtwActivity.SetActivityId(EtwActivity.CreateActivityId());
+            }
+
+            PSEtwLog.LogOperationalInformation(PSEventId.Perftrack_ConsoleStartupStart, PSOpcode.WinStart,
+                PSTask.PowershellConsoleStartup, PSKeyword.UseAlwaysOperational);
+
         }
 
         /// <summary>
@@ -270,7 +284,6 @@ namespace System.Management.Automation.Tracing
         {
             provider.WriteEvent(id, PSChannel.Operational, opcode, task, logContext, payLoad);
         }
-
 
         internal static void SetActivityIdForCurrentThread(Guid newActivityId)
         {

@@ -1,4 +1,6 @@
-﻿Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
     BeforeAll {
         class SampleClass5 {
             [int]$a
@@ -35,13 +37,13 @@
         param ($Name, $Cmd, $ExpectedType)
         Invoke-expression $Cmd -OutVariable a
         $a = Get-Variable -Name a -ValueOnly
-        $a | should BeOfType $ExpectedType
+        $a | Should -BeOfType $ExpectedType
     }
 
     It 'Hashtable conversion to PSCustomObject retains insertion order of hashtable keys when passed a hashliteral' {
 
         $x = [pscustomobject]@{one=1;two=2}
-        $x | should BeOfType "System.Management.automation.psobject"
+        $x | Should -BeOfType "System.Management.automation.psobject"
 
         $p = 0
         # Checks if the first property is One
@@ -50,7 +52,7 @@
                                     if ($p -eq 0)
                                     {
                                         $p++;
-                                        $_.Name | Should Be 'one'
+                                        $_.Name | Should -BeExactly 'one'
                                      }
                                 }
     }
@@ -58,7 +60,7 @@
     It 'Conversion of Ordered hashtable to PSCustomObject should succeed' {
 
        $x = [pscustomobject][ordered]@{one=1;two=2}
-       $x | should BeOfType "System.Management.automation.psobject"
+       $x | Should -BeOfType "System.Management.automation.psobject"
 
        $p = 0
        # Checks if the first property is One
@@ -67,7 +69,7 @@
                                     if ($p -eq 0)
                                     {
                                         $p++;
-                                        $_.Name | Should Be 'one'
+                                        $_.Name | Should -BeExactly 'one'
                                      }
                                 }
     }
@@ -105,37 +107,36 @@
 
            if($InnerException)
            {
-                $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should Be $ErrorID
+                $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly $ErrorID
            }
            else {
-                $_.FullyQualifiedErrorId | Should Be $ErrorID
+                $_.FullyQualifiedErrorId | Should -BeExactly $ErrorID
            }
        }
     }
 
-
     It  'Creating an object of an existing type from hashtable should succeed' {
         $result = [System.Management.Automation.Host.Coordinates]@{X=10;Y=33}
-        $result.X | should be 10
+        $result.X | Should -Be 10
     }
 
     It 'Creating an object of an existing type from hashtable should call the constructor taking a hashtable if such a constructor exists in the type' {
 
        $x = [SampleClass5]@{a=10;b=5}
-       $x.a | Should Be '100'
+       $x.a | Should -BeExactly '100'
     }
 
     It 'Add a new type name to PSTypeNames property' {
 
 	    $obj = [PSCustomObject] @{pstypename = 'Mytype'}
-	    $obj.PSTypeNames[0] | Should Be 'Mytype'
+	    $obj.PSTypeNames[0] | Should -BeExactly 'Mytype'
     }
 
     It 'Add an existing type name to PSTypeNames property' {
 
 	    $obj = [PSCustomObject] @{pstypename = 'System.Object'}
-	    $obj.PSTypeNames.Count | Should Be 3
-	    $obj.PSTypeNames[0] | Should Be 'System.Object'
+	    $obj.PSTypeNames.Count | Should -Be 3
+	    $obj.PSTypeNames[0] | Should -BeExactly 'System.Object'
     }
     It "new-object should fail to create object for System.Management.Automation.PSCustomObject" {
 
@@ -150,8 +151,8 @@
         {
             $errorObj = $_
         }
-        $obj | should be $null
-        $errorObj.FullyQualifiedErrorId | should be "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
+        $obj | Should -BeNullOrEmpty
+        $errorObj.FullyQualifiedErrorId | Should -BeExactly "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
     }
 }
 

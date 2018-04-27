@@ -1,6 +1,5 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -91,7 +90,6 @@ namespace Microsoft.PowerShell.Commands
         private PSObject _messageData = null;
 
         #endregion parameters
-
 
         /// <summary>
         /// Add the event to the event queue

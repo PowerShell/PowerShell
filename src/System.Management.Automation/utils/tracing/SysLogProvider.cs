@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 #if UNIX
 
 using System;
@@ -102,6 +104,14 @@ namespace System.Management.Automation.Tracing
             _keywordFilter = (ulong)keywords;
             _levelFilter = (byte) level;
             _channelFilter = (byte) channels;
+            if ((_channelFilter & (ulong) PSChannel.Operational) != 0)
+            {
+                _keywordFilter |= (ulong) PSKeyword.UseAlwaysOperational;
+            }
+            if ((_channelFilter & (ulong) PSChannel.Analytic) != 0)
+            {
+                _keywordFilter |= (ulong) PSKeyword.UseAlwaysAnalytic;
+            }
         }
 
         /// <summary>
@@ -188,7 +198,7 @@ namespace System.Management.Automation.Tracing
             {
                 if (object.ReferenceEquals(_resourceManager, null))
                 {
-                    _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).GetTypeInfo().Assembly);
+                    _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).Assembly);
                 }
                 return _resourceManager;
             }
@@ -313,13 +323,6 @@ namespace System.Management.Automation.Tracing
         /// <param name="args">The payload for the log message.</param>
         public void Log(PSEventId eventId, PSChannel channel, PSTask task, PSOpcode opcode, PSLevel level, PSKeyword keyword, params object[] args)
         {
-            if (keyword == PSKeyword.UseAlwaysAnalytic)
-            {
-                // Use the 'DefaultKeywords' to work around the default keyword filter.
-                // Note that the PSKeyword argument is not really used in writing SysLog.
-                keyword = PSSysLogProvider.DefaultKeywords;
-            }
-
             if (ShouldLog(level, keyword, channel))
             {
                 int threadId = Thread.CurrentThread.ManagedThreadId;

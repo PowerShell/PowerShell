@@ -1,8 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 #pragma warning disable 1634, 1691
-
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
 
 using System.Collections;
 using System.Collections.Generic;
@@ -1891,7 +1889,6 @@ namespace System.Management.Automation
             return DoShouldContinue(query, caption, false, true, ref yesToAll, ref noToAll);
         }
 
-
         private bool DoShouldContinue(
             string query,
             string caption,
@@ -2320,7 +2317,6 @@ namespace System.Management.Automation
             private Thread _wasPermittedToWriteThread = null;
         } // AllowWrite
 
-
         /// <summary>
         /// Stores the exception to be returned from
         /// PipelineProcessor.SynchronousExecute,
@@ -2488,7 +2484,6 @@ namespace System.Management.Automation
             SetupVariable(VariableStreamKind.Information, this.InformationVariable, ref _informationVarList);
         } // SetupWarningVariable
 
-
         internal void SetupVariable(VariableStreamKind streamKind, string variableName, ref IList varList)
         {
             if (String.IsNullOrEmpty(variableName))
@@ -2578,7 +2573,6 @@ namespace System.Management.Automation
 
             this.OutputPipe.Add(sendToPipeline);
         }
-
 
         // NOTICE-2004/06/08-JonN 959638
         // Use this variant to skip the ThrowIfWriteNotPermitted check
@@ -2872,7 +2866,6 @@ namespace System.Management.Automation
 
         #region Preference
 
-
         // These are a set of preference variables which affect the inner
         // workings of the command and when what information will get output.
         // See "User Feedback Mechanisms - Note.doc" for details.
@@ -2915,8 +2908,6 @@ namespace System.Management.Automation
             }
         }
 
-
-
         private bool _isDebugPreferenceSet = false;
         private ActionPreference _debugPreference = InitialSessionState.defaultDebugPreference;
         private bool _isDebugPreferenceCached = false;
@@ -2950,7 +2941,6 @@ namespace System.Management.Automation
                     else
                         return ActionPreference.SilentlyContinue;
                 }
-
 
                 if (!_isDebugPreferenceCached)
                 {
@@ -3047,7 +3037,6 @@ namespace System.Management.Automation
                     return ActionPreference.Continue;
                 // Debug:$false and Verbose:$false ignored
 
-
                 if (!_isWarningPreferenceCached)
                 {
                     bool defaultUsed = false;
@@ -3136,7 +3125,6 @@ namespace System.Management.Automation
         }
 
         internal bool UseTransactionFlagSet { get; private set; } = false;
-
 
         //This is used so that people can tell whether the debug switch was specified.  This
         // Is useful in the Cmdlet-calling-Cmdlet case where you'd like the underlying Cmdlet to
@@ -3302,7 +3290,6 @@ namespace System.Management.Automation
         internal bool IsInformationActionSet { get; private set; } = false;
 
         private bool _isInformationPreferenceCached = false;
-
 
         internal PagingParameters PagingParameters { get; set; }
 
@@ -3711,7 +3698,9 @@ namespace System.Management.Automation
             if (this.PipelineVariable != null)
             {
                 this.OutputPipe.RemovePipelineVariable();
-                _state.PSVariable.Remove(this.PipelineVariable);
+                // '_state' could be null when a 'DynamicParam' block runs because the 'DynamicParam' block runs in 'DoPrepare',
+                // before 'PipelineProcessor.SetupParameterVariables' is called, where '_state' is initialized.
+                _state?.PSVariable.Remove(this.PipelineVariable);
             }
         }
     }

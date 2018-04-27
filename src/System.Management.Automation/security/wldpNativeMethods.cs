@@ -1,3 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+//
+//  Application white listing policies such as AppLocker and DeviceGuard UMCI are only implemented on Windows OSs
+//
+#if !UNIX
+
 using System.Management.Automation.Internal;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
@@ -166,7 +174,6 @@ namespace System.Management.Automation.Security
             }
         }
         private static SystemEnforcementMode? s_cachedWldpSystemPolicy = null;
-
 
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
@@ -393,8 +400,6 @@ namespace System.Management.Automation.Security
         }
         private static bool s_hadMissingWldpAssembly = false;
 
-
-
         /// <summary>
         /// Gets lockdown policy as applied to a COM object
         /// </summary>
@@ -560,7 +565,6 @@ namespace System.Management.Automation.Security
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpGetLockdownPolicy")]
             internal static extern int WldpGetLockdownPolicy(ref WLDP_HOST_INFORMATION pHostInformation, ref uint pdwLockdownState, uint dwFlags);
 
-
             /// Return Type: HRESULT->LONG->int
             /// rclsid: IID*
             /// pHostInformation: PWLDP_HOST_INFORMATION->_WLDP_HOST_INFORMATION*
@@ -579,3 +583,5 @@ namespace System.Management.Automation.Security
         }
     }
 }
+
+#endif

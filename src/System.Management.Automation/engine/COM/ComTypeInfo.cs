@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
@@ -35,7 +34,6 @@ namespace System.Management.Automation
         private COM.ITypeInfo _typeinfo = null;
         private Guid _guid = Guid.Empty;
 
-
         /// <summary>
         ///  Constructor
         /// </summary>
@@ -51,7 +49,6 @@ namespace System.Management.Automation
                 Initialize();
             }
         }
-
 
         /// <summary>
         ///  Collection of properties in the COM object.
@@ -139,7 +136,6 @@ namespace System.Management.Automation
             }
         }
 
-
         /// <summary>
         ///  Get the typeinfo interface for the given comobject.
         /// </summary>
@@ -175,7 +171,6 @@ namespace System.Management.Automation
             return result;
         }
 
-
         private void AddProperty(string strName, COM.FUNCDESC funcdesc, int index)
         {
             ComProperty prop;
@@ -205,7 +200,6 @@ namespace System.Management.Automation
                 method.AddFuncDesc(index);
             }
         }
-
 
         /// <summary>
         ///  Get TypeAttr for the given type information.
@@ -238,7 +232,6 @@ namespace System.Management.Automation
             return funcdesc;
         }
 
-
         /// <summary>
         ///
         /// </summary>
@@ -267,7 +260,6 @@ namespace System.Management.Automation
             }
             return dispinfo;
         }
-
 
         /// <summary>
         /// Get the IDispatch Typeinfo from CoClass typeinfo.

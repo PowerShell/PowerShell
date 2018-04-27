@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -72,6 +71,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = PathParameterSetName)]
         [ValidateNotNull]
+        [Alias("Path")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] SourcePath
         {
@@ -106,7 +106,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private bool _isLiteralPath = false;
-
 
         /// <summary>
         /// Scans paths recursively
@@ -213,10 +212,17 @@ namespace Microsoft.PowerShell.Commands
             UpdatableHelpInfo newHelpInfo = null;
             string helpInfoUri = null;
 
+            string moduleBase = module.ModuleBase;
+
+            if(this.Scope == UpdateHelpScope.CurrentUser)
+            {
+                moduleBase = HelpUtils.GetModuleBaseForUserHelp(moduleBase, module.ModuleName);
+            }
+
             // reading the xml file even if force is specified
             // Reason: we need the current version for ShouldProcess
             string xml = UpdatableHelpSystem.LoadStringFromPath(this,
-                 SessionState.Path.Combine(module.ModuleBase, module.GetHelpInfoName()),
+                 SessionState.Path.Combine(moduleBase, module.GetHelpInfoName()),
                  null);
 
             if (xml != null)
@@ -231,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Don't update too frequently
-            if (!_alreadyCheckedOncePerDayPerModule && !CheckOncePerDayPerModule(module.ModuleName, module.ModuleBase, module.GetHelpInfoName(), DateTime.UtcNow, _force))
+            if (!_alreadyCheckedOncePerDayPerModule && !CheckOncePerDayPerModule(module.ModuleName, moduleBase, module.GetHelpInfoName(), DateTime.UtcNow, _force))
             {
                 return true;
             }
@@ -348,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (Utils.IsUnderProductFolder(module.ModuleBase) && (!Utils.IsAdministrator()))
+                if (Utils.IsUnderProductFolder(moduleBase) && (!Utils.IsAdministrator()))
                 {
                     string message = StringUtil.Format(HelpErrors.UpdatableHelpRequiresElevation);
                     ProcessException(module.ModuleName, null, new UpdatableHelpSystemException("UpdatableHelpSystemRequiresElevation",
@@ -376,7 +382,12 @@ namespace Microsoft.PowerShell.Commands
                         // Gather destination paths
                         Collection<string> destPaths = new Collection<string>();
 
-                        destPaths.Add(module.ModuleBase);
+                        if(!Directory.Exists(moduleBase))
+                        {
+                            Directory.CreateDirectory(moduleBase);
+                        }
+
+                        destPaths.Add(moduleBase);
 
 #if !CORECLR // Side-By-Side directories are not present in OneCore environments.
                         if (IsSystemModule(module.ModuleName) && Environment.Is64BitOperatingSystem)
@@ -443,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         _helpSystem.GenerateHelpInfo(module.ModuleName, module.ModuleGuid, newHelpInfo.UnresolvedUri, contentUri.Culture.Name, newHelpInfo.GetCultureVersion(contentUri.Culture),
-                            module.ModuleBase, module.GetHelpInfoName(), _force);
+                            moduleBase, module.GetHelpInfoName(), _force);
 
                         foreach (string fileInstalled in filesInstalled)
                         {

@@ -1,4 +1,6 @@
-﻿Describe "DeserializedMethods" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "DeserializedMethods" -Tags "CI" {
     It "Deserialized objects shouldn't ever have any methods (unless they are primitive known types)" {
         $a = [collections.arraylist]::new()
         $null = $a.Add(1)
@@ -14,6 +16,6 @@
         $s = [System.Management.Automation.PSSerializer]::Serialize($x)
         $d = [System.Management.Automation.PSSerializer]::Deserialize($s)
 
-        $d | Get-Member -MemberType *Method* Add | Should Be $null
+        $d | Get-Member -MemberType *Method* Add | Should -BeNullOrEmpty
     }
 }

@@ -425,7 +425,6 @@ Set-PSReadlineKeyHandler -Key F1 `
     }
 }
 
-
 #
 # Ctrl+Shift+j then type a key to mark the current directory.
 # Ctrj+j then the same key will change back to that directory without

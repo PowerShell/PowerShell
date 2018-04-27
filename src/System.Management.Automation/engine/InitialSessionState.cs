@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
@@ -140,7 +139,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public SessionStateEntryVisibility Visibility { get; set; }
     }
-
 
     /// <summary>
     /// Command class so that all the commands can derive off this one.
@@ -450,7 +448,6 @@ namespace System.Management.Automation.Runspaces
             CommandType = CommandTypes.Cmdlet;
         }
 
-
         /// <summary>
         ///
         /// </summary>
@@ -513,7 +510,6 @@ namespace System.Management.Automation.Runspaces
             ImplementingType = implementingType;
             HelpFileName = helpFileName;
         }
-
 
         /// <summary>
         /// Shallow-clone this object...
@@ -975,7 +971,6 @@ namespace System.Management.Automation.Runspaces
         private Collection<Attribute> _attributes;
     }
 
-
     /// <summary>
     ///
     /// </summary>
@@ -1157,7 +1152,6 @@ namespace System.Management.Automation.Runspaces
                 _internalCollection.Clear();
             }
         }
-
 
         /// <summary>
         /// This overload exists so that we can remove items based on the item name, rather than
@@ -1596,7 +1590,6 @@ namespace System.Management.Automation.Runspaces
             return ss.Clone();
         }
 
-
         /// <summary>
         /// Creates the default PowerShell one with default cmdlets, provider etc.
         /// The default cmdlets, provider, etc are loaded via Modules
@@ -1719,7 +1712,6 @@ namespace System.Management.Automation.Runspaces
 
             return ss;
         }
-
 
         /// <summary>
         /// Want to get away from SnapIn and console file. Have modules and assemblies instead.
@@ -4875,7 +4867,6 @@ end
                                                                                              { "Microsoft.WSMan.Management", "Microsoft.WSMan.Management"},
                                                                                          };
 
-
         // The list of engine modules that we will not allow users to remove
         internal static HashSet<string> ConstantEngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                                                             {
@@ -4887,7 +4878,6 @@ end
                                                             {
                                                                 "System.Management.Automation",
                                                             };
-
 
         internal static string GetNestedModuleDllName(string moduleName)
         {
@@ -4971,9 +4961,9 @@ end
             return assembly;
         }
 
-        private static T GetCustomAttribute<T>(TypeInfo decoratedType) where T : Attribute
+        private static T GetCustomAttribute<T>(Type decoratedType) where T : Attribute
         {
-            var attributes = CustomAttributeExtensions.GetCustomAttributes<T>(decoratedType, false);
+            var attributes = decoratedType.GetCustomAttributes<T>(false);
             var customAttrs = attributes.ToArray();
 
             Debug.Assert(customAttrs.Length <= 1, "CmdletAttribute and/or CmdletProviderAttribute cannot normally appear more than once");
@@ -5214,7 +5204,7 @@ end
                 {
                     clone[entry.Key] = (SessionStateProviderEntry)entry.Value.Clone();
                 }
-                s_providerCache.Value[assembly] = providers;
+                s_providerCache.Value[assembly] = clone;
             }
         }
 
@@ -5233,8 +5223,7 @@ end
 
             foreach (Type type in assemblyTypes)
             {
-                var typeInfo = type.GetTypeInfo();
-                if (!(typeInfo.IsPublic || typeInfo.IsNestedPublic) || typeInfo.IsAbstract)
+                if (!(type.IsPublic || type.IsNestedPublic) || type.IsAbstract)
                     continue;
 
                 // Check for cmdlets
@@ -5242,7 +5231,7 @@ end
                 {
                     randomCmdletToCheckLinkDemand = type;
 
-                    CmdletAttribute cmdletAttribute = GetCustomAttribute<CmdletAttribute>(typeInfo);
+                    CmdletAttribute cmdletAttribute = GetCustomAttribute<CmdletAttribute>(type);
                     if (cmdletAttribute == null)
                     {
                         continue;
@@ -5270,7 +5259,7 @@ end
                     }
                     cmdlets.Add(cmdletName, cmdlet);
 
-                    var aliasAttribute = GetCustomAttribute<AliasAttribute>(typeInfo);
+                    var aliasAttribute = GetCustomAttribute<AliasAttribute>(type);
                     if (aliasAttribute != null)
                     {
                         if (aliases == null)
@@ -5304,7 +5293,7 @@ end
                 {
                     randomProviderToCheckLinkDemand = type;
 
-                    CmdletProviderAttribute providerAttribute = GetCustomAttribute<CmdletProviderAttribute>(typeInfo);
+                    CmdletProviderAttribute providerAttribute = GetCustomAttribute<CmdletProviderAttribute>(type);
                     if (providerAttribute == null)
                     {
                         continue;
@@ -5448,8 +5437,7 @@ end
             for (int i = 0; i < assemblyTypes.Length; i++)
             {
                 Type type = assemblyTypes[i];
-                TypeInfo typeInfo = type.GetTypeInfo();
-                if (!(typeInfo.IsPublic || typeInfo.IsNestedPublic) || typeInfo.IsAbstract) { continue; }
+                if (!(type.IsPublic || type.IsNestedPublic) || type.IsAbstract) { continue; }
 
                 if (isModuleLoad && typeof(IModuleAssemblyInitializer).IsAssignableFrom(type) && type != typeof(IModuleAssemblyInitializer))
                 {

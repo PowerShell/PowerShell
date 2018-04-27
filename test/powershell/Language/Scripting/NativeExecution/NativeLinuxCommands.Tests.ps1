@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "NativeLinuxCommands" -tags "CI" {
     BeforeAll {
         $originalDefaultParams = $PSDefaultParameterValues.Clone()
@@ -12,27 +14,27 @@ Describe "NativeLinuxCommands" -tags "CI" {
     }
 
     It "Should find Application grep" {
-        (get-command grep).CommandType | Should Be Application
+        (get-command grep).CommandType | Should -Be Application
     }
 
     It "Should pipe to grep and get result" {
-        "hello world" | grep hello | Should Be "hello world"
+        "hello world" | grep hello | Should -BeExactly "hello world"
     }
 
     It "Should find Application touch" {
-        (get-command touch).CommandType | Should Be Application
+        (get-command touch).CommandType | Should -Be Application
     }
 
     It "Should not redirect standard input if native command is the first command in pipeline (1)" {
         df | ForEach-Object -Begin { $out = @() } -Process { $out += $_ }
-        $out.Length -gt 0 | Should Be $true
-        $out[0] -like "Filesystem*Available*" | Should Be $true
+        $out.Length -gt 0 | Should -BeTrue
+        $out[0] -like "Filesystem*Available*" | Should -BeTrue
     }
 
     It "Should not redirect standard input if native command is the first command in pipeline (2)" {
         $out = df
-        $out.Length -gt 0 | Should Be $true
-        $out[0] -like "Filesystem*Available*" | Should Be $true
+        $out.Length -gt 0 | Should -BeTrue
+        $out[0] -like "Filesystem*Available*" | Should -BeTrue
     }
 
     It "Should find command before script with same name" {
@@ -44,7 +46,7 @@ echo 'command'
         Set-Content "$TestDrive\foo.ps1" -Value @"
 'script'
 "@ -Encoding Ascii
-        foo | Should BeExactly 'command'
+        foo | Should -BeExactly 'command'
     }
 }
 
@@ -61,10 +63,10 @@ Describe "Scripts with extensions" -tags "CI" {
     }
 
     It "Should run a script with its full name" {
-        testScript.ps1 | Should Be $data
+        testScript.ps1 | Should -BeExactly $data
     }
 
     It "Should run a script with its short name" {
-        testScript | Should Be $data
+        testScript | Should -BeExactly $data
     }
 }

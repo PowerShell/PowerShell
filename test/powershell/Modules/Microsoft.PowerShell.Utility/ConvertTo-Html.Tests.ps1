@@ -1,4 +1,6 @@
-﻿Describe "ConvertTo-Html Tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "ConvertTo-Html Tests" -Tags "CI" {
 
     BeforeAll {
         $customObject = [pscustomobject]@{"Name" = "John Doe"; "Age" = 42; "Friends" = ("Jack", "Jill")}
@@ -12,7 +14,7 @@
 
     It "Test ConvertTo-Html with no parameters" {
         $returnObject = $customObject | ConvertTo-Html
-        ,$returnObject | Should BeOfType System.Object[]
+        ,$returnObject | Should -BeOfType System.Object[]
         $returnString = $returnObject -join $newLine
         $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -27,7 +29,7 @@
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-Html Fragment parameter" {
@@ -39,7 +41,7 @@
 <tr><td>John Doe</td><td>42</td><td>System.Object[]</td></tr>
 </table>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-Html as List" {
@@ -57,7 +59,7 @@
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-Html specified properties" {
@@ -74,7 +76,7 @@
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-Html using page parameters" {
@@ -94,7 +96,7 @@ Body Text
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-Html pre and post" {
@@ -114,7 +116,7 @@ Before the object
 After the object
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-HTML meta"{
@@ -133,12 +135,14 @@ After the object
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-HTML meta with invalid properties should throw warning" {
         $parms = @{"authors"="John Doe";"keywords"="PowerShell,PSv6"}
-        ($customObject | ConvertTo-HTML -Meta $parms 3>&1) -match $parms["authors"]  | Should Be $true
+        # make this a string, rather than an array of string so match will behave
+        [string]$observedProperties = $customObject | ConvertTo-HTML -Meta $parms 3>&1
+        $observedProperties | Should -Match $parms["authors"]
     }
 
     It "Test ConvertTo-HTML charset"{
@@ -157,12 +161,12 @@ After the object
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-HTML transitional"{
         $returnString = $customObject | ConvertTo-HTML -Transitional | Select-Object -First 1
-        $returnString | Should Be '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+        $returnString | Should -Be '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
     }
 }
 

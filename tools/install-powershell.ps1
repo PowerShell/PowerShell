@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 <#
 .Synopsis
     Install PowerShell Core on Windows, Linux or macOS.
@@ -89,6 +91,11 @@ $architecture = if (-not $IsWinEnv) {
 $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
 New-Item -ItemType Directory -Path $tempDir -Force > $null
 try {
+    # Setting Tls to 12 to prevent the Invoke-WebRequest : The request was
+    # aborted: Could not create SSL/TLS secure channel. error.
+    $originalValue = [Net.ServicePointManager]::SecurityProtocol
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
     if ($Daily) {
         if (-not (Get-Module -Name PackageManagement -ListAvailable)) {
             throw "PackageManagement module is required to install daily PowerShell Core."
@@ -225,5 +232,8 @@ try {
         Write-Host "Please restart pwsh" -ForegroundColor Magenta
     }
 } finally {
+    # Restore original value
+    [Net.ServicePointManager]::SecurityProtocol = $originalValue
+
     Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
 }

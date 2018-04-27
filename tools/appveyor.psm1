@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $ErrorActionPreference = 'Stop'
 $repoRoot = Join-Path $PSScriptRoot '..'
 $script:administratorsGroupSID = "S-1-5-32-544"
@@ -82,7 +84,6 @@ function Add-UserToGroup
 
   $groupAD.Add($userAD.AdsPath);
 }
-
 
 # tests if we should run a daily build
 # returns true if the build is scheduled
@@ -346,12 +347,6 @@ function Invoke-AppVeyorTest
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
 
-    # Remove telemetry semaphore file in CI
-    $telemetrySemaphoreFilepath = Join-Path $env:CoreOutput DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
-    if ( Test-Path "${telemetrySemaphoreFilepath}" ) {
-        Remove-Item -Force ${telemetrySemaphoreFilepath}
-    }
-
     Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
     Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
@@ -448,12 +443,23 @@ function Invoke-AppveyorFinish
     try {
         $releaseTag = Get-ReleaseTag
 
+        # Build clean before backing to remove files from testing
+        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -Clean
+
         # Build packages
         $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
-            $null = $artifacts.Add($package)
+            if($package -is [string])
+            {
+                $null = $artifacts.Add($package)
+            }
+            elseif($package -is [pscustomobject] -and $package.msi)
+            {
+                $null = $artifacts.Add($package.msi)
+                $null = $artifacts.Add($package.wixpdb)
+            }
         }
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
@@ -474,6 +480,22 @@ function Invoke-AppveyorFinish
             $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
+        # the packaging tests find the MSI package using env:PSMsiX64Path
+        $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
+
+        # Install the latest Pester and import it
+        Install-Module Pester -Force -SkipPublisherCheck
+        Import-Module Pester -Force
+
+        # start the packaging tests and get the results
+        $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru
+
+        # fail the CI job if the tests failed, or nothing passed
+        if($packagingTestResult.FailedCount -ne 0 -or !$packagingTestResult.PassedCount)
+        {
+            throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
+        }
+
         # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
         {
@@ -488,11 +510,11 @@ function Invoke-AppveyorFinish
         if (Test-DailyBuild)
         {
             # produce win-arm and win-arm64 packages if it is a daily build
-            Start-PSBuild -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+            Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
             $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
             $artifacts.Add($arm32Package)
 
-            Start-PSBuild -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+            Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
             $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
             $artifacts.Add($arm64Package)
         }
@@ -515,7 +537,7 @@ function Invoke-AppveyorFinish
 
             if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
             {
-                log "pushing $_ to $env:NUGET_URL"
+                Write-Log "pushing $_ to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $_ --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
@@ -526,5 +548,6 @@ function Invoke-AppveyorFinish
     }
     catch {
         Write-Host -Foreground Red $_
+        throw $_
     }
 }

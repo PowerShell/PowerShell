@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Reflection;
@@ -8,7 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -48,7 +46,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ProcessUnknownInvalidClassId(fid.ClassId2e4f51ef21dd47e99d3c952918aff9cd, so, "FormatObjectDeserializerDeserializeInvalidClassId");
                 return false;
             }
-
 
             // check the type of the object by
             // 1) verifying the type name information
@@ -410,7 +407,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return fid;
         }
 
-
         // returns null on failure
         private static FormatInfoData CreateInstance(string clsid, FormatObjectDeserializer deserializer)
         {
@@ -480,8 +476,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static readonly Dictionary<string, Func<FormatInfoData>> s_constructors;
     }
 
-
-
     internal static class FormatInfoDataListDeserializer<T> where T : FormatInfoData
     {
         private static void ReadListHelper(IEnumerable en, List<T> lst, FormatObjectDeserializer deserializer)
@@ -505,7 +499,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ReadListHelper(PSObjectHelper.GetEnumerable(memberRaw), lst, deserializer);
         }
     }
-
 
     #region Formatting Objects Deserializer
 

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
@@ -72,10 +71,6 @@ namespace System.Management.Automation
                 else if (extension.Equals(StringLiterals.PowerShellCmdletizationFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     result = AnalyzeCdxmlModule(modulePath, context, lastWriteTime);
-                }
-                else if (extension.Equals(StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
-                {
-                    result = AnalyzeXamlModule(modulePath, context, lastWriteTime);
                 }
                 else if (extension.Equals(".dll", StringComparison.OrdinalIgnoreCase))
                 {
@@ -365,11 +360,6 @@ namespace System.Management.Automation
             s_cacheData.Entries[modulePath] = moduleCacheEntry;
 
             return result;
-        }
-
-        private static ConcurrentDictionary<string, CommandTypes> AnalyzeXamlModule(string modulePath, ExecutionContext context, DateTime lastWriteTime)
-        {
-            return AnalyzeTheOldWay(modulePath, context, lastWriteTime);
         }
 
         private static ConcurrentDictionary<string, CommandTypes> AnalyzeCdxmlModule(string modulePath, ExecutionContext context, DateTime lastWriteTime)

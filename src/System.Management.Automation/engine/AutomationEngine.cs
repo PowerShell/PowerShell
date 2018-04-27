@@ -1,12 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-
 
 namespace System.Management.Automation
 {
@@ -30,7 +28,6 @@ namespace System.Management.Automation
         /// </summary>
         ///
         internal CommandDiscovery CommandDiscovery { get; }
-
 
         /// <summary>
         /// The principal constructor that most hosts will use when creating
@@ -65,19 +62,19 @@ namespace System.Management.Automation
         /// Compile a piece of text into a parse tree for later execution.
         /// </summary>
         /// <param name="script">The text to parse</param>
-        /// <param name="interactiveCommand"></param>
+        /// <param name="addToHistory">true iff the scriptblock will be added to history</param>
         /// <returns>The parse text as a parsetree node.</returns>
-        internal ScriptBlock ParseScriptBlock(string script, bool interactiveCommand)
+        internal ScriptBlock ParseScriptBlock(string script, bool addToHistory)
         {
-            return ParseScriptBlock(script, null, interactiveCommand);
+            return ParseScriptBlock(script, null, addToHistory);
         }
 
-        internal ScriptBlock ParseScriptBlock(string script, string fileName, bool interactiveCommand)
+        internal ScriptBlock ParseScriptBlock(string script, string fileName, bool addToHistory)
         {
             ParseError[] errors;
             var ast = EngineParser.Parse(fileName, script, null, out errors, ParseMode.Default);
 
-            if (interactiveCommand)
+            if (addToHistory)
             {
                 EngineParser.SetPreviousFirstLastToken(Context);
             }

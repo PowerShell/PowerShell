@@ -1,4 +1,6 @@
-﻿Describe "Parameter Binding Tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Parameter Binding Tests" -Tags "CI" {
     It "Should throw a parameter binding exception when two parameters have the same position" {
         function test-PositionalBinding1 {
             [CmdletBinding()]
@@ -19,7 +21,7 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | should be "AmbiguousPositionalParameterNoName,test-PositionalBinding1"
+            $_.FullyQualifiedErrorId | should -Be "AmbiguousPositionalParameterNoName,test-PositionalBinding1"
         }
     }
 
@@ -69,9 +71,9 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | should be "ParameterArgumentValidationErrorEmptyStringNotAllowed,test-allownullattributes"
-            $_.CategoryInfo | Should match "ParameterBindingValidationException"
-            $_.Exception.Message | should match "Parameter3"
+            $_.FullyQualifiedErrorId | should -Be "ParameterArgumentValidationErrorEmptyStringNotAllowed,test-allownullattributes"
+            $_.CategoryInfo | Should -Match "ParameterBindingValidationException"
+            $_.Exception.Message | should -Match "Parameter3"
         }
     }
 
@@ -95,9 +97,9 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | should be "MissingArgument,test-namedwithboolishargument"
-            $_.CategoryInfo | Should match "ParameterBindingException"
-            $_.Exception.Message | should match "Parameter2"
+            $_.FullyQualifiedErrorId | should -Be "MissingArgument,test-namedwithboolishargument"
+            $_.CategoryInfo | Should -Match "ParameterBindingException"
+            $_.Exception.Message | should -Match "Parameter2"
         }
     }
 
@@ -114,7 +116,7 @@
         }
 
         $result = test-singleswitchparameter
-        $result | Should Be $false
+        $result | Should -BeFalse
     }
 
     It "Verify that a bool parameter returns proper value" {
@@ -130,10 +132,10 @@
         }
 
         $result1 = test-singleboolparameter
-        $result1 | Should Be $false
+        $result1 | Should -BeFalse
 
         $result2 = test-singleboolparameter -Parameter1:1
-        $result2 | Should Be $true
+        $result2 | Should -BeTrue
     }
 
     It "Should throw a exception when passing a string that can't be parsed by Int" {
@@ -155,10 +157,10 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | should be "ParameterArgumentTransformationError,test-singleintparameter"
-            $_.CategoryInfo | Should match "ParameterBindingArgumentTransformationException"
-            $_.Exception.Message | should match "Input string was not in a correct format"
-            $_.Exception.Message | should match "Parameter1"
+            $_.FullyQualifiedErrorId | should -Be "ParameterArgumentTransformationError,test-singleintparameter"
+            $_.CategoryInfo | Should -Match "ParameterBindingArgumentTransformationException"
+            $_.Exception.Message | should -Match "Input string was not in a correct format"
+            $_.Exception.Message | should -Match "Parameter1"
         }
     }
 
@@ -173,7 +175,7 @@
         }
 
         $result = test-supportsshouldprocess2 -Whatif
-        $result | Should Be 1
+        $result | Should -Be 1
     }
 
     It "Verify that ValueFromPipeline takes precedence over ValueFromPipelineByPropertyName without type coercion" {
@@ -190,7 +192,7 @@
         }
 
         $result = '0123' | test-bindingorder2
-        $result | Should Be "0123 - 0"
+        $result | Should -Be "0123 - 0"
     }
 
     It "Verify that a ScriptBlock object can be delay-bound to a parameter of type FileInfo with pipeline input" {
@@ -207,7 +209,7 @@
         $testFile = Join-Path $TestDrive -ChildPath "testfile.txt"
         New-Item -Path $testFile -ItemType file -Force
         $result = Get-Item $testFile | test-scriptblockbindingfrompipeline -Parameter1 {$_}
-        $result | Should Be "testfile.txt"
+        $result | Should -Be "testfile.txt"
     }
 
     It "Verify that a dynamic parameter named WhatIf doesn't conflict if SupportsShouldProcess is false" {
@@ -220,7 +222,7 @@
             )
         }
 
-        { test-dynamicparameters3 -Parameter1 1 } | Should Not Throw
+        { test-dynamicparameters3 -Parameter1 1 } | Should -Not -Throw
     }
 
     It "Verify that an int can be bound to a parameter of type Array" {
@@ -254,7 +256,7 @@
         }
 
         $result = test-collectionbinding1 -Parameter1 1 -Parameter2 2
-        $result | Should Be "P1:Int32,1 P2:Int32,2"
+        $result | Should -Be "P1:Int32,1 P2:Int32,2"
     }
 
     It "Verify that a dynamic parameter and an alias can't have the same name" {
@@ -274,11 +276,22 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | should be "ParameterNameConflictsWithAlias"
-            $_.CategoryInfo | Should match "MetadataException"
-            $_.Exception.Message | should match "Parameter1"
-            $_.Exception.Message | should match "Parameter2"
+            $_.FullyQualifiedErrorId | should -Be "ParameterNameConflictsWithAlias"
+            $_.CategoryInfo | Should -Match "MetadataException"
+            $_.Exception.Message | should -Match "Parameter1"
+            $_.Exception.Message | should -Match "Parameter2"
         }
+    }
+
+    It "PipelineVariable shouldn't cause a NullRef exception when 'DynamicParam' block is present" {
+        function DynamicParamTest {
+            [CmdletBinding()]
+            param()
+            dynamicparam { }
+            process { 'hi' }
+        }
+
+        DynamicParamTest -PipelineVariable bar | ForEach-Object { $bar } | Should -Be "hi"
     }
 
     Context "Use automatic variables as default value for parameters" {
@@ -315,18 +328,18 @@
 
         It "Test dot-source should evaluate '`$PSScriptRoot' for parameter default value" {
             $result = . $test1File
-            $result | Should Be $expected
+            $result | Should -Be $expected
 
             $result = . $test2File
-            $result | Should Be $expected
+            $result | Should -Be $expected
         }
 
         It "Test 'powershell -File' should evaluate '`$PSScriptRoot' for parameter default value" {
             $result = & $psPath -NoProfile -File $test1File
-            $result | Should Be $expected
+            $result | Should -Be $expected
 
             $result = & $psPath -NoProfile -File $test2File
-            $result | Should Be $expected
+            $result | Should -Be $expected
         }
     }
 
@@ -390,57 +403,57 @@
         It "Binds properly when passing an explicit array to an advanced function" {
             $result = Test-BindingFunction 1,2,3
 
-            $result.ArgumentCount | Should Be 3
-            $result.Value[0] | Should Be 1
-            $result.Value[1] | Should Be 2
-            $result.Value[2] | Should Be 3
+            $result.ArgumentCount | Should -Be 3
+            $result.Value[0] | Should -Be 1
+            $result.Value[1] | Should -Be 2
+            $result.Value[2] | Should -Be 3
         }
 
         It "Binds properly when passing multiple arguments to an advanced function" {
             $result = Test-BindingFunction 1 2 3
 
-            $result.ArgumentCount | Should Be 3
-            $result.Value[0] | Should Be 1
-            $result.Value[1] | Should Be 2
-            $result.Value[2] | Should Be 3
+            $result.ArgumentCount | Should -Be 3
+            $result.Value[0] | Should -Be 1
+            $result.Value[1] | Should -Be 2
+            $result.Value[2] | Should -Be 3
         }
 
         It "Binds properly when passing an explicit array to a cmdlet" {
             $result = Test-BindingCmdlet 1,2,3
 
-            $result.ArgumentCount | Should Be 3
-            $result.Value[0] | Should Be 1
-            $result.Value[1] | Should Be 2
-            $result.Value[2] | Should Be 3
+            $result.ArgumentCount | Should -Be 3
+            $result.Value[0] | Should -Be 1
+            $result.Value[1] | Should -Be 2
+            $result.Value[2] | Should -Be 3
         }
 
         It "Binds properly when passing multiple arguments to a cmdlet" {
             $result = Test-BindingCmdlet 1 2 3
 
-            $result.ArgumentCount | Should Be 3
-            $result.Value[0] | Should Be 1
-            $result.Value[1] | Should Be 2
-            $result.Value[2] | Should Be 3
+            $result.ArgumentCount | Should -Be 3
+            $result.Value[0] | Should -Be 1
+            $result.Value[1] | Should -Be 2
+            $result.Value[2] | Should -Be 3
         }
 
         It "Binds properly when collections of type other than object[] are used on an advanced function" {
             $list = [Collections.Generic.List[int]](1..3)
             $result = Test-BindingFunction $list
 
-            $result.ArgumentCount | Should Be 3
-            $result.Value[0] | Should Be 1
-            $result.Value[1] | Should Be 2
-            $result.Value[2] | Should Be 3
+            $result.ArgumentCount | Should -Be 3
+            $result.Value[0] | Should -Be 1
+            $result.Value[1] | Should -Be 2
+            $result.Value[2] | Should -Be 3
         }
 
         It "Binds properly when collections of type other than object[] are used on a cmdlet" {
             $list = [Collections.Generic.List[int]](1..3)
             $result = Test-BindingCmdlet $list
 
-            $result.ArgumentCount | Should Be 3
-            $result.Value[0] | Should Be 1
-            $result.Value[1] | Should Be 2
-            $result.Value[2] | Should Be 3
+            $result.ArgumentCount | Should -Be 3
+            $result.Value[0] | Should -Be 1
+            $result.Value[1] | Should -Be 2
+            $result.Value[2] | Should -Be 3
         }
     }
 }

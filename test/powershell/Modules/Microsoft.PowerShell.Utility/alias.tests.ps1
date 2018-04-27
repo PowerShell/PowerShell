@@ -1,7 +1,9 @@
-﻿Describe "Alias tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Alias tests" -Tags "CI" {
 
     BeforeAll {
-        $testPath = Join-Path testdrive:\ ("testAlias\[.test")
+        $testPath = Join-Path testdrive:\ ("testAlias\.test")
         New-Item -ItemType Directory -Path $testPath -Force | Out-Null
 
         class TestData
@@ -48,11 +50,11 @@
 
                 if($null -eq $test.expectedError)
                 {
-                    Test-Path -LiteralPath $test.testFile | Should Be $true
+                   Test-Path -LiteralPath $test.testFile | Should -BeTrue
                 }
                 else
                 {
-                    $exportAliasError.FullyqualifiedErrorId | Should Be $test.expectedError
+                    $exportAliasError.FullyqualifiedErrorId | Should -Be $test.expectedError
                 }
             }
 
@@ -63,17 +65,7 @@
 
         It "when file exists with NoClobber" {
             Export-Alias -LiteralPath $csvFile
-
-            try
-            {
-                Export-Alias -LiteralPath $csvFile -NoClobber
-            }
-            catch
-            {
-                $exportAliasError = $_
-            }
-
-            $exportAliasError.FullyQualifiedErrorId | Should Be "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
+            { Export-Alias -LiteralPath $csvFile -NoClobber } | Should -Throw -ErrorId "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
         }
     }
 
@@ -84,22 +76,13 @@
 
         It "with a CSV file" {
             Export-Alias "alias.csv"
-            Test-Path -LiteralPath (Join-Path $testPath "alias.csv") | Should Be $true
+            Test-Path -LiteralPath (Join-Path $testPath "alias.csv") | Should -BeTrue
         }
 
         It "with NoClobber" {
             $path = Export-Alias alias.csv
 
-            try
-            {
-                Export-Alias alias.csv -NoClobber
-            }
-            catch
-            {
-                $exportAliasError = $_
-            }
-
-            $exportAliasError.FullyQualifiedErrorId | Should Be "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
+            { Export-Alias alias.csv -NoClobber } | Should -Throw -ErrorId "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
         }
 
         AfterEach {
@@ -124,16 +107,7 @@
             It "for $($_.testName)" {
                 $test = $_
 
-                try
-                {
-                    Import-Alias -LiteralPath $test.testFile -ErrorAction SilentlyContinue
-                }
-                catch
-                {
-                    $exportAliasError = $_
-                }
-
-                $exportAliasError.FullyqualifiedErrorId | Should Be $test.expectedError
+                { Import-Alias -LiteralPath $test.testFile -ErrorAction SilentlyContinue } | Should -Throw -ErrorId $test.expectedError
             }
         }
 
@@ -152,9 +126,9 @@
             # Verify that the alias was imported
             $definedAlias = Get-Alias myuh
 
-            $definedAlias | Should Not Be $null
-            $definedAlias.Name | Should Be "myuh"
-            $definedAlias.Definition | Should Be "update-help"
+            $definedAlias | Should -Not -BeNullOrEmpty
+            $definedAlias.Name | Should -BeExactly "myuh"
+            $definedAlias.Definition | Should -Be "update-help"
         }
     }
 }

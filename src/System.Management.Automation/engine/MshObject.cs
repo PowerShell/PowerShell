@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -172,9 +171,9 @@ namespace System.Management.Automation
         private static PSMemberInfoInternalCollection<T> DotNetGetMembersDelegate<T>(PSObject msjObj) where T : PSMemberInfo
         {
             // Don't lookup dotnet members if the object doesn't insist.
-            if (null != msjObj.InternalAdapterSet.DotNetAdapter)
+            if (null != msjObj.InternalBaseDotNetAdapter)
             {
-                PSMemberInfoInternalCollection<T> retValue = msjObj.InternalAdapterSet.DotNetAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
+                PSMemberInfoInternalCollection<T> retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
                 PSObject.memberResolution.WriteLine("DotNet members: {0}.", retValue.VisibleCount);
                 return retValue;
             }
@@ -185,9 +184,9 @@ namespace System.Management.Automation
         private static T DotNetGetMemberDelegate<T>(PSObject msjObj, string name) where T : PSMemberInfo
         {
             // Don't lookup dotnet member if the object doesn't insist.
-            if (null != msjObj.InternalAdapterSet.DotNetAdapter)
+            if (null != msjObj.InternalBaseDotNetAdapter)
             {
-                T retValue = msjObj.InternalAdapterSet.DotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
+                T retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
                 PSObject.memberResolution.WriteLine("DotNet member: {0}.", retValue == null ? "not found" : retValue.Name);
                 return retValue;
             }
@@ -587,7 +586,6 @@ namespace System.Management.Automation
         /// </summary>
         private object _immediateBaseObject;
 
-
         private WeakReference<TypeTable> _typeTable;
 
         /// <summary>
@@ -735,7 +733,6 @@ namespace System.Management.Automation
 
         #endregion instance fields
 
-
         #endregion fields
 
         #region properties
@@ -808,7 +805,6 @@ namespace System.Management.Automation
             }
         }
         private PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
-
 
         /// <summary>
         /// Gets the object we are directly wrapping.
@@ -1584,7 +1580,6 @@ namespace System.Management.Automation
                 returnValue._immediateBaseObject = CopyValueType(returnValue._immediateBaseObject);
             }
 
-
             // needToReAddInstanceMembersAndTypeNames = returnValue will have a different key (different from "this") returned from GetKeyForResurrectionTables
             bool needToReAddInstanceMembersAndTypeNames = !object.ReferenceEquals(GetKeyForResurrectionTables(this), GetKeyForResurrectionTables(returnValue));
             if (needToReAddInstanceMembersAndTypeNames)
@@ -1755,7 +1750,6 @@ namespace System.Management.Automation
         /// </remarks>
         public const string BaseObjectMemberSetName = "psbase";
 
-
         /// <summary>
         /// The PSObject's properties
         /// </summary>
@@ -1851,8 +1845,6 @@ namespace System.Management.Automation
             }
             return note.Value;
         }
-
-
 
         internal int GetSerializationDepth(TypeTable backupTypeTable)
         {
@@ -2415,8 +2407,7 @@ namespace Microsoft.PowerShell
                 return String.Empty;
 
             string result;
-            TypeInfo typeinfo = type.GetTypeInfo();
-            if (typeinfo.IsGenericType && !typeinfo.IsGenericTypeDefinition)
+            if (type.IsGenericType && !type.IsGenericTypeDefinition)
             {
                 string genericDefinition = Type(type.GetGenericTypeDefinition(), dropNamespaces);
                 // For regular generic types, we find the backtick character, for example:
@@ -2425,12 +2416,12 @@ namespace Microsoft.PowerShell
                 // For nested generic types, we find the left bracket character, for example:
                 //      System.Collections.Generic.Dictionary`2+Enumerator[TKey, TValue] ->
                 //      System.Collections.Generic.Dictionary`2+Enumerator[string,string]
-                int backtickOrLeftBracketIndex = genericDefinition.LastIndexOf(typeinfo.IsNested ? '[' : '`');
+                int backtickOrLeftBracketIndex = genericDefinition.LastIndexOf(type.IsNested ? '[' : '`');
                 var sb = new StringBuilder(genericDefinition, 0, backtickOrLeftBracketIndex, 512);
                 AddGenericArguments(sb, type.GetGenericArguments(), dropNamespaces);
                 result = sb.ToString();
             }
-            else if (typeinfo.IsArray)
+            else if (type.IsArray)
             {
                 string elementDefinition = Type(type.GetElementType(), dropNamespaces);
                 var sb = new StringBuilder(elementDefinition, elementDefinition.Length + 10);
@@ -2453,7 +2444,7 @@ namespace Microsoft.PowerShell
                     }
                     if (dropNamespaces)
                     {
-                        if (typeinfo.IsNested)
+                        if (type.IsNested)
                         {
                             // For nested types, we should return OuterType+InnerType. For example,
                             //  System.Environment+SpecialFolder ->  Environment+SpecialFolder
@@ -2476,10 +2467,10 @@ namespace Microsoft.PowerShell
 
             // We can't round trip anything with a generic parameter.
             // We also can't round trip if we're dropping the namespace.
-            if (!typeinfo.IsGenericParameter
-                && !typeinfo.ContainsGenericParameters
+            if (!type.IsGenericParameter
+                && !type.ContainsGenericParameters
                 && !dropNamespaces
-                && !typeinfo.Assembly.GetCustomAttributes(typeof(DynamicClassImplementationAssemblyAttribute)).Any())
+                && !type.Assembly.GetCustomAttributes(typeof(DynamicClassImplementationAssemblyAttribute)).Any())
             {
                 Type roundTripType;
                 TypeResolver.TryResolveType(result, out roundTripType);

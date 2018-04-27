@@ -1,4 +1,6 @@
-﻿set-strictmode -v 2
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+set-strictmode -v 2
 
 Describe 'for statement parsing' -Tags "CI" {
     ShouldBeParseError 'for' MissingOpenParenthesisAfterKeyword 4 -CheckColumnNumber
@@ -21,7 +23,6 @@ Describe 'for statement parsing' -Tags "CI" {
     ShouldBeParseError ':lab for($a;$b;' MissingEndParenthesisAfterStatement 15
     ShouldBeParseError ':lab for($a;$b;$c' MissingEndParenthesisAfterStatement 17
     ShouldBeParseError ':lab for($a;$b;$c)' MissingLoopStatement 18
-
 
     Test-ErrorStmt 'for z' 'for'
     Test-ErrorStmt 'for {}' 'for'
@@ -110,7 +111,6 @@ Describe 'do/while statement statement parsing' -Tags "CI" {
     Test-ErrorStmt ':lab do {1} while($false' ':lab do {1} while($false' '{1}' '1' '1' '1' '$false' '$false' '$false'
 }
 
-
 Describe 'do/while statement statement parsing' -Tags "CI" {
     ShouldBeParseError 'do' MissingLoopStatement 3 -CheckColumnNumber
     ShouldBeParseError 'do {}' MissingWhileOrUntilInDoWhile 6 -CheckColumnNumber
@@ -143,7 +143,6 @@ Describe 'trap statement parsing' -Tags "CI" {
     Test-ErrorStmt 'trap' 'trap'
     Test-ErrorStmt 'trap [int]' 'trap [int]' '[int]'
 }
-
 
 Describe 'named blocks parsing' -Tags "CI" {
     ShouldBeParseError 'begin' MissingNamedStatementBlock 5
@@ -241,7 +240,6 @@ Describe 'switch statement parsing' -Tags "CI" {
     Test-ErrorStmt 'switch (1) {default {9} default{2}' 'switch (1) {default {9} default{2}' 'default' '{9}' '9' '9' '9' 'default' '{2}' '2' '2' '2' '1' '1' '1'
 }
 
-
 Describe 'function statement parsing' -Tags "CI" {
     ShouldBeParseError 'function' MissingNameAfterKeyword 8
     ShouldBeParseError 'function foo' MissingFunctionBody 12
@@ -260,11 +258,9 @@ Describe 'function statement parsing' -Tags "CI" {
     Test-ErrorStmt 'function foo($a = 1' 'function foo($a = 1' '$a = 1' '1' '$a'
 }
 
-
 Describe 'assignment statement parsing' -Tags "CI" {
     ShouldBeParseError '$a,$b += 1,2' InvalidLeftHandSide 0
 }
-
 
 Describe 'splatting parsing' -Tags "CI" {
     ShouldBeParseError '@a' SplattingNotPermitted 0

@@ -1,8 +1,5 @@
-#pragma warning disable 1634, 1691
-
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
 #pragma warning disable 56506
@@ -106,7 +103,6 @@ namespace Microsoft.PowerShell.Commands
                 return coreCommandContext;
             }
         } // CmdletProviderContext
-
 
         #region brokered properties
 

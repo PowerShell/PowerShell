@@ -132,6 +132,7 @@ Type 'help' to get help.</value>
                   [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
                   [-Interactive] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
                   [-OutputFormat {Text | XML}] [-Version] [-WindowStyle &lt;style&gt;]
+                  [-WorkingDirectory &lt;directoryPath&gt;]
 
        pwsh[.exe] -h | -Help | -? | /?
 
@@ -171,7 +172,7 @@ All parameters are case-insensitive.</value>
     This can be any endpoint registered on the local machine including the default PowerShell
     remoting endpoints or a custom endpoint having specific user role capabilities.
 
-    Example: pwsh -configurationmame AdminRoles
+    Example: pwsh -ConfigurationName AdminRoles
 
 -EncodedCommand | -e | -ec
     Accepts a base64 encoded string version of a command. Use this parameter to submit
@@ -232,14 +233,6 @@ All parameters are case-insensitive.</value>
 
     Example: pwsh -o XML -c Get-Date
 
--Version | -v
-    Shows the version of PowerShell and exits. Additional arguments are ignored.
-
-    Example: pwsh -v
-
--WindowStyle | -w
-    Sets the window style to Normal, Minimized, Maximized or Hidden.
-
 -SettingsFile | -settings
     Overrides the system-wide powershell.config.json settings file for the session.
     By default, system-wide settings are read from the powershell.config.json
@@ -250,6 +243,19 @@ All parameters are case-insensitive.</value>
 
     Example: pwsh -SettingsFile c:\myproject\powershell.config.json
 
+-Version | -v
+    Shows the version of PowerShell and exits. Additional arguments are ignored.
+
+    Example: pwsh -v
+
+-WindowStyle | -w
+    Sets the window style to Normal, Minimized, Maximized or Hidden.
+
+-WorkingDirectory | -wd
+    Sets the working directory at the start of PowerShell given a valid PowerShell directory path.
+    Executing `Set-Location -LiteralPath &lt;path&gt;` at startup.
+
+    Example: pwsh -WorkingDirectory ~
     </value>
   </data>
 </root>

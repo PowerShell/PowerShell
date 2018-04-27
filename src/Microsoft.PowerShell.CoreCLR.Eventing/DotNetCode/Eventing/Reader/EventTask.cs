@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 /*============================================================
 **
@@ -26,7 +28,6 @@ namespace System.Diagnostics.Eventing.Reader
         private bool _dataReady;
         private ProviderMetadata _pmReference;
         private object _syncObject;
-
 
         //called from EventMetadata
         internal EventTask(int value, ProviderMetadata pmReference)

@@ -1,4 +1,6 @@
-﻿Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
 
     # The csv files (V2Cmdlets.csv and V3Cmdlets.csv) contain a list of cmdlets and expected HelpURIs.
     # The HelpURI is part of the cmdlet metadata, and when the user runs 'get-help <cmdletName> -online'
@@ -37,7 +39,7 @@
             It "Validate 'get-help $($cmdlet.TopicTitle) -Online'" -Skip:$skipTest {
                 $actualURI = Get-Help $cmdlet.TopicTitle -Online
                 $actualURI = $actualURI.Replace("Help URI: ","")
-                $actualURI | Should Be $cmdlet.HelpURI
+                $actualURI | Should -Be $cmdlet.HelpURI
             }
         }
     }
@@ -80,7 +82,7 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
     }
 
     It "Get-Help get-process -online" -skip:$skipTest {
-        { Get-Help get-process -online } | Should Not Throw
+        { Get-Help get-process -online } | Should -Not -Throw
     }
 }
 
@@ -97,7 +99,7 @@ Describe 'Get-Help -Online is not supported on Nano Server and IoT' -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be "InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand"
+            $_.FullyQualifiedErrorId | Should -Be "InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand"
         }
     }
 }

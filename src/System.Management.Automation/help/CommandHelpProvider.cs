@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Collections;
@@ -125,9 +124,7 @@ namespace System.Management.Automation
                         }
                         else if (scriptCommandInfo != null &&
                                   (nestedModule.ExportedFunctions.ContainsKey(commandInfo.Name) ||
-                                    nestedModule.ExportedWorkflows.ContainsKey(commandInfo.Name) ||
-                                    (testWithoutPrefix && nestedModule.ExportedFunctions.ContainsKey(cmdNameWithoutPrefix)) ||
-                                    (testWithoutPrefix && nestedModule.ExportedWorkflows.ContainsKey(cmdNameWithoutPrefix))))
+                                    (testWithoutPrefix && nestedModule.ExportedFunctions.ContainsKey(cmdNameWithoutPrefix))))
                         {
                             nestedModulePath = nestedModule.Path;
                             break;
@@ -318,7 +315,8 @@ namespace System.Management.Automation
                 // and the nested module that implements the command
                 GetModulePaths(commandInfo, out moduleName, out moduleDir, out nestedModulePath);
 
-                Collection<String> searchPaths = new Collection<String>();
+                Collection<String> searchPaths = new Collection<String>(){ HelpUtils.GetUserHomeHelpSearchPath() };
+
                 if (!String.IsNullOrEmpty(moduleDir))
                 {
                     searchPaths.Add(moduleDir);
@@ -473,7 +471,7 @@ namespace System.Management.Automation
             if (cmdletInfo.ImplementingType == null)
                 return null;
 
-            return Path.GetDirectoryName(cmdletInfo.ImplementingType.GetTypeInfo().Assembly.Location);
+            return Path.GetDirectoryName(cmdletInfo.ImplementingType.Assembly.Location);
         }
 
         /// <summary>
@@ -512,14 +510,18 @@ namespace System.Management.Automation
                     // we have to search only in the application base for a mshsnapin...
                     // if you create an absolute path for helpfile, then MUIFileSearcher
                     // will look only in that path.
-                    helpFileToLoad = Path.Combine(mshSnapInInfo.ApplicationBase, helpFile);
+
+                    searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
+                    searchPaths.Add(mshSnapInInfo.ApplicationBase);
                 }
                 else if (cmdletInfo.Module != null && !string.IsNullOrEmpty(cmdletInfo.Module.Path))
                 {
-                    helpFileToLoad = Path.Combine(cmdletInfo.Module.ModuleBase, helpFile);
+                    searchPaths.Add(HelpUtils.GetModuleBaseForUserHelp(cmdletInfo.Module.ModuleBase, cmdletInfo.Module.Name));
+                    searchPaths.Add(cmdletInfo.Module.ModuleBase);
                 }
                 else
                 {
+                    searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
                     searchPaths.Add(GetDefaultShellSearchPath());
                     searchPaths.Add(GetCmdletAssemblyPath(cmdletInfo));
                 }
@@ -890,7 +892,6 @@ namespace System.Management.Automation
             MamlCommandHelpInfo originalHelpInfo = GetFromCommandCache(helpIdentifier,
                         Microsoft.PowerShell.Commands.ModuleCmdletBase.RemovePrefixFromCommandName(cmdInfo.Name, cmdInfo.Prefix),
                         cmdInfo.HelpCategory) as MamlCommandHelpInfo;
-
 
             if (null != originalHelpInfo)
             {
@@ -1329,7 +1330,6 @@ namespace System.Management.Automation
                         SearchResolutionOptions.CommandNameIsPattern,
                         CommandTypes.Cmdlet,
                         context);
-
 
             return searcher;
         }

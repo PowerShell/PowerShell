@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Start-Process" -Tags @("Feature") {
 
     BeforeAll {
@@ -23,25 +25,32 @@ Describe "Start-Process" -Tags @("Feature") {
     It "Should process arguments without error" {
 	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
 
-	    $process.Length      | Should Be 1
-	    $process.Id          | Should BeGreaterThan 1
+	    $process.Length      | Should -Be 1
+	    $process.Id          | Should -BeGreaterThan 1
 	    # $process.ProcessName | Should Be "ping"
     }
 
     It "Should work correctly when used with full path name" {
 	    $process = Start-Process $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
 
-	    $process.Length      | Should Be 1
-	    $process.Id          | Should BeGreaterThan 1
+	    $process.Length      | Should -Be 1
+	    $process.Id          | Should -BeGreaterThan 1
 	    # $process.ProcessName | Should Be "ping"
     }
 
     It "Should invoke correct path when used with FilePath argument" {
 	    $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
 
-	    $process.Length      | Should Be 1
-	    $process.Id          | Should BeGreaterThan 1
+	    $process.Length      | Should -Be 1
+	    $process.Id          | Should -BeGreaterThan 1
 	    # $process.ProcessName | Should Be "ping"
+    }
+
+    It "Should invoke correct path when used with Path alias argument" {
+	    $process = Start-Process -Path $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
+
+	    $process.Length | Should -Be 1
+	    $process.Id     | Should -BeGreaterThan 1
     }
 
     It "Should wait for command completion if used with Wait argument" {
@@ -51,30 +60,30 @@ Describe "Start-Process" -Tags @("Feature") {
     It "Should work correctly with WorkingDirectory argument" {
 	    $process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
 
-	    $process.Length      | Should Be 1
-	    $process.Id          | Should BeGreaterThan 1
+	    $process.Length      | Should -Be 1
+	    $process.Id          | Should -BeGreaterThan 1
 	    # $process.ProcessName | Should Be "ping"
     }
 
     It "Should handle stderr redirection without error" {
 	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"
 
-	    $process.Length      | Should Be 1
-	    $process.Id          | Should BeGreaterThan 1
+	    $process.Length      | Should -Be 1
+	    $process.Id          | Should -BeGreaterThan 1
 	    # $process.ProcessName | Should Be "ping"
     }
 
     It "Should handle stdout redirection without error" {
 	    $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile
 	    $dirEntry = get-childitem $tempFile
-	    $dirEntry.Length | Should BeGreaterThan 0
+	    $dirEntry.Length | Should -BeGreaterThan 0
     }
 
     # Marking this test 'pending' to unblock daily builds. Filed issue : https://github.com/PowerShell/PowerShell/issues/2396
     It "Should handle stdin redirection without error" -Pending {
 	    $process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile
 	    $dirEntry = get-childitem $tempFile
-	    $dirEntry.Length | Should BeGreaterThan 0
+	    $dirEntry.Length | Should -BeGreaterThan 0
     }
 
     ## -Verb is supported in PowerShell core on Windows full desktop.
@@ -94,25 +103,25 @@ Describe "Start-Process" -Tags @("Feature") {
     It "Should start cmd.exe with Verb 'open' and WindowStyle 'Minimized'" -Skip:(!$isFullWin) {
         $fileToWrite = Join-Path $TestDrive "VerbTest.txt"
         $process = Start-Process cmd.exe -ArgumentList "/c echo abc > $fileToWrite" -Verb open -WindowStyle Minimized -PassThru
-        $process.Name | Should Be "cmd"
+        $process.Name | Should -Be "cmd"
         $process.WaitForExit()
-        Test-Path $fileToWrite | Should Be $true
+        Test-Path $fileToWrite | Should -BeTrue
     }
 
     It "Should start notepad.exe with ShellExecute" -Skip:(!$isFullWin) {
         $process = Start-Process notepad -PassThru -WindowStyle Normal
-        $process.Name | Should Be "notepad"
+        $process.Name | Should -Be "notepad"
         $process | Stop-Process
     }
 
     It "Should be able to use the -WhatIf switch without performing the actual action" {
         $pingOutput = Join-Path $TestDrive "pingOutput.txt"
-        { Start-Process -Wait $pingCommand -ArgumentList $pingParam -RedirectStandardOutput $pingOutput -WhatIf -ErrorAction Stop } | Should Not Throw
-        $pingOutput | Should Not Exist 
+        { Start-Process -Wait $pingCommand -ArgumentList $pingParam -RedirectStandardOutput $pingOutput -WhatIf -ErrorAction Stop } | Should -Not -Throw
+        $pingOutput | Should -Not -Exist
     }
 
     It "Should return null when using -WhatIf switch with -PassThru" {
-        Start-Process $pingCommand -ArgumentList $pingParam -PassThru -WhatIf | Should Be $null
+        Start-Process $pingCommand -ArgumentList $pingParam -PassThru -WhatIf | Should -BeNullOrEmpty
    }
 }
 
@@ -136,7 +145,7 @@ Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWi
 
         Wait-FileToBePresent -File "$testdrive\foo.txt" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
 
-        "$testdrive\foo.txt" | Should Exist
-        Get-Content $testdrive\foo.txt | Should BeExactly $fooFile
+        "$testdrive\foo.txt" | Should -Exist
+        Get-Content $testdrive\foo.txt | Should -BeExactly $fooFile
     }
 }

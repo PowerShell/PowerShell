@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -660,7 +659,6 @@ namespace System.Management.Automation
                 // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
                 return false;
             }
-
 
             public static bool IsHardLink(FileSystemInfo fs)
             {

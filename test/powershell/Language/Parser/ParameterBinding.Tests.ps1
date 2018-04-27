@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe 'Argument transformation attribute on optional argument with explicit $null' -Tags "CI" {
     $tdefinition = @'
@@ -67,34 +69,33 @@ Describe 'Argument transformation attribute on optional argument with explicit $
         return $Address
     }
 
-
     It "There was no error importing the in-memory module" {
-        $ErrorImportingModule | Should Be $null
+        $ErrorImportingModule | Should -BeNullOrEmpty
     }
 
     It "Script function takes object" {
-        Invoke-ScriptFunctionTakesObject | Should Be 42
+        Invoke-ScriptFunctionTakesObject | Should -Be 42
     }
     It "Script function takes uint64" {
-        Invoke-ScriptFunctionTakesUInt64 | Should Be 42
+        Invoke-ScriptFunctionTakesUInt64 | Should -Be 42
     }
     it "csharp cmdlet takes object" {
-        Invoke-CSharpCmdletTakesObject | Should Be "passed in null"
+        Invoke-CSharpCmdletTakesObject | Should -Be "passed in null"
     }
     it "csharp cmdlet takes uint64" {
-        Invoke-CSharpCmdletTakesUInt64 | Should Be 0
+        Invoke-CSharpCmdletTakesUInt64 | Should -Be 0
     }
 
     it "script function takes object when parameter is null" {
-        Invoke-ScriptFunctionTakesObject -Address $null | Should Be 42
+        Invoke-ScriptFunctionTakesObject -Address $null | Should -Be 42
     }
     it "script function takes unit64 when parameter is null" {
-        Invoke-ScriptFunctionTakesUInt64 -Address $null | Should Be 42
+        Invoke-ScriptFunctionTakesUInt64 -Address $null | Should -Be 42
     }
     it "script csharp cmdlet takes object when parameter is null" {
-        Invoke-CSharpCmdletTakesObject -Address $null | Should Be 42
+        Invoke-CSharpCmdletTakesObject -Address $null | Should -Be 42
     }
     it "script csharp cmdlet takes uint64 when parameter is null" {
-        Invoke-CSharpCmdletTakesUInt64 -Address $null | Should Be 42
+        Invoke-CSharpCmdletTakesUInt64 -Address $null | Should -Be 42
     }
 }

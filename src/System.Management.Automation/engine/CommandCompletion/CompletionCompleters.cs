@@ -1,7 +1,5 @@
-
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
@@ -784,7 +782,7 @@ namespace System.Management.Automation
 
         private static string GetOperatorDescription(string op)
         {
-            return ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).GetTypeInfo().Assembly,
+            return ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).Assembly,
                                                           "System.Management.Automation.resources.TabCompletionStrings",
                                                           op + "OperatorDescription");
         }
@@ -1641,7 +1639,7 @@ namespace System.Management.Automation
                 parameterType = parameterType.GetElementType();
             }
 
-            if (parameterType.GetTypeInfo().IsEnum)
+            if (parameterType.IsEnum)
             {
                 RemoveLastNullCompletionResult(result);
 
@@ -2351,7 +2349,6 @@ namespace System.Management.Automation
 
             return null;
         }
-
 
         private static bool InvokeScriptArgumentCompleter(
             ScriptBlock scriptBlock,
@@ -3194,7 +3191,6 @@ namespace System.Management.Automation
             var providerName = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref providerName);
 
-
             if (!providerName.EndsWith("*", StringComparison.Ordinal))
             {
                 providerName += "*";
@@ -3806,7 +3802,6 @@ namespace System.Management.Automation
 
         #endregion Native Command Argument Completion
 
-
         /// <summary>
         /// Find the positional argument at the specific position from the parsed argument list
         /// </summary>
@@ -4262,7 +4257,7 @@ namespace System.Management.Automation
                             {
                                 var sessionStateInternal = executionContext.EngineSessionState;
                                 completionText = sessionStateInternal.NormalizeRelativePath(path, sessionStateInternal.CurrentLocation.ProviderPath);
-                                string parentDirectory = ".." + Path.DirectorySeparatorChar;
+                                string parentDirectory = ".." + StringLiterals.DefaultPathSeparator;
                                 if (!completionText.StartsWith(parentDirectory, StringComparison.Ordinal))
                                     completionText = Path.Combine(".", completionText);
                             }
@@ -4477,13 +4472,9 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete;
             var colon = wordToComplete.IndexOf(':');
 
-            var prefix = "$";
             var lastAst = context.RelatedAsts.Last();
             var variableAst = lastAst as VariableExpressionAst;
-            if (variableAst != null && variableAst.Splatted)
-            {
-                prefix = "@";
-            }
+            var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
 
             // Look for variables in the input (e.g. parameters, etc.) before checking session state - these
             // variables might not exist in session state yet.
@@ -5312,7 +5303,6 @@ namespace System.Management.Automation
             return false;
         }
 
-
         #endregion Members
 
         #region Types
@@ -5478,15 +5468,13 @@ namespace System.Management.Automation
 
             protected string GetTooltipPrefix()
             {
-                TypeInfo typeInfo = Type.GetTypeInfo();
-
                 if (typeof(Delegate).IsAssignableFrom(Type))
                     return "Delegate ";
-                if (typeInfo.IsInterface)
+                if (Type.IsInterface)
                     return "Interface ";
-                if (typeInfo.IsClass)
+                if (Type.IsClass)
                     return "Class ";
-                if (typeInfo.IsEnum)
+                if (Type.IsEnum)
                     return "Enum ";
                 if (typeof(ValueType).IsAssignableFrom(Type))
                     return "Struct ";
@@ -5929,7 +5917,20 @@ namespace System.Management.Automation
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
             var results = new List<CompletionResult>();
-            var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + Path.DirectorySeparatorChar + CultureInfo.CurrentCulture.Name;
+            var searchPaths = new List<string>();
+            var currentCulture = CultureInfo.CurrentCulture.Name;
+
+            // Add the user scope path first, since it is searched in order.
+            var userHelpRoot = Path.Combine(HelpUtils.GetUserHomeHelpSearchPath(), currentCulture);
+
+            if(Directory.Exists(userHelpRoot))
+            {
+                searchPaths.Add(userHelpRoot);
+            }
+
+            var dirPath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), currentCulture);
+            searchPaths.Add(dirPath);
+
             var wordToComplete = context.WordToComplete + "*";
             var topicPattern = WildcardPattern.Get("about_*.help.txt", WildcardOptions.IgnoreCase);
             List<string> files = new List<string>();
@@ -5938,11 +5939,14 @@ namespace System.Management.Automation
             {
                 var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
 
-                foreach(var file in Directory.GetFiles(dirPath))
+                foreach (var dir in searchPaths)
                 {
-                    if(wildcardPattern.IsMatch(Path.GetFileName(file)))
+                    foreach (var file in Directory.GetFiles(dir))
                     {
-                        files.Add(file);
+                        if (wildcardPattern.IsMatch(Path.GetFileName(file)))
+                        {
+                            files.Add(file);
+                        }
                     }
                 }
             }
@@ -6190,6 +6194,11 @@ namespace System.Management.Automation
             if (commandAst != null)
             {
                 var binding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, bindingType: PseudoParameterBinder.BindingType.ArgumentCompletion);
+                if (binding == null)
+                {
+                    return null;
+                }
+
                 string parameterName = null;
                 foreach (var boundArg in binding.BoundArguments)
                 {
@@ -6326,7 +6335,7 @@ namespace System.Management.Automation
                     if (strValue == null)
                     {
                         object baseObj = PSObject.Base(value);
-                        if (baseObj is string || baseObj.GetType().GetTypeInfo().IsPrimitive)
+                        if (baseObj is string || baseObj.GetType().IsPrimitive)
                         {
                             strValue = LanguagePrimitives.ConvertTo<string>(value);
                         }

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Linq;
@@ -276,6 +275,7 @@ namespace Microsoft.PowerShell.Commands
         public string UserName;
         public string KeyFilePath;
         public int Port;
+        public string Subsystem;
     }
 
     /// <summary>
@@ -764,6 +764,13 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
+        /// <summary>
+        /// This parameter specifies the SSH subsystem to use for the remote connection.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        public String Subsystem { get; set; }
+
         #endregion
 
         #endregion Properties
@@ -823,8 +830,45 @@ namespace Microsoft.PowerShell.Commands
         private const string KeyFilePathParameter = "KeyFilePath";
         private const string IdentityFilePathAlias = "IdentityFilePath";
         private const string PortParameter = "Port";
+        private const string SubsystemParameter = "Subsystem";
 
         #endregion
+
+        /// <summary>
+        /// Parse a hostname used with SSH Transport to get embedded
+        /// username and/or port.
+        /// </summary>
+        /// <param name="hostname">host name to parse</param>
+        /// <param name="host">resolved target host</param>
+        /// <param name="userName">resolved target user name</param>
+        /// <param name="port">resolved target port</param>
+        protected void ParseSshHostName(string hostname, out string host, out string userName, out int port)
+        {
+            host = hostname;
+            userName = this.UserName;
+            port = this.Port;
+            try
+            {
+                Uri uri = new System.Uri("ssh://" + hostname);
+                host = ResolveComputerName(uri.Host);
+                ValidateComputerName(new string[]{host});
+                if (uri.UserInfo != String.Empty)
+                {
+                    userName = uri.UserInfo;
+                }
+                if (uri.Port != -1)
+                {
+                    port = uri.Port;
+                }
+            }
+            catch (UriFormatException)
+            {
+                ThrowTerminatingError(new ErrorRecord(
+                    new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(
+                        RemotingErrorIdStrings.InvalidComputerName)), "PSSessionInvalidComputerName",
+                            ErrorCategory.InvalidArgument, hostname));
+            }
+        }
 
         /// <summary>
         /// Parse the Connection parameter HashTable array.
@@ -857,8 +901,16 @@ namespace Microsoft.PowerShell.Commands
                     if (paramName.Equals(ComputerNameParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(HostNameAlias, StringComparison.OrdinalIgnoreCase))
                     {
                         var resolvedComputerName = ResolveComputerName(GetSSHConnectionStringParameter(item[paramName]));
-                        ValidateComputerName(new string[] { resolvedComputerName });
-                        connectionInfo.ComputerName = resolvedComputerName;
+                        ParseSshHostName(resolvedComputerName, out string host, out string userName, out int port);
+                        connectionInfo.ComputerName = host;
+                        if (userName != String.Empty)
+                        {
+                            connectionInfo.UserName = userName;
+                        }
+                        if (port != -1)
+                        {
+                            connectionInfo.Port = port;
+                        }
                     }
                     else if (paramName.Equals(UserNameParameter, StringComparison.OrdinalIgnoreCase))
                     {
@@ -871,6 +923,10 @@ namespace Microsoft.PowerShell.Commands
                     else if (paramName.Equals(PortParameter, StringComparison.OrdinalIgnoreCase))
                     {
                         connectionInfo.Port = GetSSHConnectionIntParameter(item[paramName]);
+                    }
+                    else if (paramName.Equals(SubsystemParameter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.Subsystem = GetSSHConnectionStringParameter(item[paramName]);
                     }
                     else
                     {
@@ -996,7 +1052,6 @@ namespace Microsoft.PowerShell.Commands
 
             throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
         }
-
 
         /// <summary>
         /// Validates parameter value and returns as integer
@@ -1168,7 +1223,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private Object[] _args;
 
-
         /// <summary>
         /// Indicates that if a job/command is invoked remotely the connection should be severed
         /// right have invocation of job/command.
@@ -1308,7 +1362,7 @@ namespace Microsoft.PowerShell.Commands
                     // it can be easily identified if it becomes disconnected and is queried on the server.
                     int rsId = PSSession.GenerateRunspaceId();
                     string rsName = (DisconnectedSessionName != null && DisconnectedSessionName.Length > i) ?
-                        DisconnectedSessionName[i] : PSSession.ComposeRunspaceName(rsId);
+                        DisconnectedSessionName[i] : PSSession.GenerateRunspaceName(out rsId);
 
                     remoteRunspace = new RemoteRunspace(Utils.GetTypeTableFromExecutionContextTLS(), connectionInfo,
                         this.Host, this.SessionOption.ApplicationArguments, rsName, rsId);
@@ -1340,11 +1394,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected void CreateHelpersForSpecifiedSSHComputerNames()
         {
-            ValidateComputerName(ResolvedComputerNames);
-
             foreach (string computerName in ResolvedComputerNames)
             {
-                var sshConnectionInfo = new SSHConnectionInfo(this.UserName, computerName, this.KeyFilePath, this.Port);
+                ParseSshHostName(computerName, out string host, out string userName, out int port);
+
+                var sshConnectionInfo = new SSHConnectionInfo(userName, host, this.KeyFilePath, port, this.Subsystem);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);
@@ -1366,7 +1420,8 @@ namespace Microsoft.PowerShell.Commands
                     sshConnection.UserName,
                     sshConnection.ComputerName,
                     sshConnection.KeyFilePath,
-                    sshConnection.Port);
+                    sshConnection.Port,
+                    sshConnection.Subsystem);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);
@@ -1842,7 +1897,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal List<IThrottleOperation> Operations { get; } = new List<IThrottleOperation>();
 
-
         /// <summary>
         /// Closes the input streams on all the pipelines
         /// </summary>
@@ -2034,7 +2088,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         #endregion Overrides
 
         #region "Get PowerShell instance"
@@ -2213,7 +2266,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion "Get PowerShell instance"
 
         #region "UsingExpression Utilities"
-
 
         /// <summary>
         /// Get the converted script for a remote PSv2 end

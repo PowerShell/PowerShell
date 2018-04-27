@@ -1,8 +1,7 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-#pragma warning disable 1634, 1691
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
+#pragma warning disable 1634, 1691
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -186,6 +185,12 @@ namespace Microsoft.PowerShell
 
                 s_cpp.Parse(tempArgs);
 
+#if UNIX
+                // On Unix, logging has to be deferred until after command-line parsing
+                // completes to allow overriding logging options.
+                PSEtwLog.LogConsoleStartup();
+#endif
+
                 if (s_cpp.ShowVersion)
                 {
                     // Alternatively, we could call s_theConsoleHost.UI.WriteLine(s_theConsoleHost.Version.ToString());
@@ -272,8 +277,6 @@ namespace Microsoft.PowerShell
             }
         }
         private static CommandLineParameterParser s_cpp;
-
-
 
 #if UNIX
         /// <summary>
@@ -856,8 +859,6 @@ namespace Microsoft.PowerShell
         }
         private PSObject _consoleColorProxy;
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -876,8 +877,6 @@ namespace Microsoft.PowerShell
                 }
             }
         }
-
-
 
         /// <summary>
         ///
@@ -1249,7 +1248,6 @@ namespace Microsoft.PowerShell
 
         internal WrappedSerializer.DataFormat OutputFormat { get; private set; }
 
-
         internal WrappedSerializer.DataFormat InputFormat { get; private set; }
 
         internal WrappedDeserializer.DataFormat ErrorFormat
@@ -1614,6 +1612,7 @@ namespace Microsoft.PowerShell
                     OpenConsoleRunspace(consoleRunspace, staMode);
                 }
 
+                Runspace.PrimaryRunspace = consoleRunspace;
                 _runspaceRef = new RunspaceRef(consoleRunspace);
 
                 if (psReadlineFailed)
@@ -1658,10 +1657,8 @@ namespace Microsoft.PowerShell
 #endif
             runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             runspace.EngineActivityId = EtwActivity.GetActivityId();
-            Runspace.PrimaryRunspace = runspace;
 
             s_runspaceInitTracer.WriteLine("Calling Runspace.Open");
-
             runspace.Open();
         }
 
@@ -1754,6 +1751,31 @@ namespace Microsoft.PowerShell
             // if one is specified.
             TelemetryAPI.ReportStartupTelemetry(this);
 #endif
+
+            // If working directory was specified, set it
+            if (s_cpp != null && s_cpp.WorkingDirectory != null)
+            {
+                Pipeline tempPipeline = exec.CreatePipeline();
+                var command = new Command("Set-Location");
+                command.Parameters.Add("LiteralPath", s_cpp.WorkingDirectory);
+                tempPipeline.Commands.Add(command);
+
+                Exception exception;
+                if (IsRunningAsync)
+                {
+                    exec.ExecuteCommandAsyncHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
+                }
+                else
+                {
+                    exec.ExecuteCommandHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
+                }
+
+                if (exception != null)
+                {
+                    _lastRunspaceInitializationException = exception;
+                    ReportException(exception, exec);
+                }
+            }
 
             // If a file was specified as the argument to run, then run it...
             if (s_cpp != null && s_cpp.File != null)
@@ -1919,7 +1941,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         ///
         /// Escapes backtick and tick characters with a backtick, returns the result
@@ -2070,7 +2091,6 @@ namespace Microsoft.PowerShell
         /// raised when the host pushes a runspace
         /// </summary>
         internal event EventHandler RunspacePushed;
-
 
         #endregion non-overrides
 
@@ -2885,10 +2905,7 @@ namespace Microsoft.PowerShell
 
         private static ConsoleHost s_theConsoleHost;
 
-
         internal static InitialSessionState DefaultInitialSessionState;
-
-
 
         [TraceSource("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost")]
         private static
@@ -2936,5 +2953,4 @@ namespace Microsoft.PowerShell
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }
 }   // namespace
-
 

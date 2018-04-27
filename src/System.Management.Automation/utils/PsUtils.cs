@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Diagnostics;
@@ -60,13 +59,12 @@ namespace System.Management.Automation
         internal static ProcessModule GetMainModule(Process targetProcess)
         {
             int caughtCount = 0;
-            ProcessModule mainModule = null;
 
-            while (mainModule == null)
+            while (true)
             {
                 try
                 {
-                    mainModule = targetProcess.MainModule;
+                    return targetProcess.MainModule;
                 }
                 catch (System.ComponentModel.Win32Exception e)
                 {
@@ -82,8 +80,6 @@ namespace System.Management.Automation
                         throw;
                 }
             }
-
-            return mainModule;
         }
 
         // Cache of the current process' parentId
@@ -247,10 +243,6 @@ namespace System.Management.Automation
 
         private static class NativeMethods
         {
-            // Important:
-            // this clone has a clone in SMA in admin\monad\src\m3p\product\ServiceCore\WorkflowCore\WorkflowRuntimeCompilation.cs
-            // if you are making any changes specific to this class then update the clone as well.
-
             internal const ushort PROCESSOR_ARCHITECTURE_INTEL = 0;
             internal const ushort PROCESSOR_ARCHITECTURE_ARM = 5;
             internal const ushort PROCESSOR_ARCHITECTURE_IA64 = 6;

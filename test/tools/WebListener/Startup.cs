@@ -1,4 +1,6 @@
-﻿using System;
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,6 +44,10 @@ namespace mvc
 
             app.UseMvc(routes =>
             {
+                routes.MapRoute(
+                    name: "resume_bytes",
+                    template: "Resume/Bytes/{NumberBytes?}",
+                    defaults: new {controller = "Resume", action = "Bytes"});
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

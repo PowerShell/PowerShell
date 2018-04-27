@@ -355,7 +355,7 @@ namespace System.Management.Automation.Interpreter
                 return;
             }
 
-            if (type == null || type.GetTypeInfo().IsValueType)
+            if (type == null || type.IsValueType)
             {
                 if (value is bool)
                 {
@@ -625,7 +625,7 @@ namespace System.Management.Automation.Interpreter
             {
                 Emit(new InitializeLocalInstruction.ImmutableValue(index, value));
             }
-            else if (type.GetTypeInfo().IsValueType)
+            else if (type.IsValueType)
             {
                 Emit(new InitializeLocalInstruction.MutableValue(index, type));
             }
@@ -712,8 +712,7 @@ namespace System.Management.Automation.Interpreter
         public void EmitGetArrayItem(Type arrayType)
         {
             var elementType = arrayType.GetElementType();
-            var elementTypeInfo = elementType.GetTypeInfo();
-            if (elementTypeInfo.IsClass || elementTypeInfo.IsInterface)
+            if (elementType.IsClass || elementType.IsInterface)
             {
                 Emit(InstructionFactory<object>.Factory.GetArrayItem());
             }
@@ -726,8 +725,7 @@ namespace System.Management.Automation.Interpreter
         public void EmitSetArrayItem(Type arrayType)
         {
             var elementType = arrayType.GetElementType();
-            var elementTypeInfo = elementType.GetTypeInfo();
-            if (elementTypeInfo.IsClass || elementTypeInfo.IsInterface)
+            if (elementType.IsClass || elementType.IsInterface)
             {
                 Emit(InstructionFactory<object>.Factory.SetArrayItem());
             }
@@ -1055,7 +1053,6 @@ namespace System.Management.Automation.Interpreter
         {
             Emit(DynamicInstruction<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TRet>.Factory(binder));
         }
-
 
         // *** END GENERATED CODE ***
 

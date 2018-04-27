@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 $script:forcePull = $true
 # Get docker Engine OS
 function Get-DockerEngineOs
@@ -86,7 +89,6 @@ function Get-WindowsContainer
         }
     }
 }
-
 
 $script:repoName = 'microsoft/powershell'
 function Get-RepoName
@@ -222,9 +224,11 @@ function Test-PSPackage
         [Parameter(Mandatory=$true)]
         $PSPackageLocation, # e.g. Azure storage
         [string]
-        $PSVersion = "6.0.1",
+        $PSVersion = "6.0.2",
         [string]
-        $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module"
+        $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module",
+        [string]
+        $GitLocation = "https://github.com/PowerShell/PowerShell.git"
     )
 
     $PSPackageLocation = $PSPackageLocation.TrimEnd('/','\')
@@ -250,7 +254,8 @@ function Test-PSPackage
     $testlistStubValue = $TestList
     $packageLocationStubName = 'PACKAGELOCATIONSTUB'
     $packageLocationStubValue = $PSPackageLocation
-
+    $GitLocationStubName = 'GITLOCATION'
+    $GitLocationStubValue = $GitLocation
 
     $results = @{}
     $returnValue = $true
@@ -263,6 +268,7 @@ function Test-PSPackage
         $buildArgs += "--build-arg","$versionStubName=$versionStubValue"
         $buildArgs += "--build-arg","$testlistStubName=$testlistStubValue"
         $buildArgs += "--build-arg","$packageLocationStubName=$packageLocationStubValue"
+        $buildArgs += "--build-arg","$GitLocationStubName=$GitLocationStubValue"
         $buildArgs += "--no-cache"
         $buildArgs += $dir.FullName
 

@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 /*============================================================
 **
@@ -67,7 +69,6 @@ namespace System.Diagnostics.Eventing.Reader
                 return _handle;
             }
         }
-
 
         internal void PrepareSystemData()
         {
@@ -285,7 +286,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-
         public override EventBookmark Bookmark
         {
             [System.Security.SecuritySafeCritical]
@@ -340,7 +340,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-
         public override string OpcodeDisplayName
         {
             get
@@ -391,7 +390,6 @@ namespace System.Diagnostics.Eventing.Reader
                 }
             }
         }
-
 
         public override IList<EventProperty> Properties
         {

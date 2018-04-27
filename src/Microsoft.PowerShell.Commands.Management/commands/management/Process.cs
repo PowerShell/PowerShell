@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -651,7 +650,10 @@ namespace Microsoft.PowerShell.Commands
                     //if fileversion of each process is to be displayed
                     try
                     {
-                        WriteObject(PsUtils.GetMainModule(process).FileVersionInfo, true);
+                        ProcessModule mainModule = PsUtils.GetMainModule(process);
+                        if (mainModule != null) {
+                            WriteObject(mainModule.FileVersionInfo, true);
+                        }
                     }
                     catch (InvalidOperationException exception)
                     {
@@ -718,7 +720,6 @@ namespace Microsoft.PowerShell.Commands
 
             return processAsPsobj;
         }
-
 
         /// <summary>
         /// Retrieve the UserName through PInvoke
@@ -901,7 +902,6 @@ namespace Microsoft.PowerShell.Commands
         private int _timeout = 0;
         private bool _timeOutSpecified;
 
-
         #endregion Parameters
 
         private bool _disposed = false;
@@ -947,7 +947,6 @@ namespace Microsoft.PowerShell.Commands
         //Wait handle which is used by thread to sleep.
         private ManualResetEvent _waitHandle;
         private int _numberOfProcessesToWaitFor;
-
 
         /// <summary>
         /// gets the list of process
@@ -1135,7 +1134,6 @@ namespace Microsoft.PowerShell.Commands
             set { _passThru = value; }
         }
 
-
         //Addition by v-ramch Mar 18 2008
         //Added force parameter
         /// <summary>
@@ -1269,7 +1267,6 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(process);
             }
         } // ProcessRecord
-
 
         /// <summary>
         /// Kill the current process here.
@@ -1613,9 +1610,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath")]
+        [Alias("PSPath","Path")]
         public string FilePath { get; set; }
-
 
         /// <summary>
         /// Arguments for the process
@@ -1625,7 +1621,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ArgumentList { get; set; }
-
 
         /// <summary>
         /// Credentials for the process
@@ -1651,7 +1646,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         public string WorkingDirectory { get; set; }
-
 
         /// <summary>
         /// load user profile from registry
@@ -1691,7 +1685,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter PassThru { get; set; }
 
-
         /// <summary>
         /// Redirect error
         /// </summary>
@@ -1709,7 +1702,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _redirectstandarderror;
 
-
         /// <summary>
         /// Redirect input
         /// </summary>
@@ -1726,7 +1718,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private string _redirectstandardinput;
-
 
         /// <summary>
         /// Redirect output
@@ -1864,7 +1855,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 startInfo.Arguments = sb.ToString(); ;
             }
-
 
             //WorkingDirectory
             if (WorkingDirectory != null)
@@ -2263,7 +2253,6 @@ namespace Microsoft.PowerShell.Commands
             System.IntPtr hFileHandle = System.IntPtr.Zero;
             ProcessNativeMethods.SECURITY_ATTRIBUTES lpSecurityAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
 
-
             hFileHandle = ProcessNativeMethods.CreateFileW(RedirectionPath,
                 ProcessNativeMethods.GENERIC_READ | ProcessNativeMethods.GENERIC_WRITE,
                 ProcessNativeMethods.FILE_SHARE_WRITE | ProcessNativeMethods.FILE_SHARE_READ,
@@ -2655,10 +2644,8 @@ namespace Microsoft.PowerShell.Commands
         internal static UInt32 OF_READWRITE = 0x00000002;
         internal static UInt32 OPEN_EXISTING = 3;
 
-
         // Methods
         //    static NativeMethods();
-
 
         [DllImport(PinvokeDllNames.GetStdHandleDllName, CharSet = CharSet.Ansi, SetLastError = true)]
         public static extern IntPtr GetStdHandle(int whichHandle);
@@ -2702,7 +2689,6 @@ namespace Microsoft.PowerShell.Commands
             System.IntPtr hTemplateFile
             );
 
-
         [Flags]
         internal enum LogonFlags
         {
@@ -2744,7 +2730,6 @@ namespace Microsoft.PowerShell.Commands
                 return (LocalFree(base.handle) == IntPtr.Zero);
             }
         }
-
 
         [StructLayout(LayoutKind.Sequential)]
         internal class STARTUPINFO

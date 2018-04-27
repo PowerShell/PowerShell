@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -2023,7 +2022,7 @@ namespace System.Management.Automation
 
                     try
                     {
-                        if (generic != null && generic.GetTypeInfo().ContainsGenericParameters)
+                        if (generic != null && generic.ContainsGenericParameters)
                             generic.MakeGenericType(typeArgs);
                     }
                     catch (Exception e)
@@ -2189,7 +2188,7 @@ namespace System.Management.Automation
                 if (t.IsClass)
                 {
                     var helperType =
-                        t.Type.GetTypeInfo().Assembly.GetType(t.Type.FullName + "_<staticHelpers>");
+                        t.Type.Assembly.GetType(t.Type.FullName + "_<staticHelpers>");
                     Diagnostics.Assert(helperType != null, "no corresponding " + t.Type.FullName + "_<staticHelpers> type found");
                     foreach (var p in helperType.GetFields(BindingFlags.Static | BindingFlags.NonPublic))
                     {
@@ -2465,7 +2464,6 @@ namespace System.Management.Automation
                         rest.Add(Current(enumerator));
                     }
 
-
                     return rest.ToArray();
                 }
 
@@ -2644,7 +2642,6 @@ namespace System.Management.Automation
             return matches;
         }
 
-
         /// <summary>
         /// Implements the ForEach() operator.
         /// </summary>
@@ -2689,7 +2686,7 @@ namespace System.Management.Automation
                     }
 
                     // If it's a generic type then make sure it only has one type argument
-                    if (targetType.GetTypeInfo().IsGenericType)
+                    if (targetType.IsGenericType)
                     {
                         Type[] ta = targetType.GetGenericArguments();
                         if (ta.Length != 1)
@@ -3216,7 +3213,6 @@ namespace System.Management.Automation
                     e.Message);
             }
         }
-
 
         /// <summary>
         /// A routine used to advance an enumerator and catch errors that might occur

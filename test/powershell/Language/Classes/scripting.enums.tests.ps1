@@ -1,6 +1,5 @@
-#
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
+# Licensed under the MIT License.
 
 Describe 'enums' -Tags "CI" {
     Context 'basic enums' {
@@ -11,11 +10,11 @@ Describe 'enums' -Tags "CI" {
             e2
         }
 
-        It "has correct value 0" { [E1]::e0 | Should Be ([E1]0) }
-        It "has correct value 1" { [E1]::e1 | Should Be ([E1]1) }
-        It "has correct value 2" { [E1]::e2 | Should Be ([E1]2) }
-        It "cast from string"    { [E1]::e1 | Should Be 'e1' }
-        It "cast to string"      { 'e2' | Should Be ([E1]::e2) }
+        It "has correct value 0" { [E1]::e0 | Should -Be ([E1]0) }
+        It "has correct value 1" { [E1]::e1 | Should -Be ([E1]1) }
+        It "has correct value 2" { [E1]::e2 | Should -Be ([E1]2) }
+        It "cast from string"    { [E1]::e1 | Should -Be 'e1' }
+        It "cast to string"      { 'e2' | Should -Be ([E1]::e2) }
     }
 
     Context 'Basic enum with initial value' {
@@ -26,11 +25,11 @@ Describe 'enums' -Tags "CI" {
             e2
         }
 
-        It "has correct value 0" { [E2]::e0 | Should Be ([E2]0) }
-        It "has correct value 5" { [E2]::e1 | Should Be ([E2]5) }
-        It "has correct value 6" { [E2]::e2 | Should Be ([E2]6) }
-        It "cast from string"    { [E2]::e1 | Should Be 'e1' }
-        It "cast to string"      { 'e2' | Should Be ([E2]::e2) }
+        It "has correct value 0" { [E2]::e0 | Should -Be ([E2]0) }
+        It "has correct value 5" { [E2]::e1 | Should -Be ([E2]5) }
+        It "has correct value 6" { [E2]::e2 | Should -Be ([E2]6) }
+        It "cast from string"    { [E2]::e1 | Should -Be 'e1' }
+        It "cast to string"      { 'e2' | Should -Be ([E2]::e2) }
     }
 
     Context 'Basic enum with initial value expression' {
@@ -42,12 +41,12 @@ Describe 'enums' -Tags "CI" {
             e3 = 1    # This shouldn't be an error even though previous member was max int
         }
 
-        It "has correct value 0"               { [E3]::e0 | Should Be ([E3]0) }
-        It "has correct value 5"               { [E3]::e1 | Should Be ([E3]5) }
-        It "has correct value [int]::MaxValue" { [E3]::e2 | Should Be ([E3]([int]::MaxValue)) }
-        It "has correct value 1"               { [E3]::e3 | Should Be ([E3]1) }
-        It "cast from string"                  { [E3]::e2 | Should Be 'e2' }
-        It "cast to string"                    { 'e3' | Should Be ([E3]::e3) }
+        It "has correct value 0"               { [E3]::e0 | Should -Be ([E3]0) }
+        It "has correct value 5"               { [E3]::e1 | Should -Be ([E3]5) }
+        It "has correct value [int]::MaxValue" { [E3]::e2 | Should -Be ([E3]([int]::MaxValue)) }
+        It "has correct value 1"               { [E3]::e3 | Should -Be ([E3]1) }
+        It "cast from string"                  { [E3]::e2 | Should -Be 'e2' }
+        It "cast to string"                    { 'e3' | Should -Be ([E3]::e3) }
     }
 
     Context 'Enum with complicated initial value' {
@@ -67,9 +66,9 @@ Describe 'enums' -Tags "CI" {
             e0 =38
         }
 
-        It 'E4 has correct value' { [E4]::e0 | Should Be ([E4]42) }
-        It 'E5 has correct value' { [E5]::e0 | Should Be ([E5]40) }
-        It 'E6 has correct value' { [E6]::e0 | Should Be ([E6]38) }
+        It 'E4 has correct value' { [E4]::e0 | Should -Be ([E4]42) }
+        It 'E5 has correct value' { [E5]::e0 | Should -Be ([E5]40) }
+        It 'E6 has correct value' { [E6]::e0 | Should -Be ([E6]38) }
     }
 }
 

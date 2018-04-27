@@ -14,12 +14,10 @@ ConvertFrom-StringData @'
 '@
 }
 
-
 Import-LocalizedData -BindingVariable Day
 
 # Build an array of weekdays.
 $a = $Day.d0, $Day.d1, $Day.d2, $Day.d3, $Day.d4, $Day.d5, $Day.d6
-
 
         # Get the day of the week as a number (Monday = 1).
         # Index into $a to get the name of the day.

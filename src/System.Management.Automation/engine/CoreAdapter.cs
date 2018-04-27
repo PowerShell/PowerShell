@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -47,11 +46,11 @@ namespace System.Management.Automation
 
         #region member
 
-        internal virtual bool SiteBinderCanOptimize { get { return false; } }
+        internal virtual bool CanSiteBinderOptimize(MemberTypes typeToOperateOn) { return false; }
 
         protected static IEnumerable<string> GetDotNetTypeNameHierarchy(Type type)
         {
-            for (; type != null; type = type.GetTypeInfo().BaseType)
+            for (; type != null; type = type.BaseType)
             {
                 yield return type.FullName;
             }
@@ -586,7 +585,6 @@ namespace System.Management.Automation
         }
         #endregion method
 
-
         #region parameterized property
         internal string BaseParameterizedPropertyType(PSParameterizedProperty property)
         {
@@ -691,9 +689,6 @@ namespace System.Management.Automation
                     property.Name, e.Message);
             }
         }
-
-
-
 
         internal string BaseParameterizedPropertyToString(PSParameterizedProperty property)
         {
@@ -878,7 +873,6 @@ namespace System.Management.Automation
                     return 1;
                 }
 
-
                 // Apply tie breaking rules, related to specificity of parameters
                 betterCount = CompareTypeSpecificity(candidate1, candidate2);
             }
@@ -970,9 +964,9 @@ namespace System.Management.Automation
                 return CompareTypeSpecificity(type1.GetElementType(), type2.GetElementType());
             }
 
-            if (type1.GetTypeInfo().IsGenericType)
+            if (type1.IsGenericType)
             {
-                Dbg.Assert(type2.GetTypeInfo().IsGenericType, "Caller should verify that both overload candidates have the same parameter types");
+                Dbg.Assert(type2.IsGenericType, "Caller should verify that both overload candidates have the same parameter types");
                 Dbg.Assert(type1.GetGenericTypeDefinition() == type2.GetGenericTypeDefinition(), "Caller should verify that both overload candidates have the same parameter types");
                 return CompareTypeSpecificity(type1.GetGenericArguments(), type2.GetGenericArguments());
             }
@@ -1084,25 +1078,23 @@ namespace System.Management.Automation
             // will have no method target type.
 
             var methodDeclaringType = method.method.DeclaringType;
-            var methodDeclaringTypeInfo = methodDeclaringType.GetTypeInfo();
             if (invocationConstraints == null || invocationConstraints.MethodTargetType == null)
             {
                 // If no method target type is specified, we say the constraint is matched as long as the method is not an interface.
                 // This behavior matches V2 - our candidate sets never included methods with declaring type as an interface in V2.
 
-                return !methodDeclaringTypeInfo.IsInterface;
+                return !methodDeclaringType.IsInterface;
             }
 
             var targetType = invocationConstraints.MethodTargetType;
-            var targetTypeInfo = targetType.GetTypeInfo();
-            if (targetTypeInfo.IsInterface)
+            if (targetType.IsInterface)
             {
                 // If targetType is an interface, types must match exactly.  This is how we can call method impls.
                 // We also allow the method declaring type to be in a base interface.
-                return methodDeclaringType == targetType || (methodDeclaringTypeInfo.IsInterface && targetType.IsSubclassOf(methodDeclaringType));
+                return methodDeclaringType == targetType || (methodDeclaringType.IsInterface && targetType.IsSubclassOf(methodDeclaringType));
             }
 
-            if (methodDeclaringTypeInfo.IsInterface)
+            if (methodDeclaringType.IsInterface)
             {
                 // targetType is a class.  We don't try comparing with targetType because we'll end up with
                 // an ambiguous set because what is effectively the same method may appear in our set multiple
@@ -1150,7 +1142,7 @@ namespace System.Management.Automation
             // Array is a special case.
             return targetType.IsAssignableFrom(methodDeclaringType)
                 || methodDeclaringType.IsAssignableFrom(targetType)
-                || (targetTypeInfo.IsArray && methodDeclaringType == typeof(Array));
+                || (targetType.IsArray && methodDeclaringType == typeof(Array));
         }
 
         private static bool IsInvocationConstraintSatisfied(OverloadCandidate overloadCandidate, PSMethodInvocationConstraints invocationConstraints)
@@ -1267,7 +1259,7 @@ namespace System.Management.Automation
             if ((methods.Length == 1) &&
                 (methods[0].hasVarArgs == false) &&
                 (methods[0].isGeneric == false) &&
-                (methods[0].method == null || !(methods[0].method.DeclaringType.GetTypeInfo().IsGenericTypeDefinition)) &&
+                (methods[0].method == null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition)) &&
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
                 (methods[0].parameters.Length == arguments.Length))
             {
@@ -1280,7 +1272,7 @@ namespace System.Management.Automation
             {
                 MethodInformation method = methods[i];
 
-                if (method.method != null && method.method.DeclaringType.GetTypeInfo().IsGenericTypeDefinition)
+                if (method.method != null && method.method.DeclaringType.IsGenericTypeDefinition)
                 {
                     continue; // skip methods defined by an *open* generic type
                 }
@@ -1430,7 +1422,7 @@ namespace System.Management.Automation
 
             if (candidates.Count == 0)
             {
-                if ((methods.Length > 0) && (methods.All(m => m.method != null && m.method.DeclaringType.GetTypeInfo().IsGenericTypeDefinition && m.method.IsStatic)))
+                if ((methods.Length > 0) && (methods.All(m => m.method != null && m.method.DeclaringType.IsGenericTypeDefinition && m.method.IsStatic)))
                 {
                     errorId = "CannotInvokeStaticMethodOnUninstantiatedGenericType";
                     errorMsg = string.Format(
@@ -1758,7 +1750,6 @@ namespace System.Management.Automation
 
         internal static void DoBoxingIfNecessary(ILGenerator generator, Type type)
         {
-            TypeInfo typeInfo = null;
             if (type.IsByRef)
             {
                 // We can't use a byref like we would use System.Object (the CLR will
@@ -1766,8 +1757,7 @@ namespace System.Management.Automation
                 // with a byref in PowerShell anyway, so just load the object and
                 // return that instead.
                 type = type.GetElementType();
-                typeInfo = type.GetTypeInfo();
-                if (typeInfo.IsPrimitive)
+                if (type.IsPrimitive)
                 {
                     if (type == typeof(byte)) { generator.Emit(OpCodes.Ldind_U1); }
                     else if (type == typeof(ushort)) { generator.Emit(OpCodes.Ldind_U2); }
@@ -1779,7 +1769,7 @@ namespace System.Management.Automation
                     else if (type == typeof(float)) { generator.Emit(OpCodes.Ldind_R4); }
                     else if (type == typeof(double)) { generator.Emit(OpCodes.Ldind_R8); }
                 }
-                else if (typeInfo.IsValueType)
+                else if (type.IsValueType)
                 {
                     generator.Emit(OpCodes.Ldobj, type);
                 }
@@ -1801,8 +1791,7 @@ namespace System.Management.Automation
                 generator.Emit(OpCodes.Call, boxMethod);
             }
 
-            typeInfo = typeInfo ?? type.GetTypeInfo();
-            if (typeInfo.IsValueType)
+            if (type.IsValueType)
             {
                 generator.Emit(OpCodes.Box, type);
             }
@@ -2004,7 +1993,7 @@ namespace System.Management.Automation
 
             Type valuetype = method.DeclaringType;
 
-            Diagnostics.Assert(valuetype.GetTypeInfo().IsValueType, "This code only works with valuetypes");
+            Diagnostics.Assert(valuetype.IsValueType, "This code only works with valuetypes");
 
             Type[] interfaces = valuetype.GetInterfaces();
             for (int i = 0; i < interfaces.Length; i++)
@@ -2035,13 +2024,13 @@ namespace System.Management.Automation
             int c;
 
             DynamicMethod dynamicMethod = new DynamicMethod(method.Name, typeof(object),
-                new Type[] { typeof(object), typeof(object[]) }, typeof(Adapter).GetTypeInfo().Module, true);
+                new Type[] { typeof(object), typeof(object[]) }, typeof(Adapter).Module, true);
 
             ILGenerator emitter = dynamicMethod.GetILGenerator();
             ParameterInfo[] parameters = method.GetParameters();
 
             int localCount = 0;
-            if (!method.IsStatic && method.DeclaringType.GetTypeInfo().IsValueType)
+            if (!method.IsStatic && method.DeclaringType.IsValueType)
             {
                 if (!method.IsVirtual)
                 {
@@ -2105,7 +2094,7 @@ namespace System.Management.Automation
                         emitter.Emit(OpCodes.Ldarg_1);
                         EmitLdc(emitter, c);
                         emitter.Emit(OpCodes.Ldelem_Ref);
-                        if (type.GetTypeInfo().IsValueType)
+                        if (type.IsValueType)
                         {
                             emitter.Emit(OpCodes.Unbox_Any, type);
                         }
@@ -2129,7 +2118,7 @@ namespace System.Management.Automation
             if (!method.IsStatic)
             {
                 // Load the "instance" argument.
-                if (method.DeclaringType.GetTypeInfo().IsValueType)
+                if (method.DeclaringType.IsValueType)
                 {
                     if (method.IsVirtual)
                     {
@@ -2174,7 +2163,7 @@ namespace System.Management.Automation
                     emitter.Emit(OpCodes.Ldelem_Ref);
 
                     // Unbox value types since our args array is full of objects
-                    if (type.GetTypeInfo().IsValueType)
+                    if (type.IsValueType)
                     {
                         emitter.Emit(OpCodes.Unbox_Any, type);
                     }
@@ -2215,7 +2204,7 @@ namespace System.Management.Automation
                     emitter.Emit(OpCodes.Ldloc, locals[cLocal]);
 
                     // Again, box value types since the args array holds objects
-                    if (type.GetTypeInfo().IsValueType)
+                    if (type.IsValueType)
                     {
                         emitter.Emit(OpCodes.Box, type);
                     }
@@ -2351,7 +2340,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Cache delegate to the ctor of PSMethod&lt;&gt; with a template parameter derived from the methodInformationStructures.
             /// </summary>
-            internal Func<string, DotNetAdapter, object, DotNetAdapter.MethodCacheEntry, bool, bool, PSMethod> psmethodCtor;
+            internal Func<string, DotNetAdapter, object, DotNetAdapter.MethodCacheEntry, bool, bool, PSMethod> PSMethodCtor;
 
             internal MethodCacheEntry(MethodBase[] methods)
             {
@@ -2465,12 +2454,12 @@ namespace System.Management.Automation
                 // Generating code for fields/properties in ValueTypes is complex and will probably
                 // require different delegates
                 // The same is true for generics, COM Types.
-                TypeInfo declaringTypeInfo = property.DeclaringType.GetTypeInfo();
-                TypeInfo propertyTypeInfo = property.PropertyType.GetTypeInfo();
+                Type declaringType = property.DeclaringType;
+                Type propertyType = property.PropertyType;
 
-                if (declaringTypeInfo.IsValueType ||
-                    propertyTypeInfo.IsGenericType ||
-                    declaringTypeInfo.IsGenericType ||
+                if (declaringType.IsValueType ||
+                    propertyType.IsGenericType ||
+                    declaringType.IsGenericType ||
                     property.DeclaringType.IsCOMObject ||
                     property.PropertyType.IsCOMObject)
                 {
@@ -2531,10 +2520,9 @@ namespace System.Management.Automation
                 if (field != null)
                 {
                     var declaringType = field.DeclaringType;
-                    var declaringTypeInfo = declaringType.GetTypeInfo();
                     if (!field.IsStatic)
                     {
-                        if (declaringTypeInfo.IsValueType)
+                        if (declaringType.IsValueType)
                         {
                             // I'm not sure we can get here with a Nullable, but if so,
                             // we must use the Value property, see PSGetMemberBinder.GetTargetValue.
@@ -2549,7 +2537,7 @@ namespace System.Management.Automation
                     }
                     Expression getterExpr;
 
-                    if (declaringTypeInfo.IsGenericTypeDefinition)
+                    if (declaringType.IsGenericTypeDefinition)
                     {
                         Expression innerException = Expression.New(CachedReflectionInfo.GetValueException_ctor,
                             Expression.Constant("PropertyGetException"),
@@ -2590,10 +2578,9 @@ namespace System.Management.Automation
                 if (field != null)
                 {
                     var declaringType = field.DeclaringType;
-                    var declaringTypeInfo = declaringType.GetTypeInfo();
                     if (!field.IsStatic)
                     {
-                        if (declaringTypeInfo.IsValueType)
+                        if (declaringType.IsValueType)
                         {
                             // I'm not sure we can get here with a Nullable, but if so,
                             // we must use the Value property, see PSGetMemberBinder.GetTargetValue.
@@ -2610,10 +2597,10 @@ namespace System.Management.Automation
                     Expression setterExpr;
                     string errMessage = null;
                     Type errType = field.FieldType;
-                    if (declaringTypeInfo.IsGenericTypeDefinition)
+                    if (declaringType.IsGenericTypeDefinition)
                     {
                         errMessage = ParserStrings.PropertyInGenericType;
-                        if (errType.GetTypeInfo().ContainsGenericParameters)
+                        if (errType.ContainsGenericParameters)
                         {
                             errType = typeof(object);
                         }
@@ -2651,7 +2638,6 @@ namespace System.Management.Automation
                         Expression.Assign(Expression.Property(instance, property),
                             Expression.Convert(value, property.PropertyType)), parameter, value).Compile();
             }
-
 
             internal MemberInfo member;
 
@@ -2778,10 +2764,9 @@ namespace System.Management.Automation
                 }
             }
 
-            var typeInfo = type.GetTypeInfo();
-            if (typeInfo.BaseType != null)
+            if (type.BaseType != null)
             {
-                PopulateMethodReflectionTable(typeInfo.BaseType, methods, typeMethods);
+                PopulateMethodReflectionTable(type.BaseType, methods, typeMethods);
             }
         }
 
@@ -2812,16 +2797,15 @@ namespace System.Management.Automation
         /// <param name="bindingFlags">bindingFlags to use</param>
         private static void PopulateMethodReflectionTable(Type type, CacheTable typeMethods, BindingFlags bindingFlags)
         {
-            var typeInfo = type.GetTypeInfo();
             Type typeToGetMethod = type;
-#if CORECLR
+
             // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
             // the derivation chain to find the first public parent, and use reflection methods on the public parent.
-            if (!TypeResolver.IsPublic(typeInfo) && DisallowPrivateReflection(typeInfo))
+            if (!TypeResolver.IsPublic(type) && DisallowPrivateReflection(type))
             {
-                typeToGetMethod = GetFirstPublicParentType(typeInfo);
+                typeToGetMethod = GetFirstPublicParentType(type);
             }
-#endif
+
             // In CoreCLR, "GetFirstPublicParentType" may return null if 'type' is an interface
             if (typeToGetMethod != null)
             {
@@ -2833,25 +2817,24 @@ namespace System.Management.Automation
             for (int interfaceIndex = 0; interfaceIndex < interfaces.Length; interfaceIndex++)
             {
                 var interfaceType = interfaces[interfaceIndex];
-                var interfaceTypeInfo = interfaceType.GetTypeInfo();
-                if (!TypeResolver.IsPublic(interfaceTypeInfo))
+                if (!TypeResolver.IsPublic(interfaceType))
                 {
                     continue;
                 }
 
-                if (interfaceTypeInfo.IsGenericType && type.IsArray)
+                if (interfaceType.IsGenericType && type.IsArray)
                 {
                     continue; // GetInterfaceMap is not supported in this scenario... not sure if we need to do something special here...
                 }
 
                 MethodInfo[] methods;
-                if (typeInfo.IsInterface)
+                if (type.IsInterface)
                 {
                     methods = interfaceType.GetMethods(bindingFlags);
                 }
                 else
                 {
-                    InterfaceMapping interfaceMapping = typeInfo.GetRuntimeInterfaceMap(interfaceType);
+                    InterfaceMapping interfaceMapping = type.GetInterfaceMap(interfaceType);
                     methods = interfaceMapping.InterfaceMethods;
                 }
                 for (int methodIndex = 0; methodIndex < methods.Length; methodIndex++)
@@ -2880,7 +2863,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if ((bindingFlags & BindingFlags.Static) != 0 && TypeResolver.IsPublic(typeInfo))
+            if ((bindingFlags & BindingFlags.Static) != 0 && TypeResolver.IsPublic(type))
             {
                 // We don't add constructors if there was a static method named new.
                 // We don't add constructors if the target type is not public, because it's useless to an internal type.
@@ -2910,15 +2893,13 @@ namespace System.Management.Automation
         /// <param name="bindingFlags">bindingFlags to use</param>
         private static void PopulateEventReflectionTable(Type type, Dictionary<string, EventCacheEntry> typeEvents, BindingFlags bindingFlags)
         {
-#if CORECLR
             // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
             // the derivation chain to find the first public parent, and use reflection events on the public parent.
-            TypeInfo typeInfo = type.GetTypeInfo();
-            if (!TypeResolver.IsPublic(typeInfo) && DisallowPrivateReflection(typeInfo))
+            if (!TypeResolver.IsPublic(type) && DisallowPrivateReflection(type))
             {
-                type = GetFirstPublicParentType(typeInfo);
+                type = GetFirstPublicParentType(type);
             }
-#endif
+
             // In CoreCLR, "GetFirstPublicParentType" may return null if 'type' is an interface
             if (type != null)
             {
@@ -2997,15 +2978,14 @@ namespace System.Management.Automation
         {
             var tempTable = new Dictionary<string, List<PropertyInfo>>(StringComparer.OrdinalIgnoreCase);
             Type typeToGetPropertyAndField = type;
-#if CORECLR
+
             // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up the
-            // derivation chain to find the first public parent, and use reflection properties/fileds on the public parent.
-            TypeInfo typeInfo = type.GetTypeInfo();
-            if (!TypeResolver.IsPublic(typeInfo) && DisallowPrivateReflection(typeInfo))
+            // derivation chain to find the first public parent, and use reflection properties/fields on the public parent.
+            if (!TypeResolver.IsPublic(type) && DisallowPrivateReflection(type))
             {
-                typeToGetPropertyAndField = GetFirstPublicParentType(typeInfo);
+                typeToGetPropertyAndField = GetFirstPublicParentType(type);
             }
-#endif
+
             // In CoreCLR, "GetFirstPublicParentType" may return null if 'type' is an interface
             PropertyInfo[] properties;
             if (typeToGetPropertyAndField != null)
@@ -3100,7 +3080,7 @@ namespace System.Management.Automation
         }
 
         #region Handle_Internal_Type_Reflection_In_CoreCLR
-#if CORECLR
+
         /// <summary>
         /// The dictionary cache about if an assembly supports reflection execution on its internal types.
         /// </summary>
@@ -3111,10 +3091,10 @@ namespace System.Management.Automation
         /// Check if the type is defined in an assembly that disallows reflection execution on internal types.
         ///  - .NET Framework assemblies don't support reflection execution on their internal types.
         /// </summary>
-        internal static bool DisallowPrivateReflection(TypeInfo typeInfo)
+        internal static bool DisallowPrivateReflection(Type type)
         {
             bool disallowReflection = false;
-            Assembly assembly = typeInfo.Assembly;
+            Assembly assembly = type.Assembly;
             if (s_disallowReflectionCache.TryGetValue(assembly.FullName, out disallowReflection))
             {
                 return disallowReflection;
@@ -3139,24 +3119,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Walk up the derivation chain to find the first public parent type.
         /// </summary>
-        internal static Type GetFirstPublicParentType(TypeInfo typeInfo)
+        internal static Type GetFirstPublicParentType(Type type)
         {
-            Dbg.Assert(!TypeResolver.IsPublic(typeInfo), "typeInfo should not be public.");
-            Type parent = typeInfo.BaseType;
+            Dbg.Assert(!TypeResolver.IsPublic(type), "type should not be public.");
+            Type parent = type.BaseType;
             while (parent != null)
             {
-                TypeInfo parentTypeInfo = parent.GetTypeInfo();
-                if (parentTypeInfo.IsPublic)
+                if (parent.IsPublic)
                 {
                     return parent;
                 }
-                parent = parentTypeInfo.BaseType;
+                parent = parent.BaseType;
             }
 
-            // Return null when typeInfo is an interface
+            // Return null when type is an interface
             return null;
         }
-#endif
+
         #endregion Handle_Internal_Type_Reflection_In_CoreCLR
 
         /// <summary>
@@ -3526,7 +3505,7 @@ namespace System.Management.Automation
 
         #region member
 
-        internal override bool SiteBinderCanOptimize { get { return true; } }
+        internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn) { return true; }
 
         private static ConcurrentDictionary<Type, ConsolidatedString> s_typeToTypeNameDictionary =
             new ConcurrentDictionary<Type, ConsolidatedString>();
@@ -3674,7 +3653,7 @@ namespace System.Management.Automation
 
             if (adapterData.readOnly)
             {
-                throw new SetValueException("ReadOnlyProperty",
+                throw new SetValueException(nameof(ExtendedTypeSystem.ReadOnlyProperty),
                     null,
                     ExtendedTypeSystem.ReadOnlyProperty,
                     adapterData.member.Name);
@@ -4007,7 +3986,7 @@ namespace System.Management.Automation
                     builder.Append(" ");
                 }
             }
-            if (methodEntry.DeclaringType.GetTypeInfo().IsInterface)
+            if (methodEntry.DeclaringType.IsInterface)
             {
                 builder.Append(ToStringCodeMethods.Type(methodEntry.DeclaringType, dropNamespaces: true));
                 builder.Append(".");
@@ -4259,7 +4238,7 @@ namespace System.Management.Automation
             // are ignored.
             if (typeof(T) == typeof(PSMemberInfo))
             {
-                T returnValue = PSObject.dotNetInstanceAdapter.GetDotNetMethod<T>(obj, memberName);
+                T returnValue = base.GetDotNetMethod<T>(obj, memberName);
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (returnValue != null && property == null)
@@ -4270,7 +4249,7 @@ namespace System.Management.Automation
 
             if (IsTypeParameterizedProperty(typeof(T)))
             {
-                PSParameterizedProperty parameterizedProperty = PSObject.dotNetInstanceAdapter.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
+                PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (parameterizedProperty != null && property == null)
@@ -4297,7 +4276,7 @@ namespace System.Management.Automation
 
         protected override IEnumerable<string> GetTypeNameHierarchy(object obj)
         {
-            for (Type type = obj.GetType(); type != null; type = type.GetTypeInfo().BaseType)
+            for (Type type = obj.GetType(); type != null; type = type.BaseType)
             {
                 if (type.FullName.Equals("System.__ComObject"))
                 {
@@ -4355,7 +4334,6 @@ namespace System.Management.Automation
             throw PSTraceSource.NewNotSupportedException();
         }
 
-
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
@@ -4367,7 +4345,6 @@ namespace System.Management.Automation
             throw PSTraceSource.NewNotSupportedException();
         }
 
-
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
@@ -4378,7 +4355,6 @@ namespace System.Management.Automation
             Diagnostics.Assert(false, "redirection adapter is not called for properties");
             throw PSTraceSource.NewNotSupportedException();
         }
-
 
         /// <summary>
         /// Returns the name of the type corresponding to the property's value
@@ -4555,7 +4531,24 @@ namespace System.Management.Automation
     /// </summary>
     internal abstract class PropertyOnlyAdapter : DotNetAdapter
     {
-        internal override bool SiteBinderCanOptimize { get { return false; } }
+        /// <summary>
+        /// For a PropertyOnlyAdapter, the property may come from various sources,
+        /// but methods, including parameterized properties, still come from DotNetAdapter.
+        /// So, the binder can optimize on method calls for objects that map to a
+        /// custom PropertyOnlyAdapter.
+        /// </summary>
+        internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn)
+        {
+            switch (typeToOperateOn)
+            {
+                case MemberTypes.Property:
+                    return false;
+                case MemberTypes.Method:
+                    return true;
+                default:
+                    throw new InvalidOperationException("Should be unreachable. Update code if other member types need to be handled here.");
+            }
+        }
 
         protected override ConsolidatedString GetInternedTypeNameHierarchy(object obj)
         {
@@ -4579,7 +4572,6 @@ namespace System.Management.Automation
         /// <param name="members">collection where the properties will be added</param>
         protected abstract void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members) where T : PSMemberInfo;
 
-
         /// <summary>
         /// Returns null if memberName is not a member in the adapter or
         /// the corresponding PSMemberInfo
@@ -4598,7 +4590,7 @@ namespace System.Management.Automation
 
             if (typeof(T).IsAssignableFrom(typeof(PSMethod)))
             {
-                T returnValue = PSObject.dotNetInstanceAdapter.GetDotNetMethod<T>(obj, memberName);
+                T returnValue = base.GetDotNetMethod<T>(obj, memberName);
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (returnValue != null && property == null)
@@ -4608,7 +4600,7 @@ namespace System.Management.Automation
             }
             if (IsTypeParameterizedProperty(typeof(T)))
             {
-                PSParameterizedProperty parameterizedProperty = PSObject.dotNetInstanceAdapter.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
+                PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (parameterizedProperty != null && property == null)
@@ -4618,7 +4610,6 @@ namespace System.Management.Automation
             }
             return null;
         }
-
 
         /// <summary>
         /// Retrieves all the members available in the object.
@@ -4639,11 +4630,11 @@ namespace System.Management.Automation
             {
                 DoAddAllProperties<T>(obj, returnValue);
             }
-            PSObject.dotNetInstanceAdapter.AddAllMethods(obj, returnValue, true);
+            base.AddAllMethods(obj, returnValue, true);
             if (IsTypeParameterizedProperty(typeof(T)))
             {
                 var parameterizedProperties = new PSMemberInfoInternalCollection<PSParameterizedProperty>();
-                PSObject.dotNetInstanceAdapter.AddAllProperties(obj, parameterizedProperties, true);
+                base.AddAllProperties(obj, parameterizedProperties, true);
                 foreach (PSParameterizedProperty parameterizedProperty in parameterizedProperties)
                 {
                     try
@@ -4964,7 +4955,6 @@ namespace System.Management.Automation
         }
         #endregion virtual
 
-
         /// <summary>
         /// Auxiliary in GetProperty to perform case sensitive and case insensitive searches
         /// in the child nodes
@@ -5089,7 +5079,6 @@ namespace System.Management.Automation
         {
             return true;
         }
-
 
         /// <summary>
         /// Returns the value from a property coming from a previous call to DoGetProperty
@@ -5380,7 +5369,7 @@ namespace System.Management.Automation
 
             if ((inferenceCandidates != null) && (inferenceCandidates.Any(t => t == typeof(LanguagePrimitives.Null))))
             {
-                Type firstValueType = inferenceCandidates.FirstOrDefault(t => t.GetTypeInfo().IsValueType);
+                Type firstValueType = inferenceCandidates.FirstOrDefault(t => t.IsValueType);
                 if (firstValueType != null)
                 {
                     s_tracer.WriteLine("Cannot reconcile null and {0} (a value type)", firstValueType);
@@ -5458,8 +5447,7 @@ namespace System.Management.Automation
 
         private bool Unify(Type parameterType, Type argumentType)
         {
-            var parameterTypeInfo = parameterType.GetTypeInfo();
-            if (!parameterTypeInfo.ContainsGenericParameters)
+            if (!parameterType.ContainsGenericParameters)
             {
                 return true;
             }
@@ -5501,7 +5489,7 @@ namespace System.Management.Automation
 
             if (parameterType.IsByRef)
             {
-                if (argumentType.GetTypeInfo().IsGenericType && argumentType.GetGenericTypeDefinition() == typeof(PSReference<>))
+                if (argumentType.IsGenericType && argumentType.GetGenericTypeDefinition() == typeof(PSReference<>))
                 {
                     Type referencedType = argumentType.GetGenericArguments()[0];
                     if (referencedType == typeof(LanguagePrimitives.Null))
@@ -5522,7 +5510,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (parameterTypeInfo.IsGenericType && parameterType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (parameterType.IsGenericType && parameterType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 if (argumentType == typeof(LanguagePrimitives.Null))
                 {
@@ -5532,7 +5520,7 @@ namespace System.Management.Automation
                 return this.Unify(parameterType.GetGenericArguments()[0], argumentType);
             }
 
-            if (parameterTypeInfo.IsGenericType)
+            if (parameterType.IsGenericType)
             {
                 if (argumentType == typeof(LanguagePrimitives.Null))
                 {
@@ -5549,7 +5537,7 @@ namespace System.Management.Automation
 
         private bool UnifyConstructedType(Type parameterType, Type argumentType)
         {
-            Dbg.Assert(parameterType.GetTypeInfo().IsGenericType, "Caller should verify parameterType.IsGenericType before calling this method");
+            Dbg.Assert(parameterType.IsGenericType, "Caller should verify parameterType.IsGenericType before calling this method");
 
             if (IsEqualGenericTypeDefinition(parameterType, argumentType))
             {
@@ -5567,14 +5555,14 @@ namespace System.Management.Automation
                 }
             }
 
-            Type baseType = argumentType.GetTypeInfo().BaseType;
+            Type baseType = argumentType.BaseType;
             while (baseType != null)
             {
                 if (IsEqualGenericTypeDefinition(parameterType, baseType))
                 {
                     return UnifyConstructedType(parameterType, baseType);
                 }
-                baseType = baseType.GetTypeInfo().BaseType;
+                baseType = baseType.BaseType;
             }
 
             s_tracer.WriteLine("Attempt to unify different constructed types: {0} and {1}", parameterType, argumentType);
@@ -5583,9 +5571,9 @@ namespace System.Management.Automation
 
         private static bool IsEqualGenericTypeDefinition(Type parameterType, Type argumentType)
         {
-            Dbg.Assert(parameterType.GetTypeInfo().IsGenericType, "Caller should verify parameterType.IsGenericType before calling this method");
+            Dbg.Assert(parameterType.IsGenericType, "Caller should verify parameterType.IsGenericType before calling this method");
 
-            if (!argumentType.GetTypeInfo().IsGenericType)
+            if (!argumentType.IsGenericType)
             {
                 return false;
             }

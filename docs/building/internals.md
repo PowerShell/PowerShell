@@ -16,7 +16,7 @@ We are calling `dotnet` tool build for `$Top` directory
 ### Dummy dependencies
 
 We use dummy dependencies between projects to leverage `dotnet` build functionality.
-For example, `src\powershell-win-core\powershell-win-core.csproj` has dependency on `Microsoft.PowerShell.PSReadLine`,
+For example, `src\powershell-win-core\powershell-win-core.csproj` has dependency on `Microsoft.PowerShell.Commands.Diagnostics.csproj`,
 but in reality, there is no build dependency.
 
 Dummy dependencies allows us to build just `$Top` folder, instead of building several folders.
@@ -86,7 +86,7 @@ cat > $targetFile <<-"EOF"
   </Target>
 </Project>
 EOF
-dotnet msbuild Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$(pwd)/src/TypeCatalogGen/powershell.inc" /nologo
+dotnet msbuild Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$(pwd)/TypeCatalogGen/powershell.inc" /nologo
 ```
 
 `powershell.inc` contains the resolved paths to the DLLs of each dependency of PowerShell,
@@ -136,7 +136,7 @@ For example, the following builds the release flavor of the binary targeting arm
 Start-BuildNativeWindowsBinaries -Configuration Release -Arch x64_arm64
 ```
 
-Be sure to build and test for all supported architectures: x86, x64, x64_arm, and x64_arm64.
+Be sure to build and test for all supported architectures: `x86`, `x64`, `x64_arm`, and `x64_arm64`.
 
 The `x64_arm` and `x64_arm64` architectures mean that the host system needs to be x64 to cross-compile to ARM.
 When building for multiple architectures, be sure to use the `-clean` switch as cmake will cache the previous run and the wrong compiler will be used to generate the subsequent architectures.

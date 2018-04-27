@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 [cmdletbinding(DefaultParameterSetName='default')]
 # PowerShell Script to clone, build and package PowerShell from specified fork and branch
 param (
@@ -103,7 +105,7 @@ try{
 
     Write-Verbose "Exporting packages ..." -verbose
 
-    Get-ChildItem $location\*.msi,$location\*.zip | ForEach-Object {
+    Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb | ForEach-Object {
         $file = $_.FullName
         Write-Verbose "Copying $file to $destination" -verbose
         Copy-Item -Path $file -Destination "$destination\" -Force

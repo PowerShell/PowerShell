@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Linq;
 using System.Management.Automation.Language;
@@ -166,7 +165,6 @@ namespace System.Management.Automation
             }
             thisAsProperty.SetAdaptedValue(setValue, false);
         }
-
 
         /// <summary>
         /// Initializes a new instance of an PSMemberInfo derived class
@@ -620,7 +618,6 @@ namespace System.Management.Automation
             return returnValue.ToString();
         }
 
-
         /// <summary>
         /// Called from TypeTableUpdate before SetSetterFromTypeTable is called
         /// </summary>
@@ -860,7 +857,6 @@ namespace System.Management.Automation
                 return GetterCodeReference != null;
             }
         }
-
 
         /// <summary>
         /// Gets and Sets the value of this member
@@ -1241,7 +1237,6 @@ namespace System.Management.Automation
             return returnValue.ToString();
         }
 
-
         internal object noteValue;
 
         /// <summary>
@@ -1407,7 +1402,6 @@ namespace System.Management.Automation
             returnValue.Append(_variable.Value ?? "null");
             return returnValue.ToString();
         }
-
 
         internal PSVariable _variable;
 
@@ -2164,7 +2158,6 @@ namespace System.Management.Automation
             }
         }
 
-
         /// <summary>
         /// Used from TypeTable
         /// </summary>
@@ -2230,7 +2223,6 @@ namespace System.Management.Automation
                 return PSMemberTypes.CodeMethod;
             }
         }
-
 
         /// <summary>
         /// Invokes CodeReference method and returns its results.
@@ -2345,7 +2337,6 @@ namespace System.Management.Automation
                 }
             }
         }
-
 
         /// <summary>
         /// Initializes a new instance of PSScriptMethod
@@ -2651,11 +2642,17 @@ namespace System.Management.Automation
 
         internal static PSMethod Create(string name, DotNetAdapter dotNetInstanceAdapter, object baseObject, DotNetAdapter.MethodCacheEntry method, bool isSpecial, bool isHidden)
         {
-            if (method.psmethodCtor == null)
+            if (method[0].method is ConstructorInfo)
             {
-                method.psmethodCtor = CreatePSMethodConstructor(method.methodInformationStructures);
+                // Constructor cannot be converted to a delegate, so just return a simple PSMethod instance
+                return new PSMethod(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
             }
-            return method.psmethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
+
+            if (method.PSMethodCtor == null)
+            {
+                method.PSMethodCtor = CreatePSMethodConstructor(method.methodInformationStructures);
+            }
+            return method.PSMethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
         }
 
         static Type GetMethodGroupType(MethodInfo methodInfo)
@@ -2706,7 +2703,7 @@ namespace System.Management.Automation
         {
             if (type == typeof(void))
             {
-                return typeof(Unit);
+                return typeof(VOID);
             }
             if (type == typeof(TypedReference))
             {
@@ -2751,7 +2748,7 @@ namespace System.Management.Automation
                 sourceType = sourceType.GenericTypeArguments[0];
             }
 
-            if (targetType == typeof(void) && sourceType == typeof(Unit))
+            if (targetType == typeof(void) && sourceType == typeof(VOID))
             {
                 return true;
             }
@@ -2792,21 +2789,14 @@ namespace System.Management.Automation
 
         private static Func<string, DotNetAdapter, object, object, bool, bool, PSMethod> CreatePSMethodConstructor(MethodInformation[] methods)
         {
+            // Produce the PSMethod creator for MethodInfo objects
             var types = new Type[methods.Length];
             for (int i = 0; i < methods.Length; i++)
             {
-                var mb = methods[i].method;
-
-                if (mb is MethodInfo mi)
-                {
-                    types[i] = GetMethodGroupType(mi);
-                }
-                else
-                {
-                    types[i] = typeof(Unit);
-                }
+                types[i] = GetMethodGroupType((MethodInfo)methods[i].method);
             }
-            var methodGroupType =  CreateMethodGroup(types, 0, types.Length);
+
+            var methodGroupType = CreateMethodGroup(types, 0, types.Length);
             Type psMethodType = typeof(PSMethod<>).MakeGenericType(methodGroupType);
             var delegateType = typeof(Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>);
             return (Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>)Delegate.CreateDelegate(delegateType, psMethodType.GetMethod("Create", BindingFlags.NonPublic|BindingFlags.Static));
@@ -2955,9 +2945,9 @@ namespace System.Management.Automation
     internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> : MethodGroup { }
     internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32> : MethodGroup { }
 
-    class Unit
+    class VOID
     {
-        private Unit() { }
+        private VOID() { }
     }
 
     internal struct PSMethodSignatureEnumerator : IEnumerator<Type>
@@ -3042,7 +3032,6 @@ namespace System.Management.Automation
         }
     }
 
-
     /// <summary>
     /// Used to access parameterized properties from the BaseObject
     /// </summary>
@@ -3061,7 +3050,6 @@ namespace System.Management.Automation
             Diagnostics.Assert((this.baseObject != null) && (this.adapter != null) && (this.adapterData != null), "it should have all these properties set");
             return this.adapter.BaseParameterizedPropertyToString(this);
         }
-
 
         internal Adapter adapter;
         internal object adapterData;
@@ -3149,7 +3137,6 @@ namespace System.Management.Automation
             }
             this.adapter.BaseParameterizedPropertySet(this, valueToSet, arguments);
         }
-
 
         /// <summary>
         /// Returns a collection of the definitions for this property
@@ -3365,7 +3352,6 @@ namespace System.Management.Automation
                 return this.inheritMembers;
             }
         }
-
 
         /// <summary>
         /// Gets the internal member collection
@@ -3898,7 +3884,6 @@ namespace System.Management.Automation
             return null;
         }
 
-
         /// <summary>
         /// Returns all members in memberList matching name and memberTypes
         /// </summary>
@@ -4040,7 +4025,6 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal abstract ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes, MshMemberMatchOptions matchOptions);
 
-
         #endregion Match
 
         internal static bool IsReservedName(string name)
@@ -4053,7 +4037,6 @@ namespace System.Management.Automation
         }
 
         #region IEnumerable
-
 
         /// <summary>
         /// Gets the general enumerator for this collection
@@ -4453,7 +4436,6 @@ namespace System.Management.Automation
 
     #region CollectionEntry
 
-
     internal class CollectionEntry<T> where T : PSMemberInfo
     {
         internal delegate PSMemberInfoInternalCollection<T> GetMembersDelegate(PSObject obj);
@@ -4585,7 +4567,6 @@ namespace System.Management.Automation
 
         internal Collection<CollectionEntry<T>> Collections { get; }
 
-
         private PSObject _mshOwner;
         private PSMemberSet _memberSetOwner;
 
@@ -4667,7 +4648,6 @@ namespace System.Management.Automation
                         null,
                         ExtendedTypeSystem.CannotAddPropertyOrMethod);
                 }
-
 
                 if (_memberSetOwner != null && _memberSetOwner.IsReservedMember)
                 {
@@ -4812,7 +4792,6 @@ namespace System.Management.Automation
             _memberSetOwner.InternalMembers.Remove(name);
         }
 
-
         /// <summary>
         /// Method which checks if the <paramref name="name"/> is reserved and if so
         /// it will ensure that the particular reserved member is loaded into the
@@ -4853,7 +4832,6 @@ namespace System.Management.Automation
                 }
             }
         }
-
 
         /// <summary>
         /// Returns the name corresponding to name or null if it is not present
@@ -4934,7 +4912,6 @@ namespace System.Management.Automation
             }
         }
 
-
         private PSMemberInfoInternalCollection<T> GetIntegratedMembers(MshMemberMatchOptions matchOptions)
         {
             using (PSObject.memberResolution.TraceScope("Generating the total list of members"))
@@ -5013,7 +4990,6 @@ namespace System.Management.Automation
                 return returnValue;
             }
         }
-
 
         /// <summary>
         /// Returns all members in the collection matching name
@@ -5184,7 +5160,6 @@ namespace System.Management.Automation
                 _currentIndex = -1;
                 _current = null;
             }
-
 
             /// <summary>
             /// Not supported

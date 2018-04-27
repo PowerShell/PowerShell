@@ -1,4 +1,6 @@
-﻿
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System.Diagnostics.CodeAnalysis;
 
 namespace System.Management.Automation.SecurityAccountsManager.Native
@@ -18,7 +20,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         public const UInt32 STATUS_SEVERITY_INFORMATIONAL   = 0x1;
         public const UInt32 STATUS_SEVERITY_ERROR           = 0x3;
 
-
         public const UInt32 STATUS_SUCCESS                  = 0x00000000;
         //
         // MessageText:
@@ -26,11 +27,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         // Returned by enumeration APIs to indicate more information is available to successive calls.
         //
         public const UInt32 STATUS_MORE_ENTRIES             = 0x00000105;
-
-
-
-
-
 
 
         /////////////////////////////////////////////////////////////////////////
@@ -453,7 +449,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
             return Severity(ntstatus) == STATUS_SEVERITY_ERROR;
         }
 
-
         /// <summary>
         /// Determine if an NTSTATUS value indicates a Warning
         /// </summary>
@@ -480,7 +475,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
             return Severity(ntstatus) == STATUS_SEVERITY_INFORMATIONAL;
         }
 
-
         /// <summary>
         /// Return the Severity part of an NTSTATUS value
         /// </summary>
@@ -492,7 +486,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         {
             return ntstatus >> 30;
         }
-
 
         /// <summary>
         /// Return the Facility part of an NSTATUS value
@@ -507,7 +500,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         {
             return (ntstatus >> 16) & 0x0FFF;
         }
-
 
         /// <summary>
         /// Return the Code part of an NTSTATUS value

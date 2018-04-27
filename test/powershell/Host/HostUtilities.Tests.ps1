@@ -1,4 +1,6 @@
-﻿Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 
     BeforeAll {
         $command = [System.Management.Automation.PSCommand]::new()
@@ -14,7 +16,7 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be "PSArgumentNullException"
+            $_.FullyQualifiedErrorId | Should -Be "PSArgumentNullException"
         }
     }
 
@@ -27,7 +29,7 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be "PSArgumentNullException"
+            $_.FullyQualifiedErrorId | Should -Be "PSArgumentNullException"
         }
     }
 }
@@ -42,7 +44,7 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
 
         $results = [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $currentRunspace)
 
-        $results[0] | Should Be "Hello!"
+        $results[0] | Should -Be "Hello!"
     }
 }
 
@@ -69,6 +71,6 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature" {
 
         $results = [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $script:remoteRunspace)
 
-        $results[0] | Should Be "Hello!"
+        $results[0] | Should -Be "Hello!"
     }
 }

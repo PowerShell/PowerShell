@@ -1,7 +1,11 @@
 ### Writing Pester Tests
-Note that this document does not replace the documents found in the [Pester](https://github.com/pester/pester "Pester") project. This is just
-some quick tips and suggestions for creating Pester tests for this project. The Pester community is vibrant and active, if you have questions
-about Pester or creating tests, the [Pester Wiki](https://github.com/pester/pester/wiki) has a lot of great information.
+Note that this document does not replace the documents found in the [Pester](https://github.com/pester/pester "Pester") project.
+This is just some quick tips and suggestions for creating Pester tests for this project.
+The Pester community is vibrant and active, if you have questions about Pester or creating tests, the [Pester Wiki](https://github.com/pester/pester/wiki) has a lot of great information.
+As of January 2018, PowerShell Core is using Pester version 4 which has some changes from earlier versions.
+See [Migrating from Pester 3 to Pester 4](https://github.com/pester/Pester/wiki/Migrating-from-Pester-3-to-Pester-4) for more information.
+
+
 
 When creating tests, keep the following in mind:
 * Tests should not be overly complicated and test too many things
@@ -16,7 +20,7 @@ Here's the simplest of tests
 Describe "A variable can be assigned and retrieved" {
     It "Create a variable and make sure its value is correct" {
        $a = 1
-       $a | Should be 1
+       $a | Should Be 1
    }
 }
 ```
@@ -27,7 +31,7 @@ If you need to do type checking, that can be done as well
 Describe "One is really one" {
     It "Compare 1 to 1" {
        $a = 1
-       $a | Should be 1
+       $a | Should Be 1
     }
     It "1 is really an int" {
        $i = 1
@@ -42,7 +46,7 @@ alternatively, you could do the following:
 Describe "One is really one" {
     It "Compare 1 to 1" {
        $a = 1
-       $a | Should be 1
+       $a | Should Be 1
     }
     It "1 is really an int" {
        $i = 1
@@ -51,25 +55,24 @@ Describe "One is really one" {
 }
 ```
 
-If you are checking for proper errors, use the `ShouldBeErrorId` helper defined in HelpersCommon.psm1 module which is in your path if you import `build.psm1`.
-Checking against `FullyQualifiedErrorId` is recommended because it does not change based on culture as an error message might.
+If you are checking for proper errors, use the `Should -Throw -ErrorId` Pester syntax.
+It checks against `FullyQualifiedErrorId` property, which is recommended because it does not change based on culture as an error message might.
 
 ```powershell
 ...
 It "Get-Item on a nonexisting file should have error PathNotFound" {
-    { Get-Item "ThisFileCannotPossiblyExist" -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+    { Get-Item "ThisFileCannotPossiblyExist" -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
 }
 ```
 
-Note that if get-item were to succeed, a different FullyQualifiedErrorId would be thrown and the test will fail.
-This is the suggested path because Pester wants to check the error message, which will likely not work here because of localized builds, but the FullyQualifiedErrorId is constant regardless of the locale.
+Note that if Get-Item were to succeed, the test will fail.
 
-However, if you need to check the `InnerException` or other members of the ErrorRecord, the recommended pattern to use is:
+However, if you need to check the `InnerException` or other members of the ErrorRecord, you should use `-PassThru` parameter:
 
 ```powershell
 	It "InnerException sample" {
 
-	$e = { Invoke-WebRequest https://expired.badssl.com/ } | ShouldBeErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+	$e = { Invoke-WebRequest https://expired.badssl.com/ } | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand" -PassThru
 	$e.Exception.InnerException.NativeErrorCode | Should Be 12175
     ...
 	}
@@ -95,6 +98,12 @@ In the AppVeyor CI, we run two different passes:
 - The pass where we run only 'RequireAdminOnWindows' tests
 
 In each case, tests are executed with appropriate privileges.
+
+Tests that need to be run with sudo **on Unix systems** should be additionally marked with 'RequireSudoOnUnix' Pester tag.
+'RequireSudoOnUnix' tag is mutually exclusive to all other tags like 'CI', 'Feature' etc. (which are now ignored when 'RequireSudoOnUnix' is present) and is treated as 'CI'.
+Similarly as above, we run the tests in Travis CI in two passes:
+- With sudo only tests with 'RequireSudoOnUnix' tag
+- Without sudo all tests excluding those with 'RequireSudoOnUnix' tag.
 
 ### Selected Features
 
@@ -136,7 +145,7 @@ $testCases = @(
 Describe "A test" {
     It "<a> -xor <b> should be <expectedresult>" -testcase $testcases {
         param ($a, $b, $ExpectedResult)
-        $a -xor $b | Should be $ExpectedResult
+        $a -xor $b | Should Be $ExpectedResult
     }
 }
 ```
@@ -151,7 +160,7 @@ The following example illustrates simple use:
 Context "Get-Random is not random" {
         Mock Get-Random { return 3 }
         It "Get-Random returns 3" {
-            Get-Random | Should be 3
+            Get-Random | Should Be 3
         }
     }
 ```

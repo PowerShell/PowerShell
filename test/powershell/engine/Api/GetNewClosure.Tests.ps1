@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "ScriptBlock.GetNewClosure()" -tags "CI" {
     
     BeforeAll {
@@ -30,13 +32,13 @@ Describe "ScriptBlock.GetNewClosure()" -tags "CI" {
     }
 
     It "Parameter attributes should not get evaluated again in GetNewClosure - SimpleFunction" {
-        SimpleFunction_GetNewClosure | Should Be "OK"
+        SimpleFunction_GetNewClosure | Should -BeExactly "OK"
     }
 
     It "Parameter attributes should not get evaluated again in GetNewClosure - ScriptCmdlet" {
         $result = ScriptCmdlet_GetNewClosure
-        $result.Count | Should Be 2
-        $result[0] | Should Be 4
-        $result[1] | Should Be ""
+        $result.Count | Should -Be 2
+        $result[0] | Should -Be 4
+        $result[1] | Should -BeNullOrEmpty
     }
 }

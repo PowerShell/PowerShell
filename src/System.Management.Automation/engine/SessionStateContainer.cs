@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -144,7 +143,6 @@ namespace System.Management.Automation
                         out provider,
                         out providerInstance);
 
-
                 foreach (string providerPath in providerPaths)
                 {
                     result = ItemExists(providerInstance, providerPath, context);
@@ -206,7 +204,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
@@ -368,7 +365,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
@@ -562,7 +558,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
@@ -708,7 +703,6 @@ namespace System.Management.Automation
                         context,
                         out provider,
                         out providerInstance);
-
 
                 foreach (string providerPath in providerPaths)
                 {
@@ -1096,7 +1090,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
 
@@ -1308,7 +1301,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
 
@@ -1499,6 +1491,22 @@ namespace System.Management.Automation
                     // expectations:
                     if (recurse)
                     {
+                        string childName = GetChildName(path, context);
+                            
+                        // If -File or -Directory is specified and path is ended with '*', we should include the parent path as search path
+
+                        bool isFileOrDirectoryPresent = false;
+
+                        if(context.DynamicParameters is Microsoft.PowerShell.Commands.GetChildDynamicParameters dynParam)
+                        {
+                            isFileOrDirectoryPresent = dynParam.File.IsPresent || dynParam.Directory.IsPresent;
+                        }
+
+                        if (String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)
+                        {
+                            string parentName = path.Substring(0, path.Length - childName.Length);
+                            path = parentName;
+                        }
                         // dir c:\tem* -include *.ps1 -rec => No change
                         if ((context.Include == null) || (context.Include.Count == 0))
                         {
@@ -1509,9 +1517,8 @@ namespace System.Management.Automation
                             // Should glob paths and files that match tem*, but then
                             // recurse into all subdirectories and do the same for
                             // those directories.
-                            if ((!String.IsNullOrEmpty(path)) && (!IsItemContainer(path)))
+                            if (!String.IsNullOrEmpty(path) && !IsItemContainer(path))
                             {
-                                string childName = GetChildName(path, context);
                                 if (!String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
                                 {
                                     if (context.Include != null)
@@ -1569,7 +1576,6 @@ namespace System.Management.Automation
                     {
                         ContainerCmdletProvider unused = GetContainerProviderInstance(provider);
                     }
-
 
                     bool getChildrenBecauseNoGlob = !LocationGlobber.StringContainsGlobCharacters(path);
                     // If we are doing recursion and we have include or exclude
@@ -1648,7 +1654,25 @@ namespace System.Management.Automation
 
                 ContainerCmdletProvider providerInstance = GetContainerProviderInstance(provider);
 
-                if (path != null && this.ItemExists(providerInstance, path, context))
+                if (
+                    (context.Include != null && context.Include.Count > 0) ||
+                    (context.Exclude != null && context.Exclude.Count > 0))
+                {
+                    // Do the recursion manually so that we can apply the
+                    // include and exclude filters
+                    int unUsedChildrenNotMatchingFilterCriteria = 0;
+                    try
+                    {
+                        // Temeporary set literal path as false to apply filter
+                        context.SuppressWildcardExpansion = false;
+                        ProcessPathItems(providerInstance, path, recurse, depth, context, out unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate);
+                    }
+                    finally
+                    {
+                        context.SuppressWildcardExpansion = true;       
+                    }
+                }
+                else if (path != null && this.ItemExists(providerInstance, path, context))
                 {
                     if (IsItemContainer(providerInstance, path, context))
                     {
@@ -1726,7 +1750,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
@@ -1950,7 +1973,6 @@ namespace System.Management.Automation
                     context.Include,
                     WildcardOptions.IgnoreCase);
 
-
             // Construct the exclude filter
 
             Collection<WildcardPattern> excludeMatcher =
@@ -1978,7 +2000,6 @@ namespace System.Management.Automation
                         newContext);
                     newContext.WriteErrorsToContext(context);
                     childNameObjects = newContext.GetAccumulatedObjects();
-
 
                     // The code above initially retrieves all of the containers so that it doesn't limit the recursion,
                     // but then emits the non-matching container further down. The public API doesn't support a way to
@@ -2264,7 +2285,7 @@ namespace System.Management.Automation
             {
                 mi = providerType.GetMethod("GetChildItemsDynamicParameters",
                  BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-                providerType = providerType.GetTypeInfo().BaseType;
+                providerType = providerType.BaseType;
             } while (
                 (mi == null) &&
                 (providerType != null) &&
@@ -2329,7 +2350,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
@@ -2558,7 +2578,6 @@ namespace System.Management.Automation
                     context.Include,
                     WildcardOptions.IgnoreCase);
 
-
             // Construct the exclude filter
 
             Collection<WildcardPattern> excludeMatcher =
@@ -2605,7 +2624,6 @@ namespace System.Management.Automation
                     {
                         return;
                     }
-
 
                     if ((!pathContainsGlobCharacters || recurse) && IsItemContainer(providerInstance, providerPath, context))
                     {
@@ -2985,7 +3003,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
 
@@ -3172,7 +3189,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
@@ -3414,7 +3430,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
 
@@ -3581,7 +3596,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
@@ -3878,7 +3892,6 @@ namespace System.Management.Automation
             }
         } // NewItem
 
-
         /// <summary>
         /// Creates a new item at the specified path.
         /// </summary>
@@ -3931,7 +3944,6 @@ namespace System.Management.Automation
                 path != null,
                 "Caller should validate path before calling this method");
 
-
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
 
@@ -3961,7 +3973,6 @@ namespace System.Management.Automation
                     e);
             }
         } // NewItem
-
 
         /// <summary>
         /// Gets the dynamic parameters for the new-item cmdlet.
@@ -4108,7 +4119,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
@@ -4411,7 +4421,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
@@ -4922,7 +4931,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             ContainerCmdletProvider containerCmdletProvider =
                 GetContainerProviderInstance(providerInstance);
 
@@ -5398,7 +5406,6 @@ namespace System.Management.Automation
 
         #endregion ContainerCmdletProvider accessors
     }           // SessionStateInternal class
-
 
     /// <summary>
     /// Defines the action to be taken for Navigation cmdlets

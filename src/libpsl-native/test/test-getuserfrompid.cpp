@@ -1,5 +1,6 @@
-//! @file test-getuserfrompid.cpp
-//! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Unit tests for GetUserFromPid
 
 #include <gtest/gtest.h>

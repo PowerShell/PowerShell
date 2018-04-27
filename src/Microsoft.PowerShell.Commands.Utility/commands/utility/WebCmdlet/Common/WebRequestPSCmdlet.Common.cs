@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
@@ -355,6 +354,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SwitchParameter PassThru { get; set; }
 
+        /// <summary>
+        /// Resumes downloading a partial or incomplete file. OutFile is required.
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter Resume { get; set; }
+
         #endregion
 
         #endregion Virtual Properties
@@ -513,7 +518,15 @@ namespace Microsoft.PowerShell.Commands
             if (PassThru && (OutFile == null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing,
-                                                       "WebCmdletOutFileMissingException");
+                                                       "WebCmdletOutFileMissingException", nameof(PassThru));
+                ThrowTerminatingError(error);
+            }
+
+            // Resume requires OutFile.
+            if (Resume.IsPresent && OutFile == null)
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing,
+                                                       "WebCmdletOutFileMissingException", nameof(Resume));
                 ThrowTerminatingError(error);
             }
         }
@@ -553,7 +566,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession.UseDefaultCredentials = true;
             }
-
 
             if (null != CertificateThumbprint)
             {
@@ -637,6 +649,14 @@ namespace Microsoft.PowerShell.Commands
         internal bool ShouldWriteToPipeline
         {
             get { return (!ShouldSaveToOutFile || PassThru); }
+        }
+
+        /// <summary>
+        /// Determines whether writing to a file should Resume and append rather than overwrite.
+        /// </summary>
+        internal bool ShouldResume
+        {
+            get { return (Resume.IsPresent && _resumeSuccess); }
         }
 
         #endregion Helper Properties
@@ -862,6 +882,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal int _maximumFollowRelLink = Int32.MaxValue;
 
+        /// <summary>
+        /// The remote endpoint returned a 206 status code indicating successful resume.
+        /// </summary>
+        private bool _resumeSuccess = false;
+
+        /// <summary>
+        /// The current size of the local file being resumed.
+        /// </summary>
+        private long _resumeFileSize = 0;
+
         private HttpMethod GetHttpMethod(WebRequestMethod method)
         {
             switch (Method)
@@ -946,7 +976,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             handler.SslProtocols = (SslProtocols)SslProtocol;
-
 
             HttpClient httpClient = new HttpClient(handler);
 
@@ -1065,6 +1094,22 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            // If the file to resume downloading exists, create the Range request header using the file size.
+            // If not, create a Range to request the entire file.
+            if (Resume.IsPresent)
+            {
+                var fileInfo = new FileInfo(QualifiedOutFile);
+                if (fileInfo.Exists)
+                {
+                    request.Headers.Range = new RangeHeaderValue(fileInfo.Length, null);
+                    _resumeFileSize = fileInfo.Length;
+                }
+                else
+                {
+                    request.Headers.Range = new RangeHeaderValue(0, null);
+                }
+            }
+
             // Some web sites (e.g. Twitter) will return exception on POST when Expect100 is sent
             // Default behavior is continue to send body content anyway after a short period
             // Here it send the two part as a whole.
@@ -1176,7 +1221,23 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var entry in WebSession.ContentHeaders)
                 {
-                    request.Content.Headers.Add(entry.Key, entry.Value);
+                    if (SkipHeaderValidation)
+                    {
+                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            request.Content.Headers.Add(entry.Key, entry.Value);
+                        }
+                        catch (FormatException ex)
+                        {
+                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                            ThrowTerminatingError(er);
+                        }
+                    }
                 }
             }
         }
@@ -1220,10 +1281,13 @@ namespace Microsoft.PowerShell.Commands
             if (client == null) { throw new ArgumentNullException("client"); }
             if (request == null) { throw new ArgumentNullException("request"); }
 
+            // Track the current URI being used by various requests and re-requests.
+            var currentUri = request.RequestUri;
+
             _cancelToken = new CancellationTokenSource();
             HttpResponseMessage response = client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
-            if (stripAuthorization && IsRedirectCode(response.StatusCode))
+            if (stripAuthorization && IsRedirectCode(response.StatusCode) && response.Headers.Location != null)
             {
                 _cancelToken.Cancel();
                 _cancelToken = null;
@@ -1243,14 +1307,51 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // recreate the HttpClient with redirection enabled since the first call suppressed redirection
+                currentUri = new Uri(request.RequestUri, response.Headers.Location);
                 using (client = GetHttpClient(false))
-                using (HttpRequestMessage redirectRequest = GetRequest(response.Headers.Location, stripAuthorization:true))
+                using (HttpRequestMessage redirectRequest = GetRequest(currentUri, stripAuthorization:true))
                 {
                     FillRequestStream(redirectRequest);
                     _cancelToken = new CancellationTokenSource();
                     response = client.SendAsync(redirectRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
                 }
             }
+
+            // Request again without the Range header because the server indicated the range was not satisfiable.
+            // This happens when the local file is larger than the remote file.
+            // If the size of the remote file is the same as the local file, there is nothing to resume.
+            if (Resume.IsPresent && 
+                response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable && 
+                (response.Content.Headers.ContentRange.HasLength &&
+                response.Content.Headers.ContentRange.Length != _resumeFileSize))
+            {
+                _cancelToken.Cancel();
+
+                WriteVerbose(WebCmdletStrings.WebMethodResumeFailedVerboseMsg);
+
+                // Disable the Resume switch so the subsequent calls to GetResponse() and FillRequestStream()
+                // are treated as a standard -OutFile request. This also disables appending local file.
+                Resume = new SwitchParameter(false);
+
+                using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri, stripAuthorization:false))
+                {
+                    FillRequestStream(requestWithoutRange);
+                    long requestContentLength = 0;
+                    if (requestWithoutRange.Content != null)
+                        requestContentLength = requestWithoutRange.Content.Headers.ContentLength.Value;
+
+                    string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
+                        WebCmdletStrings.WebMethodInvocationVerboseMsg,
+                        requestWithoutRange.Method,
+                        requestWithoutRange.RequestUri,
+                        requestContentLength);
+                    WriteVerbose(reqVerboseMsg);
+
+                    return GetResponse(client, requestWithoutRange, stripAuthorization);
+                }
+            }
+
+            _resumeSuccess = response.StatusCode == HttpStatusCode.PartialContent;
             return response;
         }
 
@@ -1323,7 +1424,22 @@ namespace Microsoft.PowerShell.Commands
                                     contentType);
                                 WriteVerbose(respVerboseMsg);
 
-                                if (!response.IsSuccessStatusCode)
+                                bool _isSuccess = response.IsSuccessStatusCode;
+
+                                // Check if the Resume range was not satisfiable because the file already completed downloading.
+                                // This happens when the local file is the same size as the remote file.
+                                if (Resume.IsPresent &&
+                                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable && 
+                                    response.Content.Headers.ContentRange.HasLength && 
+                                    response.Content.Headers.ContentRange.Length == _resumeFileSize)
+                                {
+                                    _isSuccess = true;
+                                    WriteVerbose(String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, OutFile));
+                                    // Disable writing to the OutFile.
+                                    OutFile = null;
+                                }
+
+                                if (!_isSuccess)
                                 {
                                     string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
                                         (int)response.StatusCode, response.ReasonPhrase);
@@ -1476,16 +1592,29 @@ namespace Microsoft.PowerShell.Commands
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
                 // would be used if Charset is not supplied in the Content-Type property.
-                var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
-                if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
+                try
                 {
-                    try
+                    var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
+                    if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
                     }
-                    catch (ArgumentException ex)
+                }
+                catch (FormatException ex)
+                {
+                    if (!SkipHeaderValidation)
                     {
-                        ErrorRecord er = new ErrorRecord(ex, "WebCmdletEncodingException", ErrorCategory.InvalidArgument, ContentType);
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ThrowTerminatingError(er);
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    if (!SkipHeaderValidation)
+                    {
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                         ThrowTerminatingError(er);
                     }
                 }
@@ -1590,7 +1719,8 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_relationLink == null)
             {
-                _relationLink = new Dictionary<string, string>();
+                // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
+                _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             }
             else
             {

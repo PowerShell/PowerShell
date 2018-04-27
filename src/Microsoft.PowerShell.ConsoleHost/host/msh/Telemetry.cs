@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
@@ -16,16 +19,8 @@ namespace Microsoft.PowerShell
     /// </summary>
     internal static class ApplicationInsightsTelemetry
     {
-        // The semaphore file which indicates whether telemetry should be sent
-        // This is temporary code waiting on the acceptance and implementation of the configuration spec
-        // The name of the file by when present in $PSHOME will enable telemetry.
-        // If this file is not present, no telemetry will be sent.
-        private const string TelemetrySemaphoreFilename = "DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY";
-
-        // The path to the semaphore file which enables telemetry
-        private static string TelemetrySemaphoreFilePath = Path.Combine(
-            Utils.DefaultPowerShellAppBase,
-            TelemetrySemaphoreFilename);
+        // If this env var is true, yes, or 1, telemetry will NOT be sent.
+        private const string TelemetryOptoutEnvVar = "POWERSHELL_TELEMETRY_OPTOUT";
 
         // Telemetry client to be reused when we start sending more telemetry
         private static TelemetryClient _telemetryClient = null;
@@ -42,6 +37,28 @@ namespace Microsoft.PowerShell
             TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = _developerMode;
         }
 
+        private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue) {
+            var str = Environment.GetEnvironmentVariable(name);
+            if (string.IsNullOrEmpty(str))
+            {
+                return defaultValue;
+            }
+
+            switch (str.ToLowerInvariant())
+            {
+                case "true":
+                case "1":
+                case "yes":
+                    return true;
+                case "false":
+                case "0":
+                case "no":
+                    return false;
+                default:
+                    return defaultValue;
+            }
+        }
+
         /// <summary>
         /// Send the telemetry
         /// </summary>
@@ -49,15 +66,18 @@ namespace Microsoft.PowerShell
         {
             try
             {
-                // if the semaphore file exists, try to send telemetry
-                if (Utils.NativeFileExists(TelemetrySemaphoreFilePath))
+                var enabled = !GetEnvironmentVariableAsBool(name : TelemetryOptoutEnvVar, defaultValue : false);
+
+                if (!enabled)
                 {
-                    if ( _telemetryClient == null )
-                    {
-                        _telemetryClient = new TelemetryClient();
-                    }
-                    _telemetryClient.TrackEvent(eventName, payload, null);
+                    return;
                 }
+
+                if (_telemetryClient == null)
+                {
+                    _telemetryClient = new TelemetryClient();
+                }
+                _telemetryClient.TrackEvent(eventName, payload, null);
             }
             catch (Exception)
             {

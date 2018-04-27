@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -30,7 +29,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private PSCmdlet _command;
     }
-
 
     /// <summary>
     /// helper class to invoke a command in a secondary pipeline.
@@ -66,7 +64,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     /*argumentAst*/null, parameterValue,
                     false));
         }
-
 
         /// <summary>
         /// send an object to the pipeline
@@ -232,7 +229,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal ImplementationCommandBase implementation = null;
 
-
         #region IDisposable Implementation
 
         /// <summary>
@@ -376,7 +372,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// callback to write object
         /// </summary>
         internal WriteObjectCallback WriteObjectCall;
-
 
         #region IDisposable Implementation
 

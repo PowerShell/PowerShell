@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,6 @@ using System.Management.Automation.Runspaces.Internal;
 using System.Management.Automation.Remoting.Client;
 using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -1069,19 +1067,29 @@ namespace Microsoft.PowerShell.Commands
         {
             // Resolve all the machine names
             String[] resolvedComputerNames;
+
             ResolveComputerNames(HostName, out resolvedComputerNames);
-            ValidateComputerName(resolvedComputerNames);
 
             var remoteRunspaces = new List<RemoteRunspace>();
+            int index = 0;
             foreach (var computerName in resolvedComputerNames)
             {
+                ParseSshHostName(computerName, out string host, out string userName, out int port);
+
                 var sshConnectionInfo = new SSHConnectionInfo(
-                    this.UserName,
-                    computerName,
+                    userName,
+                    host,
                     this.KeyFilePath,
-                    this.Port);
+                    port,
+                    Subsystem);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
-                remoteRunspaces.Add(RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace);
+                string rsName = GetRunspaceName(index, out int rsIdUnused);
+                index++;
+                remoteRunspaces.Add(RunspaceFactory.CreateRunspace( connectionInfo : sshConnectionInfo,
+                                                                    host : this.Host,
+                                                                    typeTable : typeTable,
+                                                                    applicationArguments : null,
+                                                                    name : rsName) as RemoteRunspace);
             }
 
             return remoteRunspaces;
@@ -1091,15 +1099,23 @@ namespace Microsoft.PowerShell.Commands
         {
             var sshConnections = ParseSSHConnectionHashTable();
             var remoteRunspaces = new List<RemoteRunspace>();
+            int index = 0;
             foreach (var sshConnection in sshConnections)
             {
                 var sshConnectionInfo = new SSHConnectionInfo(
                     sshConnection.UserName,
                     sshConnection.ComputerName,
                     sshConnection.KeyFilePath,
-                    sshConnection.Port);
+                    sshConnection.Port,
+                    sshConnection.Subsystem);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
-                remoteRunspaces.Add(RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace);
+                string rsName = GetRunspaceName(index, out int rsIdUnused);
+                index++;
+                remoteRunspaces.Add(RunspaceFactory.CreateRunspace( connectionInfo : sshConnectionInfo,
+                                                                    host : this.Host,
+                                                                    typeTable : typeTable,
+                                                                    applicationArguments : null,
+                                                                    name : rsName) as RemoteRunspace);
             }
 
             return remoteRunspaces;

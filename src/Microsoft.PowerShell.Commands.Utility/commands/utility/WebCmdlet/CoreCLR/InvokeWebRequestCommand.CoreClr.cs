@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -10,7 +9,7 @@ using System.IO;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Invoke-RestMethod command
+    /// The Invoke-WebRequest command.
     /// This command makes an HTTP or HTTPS request to a web server and returns the results.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217035", DefaultParameterSetName = "StandardMethod")]

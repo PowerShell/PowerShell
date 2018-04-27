@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #region Using directives
 
@@ -100,7 +99,6 @@ namespace Microsoft.PowerShell.Commands
             ThrowTerminatingError(
                 new ErrorRecord(ex, "SetValueException", ErrorCategory.InvalidData, null));
         }
-
 
         private static string ParameterSet2ResourceString(string parameterSet)
         {

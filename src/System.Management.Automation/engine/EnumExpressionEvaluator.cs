@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Text;
@@ -27,7 +26,7 @@ namespace System.Management.Automation
         /// </param>
         public FlagsExpression(string expression)
         {
-            if (!typeof(T).GetTypeInfo().IsEnum)
+            if (!typeof(T).IsEnum)
             {
                 throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                     null, "InvalidGenericType", EnumExpressionEvaluatorStrings.InvalidGenericType);
@@ -59,7 +58,7 @@ namespace System.Management.Automation
         /// </param>
         public FlagsExpression(object[] expression)
         {
-            if (!typeof(T).GetTypeInfo().IsEnum)
+            if (!typeof(T).IsEnum)
             {
                 throw InterpreterError.NewInterpreterException(expression, typeof(RuntimeException),
                     null, "InvalidGenericType", EnumExpressionEvaluatorStrings.InvalidGenericType);

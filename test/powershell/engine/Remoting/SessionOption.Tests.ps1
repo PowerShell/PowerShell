@@ -1,27 +1,29 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 try {
     if ( ! $IsWindows ) {
         $PSDefaultParameterValues['it:skip'] = $true
     }
     Describe " WSMan SessionOption object" -Tag @("CI") {
         It "The SessionOption type exists" {
-            "Microsoft.WSMan.Management.SessionOption" -as "Type" | Should Not BeNullOrEmpty
+            "Microsoft.WSMan.Management.SessionOption" -as "Type" | Should -Not -BeNullOrEmpty
         }
         It "The SessionOption type can be created" {
             $result = [Microsoft.WSMan.Management.SessionOption]::new()
-            $result | should BeOfType "Microsoft.WSMan.Management.SessionOption"
+            $result | should -BeOfType "Microsoft.WSMan.Management.SessionOption"
         }
         It "The SessionOption type has the proper properties when created with the default constructor" {
             $result = [Microsoft.WSMan.Management.SessionOption]::new()
-            $result.SkipCACheck         | should be $False
-            $result.SkipCNCheck         | should be $False
-            $result.SkipRevocationCheck | should be $False
-            $result.UseEncryption       | should be $True
-            $result.UseUtf16            | should be $False
-            $result.ProxyAuthentication | should be 0
-            $result.SPNPort             | should be 0
-            $result.OperationTimeout    | should be 0
-            $result.ProxyCredential     | should BeNullOrEmpty
-            $result.ProxyAccessType     | should be ProxyIEConfig
+            $result.SkipCACheck         | should -BeFalse
+            $result.SkipCNCheck         | should -BeFalse
+            $result.SkipRevocationCheck | should -BeFalse
+            $result.UseEncryption       | should -BeTrue
+            $result.UseUtf16            | should -BeFalse
+            $result.ProxyAuthentication | should -Be 0
+            $result.SPNPort             | should -Be 0
+            $result.OperationTimeout    | should -Be 0
+            $result.ProxyCredential     | should -BeNullOrEmpty
+            $result.ProxyAccessType     | should -Be ProxyIEConfig
         }
         It "The values of SessionOption may be set" {
             $result = [Microsoft.WSMan.Management.SessionOption]::new()
@@ -36,16 +38,16 @@ try {
             $result.ProxyAccessType = "ProxyAutoDetect"
             $result.ProxyCredential = [System.Net.NetworkCredential]::new("user","pass")
 
-            $result.SkipCACheck         | should be $true
-            $result.SkipCNCheck         | should be $true
-            $result.SkipRevocationCheck | should be $true
-            $result.UseEncryption       | should be $False
-            $result.UseUtf16            | should be $True
-            $result.ProxyAuthentication | should be "Negotiate"
-            $result.SPNPort             | should be 10
-            $result.OperationTimeout    | should be 10
-            $result.ProxyCredential     | should Not BeNullOrEmpty
-            $result.ProxyAccessType     | should be "ProxyAutoDetect"
+            $result.SkipCACheck         | should -BeTrue
+            $result.SkipCNCheck         | should -BeTrue
+            $result.SkipRevocationCheck | should -BeTrue
+            $result.UseEncryption       | should -BeFalse
+            $result.UseUtf16            | should -BeTrue
+            $result.ProxyAuthentication | should -Be "Negotiate"
+            $result.SPNPort             | should -Be 10
+            $result.OperationTimeout    | should -Be 10
+            $result.ProxyCredential     | should -Not -BeNullOrEmpty
+            $result.ProxyAccessType     | should -Be "ProxyAutoDetect"
         }
     }
 }

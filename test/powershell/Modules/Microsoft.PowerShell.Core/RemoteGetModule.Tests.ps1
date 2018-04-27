@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
@@ -36,8 +38,8 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
             $parameters += @{name=$name}
         }
         $modules = Get-Module @parameters
-        $modules | Should Not BeNullOrEmpty
-        $modules[0] | Should BeOfType "System.Management.Automation.PSModuleInfo"
+        $modules | Should -Not -BeNullOrEmpty
+        $modules[0] | Should -BeOfType "System.Management.Automation.PSModuleInfo"
     }
 
     It "Get-Module can be called as an API with '<parameter>' = '<value>'" -TestCases @(
@@ -62,11 +64,11 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
         $getModuleCommand = [Microsoft.PowerShell.Commands.GetModuleCommand]::new()
         $getModuleCommand.$parameter = $value
         if ($parameter -eq "FullyQualifiedName") {
-            $getModuleCommand.FullyQualifiedName | Should BeOfType "Microsoft.PowerShell.Commands.ModuleSpecification"
-            $getModuleCommand.FullyQualifiedName.Name | Should Be "foo"
-            $getModuleCommand.FullyQualifiedName.Version | Should Be "1.2.3"
+            $getModuleCommand.FullyQualifiedName | Should -BeOfType "Microsoft.PowerShell.Commands.ModuleSpecification"
+            $getModuleCommand.FullyQualifiedName.Name | Should -BeExactly "foo"
+            $getModuleCommand.FullyQualifiedName.Version | Should -Be "1.2.3"
         } else {
-            $getModuleCommand.$parameter | Should Be $value
+            $getModuleCommand.$parameter | Should -Be $value
         }
     }
 
@@ -76,7 +78,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     It "Get-Module supports pipeline" {
         $module = Get-Module -Name Microsoft.PowerShell.Utility
-        Compare-Object $module ($module | Get-Module) | Should BeNullOrEmpty
+        Compare-Object $module ($module | Get-Module) | Should -BeNullOrEmpty
     }
 
     It "New-CimSession works" -Pending {

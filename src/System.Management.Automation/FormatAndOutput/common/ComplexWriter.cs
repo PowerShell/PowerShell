@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -147,7 +146,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 firstLineIndentation = 0;
             }
 
-
             // compute the first line indentation or hanging
             int firstLineWidth = _textColumns - rightIndentation - leftIndentation;
             int followingLinesWidth = firstLineWidth;
@@ -224,7 +222,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private const int maxRecursionDepth = 50;
     }
 
-
     internal sealed class IndentationManager
     {
         private sealed class IndentationStackFrame : IDisposable
@@ -287,7 +284,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return _frameInfoStack.Peek().firstLine;
             }
         }
-
 
         private int ComputeRightIndentation()
         {
@@ -704,12 +700,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static string TruncateAtNewLine(string s)
         {
             if (string.IsNullOrEmpty(s))
-                return s;
+            {
+                return "";
+            }
 
             int lineBreak = s.IndexOfAny(s_lineBreakChars);
 
             if (lineBreak < 0)
+            {
                 return s;
+            }
 
             return s.Substring(0, lineBreak) + PSObjectHelper.ellipses;
         }

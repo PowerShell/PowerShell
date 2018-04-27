@@ -1,4 +1,6 @@
-﻿Describe "CliXml test" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "CliXml test" -Tags "CI" {
 
     BeforeAll {
         $testFilePath = Join-Path "testdrive:\" "testCliXml"
@@ -55,17 +57,7 @@
 
             It "$($_.testName)" {
                 $test = $_
-
-                try
-                {
-                    Export-Clixml -Depth 1 -LiteralPath $test.testFile -InputObject $test.inputObject -Force
-                }
-                catch
-                {
-                    $exportCliXmlError = $_
-                }
-
-                $exportCliXmlError.FullyQualifiedErrorId | Should Be $test.expectedError
+                { Export-Clixml -Depth 1 -LiteralPath $test.testFile -InputObject $test.inputObject -Force } | Should -Throw -ErrorId $test.expectedError
             }
         }
 
@@ -74,7 +66,7 @@
             $filePath = Join-Path $subFilePath 'gps.xml'
             Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject ($gpsList | Select-Object -First 1)
 
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
             $isExisted = $false
@@ -92,16 +84,15 @@
                 }
             }
 
-            $isExisted | Should Be $true
+            $isExisted | Should -BeTrue
         }
 
         It "can be created with literal path using pipeline" {
 
-
             $filePath = Join-Path $subFilePath 'gps.xml'
             ($gpsList | Select-Object -First 1) | Export-Clixml -Depth 1 -LiteralPath $filePath
 
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
             $isExisted = $false
@@ -119,7 +110,7 @@
                 }
             }
 
-            $isExisted | Should Be $true
+            $isExisted | Should -BeTrue
         }
     }
 
@@ -140,52 +131,43 @@
             It "$($_.testName)" {
                 $test = $_
 
-                try
-                {
-                    Import-Clixml -LiteralPath $test.testFile
-                }
-                catch
-                {
-                    $importCliXmlError = $_
-                }
-
-                $importCliXmlError.FullyQualifiedErrorId | Should Be $test.expectedError
+                { Import-Clixml -LiteralPath $test.testFile } | Should -Throw -ErrorId $test.expectedError
             }
         }
 
         It "can import from a literal path" {
             Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject $gps
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
-            $fileContent | Should Not Be $null
+            $fileContent | Should -Not -Be $null
 
             $importedProcess = Import-Clixml $filePath
-            $importedProcess.ProcessName | Should Not BeNullOrEmpty
-            $gps.ProcessName | Should Be $importedProcess.ProcessName
-            $importedProcess.Id | Should Not BeNullOrEmpty
-            $gps.Id | Should Be $importedProcess.Id
+            $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
+            $importedProcess.Id | Should -Not -BeNullOrEmpty
+            $gps.Id | Should -Be $importedProcess.Id
         }
 
         It "can import from a literal path using pipeline" {
             $gps | Export-Clixml -Depth 1 -LiteralPath $filePath
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
-            $fileContent | Should Not Be $null
+            $fileContent | Should -Not -Be $null
 
             $importedProcess = Import-Clixml $filePath
-            $importedProcess.ProcessName | Should Not BeNullOrEmpty
-            $gps.ProcessName | Should Be $importedProcess.ProcessName
-            $importedProcess.Id | Should Not BeNullOrEmpty
-            $gps.Id | Should Be $importedProcess.Id
+            $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
+            $importedProcess.Id | Should -Not -BeNullOrEmpty
+            $gps.Id | Should -Be $importedProcess.Id
         }
 
         It "test follow-up for WinBlue: 161470 - Export-CliXml errors in WhatIf scenarios" {
 
             $testPath = "testdrive:\Bug161470NonExistPath.txt"
             Export-Clixml -Path $testPath -InputObject "string" -WhatIf
-            $testPath | Should Not Exist
+            $testPath | Should -Not -Exist
         }
     }
 }
@@ -227,6 +209,6 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
             Start-Sleep -Milliseconds 500
         }
 
-        $calcProc | Should BeNullOrEmpty
+        $calcProc | Should -BeNullOrEmpty
     }
 }

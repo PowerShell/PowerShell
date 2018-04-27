@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Generic;
 using Microsoft.Management.Infrastructure.Serialization;
@@ -664,7 +667,18 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             else
             {
-                var systemResourceRoot = Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.System), "Configuration");
+                // DSC SxS scenario
+                var configSystemPath = Utils.DefaultPowerShellAppBase;
+                var systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
+                var inboxModulePath = "Modules\\PSDesiredStateConfiguration";
+
+                if (!Directory.Exists(systemResourceRoot))
+                {
+                     configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
+                     systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
+                     inboxModulePath = InboxDscResourceModulePath;
+                }
+
                 var programFilesDirectory = Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
                 Debug.Assert(programFilesDirectory != null, "Program Files environment variable does not exist!");
                 var customResourceRoot = Path.Combine(programFilesDirectory, "WindowsPowerShell\\Configuration");
@@ -705,7 +719,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 List<string> modulePaths = new List<string>();
                 if (modulePathList == null || modulePathList.Count == 0)
                 {
-                    modulePaths.Add(Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.System), InboxDscResourceModulePath));
+                    modulePaths.Add(Path.Combine(configSystemPath, inboxModulePath));
                     isInboxResource = true;
                 }
                 else
@@ -2288,7 +2302,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (type != null)
                 {
                     ProcessMembers(type, sb, embeddedInstanceTypes, className);
-                    var t = type.GetTypeInfo().BaseType;
+                    var t = type.BaseType;
                     if (t != null)
                     {
                         bases.Enqueue(t);
@@ -2422,7 +2436,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType,
                         out embeddedInstanceType,
                         embeddedInstanceTypes);
-                    if (memberType.GetTypeInfo().IsEnum)
+                    if (memberType.IsEnum)
                     {
                         enumNames = Enum.GetNames(memberType);
                     }
@@ -2693,12 +2707,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         internal static string MapTypeToMofType(Type type, String memberName, String className, out bool isArrayType, out string embeddedInstanceType, List<object> embeddedInstanceTypes)
         {
             isArrayType = false;
-            if (type.GetTypeInfo().IsValueType)
+            if (type.IsValueType)
             {
                 type = Nullable.GetUnderlyingType(type) ?? type;
             }
 
-            if (type.GetTypeInfo().IsEnum)
+            if (type.IsEnum)
             {
                 embeddedInstanceType = null;
                 return "string";
@@ -2738,24 +2752,23 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
             }
 
-
             bool supported = false;
             bool missingDefaultConstructor = false;
-            if (type.GetTypeInfo().IsValueType)
+            if (type.IsValueType)
             {
                 if (s_mapPrimitiveDotNetTypeToMof.ContainsKey(type))
                 {
                     supported = true;
                 }
             }
-            else if (!type.GetTypeInfo().IsAbstract)
+            else if (!type.IsAbstract)
             {
                 // Must have default constructor, at least 1 public property/field, and no base classes
                 if (type.GetConstructor(PSTypeExtensions.EmptyTypes) == null)
                 {
                     missingDefaultConstructor = true;
                 }
-                else if (type.GetTypeInfo().BaseType == typeof(object) &&
+                else if (type.BaseType == typeof(object) &&
                     (type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Length > 0 ||
                          type.GetFields(BindingFlags.Instance | BindingFlags.Public).Length > 0))
                 {
@@ -2937,7 +2950,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             // Friendly name is required by module validator to verify resource instance against the exclusive resource name list.
             sb.AppendFormat(CultureInfo.InvariantCulture, "[ClassVersion(\"1.0.0\"), FriendlyName(\"{0}\")]\nclass {0}", className);
 
-            if (type.GetTypeInfo().GetCustomAttributes<DscResourceAttribute>().Any())
+            if (type.GetCustomAttributes<DscResourceAttribute>().Any())
             {
                 sb.Append(" : OMI_BaseResource");
             }
@@ -2979,7 +2992,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     embeddedInstanceTypes);
                 string arrayAffix = isArrayType ? "[]" : String.Empty;
 
-                var enumNames = memberType.GetTypeInfo().IsEnum
+                var enumNames = memberType.IsEnum
                     ? Enum.GetNames(memberType)
                     : null;
                 sb.AppendFormat(CultureInfo.InvariantCulture,
@@ -3002,7 +3015,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
 
             IEnumerable<Type> resourceDefinitions =
-                assembly.GetTypes().Where(t => t.GetTypeInfo().GetCustomAttributes<DscResourceAttribute>().Any());
+                assembly.GetTypes().Where(t => t.GetCustomAttributes<DscResourceAttribute>().Any());
 
             foreach (var r in resourceDefinitions)
             {
@@ -3731,7 +3744,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                 }
 
-
                 if($null -ne $value['ExclusiveResources'])
                 {
 # make sure the references are well-formed
@@ -3899,7 +3911,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
     }
 
-
 # Generate the MOF text for this resource instance.
 # when generate mof text for OMI_ConfigurationDocument we handle below two cases:
 # 1. we will add versioning related property based on meta configuration instance already process
@@ -3925,5 +3936,4 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
     ";
     }
 }
-
 

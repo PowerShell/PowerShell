@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $Environment = Get-EnvironmentInformation
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
@@ -51,7 +53,7 @@ function Start-PSPackage {
     End {
         $IncludeSymbols = $null
         if ($PSBoundParameters.ContainsKey('IncludeSymbols')) {
-            log 'setting IncludeSymbols'
+            Write-Log 'setting IncludeSymbols'
             $IncludeSymbols = $PSBoundParameters['IncludeSymbols']
         }
 
@@ -74,7 +76,7 @@ function Start-PSPackage {
             }
         }
 
-        log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
+        Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
 
         $Script:Options = Get-PSOptions
 
@@ -187,7 +189,7 @@ function Start-PSPackage {
             }
         }
 
-        log "Packaging Source: '$Source'"
+        Write-Log "Packaging Source: '$Source'"
 
         # Decide package output type
         if (-not $Type) {
@@ -208,7 +210,7 @@ function Start-PSPackage {
             }
             Write-Warning "-Type was not specified, continuing with $Type!"
         }
-        log "Packaging Type: $Type"
+        Write-Log "Packaging Type: $Type"
 
         # Add the symbols to the suffix
         # if symbols are specified to be included
@@ -281,7 +283,7 @@ function Start-PSPackage {
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create NuPkg Package")) {
-                    New-NugetPackage @Arguments
+                    New-NugetContentPackage @Arguments
                 }
             }
             "tar" {
@@ -403,7 +405,7 @@ function New-TarballPackage {
             }
 
             if (Test-Path -Path $packagePath) {
-                log "You can find the tarball package at $packagePath"
+                Write-Log "You can find the tarball package at $packagePath"
                 return $packagePath
             } else {
                 throw "Failed to create $packageName"
@@ -445,7 +447,7 @@ function New-PSSignedBuildZip
     Get-ChildItem -path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
         $relativePath = $_.Replace($signedFilesPath,'')
         $destination = Join-Path -Path $buildPath -ChildPath $relativePath
-        log "replacing $destination with $_"
+        Write-Log "replacing $destination with $_"
         Copy-Item -Path $_ -Destination $destination -force
     }
 
@@ -461,7 +463,7 @@ function New-PSSignedBuildZip
     if ($VstsVariableName)
     {
         # set VSTS variable with path to package files
-        log "Setting $VstsVariableName to $zipLocationPath"
+        Write-Log "Setting $VstsVariableName to $zipLocationPath"
         Write-Host "##vso[task.setvariable variable=$VstsVariableName]$zipLocationPath"
     }
     else
@@ -490,7 +492,13 @@ function Expand-PSSignedBuild
 
     Restore-PSModuleToBuild -PublishPath $buildPath
 
-    $options = Get-Content -Path (Join-Path $buildPath -ChildPath 'psoptions.json') | ConvertFrom-Json
+    $psOptionsPath = Join-Path $buildPath -ChildPath 'psoptions.json'
+    $options = Get-Content -Path $psOptionsPath | ConvertFrom-Json
+
+    # Remove PSOptions.
+    # The file is only used to set the PSOptions.
+    Remove-Item -Path $psOptionsPath
+
     $options.PSModuleRestore = $true
 
     if(Test-Path -Path $windowsExecutablePath)
@@ -553,6 +561,7 @@ function New-UnixPackage {
         $ErrorMessage = "Must be on {0} to build '$Type' packages!"
         switch ($Type) {
             "deb" {
+                $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
                 if (!$Environment.IsUbuntu -and !$Environment.IsDebian) {
                     throw ($ErrorMessage -f "Ubuntu or Debian")
                 }
@@ -578,11 +587,13 @@ function New-UnixPackage {
                 $Iteration += ".$DebDistro"
             }
             "rpm" {
+                $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
                 if (!$Environment.IsRedHatFamily -and !$Environment.IsSUSEFamily) {
                     throw ($ErrorMessage -f "Redhat or SUSE Family")
                 }
             }
             "osxpkg" {
+                $packageVersion = $Version
                 if (!$Environment.IsMacOS) {
                     throw ($ErrorMessage -f "macOS")
                 }
@@ -598,7 +609,7 @@ function New-UnixPackage {
         $Suffix = $Name -replace "^powershell"
         if (!$Suffix) {
             Write-Verbose "Suffix not given, building primary PowerShell package!"
-            $Suffix = $Version
+            $Suffix = $packageVersion
         }
 
         # Setup staging directory so we don't change the original source directory
@@ -675,7 +686,7 @@ function New-UnixPackage {
 
         $Arguments = Get-FpmArguments `
             -Name $Name `
-            -Version $Version `
+            -Version $packageVersion `
             -Iteration $Iteration `
             -Description $Description `
             -Type $Type `
@@ -788,9 +799,9 @@ function New-MacOsDistributionPackage
     # 1 - version
     # 2 - package path
     # 2 - minimum os version
-    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $Version", $Version, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
 
-    log "Applying distribution.xml to package..."
+    Write-Log "Applying distribution.xml to package..."
     Push-Location $tempDir
     try
     {
@@ -1060,7 +1071,6 @@ function New-ManGzip
     $RoffFile = $RonnFile -replace "\.ronn$"
 
     # Run ronn on assets file
-    # Run does not play well with files named powershell6.0.1, so we generate and then rename
     Start-NativeExecution { ronn --roff $RonnFile }
 
     # gzip in assets directory
@@ -1212,7 +1222,7 @@ function New-ZipPackage
 
         if (Test-Path $zipLocationPath)
         {
-            log "You can find the Zip @ $zipLocationPath"
+            Write-Log "You can find the Zip @ $zipLocationPath"
             $zipLocationPath
         }
         else
@@ -1227,8 +1237,581 @@ function New-ZipPackage
     }
 }
 
+function CreateNugetPlatformFolder
+{
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $Platform,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackageRuntimesFolder,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PlatformBinPath
+    )
+
+    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netstandard2.0")
+    $fullPath = Join-Path $PlatformBinPath $file
+
+    if (-not(Test-Path $fullPath)) {
+        throw "File not found: $fullPath"
+    }
+
+    Copy-Item -Path $fullPath -Destination $destPath
+    Write-Log "Copied $file to $Platform"
+}
+
+<#
+.SYNOPSIS
+Creates NuGet packages containing linux, osx and Windows runtime assemblies.
+
+.DESCRIPTION
+Creates a NuGet package for linux, osx, Windows runtimes for 32 bit, 64 bit and ARM.
+The packages for Microsoft.PowerShell.Commands.Diagnostics, Microsoft.PowerShell.Commands.Management,
+Microsoft.PowerShell.Commands.Utility, Microsoft.PowerShell.ConsoleHost, Microsoft.PowerShell.CoreCLR.Eventing,
+Microsoft.PowerShell.SDK, Microsoft.PowerShell.Security, Microsoft.WSMan.Management, Microsoft.WSMan.Runtime,
+System.Management.Automation are created.
+
+.PARAMETER PackagePath
+Path where the package will be created.
+
+.PARAMETER PackageVersion
+Version of the created package.
+
+.PARAMETER Winx86BinPath
+Path to folder containing Windows x86 assemblies.
+
+.PARAMETER Winx64BinPath
+Path to folder containing Windows x64 assemblies.
+
+.PARAMETER WinArm32BinPath
+Path to folder containing Windows arm32 assemblies.
+
+.PARAMETER WinArm64BinPath
+Path to folder containing Windows arm64 assemblies.
+
+.PARAMETER LinuxArm32BinPath
+Path to folder containing linux arm32 assemblies.
+
+.PARAMETER LinuxBinPath
+Path to folder containing linux x64 assemblies.
+
+.PARAMETER OsxBinPath
+Path to folder containing osx assemblies.
+
+.PARAMETER GenAPIToolPath
+Path to the GenAPI.exe tool.
+#>
+function New-UnifiedNugetPackage
+{
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackagePath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackageVersion,
+
+        [Parameter(Mandatory = $true)]
+        [string] $Winx86BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $Winx64BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $WinArm32BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $WinArm64BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $LinuxArm32BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $LinuxBinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $OsxBinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $GenAPIToolPath
+    )
+
+    if(-not $Environment.IsWindows)
+    {
+        throw "New-UnifiedNugetPackage can be only executed on Windows platform."
+    }
+
+    $fileList = @(
+        "Microsoft.PowerShell.Commands.Diagnostics.dll",
+        "Microsoft.PowerShell.Commands.Management.dll",
+        "Microsoft.PowerShell.Commands.Utility.dll",
+        "Microsoft.PowerShell.ConsoleHost.dll",
+        "Microsoft.PowerShell.CoreCLR.Eventing.dll",
+        "Microsoft.PowerShell.Security.dll",
+        "Microsoft.PowerShell.SDK.dll",
+        "Microsoft.WSMan.Management.dll",
+        "Microsoft.WSMan.Runtime.dll",
+        "System.Management.Automation.dll")
+
+    $linuxExceptionList = @(
+        "Microsoft.PowerShell.Commands.Diagnostics.dll",
+        "Microsoft.WSMan.Management.dll",
+        "Microsoft.WSMan.Runtime.dll")
+
+    if ($PSCmdlet.ShouldProcess("Create nuget packages at: $PackagePath"))
+    {
+
+        $refBinPath = New-TempFolder
+        $SnkFilePath = Join-Path $PSScriptRoot -ChildPath '../../src/signing/visualstudiopublic.snk' -Resolve
+
+        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+        $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
+
+        foreach ($file in $fileList)
+        {
+            $tmpPackageRoot = New-TempFolder
+            # Remove '.dll' at the end
+            $fileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($file)
+            $filePackageFolder = New-Item (Join-Path $tmpPackageRoot $fileBaseName) -ItemType Directory -Force
+            $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
+
+            #region ref
+            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netstandard2.0') -ItemType Directory -Force
+            Copy-Item $refBinFullName -Destination $refFolder -Force
+            Write-Log "Copied file $refBinFullName to $refFolder"
+            #endregion ref
+
+            $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
+
+            CreateNugetPlatformFolder -Platform 'win-x86' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX86BinPath
+            CreateNugetPlatformFolder -Platform 'win-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX64BinPath
+            CreateNugetPlatformFolder -Platform 'win-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm32BinPath
+            CreateNugetPlatformFolder -Platform 'win-arm64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm64BinPath
+
+            if ($linuxExceptionList -notcontains $file )
+            {
+                CreateNugetPlatformFolder -Platform 'linux-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxArm32BinPath
+                CreateNugetPlatformFolder -Platform 'linux-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxBinPath
+                CreateNugetPlatformFolder -Platform 'osx' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $osxBinPath
+            }
+
+            #region nuspec
+            # filed a tracking bug for automating generation of dependecy list: https://github.com/PowerShell/PowerShell/issues/6247
+            $deps = [System.Collections.ArrayList]::new()
+
+            switch ($fileBaseName) {
+                'Microsoft.PowerShell.Commands.Diagnostics' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                }
+
+                'Microsoft.PowerShell.Commands.Management' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceProcess.ServiceController'), [tuple]::Create('version', '4.4.1'))) > $null
+                }
+
+                'Microsoft.PowerShell.Commands.Utility' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.CodeAnalysis.CSharp'), [tuple]::Create('version', '2.6.1'))) > $null
+                }
+
+                'Microsoft.PowerShell.ConsoleHost' {
+                    $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create( [tuple]::Create('id', 'Microsoft.ApplicationInsights'), [tuple]::Create('version', '2.4.0'))) > $null
+                }
+
+                'Microsoft.PowerShell.CoreCLR.Eventing' {
+                    $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Security.Principal.Windows'), [tuple]::Create('version', '4.4.1'))) > $null
+                }
+
+                'Microsoft.PowerShell.SDK' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Utility'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.ConsoleHost'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Data.SqlClient'), [tuple]::Create('version', '4.4.2'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.IO.Packaging'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Net.Http.WinHttpHandler'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Duplex'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Http'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.NetTcp'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Primitives'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Security'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Text.Encodings.Web'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Threading.AccessControl'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Private.ServiceModel'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.NETCore.Windows.ApiSets'), [tuple]::Create('version', '1.0.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
+                }
+
+                'Microsoft.PowerShell.Security' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                }
+
+                'Microsoft.WSMan.Management' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Runtime'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceProcess.ServiceController'), [tuple]::Create('version', '4.4.1'))) > $null
+                }
+
+                'Microsoft.WSMan.Runtime' {
+                    ## No dependencies
+                }
+
+                'System.Management.Automation' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.CoreCLR.Eventing'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Win32.Registry.AccessControl'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Newtonsoft.Json'), [tuple]::Create('version', '10.0.3'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.IO.FileSystem.AccessControl'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.AccessControl'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.Cryptography.Pkcs'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.Permissions'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Text.Encoding.CodePages'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure'), [tuple]::Create('version', '1.0.0-alpha08'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'PowerShell.Core.Instrumentation'), [tuple]::Create('version', '6.0.0-RC2'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'libpsl'), [tuple]::Create('version', '6.0.0-rc'))) > $null
+                }
+            }
+
+            New-NuSpec -PackageId $fileBaseName -PackageVersion $PackageVersion -Dependency $deps -FilePath (Join-Path $filePackageFolder.FullName "$fileBaseName.nuspec")
+            New-NugetPackage -NuSpecPath $filePackageFolder.FullName -PackageDestinationPath $PackagePath
+        }
+
+        if(Test-Path $refBinPath)
+        {
+            Remove-Item $refBinPath -Recurse -Force -ErrorAction SilentlyContinue
+        }
+
+        if(Test-Path $tmpPackageRoot)
+        {
+            Remove-Item $tmpPackageRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+<#
+.SYNOPSIS
+Creates a nuspec file.
+
+.PARAMETER PackageId
+ID of the package.
+
+.PARAMETER PackageVersion
+Version of the package.
+
+.PARAMETER Dependency
+Depedencies of the package.
+
+.PARAMETER FilePath
+Path to create the nuspec file.
+#>
+function New-NuSpec {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $PackageId,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackageVersion,
+
+        [Parameter(Mandatory = $false)]
+        # An array of tuples of tuples to define the dependencies.
+        # First tuple defines 'id' and value eg: ["id", "System.Data.SqlClient"]
+        # Second tuple defines 'version' and vale eg: ["version", "4.4.2"]
+        # Both these tuples combined together define one dependency.
+        # An array represents all the dependencies.
+        [tuple[ [tuple[string, string]], [tuple[string, string]] ] []] $Dependency,
+
+        [Parameter(Mandatory = $true)]
+        [string] $FilePath
+    )
+
+    if(-not $Environment.IsWindows)
+    {
+        throw "New-NuSpec can be only executed on Windows platform."
+    }
+
+    $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion
+    $nuspecObj = [xml] $nuspecTemplate
+
+    if ( ($Dependency -ne $null) -and $Dependency.Count -gt 0 ) {
+
+        foreach($dep in $Dependency) {
+            # Each item is [tuple[ [tuple[string, string]], [tuple[string, string]] ]
+            $d = $nuspecObj.package.metadata.dependencies.group.AppendChild($nuspecObj.CreateElement("dependency"))
+
+            # 'id' and value
+            $d.SetAttribute($dep.Item1.Item1, $dep.Item1.Item2)
+
+            # 'version' and value
+            $d.SetAttribute($dep.Item2.Item1, $dep.Item2.Item2)
+        }
+    }
+
+    $nuspecObj.Save($filePath)
+}
+
+<#
+.SYNOPSIS
+Create a reference assembly from System.Management.Automation.dll
+
+.DESCRIPTION
+A unix variant of System.Management.Automation.dll is converted to a reference assembly.
+GenAPI.exe generated the CS file containing the APIs.
+This file is cleaned up and then compiled into a dll.
+
+.PARAMETER Unix64BinPath
+Path to the folder containing unix 64 bit assemblies.
+
+.PARAMETER RefAssemblyDestinationPath
+Path to the folder where the reference assembly is created.
+
+.PARAMETER RefAssemblyVersion
+Version of the reference assembly.
+
+.PARAMETER GenAPIToolPath
+Path to GenAPI.exe. Tool from https://www.nuget.org/packages/Microsoft.DotNet.BuildTools.GenAPI/
+
+.PARAMETER SnkFilePath
+Path to the snk file for strong name signing.
+#>
+
+function New-ReferenceAssembly
+{
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $Linux64BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $RefAssemblyDestinationPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $RefAssemblyVersion,
+
+        [Parameter(Mandatory = $true)]
+        [string] $GenAPIToolPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $SnkFilePath
+    )
+
+    if(-not $Environment.IsWindows)
+    {
+        throw "New-ReferenceAssembly can be only executed on Windows platform."
+    }
+
+    $genAPIFolder = New-TempFolder
+    $smaProjectFolder = New-Item -Path "$genAPIFolder/System.Management.Automation" -ItemType Directory -Force
+    $smaCs = Join-Path $smaProjectFolder 'System.Management.Automation.cs'
+    $smaCsFiltered = Join-Path $smaProjectFolder 'System.Management.Automation_Filtered.cs'
+
+    Write-Log "Working directory: $genAPIFolder."
+
+    #region GenAPI
+
+    $genAPIExe = Get-ChildItem -Path "$GenAPIToolPath/*GenAPI.exe" -Recurse
+
+    if(-not (Test-Path $genAPIExe))
+    {
+        throw "GenAPI.exe was not found at: $GenAPIToolPath"
+    }
+
+    Write-Log "GenAPI nuget package saved and expanded."
+
+    $linuxSMAPath = Join-Path $Linux64BinPath "System.Management.Automation.dll"
+
+    if(-not (Test-Path $linuxSMAPath))
+    {
+        throw "System.Management.Automation.dll was not found at: $Linux64BinPath"
+    }
+
+    $genAPIArgs = "$linuxSMAPath","-libPath:$Linux64BinPath"
+    Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+
+    Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $smaCs -Force
+
+    Write-Log "Reference assembly file generated at: $smaCs"
+
+    #endregion GenAPI
+
+    #region Cleanup SMA.cs
+
+    $patternsToRemove = @(
+        '[System.Management.Automation.ArgumentToEncodingTransformationAttribute]',
+        'typeof(System.Security.AccessControl.FileSecurity)',
+        '[System.Management.Automation.ArgumentTypeConverterAttribute',
+        '[System.Runtime.CompilerServices.IteratorStateMachineAttribute',
+        '[Microsoft.PowerShell.Commands.ArgumentToModuleTransformationAttribute]',
+        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ArgumentToVersionTransformationAttribute]',
+        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ValidateVersionAttribute]',
+        '[System.Management.Automation.OutputTypeAttribute(typeof(System.Management.Automation.PSRemotingJob))]',
+        'typeof(System.Management.Automation.LanguagePrimitives.EnumMultipleTypeConverter)',
+        '[System.Management.Automation.Internal.CommonParameters.ValidateVariableName]'
+        )
+
+    $reader = [System.IO.File]::OpenText($smaCs)
+    $writer = [System.IO.File]::CreateText($smaCsFiltered)
+
+    while(($line = $reader.ReadLine()) -ne $null)
+    {
+        $match = $line | Select-String -Pattern $patternsToRemove -SimpleMatch
+
+        if($match -ne $null)
+        {
+            $writer.WriteLine("//$line")
+        }
+        else
+        {
+            $writer.WriteLine($line)
+        }
+    }
+    if($reader -ne $null)
+    {
+        $reader.Close()
+    }
+    if($writer -ne $null)
+    {
+        $writer.Close()
+    }
+
+    Move-Item $smaCsFiltered $smaCs -Force
+
+    Write-Log "Reference assembly code cleanup complete."
+
+    #endregion Cleanup SMA.cs
+
+    #region Build SMA ref assembly
+
+    try
+    {
+        Push-Location $smaProjectFolder
+
+        $csProj = $packagingStrings.RefAssemblyCsProj -f $RefAssemblyVersion,$SnkFilePath
+
+        $csProj | Out-File -FilePath "$smaProjectFolder/System.Management.Automation.csproj" -Force
+
+        $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
+
+        Start-NativeExecution { dotnet build -c Release } > $null
+
+        $refBinPath = Join-Path $smaProjectFolder 'bin/Release/netstandard2.0/System.Management.Automation.dll'
+
+        if($refBinPath -eq $null)
+        {
+            throw "Reference assembly was not built."
+        }
+
+        Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
+
+        Write-Log "Reference assembly built and copied to $RefAssemblyDestinationPath"
+    }
+    finally
+    {
+        Pop-Location
+    }
+
+    if(Test-Path $genAPIFolder)
+    {
+        Remove-Item $genAPIFolder -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    #endregion Build SMA ref assembly
+}
+
+<#
+.SYNOPSIS
+Create a NuGet package from a nuspec.
+
+.DESCRIPTION
+Creates a NuGet using the nuspec using at the specified folder.
+It is expected that the lib / ref / runtime folders are welformed.
+The genereated NuGet package is copied over to the $PackageDestinationPath
+
+.PARAMETER NuSpecPath
+Path to the folder containing the nuspec file.
+
+.PARAMETER PackageDestinationPath
+Path to which NuGet package should be copied. Destination is created if it does not exist.
+#>
 
 function New-NugetPackage
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $NuSpecPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackageDestinationPath
+    )
+
+    $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
+
+    if($nuget -eq $null)
+    {
+        throw 'nuget application is not available in PATH'
+    }
+
+    Push-Location $NuSpecPath
+
+    Start-NativeExecution { nuget pack . } > $null
+
+    if(-not (Test-Path $PackageDestinationPath))
+    {
+        New-Item $PackageDestinationPath -ItemType Directory -Force > $null
+    }
+
+    Copy-Item *.nupkg $PackageDestinationPath -Force -Verbose
+    Pop-Location
+}
+
+<#
+.SYNOPSIS
+Publish the specified Nuget Package to MyGet feed.
+
+.DESCRIPTION
+The specified nuget package is published to the powershell.myget.org/powershell-core feed.
+
+.PARAMETER PackagePath
+Path to the NuGet Package.
+
+.PARAMETER ApiKey
+API key for powershell.myget.org
+#>
+function Publish-NugetToMyGet
+{
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $PackagePath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $ApiKey
+    )
+
+    $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
+
+    if($nuget -eq $null)
+    {
+        throw 'nuget application is not available in PATH'
+    }
+
+    Get-ChildItem $PackagePath | ForEach-Object {
+        Write-Log "Pushing $_ to PowerShell Myget"
+        Start-NativeExecution { nuget push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey } > $null
+    }
+}
+
+<#
+.SYNOPSIS
+The function creates a nuget package for daily feed.
+
+.DESCRIPTION
+The nuget package created is a content package and has all the binaries laid out in a flat structure.
+This package is used by install-powershell.ps1
+#>
+function New-NugetContentPackage
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param (
@@ -1255,7 +1838,6 @@ function New-NugetPackage
         [ValidateNotNullOrEmpty()]
         [string] $PackageConfiguration,
 
-
         # Source Path to the Product Files - required to package the contents into an Zip
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -1265,9 +1847,9 @@ function New-NugetPackage
         $Force
     )
 
-    log "PackageVersion: $PackageVersion"
+    Write-Log "PackageVersion: $PackageVersion"
     $nugetSemanticVersion = Get-NugetSemanticVersion -Version $PackageVersion
-    log "nugetSemanticVersion: $nugetSemanticVersion"
+    Write-Log "nugetSemanticVersion: $nugetSemanticVersion"
 
     $nugetFolder = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetOutput' -Clean
 
@@ -1296,8 +1878,8 @@ function New-NugetPackage
     $arguments += "/p:PackageName=$nuspecPackageName"
     $arguments += $projectFolder
 
-    log "Running dotnet $arguments"
-    log "Use -verbose to see output..."
+    Write-Log "Running dotnet $arguments"
+    Write-Log "Use -verbose to see output..."
     Start-NativeExecution -sb {dotnet $arguments} | Foreach-Object {Write-Verbose $_}
 
     $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
@@ -1372,6 +1954,33 @@ function Get-PackageSemanticVersion
     $packageSemanticVersion
 }
 
+# Builds coming out of this project can have version number as 'M.m.p-previewName[Number]' OR 'M.m.p'
+# This function converts the above version into semantic version major.minor.patch[~previewName[Number]] format
+function Get-LinuxPackageSemanticVersion
+{
+    [CmdletBinding()]
+    param (
+        # Version of the Package
+        [Parameter(Mandatory = $true)]
+        [ValidatePattern("^\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidateNotNullOrEmpty()]
+        [string] $Version
+        )
+
+    Write-Verbose "Extract the semantic version in the form of major.minor[.build-quality[.revision]] for $Version"
+    $packageVersionTokens = $Version.Split('-')
+
+    if ($packageVersionTokens.Count -eq 1) {
+        # In case the input is of the form a.b.c, we use the same form
+        $packageSemanticVersion = $Version
+    } elseif ($packageVersionTokens.Count -ge 2) {
+        $packageRevisionTokens = ($packageVersionTokens[1..($packageVersionTokens.Count-1)] -join '-')
+        $packageSemanticVersion = ('{0}~{1}' -f  $packageVersionTokens[0], $packageRevisionTokens)
+    }
+
+    $packageSemanticVersion
+}
+
 # Builds coming out of this project can have version number as 'a.b.c-stringf.d-e-f' OR 'a.b.c.d-e-f'
 # This function converts the above version into semantic version major.minor[.build-quality[-revision]] format needed for nuget
 function Get-NugetSemanticVersion
@@ -1428,4 +2037,466 @@ function Get-NugetSemanticVersion
     }
 
     $packageSemanticVersion
+}
+
+# Get the paths to various WiX tools
+function Get-WixPath
+{
+    ## AppVeyor base image might update the version for Wix. Hence, we should
+    ## not hard code version numbers.
+    $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
+
+    Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
+    if (-not (Test-Path $wixToolsetBinPath))
+    {
+        throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
+    }
+
+    ## Get the latest if multiple versions exist.
+    $wixToolsetBinPath = (Get-ChildItem $wixToolsetBinPath).FullName | Sort-Object -Descending | Select-Object -First 1
+
+    Write-Verbose "Initialize Wix executables..."
+    $wixHeatExePath = Join-Path $wixToolsetBinPath "heat.exe"
+    $wixMeltExePath = Join-Path $wixToolsetBinPath "melt.exe"
+    $wixTorchExePath = Join-Path $wixToolsetBinPath "torch.exe"
+    $wixPyroExePath = Join-Path $wixToolsetBinPath "pyro.exe"
+    $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
+    $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
+
+    return [PSCustomObject] @{
+        WixHeatExePath = $wixHeatExePath
+        WixMeltExePath = $wixMeltExePath
+        WixTorchExePath = $wixTorchExePath
+        WixPyroExePath = $wixPyroExePath
+        WixCandleExePath = $wixCandleExePath
+        WixLightExePath = $wixLightExePath
+    }
+
+}
+
+<#
+    .Synopsis
+        Creates a Windows installer MSP package from two MSIs and WIXPDB files
+        This only works on a Windows machine due to the usage of WiX.
+    .EXAMPLE
+        # This example shows how to produce a x64 patch from 6.0.2 to a theoretical 6.0.3
+        cd $RootPathOfPowerShellRepo
+        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
+        New-MSIPatch -NewVersion 6.0.1 -BaselineMsiPath .\PowerShell-6.0.2-win-x64.msi -BaselineWixPdbPath .\PowerShell-6.0.2-win-x64.wixpdb -PatchMsiPath .\PowerShell-6.0.3-win-x64.msi -PatchWixPdbPath .\PowerShell-6.0.3-win-x64.wixpdb
+#>
+function New-MSIPatch
+{
+    param(
+        [Parameter(Mandatory, HelpMessage='The version of the fixed or patch MSI.')]
+        [ValidatePattern("^\d+\.\d+\.\d+$")]
+        [string] $NewVersion,
+
+        [Parameter(Mandatory, HelpMessage='The path to the original or baseline MSI.')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {(Test-Path $_) -and $_ -like '*.msi'})]
+        [string] $BaselineMsiPath,
+
+        [Parameter(Mandatory, HelpMessage='The path to the WIXPDB for the original or baseline MSI.')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {(Test-Path $_) -and $_ -like '*.wixpdb'})]
+        [string] $BaselineWixPdbPath,
+
+        [Parameter(Mandatory, HelpMessage='The path to the fixed or patch MSI.')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {(Test-Path $_) -and $_ -like '*.msi'})]
+        [string] $PatchMsiPath,
+
+        [Parameter(Mandatory, HelpMessage='The path to the WIXPDB for the fixed or patch MSI.')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {(Test-Path $_) -and $_ -like '*.wixpdb'})]
+        [string] $PatchWixPdbPath,
+
+        [Parameter(HelpMessage='Path to the patch template WXS.  Usually you do not need to specify this')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $PatchWxsPath = "$PSScriptRoot\..\..\assets\patch-template.wxs",
+
+        [Parameter(HelpMessage='Produce a delta patch instead of a full patch.  Usually not worth it.')]
+        [switch] $Delta
+    )
+
+    $mspName = (Split-Path -Path $PatchMsiPath -Leaf).Replace('.msi','.fullpath.msp')
+    $mspDeltaName = (Split-Path -Path $PatchMsiPath -Leaf).Replace('.msi','.deltapatch.msp')
+
+    $wixPatchXmlPath = Join-Path $env:Temp "patch.wxs"
+    $wixBaselineOriginalPdbPath = Join-Path $env:Temp "baseline.original.wixpdb"
+    $wixBaselinePdbPath = Join-Path $env:Temp "baseline.wixpdb"
+    $wixBaselineBinariesPath = Join-Path $env:Temp "baseline.binaries"
+    $wixPatchOriginalPdbPath = Join-Path $env:Temp "patch.original.wixpdb"
+    $wixPatchPdbPath = Join-Path $env:Temp "patch.wixpdb"
+    $wixPatchBinariesPath = Join-Path $env:Temp "patch.binaries"
+    $wixPatchMstPath = Join-Path $env:Temp "patch.wixmst"
+    $wixPatchObjPath = Join-Path $env:Temp "patch.wixobj"
+    $wixPatchWixMspPath = Join-Path $env:Temp "patch.wixmsp"
+
+    $filesToCleanup = @(
+        $wixPatchXmlPath
+        $wixBaselinePdbPath
+        $wixBaselineBinariesPath
+        $wixPatchPdbPath
+        $wixPatchBinariesPath
+        $wixPatchMstPath
+        $wixPatchObjPath
+        $wixPatchWixMspPath
+        $wixPatchOriginalPdbPath
+        $wixBaselineOriginalPdbPath
+    )
+
+    # cleanup from previous builds
+    Remove-Item -Path $filesToCleanup -Force -Recurse -ErrorAction SilentlyContinue
+
+    # Melt changes the original, so copy before running melt
+    Copy-Item -Path $BaselineWixPdbPath -Destination $wixBaselineOriginalPdbPath -Force
+    Copy-Item -Path $PatchWixPdbPath -Destination $wixPatchOriginalPdbPath -Force
+
+    [xml] $filesAssetXml = Get-Content -Raw -Path "$PSScriptRoot\..\..\assets\files.wxs"
+    [xml] $patchTemplateXml = Get-Content -Raw -Path $PatchWxsPath
+
+    # Update the patch version
+    $patchFamilyNode = $patchTemplateXml.Wix.Fragment.PatchFamily
+    $patchFamilyNode.SetAttribute('Version', $NewVersion)
+
+    # get all the file components from the files.wxs
+    $components = $filesAssetXml.GetElementsByTagName('Component')
+
+    # add all the file components to the patch
+    foreach($component in $components)
+    {
+        $id = $component.Id
+        $componentRef = $patchTemplateXml.CreateElement('ComponentRef','http://schemas.microsoft.com/wix/2006/wi')
+        $idAttribute = $patchTemplateXml.CreateAttribute('Id')
+        $idAttribute.Value = $id
+        $null = $componentRef.Attributes.Append($idAttribute)
+        $null = $patchFamilyNode.AppendChild($componentRef)
+    }
+
+    # save the updated patch xml
+    $patchTemplateXml.Save($wixPatchXmlPath)
+
+    $wixPaths = Get-WixPath
+
+    Write-Log "Processing baseline msi..."
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixMeltExePath -nologo $BaselineMsiPath $wixBaselinePdbPath -pdb $wixBaselineOriginalPdbPath -x $wixBaselineBinariesPath}
+
+    Write-Log "Processing patch msi..."
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixMeltExePath -nologo $PatchMsiPath $wixPatchPdbPath -pdb $wixPatchOriginalPdbPath -x $wixPatchBinariesPath}
+
+    Write-Log  "generate diff..."
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixTorchExePath -nologo -p -xi $wixBaselinePdbPath $wixPatchPdbPath -out $wixPatchMstPath}
+
+    Write-Log  "Compiling patch..."
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixCandleExePath -nologo $wixPatchXmlPath -out $wixPatchObjPath}
+
+    Write-Log  "Linking patch..."
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -nologo $wixPatchObjPath -out $wixPatchWixMspPath}
+
+    if($Delta.IsPresent)
+    {
+        Write-Log  "Generating delta msp..."
+        Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixPyroExePath -nologo $wixPatchWixMspPath -out $mspDeltaName -t RTM $wixPatchMstPath }
+    }
+    else
+    {
+        Write-Log  "Generating full msp..."
+        Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixPyroExePath -nologo $wixPatchWixMspPath -out $mspName -t RTM $wixPatchMstPath }
+    }
+
+    # cleanup temporary files
+    Remove-Item -Path $filesToCleanup -Force -Recurse -ErrorAction SilentlyContinue
+}
+
+<#
+    .Synopsis
+        Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
+        This only works on a Windows machine due to the usage of WiX.
+    .EXAMPLE
+        # This example shows how to produce a Debug-x64 installer for development purposes.
+        cd $RootPathOfPowerShellRepo
+        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
+        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+#>
+function New-MSIPackage
+{
+    [CmdletBinding()]
+    param (
+
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion,
+
+        # The ProductCode property is a unique identifier for the particular product release
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductCode,
+
+        # Source Path to the Product Files - required to package the contents into an MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductSourcePath,
+
+        # File describing the MSI Package creation semantics
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $ProductWxsPath = "$PSScriptRoot\..\..\assets\Product.wxs",
+
+        # File describing the MSI file components
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $FilesWxsPath = "$PSScriptRoot\..\..\assets\Files.wxs",
+
+        # Path to Assets folder containing artifacts such as icons, images
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $AssetsPath = "$PSScriptRoot\..\..\assets",
+
+        # Path to license.rtf file - for the EULA
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf",
+
+        # Architecture to use when creating the MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture,
+
+        # Force overwrite of package
+        [Switch] $Force
+    )
+
+    $wixPaths = Get-WixPath
+
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
+    $simpleProductVersion = '6'
+    $isPreview = $ProductSemanticVersion -like '*-*'
+    if($isPreview)
+    {
+        $simpleProductVersion += '-preview'
+    }
+
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+
+    $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
+    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
+
+    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
+    Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
+
+    $productVersionWithName = $ProductName + '_' + $ProductVersion
+    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
+    $productDirectoryName = 'PowerShell_6'
+
+    Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
+
+    [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
+    # These variables are used by Product.wxs in assets directory
+    [Environment]::SetEnvironmentVariable("ProductDirectoryName", $productDirectoryName, "Process")
+    [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
+    [Environment]::SetEnvironmentVariable("ProductCode", $ProductCode, "Process")
+    [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
+    [Environment]::SetEnvironmentVariable("SimpleProductVersion", $simpleProductVersion, "Process")
+    [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
+    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
+    if(!$isPreview)
+    {
+        [Environment]::SetEnvironmentVariable("AddPathDefault", '1', "Process")
+        [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '31ab5147-9a97-4452-8443-d9709f0516e1', "Process")
+        [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '1d00683b-0f84-4db8-a64f-2f98ad42fe06', "Process")
+    }
+    else
+    {
+        [Environment]::SetEnvironmentVariable("AddPathDefault", '0', "Process")
+        [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
+        [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
+    }
+    $fileArchitecture = 'amd64'
+    $ProductProgFilesDir = "ProgramFiles64Folder"
+    if ($ProductTargetArchitecture -eq "x86")
+    {
+        $fileArchitecture = 'x86'
+        $ProductProgFilesDir = "ProgramFilesFolder"
+    }
+    [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
+    [Environment]::SetEnvironmentVariable("FileArchitecture", $fileArchitecture, "Process")
+
+    $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
+    $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
+    $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
+
+    # cleanup any garbage on the system
+    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
+
+    $packageName = $productSemanticVersionWithName
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
+    $msiLocationPath = Join-Path $pwd "$packageName.msi"
+    $msiPdbLocationPath = Join-Path $pwd "$packageName.wixpdb"
+
+    if(!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
+    {
+        Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
+    }
+
+    Write-Log "verifying no new files have been added or removed..."
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir  $ProductSourcePath -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+    Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
+
+    Write-Log "running candle..."
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
+
+    Write-Log "running light..."
+    # suppress ICE61, because we allow same version upgrades
+    # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath"}
+
+    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
+
+    if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
+    {
+        Write-Verbose "You can find the WixPdb @ $msiPdbLocationPath" -Verbose
+        Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
+        [pscustomobject]@{
+            msi=$msiLocationPath
+            wixpdb=$msiPdbLocationPath
+        }
+    }
+    else
+    {
+        $errorMessage = "Failed to create $msiLocationPath"
+        if ($null -ne $env:CI)
+        {
+           Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
+        }
+        throw $errorMessage
+    }
+}
+
+# verify no files have been added or removed
+# if so, write an error with details
+function Test-FileWxs
+{
+    param
+    (
+        # File describing the MSI file components from the asset folder
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $FilesWxsPath = "$PSScriptRoot\..\..\assets\Files.wxs",
+
+        # File describing the MSI file components generated by heat
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $HeatFilesWxsPath
+    )
+
+    # Update the fileArchitecture in our file to the actual value.  Since, the heat file will have the actual value.
+    # Wix will update this automaticaly, but the output is not the same xml
+    $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)',$env:FileArchitecture)
+
+    [xml] $filesAssetXml = $filesAssetString
+    [xml] $heatFilesXml = Get-Content -Raw -Path $HeatFilesWxsPath
+    $assetFiles = $filesAssetXml.GetElementsByTagName('File')
+    $heatFiles = $heatFilesXml.GetElementsByTagName('File')
+    $indexedHeatFiles = @()
+
+    # Index the list of files generated by heat
+    foreach($file in $heatFiles)
+    {
+        $indexedHeatFiles += $file.Source
+    }
+
+    # Index the files from the asset wxs
+    # and verify that no files have been removed.
+    $passed = $true
+    $indexedAssetFiles = @()
+    foreach($file in $assetFiles)
+    {
+        $name = $file.Source
+        if($indexedHeatFiles -inotcontains $name)
+        {
+            $passed = $false
+            Write-Warning "{$name} is no longer in product and should be removed from {$FilesWxsPath}"
+        }
+        $indexedAssetFiles += $name
+    }
+
+    # verify that no files have been added.
+    foreach($file in $indexedHeatFiles)
+    {
+        if($indexedAssetFiles -inotcontains $file)
+        {
+            $passed = $false
+            Write-Warning "new file {$file} need to be added to {$FilesWxsPath}"
+        }
+    }
+
+    if(!$passed)
+    {
+        if($env:appveyor)
+        {
+            try
+            {
+                Push-AppveyorArtifact $HeatFilesWxsPath
+            }
+            catch
+            {
+                Write-Warning -Message "Pushing MSI File fragment failed."
+            }
+        }
+
+        throw "Current files to not match  {$FilesWxsPath}"
+    }
+}
+
+# Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'
+# This function converts the above version into major.minor[.build[.revision]] format
+function Get-PackageVersionAsMajorMinorBuildRevision
+{
+    [CmdletBinding()]
+    param (
+        # Version of the Package
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Version
+        )
+
+    Write-Verbose "Extract the version in the form of major.minor[.build[.revision]] for $Version"
+    $packageVersionTokens = $Version.Split('-')
+    $packageVersion = ([regex]::matches($Version, "\d+(\.\d+)+"))[0].value
+
+    if (1 -eq $packageVersionTokens.Count) {
+        # In case the input is of the form a.b.c, add a '0' at the end for revision field
+        $packageVersion = $packageVersion + '.0'
+    } elseif (1 -lt $packageVersionTokens.Count) {
+        # We have all the four fields
+        $packageBuildTokens = ([regex]::Matches($packageVersionTokens[1], "\d+"))[0].value
+
+        if ($packageBuildTokens)
+        {
+            $packageVersion = $packageVersion + '.' + $packageBuildTokens
+        }
+        else
+        {
+            $packageVersion = $packageVersion
+        }
+    }
+
+    $packageVersion
 }

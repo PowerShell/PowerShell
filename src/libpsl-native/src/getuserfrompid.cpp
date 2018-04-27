@@ -1,4 +1,8 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #include "pal.h"
+#include "pal_config.h"
 #include "getfileowner.h"
 #include "getpwuid.h"
 #include "getuserfrompid.h"
@@ -6,7 +10,10 @@
 #include <string>
 #include <sstream>
 #include <errno.h>
+
+#if HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
+#endif
 
 char* GetUserFromPid(pid_t pid)
 {

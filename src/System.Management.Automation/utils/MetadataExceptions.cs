@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
@@ -55,7 +54,6 @@ namespace System.Management.Automation
             SetErrorCategory(ErrorCategory.MetadataError);
         }
 
-
         internal MetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
             base(StringUtil.Format(resourceStr, arguments), innerException)
         {
@@ -82,9 +80,7 @@ namespace System.Management.Automation
         internal const string ValidateRangeGreaterThanMaxRangeFailure = "ValidateRangeGreaterThanMaxRangeFailure";
         internal const string ValidateRangeSmallerThanMinRangeFailure = "ValidateRangeSmallerThanMinRangeFailure";
 
-
         internal const string ValidateFailureResult = "ValidateFailureResult";
-
 
         internal const string ValidatePatternFailure = "ValidatePatternFailure";
         internal const string ValidateScriptFailure = "ValidateScriptFailure";
@@ -124,7 +120,6 @@ namespace System.Management.Automation
         /// <param name="message">the exception's message</param>
         /// <param name="innerException">the exceptions's inner exception</param>
         public ValidationMetadataException(string message, Exception innerException) : base(message, innerException) { }
-
 
         internal ValidationMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
             base(errorId, innerException, resourceStr, arguments)
@@ -190,7 +185,6 @@ namespace System.Management.Automation
         /// <param name="innerException">the exceptions's inner exception</param>
         public ArgumentTransformationMetadataException(string message, Exception innerException) : base(message, innerException) { }
 
-
         internal ArgumentTransformationMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
             base(errorId, innerException, resourceStr, arguments)
         {
@@ -227,7 +221,6 @@ namespace System.Management.Automation
         /// <param name="message">the exception's message</param>
         /// <param name="innerException">the exceptions's inner exception</param>
         public ParsingMetadataException(string message, Exception innerException) : base(message, innerException) { }
-
 
         internal ParsingMetadataException(string errorId, Exception innerException, string resourceStr, params object[] arguments) :
             base(errorId, innerException, resourceStr, arguments)

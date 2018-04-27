@@ -149,9 +149,8 @@ namespace System.Management.Automation.Interpreter
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public static Instruction Create(Type type)
         {
-            var typeInfo = type.GetTypeInfo();
             // Boxed enums can be unboxed as their underlying types:
-            var typeToUse = typeInfo.IsEnum ? Enum.GetUnderlyingType(type) : type;
+            var typeToUse = type.IsEnum ? Enum.GetUnderlyingType(type) : type;
             switch (typeToUse.GetTypeCode())
             {
                 case TypeCode.Boolean: return s_boolean ?? (s_boolean = new NotEqualBoolean());
@@ -170,7 +169,7 @@ namespace System.Management.Automation.Interpreter
                 case TypeCode.Double: return s_double ?? (s_double = new NotEqualDouble());
 
                 case TypeCode.Object:
-                    if (!typeInfo.IsValueType)
+                    if (!type.IsValueType)
                     {
                         return s_reference ?? (s_reference = new NotEqualReference());
                     }

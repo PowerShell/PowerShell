@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Exceptions flow for classes' -Tags "CI" {
 
     $canaryHashtable = @{}
@@ -40,7 +42,7 @@ class C
 
             } catch {}
 
-            $canaryHashtable['canary'] | Should Be 42
+            $canaryHashtable['canary'] | Should -Be 42
         }
 
         It 'does not execute statements after static method with exception' {
@@ -69,7 +71,7 @@ class C
 
             } catch {}
 
-            $canaryHashtable['canary'] | Should Be 43
+            $canaryHashtable['canary'] | Should -Be 43
         }
 
         It 'does not execute statements after instance method with exception and deep stack' {
@@ -125,7 +127,7 @@ class C
 
             } catch {}
 
-            $canaryHashtable['canary'] | Should Be 11111
+            $canaryHashtable['canary'] | Should -Be 11111
         }
     }
 
@@ -144,7 +146,6 @@ class C
         s2
     }
 }
-
 
 function m2()
 {
@@ -184,7 +185,7 @@ function ImThrow()
 
             } catch {}
 
-            $canaryHashtable['canaryM'] | Should Be 45
+            $canaryHashtable['canaryM'] | Should -Be 45
         }
 
         It 'does not execute statements after function with exception called from static method' {
@@ -197,7 +198,7 @@ function ImThrow()
 
             } catch {}
 
-            $canaryHashtable['canaryS'] | Should Be 46
+            $canaryHashtable['canaryS'] | Should -Be 46
         }
 
     }
@@ -219,7 +220,7 @@ $canaryHashtable['canary'] += 100
 
             } catch {}
 
-            $canaryHashtable['canary'] | Should Be 111
+            $canaryHashtable['canary'] | Should -Be 111
         }
     }
 }
@@ -238,7 +239,7 @@ Describe "Exception error position" -Tags "CI" {
             [MSFT_3090412]::f1()
             throw "f1 should have thrown"
         } catch {
-            $_.InvocationInfo.Line | Should Match ([regex]::Escape('[MSFT_3090412]::bar = 42'))
+            $_.InvocationInfo.Line | Should -Match ([regex]::Escape('[MSFT_3090412]::bar = 42'))
         }
     }
 
@@ -247,7 +248,7 @@ Describe "Exception error position" -Tags "CI" {
             [MSFT_3090412]::f2()
             throw "f2 should have thrown"
         } catch {
-            $_.InvocationInfo.Line | Should Match ([regex]::Escape('throw "an error in f2"'))
+            $_.InvocationInfo.Line | Should -Match ([regex]::Escape('throw "an error in f2"'))
         }
     }
 
@@ -256,7 +257,7 @@ Describe "Exception error position" -Tags "CI" {
             [MSFT_3090412]::f3()
             throw "f3 should have thrown"
         } catch {
-            $_.InvocationInfo.Line | Should Match ([regex]::Escape('"".Substring(0, 10)'))
+            $_.InvocationInfo.Line | Should -Match ([regex]::Escape('"".Substring(0, 10)'))
         }
     }
 
@@ -265,7 +266,7 @@ Describe "Exception error position" -Tags "CI" {
             [MSFT_3090412]::f4()
             throw "f4 should have thrown"
         } catch {
-            $_.InvocationInfo.Line | Should Match ([regex]::Escape('dir nosuchfile -ea Stop'))
+            $_.InvocationInfo.Line | Should -Match ([regex]::Escape('dir nosuchfile -ea Stop'))
         }
     }
 }
@@ -301,8 +302,8 @@ Describe "Exception from initializer" -Tags "CI" {
         catch
         {
             $e = $_
-            $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'
+            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
+            $e.InvocationInfo.Line | Should -Match 'a = "zz"'
         }
     }
 
@@ -314,8 +315,8 @@ Describe "Exception from initializer" -Tags "CI" {
         catch
         {
             $e = $_
-            $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'
+            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
+            $e.InvocationInfo.Line | Should -Match 'a = "zz"'
         }
     }
 
@@ -326,10 +327,10 @@ Describe "Exception from initializer" -Tags "CI" {
         }
         catch
         {
-            $_.Exception | Should BeOfType System.TypeInitializationException
+            $_.Exception | Should -BeOfType System.TypeInitializationException
             $e  = $_.Exception.InnerException.InnerException.ErrorRecord
-            $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'
+            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
+            $e.InvocationInfo.Line | Should -Match 'a = "zz"'
         }
     }
 
@@ -340,10 +341,10 @@ Describe "Exception from initializer" -Tags "CI" {
         }
         catch
         {
-            $_.Exception | Should BeOfType System.TypeInitializationException
+            $_.Exception | Should -BeOfType System.TypeInitializationException
             $e  = $_.Exception.InnerException.InnerException.ErrorRecord
-            $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'
+            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
+            $e.InvocationInfo.Line | Should -Match 'a = "zz"'
         }
     }
 }

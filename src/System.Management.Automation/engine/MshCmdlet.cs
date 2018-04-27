@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Collections;
@@ -445,7 +444,7 @@ namespace System.Management.Automation
             }
 
             CmdletAttribute ca = null;
-            foreach (var attr in cmdletType.GetTypeInfo().GetCustomAttributes(true))
+            foreach (var attr in cmdletType.GetCustomAttributes(true))
             {
                 ca = attr as CmdletAttribute;
                 if (ca != null)

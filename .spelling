@@ -103,6 +103,7 @@ linux-x64
 lockfile
 macOS
 md
+microsoft
 Microsoft.PowerShell.Archive
 microsoft.powershell.commands.diagnostics
 microsoft.powershell.commands.management
@@ -205,6 +206,7 @@ writingpestertests.md
 WSMan
 wsmansessionoption.cs
 xUnit
+0-powershell-crossplatform
 #endregion
 
 #region ./tools/install-powershell.readme.md Overrides
@@ -223,6 +225,8 @@ _Jobs
 -Include
 -Title
 0xfeeddeadbeef
+about_
+about_Jobs
 acceptance
 alpha.10
 alpha.11
@@ -384,11 +388,38 @@ XPath
 Youtube
 stuntguy3000
 SwarfegaGit
+v6.0.2
+diddledan
+v6.1.0
+preview.1
+tandasat
+kwkam
+stknohg
+CloudyDino
+KevinMarquette
+tomconte
+DarqueWarrior
+Pawamoy
+strawgate
+CallmeJoeBob
+maertendMSFT
+seemethere
+zackJKnight
+brianbunke
+timothywlewis
+rpalo
+kanjibates
+kasper3
+ppadmavilasom
+Stanzilla
+mababio
+v4
 #endregion
 
 #region CODE_OF_CONDUCT.md Overrides
  - CODE_OF_CONDUCT.md
 microsoft.com
+o
 opencode
 #endregion
 
@@ -420,6 +451,8 @@ u
 
 #region demos/DSC/readme.md Overrides
  - demos/DSC/readme.md
+www.github.com
+omi
 #endregion
 
 #region demos/python/README.md Overrides
@@ -431,39 +464,6 @@ _script.ps1.
 #region demos/rest/README.md Overrides
  - demos/rest/README.md
 rest.ps1
-#endregion
-
-#region demos/SSHRemoting/README.md Overrides
- - demos/SSHRemoting/README.md
-_config
-2kCbnhT2dUE6WCGgVJ8Hyfu1z2wE4lifaJXLO7QJy0Y
-com.openssh.sshd
-ComputerName
-ComputerType
-ConfigurationName
-Enter-PSSession
-HostName
-KeyFilePath
-KeyPath
-launchctl
-New-PSSession
-NoLogo
-NoProfile
-openssh-client
-openssh-server
-PasswordAuthentication
-PSCredential
-PSSessions
-PubkeyAuthentication
-RSAAuthentication
-ssh.exe
-sshd
-sshd.exe
-sshs
-TestUser
-UbuntuVM1
-UbuntuVM1s
-usr
 #endregion
 
 #region demos/SystemD/readme.md Overrides
@@ -485,7 +485,6 @@ WindowsPSModulePath
 andschwa's
 CurrentUser
 hub.docker.com
-microsoft
 NanoServer-Insider
 nanoserver-insider-powershell
 #endregion
@@ -506,8 +505,6 @@ WMI-based
 
 #region docs/building/internals.md Overrides
  - docs/building/internals.md
-_arm
-_arm64
 Catalog
 flavor
 libpsl
@@ -517,6 +514,8 @@ plugin
 powershell-unix
 src
 v141
+x64_arm
+x64_arm64
 #endregion
 
 #region docs/building/macos.md Overrides
@@ -675,6 +674,7 @@ windir
  - docs/KNOWNISSUES.md
 cp
 globbing
+New-PSSession
 pipelining
 psl-omi-provider
 Register-WmiEvent
@@ -691,6 +691,7 @@ RemoteSigned
 #region docs/learning-powershell/debugging-from-commandline.md Overrides
  - docs/learning-powershell/debugging-from-commandline.md
 _Debuggers
+about_Debuggers
 celsius
 Set-PSBreakpoint
 test.ps1
@@ -801,6 +802,7 @@ Enable-RunspaceDebug
 Enable-WSManCredSSP
 Enable-WSManTrace
 Enter-PSHostProcess
+Enter-PSSession
 Exit-PSHostProcess
 Exit-PSSession
 Export-BinaryMiLog
@@ -866,6 +868,7 @@ New-LocalGroup
 New-LocalUser
 New-ModuleManifest
 New-PSDrive
+New-PSSession
 New-PSRoleCapabilityFile
 New-PSSessionConfigurationFile
 New-ScriptFileInfo
@@ -942,6 +945,7 @@ TabCompletion
 
 #region docs/testing-guidelines/TestRoadmap.md Overrides
  - docs/testing-guidelines/TestRoadmap.md
+_no_
 corefx
 DotCover
 Downlevel
@@ -975,6 +979,7 @@ Gitter
 microsoft.com
 msi
 omnisharp-vscode
+o
 opencode
 pkg
 tgz
@@ -994,6 +999,7 @@ libpsl-native
 _history.txt
 _PSReadline
 50ms
+about_PSReadline
 AddToHistoryHandler
 AppData
 BackgroundColor
@@ -1092,6 +1098,8 @@ v6.0.
 #region test/tools/WebListener/README.md Overrides
  - test/tools/WebListener/README.md
 Auth
+NoResume
 NTLM
+NumberBytes
 ResponseHeaders
 #endregion

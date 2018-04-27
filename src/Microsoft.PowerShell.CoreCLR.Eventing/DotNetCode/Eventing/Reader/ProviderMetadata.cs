@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 /*============================================================
 **
@@ -177,7 +179,6 @@ namespace System.Diagnostics.Eventing.Reader
                         int arraySize = NativeWrapper.EvtGetObjectArraySize(elHandle);
 
                         List<EventLogLink> channelList = new List<EventLogLink>(arraySize);
-
 
                         for (int index = 0; index < arraySize; index++)
                         {
@@ -405,7 +406,6 @@ namespace System.Diagnostics.Eventing.Reader
                         generalDisplayName = NativeWrapper.EvtFormatMessage(providerHandle, unchecked((uint)generalMessageId));
                     }
 
-
                     switch (objectTypeName)
                     {
                         case ObjectTypeName.Level:
@@ -444,7 +444,6 @@ namespace System.Diagnostics.Eventing.Reader
                 elHandle.Dispose();
             }
         }
-
 
         public IList<EventLevel> Levels
         {
@@ -498,7 +497,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-
         public IList<EventTask> Tasks
         {
             get
@@ -515,7 +513,6 @@ namespace System.Diagnostics.Eventing.Reader
                 return _tasks;
             }
         }
-
 
         public IEnumerable<EventMetadata> Events
         {

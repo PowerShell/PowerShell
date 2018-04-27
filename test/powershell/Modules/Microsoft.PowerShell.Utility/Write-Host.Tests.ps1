@@ -1,4 +1,6 @@
-﻿Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
@@ -15,10 +17,10 @@
 
         [array]$result = & $powershell -noprofile -c $Command
 
-        $result.Count | Should Be $returnCount
+        $result.Count | Should -Be $returnCount
         foreach ($i in 0..($returnCount - 1))
         {
-            $result[$i] | Should Be $returnValue[$i]
+            $result[$i] | Should -Be $returnValue[$i]
         }
     }
 }
@@ -36,12 +38,7 @@ Describe "Write-Host with wrong colors" -Tags "CI" {
 
     It 'Should throw if color is invalid: ForegroundColor = <ForegroundColor>; BackgroundColor = <BackgroundColor>' -TestCases:$testWrongColor {
       param($ForegroundColor, $BackgroundColor)
-      try
-      {
-          Write-Host "No output from Write-Host" -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
-          throw "No Exception!"
-      }
-      catch { $_.FullyQualifiedErrorId | Should Be 'CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.WriteHostCommand' }
+      { Write-Host "No output from Write-Host" -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor } | Should -Throw -ErrorId 'CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.WriteHostCommand'
     }
 }
 
@@ -57,6 +54,8 @@ Describe "Write-Host with TestHostCS" -Tags "CI" {
         $testHostCSData = @(
             @{ Name = 'defaults';                          Command = "Write-Host a,b,c";                                                                             returnCount = 1; returnValue = @("White:Black:a b c:NewLine"); returnInfo = @("a b c") }
             @{ Name = '-Object';                           Command = "Write-Host -Object a,b,c";                                                                     returnCount = 1; returnValue = @("White:Black:a b c:NewLine"); returnInfo = @("a b c") }
+            @{ Name = '-Message';                          Command = "Write-Host -Message a,b,c";                                                                    returnCount = 1; returnValue = @("White:Black:a b c:NewLine"); returnInfo = @("a b c") }
+            @{ Name = '-Msg';                              Command = "Write-Host -Msg a,b,c";                                                                        returnCount = 1; returnValue = @("White:Black:a b c:NewLine"); returnInfo = @("a b c") }
             @{ Name = '-Separator';                        Command = "Write-Host a,b,c -Separator '+'";                                                              returnCount = 1; returnValue = @("White:Black:a+b+c:NewLine"); returnInfo = @("a+b+c") }
             @{ Name = '-Separator, colors and -NoNewLine'; Command = "Write-Host a,b,c -Separator ',' -ForegroundColor Yellow -BackgroundColor DarkBlue -NoNewline"; returnCount = 1; returnValue = @("Yellow:DarkBlue:a,b,c:NoNewLine"); returnInfo = @("a,b,c") }
             @{ Name = '-NoNewline:$true and colors';       Command = "Write-Host a,b -NoNewline:`$true -ForegroundColor Red -BackgroundColor Green;Write-Host a,b";  returnCount = 2; returnValue = @("Red:Green:a b:NoNewLine", "White:Black:a b:NewLine"); returnInfo = @("a b", "a b") }
@@ -82,12 +81,12 @@ Describe "Write-Host with TestHostCS" -Tags "CI" {
 
         $result = $th.ui.Streams.ConsoleOutput
 
-        $result.Count | Should Be $returnCount
-        (Compare-Object $result $returnValue -SyncWindow 0).length -eq 0 | Should Be $true
+        $result.Count | Should -Be $returnCount
+        (Compare-Object $result $returnValue -SyncWindow 0).length | Should -Be 0
 
         $result = $th.ui.Streams.Information
 
-        $result.Count | Should Be $returnCount
-        (Compare-Object $result $returnInfo -SyncWindow 0).length -eq 0 | Should Be $true
+        $result.Count | Should -Be $returnCount
+        (Compare-Object $result $returnInfo -SyncWindow 0).length | Should -Be 0
     }
 }

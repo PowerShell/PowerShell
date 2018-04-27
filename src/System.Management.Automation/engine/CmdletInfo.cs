@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -341,7 +340,7 @@ namespace System.Management.Automation
 
                     if (ImplementingType != null)
                     {
-                        foreach (object o in ImplementingType.GetTypeInfo().GetCustomAttributes(typeof(OutputTypeAttribute), false))
+                        foreach (object o in ImplementingType.GetCustomAttributes(typeof(OutputTypeAttribute), false))
                         {
                             OutputTypeAttribute attr = (OutputTypeAttribute)o;
                             _outputType.AddRange(attr.Type);

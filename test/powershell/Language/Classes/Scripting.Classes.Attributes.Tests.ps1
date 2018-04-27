@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Attributes Test' -Tags "CI" {
 
     BeforeAll {
@@ -48,23 +50,13 @@ namespace Dummy
         Add-Type -TypeDefinition $dummyAttributesSource
     }
 
-
-
     Context 'Property.Instance.ValidateSet.String' {
         class C1 { [ValidateSet("Present", "Absent")][string]$Ensure }
         # This call should not throw exception
         [C1]::new().Ensure = "Present"
 
         It 'Error when ValidateSet should be ExceptionWhenSetting' {
-            try
-            {
-                [C1]::new().Ensure = "foo"
-                throw "Exception expected"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { [C1]::new().Ensure = "foo" } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -73,13 +65,7 @@ namespace Dummy
         # This call should not throw exception
         [C1]::Ensure = "Present"
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
-            try  {
-                [C1]::Ensure = "foo"
-                throw "Exception expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { [C1]::Ensure = "foo" } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -89,13 +75,7 @@ namespace Dummy
         [C1]::new().f = 10
         [C1]::new().f = 1
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
-            try {
-                [C1]::new().f = 20
-                throw "Exception expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { [C1]::new().f = 20 } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -104,13 +84,7 @@ namespace Dummy
         # This call should not throw exception
         [C1]::f = 5
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
-            try {
-                [C1]::f = 20
-                throw "Exception expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { [C1]::f = 20 } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -120,13 +94,7 @@ namespace Dummy
         [C1]::o = "abc"
         [C1]::o = 5
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
-            try {
-                [C1]::o = 1
-                throw "Exception expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { [C1]::o = 1 } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -142,11 +110,11 @@ namespace Dummy
 
         It 'Implicitly Transform to 100' {
             $c.arg = 100
-            $c.arg | should be 100
+            $c.arg | Should -Be 100
         }
         It 'Implicitly Transform to foo' {
             $c.arg = "foo"
-            $c.arg | should be "foofoo"
+            $c.arg | Should -BeExactly "foofoo"
         }
     }
 
@@ -154,7 +122,7 @@ namespace Dummy
         $c = [scriptblock]::Create('class C1 { [Dummy.DoubleStringTransformation()][string]$arg }; [C1]::new()').Invoke()[0]
         It 'set to foo' {
             $c.arg = "foo"
-            $c.arg | should be "foofoo"
+            $c.arg | Should -BeExactly "foofoo"
         }
     }
 
@@ -162,16 +130,10 @@ namespace Dummy
         $c = [scriptblock]::Create('class C1 { [Dummy.DoubleInt()][int]$arg }; [C1]::new()').Invoke()[0]
         It 'arg should be 200' {
             $c.arg = 100
-            $c.arg | should be 200
+            $c.arg | Should -Be 200
         }
         It 'Set to string should fail with ExceptionWhenSetting' {
-            try {
-                $c.arg = "abc"
-                throw "Exception expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { $c.arg = "abc" } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -179,7 +141,7 @@ namespace Dummy
         $c = [scriptblock]::Create('class C1 { [Nullable[int]][Dummy.DoubleStringTransformation()]$arg }; [C1]::new()').Invoke()[0]
         It 'arg should be 100' {
             $c.arg = 100
-            $c.arg | should be 100
+            $c.arg | Should -Be 100
         }
     }
 
@@ -187,12 +149,12 @@ namespace Dummy
         $c = [scriptblock]::Create('class C1 { [Dummy.DoubleStringTransformation()][Dummy.AppendStringTransformation()]$arg }; [C1]::new()').Invoke()[0]
         It 'arg should be 100' {
             $c.arg = 100
-            $c.arg | should be 100
+            $c.arg | Should -Be 100
         }
 
         It 'arg should be foo___foo___g' {
             $c.arg = "foo"
-            $c.arg | should be "foo___foo___"
+            $c.arg | Should -BeExactly "foo___foo___"
         }
     }
 }
@@ -211,7 +173,7 @@ Describe 'Type resolution with attributes' -Tag "CI" {
                 [void] OnEvent([string]$Message) {}
             }
 
-            [MyEventSource]::new() | Should Not Be $null
+            [MyEventSource]::new() | Should -Not -BeNullOrEmpty
 
         }
     }
@@ -268,7 +230,6 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                 }
             }
 
-
             /// Implement of test IValidateSetValuesGenerator
             public class GenValuesForParamNull : IValidateSetValuesGenerator
             {
@@ -303,14 +264,14 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
         }
 
         It 'Dynamically generated set works in C# with default (immediate) cache expire' {
-            Get-TestValidateSet4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+            Get-TestValidateSet4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should -BeExactly "TestString1"
         }
 
         It 'Empty dynamically generated set throws in C#' {
             $exc = {
                 Get-TestValidateSet5 -Param1 "TestString1" -ErrorAction Stop
             } | ShouldBeErrorId "ParameterArgumentValidationError,Test.Language.TestValidateSetCommand5"
-            $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should BeExactly "ValidateSetGeneratedValidValuesListIsNull"
+            $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "ValidateSetGeneratedValidValuesListIsNull"
         }
     }
 
@@ -391,7 +352,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
         }
 
         It 'Dynamically generated set works in PowerShell script with default (immediate) cache expire' {
-            Get-TestValidateSetPS4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+            Get-TestValidateSetPS4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should -BeExactly "TestString1"
         }
 
         It 'Get the appropriate error message' {
@@ -402,7 +363,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
             $exc = {
                 Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction Stop
             } | ShouldBeErrorId "ParameterArgumentValidationError,Get-TestValidateSetPS5"
-            $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should BeExactly "ValidateSetGeneratedValidValuesListIsNull"
+            $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "ValidateSetGeneratedValidValuesListIsNull"
         }
 
         It 'Unimplemented valid values generator type throws in PowerShell script' {
@@ -438,7 +399,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
             try {
                 Import-Module -Name $moduleFile -Force
-                Test-ValidateSet 'Hello' | Should Be 'Hello'
+                Test-ValidateSet 'Hello' | Should -BeExactly 'Hello'
             } finally {
                 Remove-Module -Name $moduleFile -Force
             }
@@ -477,7 +438,6 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                 }
             }
 
-
             function Get-TestValidateSetPS4
             {
                 [CmdletBinding()]
@@ -504,14 +464,14 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
         }
 
         It 'Can implement CachedValidValuesGeneratorBase in PowerShell' {
-            Get-TestValidateSetPS4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+            Get-TestValidateSetPS4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should -BeExactly "TestString1"
         }
 
         It 'Can implement CachedValidValuesGeneratorBase with cache expiration in PowerShell' {
-            Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
-            Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+            Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should -BeExactly "TestString1"
+            Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should -BeExactly "TestString1"
             Start-Sleep 3
-            Get-TestValidateSetPS5 -Param1 "TestString2" -ErrorAction SilentlyContinue | Should BeExactly "TestString2"
+            Get-TestValidateSetPS5 -Param1 "TestString2" -ErrorAction SilentlyContinue | Should -BeExactly "TestString2"
         }
     }
 }

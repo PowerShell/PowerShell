@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Linq;
@@ -115,6 +114,16 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         internal bool _force;
+
+        /// <summary>
+        /// Sets the scope to which help is saved.
+        /// </summary>
+        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        public UpdateHelpScope Scope
+        {
+            get;
+            set;
+        }
 
         #endregion
 
@@ -862,5 +871,20 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
+    }
+
+     /// <summary>
+    /// Scope to which the help should be saved.
+    /// </summary>
+    public enum UpdateHelpScope
+    {
+        /// <summary>
+        /// Save the help content to the user directory.
+        CurrentUser,
+
+        /// <summary>
+        /// Save the help content to the module directory. This is the default behavior.
+        /// </summary>
+        AllUsers
     }
 }
