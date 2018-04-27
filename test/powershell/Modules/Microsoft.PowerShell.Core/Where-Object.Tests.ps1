@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+Import-Module HelpersCommon
+Add-TestDynamicType
 
 Describe "Where-Object" -Tags "CI" {
     BeforeAll {
@@ -124,5 +126,21 @@ Describe "Where-Object" -Tags "CI" {
     It 'Where-Object Prop -like Value' {
         $Result = $Computers | Where-Object ComputerName -match '^MGC.+'
         $Result.Count | Should -Be 1
+    }
+
+    It 'Where-Object should handle dynamic (DLR) objects' {
+        $dynObj = [TestDynamic]::new()
+        $Result = $dynObj, $dynObj | Where FooProp -eq 123
+        $Result.Count | Should -Be 2
+        $Result[0] | Should -Be $dynObj
+        $Result[1] | Should -Be $dynObj
+    }
+
+    It 'Where-Object should handle dynamic (DLR) objects, even without property name hint' {
+        $dynObj = [TestDynamic]::new()
+        $Result = $dynObj, $dynObj | Where HiddenProp -eq 789
+        $Result.Count | Should -Be 2
+        $Result[0] | Should -Be $dynObj
+        $Result[1] | Should -Be $dynObj
     }
 }

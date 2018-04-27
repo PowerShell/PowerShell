@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
+Import-Module HelpersCommon
+Add-TestDynamicType
 
 Describe "Select-Object" -Tags "CI" {
     BeforeEach {
@@ -242,6 +244,47 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 		$results.Count | Should -Be 1
 		$results[0] | Should -BeExactly "3"
 	}
+
+    It "Select-Object should handle dynamic (DLR) properties"{
+        $dynObj = [TestDynamic]::new()
+        $results = $dynObj, $dynObj | Select-Object -ExpandProperty FooProp
+        $results.Count | Should -Be 2
+        $results[0] | Should -Be 123
+        $results[1] | Should -Be 123
+    }
+
+    It "Select-Object should handle dynamic (DLR) properties without GetDynamicMemberNames hint"{
+        $dynObj = [TestDynamic]::new()
+        $results = $dynObj, $dynObj | Select-Object -ExpandProperty HiddenProp
+        $results.Count | Should -Be 2
+        $results[0] | Should -Be 789
+        $results[1] | Should -Be 789
+    }
+
+    It "Select-Object should handle wildcarded dynamic (DLR) properties when hinted by GetDynamicMemberNames"{
+        $dynObj = [TestDynamic]::new()
+        $results = $dynObj, $dynObj | Select-Object -ExpandProperty FooP*
+        $results.Count | Should -Be 2
+        $results[0] | Should -Be 123
+        $results[1] | Should -Be 123
+    }
+
+    It "Select-Object should work when multiple dynamic (DLR) properties match"{
+        $dynObj = [TestDynamic]::new()
+        $results = $dynObj, $dynObj | Select-Object *Prop
+        $results.Count | Should -Be 2
+        $results[0].FooProp | Should -Be 123
+        $results[0].BarProp | Should -Be 456
+        $results[1].FooProp | Should -Be 123
+        $results[1].BarProp | Should -Be 456
+    }
+
+    It "Select-Object -ExpandProperty should yield errors if multiple dynamic (DLR) properties match"{
+        $dynObj = [TestDynamic]::new()
+        $e = { $results = $dynObj, $dynObj | Select-Object -ExpandProperty *Prop -ErrorAction Stop} |
+            Should -Throw -PassThru -ErrorId "MutlipleExpandProperties,Microsoft.PowerShell.Commands.SelectObjectCommand"
+        $e.CategoryInfo | Should -Match "PSArgumentException"
+    }
 }
 
 Describe "Select-Object with Property = '*'" -Tags "CI" {
