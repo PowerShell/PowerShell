@@ -91,7 +91,9 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
             }
         }
 
-        [TestHost]::new().myName | Should -BeExactly "MyHost"
+        $th = [TestHost]::new()
+        $th.myName    | Should -BeExactly "MyHost"
+        $th.myVersion | Should -Be ([Version]"1.0.0.0")
     }
 
     It 'allows use of defined later type as a property type' {
