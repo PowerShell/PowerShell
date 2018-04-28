@@ -1166,24 +1166,12 @@ namespace System.Management.Automation
 
                     if (SessionStateUtilities.MatchesAnyWildcardPattern(entry.Key, functionPatterns, false))
                     {
-                        string message;
-
-                        if (entry.Value.CommandType == CommandTypes.Workflow)
-                        {
-                            message = StringUtil.Format(Modules.ExportingWorkflow, entry.Key);
-                            sessionState.ExportedWorkflows.Add((WorkflowInfo)entry.Value);
-                        }
-                        else
-                        {
-                            message = StringUtil.Format(Modules.ExportingFunction, entry.Key);
-                            sessionState.ExportedFunctions.Add(entry.Value);
-                        }
-
+                        sessionState.ExportedFunctions.Add(entry.Value);
+                        string message = StringUtil.Format(Modules.ExportingFunction, entry.Key);
                         cmdlet.WriteVerbose(message);
                     }
                 }
                 SortAndRemoveDuplicates(sessionState.ExportedFunctions, delegate (FunctionInfo ci) { return ci.Name; });
-                SortAndRemoveDuplicates(sessionState.ExportedWorkflows, delegate (WorkflowInfo ci) { return ci.Name; });
             }
 
             if (cmdletPatterns != null)

@@ -277,10 +277,6 @@ namespace System.Management.Automation
             CommandType = newType;
         }
 
-        internal const int HasWorkflowKeyWord = 0x0008;
-        internal const int IsCimCommand = 0x0010;
-        internal const int IsFile = 0x0020;
-
         /// <summary>
         /// A string representing the definition of the command.
         /// </summary>
