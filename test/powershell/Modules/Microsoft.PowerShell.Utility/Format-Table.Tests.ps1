@@ -330,6 +330,16 @@ Left Center Right
         }
 
         It "Format-Table should correctly render headers that span multiple rows: <variation>" -TestCases @(
+            @{ view = "Default"; widths = 7,7,7; variation = "2 row, 1 row, 1 row"; expectedTable = @"
+
+LongLon Header2 Header3
+gHeader
+------- ------- -------
+1       2       3
+
+
+
+"@ },
             @{ view = "Default"; widths = 4,7,4; variation = "4 row, 1 row, 2 row"; expectedTable = @"
 
 Long Header2 Head
@@ -463,7 +473,7 @@ er
                 Write-Verbose $e.ToString() -Verbose
             }
             $ps.HadErrors | Should -BeFalse
-            $output.Replace("`r","").Replace(" ",".").Replace("`n","``") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","``")
+            $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
 
         It "Format-Table should correctly render rows: <variation>" -TestCases @(
@@ -579,15 +589,6 @@ er
 
 
 
-"@ },
-            @{ view = "Default"; widths = 14,7,7; variation = "value wider than header, left justified"; values = [PSCustomObject]@{First="123456789012345";Second="12345678";Third="12345678"}; wrap = $false; expectedTable = @"
-
-LongLongHeader  Header2  Header3
---------------  -------  -------
-123456789012345 12345678 12345678
-
-
-
 "@ }
         ) {
             param($view, $widths, $values, $wrap, $expectedTable)
@@ -677,6 +678,40 @@ LongLongHeader  Header2  Header3
                 Write-Verbose $e.ToString() -Verbose
             }
             $ps.HadErrors | Should -BeFalse
-            $output.Replace("`r","").Replace(" ","*").Replace("`n","``") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","``")
+            $output.Replace("`r","").Replace(" ","*").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
+        }
+
+        It "Should render header correctly where values are wider than header: <variation>" -TestCases @(
+            @{ variation = "first column"; obj = [pscustomobject]@{abc="1234";bcd="123"}; expectedTable = @"
+
+abc  bcd
+---  ---
+1234 123
+
+
+
+"@ },
+            @{ variation = "both columns"; obj = [pscustomobject]@{abc="1234";bcd="1234"}; expectedTable = @"
+
+abc  bcd
+---  ---
+1234 1234
+
+
+
+"@ },
+            @{ variation = "second column"; obj = [pscustomobject]@{abc="123";bcd="1234"}; expectedTable = @"
+
+abc bcd
+--- ---
+123 1234
+
+
+
+"@ }
+        ) {
+            param($obj, $expectedTable)
+            $output = $obj | Format-Table | Out-String
+            $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
     }
