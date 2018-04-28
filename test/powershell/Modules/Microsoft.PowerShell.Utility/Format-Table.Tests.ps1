@@ -579,6 +579,15 @@ er
 
 
 
+"@ },
+            @{ view = "Default"; widths = 14,7,7; variation = "value wider than header, left justified"; values = [PSCustomObject]@{First="123456789012345";Second="12345678";Third="12345678"}; wrap = $false; expectedTable = @"
+
+LongLongHeader  Header2  Header3
+--------------  -------  -------
+123456789012345 12345678 12345678
+
+
+
 "@ }
         ) {
             param($view, $widths, $values, $wrap, $expectedTable)
