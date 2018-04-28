@@ -513,21 +513,21 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         param($proxy_address, $name, $protocol)
 
         # use external url, but with proxy the external url should not actually be called
-        $command = "Invoke-WebRequest -Uri ${protocol}://bing.com -Proxy '${protocol}://${proxy_address}' -SkipCertificateCheck"
+        $command = "Invoke-WebRequest -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}' -SkipCertificateCheck"
         $result = ExecuteWebCommand -command $command
         $command = "Invoke-WebRequest -Uri '${protocol}://${proxy_address}' -NoProxy"
         $expectedResult = ExecuteWebCommand -command $command
         $result.Output.Content | Should -BeExactly $expectedResult.Output.Content
     }
 
-    It "Validate Invoke-WebRequest with environment proxy set - '<name>'" -TestCases $testCase {
+    It "Validate Invoke-WebRequest with environment proxy set - '<name>'" -Skip:$IsWindows -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
         # Configure the environment variable.
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
         # use external url, but with proxy the external url should not actually be called
-        $command = "Invoke-WebRequest -Uri ${protocol}://bing.com -SkipCertificateCheck"
+        $command = "Invoke-WebRequest -Uri ${protocol}://httpbin.org -SkipCertificateCheck"
         $result = ExecuteWebCommand -command $command
         $command = "Invoke-WebRequest -Uri '${protocol}://${proxy_address}' -NoProxy"
         $expectedResult = ExecuteWebCommand -command $command
@@ -1887,21 +1887,21 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         param($proxy_address, $name, $protocol)
 
         # use external url, but with proxy the external url should not actually be called
-        $command = "Invoke-RestMethod -Uri ${protocol}://bing.com -Proxy '${protocol}://${proxy_address}'"
+        $command = "Invoke-RestMethod -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}'"
         $result = ExecuteWebCommand -command $command
         $command = "Invoke-RestMethod -Uri '${protocol}://${proxy_address}' -NoProxy"
         $expectedResult = ExecuteWebCommand -command $command
         $result.Output | Should -BeExactly $expectedResult.Output
     }
 
-    It "Validate Invoke-RestMethod with environment proxy set - '<name>'" -TestCases $testCase {
+    It "Validate Invoke-RestMethod with environment proxy set - '<name>'" -Skip:$IsWindows -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
         # Configure the environment variable.
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
         $uri = Get-WebListenerUrl -Test Get
-        $command = "Invoke-RestMethod -Uri ${protocol}://bing.com"
+        $command = "Invoke-RestMethod -Uri ${protocol}://httpbin.org"
         $result = ExecuteWebCommand -command $command
         $command = "Invoke-RestMethod -Uri '${protocol}://${proxy_address}' -NoProxy"
         $expectedResult = ExecuteWebCommand -command $command
