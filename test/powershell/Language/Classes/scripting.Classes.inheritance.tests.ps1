@@ -82,7 +82,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
                 [System.Management.Automation.Host.PSHostUserInterface]$myUI = $null
                 [bool]$IsInteractive
                 [void]SetShouldExit([int]$exitCode) { }
-                [void]EnterNestedPrompt(){ throw "Unsupported" }
+                [void]EnterNestedPrompt(){ throw "EnterNestedPrompt-NotSupported" }
                 [void]ExitNestedPrompt(){ throw "Unsupported" }
                 [void]NotifyBeginApplication() { }
                 [void]NotifyEndApplication() { }
