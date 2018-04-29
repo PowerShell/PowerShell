@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Set-Location" -Tags "CI" {
 
     BeforeAll {
@@ -51,6 +52,22 @@ Describe "Set-Location" -Tags "CI" {
         Set-Location $TestDrive
         Set-Location -Path "[ab]a"
         $(Get-Location).Path | Should -BeExactly $testPath.FullName
+    }
+
+    It "Should not use filesystem root folder if not in filesystem provider" -Skip:(!$IsWindows) {
+        # find filesystem root folder that doesn't exist in HKCU:
+        $foundFolder = $false
+        foreach ($folder in (Get-ChildItem "${env:SystemDrive}\" -Directory)) {
+            if (!(Test-Path "HKCU:\$($folder.Name)")) {
+                $testFolder = $folder.Name
+                $foundFolder = $true
+                break
+            }
+        }
+        $foundFolder | Should -BeTrue
+        Set-Location HKCU:\
+        { Set-Location ([System.IO.Path]::DirectorySeparatorChar + $testFolder) -ErrorAction Stop } |
+            Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
     }
 
     Context 'Set-Location with no arguments' {
