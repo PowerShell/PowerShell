@@ -461,6 +461,7 @@ er
 
         It "Format-Table should correctly render rows: <variation>" -TestCases @(
             @{ view = "Default"; widths = 4,7,5; variation = "narrow values"; values = [PSCustomObject]@{First=1;Second=2;Third=3}; wrap = $false; expectedTable = @"
+
 Long*Header2*Heade
 Long*********r3
 Head
