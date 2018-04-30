@@ -75,11 +75,13 @@ Describe "Set-Location" -Tags "CI" {
         New-Item -Path 'Z:\' -Name 'Directory2' -ItemType Directory
 
         Set-Location '.\Directory1'
+        $pathToTest1 = (Get-Location).Path
         Set-Location 'Z:\Directory2'
+        $pathToTest2 = (Get-Location).Path
 
         Set-Location 'TestDrive:'
-        (Get-Location).Path | Should -BeExactly 'TestDrive:\Directory1'
-        Set-LocalGroup 'Z:'
-        (Get-Location).Path | Should -BeExactly 'Z:\Directory2'
+        (Get-Location).Path | Should -BeExactly $pathToTest1
+        Set-Location 'Z:'
+        (Get-Location).Path | Should -BeExactly $pathToTest2
     }
 }

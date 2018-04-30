@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation.Provider;
 using Dbg = System.Management.Automation;
 
@@ -273,7 +274,7 @@ namespace System.Management.Automation
                     string colonTerminatedVolume = CurrentDrive.Name + ':';
                     if (CurrentDrive.VolumeSeparatedByColon && (path.Length == colonTerminatedVolume.Length))
                     {
-                        path = CurrentDrive.Root + CurrentDrive.CurrentLocation;
+                        path = Path.Combine((colonTerminatedVolume + "\\"), CurrentDrive.CurrentLocation);
                     }
 
                     // Now that the current working drive is set,
