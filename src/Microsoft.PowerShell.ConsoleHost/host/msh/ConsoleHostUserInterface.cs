@@ -1790,15 +1790,16 @@ namespace Microsoft.PowerShell
                         continue;
                     }
 
-                    // Modify string
-                    if (!insertMode && s != "") // then overwrite mode
-                    {
-                        s = s.Remove(index, 1);
-                    }
-
+                    // Handle case where terminal gets reset and the index is outside of the buffer
                     if (index > s.Length)
                     {
                         index = s.Length;
+                    }
+
+                    // Modify string
+                    if (!insertMode) // then overwrite mode
+                    {
+                        s = s.Remove(index, 1);
                     }
 
                     s = s.Insert(index, keyInfo.KeyChar.ToString());
