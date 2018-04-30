@@ -1791,10 +1791,16 @@ namespace Microsoft.PowerShell
                     }
 
                     // Modify string
-                    if (!insertMode) // then overwrite mode
+                    if (!insertMode && s != "") // then overwrite mode
                     {
                         s = s.Remove(index, 1);
                     }
+
+                    if (index > s.Length)
+                    {
+                        index = s.Length;
+                    }
+
                     s = s.Insert(index, keyInfo.KeyChar.ToString());
                     index++;
 
