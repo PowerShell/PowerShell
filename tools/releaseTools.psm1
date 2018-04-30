@@ -177,6 +177,10 @@ function Get-ChangeLog
         ## No cherry-pick was involved in the last release branch.
         ## Using a ref rang like "$tag_hash..HEAD" with 'git log' means getting the commits that are reachable from 'HEAD' but not reachable from the last release tag.
 
+        ## We use '--first-parent' for 'git log'. It means for any merge node, only follow the parent node on the master branch side.
+        ## In case we merge a branch to master for a PR, only the merge node will show up in this way, the individual commits from that branch will be ignored.
+        ## This is what we want because the merge commit itself already represents the PR.
+
         ## First, we want to get all new commits merged during the last release
         $new_commits_during_last_release = @(git --no-pager log --first-parent "$tag_hash..$other_parent_hash" --format=$format | New-CommitNode)
         ## Then, we want to get all new commits merged after the last release
