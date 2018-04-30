@@ -94,7 +94,7 @@ if (( $EUID != 0 )); then
 fi
 
 #Check that sudo is available
-if [[ "$SUDO" -eq "sudo" ]]; then
+if [[ "$SUDO" == "sudo" ]]; then
 
     $SUDO -v
     if [ $? -ne 0 ]; then
