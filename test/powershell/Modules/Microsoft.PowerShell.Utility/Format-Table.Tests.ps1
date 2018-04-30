@@ -681,30 +681,33 @@ er
             $output.Replace("`r","").Replace(" ","*").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
 
-        It "Should render header correctly where values are wider than header: <variation>" -TestCases @(
-            @{ variation = "first column"; obj = [pscustomobject]@{abc="1234";bcd="123"}; expectedTable = @"
+        It "Should render header/row correctly where values are wider than header w/ implicit autosize: <variation>" -TestCases @(
+            @{ variation = "first column"; obj = [pscustomobject]@{abc="1234";bcd="123"},[pscustomobject]@{abc="1";bcd="1234"}; expectedTable = @"
 
 abc  bcd
 ---  ---
 1234 123
+1    1234
 
 
 
 "@ },
-            @{ variation = "both columns"; obj = [pscustomobject]@{abc="1234";bcd="1234"}; expectedTable = @"
+            @{ variation = "both columns"; obj = [pscustomobject]@{abc="1234";bcd="1234"},[pscustomobject]@{abc="1";bcd="1"}; expectedTable = @"
 
 abc  bcd
 ---  ---
 1234 1234
+1    1
 
 
 
 "@ },
-            @{ variation = "second column"; obj = [pscustomobject]@{abc="123";bcd="1234"}; expectedTable = @"
+            @{ variation = "second column"; obj = [pscustomobject]@{abc="123";bcd="1234"},[pscustomobject]@{abc="1";bcd="123"}; expectedTable = @"
 
 abc bcd
 --- ---
 123 1234
+1   123
 
 
 
