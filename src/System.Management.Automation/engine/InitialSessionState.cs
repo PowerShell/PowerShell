@@ -4755,6 +4755,7 @@ $OutputEncoding = if ([System.Management.Automation.Platform]::IsNanoServer -or 
 }
 
 # Respect PAGER, use more on Windows, and use less on Linux
+$moreArgs = ''
 if (Test-Path env:PAGER) {
     $pager,$moreArgs = $env:PAGER -split '\s+'
     $moreCommand = (Get-Command -CommandType Application $pager | Select-Object -First 1).Definition
@@ -4768,7 +4769,9 @@ if($paths) {
     foreach ($file in $paths) {
         Get-Content $file | & $moreCommand $moreArgs
     }
-} else { $input | & $moreCommand $moreArgs }
+} else { 
+    $input | & $moreCommand $moreArgs 
+}
 ";
 
         internal const string DefaultSetDriveFunctionText = "Set-Location $MyInvocation.MyCommand.Name";
