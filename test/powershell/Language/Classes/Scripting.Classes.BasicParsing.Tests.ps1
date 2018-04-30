@@ -583,7 +583,7 @@ visibleX visibleY
 "@
 
             $tableOutput = $instance | Format-Table -AutoSize | Out-String
-            $tableOutput | Should -BeExactly $expectedTable
+            $tableOutput.Replace("`r","") | Should -BeExactly $expectedTable.Replace("`r","")
         }
 
         # Get-Member should not include hidden members by default
