@@ -711,9 +711,9 @@ function Invoke-OpenCover
             "$openCoverBin $cmdlineUnelevated" | Out-File -FilePath $unelevatedFile -Force
             runas.exe /trustlevel:0x20000 "powershell.exe -file $unelevatedFile"
             # poll for process exit every 60 seconds
-            # timeout of 6 hours
-            # Runs currently take about 2.5 - 3 hours, we picked 6 hours to be substantially larger.
-            $timeOut = ([datetime]::Now).AddHours(6)
+            # timeout of 12 hours
+            # Runs currently take about 8-9 hours, we picked 12 hours to be substantially larger.
+            $timeOut = ([datetime]::Now).AddHours(12)
 
             $openCoverExited = $false
 
@@ -732,7 +732,7 @@ function Invoke-OpenCover
 
             if(-not $openCoverExited)
             {
-                throw "Opencover has not exited in 6 hours"
+                throw "Opencover has not exited in 12 hours"
             }
         }
         finally
