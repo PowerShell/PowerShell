@@ -479,7 +479,7 @@ Describe "TabCompletion" -Tags CI {
             $tempFolder = [System.IO.Path]::GetTempPath()
             try
             {
-                New-Item -ItemType Directory -Path "$tempFolder/helloworld"
+                New-Item -ItemType Directory -Path "$tempFolder/helloworld" > $null
                 $tempFolder | Should -Exist
                 $beforeTab = 'filesystem::{0}hello' -f $tempFolder
                 $afterTab = 'filesystem::{0}helloworld' -f $tempFolder

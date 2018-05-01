@@ -524,7 +524,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         param($proxy_address, $name, $protocol)
 
         # Configure the environment variable.
-        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
+        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force > $null
 
         # use external url, but with proxy the external url should not actually be called
         $command = "Invoke-WebRequest -Uri ${protocol}://httpbin.org -SkipCertificateCheck"

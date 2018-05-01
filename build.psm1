@@ -1464,7 +1464,6 @@ function Start-PSxUnit {
             }
         }
 
-        # '-fxversion' workaround required due to https://github.com/dotnet/cli/issues/7901#issuecomment-343323674
         # Run sequential tests first, and then run the tests that can execute in parallel
         dotnet xunit -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
         dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
@@ -1930,7 +1929,6 @@ function Start-TypeGen
     Find-Dotnet
 
     $GetDependenciesTargetPath = "$PSScriptRoot/src/Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
-#            <_RefAssemblyPath Include="%(_ReferencesFromRAR)%3B" Condition=" '%(_ReferencesFromRAR.Type)' == 'assembly' And '%(_ReferencesFromRAR.PackageName)' != 'Microsoft.Management.Infrastructure' " />
     $GetDependenciesTargetValue = @'
 <Project>
     <Target Name="_GetDependencies"
