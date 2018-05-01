@@ -1924,6 +1924,12 @@ function Start-TypeGen
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    # This custom target depends on 'ResolveAssemblyReferencesDesignTime', whose definition can be found in the sdk folder.
+    # To find the available properties of '_ReferencesFromRAR' when switching to a new dotnet sdk, follow the steps below:
+    #   1. create a dummy project using the new dotnet sdk.
+    #   2. build the dummy project with this command:
+    #      dotnet msbuild .\dummy.csproj /t:ResolveAssemblyReferencesDesignTime /fileLogger /noconsolelogger /v:diag
+    #   3. search '_ReferencesFromRAR' in the produced 'msbuild.log' file. You will find the properties there.
     $GetDependenciesTargetPath = "$PSScriptRoot/src/Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
     $GetDependenciesTargetValue = @'
 <Project>
