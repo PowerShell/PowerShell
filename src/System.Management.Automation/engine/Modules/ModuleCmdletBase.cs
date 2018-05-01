@@ -5984,11 +5984,11 @@ namespace Microsoft.PowerShell.Commands
             DateTime lastModuleWriteTimeUtc = GetFileLastWriteTimeUtc(filePath);
 
             // If we have a cache entry and it's up to date, return that
-            if (s_scriptAnalysisCache.TryGetValue(filePath, out ScriptModuleCacheEntry cacheEntry) && lastModuleWriteTimeUtc == cacheEntry.LastFileWriteTimeUtc)
+            if (s_scriptAnalysisCache.TryGetValue(filePath, out ScriptModuleCacheEntry cacheEntry) && lastModuleWriteTimeUtc == cacheEntry.lastFileWriteTimeUtc)
             {
                 // We need to return a cloned version here.
                 // This is because the Get-Module -List -All modifies the returned module info and we do not want the original one changed.
-                return cacheEntry.ModuleInfo.Clone();
+                return cacheEntry.moduleInfo.Clone();
             }
 
             // fake/empty manifestInfo for processing in (!loadElements) mode
@@ -7268,19 +7268,19 @@ namespace Microsoft.PowerShell.Commands
             /// <param name="moduleInfo">the module info describing the module; the analysis result we are caching</param>
             public ScriptModuleCacheEntry(DateTime lastFileWriteTimeUtc, PSModuleInfo moduleInfo)
             {
-                LastFileWriteTimeUtc = lastFileWriteTimeUtc;
-                ModuleInfo = moduleInfo;
+                this.lastFileWriteTimeUtc = lastFileWriteTimeUtc;
+                this.moduleInfo = moduleInfo;
             }
 
             /// <summary>
             /// The last time the file defining the module was written to when we cached the analysis result
             /// </summary>
-            public DateTime LastFileWriteTimeUtc { get; }
+            public readonly DateTime lastFileWriteTimeUtc;
 
             /// <summary>
             /// The actual analysis result describing the script module we analyzed
             /// </summary>
-            public PSModuleInfo ModuleInfo { get; }
+            public readonly PSModuleInfo moduleInfo;
         }
 
     } // end ModuleCmdletBase

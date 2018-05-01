@@ -94,6 +94,8 @@ function Test-FirstModuleFunction
     Write-Output "TESTSTRING"
 }
 '@
+
+        $newModuleContent = $simpleModContent + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }"
     }
 
     AfterAll {
@@ -128,10 +130,9 @@ function Test-FirstModuleFunction
             $module.ExportedFunctions.Keys  | Should -Contain "Test-FirstModuleFunction"
             $module.ExportedFunctions.Keys  | Should -Not -Contain "Test-SecondModuleFunction"
 
-            $newModuleContent = (Get-Content $modData.Path | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }"
             Set-Content -Force -Path $modData.Path -Value $newModuleContent
 
-            $module = Import-Module $modData.Path -PassThru -Force
+            Import-Module $modData.Path -Force
             Test-SecondModuleFunction | Should -BeExactly "SECONDSTRING"
         }
 
@@ -143,7 +144,6 @@ function Test-FirstModuleFunction
             $module.ExportedFunctions.Keys  | Should -Contain "Test-FirstModuleFunction"
             $module.ExportedFunctions.Keys  | Should -Not -Contain "Test-SecondModuleFunction"
 
-            $newModuleContent = (Get-Content $modData.Path | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }"
             Set-Content -Force -Path $modData.Path -Value $newModuleContent
 
             $module = Import-Module $modData.Path -PassThru -Force
@@ -160,7 +160,6 @@ function Test-FirstModuleFunction
             $module.ExportedFunctions.Keys  | Should -Contain "Test-FirstModuleFunction"
             $module.ExportedFunctions.Keys  | Should -Not -Contain "Test-SecondModuleFunction"
 
-            $newModuleContent = (Get-Content $modData.Path | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }"
             Set-Content -Force -Path $modData.Path -Value $newModuleContent
 
             $module = Import-Module $modData.Path -AsCustomObject -Force
@@ -194,8 +193,8 @@ function Get-PassedArgsNoRoot { $passedArgs }
 
             Import-Module $modData.Path -ArgumentList 'value2'
             $rootVal = Get-PassedArgsRoot
-            $rootNoVal = Get-PassedArgsNoRoot
-            $rootVal | Should -BeExactly $rootNoVal
+            $noRootVal = Get-PassedArgsNoRoot
+            $rootVal | Should -BeExactly $noRootVal
         }
 
         It "Uses updated class definitions in later imports rather than cached values" {
@@ -225,12 +224,12 @@ class MyObj
             $mod1 = Import-Module $modData.Path -PassThru
 
             Set-Content -Path $modData.Path -Value $modSrc2
-            $mod2 = Import-Module $modData.Path -PassThru
+            $mod2 = Import-Module $modData.Path -PassThru -Force
 
             $firstTypes = $mod1.GetExportedTypeDefinitions()
             $secondTypes = $mod2.GetExportedTypeDefinitions()
 
-            $firstTypes.MyObj.Equals($secondTypes.Sub) | Should -BeFalse
+            $firstTypes.MyObj.Equals($secondTypes.MyObj) | Should -BeFalse
         }
     }
 
@@ -252,16 +251,10 @@ function Test-FirstModuleFunction
 }
 '@
 
-            $ps = [powershell]::Create()
         }
 
         AfterAll {
             TearDownModules
-            $ps.Dispose()
-        }
-
-        AfterEach {
-            $ps.Streams.ClearStreams()
         }
 
         It "Validates a null -<paramName> parameter" -TestCases $validationTests {
@@ -290,6 +283,8 @@ function Test-FirstModuleFunction
     Write-Output "TESTSTRING"
 }
 '@
+
+        $newModuleContent = $simpleModContent + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }"
     }
 
     AfterAll {
@@ -330,21 +325,19 @@ function Test-FirstModuleFunction
         $module.ExportedFunctions.Keys  | Should -Contain "Test-FirstModuleFunction"
         $module.ExportedFunctions.Keys  | Should -Not -Contain "Test-SecondModuleFunction"
 
-        $newModuleContent = (Get-Content $modData.Path | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }"
         Set-Content -Force -Path $modData.Path -Value $newModuleContent
 
         Import-Module $modInfo -Force
         Test-SecondModuleFunction | Should -BeExactly "SECONDSTRING"
     }
 
-    It "Re-imports modules from file with new members when -Force is used with -PassThru" -Skip {
+    It "Re-imports modules from file with new members when -Force is used with -PassThru" -Pending {
         $module = Import-Module $modInfo -PassThru
 
         $module.ExportedFunctions.Count | Should -Be 1
         $module.ExportedFunctions.Keys  | Should -Contain "Test-FirstModuleFunction"
         $module.ExportedFunctions.Keys  | Should -Not -Contain "Test-SecondModuleFunction"
 
-        $newModuleContent = (Get-Content $modData.Path | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }"
         Set-Content -Force -Path $modData.Path -Value $newModuleContent
 
         $module = Import-Module $modInfo -PassThru -Force
@@ -354,14 +347,13 @@ function Test-FirstModuleFunction
         $module.ExportedFunctions.Keys  | Should -Contain "Test-SecondModuleFunction"
     }
 
-    It "Re-imports modules from file with new members when -Force is used with -AsCustomObject" -Skip {
+    It "Re-imports modules from file with new members when -Force is used with -AsCustomObject" -Pending {
         $module = Import-Module $modInfo -PassThru
 
         $module.ExportedFunctions.Count | Should -Be 1
         $module.ExportedFunctions.Keys  | Should -Contain "Test-FirstModuleFunction"
         $module.ExportedFunctions.Keys  | Should -Not -Contain "Test-SecondModuleFunction"
 
-        $newModuleContent = (Get-Content $modData.Path | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }"
         Set-Content -Force -Path $modData.Path -Value $newModuleContent
 
         $module = Import-Module $modInfo -AsCustomObject -Force
