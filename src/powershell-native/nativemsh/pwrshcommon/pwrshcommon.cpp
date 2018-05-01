@@ -704,7 +704,6 @@ namespace NativeMsh
         "System.Configuration",
         "System.ComponentModel",
         "System.ComponentModel.Annotations",
-        "System.ComponentModel.Composition",
         "System.ComponentModel.DataAnnotations",
         "System.ComponentModel.EventBasedAsync",
         "System.ComponentModel.Primitives",
