@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = propertyPSObjectLiteralPathSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public string[] LiteralPath
         {
             get { return paths; }
