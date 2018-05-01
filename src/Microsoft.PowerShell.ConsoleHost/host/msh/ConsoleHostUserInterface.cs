@@ -1797,7 +1797,7 @@ namespace Microsoft.PowerShell
                     }
 
                     // Modify string
-                    if (!insertMode) // then overwrite mode
+                    if (!insertMode && index < s.Length) // then overwrite mode
                     {
                         s = s.Remove(index, 1);
                     }
