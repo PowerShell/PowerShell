@@ -176,7 +176,7 @@ function Test-FirstModuleFunction
             TearDownModules
         }
 
-        It "Uses updated class definitions when the module is reloaded" {
+        It "Class and function defintions agree after non-forced reloading" {
             $content = @'
 $passedArgs = $Args
 class Root { $passedArgs = $passedArgs }
@@ -194,6 +194,29 @@ function Get-PassedArgsNoRoot { $passedArgs }
             Import-Module $modData.Path -ArgumentList 'value2'
             $rootVal = Get-PassedArgsRoot
             $noRootVal = Get-PassedArgsNoRoot
+            $rootVal | Should -BeExactly 'value1'
+            $rootVal | Should -BeExactly $noRootVal
+        }
+
+        It "Class and function values are updated after forced reloading" {
+            $content = @'
+$passedArgs = $Args
+class Root { $passedArgs = $passedArgs }
+function Get-PassedArgsRoot { [Root]::new().passedArgs }
+function Get-PassedArgsNoRoot { $passedArgs }
+'@
+
+            $modData = New-TestModule -Content $content
+
+            Import-Module $modData.Path -ArgumentList 'value1'
+            $rootVal = Get-PassedArgsRoot
+            $noRootVal = Get-PassedArgsNoRoot
+            $rootVal | Should -BeExactly $noRootVal
+
+            Import-Module $modData.Path -ArgumentList 'value2' -Force
+            $rootVal = Get-PassedArgsRoot
+            $noRootVal = Get-PassedArgsNoRoot
+            $rootVal | Should -BeExactly 'value2'
             $rootVal | Should -BeExactly $noRootVal
         }
 
