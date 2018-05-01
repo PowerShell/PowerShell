@@ -4268,14 +4268,15 @@ param(
     {
         # Respect PAGER, use more on Windows, and use less on Linux
         if (Test-Path env:PAGER) {
-            $moreCommand = (Get-Command -CommandType Application $env:PAGER | Select-Object -First 1).Definition
+            $pager,$moreArgs = $env:PAGER -split '\s+'
+            $moreCommand = (Get-Command -CommandType Application $pager | Select-Object -First 1).Definition
         } elseif ($IsWindows) {
             $moreCommand = (Get-Command -CommandType Application more | Select-Object -First 1).Definition
         } else {
             $moreCommand = (Get-Command -CommandType Application less | Select-Object -First 1).Definition
         }
 
-        $help | & $moreCommand
+        $help | & $moreCommand $moreArgs $moreArgs
     }
 ";
         }
