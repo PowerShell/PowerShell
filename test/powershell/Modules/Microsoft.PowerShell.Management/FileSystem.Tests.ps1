@@ -1398,6 +1398,9 @@ Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
 
     It "Access-denied test for removing a folder" -Skip:(-not $IsWindows) {
 
+        # The expected error is returned when there is a empty directory with the user does not have authorization to is deleted.
+        # It cannot have 'System. 'Hidden' or 'ReadOnly' attribute as well as -Force should not be used.
+
         $powershell = Join-Path $PSHOME "pwsh"
         $errorFile = Join-Path (Get-Item $testdrive).FullName "RemoveItemError.txt"
         $cmdline = "$powershell -c Remove-Item -Path $protectedPath -ErrorVariable err ;`$err.FullyQualifiedErrorId | Out-File $errorFile"
