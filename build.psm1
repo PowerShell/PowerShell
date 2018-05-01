@@ -557,7 +557,7 @@ Fix steps:
         Pop-Location
     }
 
-    # publish netcoreapp2.0 reference assemblies
+    # publish netcoreapp2.1 reference assemblies
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
         $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
@@ -780,6 +780,8 @@ function New-PSOptions {
     if (-not $Runtime) {
         if ($Environment.IsLinux) {
             $Runtime = "linux-x64"
+        } elseif ($Environment.IsMacOS) {
+            $Runtime = "osx-x64"
         } else {
             $RID = dotnet --info | ForEach-Object {
                 if ($_ -match "RID") {
@@ -787,16 +789,10 @@ function New-PSOptions {
                 }
             }
 
-            if ($Environment.IsWindows) {
-                # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
-                # which supports all supported windows platforms.
-                # So we, will change the RID to win7-<arch>
-                $Runtime = $RID -replace "win\d+", "win7"
-            } elseif ($Environment.IsMacOS) {
-                $Runtime = "osx-x64"
-            } else {
-                $Runtime = $RID
-            }
+            # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
+            # which supports all supported windows platforms.
+            # So we, will change the RID to win7-<arch>
+            $Runtime = $RID -replace "win\d+", "win7"
         }
 
         if (-not $Runtime) {
