@@ -2218,7 +2218,7 @@ function Start-CrossGen {
         throw "crossgen is not available for this platform"
     }
 
-    $dotnetRuntimeVersion = $dotnetCLIRequiredVersion -match "(\d\.\d)\..*" | ForEach-Object { $matches[1] }
+    $dotnetRuntimeVersion = $script:Options.Framework -replace 'netcoreapp'
 
     # Get the CrossGen.exe for the correct runtime with the latest version
     $crossGenPath = Get-ChildItem $script:Environment.nugetPackagesRoot $crossGenExe -Recurse | `
