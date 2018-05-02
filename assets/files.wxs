@@ -130,6 +130,9 @@
             <Component Id="cmpCC2EA506ACC015C30257216EB54EF45C" Guid="{1EB0EDDE-B951-4CE9-85CB-297FEACE09F5}">
                 <File Id="filF929D1F6273B2D99D06A623E318B63D0" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Diagnostics.DiagnosticSource.dll" />
             </Component>
+            <Component Id="cmp23FD946C6681D6747F1B638ECBE8C8BC" Guid="{BD174174-395F-4663-A3D2-4A9B00256140}">
+                <File Id="fil575A7B8E291C10417BD21C83494AAC1C" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Diagnostics.EventLog.dll" />
+            </Component>
             <Component Id="cmp4B935A8190C2D7D1F0E0DB9E5AAD7F30" Guid="{FEFFDDFD-8EC4-433B-BD2C-BAC4E0248796}">
                 <File Id="fil17D752C2CF130AAC7BD4470E8E59E0FE" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Security.Permissions.dll" />
             </Component>
@@ -207,6 +210,9 @@
             </Component>
             <Component Id="cmpF51764A0306591EAE22DAC7C60CD94C3" Guid="{898F8710-2FAA-428A-B335-BDBDF06D43BD}">
                 <File Id="fil1BC881DF9ACC129CBAC5E043ADB7E9EB" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Resources.Writer.dll" />
+            </Component>
+            <Component Id="cmpCF291BFA1FC042E050794DC43CC97162" Guid="{29220AFF-F996-4CBC-B233-8E02D658A10F}">
+                <File Id="filDD45641EFE4035109C19BB11116B801F" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Runtime.CompilerServices.Unsafe.dll" />
             </Component>
             <Component Id="cmp9D2C3D8592740F45A1025E694A190D9C" Guid="{FDED2F24-384D-4FE5-8E31-2977A42C16C8}">
                 <File Id="filC8752C98C22FEFDF0E0D6E4F392D5DA8" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Console.dll" />
@@ -1872,6 +1878,7 @@
             <ComponentRef Id="cmp580A12A38C2531DBD6B76F4A159A7A84" />
             <ComponentRef Id="cmp65A9F72C0AE530B5080F50972BD208B0" />
             <ComponentRef Id="cmpCC2EA506ACC015C30257216EB54EF45C" />
+            <ComponentRef Id="cmp23FD946C6681D6747F1B638ECBE8C8BC" />
             <ComponentRef Id="cmp4B935A8190C2D7D1F0E0DB9E5AAD7F30" />
             <ComponentRef Id="cmp2B60F4AC2E8D95A558C3E121A6252D37" />
             <ComponentRef Id="cmp8777CA81FBD5C5FAC86993893043793D" />
@@ -1898,6 +1905,7 @@
             <ComponentRef Id="cmp8552B147D2AAFD164533C72368BFB61C" />
             <ComponentRef Id="cmp33AA41435A9FDD75B7D5FA6869C6F441" />
             <ComponentRef Id="cmpF51764A0306591EAE22DAC7C60CD94C3" />
+            <ComponentRef Id="cmpCF291BFA1FC042E050794DC43CC97162" />
             <ComponentRef Id="cmp9D2C3D8592740F45A1025E694A190D9C" />
             <ComponentRef Id="cmpDD1FEDB2A6ECB31E10220399AA30D0D3" />
             <ComponentRef Id="cmp3CF2B598C782E6BBFA0572EBC7EE5EE5" />
