@@ -624,7 +624,7 @@ function Invoke-OpenCover
         [parameter()]$OutputLog = "$home/Documents/OpenCover.xml",
         [parameter()]$TestPath = "${script:psRepoPath}/test/powershell",
         [parameter()]$OpenCoverPath = "$home/OpenCover",
-        [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/netcoreapp2.0/win7-x64/publish",
+        [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/netcoreapp2.1/win7-x64/publish",
         [parameter()]$PesterLogElevated = "$HOME/Documents/TestResultsElevated.xml",
         [parameter()]$PesterLogUnelevated = "$HOME/Documents/TestResultsUnelevated.xml",
         [parameter()]$PesterLogFormat = "NUnitXml",

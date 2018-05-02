@@ -37,7 +37,7 @@
   <ItemGroup>
     <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
-    <PackageReference Include="psrp.windows" Version="6.0.0-*" />
+    <PackageReference Include="psrp.windows" Version="6.1.0-*" />
   </ItemGroup>
 
   <PropertyGroup>
