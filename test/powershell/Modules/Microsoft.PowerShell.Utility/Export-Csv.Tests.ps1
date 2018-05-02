@@ -89,8 +89,6 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results.P2 | Should -BeExactly "second"
-        $property = $results.PSObject.Properties.Name
-        $property | Should -BeExactly "P2"
     }
 
     It "Should not overwrite file with -NoClobber parameter" {
@@ -99,8 +97,6 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results.P1 | Should -BeExactly "first"
-        $property = $results.PSObject.Properties.Name
-        $property | Should -BeExactly "P1"
     }
 
     It "Should not overwrite read-only file without -Force parameter" {
@@ -111,8 +107,6 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results.P1 | Should -BeExactly "first"
-        $property = $results.PSObject.Properties.Name
-        $property | Should -BeExactly "P1"
     }
 
     It "Should overwrite read-only file with -Force parameter" {
@@ -123,8 +117,6 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results.P2 | Should -BeExactly "second"
-        $property = $results.PSObject.Properties.Name
-        $property | Should -BeExactly "P2"
     }
 
     It "Should not export to file if -WhatIf parameter specified" {
@@ -139,10 +131,9 @@ Describe "Export-Csv" -Tags "CI" {
 
         $results[0].P1 | Should -BeExactly "first"
         $results[1].P1 | Should -BeExactly "eleventh"
-        $property = $results[0].PSObject.Properties.Name
-        $property | Should -BeExactly "P1"
     }
 
+    # This test is not a duplicate of previous one, since it covers a separate branch in code.
     It "Should append to empty file if -Append parameter specified" {
         New-Item -Path $testCsv -ItemType File
 
@@ -150,8 +141,6 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results[0].P1 | Should -BeExactly "eleventh"
-        $property = $results.PSObject.Properties.Name
-        $property | Should -BeExactly "P1"
     }
 
     It "Should throw when appended property does not exist in existing .csv file" {
@@ -160,8 +149,6 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results[0].P1 | Should -BeExactly "first"
-        $property = $results.PSObject.Properties.Name
-        $property | Should -BeExactly "P1"
     }
 
     It "Test basic function works well" {
