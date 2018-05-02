@@ -429,17 +429,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!appendedPropertyNames.Contains(preexistingPropertyName))
                 {
-                    if (!Force)
-                    {
-                        string errorMessage = string.Format(
-                            CultureInfo.InvariantCulture, // property names and file names are culture invariant
-                            CsvCommandStrings.CannotAppendCsvWithMismatchedPropertyNames,
-                            preexistingPropertyName,
-                            this.Path);
-                        InvalidOperationException exception = new InvalidOperationException(errorMessage);
-                        ErrorRecord errorRecord = new ErrorRecord(exception, "CannotAppendCsvWithMismatchedPropertyNames", ErrorCategory.InvalidData, preexistingPropertyName);
-                        this.ThrowTerminatingError(errorRecord);
-                    }
+                    string errorMessage = string.Format(
+                        CultureInfo.InvariantCulture, // property names and file names are culture invariant
+                        CsvCommandStrings.CannotAppendCsvWithMismatchedPropertyNames,
+                        preexistingPropertyName,
+                        this.Path);
+                    InvalidOperationException exception = new InvalidOperationException(errorMessage);
+                    ErrorRecord errorRecord = new ErrorRecord(exception, "CannotAppendCsvWithMismatchedPropertyNames", ErrorCategory.InvalidData, preexistingPropertyName);
+                    this.ThrowTerminatingError(errorRecord);
                 }
             }
 
