@@ -11,6 +11,20 @@ Describe "New-PSSession basic test" -Tag @("CI") {
     }
 }
 
+Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
+    It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -skip:($IsWindows) {
+        $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+        $credential = [PSCredential]::new('username', $password)
+
+        $err = ({New-PSSession -ComputerName 'localhost' -Credential $credential -Authentication Basic}  | Should -Throw -PassThru  -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand')
+        $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
+        # Should be PSRemotingErrorId.ConnectFailed
+        # Ensures we are looking at teh expected instance
+        $err.Exception.ErrorCode | Should -Be 801
+    }
+
+}
+
 Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnWindows') {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
