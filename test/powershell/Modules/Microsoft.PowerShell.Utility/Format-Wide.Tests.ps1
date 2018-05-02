@@ -39,7 +39,7 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
         $al = (0..255)
         $info = @{}
         $info.array = $al
-        $result = $info | Format-Wide | Out-String
+        $result = $info | Format-Wide | Out-String -Width 120
         $result | Should -Match "array"
     }
 
@@ -83,7 +83,7 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
         $info.arrayList = "string1", "string2"
         $info.enumerable = [MyDayOfWeek]$eto
         $info.enumerableTestObject = $eto
-        $result = $info|Format-Wide|Out-String
+        $result = $info | Format-Wide | Out-String -Width 120
         $result | Should -Match "intArray"
         $result | Should -Match "arrayList"
         $result | Should -Match "enumerable"
@@ -99,7 +99,7 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
         $testobject3 = [TestGroupingClass]::New('name3', 3)
         $testobject1.GroupingKey = "bar"
         $testobjects = @($testobject1, $testobject2, $testobject3)
-        $result = $testobjects|Format-Wide -GroupBy GroupingKey|Out-String
+        $result = $testobjects | Format-Wide -GroupBy GroupingKey | Out-String -Width 120
         $result | Should -Match "GroupingKey: bar"
         $result | Should -Match "name1"
         $result | Should -Match " GroupingKey:"
