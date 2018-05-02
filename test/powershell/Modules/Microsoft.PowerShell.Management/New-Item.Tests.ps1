@@ -206,15 +206,28 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
         Remove-Item $FullyQualifiedLink -Force
     }
 
-    It "Should error correctly when failing to create a symbolic link" -Skip:($IsWindows) {
-        # This test expects that /sbin exists but is not writable by the user
-        { New-Item -ItemType SymbolicLink -Path "/sbin/powershell-test" -Target $FullyQualifiedFolder -ErrorAction Stop } |
-		Should -Throw -ErrorId "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"
-    }
-
     It "New-Item -ItemType SymbolicLink should understand directory path ending with slash" {
         $folderName = [System.IO.Path]::GetRandomFileName()
         $symbolicLinkPath = New-Item -ItemType SymbolicLink -Path "$tmpDirectory/$folderName/" -Value "/bar/"
         $symbolicLinkPath | Should -Not -BeNullOrEmpty
+    }
+}
+
+Describe "New-Item with links fails for non elevated user." -Tags "CI" {
+    $tmpDirectory         = $TestDrive
+    $testfile             = "testfile.txt"
+    $testfolder           = "newDirectory"
+    $testlink             = "testlink"
+    $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
+    $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+
+    # BeforeEach {
+    #     Clean-State
+    # }
+
+    It "Should error correctly when failing to create a symbolic link" {
+        # This test expects that /sbin exists but is not writable by the user
+        { New-Item -ItemType SymbolicLink -Path "/sbin/powershell-test" -Target $FullyQualifiedFolder -ErrorAction Stop } |
+        Should -Throw -ErrorId "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"
     }
 }
