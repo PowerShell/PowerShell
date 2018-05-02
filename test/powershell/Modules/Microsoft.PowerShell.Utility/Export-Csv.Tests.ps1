@@ -76,7 +76,7 @@ Describe "Export-Csv" -Tags "CI" {
         { $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation -NoTypeInformation } | Should -Throw -ErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ExportCsvCommand"
     }
 
-    It "Should be able to use -LiteralPath parameter" {
+    It "Should support -LiteralPath parameter" {
         $testObject | Export-Csv -LiteralPath $testCsv
         $results = Import-Csv -Path  $testCsv
 
@@ -89,8 +89,8 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results.P2 | Should -BeExactly "second"
-        $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
-        $property | Should -BeExactly P2
+        $property = $results.PSObject.Properties.Name
+        $property | Should -BeExactly "P2"
     }
 
     It "Should not overwrite file with -NoClobber parameter" {
@@ -99,8 +99,8 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results.P1 | Should -BeExactly "first"
-        $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
-        $property | Should -BeExactly P1
+        $property = $results.PSObject.Properties.Name
+        $property | Should -BeExactly "P1"
     }
 
     It "Should not overwrite read-only file without -Force parameter" {
@@ -111,8 +111,8 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results.P1 | Should -BeExactly "first"
-        $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
-        $property | Should -BeExactly P1
+        $property = $results.PSObject.Properties.Name
+        $property | Should -BeExactly "P1"
     }
 
     It "Should overwrite read-only file with -Force parameter" {
@@ -123,8 +123,8 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results.P2 | Should -BeExactly "second"
-        $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
-        $property | Should -BeExactly P2
+        $property = $results.PSObject.Properties.Name
+        $property | Should -BeExactly "P2"
     }
 
     It "Should not export to file if -WhatIf parameter specified" {
@@ -139,8 +139,8 @@ Describe "Export-Csv" -Tags "CI" {
 
         $results[0].P1 | Should -BeExactly "first"
         $results[1].P1 | Should -BeExactly "eleventh"
-        $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
-        $property | Should -BeExactly P1
+        $property = $results[0].PSObject.Properties.Name
+        $property | Should -BeExactly "P1"
     }
 
     It "Should append to empty file if -Append parameter specified" {
@@ -150,18 +150,18 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results[0].P1 | Should -BeExactly "eleventh"
-        $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
-        $property | Should -BeExactly P1
+        $property = $results.PSObject.Properties.Name
+        $property | Should -BeExactly "P1"
     }
 
-    It "Should throw when appended property does not exits in existing .csv file" {
+    It "Should throw when appended property does not exist in existing .csv file" {
         $P1 | Export-Csv -Path $testCsv
         { $P2 | Export-Csv -Path $testCsv -Append -ErrorAction Stop } | Should -Throw -ErrorId "CannotAppendCsvWithMismatchedPropertyNames,Microsoft.PowerShell.Commands.ExportCsvCommand"
         $results = Import-Csv -Path $testCsv
 
         $results[0].P1 | Should -BeExactly "first"
-        $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
-        $property | Should -BeExactly P1
+        $property = $results.PSObject.Properties.Name
+        $property | Should -BeExactly "P1"
     }
 
     It "Test basic function works well" {
