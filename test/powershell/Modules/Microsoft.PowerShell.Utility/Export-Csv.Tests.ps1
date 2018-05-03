@@ -135,7 +135,7 @@ Describe "Export-Csv" -Tags "CI" {
 
     # This test is not a duplicate of previous one, since it covers a separate branch in code.
     It "Should append to empty file if -Append parameter specified" {
-        New-Item -Path $testCsv -ItemType File
+        New-Item -Path $testCsv -ItemType File | Out-Null
 
         $P11 | Export-Csv -Path $testCsv -Append
         $results = Import-Csv -Path $testCsv
