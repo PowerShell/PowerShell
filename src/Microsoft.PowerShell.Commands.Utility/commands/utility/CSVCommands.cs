@@ -877,9 +877,8 @@ namespace Microsoft.PowerShell.Commands
         internal
         ExportCsvHelper(PSCmdlet cmdlet, char delimiter)
         {
-            if (cmdlet == null)
-            {
-            }
+            Dbg.Assert(cmdlet != null, "Caller should verify cmdlet != null");
+            
             _cmdlet = cmdlet;
             _delimiter = delimiter;
         }
