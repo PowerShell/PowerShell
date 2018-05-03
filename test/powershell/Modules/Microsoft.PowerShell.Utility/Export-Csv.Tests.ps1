@@ -133,7 +133,7 @@ Describe "Export-Csv" -Tags "CI" {
         $results[1].P1 | Should -BeExactly "eleventh"
     }
 
-    # This test is not a duplicate of previous one, since it covers a separate branch in code.
+    # This test is not a duplicate of the previous one, since it covers a separate branch in code.
     It "Should append to empty file if -Append parameter specified" {
         New-Item -Path $testCsv -ItemType File | Out-Null
 
@@ -149,6 +149,53 @@ Describe "Export-Csv" -Tags "CI" {
         $results = Import-Csv -Path $testCsv
 
         $results[0].P1 | Should -BeExactly "first"
+    }
+
+    It "Should append existing properties, add missing properties with empty value, and skip extra properties" {
+        $object1 = [PSCustomObject]@{first = 1; second = 2}
+        $object2 = [PSCustomObject]@{first = 11; third = 13}
+
+        $object1 | Export-Csv -Path $testCsv
+        $object2 | Export-Csv -Path $testCsv -Append -Force
+
+        $results = Import-Csv -Path $testCsv
+
+        $results[0].first | Should -BeExactly "1"
+        $results[0].second | Should -BeExactly "2"
+        $results[1].first | Should -BeExactly "11"
+        $results[1].second | Should -BeNullOrEmpty
+        $results[1].PSObject.properties.Name | Should -Not -Contain 'third'
+    }
+
+    It "First line should be #TYPE if -IncludeTypeInformation used and pstypenames object property is empty" {
+        $object = [PSCustomObject]@{first = 1}
+        $pstypenames = $object.pstypenames | ForEach-Object -Process {$_}
+        $pstypenames | ForEach-Object -Process {$object.pstypenames.Remove($_)}
+        $object | Export-Csv -Path $testCsv -IncludeTypeInformation
+        $content = Get-Content -Path $testCsv
+
+        $content[0] | Should -BeExactly '#TYPE'
+    }
+
+    It "Shoud remove 'CSV:' from first line when export imported object" {
+        $P1 | Export-Csv -Path $testCsv -IncludeTypeInformation
+        $result1 = Import-Csv -Path $testCsv
+
+        # after removing the first element - 'System.Management.Automation.PSCustomObject',
+        # the remaining - 'CSV:System.Management.Automation.PSCustomObject' is tested.
+        $result1.pstypenames.Remove('System.Management.Automation.PSCustomObject')
+        $result1 | Export-Csv -Path $testCsv -IncludeTypeInformation
+        $result2 = Get-Content -Path $testCsv
+
+        $result2[0] | Should -Not -Match 'CSV'
+    }
+
+    It "Should escape double quote with another double quote" {
+        $object = [PSCustomObject]@{first = 'Double quote " in the middle.'}
+        $object | Export-Csv -Path $testCsv
+        $result = Get-Content -Path $testCsv
+
+        $result[1] | Should -BeExactly '"Double quote "" in the middle."'
     }
 
     It "Test basic function works well" {
