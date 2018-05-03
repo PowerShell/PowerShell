@@ -3,7 +3,7 @@
 $Environment = Get-EnvironmentInformation
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
-$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.17.10", "debian.8", "debian.9")
+$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.17.10", "ubuntu.18.04", "debian.8", "debian.9")
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -574,6 +574,8 @@ function New-UnixPackage {
                     $DebDistro = "ubuntu.16.04"
                 } elseif ($Environment.IsUbuntu17) {
                     $DebDistro = "ubuntu.17.10"
+                } elseif ($Environment.IsUbuntu18) {
+                    $DebDistro = "ubuntu.18.04"
                 } elseif ($Environment.IsDebian8) {
                     $DebDistro = "debian.8"
                 } elseif ($Environment.IsDebian9) {
@@ -993,6 +995,7 @@ function Get-PackageDependencies
                 "ubuntu.14.04" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
                 "ubuntu.17.10" { $Dependencies += @("libssl1.0.0", "libicu57") }
+                "ubuntu.18.04" { $Dependencies += @("libssl1.0.0", "libssl1.1", "libicu60") }
                 "debian.8" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "debian.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
                 default { throw "Debian distro '$Distribution' is not supported." }
