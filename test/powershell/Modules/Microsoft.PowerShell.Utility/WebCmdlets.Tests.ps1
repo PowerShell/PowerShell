@@ -505,8 +505,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     $testCase = @(
-        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'http proxy'; protocol = 'http' }
-        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'https proxy'; protocol = 'https' }
+        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'HTTP proxy'; protocol = 'http' }
+        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'HTTPS proxy'; protocol = 'https' }
     )
 
     It "Validate Invoke-WebRequest with -Proxy option set - '<name>'" -TestCases $testCase {
@@ -1822,8 +1822,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     $testCase = @(
-        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'http proxy'; protocol = 'http' }
-        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'https proxy'; protocol = 'https' }
+        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'HTTP proxy'; protocol = 'http' }
+        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'HTTPS proxy'; protocol = 'https' }
     )
 
     It "Validate Invoke-RestMethod with -Proxy option - '<name>'" -TestCases $testCase {
