@@ -2282,7 +2282,6 @@ function Start-CrossGen {
         "Microsoft.PowerShell.Security.dll",
         "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.PowerShell.ConsoleHost.dll",
-        "Microsoft.PowerShell.PSReadLine.dll",
         "System.Management.Automation.dll"
     )
 
