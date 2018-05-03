@@ -58,7 +58,7 @@ Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') 
             Help
         }
         # the help function renders the help content as text so just verify that there is content
-        $help | Should -Not -BeNullOrEmpty $true
+        $help | Should -Not -BeNullOrEmpty
     }
 }
 
