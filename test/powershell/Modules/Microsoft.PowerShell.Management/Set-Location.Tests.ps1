@@ -71,6 +71,7 @@ Describe "Set-Location" -Tags "CI" {
     It "Should set location to new drive's current working directory when path is the colon-terminated name of a different drive" {
         try
         {
+            $oldLocation = Get-Location
             Set-Location 'TestDrive:\'
             New-Item -Path 'TestDrive:\' -Name 'Directory1' -ItemType Directory
             New-PSDrive -Name 'Z' -PSProvider FileSystem -Root 'TestDrive:\Directory1'
@@ -88,7 +89,7 @@ Describe "Set-Location" -Tags "CI" {
         }
         finally
         {
-            Set-Location 'TestDrive:\'
+            Set-Location $oldLocation
             Remove-PSDrive -Name 'Z'
         }
     }
