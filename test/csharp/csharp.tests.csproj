@@ -5,7 +5,7 @@
   <PropertyGroup>
     <Description>PowerShell xUnit Tests</Description>
     <AssemblyName>powershell-tests</AssemblyName>
-    <RuntimeIdentifiers>win7-x86;win7-x64;osx.10.12-x64;linux-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win7-x86;win7-x64;osx-x64;linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -17,7 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj"/>
     <ProjectReference Include="../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj"/>
-    <ProjectReference Include="../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj"/>    
+    <ProjectReference Include="../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

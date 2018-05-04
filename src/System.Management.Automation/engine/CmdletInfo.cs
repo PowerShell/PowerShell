@@ -297,7 +297,7 @@ namespace System.Management.Automation
                                 _verb,
                                 StringLiterals.CommandVerbNounSeparator,
                                 _noun,
-                                parameterSet.ToString((this.CommandType & CommandTypes.Workflow) == CommandTypes.Workflow)));
+                                parameterSet.ToString()));
                     }
                 }
                 else

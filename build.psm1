@@ -402,7 +402,7 @@ function Start-PSBuild {
         # If this parameter is not provided it will get determined automatically.
         [ValidateSet("win7-x64",
                      "win7-x86",
-                     "osx.10.12-x64",
+                     "osx-x64",
                      "linux-x64",
                      "linux-arm",
                      "win-arm",
@@ -557,7 +557,7 @@ Fix steps:
         Pop-Location
     }
 
-    # publish netcoreapp2.0 reference assemblies
+    # publish netcoreapp2.1 reference assemblies
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
         $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
@@ -683,7 +683,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion "4.2"
 }
 
 function Compress-TestContent {
@@ -706,7 +706,7 @@ function New-PSOptions {
         [ValidateSet("Linux", "Debug", "Release", "CodeCoverage", "")]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp2.0")]
+        [ValidateSet("netcoreapp2.1")]
         [string]$Framework,
 
         # These are duplicated from Start-PSBuild
@@ -714,7 +714,7 @@ function New-PSOptions {
         [ValidateSet("",
                      "win7-x86",
                      "win7-x64",
-                     "osx.10.12-x64",
+                     "osx-x64",
                      "linux-x64",
                      "linux-arm",
                      "win-arm",
@@ -773,13 +773,15 @@ function New-PSOptions {
     Write-Verbose "Top project directory is $Top"
 
     if (-not $Framework) {
-        $Framework = "netcoreapp2.0"
+        $Framework = "netcoreapp2.1"
         Write-Verbose "Using framework '$Framework'"
     }
 
     if (-not $Runtime) {
         if ($Environment.IsLinux) {
             $Runtime = "linux-x64"
+        } elseif ($Environment.IsMacOS) {
+            $Runtime = "osx-x64"
         } else {
             $RID = dotnet --info | ForEach-Object {
                 if ($_ -match "RID") {
@@ -787,14 +789,10 @@ function New-PSOptions {
                 }
             }
 
-            if ($Environment.IsWindows) {
-                # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
-                # which supports all supported windows platforms.
-                # So we, will change the RID to win7-<arch>
-                $Runtime = $RID -replace "win\d+", "win7"
-            } else {
-                $Runtime = $RID
-            }
+            # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
+            # which supports all supported windows platforms.
+            # So we, will change the RID to win7-<arch>
+            $Runtime = $RID -replace "win\d+", "win7"
         }
 
         if (-not $Runtime) {
@@ -992,11 +990,21 @@ function Start-PSPester {
         [switch]$IncludeFailingTest
     )
 
-    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue))
+    $getModuleResults = Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue
+    if (-not $getModuleResults)
     {
         Write-Warning @"
 Pester module not found.
 Restore the module to '$Pester' by running:
+    Restore-PSPester
+"@
+        return;
+    }
+
+    if (-not ($getModuleResults | Where-Object { $_.Version -ge "4.2" } )) {
+        Write-Warning @"
+No Pester module of version 4.2 and higher.
+Restore the required module version to '$Pester' by running:
     Restore-PSPester
 "@
         return;
@@ -1462,10 +1470,9 @@ function Start-PSxUnit {
             }
         }
 
-        # '-fxversion' workaround required due to https://github.com/dotnet/cli/issues/7901#issuecomment-343323674
         # Run sequential tests first, and then run the tests that can execute in parallel
-        dotnet xunit -fxversion 2.0.5 -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
-        dotnet xunit -fxversion 2.0.5 -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
+        dotnet xunit -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
+        dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
     }
     finally {
         Pop-Location
@@ -1927,13 +1934,19 @@ function Start-TypeGen
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    # This custom target depends on 'ResolveAssemblyReferencesDesignTime', whose definition can be found in the sdk folder.
+    # To find the available properties of '_ReferencesFromRAR' when switching to a new dotnet sdk, follow the steps below:
+    #   1. create a dummy project using the new dotnet sdk.
+    #   2. build the dummy project with this command:
+    #      dotnet msbuild .\dummy.csproj /t:ResolveAssemblyReferencesDesignTime /fileLogger /noconsolelogger /v:diag
+    #   3. search '_ReferencesFromRAR' in the produced 'msbuild.log' file. You will find the properties there.
     $GetDependenciesTargetPath = "$PSScriptRoot/src/Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
     $GetDependenciesTargetValue = @'
 <Project>
     <Target Name="_GetDependencies"
             DependsOnTargets="ResolveAssemblyReferencesDesignTime">
         <ItemGroup>
-            <_RefAssemblyPath Include="%(_ReferencesFromRAR.ResolvedPath)%3B" Condition=" '%(_ReferencesFromRAR.Type)' == 'assembly' And '%(_ReferencesFromRAR.PackageName)' != 'Microsoft.Management.Infrastructure' " />
+            <_RefAssemblyPath Include="%(_ReferencesFromRAR.HintPath)%3B"  Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' "/>
         </ItemGroup>
         <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
     </Target>
@@ -2140,7 +2153,7 @@ function Start-CrossGen {
         [Parameter(Mandatory=$true)]
         [ValidateSet("win7-x86",
                      "win7-x64",
-                     "osx.10.12-x64",
+                     "osx-x64",
                      "linux-x64",
                      "linux-arm",
                      "win-arm",
@@ -2215,9 +2228,12 @@ function Start-CrossGen {
         throw "crossgen is not available for this platform"
     }
 
+    $dotnetRuntimeVersion = $script:Options.Framework -replace 'netcoreapp'
+
     # Get the CrossGen.exe for the correct runtime with the latest version
     $crossGenPath = Get-ChildItem $script:Environment.nugetPackagesRoot $crossGenExe -Recurse | `
                         Where-Object { $_.FullName -match $crossGenRuntime } | `
+                        Where-Object { $_.FullName -match $dotnetRuntimeVersion } | `
                         Sort-Object -Property FullName -Descending | `
                         Select-Object -First 1 | `
                         ForEach-Object { $_.FullName }

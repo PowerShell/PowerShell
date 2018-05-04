@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         /// Literal path of the XML file
         /// </summary>
         [Parameter(ParameterSetName = "ByLiteralPath", Mandatory = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public String LiteralPath
         {
             get

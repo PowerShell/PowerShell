@@ -537,9 +537,6 @@
   <data name="RemoteDiscoveryWorksOnlyInListAvailableMode" xml:space="preserve">
     <value>Running the Get-Module cmdlet against a remote computer can only list available modules. Add the ListAvailable parameter to your command, and then try again.</value>
   </data>
-  <data name="ExportingWorkflow" xml:space="preserve">
-    <value>Exporting workflow '{0}'.</value>
-  </data>
   <data name="ModuleLoadedAsASnapin" xml:space="preserve">
     <value>The '{0}' module was not imported because the '{0}' snap-in was already imported.</value>
   </data>

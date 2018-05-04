@@ -476,16 +476,21 @@ Describe "TabCompletion" -Tags CI {
         }
 
         It "Tab completion for filesystem provider qualified path" {
-            if ($IsWindows) {
-                $beforeTab = 'filesystem::{0}\Wind' -f $env:SystemDrive
-                $afterTab = 'filesystem::{0}\Windows' -f $env:SystemDrive
-            } else {
-                $beforeTab = 'filesystem::/us' -f $env:SystemDrive
-                $afterTab = 'filesystem::/usr' -f $env:SystemDrive
+            $tempFolder = [System.IO.Path]::GetTempPath()
+            try
+            {
+                New-Item -ItemType Directory -Path "$tempFolder/helloworld" > $null
+                $tempFolder | Should -Exist
+                $beforeTab = 'filesystem::{0}hello' -f $tempFolder
+                $afterTab = 'filesystem::{0}helloworld' -f $tempFolder
+                $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+                $res.CompletionMatches.Count | Should -BeGreaterThan 0
+                $res.CompletionMatches[0].CompletionText | Should -Be $afterTab
             }
-            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should -BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should -Be $afterTab
+            finally
+            {
+                Remove-Item -Path "$tempFolder/helloworld" -Force -ErrorAction SilentlyContinue
+            }
         }
 
         It "Tab completion dynamic parameter of a custom function" {

@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.1" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.5.0-rc1-26423-06" />
   </ItemGroup>
 
 </Project>
