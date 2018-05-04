@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation.Provider;
 using Dbg = System.Management.Automation;
 
@@ -551,6 +552,13 @@ namespace System.Management.Automation
             // Set the $PWD variable to the new location
 
             this.SetVariable(SpecialVariables.PWDVarPath, this.CurrentLocation, false, true, CommandOrigin.Internal);
+            
+            // Set the cwd/CurrentDirectory to the path - that path must be a file system directory
+            if (Directory.Exists(this.CurrentLocation.Path))
+            {
+                Environment.CurrentDirectory = this.CurrentLocation.Path;
+            }
+            
             return this.CurrentLocation;
         } // SetLocation
 
