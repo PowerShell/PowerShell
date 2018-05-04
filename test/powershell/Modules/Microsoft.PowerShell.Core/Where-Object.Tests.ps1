@@ -24,8 +24,8 @@ Describe "Where-Object" -Tags "CI" {
         )
     }
 
-    It "Where-Object -Not Prop" {
-        $Result = $Computers | Where-Object -Not 'IPAddress'
+    It "Where-Object -IsNullOrEmpty Prop" {
+        $Result = $Computers | Where-Object -IsNullOrEmpty 'IPAddress'
         $Result.Count | Should -Be 2
     }
 

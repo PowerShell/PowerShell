@@ -813,7 +813,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "CaseSensitiveNotInSet")]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "IsSet")]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "IsNotSet")]
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Not")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "IsNullOrEmpty")]
         [ValidateNotNullOrEmpty]
         public string Property
         {
@@ -1203,8 +1203,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Binary operator -Not.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Not")]
-        public SwitchParameter Not
+        [Parameter(Mandatory = true, ParameterSetName = "IsNullOrEmpty")]
+        public SwitchParameter IsNullOrEmpty
         {
             set { _binaryOperator = TokenKind.Not; }
             get { return _binaryOperator == TokenKind.Not; }
