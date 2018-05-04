@@ -177,17 +177,15 @@ Describe "Export-Csv" -Tags "CI" {
         $content[0] | Should -BeExactly '#TYPE'
     }
 
-    It "Shoud remove 'CSV:' from first line when export imported object" {
-        $P1 | Export-Csv -Path $testCsv -IncludeTypeInformation
-        $result1 = Import-Csv -Path $testCsv
+    # If type starts with CSV: Export-CSV should remove it. This would happen when you export
+    # an imported object. Import-Csv adds CSV: prefix to the type.
+    It "Should remove 'CSV:' from the type name" {
+        $object = [PSCustomObject]@{first = 1}
+        $object.pstypenames.Insert(0, "CSV:TheType")
+        $object | Export-Csv -Path $testCsv -IncludeTypeInformation
+        $result = Get-Content -Path $testCsv
 
-        # after removing the first element - 'System.Management.Automation.PSCustomObject',
-        # the remaining - 'CSV:System.Management.Automation.PSCustomObject' is tested.
-        $result1.pstypenames.Remove('System.Management.Automation.PSCustomObject')
-        $result1 | Export-Csv -Path $testCsv -IncludeTypeInformation
-        $result2 = Get-Content -Path $testCsv
-
-        $result2[0] | Should -Not -Match 'CSV'
+        $result[0] | Should -BeExactly "#TYPE TheType"
     }
 
     It "Should escape double quote with another double quote" {
