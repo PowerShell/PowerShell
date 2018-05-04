@@ -117,7 +117,7 @@ try {
         } elseif ($IsLinuxEnv) {
             "powershell-linux-x64"
         } elseif ($IsMacOSEnv) {
-            "powershell-osx.10.12-x64"
+            "powershell-osx-x64"
         }
 
         $package = Find-Package -Source powershell-core-daily -AllowPrereleaseVersions -Name $packageName

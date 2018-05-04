@@ -69,6 +69,53 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         [A]::b = [B]::new()
         { [A]::b = "bla" } | Should -Throw -ErrorId 'ExceptionWhenSetting'
     }
+
+    Context "Inheritance from abstract .NET classes" {
+        BeforeAll {
+            class TestHost : System.Management.Automation.Host.PSHost
+            {
+                [String]$myName = "MyHost"
+                [Version]$myVersion = [Version]"1.0.0.0"
+                [Guid]$myInstanceId = [guid]::NewGuid()
+                [System.Globalization.CultureInfo]$myCurrentCulture = "en-us"
+                [System.Globalization.CultureInfo]$myCurrentUICulture = "en-us"
+                [System.Management.Automation.Host.PSHostUserInterface]$myUI = $null
+                [bool]$IsInteractive
+                [void]SetShouldExit([int]$exitCode) { }
+                [void]EnterNestedPrompt(){ throw "EnterNestedPrompt-NotSupported" }
+                [void]ExitNestedPrompt(){ throw "Unsupported" }
+                [void]NotifyBeginApplication() { }
+                [void]NotifyEndApplication() { }
+                [string]get_Name() { return $this.myName; write-host "MyName" }
+                [version]get_Version() { return $this.myVersion }
+                [System.Globalization.CultureInfo]get_CurrentCulture() { return $this.myCurrentCulture }
+                [System.Globalization.CultureInfo]get_CurrentUICulture() { return $this.myCurrentUICulture }
+                [System.Management.Automation.Host.PSHostUserInterface]get_UI() { return $this.myUI }
+                [guid]get_InstanceId() { return $this.myInstanceId }
+                TestHost() {
+                }
+                TestHost([bool]$isInteractive) {
+                    $this.IsInteractive = $isInteractive
+                }
+            }
+        }
+
+        It 'can subclass .NET abstract class' {
+            $th = [TestHost]::new()
+            $th.myName    | Should -BeExactly "MyHost"
+            $th.myVersion | Should -Be ([Version]"1.0.0.0")
+        }
+
+        It 'overrides abstract base class properties' {
+            $th = [TestHost]::new()
+            $th.Name | Should -BeExactly "MyHost"
+        }
+
+        It 'overrides abstract base class methods' {
+            $th = [TestHost]::new()
+            { $th.EnterNestedPrompt() } | Should -Throw "EnterNestedPrompt-NotSupported"
+        }
+    }
 }
 
 Describe 'Classes inheritance syntax errors' -Tags "CI" {

@@ -6,7 +6,7 @@
     <Description>PowerShell top-level project with .NET CLI host</Description>
     <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
-    <RuntimeIdentifiers>linux-x64;osx.10.12-x64;</RuntimeIdentifiers>
+    <RuntimeIdentifiers>linux-x64;osx-x64;</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>

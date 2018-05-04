@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter()]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string LiteralPath
         {
@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {

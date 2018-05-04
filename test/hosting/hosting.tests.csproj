@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="../Test.Common.props"/>
+
+  <PropertyGroup>
+    <Description>PowerShell hosting SDK xUnit Tests</Description>
+    <AssemblyName>powershell-hosting-tests</AssemblyName>
+    <!--RuntimeIdentifiers>win7-x86;win7-x64;osx.10.12-x64;linux-x64</RuntimeIdentifiers-->
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>../../src/signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <!-- DotNetCliToolReference element specifies the CLI tool that the user wants to restore in the context of the project. -->
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.0.2" />
+  </ItemGroup>
+
+</Project>

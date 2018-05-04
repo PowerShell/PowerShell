@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty()]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public string[] LiteralPath { get; set; }
 
         /// <summary>

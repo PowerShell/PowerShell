@@ -268,7 +268,7 @@ namespace System.Management.Automation
             CommandInfo currentMatch = null;
 
             if (_context.EngineSessionState != null &&
-                (_commandTypes & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Workflow | CommandTypes.Configuration)) != 0)
+                (_commandTypes & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
             {
                 currentMatch = GetNextFunction();
             }

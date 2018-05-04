@@ -372,9 +372,6 @@ namespace System.Management.Automation.Internal
                                         case CommandTypes.Alias:
                                             current = new AliasInfo(entry.Value.Name, null, context);
                                             break;
-                                        case CommandTypes.Workflow:
-                                            current = new WorkflowInfo(entry.Value.Name, ScriptBlock.EmptyScriptBlock, context);
-                                            break;
                                         case CommandTypes.Function:
                                             current = new FunctionInfo(entry.Value.Name, ScriptBlock.EmptyScriptBlock, context);
                                             break;
@@ -480,13 +477,6 @@ namespace System.Management.Automation.Internal
                                 if ((commandTypes & CommandTypes.Configuration) == CommandTypes.Configuration)
                                 {
                                     yield return new ConfigurationInfo(commandName, ScriptBlock.EmptyScriptBlock, context)
-                                    {
-                                        Module = tempModuleInfo
-                                    };
-                                }
-                                if ((commandTypes & CommandTypes.Workflow) == CommandTypes.Workflow)
-                                {
-                                    yield return new WorkflowInfo(commandName, ScriptBlock.EmptyScriptBlock, context)
                                     {
                                         Module = tempModuleInfo
                                     };
