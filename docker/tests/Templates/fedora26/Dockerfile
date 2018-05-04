@@ -5,15 +5,14 @@ ARG PACKAGELOCATIONSTUB
 ARG TESTLISTSTUB=/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module
 ARG GITLOCATION=https://github.com/PowerShell/PowerShell.git
 
-# Apply any security updates to the image
-RUN dnf upgrade-minimal -y --security
-
 # Install dependencies
 RUN dnf install -y \
         curl \
         glibc-locale-source \
         compat-openssl10 \
-        git
+        git \
+    && dnf upgrade-minimal -y --security \
+    && dnf clean all
 
 # Setup the locale
 ENV LANG en_US.UTF-8

@@ -22,14 +22,12 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
 
 # TODO: addd LABEL org.label-schema.vcs-ref=${VCS_REF}
 
-# Apply any security updates to the image
-RUN dnf upgrade-minimal -y --security
-
 # Install dependencies and clean up
 RUN dnf install -y \
         curl \
         glibc-locale-source \
         compat-openssl10 \
+    && dnf upgrade-minimal -y --security \
     && dnf clean all
 
 # Setup the locale
