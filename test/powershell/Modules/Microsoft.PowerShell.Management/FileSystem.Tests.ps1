@@ -236,7 +236,34 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             finally {
                 Remove-Item -Path $testPath -Recurse -Force -ErrorAction SilentlyContinue
             }
-         }
+        }
+
+        It "Set-Location sets the Environment.CurrentDirectory which maps to cwd on Unix" {
+            Set-Location $TestDrive
+            if ($IsMacOS) {
+                # on macOS, /tmp is a symlink to /private so the real path is under /private/tmp
+                $expectedPath = "/private" + $TestDrive
+            } else {
+                $expectedPath = $TestDrive
+            }
+            [System.Environment]::CurrentDirectory | Should -BeExactly $expectedPath
+            Set-Location $testDir
+            [System.Environment]::CurrentDirectory | Should -BeExactly "$expectedPath/$testDir"
+        }
+        It "Push/Pop-Location sets the Environment.CurrentDirectory which maps to cwd on Unix" {
+            Push-Location $TestDrive
+            if ($IsMacOS) {
+                # on macOS, /tmp is a symlink to /private so the real path is under /private/tmp
+                $expectedPath = "/private" + $TestDrive
+            } else {
+                $expectedPath = $TestDrive
+            }
+            [System.Environment]::CurrentDirectory | Should -BeExactly $expectedPath
+            Push-Location $testDir
+            [System.Environment]::CurrentDirectory | Should -BeExactly "$expectedPath/$testDir"
+            Pop-Location
+            [System.Environment]::CurrentDirectory | Should -BeExactly $expectedPath
+        }
     }
 
     Context "Validate behavior when access is denied" {
