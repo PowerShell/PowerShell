@@ -1,6 +1,7 @@
 # Docker image file that describes an fedora 25 image with PowerShell installed from Microsoft YUM Repo
+ARG FromTag=26
 
-FROM fedora:26
+FROM fedora:${FromTag}
 
 ARG POWERSHELL_VERSION=6.0.2
 ARG IMAGE_NAME=microsoft/powershell:fedora26
