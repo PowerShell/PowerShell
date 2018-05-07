@@ -4,6 +4,7 @@ ARG FromTag=14.04
 FROM ubuntu:${FromTag}
 
 ARG POWERSHELL_VERSION=6.0.2
+ARG POWERSHELL_VERSION_POSTFIX=-1.ubuntu.14.04
 ARG IMAGE_NAME=microsoft/powershell:ubuntu14.04
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -48,7 +49,7 @@ RUN curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | tee /etc
 # Install powershell from Microsoft Repo
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-	powershell=${POWERSHELL_VERSION}-1.ubuntu.14.04 \
+	powershell=${POWERSHELL_VERSION}${POWERSHELL_VERSION_POSTFIX} \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
