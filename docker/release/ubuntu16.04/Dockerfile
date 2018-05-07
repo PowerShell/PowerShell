@@ -30,7 +30,9 @@ RUN apt-get update \
         ca-certificates \
         curl \
         apt-transport-https \
-        locales\
+        locales \
+    && apt-get dist-upgrade -y \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup the locale
@@ -47,7 +49,9 @@ RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | tee /etc
 # Install powershell from Microsoft Repo
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-	powershell=${POWERSHELL_VERSION}
+	powershell=${POWERSHELL_VERSION}-1.ubuntu.16.04 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lis
 
 # Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c

@@ -35,6 +35,8 @@ RUN apt-get update \
         ca-certificates \
         curl \
         apt-transport-https \
+    && apt-get dist-upgrade -y \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Import the public repository GPG keys for Microsoft
@@ -46,7 +48,9 @@ RUN curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | tee /etc
 # Install powershell from Microsoft Repo
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-    powershell=${POWERSHELL_VERSION}
+	powershell=${POWERSHELL_VERSION}-1.ubuntu.14.04 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c
