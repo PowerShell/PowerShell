@@ -26,6 +26,7 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
 RUN dnf install -y \
         curl \
         glibc-locale-source \
+    && dnf upgrade-minimal -y --security \
     && dnf clean all
 
 # Setup the locale

@@ -10,7 +10,9 @@ RUN dnf install -y \
         curl \
         glibc-locale-source \
         compat-openssl10 \
-        git
+        git \
+    && dnf upgrade-minimal -y --security \
+    && dnf clean all
 
 # Setup the locale
 ENV LANG en_US.UTF-8
