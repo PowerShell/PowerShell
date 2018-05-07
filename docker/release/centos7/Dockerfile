@@ -38,7 +38,7 @@ RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.r
 
 # Install latest powershell from Microsoft YUM Repo
 RUN yum install -y \
-        powershell \
+        powershell-${POWERSHELL_VERSION} \
     && yum clean all
 
 # Use PowerShell as the default shell
