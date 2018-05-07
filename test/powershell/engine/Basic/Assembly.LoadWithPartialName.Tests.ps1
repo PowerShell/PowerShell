@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Describe "Assembly.Load Validation Test" -Tags "CI" {
+Describe "Assembly::LoadWithPartialName Validation Test" -Tags "CI" {
 
     $defaultErrorId = 'FileLoadException'
     $testcases = @(
@@ -18,7 +18,7 @@ Describe "Assembly.Load Validation Test" -Tags "CI" {
 
     # All existing cases should fail on all platforms either because it doesn't exist or
     # because the assembly is blacklisted
-    It "Assembly.Load should fail to load blacklisted assembly: <Name>" -TestCases $testcases {
+    It "Assembly::LoadWithPartialName should fail to load blacklisted assembly: <Name>" -TestCases $testcases {
         param(
             [Parameter(Mandatory)]
             [string]
@@ -28,6 +28,6 @@ Describe "Assembly.Load Validation Test" -Tags "CI" {
             $ErrorId
         )
 
-        {[System.Reflection.Assembly]::Load($Name)} | Should -Throw -ErrorId $ErrorId
+        {[System.Reflection.Assembly]::LoadWithPartialName($Name)} | Should -Throw -ErrorId $ErrorId
     }
 }
