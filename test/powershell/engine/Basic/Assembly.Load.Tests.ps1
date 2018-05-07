@@ -28,6 +28,6 @@ Describe "Assembly.Load Validation Test" -Tags "CI" {
             $ErrorId
         )
 
-        {[System.Reflection.Assembly]::Load('system.windows.forms')} | Should -Throw -ErrorId $ErrorId
+        {[System.Reflection.Assembly]::Load($Name)} | Should -Throw -ErrorId $ErrorId
     }
 }
