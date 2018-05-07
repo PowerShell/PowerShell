@@ -160,7 +160,7 @@ $Environment = Get-EnvironmentInformation
 
 # Autoload (in current session) temporary modules used in our tests
 $TestModulePath = Join-Path $PSScriptRoot "test/tools/Modules"
-if ( $env:PSModulePath -notcontains $TestModulePath ) {
+if ( -not $env:PSModulePath.Contains($TestModulePath) ) {
     $env:PSModulePath = $TestModulePath+$TestModulePathSeparator+$($env:PSModulePath)
 }
 
@@ -959,7 +959,7 @@ function Publish-PSTestTools {
             dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
             $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
 
-            if ( $env:PATH -notcontains $toolPath ) {
+            if ( -not $env:PATH.Contains($toolPath) ) {
                 $env:PATH = $toolPath+$TestModulePathSeparator+$($env:PATH)
             }
         } finally {
