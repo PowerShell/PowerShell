@@ -2982,7 +2982,7 @@ namespace Microsoft.PowerShell.Commands
                 //
                 // However, there is one exception when the RootModule is also put in NestedModules in the module manifest (ill-organized module structure).
                 // For example, module folder 'test' contains two files: 'test.psd1' and 'test.psm1', and 'test.psd1' has the following content:
-                //     "@{ ModuleVersion = '0.0.1'; RootModule = 'test'; NestedModules = @('test') }".
+                //     "@{ ModuleVersion = '0.0.1'; RootModule = 'test'; NestedModules = @('test') }"
                 //
                 // In that case, the nested module will first be loaded with a different session state, and then when trying to load the RootModule via 'LoadModuleNamedInManifest',
                 // the same loaded nested module will be reused for the RootModule by 'LoadModuleNamedInManifest'.
