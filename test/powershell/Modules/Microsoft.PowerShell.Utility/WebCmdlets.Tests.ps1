@@ -505,8 +505,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     $testCase = @(
-        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'http_proxy'; protocol = 'http' }
-        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'https_proxy'; protocol = 'https' }
+        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'HTTP proxy'; protocol = 'http' }
+        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'HTTPS proxy'; protocol = 'https' }
     )
 
     It "Validate Invoke-WebRequest with -Proxy option set - '<name>'" -TestCases $testCase {
@@ -518,37 +518,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $command = "Invoke-WebRequest -Uri '${protocol}://${proxy_address}' -NoProxy"
         $expectedResult = ExecuteWebCommand -command $command
         $result.Output.Content | Should -BeExactly $expectedResult.Output.Content
-    }
-
-    It "Validate Invoke-WebRequest with environment proxy set - '<name>'" -Skip:$IsWindows -TestCases $testCase {
-        param($proxy_address, $name, $protocol)
-
-        # Configure the environment variable.
-        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force > $null
-
-        # use external url, but with proxy the external url should not actually be called
-        $command = "Invoke-WebRequest -Uri ${protocol}://httpbin.org -SkipCertificateCheck"
-        $result = ExecuteWebCommand -command $command
-        $command = "Invoke-WebRequest -Uri '${protocol}://${proxy_address}' -NoProxy"
-        $expectedResult = ExecuteWebCommand -command $command
-        $result.Output.Content | Should -BeExactly $expectedResult.Output.Content
-    }
-
-    It "Validate Invoke-WebRequest returns User-Agent where -NoProxy with envirionment proxy set - '<name>'" -TestCases $testCase {
-        param($proxy_address, $name, $protocol)
-
-        # Configure the environment variable.
-        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
-
-        $uri = Get-WebListenerUrl -Test 'Get' -Https:$($protocol -eq 'https')
-        $command = "Invoke-WebRequest -Uri '$uri' -NoProxy -SkipCertificateCheck"
-
-        $result = ExecuteWebCommand -command $command
-        ValidateResponse -response $result
-
-        # Validate response content
-        $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.Host | Should -Be $uri.Authority
     }
 
     # Perform the following operation for Invoke-WebRequest
@@ -1750,32 +1719,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes */$referenceFileSize"
         }
     }
-
-    BeforeEach {
-        if ($env:http_proxy) {
-            $savedHttpProxy = $env:http_proxy
-            $copiedHttpProxy = $true
-        }
-
-        if ($env:https_proxy) {
-            $savedHttpsProxy = $env:https_proxy
-            $copiedHttpsProxy = $true
-        }
-    }
-
-    AfterEach {
-        if ($copiedHttpProxy) {
-            $env:http_proxy = $savedHttpProxy
-        } else {
-            $env:http_proxy = $null
-        }
-
-        if ($copiedHttpsProxy) {
-            $env:https_proxy = $savedHttpsProxy
-        } else {
-            $env:https_proxy = $null
-        }
-    }
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature" {
@@ -1879,8 +1822,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     $testCase = @(
-        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'http_proxy'; protocol = 'http' }
-        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'https_proxy'; protocol = 'https' }
+        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'HTTP proxy'; protocol = 'http' }
+        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'HTTPS proxy'; protocol = 'https' }
     )
 
     It "Validate Invoke-RestMethod with -Proxy option - '<name>'" -TestCases $testCase {
@@ -1892,35 +1835,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $command = "Invoke-RestMethod -Uri '${protocol}://${proxy_address}' -NoProxy"
         $expectedResult = ExecuteWebCommand -command $command
         $result.Output | Should -BeExactly $expectedResult.Output
-    }
-
-    It "Validate Invoke-RestMethod with environment proxy set - '<name>'" -Skip:$IsWindows -TestCases $testCase {
-        param($proxy_address, $name, $protocol)
-
-        # Configure the environment variable.
-        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
-
-        $uri = Get-WebListenerUrl -Test Get
-        $command = "Invoke-RestMethod -Uri ${protocol}://httpbin.org"
-        $result = ExecuteWebCommand -command $command
-        $command = "Invoke-RestMethod -Uri '${protocol}://${proxy_address}' -NoProxy"
-        $expectedResult = ExecuteWebCommand -command $command
-        $result.Output | Should -BeExactly $expectedResult.Output
-    }
-
-    It "Validate Invoke-RestMethod returns User-Agent with option -NoProxy when environment proxy set - '<name>'" -TestCases $testCase {
-        param($proxy_address, $name, $protocol)
-
-        # Configure the environment variable.
-        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
-
-        $uri = Get-WebListenerUrl -Test 'Get' -Https:$($protocol -eq 'https')
-        $command = "Invoke-RestMethod -Uri '$uri' -NoProxy -SkipCertificateCheck"
-
-        $result = ExecuteWebCommand -command $command
-
-        # Validate response
-        $result.Output.headers.'User-Agent' | Should -MatchExactly '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
     }
 
     # Perform the following operation for Invoke-RestMethod
@@ -3039,32 +2953,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
             $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$fileSize-"
             $Headers.'Content-Range'[0] | Should -BeExactly "bytes */$referenceFileSize"
-        }
-    }
-
-    BeforeEach {
-        if ($env:http_proxy) {
-            $savedHttpProxy = $env:http_proxy
-            $copiedHttpProxy = $true
-        }
-
-        if ($env:https_proxy) {
-            $savedHttpsProxy = $env:https_proxy
-            $copiedHttpsProxy = $true
-        }
-    }
-
-    AfterEach {
-        if ($copiedHttpProxy) {
-            $env:http_proxy = $savedHttpProxy
-        } else {
-            $env:http_proxy = $null
-        }
-
-        if ($copiedHttpsProxy) {
-            $env:https_proxy = $savedHttpsProxy
-        } else {
-            $env:https_proxy = $null
         }
     }
 }
