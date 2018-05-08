@@ -874,11 +874,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="delimiter"></param>
+        /// <exception cref="ArgumentNullException">throw if cmdlet is null</exception>
         internal
         ExportCsvHelper(PSCmdlet cmdlet, char delimiter)
         {
             if (cmdlet == null)
             {
+                throw new ArgumentNullException("cmdlet");
             }
             _cmdlet = cmdlet;
             _delimiter = delimiter;
