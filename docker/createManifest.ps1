@@ -8,17 +8,17 @@ param(
     $ContainerRegistry,
 
     [ValidateNotNullOrEmpty()]
-    [ValidatePattern('^[abcdefghijklmnopqrstuvwxyz-]+$')]
+    [ValidatePattern('^[abcdefghijklmnopqrstuvwxyz\-0123456789\.]+$')]
     [string]
     $ManifestTag = 'latest',
 
     [ValidateNotNullOrEmpty()]
-    [ValidatePattern('^[abcdefghijklmnopqrstuvwxyz-]+$')]
+    [ValidatePattern('^[abcdefghijklmnopqrstuvwxyz\-0123456789\.]+$')]
     [string]
     $Image = 'powershell',
 
     [ValidateNotNullOrEmpty()]
-    [ValidatePattern('^[abcdefghijklmnopqrstuvwxyz-]+$')]
+    [ValidatePattern('^[abcdefghijklmnopqrstuvwxyz\-0123456789\.]+$')]
     [string[]]
     $TagList = ('ubuntu-16.04', 'windowsservercore')
 )
@@ -36,4 +36,4 @@ docker manifest create $ContainerRegistry/${Image}:$ManifestTag $manifestList
 docker manifest inspect $ContainerRegistry/${Image}:$ManifestTag
 
 # push the manifest
-docker manifest push $ContainerRegistry/${Image}:$ManifestTag
+docker manifest push --purge $ContainerRegistry/${Image}:$ManifestTag
