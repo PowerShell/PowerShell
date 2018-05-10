@@ -3446,10 +3446,29 @@ namespace System.Management.Automation
         private class ConvertPSMethodToDelegate
         {
             // Index of the matching overload method.
-            private readonly int matchIndex;
-            internal ConvertPSMethodToDelegate(int matchIndex)
+            private readonly int _matchIndex;
+            // Size of the cache. It's rare to have more than 10 overloads for a method.
+            private const int CacheSize = 10;
+            private static readonly ConvertPSMethodToDelegate[] s_converterCache = new ConvertPSMethodToDelegate[CacheSize];
+
+            private ConvertPSMethodToDelegate(int matchIndex)
             {
-                this.matchIndex = matchIndex;
+                _matchIndex = matchIndex;
+            }
+
+            internal static ConvertPSMethodToDelegate GetConverter(int matchIndex)
+            {
+                if (matchIndex >= CacheSize) { return new ConvertPSMethodToDelegate(matchIndex); }
+
+                var result = s_converterCache[matchIndex];
+                if (result == null)
+                {
+                    var converter = new ConvertPSMethodToDelegate(matchIndex);
+                    Threading.Interlocked.CompareExchange(ref s_converterCache[matchIndex], converter, null);
+                    result = s_converterCache[matchIndex];
+                }
+
+                return result;
             }
 
             internal Delegate Convert(object valueToConvert,
@@ -3468,7 +3487,7 @@ namespace System.Management.Automation
                     var methods = (MethodCacheEntry)psMethod.adapterData;
                     var isStatic = psMethod.instance is Type;
 
-                    var candidate = (MethodInfo)methods.methodInformationStructures[matchIndex].method;
+                    var candidate = (MethodInfo)methods.methodInformationStructures[_matchIndex].method;
                     return isStatic ? candidate.CreateDelegate(resultType)
                                     : candidate.CreateDelegate(resultType, psMethod.instance);
                 }
@@ -4803,7 +4822,7 @@ namespace System.Management.Automation
                     // Signatures in PSMethod<..> type were constructed based on the array of method overloads,
                     // in the exact order. So we can use this index directly to locate the matching overload in
                     // the converter, without having to compare the signature again.
-                    var converter = new ConvertPSMethodToDelegate(matchedIndex);
+                    var converter = ConvertPSMethodToDelegate.GetConverter(matchedIndex);
                     return CacheConversion<Delegate>(fromType, toType, converter.Convert, ConversionRank.Language);
                 }
             }
