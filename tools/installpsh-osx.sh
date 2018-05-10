@@ -93,25 +93,22 @@ if (( $EUID != 0 )); then
 fi
 
 #Check that sudo is available
-#if [[ "$SUDO" -eq "sudo" ]]; then
-#    $SUDO -v
-#    if [ $? -ne 0 ]; then
-#      echo "ERROR: You must either be root or be able to use sudo" >&2
-#      exit 5
-#    fi
-#fi
+if [[ "$SUDO" == "sudo" && ! ("'$*'" =~ skip-sudo-check) ]]; then
 
-#END Collect any variation details if required for this distro
+    $SUDO -v
+    if [ $? -ne 0 ]; then
+      echo "ERROR: You must either be root or be able to use sudo" >&2
+      exit 5
+    fi
+fi
 
-#If there are known incompatible versions of this distro, put the test, message and script exit here:
-
-#END Verify The Installer Choice
-
-##END Check requirements and prerequisites
 
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
 
-#release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+if [[ "'$*'" =~ allowprerelease ]] ; then
+    echo
+    echo "-allowprerelease was used, but since $DistroBasedOn uses repositories - selection of releases will depend on the repository contents."
+fi
 
 if ! hash brew 2>/dev/null; then
     echo "Homebrew is not found, installing..."
@@ -176,7 +173,13 @@ if [[ "'$*'" =~ includeide ]] ; then
 
     echo "*** Installing VS Code PowerShell Extension"
     code --install-extension ms-vscode.PowerShell
+    if [[ "'$*'" =~ -interactivetesting ]] ; then
+        echo "*** Loading test code in VS Code"
+        curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
+        code ./testpowershell.ps1
+    fi
 fi
+
 
 pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
 Run `"pwsh`" to start a PowerShell session."'
@@ -186,12 +189,6 @@ success=$?
 if [[ "$success" != 0 ]]; then
     echo "ERROR: PowerShell failed to install!" >&2
     exit "$success"
-fi
-
-if [[ "'$*'" =~ -interactivetesting ]] ; then
-    echo "*** Loading test code in VS Code"
-    $SUDO curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
-    code ./testpowershell.ps1        
 fi
 
 if [[ "$repobased" == true ]] ; then

@@ -18,7 +18,7 @@
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
 
-VERSION="1.1.2"
+VERSION="1.2.0"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=amazonlinux
@@ -127,7 +127,7 @@ if (( $EUID != 0 )); then
 fi
 
 #Check that sudo is available
-if [[ "$SUDO" -eq "sudo" ]]; then
+if [[ "$SUDO" == "sudo" && ! ("'$*'" =~ skip-sudo-check) ]]; then
 
     $SUDO -v
     if [ $? -ne 0 ]; then
@@ -155,7 +155,17 @@ $SUDO yum install -y \
 
 echo
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
-release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+
+echo "ATTENTION: As of version 1.2.0 this script no longer uses pre-releases unless the '-allowprereleases' switch is used"
+
+if [[ "'$*'" =~ allowprerelease ]] ; then
+    echo
+    echo "-allowprerelease was used, prereleases will be included in the retrieval of the latest version"
+    release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+else
+    echo "Finding the latest release production release"
+    release=$(curl https://api.github.com/repos/PowerShell/PowerShell/releases | grep -Po '"tag_name":(\d*?,|.*?[^\\]",)' | grep -Po '\d+.\d+.\d+[\da-z.-]*' | grep -v '[a-z]' | sort | tail -n1)
+if
 
 #DIRECT DOWNLOAD
 pwshlink=/usr/bin/pwsh
@@ -210,7 +220,7 @@ fi
 
 if [[ "'$*'" =~ -interactivetesting ]] ; then
     echo
-    echo "Amazon Linux does not have a desktop manager to support vscode, ignoring -includeide"
+    echo "Amazon Linux does not have a desktop manager to support vscode, ignoring -interactivetesting"
 fi
 
 if [[ "$repobased" == true ]] ; then
