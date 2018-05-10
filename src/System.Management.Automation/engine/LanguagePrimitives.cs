@@ -3445,6 +3445,7 @@ namespace System.Management.Automation
 
         private class ConvertPSMethodToDelegate
         {
+            // Index of the matching overload method.
             private readonly int matchIndex;
             internal ConvertPSMethodToDelegate(int matchIndex)
             {
@@ -4798,6 +4799,10 @@ namespace System.Management.Automation
 
                 if (matchedIndex > -1)
                 {
+                    // We got the index of the matching method signature based on the PSMethod<..> type.
+                    // Signatures in PSMethod<..> type were constructed based on the array of method overloads,
+                    // in the exact order. So we can use this index directly to locate the matching overload in
+                    // the converter, without having to compare the signature again.
                     var converter = new ConvertPSMethodToDelegate(matchedIndex);
                     return CacheConversion<Delegate>(fromType, toType, converter.Convert, ConversionRank.Language);
                 }
