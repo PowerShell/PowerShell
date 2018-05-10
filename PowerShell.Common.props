@@ -133,7 +133,7 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
 
-  <!-- Define non-windows, release configuratio properties -->
+  <!-- Define non-windows, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' != 'true' ">
     <DebugType>portable</DebugType>
   </PropertyGroup>
