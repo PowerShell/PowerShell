@@ -113,26 +113,32 @@
     <IsWindows Condition="'$(OS)' == 'Windows_NT'">true</IsWindows>
   </PropertyGroup>
 
+  <!-- Define non-windows, all configuration properties -->
   <PropertyGroup Condition=" '$(IsWindows)' != 'true' ">
     <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
   </PropertyGroup>
   
+  <!-- Define all OS, debug configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
+  <!-- Define all OS, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <Optimize>true</Optimize>
   </PropertyGroup>
 
+  <!-- Define windows, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' == 'true' ">
     <DebugType>full</DebugType>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' == 'true' ">
+  <!-- Define non-windows, release configuratio properties -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' != 'true' ">
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
+  <!-- Define all OS, CodeCoverage configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
     <DebugType>full</DebugType>
   </PropertyGroup>
