@@ -749,7 +749,7 @@ function New-PSOptions {
     }
     Write-Verbose "Using configuration '$Configuration'"
 
-    $PowerShellDir = if ($Environment.IsLinux -or $Environment.IsMacOS) {
+    $PowerShellDir = if (!$Environment.IsWindows) {
         "powershell-unix"
     } else {
         "powershell-win-core"
