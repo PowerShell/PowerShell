@@ -110,6 +110,7 @@
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+    <IsWindows Condition="'$(OS)' == 'Windows_NT'">true</IsWindows>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(IsWindows)' != 'true' ">
