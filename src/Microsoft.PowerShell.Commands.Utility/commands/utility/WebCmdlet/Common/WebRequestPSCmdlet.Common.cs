@@ -1300,7 +1300,7 @@ namespace Microsoft.PowerShell.Commands
 
                 currentUri = new Uri(request.RequestUri, response.Headers.Location);
                 // Continue to handle redirection
-                using (client = GetHttpClient(true))
+                using (client = GetHttpClient(handleRedirect: true))
                 using (HttpRequestMessage redirectRequest = GetRequest(currentUri))
                 {
                     response = GetResponse(client, redirectRequest, keepAuthorization);
