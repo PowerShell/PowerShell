@@ -188,7 +188,6 @@ elseif($Stage -eq 'Build')
     $releaseTag = Get-ReleaseTag
 
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
-    $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
     $originalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
@@ -199,6 +198,8 @@ elseif($Stage -eq 'Build')
     finally{
         $ProgressPreference = $originalProgressPreference
     }
+
+    $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
 
     $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
     $testResultsSudo = "$pwd/TestResultsSudo.xml"
