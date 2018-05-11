@@ -1444,7 +1444,7 @@ function Start-PSxUnit {
 
             if((Test-Path $requiredDependencies) -notcontains $false)
             {
-                $options = New-PSOptions
+                $options = Get-PSOptions -DefaultToNew
                 $Destination = "bin/$($options.configuration)/$($options.framework)"
                 New-Item $Destination -ItemType Directory -Force > $null
                 Copy-Item -Path $requiredDependencies -Destination $Destination -Force
