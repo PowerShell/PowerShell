@@ -130,11 +130,16 @@
 
   <!-- Define windows, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' == 'true' ">
+    <Optimize>true</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
 
   <!-- Define non-windows, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' != 'true' ">
+    <!-- Set-Date fails with optimize enabled in NonWindowsSetDate
+         Debugging the issues resolves the problem
+     -->
+    <Optimize>false</Optimize>
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
