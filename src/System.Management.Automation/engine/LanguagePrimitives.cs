@@ -3443,27 +3443,28 @@ namespace System.Management.Automation
             return ConvertStringToEnum(sbResult.ToString(), resultType, recursion, originalValueToConvert, formatProvider, backupTable);
         }
 
-        private class ConvertPSMethodToDelegate
+        private class PSMethodToDelegateConverter
         {
             // Index of the matching overload method.
             private readonly int _matchIndex;
             // Size of the cache. It's rare to have more than 10 overloads for a method.
             private const int CacheSize = 10;
-            private static readonly ConvertPSMethodToDelegate[] s_converterCache = new ConvertPSMethodToDelegate[CacheSize];
+            private static readonly PSMethodToDelegateConverter[] s_converterCache = new PSMethodToDelegateConverter[CacheSize];
 
-            private ConvertPSMethodToDelegate(int matchIndex)
+            private PSMethodToDelegateConverter(int matchIndex)
             {
                 _matchIndex = matchIndex;
             }
 
-            internal static ConvertPSMethodToDelegate GetConverter(int matchIndex)
+            internal static PSMethodToDelegateConverter GetConverter(int matchIndex)
             {
-                if (matchIndex >= CacheSize) { return new ConvertPSMethodToDelegate(matchIndex); }
+                if (matchIndex >= CacheSize) { return new PSMethodToDelegateConverter(matchIndex); }
 
                 var result = s_converterCache[matchIndex];
                 if (result == null)
                 {
-                    var converter = new ConvertPSMethodToDelegate(matchIndex);
+                    // If the cache entry is null, generate a new instance for the cache slot.
+                    var converter = new PSMethodToDelegateConverter(matchIndex);
                     Threading.Interlocked.CompareExchange(ref s_converterCache[matchIndex], converter, null);
                     result = s_converterCache[matchIndex];
                 }
@@ -4796,7 +4797,7 @@ namespace System.Management.Automation
 
                 while (signatureEnumerator.MoveNext())
                 {
-                    index ++;
+                    index++;
                     var signatureType = signatureEnumerator.Current;
                     // Skip the non-bindable signatures
                     if (signatureType == typeof(Func<PSNonBindableType>)) { continue; }
@@ -4811,7 +4812,7 @@ namespace System.Management.Automation
                             break;
                         }
 
-                        // If there is no exact match, then we use the compatible that was first found.
+                        // If there is no exact match, then we use the first compatible signature we found.
                         if (matchedIndex == -1) { matchedIndex = index; }
                     }
                 }
@@ -4822,7 +4823,7 @@ namespace System.Management.Automation
                     // Signatures in PSMethod<..> type were constructed based on the array of method overloads,
                     // in the exact order. So we can use this index directly to locate the matching overload in
                     // the converter, without having to compare the signature again.
-                    var converter = ConvertPSMethodToDelegate.GetConverter(matchedIndex);
+                    var converter = PSMethodToDelegateConverter.GetConverter(matchedIndex);
                     return CacheConversion<Delegate>(fromType, toType, converter.Convert, ConversionRank.Language);
                 }
             }
@@ -4848,6 +4849,16 @@ namespace System.Management.Automation
                 targetParameters = targetMethodInfo.GetParameters();
             }
 
+            /// <summary>
+            /// Check if a projected signature matches the target method.
+            /// </summary>
+            /// <param name="argumentTypes">
+            /// The type arguments from the metadata type 'Func[..]' that represents the projected signature.
+            /// It contains the return type as the last item in the array.
+            /// </param>
+            /// <param name="signaturesMatchExactly">
+            /// Set by this method to indicate if it's an exact match.
+            /// </param>
             internal bool ProjectedSignatureMatchesTarget(Type[] argumentTypes, out bool signaturesMatchExactly)
             {
                 signaturesMatchExactly = false;

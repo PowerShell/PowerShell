@@ -2659,7 +2659,7 @@ namespace System.Management.Automation
         {
             if (methodInfo.DeclaringType.IsGenericTypeDefinition)
             {
-                // If the method is from a generic type definition, consider it not convertable
+                // If the method is from a generic type definition, consider it not convertible.
                 return typeof(Func<PSNonBindableType>);
             }
 
@@ -2667,7 +2667,7 @@ namespace System.Management.Automation
             {
                 // For a generic method, it's possible to infer the generic parameters based on the target delegate.
                 // However, we don't yet handle generic methods in PSMethod-to-Delegate conversion, so for now, we
-                // don't produce the metadata type that represent the signature of a generic method.
+                // don't produce the metadata type that represents the signature of a generic method.
                 //
                 // Say one day we want to support generic method in PSMethod-to-Delegate conversion and need to produce
                 // the metadata type, we should use the generic parameter types from the MethodInfo directly to construct
@@ -2692,19 +2692,19 @@ namespace System.Management.Automation
                 return typeof(Func<PSNonBindableType>);
             }
 
-            var allTypes = new Type[parameterInfos.Length + 1];
+            var methodTypes = new Type[parameterInfos.Length + 1];
             for (int i = 0; i < parameterInfos.Length; i++)
             {
                 var parameterInfo = parameterInfos[i];
                 Type parameterType = parameterInfo.ParameterType;
-                allTypes[i] = GetPSMethodProjectedType(parameterType, parameterInfo.IsOut);
+                methodTypes[i] = GetPSMethodProjectedType(parameterType, parameterInfo.IsOut);
             }
 
-            allTypes[parameterInfos.Length] = GetPSMethodProjectedType(methodInfo.ReturnType);
+            methodTypes[parameterInfos.Length] = GetPSMethodProjectedType(methodInfo.ReturnType);
 
             try
             {
-                return DelegateHelpers.MakeDelegate(allTypes);
+                return DelegateHelpers.MakeDelegate(methodTypes);
             }
             catch (TypeLoadException)
             {
@@ -2780,11 +2780,11 @@ namespace System.Management.Automation
         }
     }
 
-    abstract class PSNonBindableType { }
-    class VOID { }
-    class PSOutParameter<T> { }
-    struct PSPointer<T> { }
-    struct PSTypedReference { }
+    internal abstract class PSNonBindableType { }
+    internal class VOID { }
+    internal class PSOutParameter<T> { }
+    internal struct PSPointer<T> { }
+    internal struct PSTypedReference { }
 
     internal abstract class MethodGroup { }
     internal class MethodGroup<T1> : MethodGroup { }
