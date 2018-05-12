@@ -263,14 +263,12 @@ namespace System.Management.Automation
                     // Since the path is an absolute path
                     // we need to change the current working
                     // drive
-
                     PSDriveInfo newWorkingDrive = GetDrive(driveName);
                     CurrentDrive = newWorkingDrive;
 
                     // If the path is simply a colon-terminated drive,
                     // not a slash-terminated path to the root of a drive,
                     // set the path to the current working directory of that drive.
-
                     string colonTerminatedVolume = CurrentDrive.Name + ':';
                     if (CurrentDrive.VolumeSeparatedByColon && (path.Length == colonTerminatedVolume.Length))
                     {
