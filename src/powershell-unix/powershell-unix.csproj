@@ -34,20 +34,4 @@
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
-    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
-</Project>
+ </Project>

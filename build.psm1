@@ -410,7 +410,7 @@ function Start-PSBuild {
                      "win-arm64")]
         [string]$Runtime,
 
-        [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
+        [ValidateSet('Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
         [string]$Configuration,
 
         [switch]$CrossGen,
@@ -704,7 +704,7 @@ function Compress-TestContent {
 function New-PSOptions {
     [CmdletBinding()]
     param(
-        [ValidateSet("Linux", "Debug", "Release", "CodeCoverage", "")]
+        [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
         [ValidateSet("netcoreapp2.1")]
@@ -736,28 +736,12 @@ function New-PSOptions {
 
     $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
-        $Configuration = if ($Environment.IsLinux -or $Environment.IsMacOS) {
-            "Linux"
-        } elseif ($Environment.IsWindows) {
-            "Debug"
-        }
+        $Configuration = 'Debug'
     } else {
         switch ($Configuration) {
-            "Linux" {
-                if ($Environment.IsWindows) {
-                    $Configuration = "Debug"
-                    Write-Warning ($ConfigWarningMsg -f $switch.Current, "Windows", $Configuration)
-                }
-            }
             "CodeCoverage" {
                 if(-not $Environment.IsWindows) {
-                    $Configuration = "Linux"
-                    Write-Warning ($ConfigWarningMsg -f $switch.Current, $Environment.LinuxInfo.PRETTY_NAME, $Configuration)
-                }
-            }
-            Default {
-                if ($Environment.IsLinux -or $Environment.IsMacOS) {
-                    $Configuration = "Linux"
+                    $Configuration = "Debug"
                     Write-Warning ($ConfigWarningMsg -f $switch.Current, $Environment.LinuxInfo.PRETTY_NAME, $Configuration)
                 }
             }
@@ -765,7 +749,7 @@ function New-PSOptions {
     }
     Write-Verbose "Using configuration '$Configuration'"
 
-    $PowerShellDir = if ($Configuration -eq 'Linux') {
+    $PowerShellDir = if (!$Environment.IsWindows) {
         "powershell-unix"
     } else {
         "powershell-win-core"
@@ -1460,7 +1444,7 @@ function Start-PSxUnit {
 
             if((Test-Path $requiredDependencies) -notcontains $false)
             {
-                $options = New-PSOptions
+                $options = Get-PSOptions -DefaultToNew
                 $Destination = "bin/$($options.configuration)/$($options.framework)"
                 New-Item $Destination -ItemType Directory -Force > $null
                 Copy-Item -Path $requiredDependencies -Destination $Destination -Force
