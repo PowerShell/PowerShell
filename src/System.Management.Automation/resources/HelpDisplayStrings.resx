@@ -443,22 +443,6 @@ To update help again, add the Force parameter to your command.</value>
   <data name="SavedHelpContent" xml:space="preserve">
     <value>Saved {0}</value>
   </data>
-  <data name="CommonWorkflowParameters" xml:space="preserve">
-    <value>&lt;WorkflowCommonParameters&gt;</value>
-  </data>
-  <data name="BaseWorkflowCmdletInformation" xml:space="preserve">
-    <value>    This cmdlet supports the workflow common parameters:
-    PSComputerName, JobName, PSApplicationName, PSCredential,
-    PSPort, PSConfigurationName, PSConnectionURI, PSSessionOption,
-    PSAuthentication, PSAuthenticationLevel,
-    PSCertificateThumbprint, PSConnectionRetryCount,
-    PSConnectionRetryIntervalSec, PSRunningTimeoutSec,
-    PSElapsedTimeoutSec, PSPersist,
-    PSPrivateMetadata, InputObject,
-    PSParameterCollection, AsJob, PSUseSSL, and PSAllowRedirection.
-    For more information, see about_Workflow_Common_Parameters
-    (https://go.microsoft.com/fwlink/?LinkID=222527).</value>
-  </data>
   <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
     <value>The HelpInfoURI {0} does not start with HTTP.</value>
   </data>

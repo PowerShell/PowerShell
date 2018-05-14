@@ -1826,10 +1826,6 @@ namespace System.Management.Automation
             {
                 newValue = new FilterInfo(name, (FilterInfo)originalFunction);
             }
-            else if (originalFunction is WorkflowInfo)
-            {
-                newValue = new WorkflowInfo(name, (WorkflowInfo)originalFunction);
-            }
             else if (originalFunction is ConfigurationInfo)
             {
                 newValue = new ConfigurationInfo(name, (ConfigurationInfo)originalFunction);

@@ -10,7 +10,7 @@
 
 TEST(IsFileTest, RootIsFile)
 {
-    EXPECT_TRUE(IsFile("/"));
+    EXPECT_FALSE(IsFile("/"));
 }
 
 TEST(IsFileTest, BinLsIsFile)

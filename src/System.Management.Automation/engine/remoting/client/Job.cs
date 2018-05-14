@@ -3882,34 +3882,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the parent debugger, breakpoints, function source and other
-        /// debugging context information.
+        /// Sets the parent debugger, breakpoints, and other debugging context information.
         /// </summary>
         /// <param name="parent">Parent debugger</param>
         /// <param name="breakPoints">List of breakpoints</param>
         /// <param name="startAction">Debugger mode</param>
         /// <param name="host">PowerShell host</param>
-        /// <param name="path">Current path</param>
-        /// <param name="functionSourceMap">Function to source map</param>
-        public override void SetParent(
-            Debugger parent,
-            IEnumerable<Breakpoint> breakPoints,
-            DebuggerResumeAction? startAction,
-            PSHost host,
-            PathInfo path,
-            Dictionary<string, DebugSource> functionSourceMap)
-        {
-            // For now always enable step mode debugging.
-            SetDebuggerStepMode(true);
-        }
-
-        /// <summary>
-        /// Sets the parent debugger and breakpoints.
-        /// </summary>
-        /// <param name="parent">Parent debugger</param>
-        /// <param name="breakPoints">List of breakpoints</param>
-        /// <param name="startAction">Debugger mode</param>
-        /// <param name="host">host</param>
         /// <param name="path">Current path</param>
         public override void SetParent(
             Debugger parent,

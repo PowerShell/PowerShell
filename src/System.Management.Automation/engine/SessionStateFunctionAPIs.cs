@@ -109,11 +109,6 @@ namespace System.Management.Automation
         /// </summary>
         internal List<FunctionInfo> ExportedFunctions { get; } = new List<FunctionInfo>();
 
-        /// <summary>
-        /// List of workflows to export from this session state object...
-        /// </summary>
-        internal List<WorkflowInfo> ExportedWorkflows { get; } = new List<WorkflowInfo>();
-
         internal bool UseExportList { get; set; } = false;
 
         /// <summary>

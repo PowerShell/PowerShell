@@ -37,23 +37,7 @@
   <ItemGroup>
     <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
-    <PackageReference Include="psrp.windows" Version="6.0.0-*" />
+    <PackageReference Include="psrp.windows" Version="6.1.0-*" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
-    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
 
 </Project>

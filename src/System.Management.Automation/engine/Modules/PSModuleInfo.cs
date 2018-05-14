@@ -577,6 +577,15 @@ namespace System.Management.Automation
             var res = new Dictionary<string, TypeDefinitionAst>(StringComparer.OrdinalIgnoreCase);
             foreach (var nestedModule in this.NestedModules)
             {
+                if (nestedModule == this)
+                {
+                    // Circular nested modules could happen with ill-organized module structure.
+                    // For example, module folder 'test' has two files: 'test.psd1' and 'test.psm1', and 'test.psd1' has the following content:
+                    //    "@{ ModuleVersion = '0.0.1'; RootModule = 'test'; NestedModules = @('test') }"
+                    // Then, 'Import-Module test.psd1 -PassThru' will return a ModuleInfo object with circular nested modules.
+                    continue;
+                }
+
                 foreach (var typePairs in nestedModule.GetExportedTypeDefinitions())
                 {
                     // The last one name wins! It's the same for command names in nested modules.

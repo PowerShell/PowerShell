@@ -2,7 +2,7 @@
 
 image: Visual Studio 2017
 
-# cache version - netcoreapp.2.0.6-sdk.2.1.4
+# cache version - netcoreapp.2.1-sdk.2.1.300-rc1-008662
 cache:
   - '%LocalAppData%\Microsoft\dotnet -> appveyor.yml'
   - '%HOMEDRIVE%%HOMEPATH%\.nuget\packages -> appveyor.yml'

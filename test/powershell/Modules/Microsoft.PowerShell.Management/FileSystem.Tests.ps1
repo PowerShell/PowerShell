@@ -256,8 +256,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             @{cmdline = "Get-ChildItem $protectedPath -ErrorAction Stop"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
             @{cmdline = "New-Item -Type File -Path $newItemPath -ErrorAction Stop"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
             @{cmdline = "Rename-Item -Path $protectedPath -NewName bar -ErrorAction Stop"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"},
-            @{cmdline = "Move-Item -Path $protectedPath -Destination bar -ErrorAction Stop"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"},
-            @{cmdline = "Remove-Item -Path $protectedPath -ErrorAction Stop"; expectedError = "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand"}
+            @{cmdline = "Move-Item -Path $protectedPath -Destination bar -ErrorAction Stop"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"}
         ) {
             param ($cmdline, $expectedError)
 
@@ -1386,5 +1385,42 @@ Describe "UNC paths" -Tags 'CI' {
         finally {
             Set-Location $originalLocation
         }
+    }
+}
+
+Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
+    BeforeAll {
+        if ($IsWindows) {
+            $folder = Join-Path $TestDrive "UnAuthFolder"
+            $protectedPath = (New-Item $folder -ItemType Directory).FullName
+        }
+    }
+
+    It "Access-denied test for removing a folder" -Skip:(-not $IsWindows) {
+
+        # The expected error is returned when there is a empty directory with the user does not have authorization to is deleted.
+        # It cannot have 'System. 'Hidden' or 'ReadOnly' attribute as well as -Force should not be used.
+
+        $powershell = Join-Path $PSHOME "pwsh"
+        $errorFile = Join-Path (Get-Item $testdrive).FullName "RemoveItemError.txt"
+        $cmdline = "$powershell -c Remove-Item -Path $protectedPath -ErrorVariable err ;`$err.FullyQualifiedErrorId | Out-File $errorFile"
+
+        ## Remove inheritance
+        $acl = Get-Acl $protectedPath
+        $acl.SetAccessRuleProtection($true, $true)
+        Set-Acl $protectedPath $acl
+
+        ## Remove ACL
+        $acl = Get-Acl $protectedPath
+        $acl.Access | ForEach-Object { $acl.RemoveAccessRule($_) } | Out-Null
+
+        # Add local admin
+        $rule = [System.Security.AccessControl.FileSystemAccessRule]::new("BUILTIN\Administrators","FullControl", "Allow")
+        $acl.SetAccessRule($rule)
+        Set-Acl $protectedPath $acl
+
+        runas.exe /trustlevel:0x20000 "$cmdline"
+        Wait-FileToBePresent -File $errorFile -TimeoutInSeconds 10
+        Get-Content $errorFile | Should -BeExactly 'RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand'
     }
 }

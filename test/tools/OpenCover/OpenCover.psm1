@@ -624,7 +624,7 @@ function Invoke-OpenCover
         [parameter()]$OutputLog = "$home/Documents/OpenCover.xml",
         [parameter()]$TestPath = "${script:psRepoPath}/test/powershell",
         [parameter()]$OpenCoverPath = "$home/OpenCover",
-        [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/netcoreapp2.0/win7-x64/publish",
+        [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/netcoreapp2.1/win7-x64/publish",
         [parameter()]$PesterLogElevated = "$HOME/Documents/TestResultsElevated.xml",
         [parameter()]$PesterLogUnelevated = "$HOME/Documents/TestResultsUnelevated.xml",
         [parameter()]$PesterLogFormat = "NUnitXml",
@@ -688,8 +688,8 @@ function Invoke-OpenCover
 
     if(-not $SuppressQuiet)
     {
-        $targetArgsElevated += @("-Quiet")
-        $targetArgsUnelevated += @("-Quiet")
+        $targetArgsElevated += @("-Show None")
+        $targetArgsUnelevated += @("-Show None")
     }
 
     $cmdlineElevated = CreateOpenCoverCmdline -target $target -outputLog $OutputLog -targetArgs $targetArgsElevated
@@ -711,9 +711,9 @@ function Invoke-OpenCover
             "$openCoverBin $cmdlineUnelevated" | Out-File -FilePath $unelevatedFile -Force
             runas.exe /trustlevel:0x20000 "powershell.exe -file $unelevatedFile"
             # poll for process exit every 60 seconds
-            # timeout of 6 hours
-            # Runs currently take about 2.5 - 3 hours, we picked 6 hours to be substantially larger.
-            $timeOut = ([datetime]::Now).AddHours(6)
+            # timeout of 12 hours
+            # Runs currently take about 8-9 hours, we picked 12 hours to be substantially larger.
+            $timeOut = ([datetime]::Now).AddHours(12)
 
             $openCoverExited = $false
 
@@ -732,7 +732,7 @@ function Invoke-OpenCover
 
             if(-not $openCoverExited)
             {
-                throw "Opencover has not exited in 6 hours"
+                throw "Opencover has not exited in 12 hours"
             }
         }
         finally
