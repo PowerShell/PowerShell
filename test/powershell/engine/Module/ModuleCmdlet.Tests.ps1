@@ -254,6 +254,43 @@ class MyObj
 
             $firstTypes.MyObj.Equals($secondTypes.MyObj) | Should -BeFalse
         }
+
+        It "Adds updates modules with new class definitions when 'using module' is used" {
+            $ps = [powershell]::Create()
+
+            $modSrc = @'
+class Foo { [string]$Name }
+'@
+
+            $modData = New-TestModule -Content $modSrc
+
+            $scriptSrc = @"
+using module ${modData.BaseDir}
+
+class Zoo { [Foo]$Foo }
+
+[Zoo]::new().GetType().Name
+"@
+
+            $ps.AddScript($scriptSrc)
+
+            $ps.Invoke() | Should -BeExactly 'Zoo'
+
+            # Update the class definitions in the module and expect the script to work without re-importing
+            $modSrcUpdate = $modSrc + "`nclass Bar { [string]`$Path }"
+            Set-Content -Path $modData.Path -Value $modSrcUpdate -Force
+
+            $scriptSrcUpdate = @"
+using module ${modData.BaseDir}
+
+class Zoo { [Foo]$Foo; [Bar]$Bar }
+
+[Zoo]::new().GetType().Name
+"@
+
+            $ps.AddScript($scriptSrc)
+            $ps.Invoke() | Should -BeExactly 'Zoo'
+        }
     }
 
     Context "Parameter handling" {
