@@ -265,9 +265,9 @@ class Foo { [string]$Name }
             $modData = New-TestModule -Content $modSrc
 
             $scriptSrc = @"
-using module ${modData.BaseDir}
+using module $($modData.BaseDir.FullName)
 
-class Zoo { [Foo]$Foo }
+class Zoo { [Foo]`$Foo }
 
 [Zoo]::new().GetType().Name
 "@
@@ -281,9 +281,9 @@ class Zoo { [Foo]$Foo }
             Set-Content -Path $modData.Path -Value $modSrcUpdate -Force
 
             $scriptSrcUpdate = @"
-using module ${modData.BaseDir}
+using module $($modData.BaseDir.FullName)
 
-class Zoo { [Foo]$Foo; [Bar]$Bar }
+class Zoo { [Foo]`$Foo; [Bar]`$Bar }
 
 [Zoo]::new().GetType().Name
 "@
