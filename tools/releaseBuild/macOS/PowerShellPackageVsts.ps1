@@ -64,7 +64,7 @@ try {
     }
 
     if ($Build.IsPresent) {
-        Start-PSBuild -Crossgen -PSModuleRestore @releaseTagParam
+        Start-PSBuild -Configuration 'Release' -Crossgen -PSModuleRestore @releaseTagParam
 
         Start-PSPackage @releaseTagParam
         switch ($ExtraPackage) {

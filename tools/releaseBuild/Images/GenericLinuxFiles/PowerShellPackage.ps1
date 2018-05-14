@@ -33,7 +33,7 @@ try {
     Import-Module "$location/tools/packaging"
 
     Start-PSBootstrap -Package -NoSudo
-    Start-PSBuild -Crossgen -PSModuleRestore @releaseTagParam
+    Start-PSBuild -Configuration Release -Crossgen -PSModuleRestore @releaseTagParam
 
     Start-PSPackage @releaseTagParam
     if ($AppImage) { Start-PSPackage -Type AppImage @releaseTagParam }
@@ -42,7 +42,7 @@ try {
     if ($TarArm) {
         ## Build 'linux-arm' and create 'tar.gz' package for it.
         ## Note that 'linux-arm' can only be built on Ubuntu environment.
-        Start-PSBuild -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam
+        Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam
         Start-PSPackage -Type tar-arm @releaseTagParam
     }
 }

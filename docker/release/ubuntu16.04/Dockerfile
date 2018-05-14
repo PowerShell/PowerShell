@@ -1,8 +1,10 @@
 # Docker image file that describes an Ubuntu16.04 image with PowerShell installed from Microsoft APT Repo
+ARG FromTag=16.04
 
-FROM ubuntu:xenial
+FROM ubuntu:${FromTag}
 
 ARG POWERSHELL_VERSION=6.0.2
+ARG POWERSHELL_VERSION_POSTFIX=-1.ubuntu.16.04
 ARG IMAGE_NAME=microsoft/powershell:ubuntu16.04
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -29,7 +31,9 @@ RUN apt-get update \
         ca-certificates \
         curl \
         apt-transport-https \
-        locales\
+        locales \
+    && apt-get dist-upgrade -y \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup the locale
@@ -46,7 +50,9 @@ RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | tee /etc
 # Install powershell from Microsoft Repo
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-	powershell
+    powershell=${POWERSHELL_VERSION}${POWERSHELL_VERSION_POSTFIX} \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c

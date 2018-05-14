@@ -207,6 +207,7 @@ WSMan
 wsmansessionoption.cs
 xUnit
 0-powershell-crossplatform
+ReportGenerator
 #endregion
 
 #region ./tools/install-powershell.readme.md Overrides

@@ -9,7 +9,10 @@ ARG GITLOCATION=https://github.com/PowerShell/PowerShell.git
 RUN dnf install -y \
         curl \
         glibc-locale-source \
-        git
+        git \
+        compat-openssl10 \
+    && dnf upgrade-minimal -y --security \
+    && dnf clean all
 
 # Setup the locale
 ENV LANG en_US.UTF-8

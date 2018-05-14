@@ -2820,7 +2820,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     bool found = false;
                     // Never load nested modules to the global scope.
-                    bool oldGLobal = this.BaseGlobal;
+                    bool oldGlobal = this.BaseGlobal;
                     this.BaseGlobal = false;
 
                     PSModuleInfo nestedModule = LoadModuleNamedInManifest(
@@ -2838,7 +2838,7 @@ namespace Microsoft.PowerShell.Commands
                             out found,
                             shortModuleName: null);
 
-                    this.BaseGlobal = oldGLobal;
+                    this.BaseGlobal = oldGlobal;
 
                     // If found, add it to the parent's list of NestedModules
                     if (found)
@@ -2976,30 +2976,16 @@ namespace Microsoft.PowerShell.Commands
                     BaseCmdletPatterns = oldCmdletPatterns;
                 }
 
-                // If there is an existing session state and the new module info
-                // session state is empty, then use the existing session state.
-                // This will be the case when ModuleToProcess is a binary module
-                // and there were nested modules.
-                if (newManifestInfo.SessionState == null && ss != null)
-                {
-                    newManifestInfo.SessionState = ss;
-                    ss.Internal.Module = newManifestInfo;
-                }
-                // If the new module info session state is not empty but there is no
-                // existing session state, then use the new module info's sessions state;
-                // This will be the case if the module to process is a script module
-                // but there where no nested modules.
-                else if (newManifestInfo.SessionState != null && ss == null)
-                {
-                    ss = newManifestInfo.SessionState;
-                }
-
-                // We don't need to care if they are both null which will be the
-                // case when there is only a binary module in ModuleToProcess and
-                // no nested modules. At this point the moduleInfo and the value in
-                // ss should be identical.
-                Dbg.Assert(newManifestInfo.SessionState == ss,
-                    "ss and newManifestInfo.SessionState should be the same after handling ModuleToProcess");
+                // For most cases, 'newManifestInfo.SessionState' should be identical to 'ss':
+                //  1. when 'importingModule == true', 'newManifestInfo' uses the same session state as 'ss' because we passed in 'ss' when loading the RootModule via 'LoadModuleNamedInManifest'.
+                //  2. when 'importingModule == false', both session states will be null since we are in module analysis mode (Get-Module -ListAvailable).
+                //
+                // However, there is one exception when the RootModule is also put in NestedModules in the module manifest (ill-organized module structure).
+                // For example, module folder 'test' contains two files: 'test.psd1' and 'test.psm1', and 'test.psd1' has the following content:
+                //     "@{ ModuleVersion = '0.0.1'; RootModule = 'test'; NestedModules = @('test') }"
+                //
+                // In that case, the nested module will first be loaded with a different session state, and then when trying to load the RootModule via 'LoadModuleNamedInManifest',
+                // the same loaded nested module will be reused for the RootModule by 'LoadModuleNamedInManifest'.
 
                 // Change the module name to match the manifest name, not the original name
                 newManifestInfo.SetName(manifestInfo.Name);
@@ -3248,7 +3234,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if ((exportedCmdlets != null) && (ss != null))
                     {
-                        Dbg.Assert(ss.Internal.ExportedCmdlets != null, "ss.Internal.ExportedCmdlets should not be null");
                         manifestInfo.ExportedCmdlets.Clear();
 
                         // Mark stuff for export

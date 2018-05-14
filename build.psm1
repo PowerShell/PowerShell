@@ -134,7 +134,8 @@ function Get-EnvironmentInformation
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu'}
         $environment += @{'IsUbuntu14' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
-        $environment += @{'IsUbuntu17' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '17.04'}
+        $environment += @{'IsUbuntu17' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '17.10'}
+        $environment += @{'IsUbuntu18' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '18.04'}
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
@@ -159,7 +160,7 @@ $Environment = Get-EnvironmentInformation
 
 # Autoload (in current session) temporary modules used in our tests
 $TestModulePath = Join-Path $PSScriptRoot "test/tools/Modules"
-if ( $env:PSModulePath -notcontains $TestModulePath ) {
+if ( -not $env:PSModulePath.Contains($TestModulePath) ) {
     $env:PSModulePath = $TestModulePath+$TestModulePathSeparator+$($env:PSModulePath)
 }
 
@@ -409,7 +410,7 @@ function Start-PSBuild {
                      "win-arm64")]
         [string]$Runtime,
 
-        [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
+        [ValidateSet('Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
         [string]$Configuration,
 
         [switch]$CrossGen,
@@ -703,7 +704,7 @@ function Compress-TestContent {
 function New-PSOptions {
     [CmdletBinding()]
     param(
-        [ValidateSet("Linux", "Debug", "Release", "CodeCoverage", "")]
+        [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
         [ValidateSet("netcoreapp2.1")]
@@ -735,28 +736,12 @@ function New-PSOptions {
 
     $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
-        $Configuration = if ($Environment.IsLinux -or $Environment.IsMacOS) {
-            "Linux"
-        } elseif ($Environment.IsWindows) {
-            "Debug"
-        }
+        $Configuration = 'Debug'
     } else {
         switch ($Configuration) {
-            "Linux" {
-                if ($Environment.IsWindows) {
-                    $Configuration = "Debug"
-                    Write-Warning ($ConfigWarningMsg -f $switch.Current, "Windows", $Configuration)
-                }
-            }
             "CodeCoverage" {
                 if(-not $Environment.IsWindows) {
-                    $Configuration = "Linux"
-                    Write-Warning ($ConfigWarningMsg -f $switch.Current, $Environment.LinuxInfo.PRETTY_NAME, $Configuration)
-                }
-            }
-            Default {
-                if ($Environment.IsLinux -or $Environment.IsMacOS) {
-                    $Configuration = "Linux"
+                    $Configuration = "Debug"
                     Write-Warning ($ConfigWarningMsg -f $switch.Current, $Environment.LinuxInfo.PRETTY_NAME, $Configuration)
                 }
             }
@@ -764,7 +749,7 @@ function New-PSOptions {
     }
     Write-Verbose "Using configuration '$Configuration'"
 
-    $PowerShellDir = if ($Configuration -eq 'Linux') {
+    $PowerShellDir = if (!$Environment.IsWindows) {
         "powershell-unix"
     } else {
         "powershell-win-core"
@@ -958,7 +943,7 @@ function Publish-PSTestTools {
             dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
             $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
 
-            if ( $env:PATH -notcontains $toolPath ) {
+            if ( -not $env:PATH.Contains($toolPath) ) {
                 $env:PATH = $toolPath+$TestModulePathSeparator+$($env:PATH)
             }
         } finally {
@@ -1459,7 +1444,7 @@ function Start-PSxUnit {
 
             if((Test-Path $requiredDependencies) -notcontains $false)
             {
-                $options = New-PSOptions
+                $options = Get-PSOptions -DefaultToNew
                 $Destination = "bin/$($options.configuration)/$($options.framework)"
                 New-Item $Destination -ItemType Directory -Force > $null
                 Copy-Item -Path $requiredDependencies -Destination $Destination -Force
@@ -2410,6 +2395,416 @@ function Copy-PSGalleryModules
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
         $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll'
         Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
+    }
+}
+
+function Merge-TestLogs
+{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateScript({Test-Path $_})]
+        [string]$XUnitLogPath,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateScript({Test-Path $_})]
+        [string[]]$NUnitLogPath,
+
+        [Parameter()]
+        [ValidateScript({Test-Path $_})]
+        [string[]]$AdditionalXUnitLogPath,
+
+        [Parameter()]
+        [string]$OutputLogPath
+    )
+
+    # Convert all the NUnit logs into single object
+    $convertedNUnit = ConvertFrom-PesterLog -logFile $NUnitLogPath
+
+    $xunit = [xml] (Get-Content $XUnitLogPath -ReadCount 0 -Raw)
+
+    $strBld = [System.Text.StringBuilder]::new($xunit.assemblies.InnerXml)
+
+    foreach($assembly in $convertedNUnit.assembly)
+    {
+        $strBld.Append($assembly.ToString()) | Out-Null
+    }
+
+    foreach($path in $AdditionalXUnitLogPath)
+    {
+        $addXunit = [xml] (Get-Content $path -ReadCount 0 -Raw)
+        $strBld.Append($addXunit.assemblies.InnerXml) | Out-Null
+    }
+
+    $xunit.assemblies.InnerXml = $strBld.ToString()
+    $xunit.Save($OutputLogPath)
+}
+
+function ConvertFrom-PesterLog {
+    [CmdletBinding()]
+    param (
+        [Parameter(ValueFromPipeline = $true, Mandatory = $true, Position = 0)]
+        [string[]]$Logfile,
+        [Parameter()][switch]$IncludeEmpty,
+        [Parameter()][switch]$MultipleLog
+    )
+    <#
+Convert our test logs to
+xunit schema - top level assemblies
+Pester conversion
+foreach $r in "test-results"."test-suite".results."test-suite"
+assembly
+    name = $r.Description
+    config-file = log file (this is the only way we can determine between admin/nonadmin log)
+    test-framework = Pester
+    environment = top-level "test-results.environment.platform
+    run-date = date (doesn't exist in pester except for beginning)
+    run-time = time
+    time =
+#>
+
+    BEGIN {
+        # CLASSES
+        class assemblies {
+            # attributes
+            [datetime]$timestamp
+            # child elements
+            [System.Collections.Generic.List[testAssembly]]$assembly
+            assemblies() {
+                $this.timestamp = [datetime]::now
+                $this.assembly = [System.Collections.Generic.List[testAssembly]]::new()
+            }
+            static [assemblies] op_Addition([assemblies]$ls, [assemblies]$rs) {
+                $newAssembly = [assemblies]::new()
+                $newAssembly.assembly.AddRange($ls.assembly)
+                $newAssembly.assembly.AddRange($rs.assembly)
+                return $newAssembly
+            }
+            [string]ToString() {
+                $sb = [text.stringbuilder]::new()
+                $sb.AppendLine('<assemblies timestamp="{0:MM}/{0:dd}/{0:yyyy} {0:HH}:{0:mm}:{0:ss}">' -f $this.timestamp)
+                foreach ( $a in $this.assembly  ) {
+                    $sb.Append("$a")
+                }
+                $sb.AppendLine("</assemblies>");
+                return $sb.ToString()
+            }
+            # use Write-Output to emit these into the pipeline
+            [array]GetTests() {
+                return $this.Assembly.collection.test
+            }
+        }
+
+        class testAssembly {
+            # attributes
+            [string]$name # path to pester file
+            [string]${config-file}
+            [string]${test-framework} # Pester
+            [string]$environment
+            [string]${run-date}
+            [string]${run-time}
+            [decimal]$time
+            [int]$total
+            [int]$passed
+            [int]$failed
+            [int]$skipped
+            [int]$errors
+            testAssembly ( ) {
+                $this."config-file" = "no config"
+                $this."test-framework" = "Pester"
+                $this.environment = $script:environment
+                $this."run-date" = $script:rundate
+                $this."run-time" = $script:runtime
+                $this.collection = [System.Collections.Generic.List[collection]]::new()
+            }
+            # child elements
+            [error[]]$error
+            [System.Collections.Generic.List[collection]]$collection
+            [string]ToString() {
+                $sb = [System.Text.StringBuilder]::new()
+                $sb.AppendFormat('  <assembly name="{0}" ', $this.name)
+                $sb.AppendFormat('environment="{0}" ', [security.securityelement]::escape($this.environment))
+                $sb.AppendFormat('test-framework="{0}" ', $this."test-framework")
+                $sb.AppendFormat('run-date="{0}" ', $this."run-date")
+                $sb.AppendFormat('run-time="{0}" ', $this."run-time")
+                $sb.AppendFormat('total="{0}" ', $this.total)
+                $sb.AppendFormat('passed="{0}" ', $this.passed)
+                $sb.AppendFormat('failed="{0}" ', $this.failed)
+                $sb.AppendFormat('skipped="{0}" ', $this.skipped)
+                $sb.AppendFormat('time="{0}" ', $this.time)
+                $sb.AppendFormat('errors="{0}" ', $this.errors)
+                $sb.AppendLine(">")
+                if ( $this.error ) {
+                    $sb.AppendLine("    <errors>")
+                    foreach ( $e in $this.error ) {
+                        $sb.AppendLine($e.ToString())
+                    }
+                    $sb.AppendLine("    </errors>")
+                } else {
+                    $sb.AppendLine("    <errors />")
+                }
+                foreach ( $col in $this.collection ) {
+                    $sb.AppendLine($col.ToString())
+                }
+                $sb.AppendLine("  </assembly>")
+                return $sb.ToString()
+            }
+        }
+
+        class collection {
+            # attributes
+            [string]$name
+            [decimal]$time
+            [int]$total
+            [int]$passed
+            [int]$failed
+            [int]$skipped
+            # child element
+            [System.Collections.Generic.List[test]]$test
+            # constructor
+            collection () {
+                $this.test = [System.Collections.Generic.List[test]]::new()
+            }
+            [string]ToString() {
+                $sb = [Text.StringBuilder]::new()
+                if ( $this.test.count -eq 0 ) {
+                    $sb.AppendLine("    <collection />")
+                } else {
+                    $sb.AppendFormat('    <collection total="{0}" passed="{1}" failed="{2}" skipped="{3}" name="{4}" time="{5}">' + "`n",
+                        $this.total, $this.passed, $this.failed, $this.skipped, [security.securityelement]::escape($this.name), $this.time)
+                    foreach ( $t in $this.test ) {
+                        $sb.AppendLine("    " + $t.ToString());
+                    }
+                    $sb.Append("    </collection>")
+                }
+                return $sb.ToString()
+            }
+        }
+
+        class errors {
+            [error[]]$error
+        }
+        class error {
+            # attributes
+            [string]$type
+            [string]$name
+            # child elements
+            [failure]$failure
+            [string]ToString() {
+                $sb = [system.text.stringbuilder]::new()
+                $sb.AppendLine('<error type="{0}" name="{1}" >' -f $this.type, [security.securityelement]::escape($this.Name))
+                $sb.AppendLine($this.failure -as [string])
+                $sb.AppendLine("</error>")
+                return $sb.ToString()
+            }
+        }
+
+        class cdata {
+            [string]$text
+            cdata ( [string]$s ) { $this.text = $s }
+            [string]ToString() {
+                return '<![CDATA[' + [security.securityelement]::escape($this.text) + ']]>'
+            }
+        }
+
+        class failure {
+            [string]${exception-type}
+            [cdata]$message
+            [cdata]${stack-trace}
+            failure ( [string]$message, [string]$stack ) {
+                $this."exception-type" = "Pester"
+                $this.Message = [cdata]::new($message)
+                $this."stack-trace" = [cdata]::new($stack)
+            }
+            [string]ToString() {
+                $sb = [text.stringbuilder]::new()
+                $sb.AppendLine("        <failure>")
+                $sb.AppendLine("          <message>" + ($this.message -as [string]) + "</message>")
+                $sb.AppendLine("          <stack-trace>" + ($this."stack-trace" -as [string]) + "</stack-trace>")
+                $sb.Append("        </failure>")
+                return $sb.ToString()
+            }
+        }
+
+        enum resultenum {
+            Pass
+            Fail
+            Skip
+        }
+
+        class trait {
+            # attributes
+            [string]$name
+            [string]$value
+        }
+        class traits {
+            [trait[]]$trait
+        }
+        class test {
+            # attributes
+            [string]$name
+            [string]$type
+            [string]$method
+            [decimal]$time
+            [resultenum]$result
+            # child elements
+            [trait[]]$traits
+            [failure]$failure
+            [cdata]$reason # skip reason
+            [string]ToString() {
+                $sb = [text.stringbuilder]::new()
+                $sb.appendformat('  <test name="{0}" type="{1}" method="{2}" time="{3}" result="{4}"',
+                    [security.securityelement]::escape($this.name), [security.securityelement]::escape($this.type),
+                    [security.securityelement]::escape($this.method), $this.time, $this.result)
+                if ( $this.failure ) {
+                    $sb.AppendLine(">")
+                    $sb.AppendLine($this.failure -as [string])
+                    $sb.append('      </test>')
+                } else {
+                    $sb.Append("/>")
+                }
+                return $sb.ToString()
+            }
+        }
+
+        function convert-pesterlog ( [xml]$x, $logpath, [switch]$includeEmpty ) {
+            <#$resultMap = @{
+                Success = "Pass"
+                Ignored = "Skip"
+                Failure = "Fail"
+            }#>
+
+            $resultMap = @{
+                Success = "Pass"
+                Ignored = "Skip"
+                Failure = "Fail"
+                Inconclusive = "Skip"
+            }
+
+            $configfile = $logpath
+            $runtime = $x."test-results".time
+            $environment = $x."test-results".environment.platform + "-" + $x."test-results".environment."os-version"
+            $rundate = $x."test-results".date
+            $suites = $x."test-results"."test-suite".results."test-suite"
+            $assemblies = [assemblies]::new()
+            foreach ( $suite in $suites ) {
+                $tCases = $suite.SelectNodes(".//test-case")
+                # only create an assembly group if we have tests
+                if ( $tCases.count -eq 0 -and ! $includeEmpty ) { continue }
+                $tGroup = $tCases | Group-Object result
+                $total = $tCases.Count
+                $asm = [testassembly]::new()
+                $asm.environment = $environment
+                $asm."run-date" = $rundate
+                $asm."run-time" = $runtime
+                $asm.Name = $suite.name
+                $asm."config-file" = $configfile
+                $asm.time = $suite.time
+                $asm.total = $suite.SelectNodes(".//test-case").Count
+                $asm.Passed = $tGroup|? {$_.Name -eq "Success"} | % {$_.Count}
+                $asm.Failed = $tGroup|? {$_.Name -eq "Failure"} | % {$_.Count}
+                $asm.Skipped = $tGroup|? { $_.Name -eq "Ignored" } | % {$_.Count}
+                $asm.Skipped += $tGroup|? { $_.Name -eq "Inconclusive" } | % {$_.Count}
+                $c = [collection]::new()
+                $c.passed = $asm.Passed
+                $c.failed = $asm.failed
+                $c.skipped = $asm.skipped
+                $c.total = $asm.total
+                $c.time = $asm.time
+                $c.name = $asm.name
+                foreach ( $tc in $suite.SelectNodes(".//test-case")) {
+                    if ( $tc.result -match "Success|Ignored|Failure" ) {
+                        $t = [test]::new()
+                        $t.name = $tc.Name
+                        $t.time = $tc.time
+                        $t.method = $tc.description # the pester actually puts the name of the "it" as description
+                        $t.type = $suite.results."test-suite".description | Select-Object -First 1
+                        $t.result = $resultMap[$tc.result]
+                        if ( $tc.failure ) {
+                            $t.failure = [failure]::new($tc.failure.message, $tc.failure."stack-trace")
+                        }
+                        $null = $c.test.Add($t)
+                    }
+                }
+                $null = $asm.collection.add($c)
+                $assemblies.assembly.Add($asm)
+            }
+            $assemblies
+        }
+
+        # convert it to our object model
+        # a simple conversion
+        function convert-xunitlog {
+            param ( $x, $logpath )
+            $asms = [assemblies]::new()
+            $asms.timestamp = $x.assemblies.timestamp
+            foreach ( $assembly in $x.assemblies.assembly ) {
+                $asm = [testAssembly]::new()
+                $asm.environment = $assembly.environment
+                $asm."test-framework" = $assembly."test-framework"
+                $asm."run-date" = $assembly."run-date"
+                $asm."run-time" = $assembly."run-time"
+                $asm.total = $assembly.total
+                $asm.passed = $assembly.passed
+                $asm.failed = $assembly.failed
+                $asm.skipped = $assembly.skipped
+                $asm.time = $assembly.time
+                $asm.name = $assembly.name
+                foreach ( $coll in $assembly.collection ) {
+                    $c = [collection]::new()
+                    $c.name = $coll.name
+                    $c.total = $coll.total
+                    $c.passed = $coll.passed
+                    $c.failed = $coll.failed
+                    $c.skipped = $coll.skipped
+                    $c.time = $coll.time
+                    foreach ( $t in $coll.test ) {
+                        $test = [test]::new()
+                        $test.name = $t.name
+                        $test.type = $t.type
+                        $test.method = $t.method
+                        $test.time = $t.time
+                        $test.result = $t.result
+                        $c.test.Add($test)
+                    }
+                    $null = $asm.collection.add($c)
+                }
+                $null = $asms.assembly.add($asm)
+            }
+            $asms
+        }
+        $Logs = @()
+    }
+
+    PROCESS {
+        #### MAIN ####
+        foreach ( $log in $Logfile ) {
+            foreach ( $logpath in (resolve-path $log).path ) {
+                write-progress "converting file $logpath"
+                if ( ! $logpath) { throw "Cannot resolve $Logfile" }
+                $x = [xml](get-content -raw -readcount 0 $logpath)
+
+                if ( $x.psobject.properties['test-results'] ) {
+                    $Logs += convert-pesterlog $x $logpath -includeempty:$includeempty
+                } elseif ( $x.psobject.properties['assemblies'] ) {
+                    $Logs += convert-xunitlog $x $logpath -includeEmpty:$includeEmpty
+                } else {
+                    write-error "Cannot determine log type"
+                }
+            }
+        }
+    }
+
+    END {
+        if ( $MultipleLog ) {
+            $Logs
+        } else {
+            $combinedLog = $Logs[0]
+            for ( $i = 1; $i -lt $logs.count; $i++ ) {
+                $combinedLog += $Logs[$i]
+            }
+            $combinedLog
+        }
     }
 }
 

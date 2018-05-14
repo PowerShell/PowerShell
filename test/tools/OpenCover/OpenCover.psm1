@@ -688,8 +688,8 @@ function Invoke-OpenCover
 
     if(-not $SuppressQuiet)
     {
-        $targetArgsElevated += @("-Quiet")
-        $targetArgsUnelevated += @("-Quiet")
+        $targetArgsElevated += @("-Show None")
+        $targetArgsUnelevated += @("-Show None")
     }
 
     $cmdlineElevated = CreateOpenCoverCmdline -target $target -outputLog $OutputLog -targetArgs $targetArgsElevated
