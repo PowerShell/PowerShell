@@ -481,4 +481,9 @@ Describe 'method conversion' -Tags 'CI' {
         [Func[[E], [object]]] $f = $n.GetC
         $f.Invoke([E]::Week) | Should -BeExactly "Week"
     }
+
+    It "Test fail-to-convert code path" {
+        $n = [N]::new()
+        { [System.Management.Automation.LanguagePrimitives]::ConvertTo($n.GetC, [Func[[int], [object]]]) } | Should -Throw -ErrorId "PSInvalidCastException"
+    }
 }
