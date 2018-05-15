@@ -3210,7 +3210,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if ((!(_commandInfo is WorkflowInfo)) && (value == ActionPreference.Suspend))
+                if (value == ActionPreference.Suspend)
                 {
                     throw PSTraceSource.NewNotSupportedException(ErrorPackage.SuspendActionPreferenceSupportedOnlyOnWorkflow);
                 }

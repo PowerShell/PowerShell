@@ -39,12 +39,26 @@ function GetCurrentUserHelpRoot {
 
 Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @('CI') {
 
-    It "Get-Help returns information about the help system." {
+    It "Get-Help returns information about the help system" {
 
         $help = Get-Help
         $help.Name | Should -Be "default"
         $help.Category | Should -Be "HelpFile"
         $help.Synopsis | Should -Match "SHORT DESCRIPTION"
+    }
+}
+
+Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') {
+
+    It "Help doesn't fail when strict mode is on" {
+
+        $help = & {
+            # run in nested scope to keep strict mode from affecting other tests
+            Set-StrictMode -Version Latest
+            Help
+        }
+        # the help function renders the help content as text so just verify that there is content
+        $help | Should -Not -BeNullOrEmpty
     }
 }
 

@@ -1110,6 +1110,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="AuthenticationMechanismRequiresCredential" xml:space="preserve">
     <value>{0} authentication requires an explicit user name and password.  Specify the user name and password by using the -Credential parameter and try the command again.</value>
   </data>
+  <data name="BasicAuthOverHttpNotSupported">
+   <value>Basic authentication is not supported over HTTP on Unix.</value>
+  </data>
   <data name="StartJobDefinitionNotFound1" xml:space="preserve">
     <value>Cannot find a scheduled job with name {0}.</value>
     <comment>{0} is the job definition name</comment>

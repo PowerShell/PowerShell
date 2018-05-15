@@ -6,10 +6,12 @@ try {
         $PSDefaultParameterValues['it:pending'] = $true
     }
 
-    Describe 'Get-CimClass' -tags "CI" {
+    Describe 'Get-CimClass' -Tags "CI" {
+
         It 'can get CIM_Error CIM class' {
             Get-CimClass -ClassName CIM_Error | Should -Not -BeNullOrEmpty
         }
+
         It 'can get class when namespace is specified' {
             Get-CimClass -ClassName CIM_OperatingSystem -Namespace root/cimv2 | Should -Not -BeNullOrEmpty
         }
@@ -26,12 +28,13 @@ try {
     }
 
     # feature tests
-    Describe 'Get-CimClass' -tags @("Feature") {
+    Describe 'Get-CimClass' -Tags @("Feature") {
         It 'can retrieve a class when a method is provided' {
             Get-CimClass -MethodName Reboot | Should -Not -BeNullOrEmpty
         }
     }
 }
+
 finally {
     $PSDefaultParameterValues.Remove('it:pending')
 }

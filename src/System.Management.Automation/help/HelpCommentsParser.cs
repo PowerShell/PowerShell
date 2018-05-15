@@ -905,25 +905,8 @@ namespace System.Management.Automation
                                                              HelpCategory.ExternalScript |
                                                              HelpCategory.Filter |
                                                              HelpCategory.Function |
-                                                             HelpCategory.ScriptCommand |
-                                                             HelpCategory.Workflow);
+                                                             HelpCategory.ScriptCommand);
                     }
-                }
-
-                WorkflowInfo workflowInfo = commandInfo as WorkflowInfo;
-                if (workflowInfo != null)
-                {
-                    bool common = DefaultCommandHelpObjectBuilder.HasCommonParameters(commandInfo.Parameters);
-                    bool commonWorkflow = ((commandInfo.CommandType & CommandTypes.Workflow) ==
-                                           CommandTypes.Workflow);
-
-                    localHelpInfo.FullHelp.Properties.Add(new PSNoteProperty("CommonParameters", common));
-                    localHelpInfo.FullHelp.Properties.Add(new PSNoteProperty("WorkflowCommonParameters", commonWorkflow));
-                    DefaultCommandHelpObjectBuilder.AddDetailsProperties(obj: localHelpInfo.FullHelp, name: workflowInfo.Name,
-                                                                        noun: workflowInfo.Noun, verb: workflowInfo.Verb,
-                                                                        typeNameForHelp: "MamlCommandHelpInfo", synopsis: localHelpInfo.Synopsis);
-                    DefaultCommandHelpObjectBuilder.AddSyntaxProperties(localHelpInfo.FullHelp, workflowInfo.Name,
-                                                                        workflowInfo.ParameterSets, common, commonWorkflow, "MamlCommandHelpInfo");
                 }
 
                 // Add HelpUri if necessary

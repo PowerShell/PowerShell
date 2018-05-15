@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the literal path to save updates to
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = LiteralPathParameterSetName)]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath

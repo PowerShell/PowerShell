@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>resgen</AssemblyName>
     <OutputType>Exe</OutputType>
-    <RuntimeIdentifiers>win7-x86;win7-x64;osx.10.12-x64;linux-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win7-x86;win7-x64;osx-x64;linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
 </Project>

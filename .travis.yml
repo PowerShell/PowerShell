@@ -58,7 +58,7 @@ after_success:
 # travis-ci will quit using the cache if an enviroment variable changes
 env:
   global:
-    - CACHE_VERSION=netcoreapp.2.0.6-sdk.2.1.4
+    - CACHE_VERSION=netcoreapp.2.1-sdk.2.1.300-rc1-008662
     - POWERSHELL_TELEMETRY_OPTOUT=1
 
 # timeout uploading cache after 6 minutes (360 seconds)

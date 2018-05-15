@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
         /// The literal path to the source code or DLL to load.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = FromLiteralPathParameterSetName)]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {

@@ -351,8 +351,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // for a given row, walk the columns
                 for (int col = 0; col < scArray.Length; col++)
                 {
-                    // if the column is the last column with content, we need to trim trailing whitespace
-                    if (col == lastColWithContent[row])
+                    // if the column is the last column with content, we need to trim trailing whitespace, unless there is only one row
+                    if (col == lastColWithContent[row] && screenRows > 1)
                     {
                         sb.Append(scArray[col][row].TrimEnd());
                     }
