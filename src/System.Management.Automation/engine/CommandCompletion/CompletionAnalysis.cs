@@ -475,9 +475,12 @@ namespace System.Management.Automation
 
                     case TokenKind.Semi:
                         // Handle scenarios such as 'gci | Format-Table @{Label=...;<tab>'
-                        result = GetResultForHashtable(completionContext);
-                        replacementIndex += 1;
-                        replacementLength = 0;
+                        if (lastAst is HashtableAst)
+                        {
+                            result = GetResultForHashtable(completionContext);
+                            replacementIndex += 1;
+                            replacementLength = 0;
+                        }
                         break;
 
                     case TokenKind.Number:
@@ -538,28 +541,16 @@ namespace System.Management.Automation
                     case TokenKind.AtParen:
                     case TokenKind.LParen:
                         {
-                            if (tokenAtCursor.Kind == TokenKind.Equals && lastAst is HashtableAst hashTableAst && CheckForPendingAssignment(hashTableAst))
-                            {
-                                if (lastAst.Parent is DynamicKeywordStatementAst)
-                                {
-                                    // Handle scenarios such as 'configuration foo { File ab { Attributes ='
-                                    bool unused;
-                                    result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
-                                    break;
-                                }
-                                // Handle scenarios such as 'gci | Format-Table @{Label=<tab>'
-                                return null;
-                            }
                             if (lastAst is AttributeAst)
                             {
                                 completionContext.ReplacementIndex = replacementIndex += tokenAtCursor.Text.Length;
                                 completionContext.ReplacementLength = replacementLength = 0;
                                 result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                             }
-                            else
+                            else if (lastAst.Parent is DynamicKeywordStatementAst || lastAst.Parent is CommandExpressionAst)
                             {
-                                //
-                                // Handle auto completion for enum/dependson property of DSC resource,
+                                // 1. Handle scenarios such as 'configuration foo { File ab { Attributes ='
+                                // 2. Handle auto completion for enum/dependson property of DSC resource,
                                 // cursor is right after '=', '(' or '@('
                                 //
                                 // Configuration config
@@ -571,8 +562,12 @@ namespace System.Management.Automation
                                 //         DependsOn=(|
                                 //
                                 bool unused;
-                                result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty,
-                                    ref replacementIndex, ref replacementLength, out unused);
+                                result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
+                            }
+                            else if (lastAst is HashtableAst hashTableAst && CheckForPendingAssignment(hashTableAst))
+                            {
+                                // Handle scenarios such as 'gci | Format-Table @{Label=<tab>' if incomplete parsing of the assignment.
+                                return null;
                             }
                             break;
                         }
