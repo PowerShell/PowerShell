@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell
 
         private
         void
-        PostWrite(string value)
+        PostWrite(ReadOnlySpan<char> value)
         {
             PostWrite();
 
@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell
                 try
                 {
                     // Reads always terminate with the enter key, so add that.
-                    _parent.WriteToTranscript(value + Crlf);
+                    _parent.WriteLineToTranscript(value);
                 }
                 catch (Exception)
                 {

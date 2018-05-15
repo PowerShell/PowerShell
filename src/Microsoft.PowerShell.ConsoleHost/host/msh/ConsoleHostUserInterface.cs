@@ -542,7 +542,24 @@ namespace Microsoft.PowerShell
 
         #region WriteToConsole
 
-        internal void WriteToConsole(string value, bool transcribeResult)
+        internal void WriteToConsole(char c, bool transcribeResult)
+        {
+            Span<char> value = stackalloc char[1];
+            value[0] = c;
+            WriteToConsole(value, transcribeResult);
+        }
+
+        internal void WriteToConsole(ReadOnlySpan<char> value, bool transcribeResult)
+        {
+            WriteToConsole(value, transcribeResult, newLine: false);
+        }
+
+        internal void WriteLineToConsole(ReadOnlySpan<char> value, bool transcribeResult)
+        {
+            WriteToConsole(value, transcribeResult, newLine: true);
+        }
+
+        private void WriteToConsole(ReadOnlySpan<char> value, bool transcribeResult, bool newLine)
         {
 #if !UNIX
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
@@ -568,14 +585,14 @@ namespace Microsoft.PowerShell
             // This is atomic, so we don't lock here...
 
 #if !UNIX
-            ConsoleControl.WriteConsole(handle, value);
+            ConsoleControl.WriteConsole(handle, value, newLine);
 #else
-            Console.Out.Write(value);
+            ConsoleOutWriteHelper(value, newLine);
 #endif
 
             if (_isInteractiveTestToolListening && Console.IsOutputRedirected)
             {
-                Console.Out.Write(value);
+                ConsoleOutWriteHelper(value, newLine);
             }
 
             if (transcribeResult)
@@ -588,34 +605,61 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
+        private void ConsoleOutWriteHelper(ReadOnlySpan<char> value, bool newLine)
         {
-            ConsoleColor fg = RawUI.ForegroundColor;
-            ConsoleColor bg = RawUI.BackgroundColor;
-
-            RawUI.ForegroundColor = foregroundColor;
-            RawUI.BackgroundColor = backgroundColor;
-
-            try
+            if (newLine)
             {
-                WriteToConsole(text, true);
+                Console.Out.WriteLine(value);
             }
-            finally
+            else
             {
-                RawUI.ForegroundColor = fg;
-                RawUI.BackgroundColor = bg;
+                Console.Out.Write(value);
+            }
+        }
+
+        private void WriteLineToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
+        {
+            WriteToConsole(PromptColor, backgroundColor, text, newLine: true);
+        }
+
+        private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text, bool newLine = false)
+        {
+            // Sync access so that we don't race on color settings if called from multiple threads.
+            lock (_instanceLock)
+            {
+                ConsoleColor fg = RawUI.ForegroundColor;
+                ConsoleColor bg = RawUI.BackgroundColor;
+
+                RawUI.ForegroundColor = foregroundColor;
+                RawUI.BackgroundColor = backgroundColor;
+
+                try
+                {
+                    if (newLine)
+                    {
+                        WriteLineToConsole(text, true);
+                    }
+                    else
+                    {
+                        WriteToConsole(text, true);
+                    }
+                }
+                finally
+                {
+                    RawUI.ForegroundColor = fg;
+                    RawUI.BackgroundColor = bg;
+                }
             }
         }
 
         private void WriteLineToConsole(string text)
         {
-            WriteToConsole(text, true);
-            WriteToConsole(Crlf, true);
+            WriteLineToConsole(text, true);
         }
 
         private void WriteLineToConsole()
         {
-            WriteToConsole(Crlf, true);
+            WriteLineToConsole("", true);
         }
 
         #endregion WriteToConsole
@@ -636,15 +680,28 @@ namespace Microsoft.PowerShell
 
         public override void Write(string value)
         {
-            if (string.IsNullOrEmpty(value))
-            {
-                // do nothing
+            WriteHelper(value, newLine: false);
+        }
 
+        private void WriteHelper(string value, bool newLine)
+        {
+            if (string.IsNullOrEmpty(value) && !newLine)
+            {
                 return;
             }
 
             // If the test hook is set, write to it and continue.
-            if (s_h != null) s_h.Write(value);
+            if (s_h != null)
+            {
+                if (newLine)
+                {
+                    s_h.WriteLine(value);
+                }
+                else
+                {
+                    s_h.Write(value);
+                }
+            }
 
             TextWriter writer = Console.IsOutputRedirected ? Console.Out : _parent.ConsoleTextWriter;
 
@@ -653,10 +710,22 @@ namespace Microsoft.PowerShell
                 Dbg.Assert(writer == _parent.OutputSerializer.textWriter, "writers should be the same");
 
                 _parent.OutputSerializer.Serialize(value);
+
+                if (newLine)
+                {
+                    _parent.OutputSerializer.Serialize(Crlf);
+                }
             }
             else
             {
-                writer.Write(value);
+                if (newLine)
+                {
+                    writer.WriteLine(value);
+                }
+                else
+                {
+                    writer.Write(value);
+                }
             }
         }
 
@@ -682,8 +751,40 @@ namespace Microsoft.PowerShell
 
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
-            // Sync access so that we don't race on color settings if called from multiple threads.
+            Write(foregroundColor, backgroundColor, value, newLine: false);
+        }
 
+        /// <summary>
+        ///
+        /// See base class
+        ///
+        /// </summary>
+        /// <param name="foregroundColor"></param>
+        /// <param name="backgroundColor"></param>
+        /// <param name="value"></param>
+        /// <exception cref="HostException">
+        ///
+        /// If obtaining information about the buffer failed
+        ///    OR
+        ///    Win32's SetConsoleTextAttribute
+        ///    OR
+        ///    Win32's CreateFile fails
+        ///    OR
+        ///    Win32's GetConsoleMode fails
+        ///    OR
+        ///    Win32's SetConsoleMode fails
+        ///    OR
+        ///    Win32's WriteConsole fails
+        ///
+        /// </exception>
+        public override void WriteLine(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
+        {
+            Write(foregroundColor, backgroundColor, value, newLine: true);
+        }
+
+        private void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value, bool newLine)
+        {
+            // Sync access so that we don't race on color settings if called from multiple threads.
             lock (_instanceLock)
             {
                 ConsoleColor fg = RawUI.ForegroundColor;
@@ -694,7 +795,14 @@ namespace Microsoft.PowerShell
 
                 try
                 {
-                    this.Write(value);
+                    if (newLine)
+                    {
+                        this.WriteLine(value);
+                    }
+                    else
+                    {
+                        this.Write(value);
+                    }
                 }
                 finally
                 {
@@ -717,16 +825,30 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's WriteConsole fails
         /// </exception>
-
         public override void WriteLine(string value)
         {
-            // lock here so that the newline is written atomically with the value
+            this.WriteHelper(value, newLine: true);
+        }
 
-            lock (_instanceLock)
-            {
-                this.Write(value);
-                this.Write(Crlf);
-            }
+        /// <summary>
+        ///
+        /// See base class
+        ///
+        /// </summary>
+        /// <exception cref="HostException">
+        ///
+        ///    Win32's CreateFile fails
+        ///    OR
+        ///    Win32's GetConsoleMode fails
+        ///    OR
+        ///    Win32's SetConsoleMode fails
+        ///    OR
+        ///    Win32's WriteConsole fails
+        ///
+        /// </exception>
+        public override void WriteLine()
+        {
+            this.WriteHelper("", newLine: true);
         }
 
         #region Word Wrapping
@@ -1227,8 +1349,6 @@ namespace Microsoft.PowerShell
         {
             if (string.IsNullOrEmpty(value))
             {
-                // do nothing
-
                 return;
             }
 
@@ -1247,7 +1367,7 @@ namespace Microsoft.PowerShell
                 if (writer == _parent.ConsoleTextWriter)
                     WriteLine(ErrorForegroundColor, ErrorBackgroundColor, value);
                 else
-                    Console.Error.Write(value + Crlf);
+                    Console.Error.WriteLine(value);
             }
         }
 
@@ -1941,7 +2061,7 @@ namespace Microsoft.PowerShell
             {
                 // Reads always terminate with the enter key, so add that.
 
-                _parent.WriteToTranscript(input + Crlf);
+                _parent.WriteLineToTranscript(input);
             }
 
             return input;
