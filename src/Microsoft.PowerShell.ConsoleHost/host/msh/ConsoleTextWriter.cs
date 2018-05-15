@@ -44,30 +44,54 @@ namespace Microsoft.PowerShell
 
         public override
         void
+        Write(ReadOnlySpan<char> value)
+        {
+            _ui.WriteToConsole(value, true);
+        }
+
+        public override
+        void
         WriteLine(string value)
         {
-            this.Write(value + ConsoleHostUserInterface.Crlf);
+            _ui.WriteLineToConsole(value, true);
+        }
+
+        public override
+        void
+        WriteLine(ReadOnlySpan<char> value)
+        {
+            _ui.WriteLineToConsole(value, true);
         }
 
         public override
         void
         Write(Boolean b)
         {
-            this.Write(b.ToString());
+            if (b)
+            {
+                _ui.WriteToConsole(Boolean.TrueString.AsSpan(), true);
+            }
+            else
+            {
+                _ui.WriteToConsole(Boolean.FalseString.AsSpan(), true);
+            }
+
         }
 
         public override
         void
         Write(Char c)
         {
-            this.Write(new String(c, 1));
+            Span<char> c1 = stackalloc char[1];
+            c1[0] = c;
+            _ui.WriteToConsole(c1, true);
         }
 
         public override
         void
         Write(Char[] a)
         {
-            this.Write(new String(a));
+            _ui.WriteToConsole(a, true);
         }
 
         private ConsoleHostUserInterface _ui;

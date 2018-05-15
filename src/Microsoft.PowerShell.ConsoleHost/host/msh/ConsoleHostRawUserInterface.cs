@@ -760,9 +760,7 @@ namespace Microsoft.PowerShell
 
             if ((options & ReadKeyOptions.NoEcho) == 0)
             {
-                parent.WriteToConsole(
-                    keyInfo.Character.ToString(),
-                    true);
+                parent.WriteToConsole(keyInfo.Character, transcribeResult: true);
             }
 
             return keyInfo;
