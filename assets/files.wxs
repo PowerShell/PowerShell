@@ -140,7 +140,7 @@
                 <File Id="fil8E8E3BF1C97D92DFEB4FC97D778F238F" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Runtime.CompilerServices.VisualC.dll" />
             </Component>
             <Component Id="cmp8777CA81FBD5C5FAC86993893043793D" Guid="{B2D9982B-D46A-4D69-AA16-CC7EC49D357F}">
-                <File Id="fil9A6CE1B34698E9E81BC367B9E9CEBF25" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26424.05.dll" />
+                <File Id="fil9A6CE1B34698E9E81BC367B9E9CEBF25" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26426.02.dll" />
             </Component>
             <Component Id="cmp5977DC14DE00AD6E597A2FEBB8C3B58B" Guid="{8E01E3C2-0596-46D8-95DD-BCA308A88941}">
                 <File Id="filEE7925E7A712381B024DAE39831F7AEB" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Threading.dll" />
@@ -437,7 +437,7 @@
                 <File Id="fil69EA4231E04E7B76EE0676A3C7EB4F91" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Security.Cryptography.Pkcs.dll" />
             </Component>
             <Component Id="cmp87DE113A572097FF094F31D019BB29BE" Guid="{2773E961-6227-40EE-B293-2929168E960A}">
-                <File Id="fil9320215B904D0997AADD8E1C11CA0998" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26424.05.dll" />
+                <File Id="fil9320215B904D0997AADD8E1C11CA0998" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26426.02.dll" />
             </Component>
             <Component Id="cmpCC989C2FC3319628C5A0897A9CDB4C7D" Guid="{2FC1414C-925B-4653-B376-0DC7114DAA4C}">
                 <File Id="fil2FBB26045517B5A73BF6024C55539694" KeyPath="yes" Source="$(env.ProductSourcePath)\api-ms-win-core-processthreads-l1-1-0.dll" />
