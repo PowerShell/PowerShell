@@ -18,7 +18,6 @@ Describe "Requires tests" -Tags "CI" {
             { [scriptblock]::Create($command) } | Should -Throw -ErrorId "ParseException"
         }
     }
-}
 
     Context "Interactive requires" {
 
