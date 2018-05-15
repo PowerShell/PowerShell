@@ -73,12 +73,8 @@ Describe "Export-Csv" -Tags "CI" {
     }
 
     It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {
-<<<<<<< HEAD
-        { $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation -NoTypeInformation } | 
+        { $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation -NoTypeInformation } |
             Should -Throw -ErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ExportCsvCommand"
-=======
-        { $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation -NoTypeInformation } | Should -Throw -ErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ExportCsvCommand"
->>>>>>> 67b1dc3059f5b80a95c0e7cff07c41fea9f636a6
     }
 
     It "Should support -LiteralPath parameter" {
