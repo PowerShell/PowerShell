@@ -2808,6 +2808,25 @@ assembly
     }
 }
 
+$psOptionsPath = 'psoptions.json'
+
+function Save-PSOptions {
+    $Script:Options = Get-PSOptions
+    $Script:Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath $psOptionsPath
+}
+
+function Restore-PSOptions {
+    $options = Get-Content -Path $psOptionsPath | ConvertFrom-Json
+
+    # Remove PSOptions.
+    # The file is only used to set the PSOptions.
+    Remove-Item -Path $psOptionsPath
+
+    $options.PSModuleRestore = $true
+
+    Set-PSOptions -Options $options
+}
+
 $script:RESX_TEMPLATE = @'
 <?xml version="1.0" encoding="utf-8"?>
 <root>
