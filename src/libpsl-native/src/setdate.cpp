@@ -15,22 +15,47 @@
 
 //! @brief SetDate sets the date and time on local computer.
 //!      You must be super-user to set the time.
+//!      See comment in setdate.h about the use of private_tm
 //!
 //! SetDate
 //!
 //! @retval 0 successfully set date
 //! @retval -1 if failure occurred.
 //!
-int32_t SetDate(struct tm* time)
+int32_t SetDate(struct private_tm* time)
 {
+    
     errno = 0;
 
     // Select locale from environment
     setlocale(LC_ALL, "");
 
     struct timeval tv;
+    int32_t result = GetTimeVal(*time,tv);
+    if(result != 0)
+    {
+        return result;
+    }
 
-    time_t newTime = mktime(time);
+    return settimeofday(&tv, NULL);
+}
+
+static int32_t GetTimeVal(struct private_tm& time, struct timeval& tv)
+{
+    struct tm nativeTime;
+    nativeTime.tm_hour = static_cast<int>(time.Hour);
+    nativeTime.tm_isdst = static_cast<int>(time.IsDst);
+    nativeTime.tm_mday = static_cast<int>(time.DayOfMonth);
+    nativeTime.tm_min = static_cast<int>(time.Minutes);
+    nativeTime.tm_mon = static_cast<int>(time.Month);
+    nativeTime.tm_sec = static_cast<int>(time.Seconds);
+    nativeTime.tm_wday = static_cast<int>(time.DayOfWeek);
+    nativeTime.tm_yday = static_cast<int>(time.DayInYear);
+    nativeTime.tm_year = static_cast<int>(time.Year);
+    //nativeTime.tm_zone;
+    //nativeTime.tm_gmtoff;
+
+    time_t newTime = mktime(&nativeTime);
     if (newTime == -1)
     {
         return -1;
@@ -39,5 +64,5 @@ int32_t SetDate(struct tm* time)
     tv.tv_sec = newTime;
     tv.tv_usec = 0;
 
-    return settimeofday(&tv, NULL);
+    return 0;
 }
