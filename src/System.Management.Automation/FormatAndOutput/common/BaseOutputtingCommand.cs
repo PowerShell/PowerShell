@@ -767,10 +767,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return DefaultConsoleWidth;
                 }
+
+                if (InternalTestHooks.SetConsoleWidthToZero)
+                {
+                    Console.WindowWidth = 0;
+                }
+
                 try
                 {
-                    # if Console width is set to 0, the default value is returned so that the output string is not null.
-                    if (Console.WindowWidth == 0) {
+                    // if Console width is set to 0, the default value is returned so that the output string is not null.
+                    if (Console.WindowWidth == 0)
+                    {
                         return DefaultConsoleWidth;
                     }
                     return Console.WindowWidth;

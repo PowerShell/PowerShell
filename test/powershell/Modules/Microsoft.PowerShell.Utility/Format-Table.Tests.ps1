@@ -717,4 +717,10 @@ abc bcd
             $output = $obj | Format-Table | Out-String
             $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
+
+        It "Should not return null when the Console width is equal to 0" {
+            [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $true)
+            Format-Table -inputobject @{'test'= 1, 2} | Should -Not -BeNullOrEmpty
+            [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $false)
+        }
     }
