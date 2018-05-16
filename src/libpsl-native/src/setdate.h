@@ -16,7 +16,7 @@ static int32_t GetTimeVal(struct private_tm& time, struct timeval& tv);
 PAL_END_EXTERNC
 
 // Using a private struct because theuse externally defined structs
-// in managed code has proven to be buggy 
+// in managed code has proven to be buggy
 // (memory corruption issues due to layout difference between platforms)
 // see https://github.com/dotnet/corefx/issues/29700#issuecomment-389313075
 #pragma pack(push, 4) // exact fit - no padding
@@ -32,4 +32,4 @@ struct private_tm
     int32_t DayInYear; /* Day in the year (0-365, 1 Jan = 0) */
     int32_t IsDst;     /* Daylight saving time */
 };
-#pragma pack(pop) //back to whatever the previous packing mode was 
+#pragma pack(pop) //back to whatever the previous packing mode was

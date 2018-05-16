@@ -24,7 +24,6 @@
 //!
 int32_t SetDate(struct private_tm* time)
 {
-    
     errno = 0;
 
     // Select locale from environment
@@ -42,18 +41,16 @@ int32_t SetDate(struct private_tm* time)
 
 static int32_t GetTimeVal(struct private_tm& time, struct timeval& tv)
 {
-    struct tm nativeTime;
-    nativeTime.tm_hour = static_cast<int>(time.Hour);
+    struct tm nativeTime = 0;
+    nativeTime.tm_hour  = static_cast<int>(time.Hour);
     nativeTime.tm_isdst = static_cast<int>(time.IsDst);
-    nativeTime.tm_mday = static_cast<int>(time.DayOfMonth);
-    nativeTime.tm_min = static_cast<int>(time.Minutes);
-    nativeTime.tm_mon = static_cast<int>(time.Month);
-    nativeTime.tm_sec = static_cast<int>(time.Seconds);
-    nativeTime.tm_wday = static_cast<int>(time.DayOfWeek);
-    nativeTime.tm_yday = static_cast<int>(time.DayInYear);
-    nativeTime.tm_year = static_cast<int>(time.Year);
-    //nativeTime.tm_zone;
-    //nativeTime.tm_gmtoff;
+    nativeTime.tm_mday  = static_cast<int>(time.DayOfMonth);
+    nativeTime.tm_min   = static_cast<int>(time.Minutes);
+    nativeTime.tm_mon   = static_cast<int>(time.Month);
+    nativeTime.tm_sec   = static_cast<int>(time.Seconds);
+    nativeTime.tm_wday  = static_cast<int>(time.DayOfWeek);
+    nativeTime.tm_yday  = static_cast<int>(time.DayInYear);
+    nativeTime.tm_year  = static_cast<int>(time.Year);
 
     time_t newTime = mktime(&nativeTime);
     if (newTime == -1)
