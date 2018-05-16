@@ -272,7 +272,7 @@ namespace System.Management.Automation
                     string colonTerminatedVolume = CurrentDrive.Name + ':';
                     if (CurrentDrive.VolumeSeparatedByColon && (path.Length == colonTerminatedVolume.Length))
                     {
-                        path = Path.Combine((colonTerminatedVolume + "\\"), CurrentDrive.CurrentLocation);
+                        path = Path.Combine((colonTerminatedVolume + Path.DirectorySeparatorChar), CurrentDrive.CurrentLocation);
                     }
 
                     // Now that the current working drive is set,
