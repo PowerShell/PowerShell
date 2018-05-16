@@ -547,10 +547,15 @@ namespace System.Management.Automation
                                 completionContext.ReplacementLength = replacementLength = 0;
                                 result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                             }
-                            else if (lastAst.Parent is DynamicKeywordStatementAst || lastAst.Parent is CommandExpressionAst)
+                            else if (lastAst is HashtableAst hashTableAst && !(lastAst.Parent is DynamicKeywordStatementAst) && CheckForPendingAssignment(hashTableAst))
                             {
-                                // 1. Handle scenarios such as 'configuration foo { File ab { Attributes ='
-                                // 2. Handle auto completion for enum/dependson property of DSC resource,
+                                // Handle scenarios such as 'gci | Format-Table @{Label=<tab>' if incomplete parsing of the assignment.
+                                return null;
+                            }
+                            else
+                            {
+                                // Handle scenarios such as 'configuration foo { File ab { Attributes ='
+                                // (auto completion for enum/dependson property of DSC resource),
                                 // cursor is right after '=', '(' or '@('
                                 //
                                 // Configuration config
@@ -563,11 +568,6 @@ namespace System.Management.Automation
                                 //
                                 bool unused;
                                 result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
-                            }
-                            else if (lastAst is HashtableAst hashTableAst && CheckForPendingAssignment(hashTableAst))
-                            {
-                                // Handle scenarios such as 'gci | Format-Table @{Label=<tab>' if incomplete parsing of the assignment.
-                                return null;
                             }
                             break;
                         }

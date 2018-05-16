@@ -77,7 +77,7 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
         $result.CurrentMatchIndex | Should -Be -1
         $result.ReplacementIndex | Should -Be 40
-        $result.CompletionMatches[2].CompletionText | Should -Be 'Descending'
+        $result.ReplacementLength | Should -Be 0
         $result.CompletionMatches[0].CompletionText | Should -Be 'Expression'
         $result.CompletionMatches[1].CompletionText | Should -Be 'Ascending'
         $result.CompletionMatches[2].CompletionText | Should -Be 'Descending'
