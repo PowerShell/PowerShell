@@ -19,7 +19,7 @@ using System.IO;
 using System.Text;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
-using System.Diagnostics.CodeAnalysis; // for fxcop
+using System.Diagnostics.CodeAnalysis;
 using Dbg = System.Management.Automation.Diagnostics;
 using MethodCacheEntry = System.Management.Automation.DotNetAdapter.MethodCacheEntry;
 
@@ -3202,49 +3202,6 @@ namespace System.Management.Automation
                 valueToConvert.ToString(), resultType.ToString(), exception.Message);
         }
 
-        private static Delegate ConvertPSMethodInfoToDelegate(object valueToConvert,
-                                                      Type resultType,
-                                                      bool recurse,
-                                                      PSObject originalValueToConvert,
-                                                      IFormatProvider formatProvider,
-                                                      TypeTable backupTable)
-        {
-            // We can only possibly convert PSMethod instance of the type PSMethod<T>.
-            // Such a PSMethod essentially represents a set of .NET method overloads.
-            var psMethod = (PSMethod)valueToConvert;
-
-            try
-            {
-                var methods = (MethodCacheEntry)psMethod.adapterData;
-                var isStatic = psMethod.instance is Type;
-                var targetMethodInfo = resultType.GetMethod("Invoke");
-                var comparator = new DelegateArgsComparator(targetMethodInfo);
-
-                foreach (var methodInformation in methods.methodInformationStructures)
-                {
-                    var candidate = (MethodInfo)methodInformation.method;
-                    if (comparator.SignatureMatches(candidate.ReturnType, candidate.GetParameters()))
-                    {
-                        return isStatic ? candidate.CreateDelegate(resultType)
-                                        : candidate.CreateDelegate(resultType, psMethod.instance);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                typeConversion.WriteLine("PSMethod to Delegate exception: \"{0}\".", e.Message);
-                throw new PSInvalidCastException("InvalidCastExceptionPSMethodToDelegate", e,
-                    ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
-                    valueToConvert.ToString(), resultType.ToString(), e.Message);
-            }
-
-            var msg = String.Format(ExtendedTypeSystem.PSMethodToDelegateNoMatchingOverLoad, psMethod, resultType);
-            typeConversion.WriteLine($"PSMethod to Delegate exception: \"{msg}\".");
-            throw new PSInvalidCastException("InvalidCastExceptionPSMethodToDelegate", null,
-                ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
-                valueToConvert.ToString(), resultType.ToString(), msg);
-        }
-
         private static object ConvertToNullable(object valueToConvert,
                                                 Type resultType,
                                                 bool recursion,
@@ -3484,6 +3441,65 @@ namespace System.Management.Automation
             }
 
             return ConvertStringToEnum(sbResult.ToString(), resultType, recursion, originalValueToConvert, formatProvider, backupTable);
+        }
+
+        private class PSMethodToDelegateConverter
+        {
+            // Index of the matching overload method.
+            private readonly int _matchIndex;
+            // Size of the cache. It's rare to have more than 10 overloads for a method.
+            private const int CacheSize = 10;
+            private static readonly PSMethodToDelegateConverter[] s_converterCache = new PSMethodToDelegateConverter[CacheSize];
+
+            private PSMethodToDelegateConverter(int matchIndex)
+            {
+                _matchIndex = matchIndex;
+            }
+
+            internal static PSMethodToDelegateConverter GetConverter(int matchIndex)
+            {
+                if (matchIndex >= CacheSize) { return new PSMethodToDelegateConverter(matchIndex); }
+
+                var result = s_converterCache[matchIndex];
+                if (result == null)
+                {
+                    // If the cache entry is null, generate a new instance for the cache slot.
+                    var converter = new PSMethodToDelegateConverter(matchIndex);
+                    Threading.Interlocked.CompareExchange(ref s_converterCache[matchIndex], converter, null);
+                    result = s_converterCache[matchIndex];
+                }
+
+                return result;
+            }
+
+            internal Delegate Convert(object valueToConvert,
+                                      Type resultType,
+                                      bool recursion,
+                                      PSObject originalValueToConvert,
+                                      IFormatProvider formatProvider,
+                                      TypeTable backupTable)
+            {
+                // We can only possibly convert PSMethod instance of the type PSMethod<T>.
+                // Such a PSMethod essentially represents a set of .NET method overloads.
+                var psMethod = (PSMethod)valueToConvert;
+
+                try
+                {
+                    var methods = (MethodCacheEntry)psMethod.adapterData;
+                    var isStatic = psMethod.instance is Type;
+
+                    var candidate = (MethodInfo)methods.methodInformationStructures[_matchIndex].method;
+                    return isStatic ? candidate.CreateDelegate(resultType)
+                                    : candidate.CreateDelegate(resultType, psMethod.instance);
+                }
+                catch (Exception e)
+                {
+                    typeConversion.WriteLine("PSMethod to Delegate exception: \"{0}\".", e.Message);
+                    throw new PSInvalidCastException("InvalidCastExceptionPSMethodToDelegate", e,
+                        ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
+                        valueToConvert.ToString(), resultType.ToString(), e.Message);
+                }
+            }
         }
 
         private class ConvertViaParseMethod
@@ -4772,66 +4788,148 @@ namespace System.Management.Automation
                 return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertIntegerToEnum, ConversionRank.Language);
             }
 
-            if (fromType.IsSubclassOf(typeof(PSMethod)) && toType.IsSubclassOf(typeof(Delegate)))
+            if (fromType.IsSubclassOf(typeof(PSMethod)) && toType.IsSubclassOf(typeof(Delegate)) && !toType.IsAbstract)
             {
-                var mi = toType.GetMethod("Invoke");
-
-                var comparator = new DelegateArgsComparator(mi);
+                var targetMethod = toType.GetMethod("Invoke");
+                var comparator = new SignatureComparator(targetMethod);
                 var signatureEnumerator = new PSMethodSignatureEnumerator(fromType);
+                int index = -1, matchedIndex = -1;
+
                 while (signatureEnumerator.MoveNext())
                 {
-                    var candidate = signatureEnumerator.Current.GetMethod("Invoke");
-                    if (comparator.SignatureMatches(candidate.ReturnType, candidate.GetParameters()))
+                    index++;
+                    var signatureType = signatureEnumerator.Current;
+                    // Skip the non-bindable signatures
+                    if (signatureType == typeof(Func<PSNonBindableType>)) { continue; }
+
+                    Type[] argumentTypes = signatureType.GenericTypeArguments;
+                    if (comparator.ProjectedSignatureMatchesTarget(argumentTypes, out bool signaturesMatchExactly))
                     {
-                        return CacheConversion<Delegate>(fromType, toType, LanguagePrimitives.ConvertPSMethodInfoToDelegate, ConversionRank.Language);
+                        if (signaturesMatchExactly)
+                        {
+                            // We prefer the signature that exactly matches the target delegate.
+                            matchedIndex = index;
+                            break;
+                        }
+
+                        // If there is no exact match, then we use the first compatible signature we found.
+                        if (matchedIndex == -1) { matchedIndex = index; }
                     }
+                }
+
+                if (matchedIndex > -1)
+                {
+                    // We got the index of the matching method signature based on the PSMethod<..> type.
+                    // Signatures in PSMethod<..> type were constructed based on the array of method overloads,
+                    // in the exact order. So we can use this index directly to locate the matching overload in
+                    // the converter, without having to compare the signature again.
+                    var converter = PSMethodToDelegateConverter.GetConverter(matchedIndex);
+                    return CacheConversion<Delegate>(fromType, toType, converter.Convert, ConversionRank.Language);
                 }
             }
 
             return null;
         }
 
-        struct DelegateArgsComparator
+        private struct SignatureComparator
         {
-            private readonly ParameterInfo[] _targetParametersInfos;
-            private readonly Type _returnType;
-
-            public DelegateArgsComparator(MethodInfo targetMethodInfo)
+            enum TypeMatchingContext
             {
-                _returnType = targetMethodInfo.ReturnType;
-                _targetParametersInfos = targetMethodInfo.GetParameters();
+                ReturnType,
+                ParameterType,
+                OutParameterType
             }
 
-            public bool SignatureMatches(Type returnType, ParameterInfo[] arguments)
+            private readonly ParameterInfo[] targetParameters;
+            private readonly Type targetReturnType;
+
+            internal SignatureComparator(MethodInfo targetMethodInfo)
             {
-                return ReturnTypeMatches(returnType) && ParameterTypesMatches(arguments);
+                targetReturnType = targetMethodInfo.ReturnType;
+                targetParameters = targetMethodInfo.GetParameters();
             }
 
-            private bool ReturnTypeMatches(Type returnType)
+            /// <summary>
+            /// Check if a projected signature matches the target method.
+            /// </summary>
+            /// <param name="argumentTypes">
+            /// The type arguments from the metadata type 'Func[..]' that represents the projected signature.
+            /// It contains the return type as the last item in the array.
+            /// </param>
+            /// <param name="signaturesMatchExactly">
+            /// Set by this method to indicate if it's an exact match.
+            /// </param>
+            internal bool ProjectedSignatureMatchesTarget(Type[] argumentTypes, out bool signaturesMatchExactly)
             {
-                return PSMethod.MatchesPSMethodProjectedType(_returnType, returnType, testAssignment: true);
+                signaturesMatchExactly = false;
+                int length = argumentTypes.Length;
+                if (length != targetParameters.Length + 1) { return false; }
+
+                bool typesMatchExactly, allTypesMatchExactly;
+                Type sourceReturnType = argumentTypes[length - 1];
+
+                if (ProjectedTypeMatchesTargetType(sourceReturnType, targetReturnType, TypeMatchingContext.ReturnType, out typesMatchExactly))
+                {
+                    allTypesMatchExactly = typesMatchExactly;
+                    for (int i = 0; i < targetParameters.Length; i++)
+                    {
+                        var targetParam = targetParameters[i];
+                        var sourceType = argumentTypes[i];
+                        var matchContext = targetParam.IsOut ? TypeMatchingContext.OutParameterType : TypeMatchingContext.ParameterType;
+
+                        if (!ProjectedTypeMatchesTargetType(sourceType, targetParam.ParameterType, matchContext, out typesMatchExactly))
+                        {
+                            return false;
+                        }
+                        allTypesMatchExactly &= typesMatchExactly;
+                    }
+
+                    signaturesMatchExactly = allTypesMatchExactly;
+                    return true;
+                }
+
+                return false;
             }
 
-            private bool ParameterTypesMatches(ParameterInfo[] arguments)
+            private static bool ProjectedTypeMatchesTargetType(Type sourceType, Type targetType, TypeMatchingContext matchContext, out bool matchExactly)
             {
-                var argsCount = _targetParametersInfos.Length;
-                // void is encoded as typeof(VOID) in the PSMethod<MethodGroup<>> as the last parameter
-                if (arguments.Length != argsCount)
+                matchExactly = false;
+                if (targetType.IsByRef || targetType.IsPointer)
+                {
+                    if (!sourceType.IsGenericType) { return false; }
+
+                    var sourceTypeDef = sourceType.GetGenericTypeDefinition();
+                    bool isOutParameter = matchContext == TypeMatchingContext.OutParameterType;
+
+                    if (targetType.IsByRef && sourceTypeDef == (isOutParameter ? typeof(PSOutParameter<>) : typeof(PSReference<>)) ||
+                        targetType.IsPointer && sourceTypeDef == typeof(PSPointer<>))
+                    {
+                        // For ref/out parameter types and pointer types, the element types need to match exactly.
+                        if (targetType.GetElementType() == sourceType.GenericTypeArguments[0])
+                        {
+                            matchExactly = true;
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                if (targetType == sourceType ||
+                    targetType == typeof(void) && sourceType == typeof(VOID) ||
+                    targetType == typeof(TypedReference) && sourceType == typeof(PSTypedReference))
+                {
+                    matchExactly = true;
+                    return true;
+                }
+
+                if (targetType == typeof(void) || targetType == typeof(TypedReference))
                 {
                     return false;
                 }
-                for (int i = 0; i < arguments.Length; i++)
-                {
-                    var arg = arguments[i];
-                    var argType = arg.ParameterType;
-                    var targetParamType = _targetParametersInfos[i].ParameterType;
-                    var isOut = (arg.Attributes | ParameterAttributes.Out) == ParameterAttributes.Out;
-                    if (!PSMethod.MatchesPSMethodProjectedType(targetParamType, argType, isOut: isOut))
-                    {
-                        return false;
-                    }
-                }
-                return true;
+
+                return matchContext == TypeMatchingContext.ReturnType
+                    ? targetType.IsAssignableFrom(sourceType)
+                    : sourceType.IsAssignableFrom(targetType);
             }
         }
 

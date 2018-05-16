@@ -396,4 +396,94 @@ Describe 'method conversion' -Tags 'CI' {
         [Func[timespan, timespan, timespan, timespan, timespan, timespan, timespan, timespan, timespan]] $f72 = [M]::Foo
         $f72.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should -Be $timeSpan
     }
+
+    enum E {
+        Day;
+        Week;
+        Year;
+    }
+
+    class N {
+        ## Attempt to convert methods to Func<System.IO.FileInfo, string, object>.
+
+        ## Different methods with same overload signatures.
+        ## The second and third overloads match the target delegate with variance.
+        [string] GetA([int] $i, [string] $s)                           { return "GetA-int-string-string" }
+        [string] GetA([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetA-filesysteminfo-object-string" }
+        [string] GetA([System.IO.FileInfo] $finfo, [object] $o)        { return "GetA-fileinfo-object-string" }
+
+        [string] GetAPrime([int] $i, [string] $s)                           { return "GetAPrime-int-string-string" }
+        [string] GetAPrime([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetAPrime-filesysteminfo-object-string" }
+        [string] GetAPrime([System.IO.FileInfo] $finfo, [object] $o)        { return "GetAPrime-fileinfo-object-string" }
+
+        static [string] GetAStatic([int] $i, [string] $s)                           { return "GetAStatic-int-string-string" }
+        static [string] GetAStatic([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetAStatic-filesysteminfo-object-string" }
+        static [string] GetAStatic([System.IO.FileInfo] $finfo, [object] $o)        { return "GetAStatic-fileinfo-object-string" }
+
+        ## Different methods with same overload signatures.
+        ## The first overload matches the target delegate with variance,
+        ## while the second overload matches the target delegate exactly.
+        [string] GetB([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetB-filesysteminfo-object-string" }
+        [object] GetB([System.IO.FileInfo] $finfo, [string] $s)        { return "GetB-fileinfo-string-object" }
+        [string] GetB([datetime] $d)                                   { return "GetB-datetime-string" }
+
+        [string] GetBPrime([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetBPrime-filesysteminfo-object-string" }
+        [object] GetBPrime([System.IO.FileInfo] $finfo, [string] $s)        { return "GetBPrime-fileinfo-string-object" }
+        [string] GetBPrime([datetime] $d)                                   { return "GetBPrime-datetime-string" }
+
+        static [string] GetBStatic([System.IO.FileSystemInfo] $fsinfo, [object] $o) { return "GetBStatic-filesysteminfo-object-string" }
+        static [object] GetBStatic([System.IO.FileInfo] $finfo, [string] $s)        { return "GetBStatic-fileinfo-string-object" }
+        static [string] GetBStatic([datetime] $d)                                   { return "GetBStatic-datetime-string" }
+
+        ## Test enum parameter type
+        [object] GetC([E] $e) { return $e.ToString() }
+    }
+
+    It "Different method overloads with same signatures/orders should have same PSMethod type" {
+        $n = [N]::new()
+
+        $n.GetA.GetType() | Should -Be ($n.GetAPrime.GetType())
+        $n.GetA.GetType() | Should -Be ([N]::GetAStatic.GetType())
+
+        $n.GetB.GetType() | Should -Be ($n.GetBPrime.GetType())
+        $n.GetB.GetType() | Should -Be ([N]::GetBStatic.GetType())
+    }
+
+    It "Match signature with variance and use the first match when there is no exact match" {
+        $n = [N]::new()
+
+        [Func[[System.IO.FileInfo], [string], [object]]] $f = $n.GetA
+        $f.Invoke($null, $null) | Should -BeExactly "GetA-filesysteminfo-object-string"
+
+        $f = $n.GetAPrime ## $n.GetAPrime has the same type as $n.GetA, so it should hit the conversion cache
+        $f.Invoke([System.IO.FileInfo]::new("aaa"), "bbb") | Should -BeExactly "GetAPrime-filesysteminfo-object-string"
+
+        $f = [N]::GetAStatic ## [N]::GetAStatic has the same type as $n.GetA, so it should hit the conversion cache
+        $f.Invoke($null, "") | Should -BeExactly "GetAStatic-filesysteminfo-object-string"
+    }
+
+    It "Exact match is preferred over match with variance" {
+        $n = [N]::new()
+
+        [Func[[System.IO.FileInfo], [string], [object]]] $f = $n.GetB
+        $f.Invoke($null, $null) | Should -BeExactly "GetB-fileinfo-string-object"
+
+        $f = $n.GetBPrime ## $n.GetBPrime has the same type as $n.GetB, so it should hit the conversion cache
+        $f.Invoke([System.IO.FileInfo]::new("ccc"), "ddd") | Should -BeExactly "GetBPrime-fileinfo-string-object"
+
+        $f = [N]::GetBStatic ## [N]::GetBStatic has the same type as $n.GetB, so it should hit the conversion cache
+        $f.Invoke($null, "") | Should -BeExactly "GetBStatic-fileinfo-string-object"
+    }
+
+    It "Test enum type parameter" {
+        $n = [N]::new()
+
+        [Func[[E], [object]]] $f = $n.GetC
+        $f.Invoke([E]::Week) | Should -BeExactly "Week"
+    }
+
+    It "Test fail-to-convert code path" {
+        $n = [N]::new()
+        { [System.Management.Automation.LanguagePrimitives]::ConvertTo($n.GetC, [Func[[int], [object]]]) } | Should -Throw -ErrorId "PSInvalidCastException"
+    }
 }

@@ -2655,43 +2655,56 @@ namespace System.Management.Automation
             return method.PSMethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
         }
 
-        static Type GetMethodGroupType(MethodInfo methodInfo)
+        private static Type GetMethodGroupType(MethodInfo methodInfo)
         {
             if (methodInfo.DeclaringType.IsGenericTypeDefinition)
             {
+                // If the method is from a generic type definition, consider it not convertible.
                 return typeof(Func<PSNonBindableType>);
             }
 
             if (methodInfo.IsGenericMethodDefinition)
             {
-                methodInfo = ReplaceGenericTypeArgumentsWithMarkerTypes(methodInfo);
-                if (methodInfo == null)
-                {
-                    // this happens when there are constraints on the generic type parameters
-                    return typeof(Func<PSNonBindableType>);
-                }
+                // For a generic method, it's possible to infer the generic parameters based on the target delegate.
+                // However, we don't yet handle generic methods in PSMethod-to-Delegate conversion, so for now, we
+                // don't produce the metadata type that represents the signature of a generic method.
+                //
+                // Say one day we want to support generic method in PSMethod-to-Delegate conversion and need to produce
+                // the metadata type, we should use the generic parameter types from the MethodInfo directly to construct
+                // the Func<> metadata type. See the concept shown in the following scripts:
+                //    $class = "public class Zoo { public static T GetName<T>(int index, T input) { return default(T); } }"
+                //    Add-Type -TypeDefinition $class
+                //    $method = [Zoo].GetMethod("GetName")
+                //    $allTypes = $method.GetParameters().ParameterType + $method.ReturnType
+                //    $metadataType = [Func`3].MakeGenericType($allTypes)
+                // In this way, '$metadataType.ContainsGenericParameters' returns 'True', indicating it represents a generic method.
+                // And also, given a generic argument type from `$metadataType.GetGenericArguments()`, it's easy to tell if it's a
+                // generic parameter (for example, 'T') based on the property 'IsGenericParameter'.
+                // Moreover, it's also easy to get constraints of the generic parameter, via 'GetGenericParameterConstraints()'
+                // and 'GenericParameterAttributes'.
+                return typeof(Func<PSNonBindableType>);
             }
 
             var parameterInfos = methodInfo.GetParameters();
             if (parameterInfos.Length > 16)
             {
+                // Too many parameters, an unlikely scenario.
                 return typeof(Func<PSNonBindableType>);
             }
 
-            var res = new Type[parameterInfos.Length + 1];
-            for (int i = 0; i < res.Length - 1; i++)
+            var methodTypes = new Type[parameterInfos.Length + 1];
+            for (int i = 0; i < parameterInfos.Length; i++)
             {
                 var parameterInfo = parameterInfos[i];
-                var parameterType = parameterInfo.ParameterType;
-                res[i] = GetPSMethodTypeProjection(parameterType,
-                    (parameterInfo.Attributes | ParameterAttributes.Out) == ParameterAttributes.Out);
+                Type parameterType = parameterInfo.ParameterType;
+                methodTypes[i] = GetPSMethodProjectedType(parameterType, parameterInfo.IsOut);
             }
-            var returnType = GetPSMethodTypeProjection(methodInfo.ReturnType);
-            res[parameterInfos.Length] = returnType;
+
+            methodTypes[parameterInfos.Length] = GetPSMethodProjectedType(methodInfo.ReturnType);
 
             try
             {
-                return DelegateHelpers.MakeDelegate(res);
+                return DelegateHelpers.MakeDelegate(methodTypes);
             }
             catch (TypeLoadException)
             {
@@ -2699,92 +2712,30 @@ namespace System.Management.Automation
             }
         }
 
-        private static Type GetPSMethodTypeProjection(Type type, bool isOut = false)
+        private static Type GetPSMethodProjectedType(Type type, bool isOut = false)
         {
             if (type == typeof(void))
             {
                 return typeof(VOID);
             }
+
             if (type == typeof(TypedReference))
             {
                 return typeof(PSTypedReference);
             }
-            var resType = type.IsEnum ? typeof(PSEnum<>).MakeGenericType(type) : type;
-            if (resType.HasElementType) {
-                var psMethodTypeProjection = GetPSMethodTypeProjection(resType.GetElementType());
-                if (type.IsPointer)
-                {
-                    resType = typeof(PSPointer<>).MakeGenericType(psMethodTypeProjection);
-                }
-                if (type.IsByRef)
-                {
-                    resType = isOut ? typeof(PSOutParameter<>).MakeGenericType(psMethodTypeProjection) : typeof(PSReference<>).MakeGenericType(psMethodTypeProjection);
-                }
+
+            if (type.IsByRef)
+            {
+                var elementType = type.GetElementType();
+                type = isOut ? typeof(PSOutParameter<>).MakeGenericType(elementType)
+                             : typeof(PSReference<>).MakeGenericType(elementType);
+            }
+            else if (type.IsPointer)
+            {
+                type = typeof(PSPointer<>).MakeGenericType(type.GetElementType());
             }
 
-            return resType;
-        }
-
-        internal static bool MatchesPSMethodProjectedType(Type targetType, Type projectedSourceType, bool testAssignment = false, bool isOut = false)
-        {
-            var sourceType = projectedSourceType;
-            if (targetType.IsByRef || targetType.IsPointer)
-            {
-                if (!projectedSourceType.IsGenericType) return false;
-                var defType = projectedSourceType.GetGenericTypeDefinition();
-                if (targetType.IsByRef && defType == (isOut ? typeof(PSOutParameter<>) : typeof(PSReference<>))
-                    || targetType.IsPointer && defType == typeof(PSPointer<>))
-                {
-                    return MatchesPSMethodProjectedType(targetType.GetElementType(),
-                        projectedSourceType.GenericTypeArguments[0], testAssignment, isOut);
-                }
-            }
-            if (targetType.IsEnum)
-            {
-                if (sourceType.IsGenericType && sourceType.GetGenericTypeDefinition() != typeof(PSEnum<>))
-                {
-                    return false;
-                }
-                sourceType = sourceType.GenericTypeArguments[0];
-            }
-
-            if (targetType == typeof(void) && sourceType == typeof(VOID))
-            {
-                return true;
-            }
-            if (targetType == typeof(TypedReference) && sourceType == typeof(PSTypedReference))
-            {
-                return true;
-            }
-            if (testAssignment)
-            {
-                return targetType.IsAssignableFrom(sourceType);
-            }
-            return targetType == sourceType;
-        }
-
-        private static MethodInfo ReplaceGenericTypeArgumentsWithMarkerTypes(MethodInfo methodInfo)
-        {
-            if (!methodInfo.ContainsGenericParameters)
-            {
-                return methodInfo;
-            }
-
-            var genArgs = methodInfo.GetGenericArguments();
-            var concrete = new Type[genArgs.Length];
-            for (int i = 0; i < genArgs.Length; i++)
-            {
-                var genArg = genArgs[i];
-                if (genArg.GetGenericParameterConstraints().Length != 0)
-                {
-                    return null;
-                }
-                var gpa = genArg.GenericParameterAttributes;
-                concrete[i] = (gpa & GenericParameterAttributes.NotNullableValueTypeConstraint) == GenericParameterAttributes.NotNullableValueTypeConstraint
-                    ? PSGenericValueType.GetGenericType(i)
-                    : PSGenericType.GetGenericType(i);
-            }
-            return methodInfo.MakeGenericMethod(concrete);
+            return type;
         }
 
         private static Func<string, DotNetAdapter, object, object, bool, bool, PSMethod> CreatePSMethodConstructor(MethodInformation[] methods)
@@ -2829,113 +2780,11 @@ namespace System.Management.Automation
         }
     }
 
-    class PSOutParameter<T> { private PSOutParameter() { }}
-
-    abstract class PSNonBindableType { }
-
-    abstract class PSGenericType
-    {
-        public static Type GetGenericType(int i)
-        {
-            switch (i)
-            {
-                case 0: return typeof(PSGenericType0);
-                case 1: return typeof(PSGenericType1);
-                case 2: return typeof(PSGenericType2);
-                case 3: return typeof(PSGenericType3);
-                case 4: return typeof(PSGenericType4);
-                case 5: return typeof(PSGenericType5);
-                case 6: return typeof(PSGenericType6);
-                case 7: return typeof(PSGenericType7);
-                case 8: return typeof(PSGenericType8);
-                case 9: return typeof(PSGenericType9);
-                case 10: return typeof(PSGenericType10);
-                case 11: return typeof(PSGenericType11);
-                case 12: return typeof(PSGenericType12);
-                case 13: return typeof(PSGenericType13);
-                case 14: return typeof(PSGenericType14);
-                case 15: return typeof(PSGenericType15);
-                case 16: return typeof(PSGenericType16);
-                default:
-                    return typeof(PSGenericType<>).MakeGenericType(GetGenericType(i - 1));
-            }
-        }
-    }
-
-    class PSGenericType0 : PSGenericType { internal PSGenericType0() { } }
-    class PSGenericType1 : PSGenericType { internal PSGenericType1() { } }
-    class PSGenericType2 : PSGenericType { internal PSGenericType2() { } }
-    class PSGenericType3 : PSGenericType { internal PSGenericType3() { } }
-    class PSGenericType4 : PSGenericType { internal PSGenericType4() { } }
-    class PSGenericType5 : PSGenericType { internal PSGenericType5() { } }
-    class PSGenericType6 : PSGenericType { internal PSGenericType6() { } }
-    class PSGenericType7 : PSGenericType { internal PSGenericType7() { } }
-    class PSGenericType8 : PSGenericType { internal PSGenericType8() { } }
-    class PSGenericType9 : PSGenericType { internal PSGenericType9() { } }
-    class PSGenericType10 : PSGenericType { internal PSGenericType10() { } }
-    class PSGenericType11 : PSGenericType { internal PSGenericType11() { } }
-    class PSGenericType12 : PSGenericType { internal PSGenericType12() { } }
-    class PSGenericType13 : PSGenericType { internal PSGenericType13() { } }
-    class PSGenericType14 : PSGenericType { internal PSGenericType14() { } }
-    class PSGenericType15 : PSGenericType { internal PSGenericType15() { } }
-    class PSGenericType16 : PSGenericType { internal PSGenericType16() { } }
-
-    class PSGenericType<T> : PSGenericType { internal PSGenericType() { } }
-
-    struct PSGenericValueType
-    {
-        internal static Type GetGenericType(int i)
-        {
-            switch (i)
-            {
-                case 0: return typeof(PSGenericValueType0);
-                case 1: return typeof(PSGenericValueType1);
-                case 2: return typeof(PSGenericValueType2);
-                case 3: return typeof(PSGenericValueType3);
-                case 4: return typeof(PSGenericValueType4);
-                case 5: return typeof(PSGenericValueType5);
-                case 6: return typeof(PSGenericValueType6);
-                case 7: return typeof(PSGenericValueType7);
-                case 8: return typeof(PSGenericValueType8);
-                case 9: return typeof(PSGenericValueType9);
-                case 10: return typeof(PSGenericValueType10);
-                case 11: return typeof(PSGenericValueType11);
-                case 12: return typeof(PSGenericValueType12);
-                case 13: return typeof(PSGenericValueType13);
-                case 14: return typeof(PSGenericValueType14);
-                case 15: return typeof(PSGenericValueType15);
-                case 16: return typeof(PSGenericValueType16);
-                default:
-                    return typeof(PSGenericValueType<>).MakeGenericType(GetGenericType(i - 1));
-            }
-        }
-    }
-
-    struct PSGenericValueType0 { internal int value; }
-    struct PSGenericValueType1 { internal int value; }
-    struct PSGenericValueType2 { internal int value; }
-    struct PSGenericValueType3 { internal int value; }
-    struct PSGenericValueType4 { internal int value; }
-    struct PSGenericValueType5 { internal int value; }
-    struct PSGenericValueType6 { internal int value; }
-    struct PSGenericValueType7 { internal int value; }
-    struct PSGenericValueType8 { internal int value; }
-    struct PSGenericValueType9 { internal int value; }
-    struct PSGenericValueType10 { internal int value; }
-    struct PSGenericValueType11 { internal int value; }
-    struct PSGenericValueType12 { internal int value; }
-    struct PSGenericValueType13 { internal int value; }
-    struct PSGenericValueType14 { internal int value; }
-    struct PSGenericValueType15 { internal int value; }
-    struct PSGenericValueType16 { internal int value; }
-
-    struct PSGenericValueType<T> { internal int value; }
-
-    struct PSEnum<T> { }
-
-    struct PSPointer<T> { }
-
-    struct PSTypedReference { }
+    internal abstract class PSNonBindableType { }
+    internal class VOID { }
+    internal class PSOutParameter<T> { }
+    internal struct PSPointer<T> { }
+    internal struct PSTypedReference { }
 
     internal abstract class MethodGroup { }
     internal class MethodGroup<T1> : MethodGroup { }
@@ -2944,11 +2793,6 @@ namespace System.Management.Automation
     internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8> : MethodGroup { }
     internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> : MethodGroup { }
     internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32> : MethodGroup { }
-
-    class VOID
-    {
-        private VOID() { }
-    }
 
     internal struct PSMethodSignatureEnumerator : IEnumerator<Type>
     {
@@ -2985,7 +2829,7 @@ namespace System.Management.Automation
                 var remaining = index - (length - 1);
                 return MoveNext(t, remaining);
             }
-            if (index >= genericTypeArguments.Length)
+            if (index >= length)
             {
                 Current = null;
                 return false;
