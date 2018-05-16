@@ -774,7 +774,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 try
                 {
-                    # if Console width is set to 0, the default value is returned so that the output string is not null.
+                    // if Console width is set to 0, the default value is returned so that the output string is not null.
                     if (Console.WindowWidth == 0)
                     {
                         return DefaultConsoleWidth;
