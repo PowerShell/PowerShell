@@ -1528,8 +1528,9 @@ namespace System.Management.Automation.Remoting.Client
             }
 
 #if UNIX
+            bool isHttps = StringComparer.OrdinalIgnoreCase.Compare("https", connectionUri.Scheme) == 0;
             // explicitly disallow Basic auth over HTTP on Unix.
-            if (connectionInfo.AuthenticationMechanism == AuthenticationMechanism.Basic && !isSSLSpecified)
+            if (connectionInfo.AuthenticationMechanism == AuthenticationMechanism.Basic && !isSSLSpecified && !isHttps)
             {
                 throw new PSRemotingTransportException(PSRemotingErrorId.ConnectFailed, RemotingErrorIdStrings.BasicAuthOverHttpNotSupported);
             }
