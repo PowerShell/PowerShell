@@ -61,14 +61,8 @@ Describe "Generics support" -Tags "CI" {
 
         # The error message for a generic that doesn't meet the constraints should mention which
         # argument failed.
-        $ex = $null
-        try {
-            [nullable[object]]
-            Throw "Exception expected, execution should not have reached here"
-        } catch {
-            $_.FullyQualifiedErrorId | Should -BeExactly 'TypeNotFoundWithMessage'
-            $_ | Should -Match "\[T\]"
-        }
+        $e = { [nullable[object]] } | Should -Throw -ErrorId 'TypeNotFoundWithMessage' -PassThru
+        $e | Should -Match "\[T\]"
     }
 
     It 'Array type works properly' -skip:$IsCoreCLR{

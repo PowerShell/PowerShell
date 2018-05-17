@@ -3,12 +3,8 @@
 
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
-        try {
-            New-PSSession -ComputerName nonexistcomputer -Authentication Basic
-            throw "New-PSSession should throw"
-        } catch {
-            $_.FullyQualifiedErrorId | Should -Be "InvalidOperation,Microsoft.PowerShell.Commands.NewPSSessionCommand"
-        }
+        { New-PSSession -ComputerName nonexistcomputer -Authentication Basic } |
+           Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.NewPSSessionCommand"
     }
 }
 
@@ -235,7 +231,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     It "<title>" -TestCases $ParameterError {
         param($parameters, $expectedError)
 
-        { Invoke-Command @parameters } | ShouldBeErrorId $expectedError
+        { Invoke-Command @parameters } | Should -Throw -ErrorId $expectedError
     }
 
     It 'Can execute command if one of the sessions is available' {

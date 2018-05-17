@@ -33,7 +33,8 @@ try {
         }
 
         It "should produce an error for a non-existing classname" {
-            { Get-CimInstance -ClassName thisnameshouldnotexist -ErrorAction Stop } | Should -Throw -ErrorId "HRESULT 0x80041010,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand"
+            { Get-CimInstance -ClassName thisnameshouldnotexist -ErrorAction Stop } |
+                Should -Throw -ErrorId "HRESULT 0x80041010,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand"
         }
     }
 }

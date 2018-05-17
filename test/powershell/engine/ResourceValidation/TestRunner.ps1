@@ -9,7 +9,7 @@ function Test-ResourceStrings
     $repoBase = (Resolve-Path (Join-Path $psScriptRoot ../../../..)).Path
     $asmBase = Join-Path $repoBase "src/$AssemblyName"
     $resourceDir = Join-Path $asmBase resources
-    $resourceFiles = Get-ChildItem $resourceDir -Filter *.resx -ea stop |
+    $resourceFiles = Get-ChildItem $resourceDir -Filter *.resx -ErrorAction stop |
         Where-Object { $excludeList -notcontains $_.Name }
 
     $bindingFlags = [reflection.bindingflags]"NonPublic,Static"

@@ -58,7 +58,7 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
         }
 
         It "Throws PSArgumentException when Set-Item is called with incorrect function value" {
-            { Set-Item $nonExistingFunction -Value 123 -ErrorAction Stop } | ShouldBeErrorId "Argument,Microsoft.PowerShell.Commands.SetItemCommand"
+            { Set-Item $nonExistingFunction -Value 123 -ErrorAction Stop } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.SetItemCommand"
         }
     }
 
@@ -88,39 +88,39 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
     Context "Validate Remove-Item Cmdlet" {
         It "Removes function" {
             Remove-Item $existingFunction
-            { Get-Item $existingFunction -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+            { Get-Item $existingFunction -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
 
         It "Fails to remove not existing function" {
-            { Remove-Item $nonExistingFunction -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.RemoveItemCommand"
+            { Remove-Item $nonExistingFunction -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.RemoveItemCommand"
         }
     }
 
     Context "Validate Rename-Item Cmdlet" {
         It "Renames existing function with None options" {
             Rename-Item $existingFunction -NewName $newName
-            { Get-Item $existingFunction -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+            { Get-Item $existingFunction -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
             (Get-Item $newName).Count | Should -BeExactly 1
         }
 
         It "Fails to rename not existing function" {
-            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RenameItemCommand"
+            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RenameItemCommand"
         }
 
         It "Fails to rename function which is Constant" {
             Set-Item $nonExistingFunction -Options "Constant" -Value $functionValue
-            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | ShouldBeErrorId "CannotRenameFunction,Microsoft.PowerShell.Commands.RenameItemCommand"
+            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | Should -Throw -ErrorId "CannotRenameFunction,Microsoft.PowerShell.Commands.RenameItemCommand"
         }
 
         It "Fails to rename function which is ReadOnly" {
             Set-Item $nonExistingFunction -Options "ReadOnly"
-            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RenameItemCommand"
+            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RenameItemCommand"
         }
 
         It "Renames ReadOnly function when -Force parameter is on" {
             Set-Item $nonExistingFunction -Options "ReadOnly" -Value $functionValue
             Rename-Item $nonExistingFunction -NewName $newName -Force
-            { Get-Item $nonExistingFunction -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+            { Get-Item $nonExistingFunction -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
             (Get-Item $newName).Count | Should -BeExactly 1
         }
     }

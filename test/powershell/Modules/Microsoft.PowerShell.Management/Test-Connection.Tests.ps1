@@ -69,7 +69,7 @@ Describe "Test-Connection" -tags "CI" {
 
         It "Ping fake host" {
 
-            { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } | ShouldBeErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } | Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
             if (!$isWindows) {
                 $Error[0].Exception.InnerException.ErrorCode | Should -Be 6
@@ -118,18 +118,18 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It "MaxHops Should -Be greater 0" {
-            { Test-Connection $targetName -MaxHops 0 }  | ShouldBeErrorId "System.ArgumentOutOfRangeException,Microsoft.PowerShell.Commands.TestConnectionCommand"
-            { Test-Connection $targetName -MaxHops -1 } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -MaxHops 0 }  | Should -Throw -ErrorId "System.ArgumentOutOfRangeException,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -MaxHops -1 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
         }
 
         It "Count Should -Be greater 0" {
-            { Test-Connection $targetName -Count 0 }  | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
-            { Test-Connection $targetName -Count -1 } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -Count 0 }  | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -Count -1 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
         }
 
         It "Delay Should -Be greater 0" {
-            { Test-Connection $targetName -Delay 0 }  | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
-            { Test-Connection $targetName -Delay -1 } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -Delay 0 }  | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -Delay -1 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
         }
 
         It "Delay works" {
@@ -143,8 +143,8 @@ Describe "Test-Connection" -tags "CI" {
 
         It "BufferSize Should -Be between 0 and 65500" {
             { Test-Connection $targetName -BufferSize 0 }     | Should Not Throw
-            { Test-Connection $targetName -BufferSize -1 }    | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
-            { Test-Connection $targetName -BufferSize 65501 } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -BufferSize -1 }    | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
+            { Test-Connection $targetName -BufferSize 65501 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.TestConnectionCommand"
         }
 
         It "BufferSize works" {

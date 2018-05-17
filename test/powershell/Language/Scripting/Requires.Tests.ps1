@@ -15,15 +15,7 @@ Describe "Requires tests" -Tags "CI" {
 
         It "throws ParserException - <testname>" -TestCases $testcases {
             param($command)
-            try
-            {
-                [scriptblock]::Create($command)
-                throw "'$command' should have thrown ParserError"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -BeExactly "ParseException"
-            }
+            { [scriptblock]::Create($command) } | Should -Throw -ErrorId "ParseException"
         }
     }
 

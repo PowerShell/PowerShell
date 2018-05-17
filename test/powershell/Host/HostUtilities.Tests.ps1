@@ -8,29 +8,13 @@ Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
     }
 
     It "Null argument exception should be thrown for null PSCommand argument" {
-
-        try
-        {
-            [System.Management.Automation.HostUtilities]::InvokeOnRunspace($null, $localRunspace)
-            throw "InvokeOnRunspace method did not throw expected PSArgumentNullException exception"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "PSArgumentNullException"
-        }
+        { [System.Management.Automation.HostUtilities]::InvokeOnRunspace($null, $localRunspace) } |
+            Should -Throw -ErrorId "PSArgumentNullException"
     }
 
     It "Null argument exception should be thrown for null Runspace argument" {
-
-        try
-        {
-            [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $null)
-            throw "InvokeOnRunspace method did not throw expected PSArgumentNullException exception"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "PSArgumentNullException"
-        }
+        { [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $null) } |
+            Should -Throw -ErrorId "PSArgumentNullException"
     }
 }
 

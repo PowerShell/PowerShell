@@ -60,7 +60,7 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
         }
 
         It "Verify Get-Item on inaccessible path" {
-            { Get-Item HKLM:\SAM\SAM -ErrorAction Stop } | ShouldBeErrorId "System.Security.SecurityException,Microsoft.PowerShell.Commands.GetItemCommand"
+            { Get-Item HKLM:\SAM\SAM -ErrorAction Stop } | Should -Throw -ErrorId "System.Security.SecurityException,Microsoft.PowerShell.Commands.GetItemCommand"
         }
 
         It "Verify Get-ChildItem" {

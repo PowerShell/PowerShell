@@ -99,20 +99,14 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
 
     It '<Name>' -TestCases:$testData1 {
         param ($Name, $Cmd, $ErrorID, $InnerException)
-        try
-        {
-            Invoke-Expression $Cmd
-            Throw "Exception expected, execution should not have reached here"
-        } catch {
+        $e = { Invoke-Expression $Cmd } | Should -Throw -PassThru
 
-           if($InnerException)
-           {
-                $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly $ErrorID
-           }
-           else {
-                $_.FullyQualifiedErrorId | Should -BeExactly $ErrorID
-           }
-       }
+        if($InnerException)
+        {
+            $e.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly $ErrorID
+        } else {
+            $e.FullyQualifiedErrorId | Should -BeExactly $ErrorID
+        }
     }
 
     It  'Creating an object of an existing type from hashtable should succeed' {
@@ -139,20 +133,12 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
 	    $obj.PSTypeNames[0] | Should -BeExactly 'System.Object'
     }
     It "new-object should fail to create object for System.Management.Automation.PSCustomObject" {
-
-        $errorObj = $null
         $obj = $null
-		$ht = @{one=1;two=2}
-        try
-        {
-            $obj = New-Object System.Management.Automation.PSCustomObject -property $ht
-        }
-        catch
-        {
-            $errorObj = $_
-        }
+        $ht = @{one=1;two=2}
+
+        { $obj = New-Object System.Management.Automation.PSCustomObject -property $ht } |
+            Should -Throw -ErrorId "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
         $obj | Should -BeNullOrEmpty
-        $errorObj.FullyQualifiedErrorId | Should -BeExactly "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
     }
 }
 

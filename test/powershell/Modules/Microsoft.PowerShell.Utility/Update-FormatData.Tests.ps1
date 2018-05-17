@@ -70,7 +70,7 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
 </Configuration>
 "@
         $xmlContent | Out-File -FilePath "$testdrive\test.format.ps1xml" -Encoding ascii
-        { Update-FormatData -Path "$testdrive\test.format.ps1xml" -ErrorAction Stop } | ShouldBeErrorId "FormatXmlUpdateException,Microsoft.PowerShell.Commands.UpdateFormatDataCommand"
+        { Update-FormatData -Path "$testdrive\test.format.ps1xml" -ErrorAction Stop } | Should -Throw -ErrorId "FormatXmlUpdateException,Microsoft.PowerShell.Commands.UpdateFormatDataCommand"
     }
 }
 
