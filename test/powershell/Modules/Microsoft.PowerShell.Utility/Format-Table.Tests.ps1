@@ -720,7 +720,13 @@ abc bcd
 
         It "Should not return null when the Console width is equal to 0" {
             [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $true)
-            Format-Table -inputobject @{'test'= 1, 2} | Should -Not -BeNullOrEmpty
-            [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $false)
+            try
+            {
+                [console]::WindowWidth | Should -Be 120
+                Format-Table -inputobject @{'test'= 1, 2} | Should -Not -BeNullOrEmpty
+            }
+            finally {
+                [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $false)
+            }
         }
     }
