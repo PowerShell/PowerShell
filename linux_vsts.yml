@@ -8,27 +8,27 @@ steps:
 #  displayName: '<display name of task>'
 - task: ShellScript@2
   inputs:
-    scriptPath: './tools/vsts.sh'
+    scriptPath: './tools/linux_vsts.sh'
     args: 'Install'
   displayName: 'Install stage'
 - task: ShellScript@2
   inputs:
-    scriptPath: './tools/vsts.sh'
+    scriptPath: './tools/linux_vsts.sh'
     args: 'Bootstrap'
   displayName: 'Bootstrap stage'
 - task: ShellScript@2
   inputs:
-    scriptPath: './tools/vsts.sh'
+    scriptPath: './tools/linux_vsts.sh'
     args: 'Build'
   displayName: 'Build stage'
 - task: ShellScript@2
   inputs:
-    scriptPath: './tools/vsts.sh'
+    scriptPath: './tools/linux_vsts.sh'
     args: 'Test'
   displayName: 'Test stage'
   continueOnError: true
 - task: ShellScript@2
   inputs:
-    scriptPath: './tools/vsts.sh'
+    scriptPath: './tools/linux_vsts.sh'
     args: 'AfterTest'
   displayName: ' After test stage'
