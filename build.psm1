@@ -2810,8 +2810,14 @@ assembly
 
 # Save PSOptions to be restored by Restore-PSOptions
 function Save-PSOptions {
-    $options = Get-PSOptions
-    $options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath $psOptionsPath
+    param(
+        [ValidateScript({Test-Path $_})]
+        [string]
+        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
+        $Options = (Get-PSOptions)
+    )
+
+    $Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath $PSOptionsPath
 }
 
 # Restore PSOptions
