@@ -25,7 +25,7 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
         $credential = [PSCredential]::new('username', $password)
 
         # use a Uri that specifies HTTPS to test Basic Auth logic.
-        # NOTE: The connection is expected to fail but not with a  PSSessionOpenFailed exception
+        # NOTE: The connection is expected to fail but not with a  ConnectFailed exception
         $uri = "https://localhost"
         New-PSSession -Uri $uri -Credential $credential -Authentication Basic -ErrorVariable err
         $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
