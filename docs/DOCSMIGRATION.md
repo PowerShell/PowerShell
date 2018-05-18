@@ -9,7 +9,7 @@ This file records which files have been migrated.
 
 ## 2018-05-18
 
-The folloing files have been moved to the PowerShell/PowerShell-Docs repo.
+The following files have been moved to the PowerShell/PowerShell-Docs repo.
 
 | Original file location      | New location in PowerShell/PowerShell-Docs                               |
 |-----------------------------|--------------------------------------------------------------------------|
