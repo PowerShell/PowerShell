@@ -2808,13 +2808,14 @@ assembly
     }
 }
 
-$psOptionsPath = 'psoptions.json'
-
+# Save PSOptions to be restored by Restore-PSOptions
 function Save-PSOptions {
     $options = Get-PSOptions
     $options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath $psOptionsPath
 }
 
+# Restore PSOptions
+# Optionally remove the PSOptions file
 function Restore-PSOptions {
     $options = Get-Content -Path $psOptionsPath | ConvertFrom-Json
 
