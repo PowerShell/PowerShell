@@ -2808,6 +2808,45 @@ assembly
     }
 }
 
+# Save PSOptions to be restored by Restore-PSOptions
+function Save-PSOptions {
+    param(
+        [ValidateScript({$parent = Split-Path $_;if($parent){Test-Path $parent}else{return $true}})]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
+
+        [ValidateNotNullOrEmpty()]
+        [object]
+        $Options = (Get-PSOptions -DefaultToNew)
+    )
+
+    $Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath $PSOptionsPath
+}
+
+# Restore PSOptions
+# Optionally remove the PSOptions file
+function Restore-PSOptions {
+    param(
+        [ValidateScript({Test-Path $_})]
+        [string]
+        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
+        [switch]
+        $Remove
+    )
+
+    $options = Get-Content -Path $PSOptionsPath | ConvertFrom-Json
+
+    if($Remove)
+    {
+        # Remove PSOptions.
+        # The file is only used to set the PSOptions.
+        Remove-Item -Path $psOptionsPath
+    }
+
+    Set-PSOptions -Options $options
+}
+
 $script:RESX_TEMPLATE = @'
 <?xml version="1.0" encoding="utf-8"?>
 <root>
