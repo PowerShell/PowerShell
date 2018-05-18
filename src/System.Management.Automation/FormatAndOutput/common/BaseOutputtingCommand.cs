@@ -768,16 +768,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return DefaultConsoleWidth;
                 }
 
-                if (InternalTestHooks.SetConsoleWidthToZero)
-                {
-                    Console.WindowWidth = 0;
-                }
-
                 try
                 {
                     // if Console width is set to 0, the default value is returned so that the output string is not null.
                     // Fix added because console width on VSTS is equal to 0.
-                    if (Console.WindowWidth == 0)
+                    if (Console.WindowWidth == 0 || InternalTestHooks.SetConsoleWidthToZero)
                     {
                         return DefaultConsoleWidth;
                     }
