@@ -2817,13 +2817,22 @@ function Save-PSOptions {
 # Restore PSOptions
 # Optionally remove the PSOptions file
 function Restore-PSOptions {
-    $options = Get-Content -Path $psOptionsPath | ConvertFrom-Json
+    param(
+        [ValidateScript({Test-Path $_})]
+        [string]
+        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
+        [switch]
+        $Remove
+    )
 
-    # Remove PSOptions.
-    # The file is only used to set the PSOptions.
-    Remove-Item -Path $psOptionsPath
+    $options = Get-Content -Path $PSOptionsPath | ConvertFrom-Json
 
-    $options.PSModuleRestore = $true
+    if($Remove)
+    {
+        # Remove PSOptions.
+        # The file is only used to set the PSOptions.
+        Remove-Item -Path $psOptionsPath
+    }
 
     Set-PSOptions -Options $options
 }
