@@ -27,5 +27,7 @@ test_script:
 after_test:
   - ps: Invoke-AppVeyorAfterTest
 
+# Run the finish command and delete files which should not be in the cache
 on_finish:
   - ps: Invoke-AppveyorFinish
+  - ps: Invoke-AppVeyorCleanCache
