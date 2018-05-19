@@ -4250,8 +4250,12 @@ param(
         $PSBoundParameters['Full'] = $true
     }
 
-    # Set the outputencoding to Console::OutputEncoding. More.com doesn't work well with Unicode.
-    $outputEncoding=[System.Console]::OutputEncoding
+    # Nano needs to use Unicode, but Windows and Linux need the default
+    $OutputEncoding = if ([System.Management.Automation.Platform]::IsNanoServer -or [System.Management.Automation.Platform]::IsIoT) {
+        [System.Text.Encoding]::Unicode
+    } else {
+        [System.Console]::OutputEncoding
+    }
 
     $help = Get-Help @PSBoundParameters
 
@@ -4262,7 +4266,15 @@ param(
     }
     else
     {
-        $help | more
+        # Respect PAGER, use more on Windows, and use less on Linux
+        $moreCommand,$moreArgs = $env:PAGER -split '\s+'
+        if ($moreCommand) {
+            $help | & $moreCommand $moreArgs
+        } elseif ($IsWindows) {
+            $help | more.com
+        } else {
+            $help | less
+        }
     }
 ";
         }
@@ -4745,32 +4757,6 @@ end
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
 
-        internal const string DefaultMoreFunctionText = @"
-param([string[]]$paths)
-# Nano needs to use Unicode, but Windows and Linux need the default
-$OutputEncoding = if ([System.Management.Automation.Platform]::IsNanoServer -or [System.Management.Automation.Platform]::IsIoT) {
-    [System.Text.Encoding]::Unicode
-} else {
-    [System.Console]::OutputEncoding
-}
-
-# Respect PAGER, use more on Windows, and use less on Linux
-if (Test-Path env:PAGER) {
-    $pager,$moreArgs = $env:PAGER -split '\s+'
-    $moreCommand = (Get-Command -CommandType Application $pager | Select-Object -First 1).Definition
-} elseif ($IsWindows) {
-    $moreCommand = (Get-Command -CommandType Application more | Select-Object -First 1).Definition
-} else {
-    $moreCommand = (Get-Command -CommandType Application less | Select-Object -First 1).Definition
-}
-
-if($paths) {
-    foreach ($file in $paths) {
-        Get-Content $file | & $moreCommand $moreArgs
-    }
-} else { $input | & $moreCommand $moreArgs }
-";
-
         internal const string DefaultSetDriveFunctionText = "Set-Location $MyInvocation.MyCommand.Name";
         internal static ScriptBlock SetDriveScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(DefaultSetDriveFunctionText, isProductCode: true);
 
@@ -4780,8 +4766,6 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("prompt", DefaultPromptFunctionText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("TabExpansion2", s_tabExpansionFunctionText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Clear-Host", GetClearHostFunctionText(), isProductCode: true),
-            // Porting note: we keep more because the function acts correctly on Linux
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("more", DefaultMoreFunctionText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true),
             // Porting note: we remove mkdir on Linux because it is a conflict
 #if !UNIX
@@ -4976,9 +4960,9 @@ if($paths) {
             return assembly;
         }
 
-        private static T GetCustomAttribute<T>(TypeInfo decoratedType) where T : Attribute
+        private static T GetCustomAttribute<T>(Type decoratedType) where T : Attribute
         {
-            var attributes = CustomAttributeExtensions.GetCustomAttributes<T>(decoratedType, false);
+            var attributes = decoratedType.GetCustomAttributes<T>(false);
             var customAttrs = attributes.ToArray();
 
             Debug.Assert(customAttrs.Length <= 1, "CmdletAttribute and/or CmdletProviderAttribute cannot normally appear more than once");
@@ -5238,8 +5222,7 @@ if($paths) {
 
             foreach (Type type in assemblyTypes)
             {
-                var typeInfo = type.GetTypeInfo();
-                if (!(typeInfo.IsPublic || typeInfo.IsNestedPublic) || typeInfo.IsAbstract)
+                if (!(type.IsPublic || type.IsNestedPublic) || type.IsAbstract)
                     continue;
 
                 // Check for cmdlets
@@ -5247,7 +5230,7 @@ if($paths) {
                 {
                     randomCmdletToCheckLinkDemand = type;
 
-                    CmdletAttribute cmdletAttribute = GetCustomAttribute<CmdletAttribute>(typeInfo);
+                    CmdletAttribute cmdletAttribute = GetCustomAttribute<CmdletAttribute>(type);
                     if (cmdletAttribute == null)
                     {
                         continue;
@@ -5275,7 +5258,7 @@ if($paths) {
                     }
                     cmdlets.Add(cmdletName, cmdlet);
 
-                    var aliasAttribute = GetCustomAttribute<AliasAttribute>(typeInfo);
+                    var aliasAttribute = GetCustomAttribute<AliasAttribute>(type);
                     if (aliasAttribute != null)
                     {
                         if (aliases == null)
@@ -5309,7 +5292,7 @@ if($paths) {
                 {
                     randomProviderToCheckLinkDemand = type;
 
-                    CmdletProviderAttribute providerAttribute = GetCustomAttribute<CmdletProviderAttribute>(typeInfo);
+                    CmdletProviderAttribute providerAttribute = GetCustomAttribute<CmdletProviderAttribute>(type);
                     if (providerAttribute == null)
                     {
                         continue;
@@ -5453,8 +5436,7 @@ if($paths) {
             for (int i = 0; i < assemblyTypes.Length; i++)
             {
                 Type type = assemblyTypes[i];
-                TypeInfo typeInfo = type.GetTypeInfo();
-                if (!(typeInfo.IsPublic || typeInfo.IsNestedPublic) || typeInfo.IsAbstract) { continue; }
+                if (!(type.IsPublic || type.IsNestedPublic) || type.IsAbstract) { continue; }
 
                 if (isModuleLoad && typeof(IModuleAssemblyInitializer).IsAssignableFrom(type) && type != typeof(IModuleAssemblyInitializer))
                 {

@@ -440,7 +440,7 @@ namespace System.Management.Automation
             Type lvalType = lval != null ? lval.GetType() : null;
             Type rvalType = rval != null ? rval.GetType() : null;
             Type opType;
-            if (lvalType == null || (lvalType.GetTypeInfo().IsPrimitive))
+            if (lvalType == null || (lvalType.IsPrimitive))
             {
                 // Prefer the LHS type when looking for the operator, but attempt the right
                 // the lhs can't have an operator.
@@ -449,7 +449,7 @@ namespace System.Management.Automation
                 // would look for overloads in both types, but this logic covers the most common
                 // cases.
 
-                opType = (rvalType == null || rvalType.GetTypeInfo().IsPrimitive) ? null : rvalType;
+                opType = (rvalType == null || rvalType.IsPrimitive) ? null : rvalType;
             }
             else
             {
@@ -529,22 +529,30 @@ namespace System.Management.Automation
 
         private static RegexOptions parseRegexOptions(SplitOptions options)
         {
-            int[][] map = {
-                new int[] { (int)SplitOptions.CultureInvariant, (int)RegexOptions.CultureInvariant },
-                new int[] { (int)SplitOptions.IgnorePatternWhitespace, (int)RegexOptions.IgnorePatternWhitespace },
-                new int[] { (int)SplitOptions.Multiline, (int)RegexOptions.Multiline },
-                new int[] { (int)SplitOptions.Singleline, (int)RegexOptions.Singleline },
-                new int[] { (int)SplitOptions.IgnoreCase, (int)RegexOptions.IgnoreCase },
-                new int[] { (int)SplitOptions.ExplicitCapture, (int)RegexOptions.ExplicitCapture },
-            };
-
             RegexOptions result = RegexOptions.None;
-            foreach (int[] entry in map)
+            if ((options & SplitOptions.CultureInvariant) != 0)
             {
-                if (((int)options & entry[0]) != 0)
-                {
-                    result |= (RegexOptions)entry[1];
-                }
+                result |= RegexOptions.CultureInvariant;
+            }
+            if ((options & SplitOptions.IgnorePatternWhitespace) != 0)
+            {
+                result |= RegexOptions.IgnorePatternWhitespace;
+            }
+            if ((options & SplitOptions.Multiline) != 0)
+            {
+                result |= RegexOptions.Multiline;
+            }
+            if ((options & SplitOptions.Singleline) != 0)
+            {
+                result |= RegexOptions.Singleline;
+            }
+            if ((options & SplitOptions.IgnoreCase) != 0)
+            {
+                result |= RegexOptions.IgnoreCase;
+            }
+            if ((options & SplitOptions.ExplicitCapture) != 0)
+            {
+                result |= RegexOptions.ExplicitCapture;
             }
 
             return result;

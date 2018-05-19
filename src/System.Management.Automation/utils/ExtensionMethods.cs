@@ -36,7 +36,7 @@ namespace System.Management.Automation
                 yield return t;
         }
 
-        internal static int SequenceGetHashCode<T>(this IEnumerable<T> xs) where T : class
+        internal static int SequenceGetHashCode<T>(this IEnumerable<T> xs)
         {
             // algorithm based on http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
             if (xs == null)
@@ -99,12 +99,12 @@ namespace System.Management.Automation
 
         internal static bool IsNumericOrPrimitive(this Type type)
         {
-            return type.GetTypeInfo().IsPrimitive || LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type));
+            return type.IsPrimitive || LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type));
         }
 
         internal static bool IsSafePrimitive(this Type type)
         {
-            return type.GetTypeInfo().IsPrimitive && (type != typeof(IntPtr)) && (type != typeof(UIntPtr));
+            return type.IsPrimitive && (type != typeof(IntPtr)) && (type != typeof(UIntPtr));
         }
 
         internal static bool IsFloating(this Type type)
@@ -126,7 +126,7 @@ namespace System.Management.Automation
         internal static IEnumerable<T> GetCustomAttributes<T>(this Type type, bool inherit)
             where T : Attribute
         {
-            return from attr in type.GetTypeInfo().GetCustomAttributes(typeof(T), inherit)
+            return from attr in type.GetCustomAttributes(typeof(T), inherit)
                    where attr is T
                    select (T)attr;
         }

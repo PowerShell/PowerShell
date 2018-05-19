@@ -574,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void AccumulateMatchingCmdlets()
         {
-            _commandType = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Alias | CommandTypes.Workflow | CommandTypes.Configuration;
+            _commandType = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Alias | CommandTypes.Configuration;
 
             Collection<string> commandNames = new Collection<string>();
             commandNames.Add("*");
@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
                 options |= SearchResolutionOptions.ResolveAliasPatterns;
             }
 
-            if ((this.CommandType & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Workflow | CommandTypes.Configuration)) != 0)
+            if ((this.CommandType & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
             {
                 options |= SearchResolutionOptions.ResolveFunctionPatterns;
             }
@@ -1108,14 +1108,13 @@ namespace Microsoft.PowerShell.Commands
                     isCommandMatch = true;
                 }
 
-                // If the command in question is a cmdlet or (a function/filter/workflow/configuration/alias and we are filtering on nouns or verbs),
-                // then do the verb/moun check
+                // If the command in question is a cmdlet or (a function/filter/configuration/alias and we are filtering on nouns or verbs),
+                // then do the verb/noun check
 
                 if (current.CommandType == CommandTypes.Cmdlet ||
                     ((_verbs.Length > 0 || _nouns.Length > 0) &&
                      (current.CommandType == CommandTypes.Function ||
                       current.CommandType == CommandTypes.Filter ||
-                      current.CommandType == CommandTypes.Workflow ||
                       current.CommandType == CommandTypes.Configuration ||
                       current.CommandType == CommandTypes.Alias)))
                 {
@@ -1472,8 +1471,8 @@ namespace Microsoft.PowerShell.Commands
         private static PSObject GetParameterType(Type parameterType)
         {
             PSObject returnParameterType = new PSObject();
-            bool isEnum = parameterType.GetTypeInfo().IsEnum;
-            bool isArray = parameterType.GetTypeInfo().IsArray;
+            bool isEnum = parameterType.IsEnum;
+            bool isArray = parameterType.IsArray;
             returnParameterType.Properties.Add(new PSNoteProperty("FullName", parameterType.FullName));
             returnParameterType.Properties.Add(new PSNoteProperty("IsEnum", isEnum));
             returnParameterType.Properties.Add(new PSNoteProperty("IsArray", isArray));
@@ -1483,7 +1482,7 @@ namespace Microsoft.PowerShell.Commands
             returnParameterType.Properties.Add(new PSNoteProperty("EnumValues", enumValues));
 
             bool hasFlagAttribute = (isArray) ?
-                ((parameterType.GetTypeInfo().GetCustomAttributes(typeof(FlagsAttribute), true)).Count() > 0) : false;
+                ((parameterType.GetCustomAttributes(typeof(FlagsAttribute), true)).Count() > 0) : false;
             returnParameterType.Properties.Add(new PSNoteProperty("HasFlagAttribute", hasFlagAttribute));
 
             // Recurse into array elements.

@@ -850,7 +850,7 @@ namespace System.Management.Automation
             {
                 return parameterType == null ||
                        isDefaultValue ||
-                       (!parameterType.GetTypeInfo().IsValueType &&
+                       (!parameterType.IsValueType &&
                         parameterType != typeof(string));
             }
 
@@ -1245,14 +1245,13 @@ namespace System.Management.Automation
                             // we don't want to attempt to bind a collection to a scalar unless
                             // the parameter type is Object or PSObject or enum.
 
-                            TypeInfo toTypeInfo = toType.GetTypeInfo();
                             if (GetIList(currentValue) != null &&
                                 toType != typeof(Object) &&
                                 toType != typeof(PSObject) &&
                                 toType != typeof(PSListModifier) &&
-                                (!toTypeInfo.IsGenericType || toTypeInfo.GetGenericTypeDefinition() != typeof(PSListModifier<>)) &&
-                                (!toTypeInfo.IsGenericType || toTypeInfo.GetGenericTypeDefinition() != typeof(FlagsExpression<>)) &&
-                                !toTypeInfo.IsEnum)
+                                (!toType.IsGenericType || toType.GetGenericTypeDefinition() != typeof(PSListModifier<>)) &&
+                                (!toType.IsGenericType || toType.GetGenericTypeDefinition() != typeof(FlagsExpression<>)) &&
+                                !toType.IsEnum)
                             {
                                 throw new NotSupportedException();
                             }

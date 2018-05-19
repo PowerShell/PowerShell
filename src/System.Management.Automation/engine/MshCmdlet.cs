@@ -444,7 +444,7 @@ namespace System.Management.Automation
             }
 
             CmdletAttribute ca = null;
-            foreach (var attr in cmdletType.GetTypeInfo().GetCustomAttributes(true))
+            foreach (var attr in cmdletType.GetCustomAttributes(true))
             {
                 ca = attr as CmdletAttribute;
                 if (ca != null)

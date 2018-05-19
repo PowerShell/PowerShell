@@ -347,12 +347,6 @@ function Invoke-AppVeyorTest
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
 
-    # Remove telemetry semaphore file in CI
-    $telemetrySemaphoreFilepath = Join-Path $env:CoreOutput DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
-    if ( Test-Path "${telemetrySemaphoreFilepath}" ) {
-        Remove-Item -Force ${telemetrySemaphoreFilepath}
-    }
-
     Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
     Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile

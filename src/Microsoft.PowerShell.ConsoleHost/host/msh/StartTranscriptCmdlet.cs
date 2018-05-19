@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         /// The literal name of the file in which to write the transcript.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [ValidateNotNullOrEmpty]
         public string LiteralPath
         {

@@ -48,12 +48,12 @@ function ExecuteRequestWithOutFile {
         } else {
             Invoke-RestMethod -Uri $uri -OutFile $filePath
         }
-        $result.Output = Get-Content $filePath -Raw -ea SilentlyContinue
+        $result.Output = Get-Content $filePath -Raw -ErrorAction SilentlyContinue
     } catch {
         $result.Error = $_
     } finally {
         if (Test-Path $filePath) {
-            Remove-Item $filePath -Force -ea SilentlyContinue
+            Remove-Item $filePath -Force -ErrorAction SilentlyContinue
         }
     }
     return $result
@@ -349,8 +349,8 @@ function GetMultipartBody {
     for additonal details.
 #>
 $redirectTests = @(
-    @{redirectType = 'MultipleChoices'; redirectedMethod = 'POST'}
-    @{redirectType = 'Ambiguous'; redirectedMethod = 'POST'} # Synonym for MultipleChoices
+    @{redirectType = 'MultipleChoices'; redirectedMethod = 'GET'}
+    @{redirectType = 'Ambiguous'; redirectedMethod = 'GET'} # Synonym for MultipleChoices
 
     @{redirectType = 'Moved'; redirectedMethod = 'GET'}
     @{redirectType = 'MovedPermanently'; redirectedMethod = 'GET'} # Synonym for Moved
@@ -361,17 +361,11 @@ $redirectTests = @(
     @{redirectType = 'redirectMethod'; redirectedMethod = 'GET'}
     @{redirectType = 'SeeOther'; redirectedMethod = 'GET'} # Synonym for RedirectMethod
 
-    @{redirectType = 'TemporaryRedirect'; redirectedMethod = 'GET'}
-    @{redirectType = 'RedirectKeepVerb'; redirectedMethod = 'GET'} # Synonym for TemporaryRedirect
+    @{redirectType = 'TemporaryRedirect'; redirectedMethod = 'POST'}
+    @{redirectType = 'RedirectKeepVerb'; redirectedMethod = 'POST'} # Synonym for TemporaryRedirect
 
     @{redirectType = 'relative'; redirectedMethod = 'GET'}
 )
-
-$PendingCertificateTest = $false
-# we can't check for Certificate on MacOS and Centos libcurl (currently 7.29.0) returns the following error:
-# The handler does not support client authentication certificates with this combination of libcurl (7.29.0) and its SSL backend ("NSS/3.21 Basic ECC")
-if ( $IsMacOS ) { $PendingCertificateTest = $true }
-if ( test-path /etc/centos-release ) { $PendingCertificateTest = $true }
 
 Describe "Invoke-WebRequest tests" -Tags "Feature" {
     BeforeAll {
@@ -505,48 +499,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     $testCase = @(
-        @{ proxy_address = "http://127.0.0.1:9"; name = 'http_proxy'; protocol = 'http' }
-        @{ proxy_address = "http://127.0.0.1:9"; name = 'https_proxy'; protocol = 'https' }
+        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'HTTP proxy'; protocol = 'http' }
+        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'HTTPS proxy'; protocol = 'https' }
     )
 
-    It "Validate Invoke-WebRequest error with -Proxy option set - '<name>'" -TestCases $testCase {
+    It "Validate Invoke-WebRequest with -Proxy option set - '<name>'" -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
-        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2 -Proxy '${proxy_address}' -SkipCertificateCheck"
-
+        # use external url, but with proxy the external url should not actually be called
+        $command = "Invoke-WebRequest -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}' -SkipCertificateCheck"
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-    }
-
-    It "Validate Invoke-WebRequest error with environment proxy set - '<name>'" -TestCases $testCase {
-        param($proxy_address, $name, $protocol)
-
-        # Configure the environment variable.
-        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
-
-        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2 -SkipCertificateCheck"
-
-        $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-    }
-
-    It "Validate Invoke-WebRequest returns User-Agent where -NoProxy with envirionment proxy set - '<name>'" -TestCases $testCase {
-        param($proxy_address, $name, $protocol)
-
-        # Configure the environment variable.
-        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
-
-        $uri = Get-WebListenerUrl -Test 'Get' -Https:$($protocol -eq 'https')
-        $command = "Invoke-WebRequest -Uri '$uri' -NoProxy -SkipCertificateCheck"
-
-        $result = ExecuteWebCommand -command $command
-        ValidateResponse -response $result
-
-        # Validate response content
-        $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.Host | Should -Be $uri.Authority
+        $command = "Invoke-WebRequest -Uri '${protocol}://${proxy_address}' -NoProxy"
+        $expectedResult = ExecuteWebCommand -command $command
+        $result.Output.Content | Should -BeExactly $expectedResult.Output.Content
     }
 
     # Perform the following operation for Invoke-WebRequest
@@ -654,7 +619,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Get'
         #Validate that parameter sets are functioning correctly
         $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-        { Invoke-WebRequest -Uri $uri -Method GET -CustomMethod TEST } | ShouldBeErrorId $errorId
+        { Invoke-WebRequest -Uri $uri -Method GET -CustomMethod TEST } | Should -Throw -ErrorId $errorId
     }
 
     It "Validate Invoke-WebRequest CustomMethod method is used" {
@@ -822,6 +787,41 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Content.Method | Should -Be $redirectedMethod
     }
 
+    It "Validates Invoke-WebRequest -PreserveAuthorizationOnRedirect keeps the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest -PreserveAuthorizationOnRedirect -Uri $uri -Method 'POST'
+
+        $response.Error | Should -BeNullOrEmpty
+        # ensure user-agent is present (i.e., no false positives )
+        $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+        # ensure Authorization header has been removed.
+        $response.Content.Headers."Authorization" | Should -BeExactly 'test'
+        # ensure POST was changed to GET for selected redirections and remains as POST for others.
+        $response.Content.Method | Should -Be $redirectedMethod
+    }
+
+    It "Validates Invoke-WebRequest handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
+        # Skip relative test as it is not a valid response type.
+        if ($redirectType -eq 'relative') { return }
+
+        # When an Authorization request header is present,
+        # and -PreserveAuthorizationOnRedirect is not present,
+        # PowerShell should throw an HTTP Response Exception
+        # for a redirect response which does not contain a Location response header.
+        # The correct redirect status code should be included in the exception.
+
+        $StatusCode = [int][System.Net.HttpStatusCode]$redirectType
+        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode}
+        $command = "Invoke-WebRequest -Uri '$uri' -Headers @{Authorization = 'foo'}"
+        $response = ExecuteWebCommand -command $command
+
+        $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+        $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
+        $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
+    }
+
     #endregion Redirect tests
 
     Context "Invoke-WebRequest SkipHeaderVerification Tests" {
@@ -906,7 +906,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Post'
 
             { Invoke-WebRequest -Uri $uri -Method 'Post' -ContentType $contentType -Body $body -ErrorAction 'Stop' } |
-                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+                Should -Throw -ErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest ContentType handling reports no error is returned for an invalid Content-Type header value, -Body, and -SkipHeaderValidation" {
@@ -938,7 +938,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Post'
 
             { Invoke-WebRequest -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile -ErrorAction 'Stop' } |
-                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+                Should -Throw -ErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest default ContentType handling reports no error is returned for an invalid Content-Type header value, -Infile, and -SkipHeaderValidation" {
@@ -1190,9 +1190,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result.Status | Should -Be 'FAILED'
         }
 
-        # Test skipped on macOS and CentOS pending support for Client Certificate Authentication
-        # https://github.com/PowerShell/PowerShell/issues/4650
-        It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -Pending:$PendingCertificateTest {
+        It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck |
@@ -1354,7 +1352,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Multipart'
 
             {Invoke-WebRequest -Uri $uri -Form $form -Body $Body -ErrorAction 'Stop'} |
-                ShouldBeErrorId 'WebCmdletBodyFormConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                Should -Throw -ErrorId 'WebCmdletBodyFormConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
 
         It "Verifies Invoke-WebRequest -Form is mutually exclusive with -InFile" {
@@ -1362,7 +1360,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Multipart'
 
             {Invoke-WebRequest -Uri $uri -Form $form -InFile $file1Path -ErrorAction 'Stop'} |
-                ShouldBeErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                Should -Throw -ErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
     }
 
@@ -1417,7 +1415,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 ErrorAction           = 'Stop'
                 SkipCertificateCheck  = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAuthenticationConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest -Authentication does not support Both -Credential and -Token" {
@@ -1429,7 +1427,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAuthenticationTokenConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest -Authentication <Authentication> requires -Token" -TestCases $testCases {
@@ -1440,7 +1438,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAuthenticationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest -Authentication Basic requires -Credential" {
@@ -1450,7 +1448,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAuthenticationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest -Authentication Requires HTTPS" {
@@ -1460,7 +1458,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 Authentication = "OAuth"
                 ErrorAction    = 'Stop'
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest -Authentication Can use HTTP with -AllowUnencryptedAuthentication" {
@@ -1494,7 +1492,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 Credential  = $credential
                 ErrorAction = 'Stop'
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication" {
@@ -1533,7 +1531,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 UseDefaultCredentials = $true
                 ErrorAction           = 'Stop'
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         # UseDefaultCredentials is only reliably testable on Windows
@@ -1562,16 +1560,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 @{ Test = @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
-                # macOS does not support multiple SslProtocols
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                # macOS does not support multiple SslProtocols and possible CoreFX issue for this combo on Linux
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
+                # Skipping intermediary protocols is not supported on all platforms
+                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = -not $IsWindows }
                 @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}; Pending = -not $IsWindows }
             )
 
@@ -1582,10 +1579,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
-                # macOS does not support multiple SslProtocols
-                @{ Test = @{IntendedProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{IntendedProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{IntendedProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+                @{ Test = @{IntendedProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls12'}; Pending = $false }
             )
         }
 
@@ -1613,7 +1609,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                     SkipCertificateCheck = $true
                     ErrorAction          = 'Stop'
                 }
-                { Invoke-WebRequest @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                { Invoke-WebRequest @params } | Should -Throw -ErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
             }
         }
     }
@@ -1727,32 +1723,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes */$referenceFileSize"
         }
     }
-
-    BeforeEach {
-        if ($env:http_proxy) {
-            $savedHttpProxy = $env:http_proxy
-            $copiedHttpProxy = $true
-        }
-
-        if ($env:https_proxy) {
-            $savedHttpsProxy = $env:https_proxy
-            $copiedHttpsProxy = $true
-        }
-    }
-
-    AfterEach {
-        if ($copiedHttpProxy) {
-            $env:http_proxy = $savedHttpProxy
-        } else {
-            $env:http_proxy = $null
-        }
-
-        if ($copiedHttpsProxy) {
-            $env:https_proxy = $savedHttpsProxy
-        } else {
-            $env:https_proxy = $null
-        }
-    }
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature" {
@@ -1856,47 +1826,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     $testCase = @(
-        @{ proxy_address = "http://127.0.0.1:9"; name = 'http_proxy'; protocol = 'http' }
-        @{ proxy_address = "http://127.0.0.1:9"; name = 'https_proxy'; protocol = 'https' }
+        @{ proxy_address = (Get-WebListenerUrl).Authority; name = 'HTTP proxy'; protocol = 'http' }
+        @{ proxy_address = (Get-WebListenerUrl -https).Authority; name = 'HTTPS proxy'; protocol = 'https' }
     )
 
-    It "Validate Invoke-RestMethod error with -Proxy option - '<name>'" -TestCases $testCase {
+    It "Validate Invoke-RestMethod with -Proxy option - '<name>'" -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
-        # A non-loopback URI is required but the external resource will not be accessed
-        $uri = 'http://httpbin.org'
-        $command = "Invoke-RestMethod -Uri '$uri' -Proxy '${proxy_address}'"
-
+        # use external url, but with proxy the external url should not actually be called
+        $command = "Invoke-RestMethod -Uri ${protocol}://httpbin.org -Proxy '${protocol}://${proxy_address}'"
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-    }
-
-    It "Validate Invoke-RestMethod error with environment proxy set - '<name>'" -TestCases $testCase {
-        param($proxy_address, $name, $protocol)
-
-        # Configure the environment variable.
-        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
-
-        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 2 -SkipCertificateCheck"
-
-        $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-    }
-
-    It "Validate Invoke-RestMethod returns User-Agent with option -NoProxy when environment proxy set - '<name>'" -TestCases $testCase {
-        param($proxy_address, $name, $protocol)
-
-        # Configure the environment variable.
-        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
-
-        $uri = Get-WebListenerUrl -Test 'Get' -Https:$($protocol -eq 'https')
-        $command = "Invoke-RestMethod -Uri '$uri' -NoProxy -SkipCertificateCheck"
-
-        $result = ExecuteWebCommand -command $command
-
-        # Validate response
-        $result.Output.headers.'User-Agent' | Should -MatchExactly '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
+        $command = "Invoke-RestMethod -Uri '${protocol}://${proxy_address}' -NoProxy"
+        $expectedResult = ExecuteWebCommand -command $command
+        $result.Output | Should -BeExactly $expectedResult.Output
     }
 
     # Perform the following operation for Invoke-RestMethod
@@ -1998,7 +1940,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     It "Validate Invoke-RestMethod StandardMethod and CustomMethod parameter sets" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-        { Invoke-RestMethod -Uri $uri -Method GET -CustomMethod TEST } | ShouldBeErrorId $errorId
+        { Invoke-RestMethod -Uri $uri -Method GET -CustomMethod TEST } | Should -Throw -ErrorId $errorId
     }
 
     It "Validate CustomMethod method is used" {
@@ -2132,9 +2074,44 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         # ensure user-agent is present (i.e., no false positives )
         $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
         # ensure Authorization header has been removed.
-        $response.Content."Authorization" | Should -BeNullOrEmpty
+        $response.Content.Headers."Authorization" | Should -BeNullOrEmpty
         # ensure POST was changed to GET for selected redirections and remains as POST for others.
         $response.Content.Method | Should -Be $redirectedMethod
+    }
+
+    It "Validates Invoke-RestMethod -PreserveAuthorizationOnRedirect keeps the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest -PreserveAuthorizationOnRedirect -Cmdlet 'Invoke-RestMethod' -Uri $uri -Method 'POST'
+
+        $response.Error | Should -BeNullOrEmpty
+        # ensure user-agent is present (i.e., no false positives )
+        $response.Content.Headers."User-Agent" | Should -Not -BeNullOrEmpty
+        # ensure Authorization header has been removed.
+        $response.Content.Headers."Authorization" | Should -BeExactly 'test'
+        # ensure POST was changed to GET for selected redirections and remains as POST for others.
+        $response.Content.Method | Should -Be $redirectedMethod
+    }
+
+    It "Validates Invoke-RestMethod handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
+        # Skip relative test as it is not a valid response type.
+        if ($redirectType -eq 'relative') { return }
+
+        # When an Authorization request header is present,
+        # and -PreserveAuthorizationOnRedirect is not present,
+        # PowerShell should throw an HTTP Response Exception
+        # for a redirect response which does not contain a Location response header.
+        # The correct redirect status code should be included in the exception.
+
+        $StatusCode = [int][System.Net.HttpStatusCode]$redirectType
+        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode}
+        $command = "Invoke-RestMethod -Uri '$uri' -Headers @{Authorization = 'foo'}"
+        $response = ExecuteWebCommand -command $command
+
+        $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+        $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
+        $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
     }
 
     #endregion Redirect tests
@@ -2220,7 +2197,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Post'
 
             { Invoke-RestMethod -Uri $uri -Method 'Post' -ContentType $contentType -Body $body -ErrorAction 'Stop' } |
-                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+                Should -Throw -ErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod ContentType handling reports no error is returned for an invalid Content-Type header value, -Body, and -SkipHeaderValidation" {
@@ -2250,7 +2227,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Post'
 
             { Invoke-RestMethod -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile -ErrorAction 'Stop' } |
-                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+                Should -Throw -ErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod default ContentType handling reports no error is returned for an invalid Content-Type header value, -Infile, and -SkipHeaderValidation" {
@@ -2297,9 +2274,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result.Status | Should -Be 'FAILED'
         }
 
-        # Test skipped on macOS and CentOS pending support for Client Certificate Authentication
-        # https://github.com/PowerShell/PowerShell/issues/4650
-        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending:$PendingCertificateTest {
+        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
@@ -2451,7 +2426,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Multipart'
 
             {Invoke-RestMethod -Uri $uri -Form $form -Body $Body -ErrorAction 'Stop'} |
-                ShouldBeErrorId 'WebCmdletBodyFormConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                Should -Throw -ErrorId 'WebCmdletBodyFormConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
 
         It "Verifies Invoke-RestMethod -Form is mutually exclusive with -InFile" {
@@ -2459,7 +2434,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Multipart'
 
             {Invoke-RestMethod -Uri $uri -Form $form -InFile $file1Path -ErrorAction 'Stop'} |
-                ShouldBeErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                Should -Throw -ErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
     }
 
@@ -2672,7 +2647,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 ErrorAction           = 'Stop'
                 SkipCertificateCheck  = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAuthenticationConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod -Authentication does not support Both -Credential and -Token" {
@@ -2684,7 +2659,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAuthenticationTokenConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod -Authentication <Authentication> requires -Token" -TestCases $testCases {
@@ -2695,7 +2670,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAuthenticationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod -Authentication Basic requires -Credential" {
@@ -2705,7 +2680,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAuthenticationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod -Authentication Requires HTTPS" {
@@ -2715,7 +2690,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 Authentication = "OAuth"
                 ErrorAction    = 'Stop'
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod -Authentication Can use HTTP with -AllowUnencryptedAuthentication" {
@@ -2747,7 +2722,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 Credential  = $credential
                 ErrorAction = 'Stop'
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication" {
@@ -2784,7 +2759,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 UseDefaultCredentials = $true
                 ErrorAction           = 'Stop'
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         # UseDefaultCredentials is only reliably testable on Windows
@@ -2811,16 +2786,15 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 @{ Test = @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
-                # macOS does not support multiple SslProtocols
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                # macOS does not support multiple SslProtocols and possible CoreFX issue for this combo on Linux
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
+                # Skipping intermediary protocols is not supported on all platforms
+                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = -not $IsWindows }
                 @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}; Pending = -not $IsWindows }
             )
 
@@ -2831,10 +2805,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
-                # macOS does not support multiple SslProtocols
-                @{ Test = @{IntendedProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{IntendedProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{IntendedProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+                @{ Test = @{IntendedProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls12'}; Pending = $false }
             )
         }
 
@@ -2861,7 +2834,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                     SkipCertificateCheck = $true
                     ErrorAction          = 'Stop'
                 }
-                { Invoke-RestMethod @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                { Invoke-RestMethod @params } | Should -Throw -ErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
             }
         }
     }
@@ -2996,35 +2969,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $Headers.'Content-Range'[0] | Should -BeExactly "bytes */$referenceFileSize"
         }
     }
-
-    BeforeEach {
-        if ($env:http_proxy) {
-            $savedHttpProxy = $env:http_proxy
-            $copiedHttpProxy = $true
-        }
-
-        if ($env:https_proxy) {
-            $savedHttpsProxy = $env:https_proxy
-            $copiedHttpsProxy = $true
-        }
-    }
-
-    AfterEach {
-        if ($copiedHttpProxy) {
-            $env:http_proxy = $savedHttpProxy
-        } else {
-            $env:http_proxy = $null
-        }
-
-        if ($copiedHttpsProxy) {
-            $env:https_proxy = $savedHttpsProxy
-        } else {
-            $env:https_proxy = $null
-        }
-    }
 }
 
 Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Feature" {
+    BeforeAll {
+        $WebListener = Start-WebListener
+    }
+
     Context "InFile parameter negative tests" {
         BeforeAll {
             $uri = Get-WebListenerUrl -Test 'Post'
@@ -3074,12 +3025,7 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
         It "<Name>" -TestCases $testCases {
             param ($scriptblock, $expectedFullyQualifiedErrorId)
 
-            try {
-                & $scriptblock
-                throw "No Exception!"
-            } catch {
-                $_.FullyQualifiedErrorId | Should -Be $ExpectedFullyQualifiedErrorId
-            }
+            { & $scriptblock } | Should -Throw -ErrorId $ExpectedFullyQualifiedErrorId
         }
     }
 

@@ -224,7 +224,7 @@ function Test-PSPackage
         [Parameter(Mandatory=$true)]
         $PSPackageLocation, # e.g. Azure storage
         [string]
-        $PSVersion = "6.0.2",
+        $PSVersion = "6.0.2", # e.g. "6.1.0~preview.2"
         [string]
         $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module",
         [string]
@@ -246,8 +246,6 @@ function Test-PSPackage
 
     Copy-Item -Recurse $SourceFolder $RootFolder
 
-    $versionRpmStubName = 'PSVERSIONSTUBRPM'
-    $versionRpmStubValue = $PSVersion -replace '-','_'
     $versionStubName = 'PSVERSIONSTUB'
     $versionStubValue = $PSVersion
     $testlistStubName = 'TESTLISTSTUB'
@@ -264,8 +262,17 @@ function Test-PSPackage
     foreach($dir in Get-ChildItem -Path $RootFolder)
     {
         $buildArgs = @()
-        $buildArgs += "--build-arg","$versionRpmStubName=$versionRpmStubValue"
-        $buildArgs += "--build-arg","$versionStubName=$versionStubValue"
+
+        if ($dir.Name -eq "opensuse42.2") # special cases that use dash instead of tilda as preview separator, e.g. 'powershell-6.1.0-preview.2-linux-x64.tar.gz'
+        {
+            $versionStubDashValue = $PSVersion -replace '~','-'
+            $buildArgs += "--build-arg","$versionStubName=$versionStubDashValue"
+        }
+        else # majority of configurations - they use tilda as preview separator, e.g. 'powershell-6.1.0~preview.2-1.rhel.7.x86_64.rpm'
+        {
+            $buildArgs += "--build-arg","$versionStubName=$versionStubValue"
+        }
+        
         $buildArgs += "--build-arg","$testlistStubName=$testlistStubValue"
         $buildArgs += "--build-arg","$packageLocationStubName=$packageLocationStubValue"
         $buildArgs += "--build-arg","$GitLocationStubName=$GitLocationStubValue"

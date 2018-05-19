@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Management.Automation.Internal;
 using System.Text;
@@ -75,22 +77,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="columnWidths">array of specified column widths</param>
         /// <param name="alignment">array of alignment flags</param>
         /// <param name="suppressHeader">if true, suppress header printing</param>
-        internal void Initialize(int leftMarginIndent, int screenColumns, int[] columnWidths, int[] alignment, bool suppressHeader)
+        internal void Initialize(int leftMarginIndent, int screenColumns, Span<int> columnWidths, ReadOnlySpan<int> alignment, bool suppressHeader)
         {
             //Console.WriteLine("         1         2         3         4         5         6         7");
             //Console.WriteLine("01234567890123456789012345678901234567890123456789012345678901234567890123456789");
-
-            if (screenColumns == int.MaxValue)
-            {
-                try
-                {
-                    screenColumns = System.Console.WindowWidth;
-                }
-                catch
-                {
-                    screenColumns = 120;
-                }
-            }
 
             if (leftMarginIndent < 0)
             {
@@ -161,7 +151,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // generate an array of "--" as header markers below
             // the column header labels
             string[] breakLine = new string[values.Length];
-            for (int k = 0; k < _si.columnInfo.Length; k++)
+            for (int k = 0; k < breakLine.Length; k++)
             {
                 // the column can be hidden
                 if (_si.columnInfo[k].width <= 0)
@@ -180,30 +170,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // NOTE: we can do this because "-" is a single cell character
                 // on all devices. If changed to some other character, this assumption
                 // would be invalidated
-                breakLine[k] = new string('-', count);
+                breakLine[k] = StringUtil.DashPadding(count);
             }
             GenerateRow(breakLine, lo, false, null, lo.DisplayCells);
         }
 
-        internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, int[] alignment, DisplayCells dc)
+        internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc)
         {
             if (_disabled)
                 return;
 
             // build the current row alignment settings
             int cols = _si.columnInfo.Length;
-            int[] currentAlignment = new int[cols];
+            Span<int> currentAlignment = cols <= OutCommandInner.StackAllocThreshold ? stackalloc int[cols] : new int[cols];
 
             if (alignment == null)
             {
-                for (int i = 0; i < cols; i++)
+                for (int i = 0; i < currentAlignment.Length; i++)
                 {
                     currentAlignment[i] = _si.columnInfo[i].alignment;
                 }
             }
             else
             {
-                for (int i = 0; i < cols; i++)
+                for (int i = 0; i < currentAlignment.Length; i++)
                 {
                     if (alignment[i] == TextAlignment.Undefined)
                         currentAlignment[i] = _si.columnInfo[i].alignment;
@@ -227,10 +217,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private string[] GenerateTableRow(string[] values, int[] alignment, DisplayCells ds)
+        private string[] GenerateTableRow(string[] values, ReadOnlySpan<int> alignment, DisplayCells ds)
         {
             // select the active columns (skip hidden ones)
-            int[] validColumnArray = new int[_si.columnInfo.Length];
+            Span<int> validColumnArray = _si.columnInfo.Length <= OutCommandInner.StackAllocThreshold ? stackalloc int[_si.columnInfo.Length] : new int[_si.columnInfo.Length];
             int validColumnCount = 0;
             for (int k = 0; k < _si.columnInfo.Length; k++)
             {
@@ -241,7 +231,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             if (validColumnCount == 0)
+            {
                 return null;
+            }
 
             StringCollection[] scArray = new StringCollection[validColumnCount];
             bool addPadding = true;
@@ -299,7 +291,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             //
             // To ensure we don't add whitespace to the end, we need to determine the last column in each row with content
 
-            System.Span<int> lastColWithContent = stackalloc int[screenRows];
+            System.Span<int> lastColWithContent = screenRows <= OutCommandInner.StackAllocThreshold ? stackalloc int[screenRows] : new int[screenRows];
             for (int row = 0; row < screenRows; row++)
             {
                 for (int col = scArray.Length - 1; col > 0; col--)
@@ -353,14 +345,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // finally, build an array of strings
             string[] rows = new string[screenRows];
-            for (int row = 0; row < rows.Length; row++)
+            for (int row = 0; row < screenRows; row++)
             {
                 StringBuilder sb = new StringBuilder();
                 // for a given row, walk the columns
                 for (int col = 0; col < scArray.Length; col++)
                 {
-                    // if the column is the last column with content, we need to trim trailing whitespace
-                    if (col == lastColWithContent[row])
+                    // if the column is the last column with content, we need to trim trailing whitespace, unless there is only one row
+                    if (col == lastColWithContent[row] && screenRows > 1)
                     {
                         sb.Append(scArray[col][row].TrimEnd());
                     }
@@ -371,6 +363,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 rows[row] = sb.ToString();
             }
+
             return rows;
         }
 
@@ -390,7 +383,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return sc;
         }
 
-        private string GenerateRow(string[] values, int[] alignment, DisplayCells dc)
+        private string GenerateRow(string[] values, ReadOnlySpan<int> alignment, DisplayCells dc)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -408,7 +401,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // skip columns that are not at least a single character wide
                     continue;
                 }
-                int newRowIndex = sb.Length;
 
                 // NOTE: the following padding operations assume that we
                 // pad with a blank (or any character that ALWAYS maps to a single screen cell
@@ -432,7 +424,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static string GenerateRowField(string val, int width, int alignment, DisplayCells dc, bool addPadding)
         {
             // make sure the string does not have any embedded <CR> in it
-            string s = StringManipulationHelper.TruncateAtNewLine(val) ?? "";
+            string s = StringManipulationHelper.TruncateAtNewLine(val);
 
             string currentValue = s;
             int currentValueDisplayLength = dc.Length(currentValue);

@@ -43,7 +43,7 @@ Describe "TestWSMan tests" -Tags 'Feature' {
     }
 
     It "-Authentication for unsupported type should return error" {
-        { Test-WSMan -Authentication foo -ErrorAction Stop } | ShouldBeErrorId "CannotConvertArgumentNoMessage,Microsoft.WSMan.Management.TestWSManCommand"
+        { Test-WSMan -Authentication foo -ErrorAction Stop } | Should -Throw -ErrorId "CannotConvertArgumentNoMessage,Microsoft.WSMan.Management.TestWSManCommand"
     }
 
     It "Test-WSMan works for '<computername>'" -TestCases @(

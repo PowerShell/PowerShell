@@ -5,6 +5,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation.Provider;
 using Dbg = System.Management.Automation;
 
@@ -262,9 +263,17 @@ namespace System.Management.Automation
                     // Since the path is an absolute path
                     // we need to change the current working
                     // drive
-
                     PSDriveInfo newWorkingDrive = GetDrive(driveName);
                     CurrentDrive = newWorkingDrive;
+
+                    // If the path is simply a colon-terminated drive,
+                    // not a slash-terminated path to the root of a drive,
+                    // set the path to the current working directory of that drive.
+                    string colonTerminatedVolume = CurrentDrive.Name + ':';
+                    if (CurrentDrive.VolumeSeparatedByColon && (path.Length == colonTerminatedVolume.Length))
+                    {
+                        path = Path.Combine((colonTerminatedVolume + Path.DirectorySeparatorChar), CurrentDrive.CurrentLocation);
+                    }
 
                     // Now that the current working drive is set,
                     // process the rest of the path as a relative path.

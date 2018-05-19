@@ -5308,7 +5308,7 @@ namespace System.Management.Automation
             else
             {
                 Type gt = source.GetType();
-                if (gt.GetTypeInfo().IsGenericType)
+                if (gt.IsGenericType)
                 {
                     if (DerivesFromGenericType(gt, typeof(Stack<>)))
                     {
@@ -5382,14 +5382,14 @@ namespace System.Management.Automation
             Dbg.Assert(baseType != null, "caller should validate the parameter");
             while (derived != null)
             {
-                if (derived.GetTypeInfo().IsGenericType)
+                if (derived.IsGenericType)
                     derived = derived.GetGenericTypeDefinition();
 
                 if (derived == baseType)
                 {
                     return true;
                 }
-                derived = derived.GetTypeInfo().BaseType;
+                derived = derived.BaseType;
             }
             return false;
         }

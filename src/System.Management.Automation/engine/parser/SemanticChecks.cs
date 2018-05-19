@@ -176,7 +176,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    var usage = attributeType.GetTypeInfo().GetCustomAttribute<AttributeUsageAttribute>(true);
+                    var usage = attributeType.GetCustomAttribute<AttributeUsageAttribute>(true);
                     if (usage != null && (usage.ValidOn & attributeTargets) == 0)
                     {
                         _parser.ReportError(attributeAst.Extent,
@@ -1384,7 +1384,7 @@ namespace System.Management.Automation.Language
                 // Type must be resolved, but if it's not, the error was reported by the symbol resolver.
                 var type = propertyMemberAst.PropertyType.TypeName.GetReflectionType();
 
-                if (type != null && (type == typeof(void) || type.GetTypeInfo().IsGenericTypeDefinition))
+                if (type != null && (type == typeof(void) || type.IsGenericTypeDefinition))
                 {
                     _parser.ReportError(propertyMemberAst.PropertyType.Extent,
                         nameof(ParserStrings.TypeNotAllowedForProperty),

@@ -370,7 +370,4 @@ PS&gt; [System.Collections.Generic.Comparer``1]::get_Default()
   <data name="InvalidCastExceptionNonCoreType" xml:space="preserve">
     <value>Cannot convert value to type "{0}". Only core types are supported in this language mode.</value>
   </data>
-  <data name="PSMethodToDelegateNoMatchingOverLoad" xml:space="preserve">
-    <value>No matching overload found from {0} to {1}</value>
-  </data>
 </root>

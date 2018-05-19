@@ -9,7 +9,7 @@
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
     <ProjectReference Include="..\Microsoft.WSMan.Runtime\Microsoft.WSMan.Runtime.csproj" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.4.1" />    
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.5.0-rc1-26423-06" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -19,17 +19,5 @@
   <ItemGroup>
     <Compile Remove="WsManSnapin.cs" />
   </ItemGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
-    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
 
 </Project>

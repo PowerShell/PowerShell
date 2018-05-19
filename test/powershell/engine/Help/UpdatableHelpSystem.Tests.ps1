@@ -166,7 +166,7 @@ function GetFiles
         [string]$path
     )
 
-    Get-ChildItem $path -Include $fileType -Recurse -ea SilentlyContinue | Select-Object -ExpandProperty FullName
+    Get-ChildItem $path -Include $fileType -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName
 }
 
 function ValidateInstalledHelpContent
@@ -325,7 +325,7 @@ function RunSaveHelpTests
             }
             finally
             {
-                Remove-Item $saveHelpFolder -Force -ea SilentlyContinue -Recurse
+                Remove-Item $saveHelpFolder -Force -ErrorAction SilentlyContinue -Recurse
             }
         }
     }

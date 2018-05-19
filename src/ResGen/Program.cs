@@ -140,7 +140,7 @@ internal class {0} {{
     internal static global::System.Resources.ResourceManager ResourceManager {{
         get {{
             if (object.ReferenceEquals(resourceMan, null)) {{
-                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager(""{1}.resources.{3}"", typeof({0}).GetTypeInfo().Assembly);
+                global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager(""{1}.resources.{3}"", typeof({0}).Assembly);
                 resourceMan = temp;
             }}
             return resourceMan;

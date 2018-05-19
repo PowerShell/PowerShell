@@ -278,18 +278,8 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
     #
     function VerifyException([ScriptBlock] $command, [string] $exception)
     {
-        try
-        {
-            & $command
-
-            throw "No Exception!"
-        }
-        catch
-        {
-            It "Script failed expected exception '${command}'" {
-                $_.Exception.GetType().Name | Should -Be $exception
-            }
-        }
+        $e = { & $command } | Should -Throw -PassThru
+        $e.Exception.GetType().Name | Should -Be $exception
     }
 
     #
@@ -590,7 +580,7 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
         if ($null -ne $breakpoint3) { Remove-PSBreakpoint $breakpoint3 }
         if ($null -ne $breakpoint4) { Remove-PSBreakpoint $breakpoint4 }
         get-module $moduleName | remove-module
-        if (Test-Path $moduleDirectory) { Remove-Item $moduleDirectory -r -force -ea silentlycontinue }
+        if (Test-Path $moduleDirectory) { Remove-Item $moduleDirectory -Recurse -force -ErrorAction silentlycontinue }
     }
 }
 

@@ -18,6 +18,7 @@ Describe "Import-Module" -Tags "CI" {
     BeforeEach {
         Remove-Module -Name $moduleName -Force
         (Get-Module -Name $moduleName).Name | Should -BeNullOrEmpty
+        Remove-Module -Name TestModule -Force -ErrorAction SilentlyContinue
     }
 
     AfterEach {
@@ -28,6 +29,15 @@ Describe "Import-Module" -Tags "CI" {
     It "should be able to add a module with using Name switch" {
         { Import-Module -Name $moduleName } | Should -Not -Throw
         (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
+    }
+
+    It "should be able to load a module with a trailing directory separator: <modulePath>" -TestCases @(
+        @{ modulePath = (Get-Module -ListAvailable $moduleName).ModuleBase + [System.IO.Path]::DirectorySeparatorChar; expectedName = $moduleName },
+        @{ modulePath = Join-Path -Path $TestDrive -ChildPath "\Modules\TestModule\"; expectedName = "TestModule" }
+    ) {
+        param( $modulePath, $expectedName )
+        { Import-Module -Name $modulePath -ErrorAction Stop } | Should -Not -Throw
+        (Get-Module -Name $expectedName).Name | Should -BeExactly $expectedName
     }
 
     It "should be able to add a module with using ModuleInfo switch" {
@@ -101,7 +111,7 @@ Describe "Import-Module for Binary Modules in GAC" -Tags 'CI' {
 
         It "Load PSScheduledJob from Windows Powershell Modules folder should fail" -Skip:(-not $IsWindows) {
             $modulePath = Join-Path $env:windir "System32/WindowsPowershell/v1.0/Modules/PSScheduledJob"
-            { Import-Module $modulePath -ErrorAction SilentlyContinue } | ShouldBeErrorId 'FormatXmlUpdateException,Microsoft.PowerShell.Commands.ImportModuleCommand'
+            { Import-Module $modulePath -ErrorAction SilentlyContinue } | Should -Throw -ErrorId 'FormatXmlUpdateException,Microsoft.PowerShell.Commands.ImportModuleCommand'
         }
     }
 
@@ -229,5 +239,27 @@ Describe "Workflow .Xaml module is not supported in PSCore" -tags "Feature" {
 
     It "Import a module with XAML nested module should raise a 'NotSupported' error" {
         { Import-Module $xamlNestedModule -ErrorAction Stop } | Should -Throw -ErrorId "Modules_WorkflowModuleNotSupported,Microsoft.PowerShell.Commands.ImportModuleCommand"
+    }
+}
+
+Describe "Circular nested module test" -tags "CI" {
+    BeforeAll {
+        $moduleFolder = Join-Path $TestDrive CircularNestedModuleTest
+        $psdPath = Join-Path $moduleFolder CircularNestedModuleTest.psd1
+        $psmPath = Join-Path $moduleFolder CircularNestedModuleTest.psm1
+
+        New-Item -Path $moduleFolder -ItemType Directory -Force > $null
+        Set-Content -Path $psdPath -Value "@{ ModuleVersion = '0.0.1'; RootModule = 'CircularNestedModuleTest'; NestedModules = @('CircularNestedModuleTest') }" -Encoding Ascii
+        Set-Content -Path $psmPath -Value "function bar {}" -Encoding Ascii
+    }
+
+    AfterAll {
+        Remove-Module -Name CircularNestedModuleTest -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $moduleFolder -Force -Recurse
+    }
+
+    It "Loading the module should succeed and return a module with circular nested module" {
+        $m = Import-Module $psdPath -PassThru
+        $m.NestedModules[0] | Should -Be $m
     }
 }

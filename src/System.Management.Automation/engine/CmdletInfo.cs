@@ -297,7 +297,7 @@ namespace System.Management.Automation
                                 _verb,
                                 StringLiterals.CommandVerbNounSeparator,
                                 _noun,
-                                parameterSet.ToString((this.CommandType & CommandTypes.Workflow) == CommandTypes.Workflow)));
+                                parameterSet.ToString()));
                     }
                 }
                 else
@@ -340,7 +340,7 @@ namespace System.Management.Automation
 
                     if (ImplementingType != null)
                     {
-                        foreach (object o in ImplementingType.GetTypeInfo().GetCustomAttributes(typeof(OutputTypeAttribute), false))
+                        foreach (object o in ImplementingType.GetCustomAttributes(typeof(OutputTypeAttribute), false))
                         {
                             OutputTypeAttribute attr = (OutputTypeAttribute)o;
                             _outputType.AddRange(attr.Type);

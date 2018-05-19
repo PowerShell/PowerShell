@@ -172,21 +172,15 @@ Describe "Assign readonly/constant variables" -Tags "CI" {
 
 Describe "Attribute error position" -Tags "CI" {
     It "Ambiguous overloads" {
-        try
-        {
+        $e =  {
             & {
                 param(
                     [ValidateNotNull(1,2,3,4)]
                     $param
                 )
             }
-            throw "Should have thrown"
-        }
-        catch
-        {
-            $_.InvocationInfo.Line | Should -Match ValidateNotNull
-            $_.FullyQualifiedErrorId | Should -Be MethodCountCouldNotFindBest
-        }
+        } | Should -Throw -PassThru -ErrorId 'MethodCountCouldNotFindBest'
+        $e.InvocationInfo.Line | Should -Match ValidateNotNull
     }
 }
 

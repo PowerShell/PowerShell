@@ -137,14 +137,8 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             [void] $ps.AddScript($script + $command)
             $asyncResult = $ps.BeginInvoke()
 
-            try
-            {
-                $ps.EndInvoke($asyncResult)
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should -BeExactly "ActionPreferenceStopException"
-            } # Exception: "Command execution stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: error foo"
+            { $ps.EndInvoke($asyncResult) } | Should -Throw -ErrorId "ActionPreferenceStopException"
+            # Exception: "Command execution stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: error foo"
 
             # BUG in runspace api.
             #$ps.error.count | Should Be 1

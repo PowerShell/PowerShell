@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter(Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = LiteralPathParameterSetName)]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public string LiteralPath
         {
             get

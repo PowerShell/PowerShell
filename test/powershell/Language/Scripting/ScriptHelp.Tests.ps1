@@ -88,34 +88,34 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
     }
 
     Context 'get-help helpFunc1 -component blah' {
-        $x = get-help helpFunc1 -component blah -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -component blah -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
     }
 
     Context 'get-help helpFunc1 -component Something' {
-        $x = get-help helpFunc1 -component Something -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -component Something -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpFunc1 $x
         It '$e should be empty' { $e.Count | Should -Be 0 }
     }
 
     Context 'get-help helpFunc1 -role blah' {
-        $x = get-help helpFunc1 -component blah -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -component blah -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
     }
 
     Context 'get-help helpFunc1 -role CrazyUser' {
-        $x = get-help helpFunc1 -role CrazyUser -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -role CrazyUser -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpFunc1 $x
         It '$e should be empty' { $e.Count | Should -Be 0 }
     }
 
     Context '$x = get-help helpFunc1 -functionality blah' {
-        $x = get-help helpFunc1 -functionality blah -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -functionality blah -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
     }
 
     Context '$x = get-help helpFunc1 -functionality Useless' {
-        $x = get-help helpFunc1 -functionality Useless -ea SilentlyContinue -ev e
+        $x = get-help helpFunc1 -functionality Useless -ErrorAction SilentlyContinue -ErrorVariable e
         TestHelpFunc1 $x
         It '$e should be empty' { $e.Count | Should -Be 0 }
     }
@@ -131,7 +131,7 @@ Describe 'get-help file' -Tags "CI" {
     }
 
     AfterAll {
-        remove-item $tmpfile -Force -ea silentlycontinue
+        remove-item $tmpfile -Force -ErrorAction silentlycontinue
     }
 
     Context 'get-help file1' {
@@ -184,7 +184,7 @@ Describe 'get-help other tests' -Tags "CI" {
     }
 
     AfterAll {
-        remove-item $tempFile -Force -ea silentlycontinue
+        remove-item $tempFile -Force -ErrorAction silentlycontinue
     }
 
     Context 'get-help missingHelp' {

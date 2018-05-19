@@ -202,7 +202,7 @@
     <value>There is no disconnected command associated with this runspace.</value>
   </data>
   <data name="DisconnectNotSupportedOnServer" xml:space="preserve">
-    <value>The disconnection operation is not supported on the remote computer. To support disconnecting, the remote computer must be running Windows PowerShell 3.0 or a later version of Windows PowerShell.</value>
+    <value>The disconnection operation is not supported on the remote computer. To support disconnecting, the remote computer must be running Windows PowerShell 3.0 or a later version of Windows PowerShell and using the WSMan transport.</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
     <value>Cannot connect the PSSession because the session is not in the Disconnected state, or is not available for connection.</value>

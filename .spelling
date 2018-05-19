@@ -207,6 +207,7 @@ WSMan
 wsmansessionoption.cs
 xUnit
 0-powershell-crossplatform
+ReportGenerator
 #endregion
 
 #region ./tools/install-powershell.readme.md Overrides
@@ -414,6 +415,17 @@ ppadmavilasom
 Stanzilla
 mababio
 v4
+preview.2
+AppLocker
+DeviceGuard
+ffeldhaus
+gabrielsroka
+SimonWahlin
+sethvs
+Dockerfile
+VisualStudio
+readonly
+PowerShell.6
 #endregion
 
 #region CODE_OF_CONDUCT.md Overrides
@@ -464,39 +476,6 @@ _script.ps1.
 #region demos/rest/README.md Overrides
  - demos/rest/README.md
 rest.ps1
-#endregion
-
-#region demos/SSHRemoting/README.md Overrides
- - demos/SSHRemoting/README.md
-_config
-2kCbnhT2dUE6WCGgVJ8Hyfu1z2wE4lifaJXLO7QJy0Y
-com.openssh.sshd
-ComputerName
-ComputerType
-ConfigurationName
-Enter-PSSession
-HostName
-KeyFilePath
-KeyPath
-launchctl
-New-PSSession
-NoLogo
-NoProfile
-openssh-client
-openssh-server
-PasswordAuthentication
-PSCredential
-PSSessions
-PubkeyAuthentication
-RSAAuthentication
-ssh.exe
-sshd
-sshd.exe
-sshs
-TestUser
-UbuntuVM1
-UbuntuVM1s
-usr
 #endregion
 
 #region demos/SystemD/readme.md Overrides
@@ -707,6 +686,7 @@ windir
  - docs/KNOWNISSUES.md
 cp
 globbing
+New-PSSession
 pipelining
 psl-omi-provider
 Register-WmiEvent
@@ -834,6 +814,7 @@ Enable-RunspaceDebug
 Enable-WSManCredSSP
 Enable-WSManTrace
 Enter-PSHostProcess
+Enter-PSSession
 Exit-PSHostProcess
 Exit-PSSession
 Export-BinaryMiLog
@@ -899,6 +880,7 @@ New-LocalGroup
 New-LocalUser
 New-ModuleManifest
 New-PSDrive
+New-PSSession
 New-PSRoleCapabilityFile
 New-PSSessionConfigurationFile
 New-ScriptFileInfo

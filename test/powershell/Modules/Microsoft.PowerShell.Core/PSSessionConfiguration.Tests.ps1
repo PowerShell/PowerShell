@@ -129,7 +129,7 @@ try
                     $Result = Get-PSSessionConfiguration
 
                     $Result.Name -contains $endpointName | Should -BeTrue
-                    $Result.PSVersion | Should -BeExactly $expectedPSVersion
+                    $Result.PSVersion -contains $expectedPSVersion | Should -BeTrue
                 }
 
                 It "Get-PSSessionConfiguration with Name parameter" {
@@ -147,7 +147,7 @@ try
                     $Result = Get-PSSessionConfiguration -Name $endpointWildcard
 
                     $Result.Name -contains $endpointName | Should -BeTrue
-                    $Result.PSVersion | Should -BeExactly $expectedPSVersion
+                    $Result.PSVersion -contains $expectedPSVersion | Should -BeTrue
                 }
 
                 It "Get-PSSessionConfiguration -Name with Non-Existent session configuration" {
@@ -481,7 +481,7 @@ namespace PowershellTestConfigNamespace
                     $UseSharedProcess = $true
 
                     Register-PSSessionConfiguration -Name $TestSessionConfigName -path $LocalConfigFilePath -MaximumReceivedObjectSizeMB $psmaximumreceivedobjectsizemb -MaximumReceivedDataSizePerCommandMB $psmaximumreceiveddatasizepercommandmb -UseSharedProcess:$UseSharedProcess -ThreadOptions $pssessionthreadoptions
-                    $Result = [PSObject]@{Session = Get-PSSessionConfiguration -Name $TestSessionConfigName; Culture = (Get-Item WSMan:\localhost\Plugin\$endpointName\lang -ea SilentlyContinue).value}
+                    $Result = [PSObject]@{Session = Get-PSSessionConfiguration -Name $TestSessionConfigName; Culture = (Get-Item WSMan:\localhost\Plugin\$endpointName\lang -ErrorAction SilentlyContinue).value}
 
                     $Result.Session.Name | Should -Be $TestSessionConfigName
                     $Result.Session.SessionType | Should -Be "Default"
@@ -558,7 +558,7 @@ namespace PowershellTestConfigNamespace
                     $UseSharedProcess = $true
 
                     Set-PSSessionConfiguration -Name $TestSessionConfigName -MaximumReceivedObjectSizeMB $psmaximumreceivedobjectsizemb -MaximumReceivedDataSizePerCommandMB $psmaximumreceiveddatasizepercommandmb -UseSharedProcess:$UseSharedProcess -ThreadOptions $pssessionthreadoptions -NoServiceRestart
-                    $Result = [PSObject]@{Session = (Get-PSSessionConfiguration -Name $TestSessionConfigName) ; Culture = (Get-Item WSMan:\localhost\Plugin\microsoft.powershell\lang -ea SilentlyContinue).value}
+                    $Result = [PSObject]@{Session = (Get-PSSessionConfiguration -Name $TestSessionConfigName) ; Culture = (Get-Item WSMan:\localhost\Plugin\microsoft.powershell\lang -ErrorAction SilentlyContinue).value}
 
                     $Result.Session.Name | Should -Be $TestSessionConfigName
                     $Result.Session.PSVersion | Should -BeExactly $expectedPSVersion
@@ -836,6 +836,27 @@ namespace PowershellTestConfigNamespace
             }
 
             $result | Should -BeTrue
+        }
+    }
+
+    Describe "Validate Enable-PSSession Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
+        BeforeAll {
+            if ($IsNotSkipped) {
+                Enable-PSRemoting
+            }
+        }
+
+        It "Enable-PSSession Cmdlet creates a PSSession configuration with a name tied to PowerShell version." {
+            $endpointName = "PowerShell." + $PSVersionTable.GitCommitId
+            $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
+            $matchedEndpoint | Should -Not -BeNullOrEmpty
+        }
+
+        It "Enable-PSSession Cmdlet creates a default PSSession configuration untied to a specific PowerShell version." {
+            $dotPos = $PSVersionTable.PSVersion.ToString().IndexOf(".")
+            $endpointName = "PowerShell." + $PSVersionTable.PSVersion.ToString().Substring(0, $dotPos)
+            $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
+            $matchedEndpoint | Should -Not -BeNullOrEmpty
         }
     }
 }

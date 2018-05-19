@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
             // Don't do ParentContainsErrorRecordException(this), as this causes recursion, and creates a
             // segmentation fault on Linux
             _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(errMessage), "HelpNotFound", ErrorCategory.ResourceUnavailable, null);
-            _errorRecord.ErrorDetails = new ErrorDetails(typeof(HelpNotFoundException).GetTypeInfo().Assembly, "HelpErrors", "HelpNotFound", _helpTopic);
+            _errorRecord.ErrorDetails = new ErrorDetails(typeof(HelpNotFoundException).Assembly, "HelpErrors", "HelpNotFound", _helpTopic);
         }
 
         private ErrorRecord _errorRecord;

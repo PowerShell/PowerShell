@@ -256,7 +256,7 @@ namespace System.Management.Automation
                 if (String.IsNullOrEmpty(resourceId))
                     throw PSTraceSource.NewArgumentNullException("resourceId");
 
-                ResourceManager manager = ResourceManagerCache.GetResourceManager(this.GetType().GetTypeInfo().Assembly, baseName);
+                ResourceManager manager = ResourceManagerCache.GetResourceManager(this.GetType().Assembly, baseName);
                 string retValue = null;
 
                 try

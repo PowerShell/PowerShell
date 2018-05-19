@@ -93,35 +93,20 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     Context "ShellInterop" {
         It "Verify Parsing Error Output Format Single Shell should throw exception" {
-            try
-            {
-                & $powershell -outp blah -comm { $input }
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "IncorrectValueForFormatParameter"
-            }
+            { & $powershell -outp blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
 
         It "Verify Validate Dollar Error Populated should throw exception" {
             $origEA = $ErrorActionPreference
             $ErrorActionPreference = "Stop"
-            try
-            {
-                $a = 1,2,3
+            $a = 1,2,3
+            $e = {
                 $a | & $powershell -noprofile -command { wgwg-wrwrhqwrhrh35h3h3}
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.ToString() | Should -Match "wgwg-wrwrhqwrhrh35h3h3"
-                $_.FullyQualifiedErrorId | Should -Be "CommandNotFoundException"
-            }
-            finally
-            {
-                $ErrorActionPreference = $origEA
-            }
+            } | Should -Throw -ErrorId "CommandNotFoundException" -PassThru
+
+            $e.ToString() | Should -Match "wgwg-wrwrhqwrhrh35h3h3"
+
+            $ErrorActionPreference = $origEA
         }
 
         It "Verify Validate Output Format As Text Explicitly Child Single Shell does not throw" {
@@ -131,15 +116,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "Verify Parsing Error Input Format Single Shell should throw exception" {
-            try
-            {
-                & $powershell -input blah -comm { $input }
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "IncorrectValueForFormatParameter"
-            }
+            { & $powershell -input blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
     }
     Context "CommandLine" {
@@ -496,15 +473,7 @@ foo
                 recurse $args
             }
 
-            try
-            {
-                recurse "args"
-                Throw "Incorrect exception"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "CallDepthOverflow"
-            }
+            { recurse "args" } | Should -Throw -ErrorId "CallDepthOverflow"
         }
     }
 
@@ -559,6 +528,44 @@ foo
             {
                 $outString | Should -Match $expectedMatch
             }
+        }
+    }
+
+    Context "-WorkingDirectory parameter" {
+        BeforeAll {
+            $folderName = (New-Guid).ToString() + " test";
+            New-Item -Path ~/$folderName -ItemType Directory
+            $ExitCodeBadCommandLineParameter = 64
+        }
+
+        AfterAll {
+            Remove-Item ~/$folderName -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Can set working directory to '<value>'" -TestCases @(
+            @{ value = "~"            ; expectedPath = $((Get-Item ~).FullName) },
+            @{ value = "~/$folderName"; expectedPath = $((Get-Item ~/$folderName).FullName) },
+            @{ value = "~\$folderName"; expectedPath = $((Get-Item ~\$folderName).FullName) }
+        ) {
+            param($value, $expectedPath)
+            $output = & $powershell -WorkingDirectory "$value" -Command "`$pwd.Path"
+            $output | Should -BeExactly $expectedPath
+        }
+
+        It "Can use '<parameter>' to set working directory" -TestCases @(
+            @{ parameter = '-workingdirectory' },
+            @{ parameter = '-wd' },
+            @{ parameter = '-wo' }
+        ) {
+            param($parameter)
+            $output = & $powershell $parameter ~ -Command "`$pwd.Path"
+            $output | Should -BeExactly $((Get-Item ~).FullName)
+        }
+
+        It "Error case if -WorkingDirectory isn't given argument as last on command line" {
+            $output = & $powershell -WorkingDirectory 2>&1
+            $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+            $output | Should -Not -BeNullOrEmpty
         }
     }
 }

@@ -1547,7 +1547,7 @@ namespace System.Management.Automation.Provider
 
                 ResourceManager manager =
                     ResourceManagerCache.GetResourceManager(
-                        this.GetType().GetTypeInfo().Assembly,
+                        this.GetType().Assembly,
                         baseName);
 
                 string retValue = null;

@@ -20,7 +20,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="..\..\license_thirdparty_proprietary.txt;..\..\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY;..\powershell-native\Install-PowerShellRemoting.ps1;..\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.man;..\PowerShell.Core.Instrumentation\RegisterManifest.ps1">
+    <Content Include="..\..\license_thirdparty_proprietary.txt;..\powershell-native\Install-PowerShellRemoting.ps1;..\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.man;..\PowerShell.Core.Instrumentation\RegisterManifest.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -37,23 +37,7 @@
   <ItemGroup>
     <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
-    <PackageReference Include="psrp.windows" Version="6.0.0-*" />
+    <PackageReference Include="psrp.windows" Version="6.1.0-*" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
-    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
 
 </Project>

@@ -212,7 +212,7 @@ namespace System.Management.Automation
             else
             {
                 elementTypes = typename.Type.GetInterfaces().Where(
-                    t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+                    t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
             }
             foreach (var type in elementTypes.Prepend(typename.Type))
             {
@@ -1099,7 +1099,7 @@ namespace System.Management.Automation
                         {
                             var res = (from method in methodCacheEntry.methodInformationStructures
                                 select method.method as MethodInfo into methodInfo
-                                where methodInfo != null && !methodInfo.ReturnType.GetTypeInfo().ContainsGenericParameters
+                                where methodInfo != null && !methodInfo.ReturnType.ContainsGenericParameters
                                 select new PSTypeName(methodInfo.ReturnType));
                             result.AddRange(res);
                             return true;
@@ -1324,7 +1324,7 @@ namespace System.Management.Automation
                                     // We can't deduce much from IEnumerable, but we can if it's generic.
                                     var enumerableInterfaces = result.Type.GetInterfaces().Where(
                                         t =>
-                                            t.GetTypeInfo().IsGenericType &&
+                                            t.IsGenericType &&
                                             t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
                                     foreach (var i in enumerableInterfaces)
                                     {
@@ -1483,11 +1483,11 @@ namespace System.Management.Automation
 
                     foreach (var iface in type.GetInterfaces())
                     {
-                        var isGenericType = iface.GetTypeInfo().IsGenericType;
+                        var isGenericType = iface.IsGenericType;
                         if (isGenericType && iface.GetGenericTypeDefinition() == typeof(IDictionary<,>))
                         {
                             var valueType = iface.GetGenericArguments()[1];
-                            if (!valueType.GetTypeInfo().ContainsGenericParameters)
+                            if (!valueType.ContainsGenericParameters)
                             {
                                 foundAny = true;
                                 yield return new PSTypeName(valueType);
@@ -1496,7 +1496,7 @@ namespace System.Management.Automation
                         else if (isGenericType && iface.GetGenericTypeDefinition() == typeof(IList<>))
                         {
                             var valueType = iface.GetGenericArguments()[0];
-                            if (!valueType.GetTypeInfo().ContainsGenericParameters)
+                            if (!valueType.ContainsGenericParameters)
                             {
                                 foundAny = true;
                                 yield return new PSTypeName(valueType);

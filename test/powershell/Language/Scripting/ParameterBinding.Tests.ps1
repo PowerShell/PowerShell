@@ -165,7 +165,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $foo
         }
 
-        { get-foo -a a -b b c d } | ShouldBeErrorId 'AmbiguousParameterSet,get-foo'
+        { get-foo -a a -b b c d } | Should -Throw -ErrorId 'AmbiguousParameterSet,get-foo'
         ( get-foo -a a b c d ) -join ',' | Should -BeExactly 'b,c,d'
         ( get-foo -b b a c d ) -join ',' | Should -BeExactly 'a,c,d'
     }
@@ -230,7 +230,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        { get-foo -a $null } | ShouldBeErrorId 'ParameterArgumentValidationErrorNullNotAllowed,get-foo'
+        { get-foo -a $null } | Should -Throw -ErrorId 'ParameterArgumentValidationErrorNullNotAllowed,get-foo'
 
     }
 
@@ -272,7 +272,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        { get-foo -a @() } | ShouldBeErrorId 'ParameterArgumentValidationErrorEmptyArrayNotAllowed,get-foo'
+        { get-foo -a @() } | Should -Throw -ErrorId 'ParameterArgumentValidationErrorEmptyArrayNotAllowed,get-foo'
     }
 
     It 'Empty collection is allowed when allowEmptyCollection is set' {
@@ -315,7 +315,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
            $Parameter
         }
 
-        { get-foo 'a','b' } | ShouldBeErrorId 'ParameterArgumentTransformationError,get-foo'
+        { get-foo 'a','b' } | Should -Throw -ErrorId 'ParameterArgumentTransformationError,get-foo'
     }
 
     It "Binding array of string to array of bool should succeed" {
@@ -420,16 +420,9 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 param([ValidateScript({$_ -gt 2}, ErrorMessage = "Item '{0}' failed '{1}' validation")] $p)
                 $p
             }
-            $errMsg = ''
-            try
-            {
-                get-fooi -p 2
-            }
-            catch
-            {
-                $errMsg = $_.Exception.Message
-            }
-            $errMsg | Should -BeExactly "Cannot validate argument on parameter 'p'. Item '2' failed '`$_ -gt 2' validation"
+
+            $err = { get-fooi -p 2 } | Should -Throw -ErrorId 'ParameterArgumentValidationError,get-fooi' -PassThru
+            $err.Exception.Message | Should -BeExactly "Cannot validate argument on parameter 'p'. Item '2' failed '`$_ -gt 2' validation"
         }
 
         It "ValidatePattern can use custom ErrorMessage" {
@@ -439,16 +432,9 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 param([ValidatePattern("\s+", ErrorMessage = "Item '{0}' failed '{1}' regex")] $p)
                 $p
             }
-            $errMsg = ''
-            try
-            {
-                get-fooj -p 2
-            }
-            catch
-            {
-                $errMsg = $_.Exception.Message
-            }
-            $errMsg | Should -BeExactly "Cannot validate argument on parameter 'p'. Item '2' failed '\s+' regex"
+
+            $err = { get-fooj -p 2 } | Should -Throw -ErrorId 'ParameterArgumentValidationError,get-fooj' -PassThru
+            $err.Exception.Message | Should -BeExactly "Cannot validate argument on parameter 'p'. Item '2' failed '\s+' regex"
         }
 
         It "ValidateSet can use custom ErrorMessage" {
@@ -456,17 +442,10 @@ Describe "Tests for parameter binding" -Tags "CI" {
             {
                 param([ValidateSet('A', 'B', 'C', IgnoreCase=$false, ErrorMessage="Item '{0}' is not in '{1}'")] $p)
             }
-            $errMsg = ''
-            try
-            {
-                get-fook -p 2
-            }
-            catch
-            {
-                $errMsg = $_.Exception.Message
-            }
+
+            $err = { get-fook -p 2 } | Should -Throw -ErrorId 'ParameterArgumentValidationError,get-fook' -PassThru
             $set = 'A','B','C' -join [Globalization.CultureInfo]::CurrentUICulture.TextInfo.ListSeparator
-            $errMsg | Should -BeExactly "Cannot validate argument on parameter 'p'. Item '2' is not in '$set'"
+            $err.Exception.Message | Should -BeExactly "Cannot validate argument on parameter 'p'. Item '2' is not in '$set'"
         }
 
     }
