@@ -88,19 +88,16 @@ fi
 
 ## Check requirements and prerequisites
 
-#Only do SUDO if we are not root
-SUDO=''
+#Check for sudo if not root
+$SUDO=''
 if (( $EUID != 0 )); then
-    SUDO='sudo'
-fi
-
-#Check that sudo is available
-if [[ "$SUDO" == "sudo" && ! ("'$*'" =~ skip-sudo-check) ]]; then
-
-    $SUDO -v
-    if [ $? -ne 0 ]; then
-      echo "ERROR: You must either be root or be able to use sudo" >&2
-      exit 5
+    #Check that sudo is available
+    if [[ ("'$*'" =~ skip-sudo-check) && "$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'* ]]; then
+        SUDO='sudo'
+    else
+        echo "ERROR: You must either be root or be able to use sudo" >&2
+        exit 5
+        fi
     fi
 fi
 

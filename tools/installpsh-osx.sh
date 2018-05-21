@@ -86,23 +86,6 @@ fi
 
 ## Check requirements and prerequisites
 
-#Only do SUDO if we are not root
-SUDO=''
-if (( $EUID != 0 )); then
-    SUDO='sudo'
-fi
-
-#Check that sudo is available
-if [[ "$SUDO" == "sudo" && ! ("'$*'" =~ skip-sudo-check) ]]; then
-
-    $SUDO -v
-    if [ $? -ne 0 ]; then
-      echo "ERROR: You must either be root or be able to use sudo" >&2
-      exit 5
-    fi
-fi
-
-
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
 
 if [[ "'$*'" =~ allowprerelease ]] ; then
