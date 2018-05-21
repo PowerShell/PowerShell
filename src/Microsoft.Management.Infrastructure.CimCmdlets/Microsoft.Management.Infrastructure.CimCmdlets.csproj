@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
