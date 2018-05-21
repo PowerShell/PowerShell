@@ -3312,7 +3312,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
+        }
 
         private void MoveItem(string path, bool literalPath)
         {
@@ -3656,7 +3656,6 @@ namespace Microsoft.PowerShell.Commands
                 switch (resolvedPaths.Count)
                 {
                     case 0:
-                        // Do nothing
                         break;
 
                     case 1:
@@ -3677,8 +3676,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
             } while (false);
-
-        } // ProcessRecord
+        }
 
         private void RenameItem(string path, bool literalPath)
         {

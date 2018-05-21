@@ -465,10 +465,8 @@ namespace System.Management.Automation
             CommandDiscovery.discoveryTracer.WriteLine(
                 "Trying to resolve the path as an PSPath");
 
-            // Find the match if it is.
             string resolvedPath = ResolvePSPath(_commandName);
 
-            // If the path was resolved, and it exists
             if (resolvedPath != null && File.Exists(resolvedPath))
             {
                 result = GetInfoFromPath(resolvedPath);
