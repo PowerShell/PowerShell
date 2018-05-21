@@ -121,8 +121,7 @@ namespace Microsoft.PowerShell
 #endif
 
 #if !UNIX
-            // TODO: put string into ressources
-            Microsoft.PowerShell.TaskbarJumpList.CreateElevatedEntry("Run as Administrator");
+            Microsoft.PowerShell.TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
 #endif
 
             // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
