@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell
         }
 
         [DllImport("ole32.Dll")]
-        static public extern HResult CoCreateInstance(ref Guid clsid,
+        static internal extern HResult CoCreateInstance(ref Guid clsid,
            [MarshalAs(UnmanagedType.IUnknown)] object inner,
            uint context,
            ref Guid uuid,

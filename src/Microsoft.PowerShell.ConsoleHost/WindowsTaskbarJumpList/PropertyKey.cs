@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell
     /// Defines a unique key for a Shell Property
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct PropertyKey : IEquatable<PropertyKey>
+    internal struct PropertyKey : IEquatable<PropertyKey>
     {
         #region Public Properties
         /// <summary>
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="formatId">A unique GUID for the property</param>
         /// <param name="propertyId">Property identifier (PID)</param>
-        public PropertyKey(Guid formatId, Int32 propertyId)
+        internal PropertyKey(Guid formatId, Int32 propertyId)
         {
             this.FormatId = formatId;
             this.PropertyId = propertyId;
