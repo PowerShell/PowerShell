@@ -389,7 +389,7 @@ namespace Microsoft.PowerShell.Commands
                 this.ThrowTerminatingError(er);
             }
 
-            if (0 == _port)
+            if (_port == 0)
             {
                 _mSmtpClient = new SmtpClient(_smtpserver);
             }
