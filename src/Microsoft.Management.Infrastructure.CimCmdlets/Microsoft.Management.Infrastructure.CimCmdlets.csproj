@@ -10,8 +10,4 @@
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
 </Project>
