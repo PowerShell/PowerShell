@@ -51,7 +51,7 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
         # This should find the file [.exe
         $result = Get-Command -Name .\[.exe -Type Application
         $result | Should -Not -BeNullOrEmpty
-        $result | Should -Be [.exe
+        $result | Should -BeExactly [.exe
 
         Pop-Location
     }
