@@ -25,7 +25,6 @@ using System.Management.Automation.Language;
 
 using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using NakedWin32Handle = System.IntPtr;
 using System.Management.Automation.Tracing;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
@@ -119,6 +118,11 @@ namespace Microsoft.PowerShell
                     Thread.Sleep(1000);
                 }
             }
+#endif
+
+#if !UNIX
+            // TODO: put string into ressources
+            Microsoft.PowerShell.TaskbarJumpList.CreateElevatedEntry("Run as Administrator");
 #endif
 
             // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version

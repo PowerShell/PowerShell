@@ -16,6 +16,14 @@
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
 
+  <ItemGroup Condition=" '$(Configuration)' == 'Linux' ">
+    <Compile Remove="WindowsTaskbarJumpList\ComInterfaces.cs" />
+    <Compile Remove="WindowsTaskbarJumpList\HResult.cs" />
+    <Compile Remove="WindowsTaskbarJumpList\PropertyKey.cs" />
+    <Compile Remove="WindowsTaskbarJumpList\PropVariant.cs" />
+    <Compile Remove="WindowsTaskbarJumpList\TaskbarJumpList.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Remove="singleshell\installer\EngineInstaller.cs" />
     <Compile Remove="singleshell\installer\MshHostMshSnapin.cs" />
