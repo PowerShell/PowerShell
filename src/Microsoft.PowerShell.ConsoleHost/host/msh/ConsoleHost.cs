@@ -1354,7 +1354,7 @@ namespace Microsoft.PowerShell
 
         private uint Run(CommandLineParameterParser cpp, bool isPrestartWarned)
         {
-            Dbg.Assert(null != cpp, "CommandLine parameter parser cannot be null.");
+            Dbg.Assert(cpp != null, "CommandLine parameter parser cannot be null.");
             uint exitCode = ExitCodeSuccess;
 
             do

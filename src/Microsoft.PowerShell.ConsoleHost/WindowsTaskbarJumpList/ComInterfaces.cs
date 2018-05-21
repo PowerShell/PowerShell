@@ -36,12 +36,10 @@ namespace Microsoft.PowerShell
             public IntPtr hStdError;
         }
 
-
         [ComImport]
         [Guid("00021401-0000-0000-C000-000000000046")]
         [ClassInterface(ClassInterfaceType.None)]
         internal class CShellLink { }
-
 
         [ComImport]
         [Guid("000214F9-0000-0000-C000-000000000046")]
@@ -89,7 +87,6 @@ namespace Microsoft.PowerShell
             void SetPath(
                 [MarshalAs(UnmanagedType.LPWStr)] string pszFile);
         }
-
 
         /// <summary>
         /// A property store.
@@ -142,7 +139,6 @@ namespace Microsoft.PowerShell
             [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
             HResult Commit();
         }
-
 
         [ComImport()]
         [Guid("6332DEBF-87B5-4670-90C0-5E57B408A49E")]
@@ -214,7 +210,6 @@ namespace Microsoft.PowerShell
             void RemoveObject(uint uiIndex);
             void Clear();
         }
-
 
         [ComImport]
         [Guid("45e2b4ae-b1c3-11d0-b92f-00a0c90312e1"),

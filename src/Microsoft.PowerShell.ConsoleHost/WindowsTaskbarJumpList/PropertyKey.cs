@@ -12,11 +12,6 @@ namespace Microsoft.PowerShell
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct PropertyKey : IEquatable<PropertyKey>
     {
-
-        #region Private Fields
-
-        #endregion
-
         #region Public Properties
         /// <summary>
         /// A unique GUID for the property
@@ -42,17 +37,6 @@ namespace Microsoft.PowerShell
             this.FormatId = formatId;
             this.PropertyId = propertyId;
         }
-
-        ///// <summary>
-        ///// PropertyKey Constructor
-        ///// </summary>
-        ///// <param name="formatId">A string represenstion of a GUID for the property</param>
-        ///// <param name="propertyId">Property identifier (PID)</param>
-        //public PropertyKey(string formatId, Int32 propertyId)
-        //{
-        //    this.formatId = new Guid(formatId);
-        //    this.propertyId = propertyId;
-        //}
 
         #endregion
 

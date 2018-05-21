@@ -16,7 +16,6 @@ namespace Microsoft.PowerShell
             var STARTF_TITLEISLINKNAME = 0x00000800;
             if (startupInfo.lpTitle == null || (startupInfo.dwFlags & STARTF_TITLEISLINKNAME) != STARTF_TITLEISLINKNAME)
             {
-
                 string cmdPath = Assembly.GetEntryAssembly().Location.Replace(".dll", ".exe"); // TODO: think of a better solution
 
                 // Check for maximum available slots in JumpList and start creating the custom Destination List
