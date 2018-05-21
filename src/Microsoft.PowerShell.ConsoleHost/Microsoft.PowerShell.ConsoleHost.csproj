@@ -16,7 +16,7 @@
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(Configuration)' == 'Linux' ">
+  <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
     <Compile Remove="WindowsTaskbarJumpList\ComInterfaces.cs" />
     <Compile Remove="WindowsTaskbarJumpList\HResult.cs" />
     <Compile Remove="WindowsTaskbarJumpList\PropertyKey.cs" />
