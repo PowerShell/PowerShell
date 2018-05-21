@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public void Dispose()
         {
-            PropVariantNativeMethods.PropVariantClear(this); // TODO
+            PropVariantNativeMethods.PropVariantClear(this);
 
             GC.SuppressFinalize(this);
         }
