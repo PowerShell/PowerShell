@@ -147,4 +147,16 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $machineName = [System.Environment]::MachineName
         $transcriptFilePath | Should FileContentMatch $machineName
     }
+    
+    It "Transcription should record Write-Information output when preference is set to Continue" {
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            $InformationPreference = 'Continue'
+            Write-Information 'Continue'
+            Stop-Transcript }
+        & $script
+        Test-Path $transcriptFilePath | Should -BeTrue
+
+        $transcriptFilePath | Should FileContentMatch 'Continue'
+    }
 }
