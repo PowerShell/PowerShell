@@ -3314,7 +3314,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void MoveItem(string path, bool literalPath)
+        private void MoveItem(string path, bool literalPath = false)
         {
             CmdletProviderContext currentContext = CmdletProviderContext;
             currentContext.SuppressWildcardExpansion = literalPath;
@@ -3678,7 +3678,7 @@ namespace Microsoft.PowerShell.Commands
             } while (false);
         }
 
-        private void RenameItem(string path, bool literalPath)
+        private void RenameItem(string path, bool literalPath = false)
         {
             CmdletProviderContext currentContext = CmdletProviderContext;
             currentContext.SuppressWildcardExpansion = literalPath;
