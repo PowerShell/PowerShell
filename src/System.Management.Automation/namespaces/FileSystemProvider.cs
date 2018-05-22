@@ -1218,8 +1218,8 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
             FileInfo result = new FileInfo(path);
 
-            bool exists = result.Exists;
             var attributes = result.Attributes;
+            bool exists = (int)attributes != -1;
             bool hidden = attributes.HasFlag(FileAttributes.Hidden);
             isContainer = attributes.HasFlag(FileAttributes.Directory);
 
