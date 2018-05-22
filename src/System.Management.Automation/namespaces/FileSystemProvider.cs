@@ -1219,6 +1219,8 @@ namespace Microsoft.PowerShell.Commands
             FileInfo result = new FileInfo(path);
 
             var attributes = result.Attributes;
+            // FileInfo.Exists is true for files but false for directories
+            // so we check attributes directly.
             bool exists = (int)attributes != -1;
             bool hidden = attributes.HasFlag(FileAttributes.Hidden);
             isContainer = attributes.HasFlag(FileAttributes.Directory);
