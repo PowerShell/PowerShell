@@ -1274,7 +1274,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     s_tracer.WriteLine("Got directory info: {0}", result);
 
-                    return result.Directory;
+                    return new DirectoryInfo(path);
                 }
             }
             return null;
