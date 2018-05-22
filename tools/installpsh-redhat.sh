@@ -91,7 +91,7 @@ fi
 ## Check requirements and prerequisites
 
 #Check for sudo if not root
-$SUDO=''
+SUDO=''
 if (( $EUID != 0 )); then
     #Check that sudo is available
     if [[ ("'$*'" =~ skip-sudo-check) && "$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'* ]]; then
