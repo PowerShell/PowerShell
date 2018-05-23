@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_path == null)
             {
-                throw new InvalidOperationException("FileName is mandatory parameter");
+                throw new InvalidOperationException(CsvCommandStrings.FileNameIsAMandatoryParameter);
             }
 
             string resolvedFilePath = PathUtils.ResolveFilePath(this.Path, this, _isLiteralPath);
@@ -421,12 +421,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!_isActuallyAppending)
             {
-                throw new InvalidOperationException("This method should only get called when appending");
+                throw new InvalidOperationException(CsvCommandStrings.ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenAppending);
             }
 
             if (_preexistingPropertyNames == null)
             {
-                throw new InvalidOperationException("This method should only get called when we have successfully read preexisting property names");
+                throw new InvalidOperationException(CsvCommandStrings.ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenPreexistingPropertyNamesHaveBeenReadSuccessfully);
             }
 
             HashSet<string> appendedPropertyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -908,7 +908,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (propertyNames != null)
             {
-                throw new InvalidOperationException("This method should be called only once per cmdlet instance");
+                throw new InvalidOperationException(CsvCommandStrings.BuildPropertyNamesMethodShouldBeCalledOnlyOncePerCmdletInstance);
             }
 
             // serialize only Extended and Adapted properties..
@@ -1046,7 +1046,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (tnh[0] == null)
                 {
-                    throw new InvalidOperationException("Type hierarchy should not have null values");
+                    throw new InvalidOperationException(CsvCommandStrings.TypeHierarchyShouldNotHaveNullValues);
                 }
 
                 string temp = tnh[0];
@@ -1201,7 +1201,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (EOF)
             {
-                throw new InvalidOperationException("This should not be called if EOF is reached");
+                throw new InvalidOperationException(CsvCommandStrings.EOFIsReached);
             }
 
             int i = _sr.Read();

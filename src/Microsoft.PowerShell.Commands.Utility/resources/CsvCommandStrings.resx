@@ -136,4 +136,22 @@
   <data name="UseDefaultNameForUnspecifiedHeader" xml:space="preserve">
     <value>One or more headers were not specified. Default names starting with "H" have been used in place of any missing headers.</value>
   </data>
+  <data name="FileNameIsAMandatoryParameter" xml:space="preserve">
+    <value>FileName is a mandatory parameter.</value>
+  </data>
+  <data name="ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenAppending" xml:space="preserve">
+    <value>ReconcilePreexistingPropertyNames method should only get called when appending.</value>
+  </data>
+  <data name="ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenPreexistingPropertyNamesHaveBeenReadSuccessfully" xml:space="preserve">
+    <value>ReconcilePreexistingPropertyNames method should only get called when preexisting property names have been read successfully.</value>
+  </data>
+  <data name="BuildPropertyNamesMethodShouldBeCalledOnlyOncePerCmdletInstance" xml:space="preserve">
+    <value>BuildPropertyNames method should be called only once per cmdlet instance.</value>
+  </data>
+  <data name="TypeHierarchyShouldNotHaveNullValues" xml:space="preserve">
+    <value>Type hierarchy should not have null values.</value>
+  </data>
+  <data name="EOFIsReached" xml:space="preserve">
+    <value>EOF is reached.</value>
+  </data>
 </root>
