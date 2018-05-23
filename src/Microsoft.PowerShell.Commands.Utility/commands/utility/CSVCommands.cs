@@ -329,8 +329,6 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateFileStream()
         {
-            Dbg.Assert(_path != null, "FileName is mandatory parameter");
-
             if (_path == null)
             {
                 throw new InvalidOperationException("FileName is mandatory parameter");
@@ -421,9 +419,6 @@ namespace Microsoft.PowerShell.Commands
 
         private void ReconcilePreexistingPropertyNames()
         {
-            Dbg.Assert(_isActuallyAppending, "This method should only get called when appending");
-            Dbg.Assert(_preexistingPropertyNames != null, "This method should only get called when we have successfully read preexisting property names");
-
             if (!_isActuallyAppending)
             {
                 throw new InvalidOperationException("This method should only get called when appending");
@@ -911,8 +906,6 @@ namespace Microsoft.PowerShell.Commands
         IList<string>
         BuildPropertyNames(PSObject source, IList<string> propertyNames)
         {
-            Dbg.Assert(propertyNames == null, "This method should be called only once per cmdlet instance");
-
             if (propertyNames != null)
             {
                 throw new InvalidOperationException("This method should be called only once per cmdlet instance");
@@ -939,8 +932,6 @@ namespace Microsoft.PowerShell.Commands
         string
         ConvertPropertyNamesCSV(IList<string> propertyNames)
         {
-            Dbg.Assert(propertyNames != null, "BuildPropertyNames should be called before this method");
-
             if (propertyNames == null)
             {
                 throw new ArgumentNullException("propertyNames");
@@ -974,8 +965,6 @@ namespace Microsoft.PowerShell.Commands
         string
         ConvertPSObjectToCSV(PSObject mshObject, IList<string> propertyNames)
         {
-            Dbg.Assert(propertyNames != null, "PropertyNames collection can be empty here, but it should not be null");
-
             if (propertyNames == null)
             {
                 throw new ArgumentNullException("propertyNames");
@@ -1015,8 +1004,6 @@ namespace Microsoft.PowerShell.Commands
         string
         GetToStringValueForProperty(PSPropertyInfo property)
         {
-            Dbg.Assert(property != null, "Caller should validate the parameter");
-
             if (property == null)
             {
                 throw new ArgumentNullException("property");
@@ -1057,8 +1044,6 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Dbg.Assert(tnh[0] != null, "type hierarchy should not have null values");
-
                 if (tnh[0] == null)
                 {
                     throw new InvalidOperationException("Type hierarchy should not have null values");
@@ -1177,9 +1162,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
-            Dbg.Assert(cmdlet != null, "Caller should verify cmdlet != null");
-            Dbg.Assert(streamReader != null, "Caller should verify textReader != null");
-
             if (cmdlet == null)
             {
                 throw new ArgumentNullException("cmdlet");
@@ -1217,8 +1199,6 @@ namespace Microsoft.PowerShell.Commands
         char
         ReadChar()
         {
-            Dbg.Assert(!EOF, "This should not be called if EOF is reached");
-
             if (EOF)
             {
                 throw new InvalidOperationException("This should not be called if EOF is reached");
