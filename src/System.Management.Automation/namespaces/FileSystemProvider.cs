@@ -2911,15 +2911,15 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                bool isDirectory;
-                Exception accessException;
-
-                if (!Utils.NativeItemExists(directory.FullName, out isDirectory, out accessException))
+                try
                 {
-                    return;
+                    if (!Utils.NativeItemExists(directory.FullName, out bool unused))
+                    {
+                        // Directory does not exist
+                        return;
+                    }
                 }
-
-                if (accessException != null)
+                catch (Exception accessException)
                 {
                     ErrorRecord errorRecord = new ErrorRecord(accessException, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, directory);
 
