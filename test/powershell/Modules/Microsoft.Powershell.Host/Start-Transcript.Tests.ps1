@@ -16,7 +16,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
                 #Add sample text to the file
                 $content = "This is sample text!"
                 $content | Out-File -FilePath $outputFilePath
-                Test-Path $outputFilePath | Should be $true
+                Test-Path $outputFilePath | Should -BeTrue
             }
 
             try {
@@ -27,16 +27,16 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
                 if($expectedError) {
                     $ps.hadErrors | Should -BeTrue
-                    $ps.Streams.Error.FullyQualifiedErrorId | Should be $expectedError
+                    $ps.Streams.Error.FullyQualifiedErrorId | Should -Be $expectedError
                 } else {
                     $ps.addscript("Get-Date").Invoke()
                     $ps.commands.clear()
                     $ps.addscript("Stop-Transcript").Invoke()
 
                     Test-Path $outputFilePath | Should -BeTrue
-                    $outputFilePath | should FileContentMatch "Get-Date"
+                    $outputFilePath | Should -FileContentMatch "Get-Date"
                     if($append) {
-                        $outputFilePath | Should FileContentMatch $content
+                        $outputFilePath | Should -FileContentMatch $content
                     }
                 }
             } finally {
@@ -122,8 +122,8 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             }
         }
 
-        Test-Path $transcriptFilePath | Should be $true
-        $transcriptFilePath | Should FileContentMatch "After Dispose"
+        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -FileContentMatch "After Dispose"
     }
 
     It "Transcription should be closed if the only runspace gets closed" {
@@ -132,8 +132,8 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         Invoke-Expression $powerShellCommand
 
         Test-Path $transcriptFilePath | Should -BeTrue
-        $transcriptFilePath | Should FileContentMatch "Before Dispose"
-        $transcriptFilePath | Should FileContentMatch "PowerShell transcript end"
+        $transcriptFilePath | Should -FileContentMatch "Before Dispose"
+        $transcriptFilePath | Should -FileContentMatch "PowerShell transcript end"
     }
 
     It "Transcription should record native command output" {
@@ -145,9 +145,9 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         Test-Path $transcriptFilePath | Should -BeTrue
 
         $machineName = [System.Environment]::MachineName
-        $transcriptFilePath | Should FileContentMatch $machineName
+        $transcriptFilePath | Should -FileContentMatch $machineName
     }
-    
+
     It "Transcription should record Write-Information output when preference is set to Continue" {
         $script = {
             Start-Transcript -Path $transcriptFilePath
@@ -157,6 +157,6 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         & $script
         Test-Path $transcriptFilePath | Should -BeTrue
 
-        $transcriptFilePath | Should FileContentMatch 'Continue'
+        $transcriptFilePath | Should -FileContentMatch 'Continue'
     }
 }
