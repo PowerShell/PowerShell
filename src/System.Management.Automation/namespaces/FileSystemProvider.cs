@@ -6201,16 +6201,7 @@ namespace Microsoft.PowerShell.Commands
             // Create a PSObject with either a DirectoryInfo or FileInfo object
             // at its core.
 
-            bool isDirectory;
-            Exception accessException;
-            bool exists = Utils.NativeItemExists(path, out isDirectory, out accessException);
-
-            if (accessException != null)
-            {
-                throw accessException;
-            }
-
-            if (exists)
+            if (Utils.NativeItemExists(path, out bool isDirectory))
             {
                 if (isDirectory)
                 {
