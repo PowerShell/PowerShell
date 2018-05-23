@@ -2366,49 +2366,27 @@ namespace System.Management.Automation.Language
             return true;
         }
 
-        private bool ScanPossibleHereStringFooter(Func<char, bool> test, Action<char> appendChar, ref int falseFooterOffset)
+        private bool ScanPossibleHereStringFooter(Func<char, bool> test, Action<char> appendChar)
         {
             char c = GetChar();
 
-            // First, check if we found the real terminator.
-            if (test(c) && PeekChar() == '@')
-            {
-                SkipChar();
-                return true;
-            }
-
-            // Catch whitespace before the terminator so we can issue
-            // a better error message than "missing terminator".
-
+            // Catch whitespace before the terminator
             while (c.IsWhitespace())
             {
                 appendChar(c);
                 c = GetChar();
             }
 
-            if (c == '\r' || c == '\n' || (c == '\0' && AtEof()))
-            {
-                UngetChar();
-                return false;
-            }
-
+            // Check if we found the real terminator.
             if (test(c) && PeekChar() == '@')
             {
-                appendChar(c);
-                if (falseFooterOffset == -1)
-                {
-                    // If we don't find a real footer, we'll use this position
-                    // to give a helpful error message.
-                    falseFooterOffset = _currentIndex - 1;
-                }
-                appendChar(GetChar());  // append the '@'
+                SkipChar();
+                return true;
             }
-            else
-            {
-                // Unget the character, it might be a '$' or '`' and if we're in a expandable here string, the caller must
-                // handle the character.
-                UngetChar();
-            }
+
+            // Unget the character, it might be a '$' or '`' and if we're in a expandable here string, the caller must
+            // handle the character.
+            UngetChar();
             return false;
         }
 
@@ -2417,7 +2395,6 @@ namespace System.Management.Automation.Language
             // On entry, we've see @'.  Remember the position in case we reach the end of file and want
             // to use this position as the error position.
             int headerOffset = _currentIndex - 2;
-            int falseFooterOffset = -1;
 
             if (!ScanAfterHereStringHeader("@'"))
             {
@@ -2427,7 +2404,7 @@ namespace System.Management.Automation.Language
             TokenFlags flags = TokenFlags.None;
             var sb = GetStringBuilder();
             Action<char> appendChar = c => sb.Append(c);
-            if (!ScanPossibleHereStringFooter(CharExtensions.IsSingleQuote, appendChar, ref falseFooterOffset))
+            if (!ScanPossibleHereStringFooter(CharExtensions.IsSingleQuote, appendChar))
             {
                 while (true)
                 {
@@ -2445,7 +2422,7 @@ namespace System.Management.Automation.Language
                             sb.Append('\n');
                         }
 
-                        if (ScanPossibleHereStringFooter(CharExtensions.IsSingleQuote, appendChar, ref falseFooterOffset))
+                        if (ScanPossibleHereStringFooter(CharExtensions.IsSingleQuote, appendChar))
                         {
                             // Remove the last newline appended.
                             sb.Length = length;
@@ -2459,19 +2436,10 @@ namespace System.Management.Automation.Language
                     else
                     {
                         UngetChar();
-                        if (falseFooterOffset != -1)
-                        {
-                            ReportIncompleteInput(falseFooterOffset,
-                                nameof(ParserStrings.WhitespaceBeforeHereStringFooter),
-                                ParserStrings.WhitespaceBeforeHereStringFooter);
-                        }
-                        else
-                        {
-                            ReportIncompleteInput(headerOffset,
-                                nameof(ParserStrings.TerminatorExpectedAtEndOfString),
-                                ParserStrings.TerminatorExpectedAtEndOfString,
-                                "'@");
-                        }
+                        ReportIncompleteInput(headerOffset,
+                            nameof(ParserStrings.TerminatorExpectedAtEndOfString),
+                            ParserStrings.TerminatorExpectedAtEndOfString,
+                            "'@");
                         flags = TokenFlags.TokenInError;
                         break;
                     }
@@ -2494,11 +2462,10 @@ namespace System.Management.Automation.Language
 
             TokenFlags flags = TokenFlags.None;
             List<Token> nestedTokens = new List<Token>();
-            int falseFooterOffset = -1;
             var sb = GetStringBuilder();
             var formatSb = GetStringBuilder();
             Action<char> appendChar = c => { sb.Append(c); formatSb.Append(c); };
-            if (!ScanPossibleHereStringFooter(CharExtensions.IsDoubleQuote, appendChar, ref falseFooterOffset))
+            if (!ScanPossibleHereStringFooter(CharExtensions.IsDoubleQuote, appendChar))
             {
                 while (true)
                 {
@@ -2518,7 +2485,7 @@ namespace System.Management.Automation.Language
                             sb.Append('\n');
                             formatSb.Append('\n');
                         }
-                        if (ScanPossibleHereStringFooter(CharExtensions.IsDoubleQuote, appendChar, ref falseFooterOffset))
+                        if (ScanPossibleHereStringFooter(CharExtensions.IsDoubleQuote, appendChar))
                         {
                             // Remove the last newline appended.
                             sb.Length = length;
@@ -2566,19 +2533,10 @@ namespace System.Management.Automation.Language
                     else
                     {
                         UngetChar();
-                        if (falseFooterOffset != -1)
-                        {
-                            ReportIncompleteInput(falseFooterOffset,
-                                nameof(ParserStrings.WhitespaceBeforeHereStringFooter),
-                                ParserStrings.WhitespaceBeforeHereStringFooter);
-                        }
-                        else
-                        {
-                            ReportIncompleteInput(headerOffset,
-                                nameof(ParserStrings.TerminatorExpectedAtEndOfString),
-                                ParserStrings.TerminatorExpectedAtEndOfString,
-                                "\"@");
-                        }
+                        ReportIncompleteInput(headerOffset,
+                            nameof(ParserStrings.TerminatorExpectedAtEndOfString),
+                            ParserStrings.TerminatorExpectedAtEndOfString,
+                            "\"@");
                         flags = TokenFlags.TokenInError;
                         break;
                     }

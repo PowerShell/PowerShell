@@ -653,9 +653,6 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="TerminatorExpectedAtEndOfString" xml:space="preserve">
     <value>The string is missing the terminator: {0}.</value>
   </data>
-  <data name="WhitespaceBeforeHereStringFooter" xml:space="preserve">
-    <value>White space is not allowed before the string terminator.</value>
-  </data>
   <data name="EndSquareBracketExpectedAtEndOfType" xml:space="preserve">
     <value>Missing ] at end of type token.</value>
   </data>
