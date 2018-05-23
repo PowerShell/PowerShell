@@ -3239,19 +3239,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                bool notUsed;
-                Exception accessException;
-
-                // First see if the file exists
-                if (Utils.NativeItemExists(path, out notUsed, out accessException))
-                {
-                    result = true;
-                }
-
-                if (accessException != null)
-                {
-                    throw accessException;
-                }
+                result = Utils.NativeItemExists(path, out bool unused);
 
                 FileSystemItemProviderDynamicParameters itemExistsDynamicParameters =
                     DynamicParameters as FileSystemItemProviderDynamicParameters;
