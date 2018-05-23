@@ -1502,17 +1502,7 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            // Get the directory object
-            bool isDirectory;
-            Exception accessException;
-            bool exists = Utils.NativeItemExists(path, out isDirectory, out accessException);
-
-            if (accessException != null)
-            {
-                throw accessException;
-            }
-
-            if (exists)
+            if (Utils.NativeItemExists(path, out bool isDirectory))
             {
                 if (isDirectory)
                 {
