@@ -505,7 +505,7 @@ namespace System.Management.Automation
             T policy = null;
 #if !UNIX
             // On Windows, group policy settings from registry take precedence.
-            // If the requested policy is not defined in registry, we query the configuration file. 
+            // If the requested policy is not defined in registry, we query the configuration file.
             policy = GetPolicySettingFromGPO<T>(preferenceOrder);
             if (policy != null) { return policy; }
 #endif
@@ -999,34 +999,16 @@ namespace System.Management.Automation
 #endif
         }
 
-        // This is done through P/Invoke since we pay 13% performance degradation
-        // through the CAS checks required by File.Exists and Directory.Exists
         internal static bool NativeFileExists(string path)
         {
-            bool isDirectory;
-            Exception ioException;
-
-            bool itemExists = NativeItemExists(path, out isDirectory, out ioException);
-            if (ioException != null)
-            {
-                throw ioException;
-            }
+            bool itemExists = NativeItemExists(path, out bool isDirectory);
 
             return (itemExists && (!isDirectory));
         }
 
-        // This is done through P/Invoke since we pay 13% performance degradation
-        // through the CAS checks required by File.Exists and Directory.Exists
         internal static bool NativeDirectoryExists(string path)
         {
-            bool isDirectory;
-            Exception ioException;
-
-            bool itemExists = NativeItemExists(path, out isDirectory, out ioException);
-            if (ioException != null)
-            {
-                throw ioException;
-            }
+            bool itemExists = NativeItemExists(path, out bool isDirectory);
 
             return (itemExists && isDirectory);
         }
