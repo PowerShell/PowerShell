@@ -2164,7 +2164,7 @@ namespace Microsoft.PowerShell.Commands
                     // non-existing targets on either Windows or Linux.
                     try
                     {
-                        exists = CheckItemExists(strTargetPath, out isDirectory);
+                        exists = Utils.NativeItemExists(strTargetPath, out isDirectory);
                         if (itemType == ItemType.SymbolicLink)
                             exists = true; // pretend the target exists if we're making a symbolic link
                     }
@@ -2197,7 +2197,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        symLinkExists = CheckItemExists(path, out isSymLinkDirectory);
+                        symLinkExists = Utils.NativeItemExists(path, out isSymLinkDirectory);
                     }
                     catch (Exception e)
                     {
@@ -2326,7 +2326,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        exists = CheckItemExists(strTargetPath, out isDirectory);
+                        exists = Utils.NativeItemExists(strTargetPath, out isDirectory);
                     }
                     catch (Exception e)
                     {
@@ -2354,7 +2354,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        pathExists = CheckItemExists(path, out isPathDirectory);
+                        pathExists = Utils.NativeItemExists(path, out isPathDirectory);
                     }
                     catch (Exception e)
                     {
@@ -2472,26 +2472,6 @@ namespace Microsoft.PowerShell.Commands
         {
             bool junctionCreated = InternalSymbolicLinkLinkCodeMethods.CreateJunction(path, strTargetPath);
             return junctionCreated;
-        }
-
-        /// <summary>
-        /// Checks if the item exists and throws exception on access.
-        /// </summary>
-        /// <param name="strTargetPath"></param>
-        /// <param name="isDirectory"></param>
-        /// <returns></returns>
-        private static bool CheckItemExists(string strTargetPath, out bool isDirectory)
-        {
-            Exception accessException;
-
-            bool exists = Utils.NativeItemExists(strTargetPath, out isDirectory, out accessException);
-
-            if (accessException != null)
-            {
-                throw accessException;
-            }
-
-            return exists;
         }
 
         private enum ItemType
