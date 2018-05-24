@@ -148,15 +148,39 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $transcriptFilePath | Should -FileContentMatch $machineName
     }
 
-    It "Transcription should record Write-Information output when preference is set to Continue" {
+    It "Transcription should record Write-Information output when InformationAction is set to Continue" {
+        [String]$message = New-Guid
         $script = {
             Start-Transcript -Path $transcriptFilePath
-            $InformationPreference = 'Continue'
-            Write-Information 'Continue'
+            Write-Information -Message $message -InformationAction Continue
             Stop-Transcript }
         & $script
         Test-Path $transcriptFilePath | Should -BeTrue
 
-        $transcriptFilePath | Should -FileContentMatch 'Continue'
+        $transcriptFilePath | Should -FileContentMatch $message
+    }
+
+    It "Transcription should not record Write-Information output when InformationAction is set to SilentlyContinue" {
+        [String]$message = New-Guid
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Information -Message $message -InformationAction SilentlyContinue
+            Stop-Transcript }
+        & $script
+        Test-Path $transcriptFilePath | Should -BeTrue
+
+        $transcriptFilePath | Should -Not -FileContentMatch $message
+    }
+
+    It "Transcription should not record Write-Information output when InformationAction is set to Ignore" {
+        [String]$message = New-Guid
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Information -Message $message -InformationAction Ignore
+            Stop-Transcript }
+        & $script
+        Test-Path $transcriptFilePath | Should -BeTrue
+
+        $transcriptFilePath | Should -Not -FileContentMatch $message
     }
 }
