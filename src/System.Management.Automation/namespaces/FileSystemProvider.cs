@@ -114,12 +114,12 @@ namespace Microsoft.PowerShell.Commands
         {
             isContainer = false;
 
-            if (Utils.NativeFileExists(path))
+            if (Utils.FileExists(path))
             {
                 return new FileInfo(path);
             }
 
-            if (Utils.NativeDirectoryExists(path))
+            if (Utils.DirectoryExists(path))
             {
                 isContainer = true;
                 return new DirectoryInfo(path);
@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell.Commands
                 // Since the drive is fixed, ensure the root is valid.
                 try
                 {
-                    validDrive = Utils.NativeDirectoryExists(drive.Root);
+                    validDrive = Utils.DirectoryExists(drive.Root);
                 }
                 catch (IOException)
                 {
@@ -1502,7 +1502,7 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            if (Utils.NativeItemExists(path, out bool isDirectory))
+            if (Utils.ItemExists(path, out bool isDirectory))
             {
                 if (isDirectory)
                 {
@@ -2164,7 +2164,7 @@ namespace Microsoft.PowerShell.Commands
                     // non-existing targets on either Windows or Linux.
                     try
                     {
-                        exists = Utils.NativeItemExists(strTargetPath, out isDirectory);
+                        exists = Utils.ItemExists(strTargetPath, out isDirectory);
                         if (itemType == ItemType.SymbolicLink)
                             exists = true; // pretend the target exists if we're making a symbolic link
                     }
@@ -2197,7 +2197,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        symLinkExists = Utils.NativeItemExists(path, out isSymLinkDirectory);
+                        symLinkExists = Utils.ItemExists(path, out isSymLinkDirectory);
                     }
                     catch (Exception e)
                     {
@@ -2326,7 +2326,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        exists = Utils.NativeItemExists(strTargetPath, out isDirectory);
+                        exists = Utils.ItemExists(strTargetPath, out isDirectory);
                     }
                     catch (Exception e)
                     {
@@ -2354,7 +2354,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        pathExists = Utils.NativeItemExists(path, out isPathDirectory);
+                        pathExists = Utils.ItemExists(path, out isPathDirectory);
                     }
                     catch (Exception e)
                     {
@@ -2893,7 +2893,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (!Utils.NativeItemExists(directory.FullName, out bool unused))
+                    if (!Utils.ItemExists(directory.FullName, out bool unused))
                     {
                         // Directory does not exist
                         return;
@@ -3219,7 +3219,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                result = Utils.NativeItemExists(path, out bool unused);
+                result = Utils.ItemExists(path, out bool unused);
 
                 FileSystemItemProviderDynamicParameters itemExistsDynamicParameters =
                     DynamicParameters as FileSystemItemProviderDynamicParameters;
@@ -3524,7 +3524,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (op["Items"] != null)
                     {
-                        bool destinationPathIsFile = Utils.NativeFileExists(destinationPath);
+                        bool destinationPathIsFile = Utils.FileExists(destinationPath);
 
                         PSObject obj = (PSObject)op["Items"];
                         ArrayList itemsList = (ArrayList)obj.BaseObject;
@@ -3898,7 +3898,7 @@ namespace Microsoft.PowerShell.Commands
                 CreateDirectory(destination, false);
 
                 // If failed to create directory
-                if (!Utils.NativeDirectoryExists(destination))
+                if (!Utils.DirectoryExists(destination))
                 {
                     return;
                 }
@@ -4971,7 +4971,7 @@ namespace Microsoft.PowerShell.Commands
                             // may contain additional globbing patterns such as '[ab]'
                             // which Directory.EnumerateFiles() processes, giving undesireable
                             // results in this context.
-                            if (!Utils.NativeItemExists(result))
+                            if (!Utils.ItemExists(result))
                             {
                                 String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                                 Exception e = new IOException(error);
@@ -5605,7 +5605,7 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            return Utils.NativeDirectoryExists(path);
+            return Utils.DirectoryExists(path);
         }
 
         #region MoveItem
@@ -6022,7 +6022,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 FileSystemInfo fileSystemObject = null;// Get the directory object
 
-                if (Utils.NativeItemExists(path, out bool isDirectory))
+                if (Utils.ItemExists(path, out bool isDirectory))
                 {
                     if (isDirectory)
                     {
@@ -6181,7 +6181,7 @@ namespace Microsoft.PowerShell.Commands
             // Create a PSObject with either a DirectoryInfo or FileInfo object
             // at its core.
 
-            if (Utils.NativeItemExists(path, out bool isDirectory))
+            if (Utils.ItemExists(path, out bool isDirectory))
             {
                 if (isDirectory)
                 {

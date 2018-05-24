@@ -504,7 +504,7 @@ namespace System.Management.Automation
             // if the directory exists, just return it
             try
             {
-                if (Utils.NativeDirectoryExists(userPath))
+                if (Utils.DirectoryExists(userPath))
                 {
                     result.Add(new PathInfo(drive, provider, userPath, _sessionState));
                     return result;
@@ -2136,7 +2136,7 @@ namespace System.Management.Automation
                             providerInstance,
                             context);
                 }
-                
+
                 return relativePath;
             }
             catch (PSNotSupportedException)

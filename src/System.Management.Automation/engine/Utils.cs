@@ -895,12 +895,12 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static bool NativeItemExists(string path)
+        internal static bool ItemExists(string path)
         {
             bool result = false;
             try
             {
-                result =  NativeItemExists(path, out bool unused);
+                result =  ItemExists(path, out bool unused);
             }
             catch
             {
@@ -908,7 +908,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        internal static bool NativeItemExists(string path, out bool isDirectory)
+        internal static bool ItemExists(string path, out bool isDirectory)
         {
             if (String.IsNullOrEmpty(path))
             {
@@ -928,16 +928,16 @@ namespace System.Management.Automation
             return (int)attributes != -1;
         }
 
-        internal static bool NativeFileExists(string path)
+        internal static bool FileExists(string path)
         {
-            bool itemExists = NativeItemExists(path, out bool isDirectory);
+            bool itemExists = ItemExists(path, out bool isDirectory);
 
             return (itemExists && (!isDirectory));
         }
 
-        internal static bool NativeDirectoryExists(string path)
+        internal static bool DirectoryExists(string path)
         {
-            bool itemExists = NativeItemExists(path, out bool isDirectory);
+            bool itemExists = ItemExists(path, out bool isDirectory);
 
             return (itemExists && isDirectory);
         }

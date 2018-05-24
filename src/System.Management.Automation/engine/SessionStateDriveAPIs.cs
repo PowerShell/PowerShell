@@ -965,9 +965,9 @@ namespace System.Management.Automation
                         {
                             try
                             {
-                                // Checking for the presence of mounted drive locally using Utils.NativeDirectoryExists API as
+                                // Checking for the presence of mounted drive locally using Utils.DirectoryExists API as
                                 // the calls to this API is faster than normal Directory.Exist API.
-                                bool validDrive = Utils.NativeDirectoryExists(drive.Root);
+                                bool validDrive = Utils.DirectoryExists(drive.Root);
                                 if (!validDrive)
                                 {
                                     result = true;
