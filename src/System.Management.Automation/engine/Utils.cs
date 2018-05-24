@@ -903,6 +903,26 @@ namespace System.Management.Automation
             return NativeItemExists(path, out unusedIsDirectory, out unusedException);
         }
 
+        internal static bool NativeItemExists(string path, out bool isDirectory)
+        {
+            if (String.IsNullOrEmpty(path))
+            {
+                isDirectory = false;
+                return false;
+            }
+#if !UNIX
+            if (IsReservedDeviceName(path))
+            {
+                isDirectory = false;
+                return false;
+            }
+#endif
+            // Use 'File.GetAttributes()' to get access exceptions
+            FileAttributes attributes = File.GetAttributes(path);
+            isDirectory = attributes.HasFlag(FileAttributes.Directory);
+            return (int)attributes != -1;
+        }
+
         // This is done through P/Invoke since File.Exists and Directory.Exists pay 13% performance degradation
         // through the CAS checks, and are terribly slow for network paths.
         internal static bool NativeItemExists(string path, out bool isDirectory, out Exception exception)
