@@ -897,10 +897,15 @@ namespace System.Management.Automation
 
         internal static bool NativeItemExists(string path)
         {
-            bool unusedIsDirectory;
-            Exception unusedException;
-
-            return NativeItemExists(path, out unusedIsDirectory, out unusedException);
+            bool result = false;
+            try
+            {
+                result =  NativeItemExists(path, out bool unused);
+            }
+            catch
+            {
+            }
+            return false;
         }
 
         internal static bool NativeItemExists(string path, out bool isDirectory)
