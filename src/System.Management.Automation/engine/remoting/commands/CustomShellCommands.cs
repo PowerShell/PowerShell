@@ -1499,46 +1499,6 @@ else
         }
 
         /// <summary>
-        /// Checks if the specified version of PowerShell is installed
-        /// </summary>
-        /// <param name="version"></param>
-        internal static void CheckIfPowerShellVersionIsInstalled(Version version)
-        {
-            // Check if PowerShell 2.0 is installed
-            if (version != null && version.Major == 2)
-            {
-#if CORECLR
-                // PowerShell 2.0 is not available for CoreCLR
-                throw new ArgumentException(
-                    PSRemotingErrorInvariants.FormatResourceString(
-                        RemotingErrorIdStrings.PowerShellNotInstalled,
-                        version, "PSVersion"));
-#else
-                // Because of app-compat issues, in Win8, we will have PS 2.0 installed by default but not .NET 2.0
-                // In such a case, it is not enough if we check just PowerShell registry keys. We also need to check if .NET 2.0 is installed.
-                try
-                {
-                    RegistryKey engineKey = PSSnapInReader.GetPSEngineKey(PSVersionInfo.RegistryVersion1Key);
-                    // Also check for .NET 2.0 installation
-                    if (!PsUtils.FrameworkRegistryInstallation.IsFrameworkInstalled(2, 0, 0))
-                    {
-                        throw new ArgumentException(
-                            PSRemotingErrorInvariants.FormatResourceString(
-                                RemotingErrorIdStrings.NetFrameWorkV2NotInstalled));
-                    }
-                }
-                catch (PSArgumentException)
-                {
-                    throw new ArgumentException(
-                        PSRemotingErrorInvariants.FormatResourceString(
-                            RemotingErrorIdStrings.PowerShellNotInstalled,
-                            version, "PSVersion"));
-                }
-#endif
-            }
-        }
-
-        /// <summary>
         /// Takes array of group name string objects and returns a semicolon delimited string.
         /// </summary>
         /// <param name="groups"></param>
@@ -2018,24 +1978,6 @@ else
             return (Environment.OSVersion.Version >= new Version(6, 2)) ? remoteSDDL_Win8 : remoteSDDL;
         }
 
-        internal static void CheckPSVersion(Version version)
-        {
-            // PSVersion value can only be 2.0, 3.0, 4.0, 5.0, or 5.1
-            if (version != null)
-            {
-                // PSVersion value can only be 2.0, 3.0, 4.0, 5.0, or 5.1
-                if (!((version.Major >= 2) && (version.Major <= 4) && (version.Minor == 0)) &&
-                     !((version.Major == 5) && (version.Minor <= 1))
-                   )
-                {
-                    throw new ArgumentException(
-                       PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.PSVersionParameterOutOfRange,
-                           version, "PSVersion")
-                   );
-                }
-            }
-        }
-
         #endregion
 
         #region Parameters
@@ -2356,10 +2298,10 @@ else
             get { return psVersion; }
             set
             {
-                CheckPSVersion(value);
+                RemotingCommandUtils.CheckPSVersion(value);
 
                 // Check if specified version of PowerShell is installed
-                PSSessionConfigurationCommandUtilities.CheckIfPowerShellVersionIsInstalled(value);
+                RemotingCommandUtils.CheckIfPowerShellVersionIsInstalled(value);
 
                 psVersion = value;
                 isPSVersionSpecified = true;
@@ -5244,7 +5186,7 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
         SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144298")]
     public sealed class DisablePSRemotingCommand : PSCmdlet
     {
-        # region Private Data
+        #region Private Data
 
         // To Escape { -- {{
         // To Escape } -- }}
