@@ -785,7 +785,6 @@ foo``u{2195}abc
     }
 
     It "A here string closing characters can be indented with spaces" {
-        { ExecuteCommand "@`"`n   here`n   string`n   `"@"} | Should -Not -Throw
         ExecuteCommand "@`"`n   here`n   string`n   `"@" | Should -BeExactly "   here`n   string"
     }
 
