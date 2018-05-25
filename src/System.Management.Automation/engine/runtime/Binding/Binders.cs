@@ -7002,7 +7002,7 @@ namespace System.Management.Automation.Language
                             Expression.Constant(null, typeof(Exception)),
                             Expression.Constant(ExtendedTypeSystem.MethodArgumentCountException),
                             Expression.NewArrayInit(typeof(object),
-                                Expression.Constant(".ForEach(expression [, arguments...])").Cast(typeof(object)),
+                                Expression.Constant(".ForEach({ expression } [, arguments...])").Cast(typeof(object)),
                                 ExpressionCache.Constant(args.Length).Cast(typeof(object)))),
                         this.ReturnType),
                     targetEnumerator.Restrictions.Merge(restrictions));

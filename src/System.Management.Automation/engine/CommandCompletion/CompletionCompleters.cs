@@ -4872,7 +4872,7 @@ namespace System.Management.Automation
             new List<Tuple<string, string>>
                 {
                     new Tuple<string, string>("Where", "Where({ expression } [, mode [, numberToReturn]])"),
-                    new Tuple<string, string>("ForEach", "ForEach(expression [, arguments...])")
+                    new Tuple<string, string>("ForEach", "ForEach({ expression } [, arguments...])")
                 };
         // List of DSC collection-value variables
         private static readonly HashSet<string> s_dscCollectionVariables =
