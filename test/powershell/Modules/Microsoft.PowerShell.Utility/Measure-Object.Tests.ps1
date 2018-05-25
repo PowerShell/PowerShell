@@ -349,6 +349,72 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
         }
     }
 
+    It "Measure-Object with ScriptBlock properties should work" {
+        $result = 1..10 | Measure-Object -Sum -Average -Minimum -Maximum -Property {$_ * 10}
+        $result.Count    | Should -Be 10
+        $result.Average  | Should -Be 55
+        $result.Sum      | Should -Be 550
+        $result.Minimum  | Should -Be 10
+        $result.Maximum  | Should -Be 100
+        $result.Property | Should -Be '$_ * 10'
+    }
+
+    It "Measure-Object with ScriptBlock properties should work with -word" {
+        $result = "a,b,c" | Measure-Object -Word  {$_ -split ','}
+        $result.Words | Should -Be 3
+    }
+
+    It "Measure-Object ScriptBlock properties should be able to transform input" {
+        $map = @{ one = 1; two = 2; three = 3 }
+        $result = "one", "two", "three" | Measure-Object -Sum {$map[$_]}
+        $result.Sum | Should -Be 6
+    }
+
+    It "Measure-Object should handle hashtables as objects" {
+        $htables = @{foo = 1}, @{foo = 3}, @{foo = 10}
+        $result = $htables | Measure-Object -Sum fo*
+        $result.Sum | Should -Be 14
+    }
+
+    It "Measure-Object should handle hashtables as objects with ScriptBlock properties" {
+        $htables = @{foo = 1}, @{foo = 3}, @{foo = 10}
+        $result = $htables | Measure-Object -Sum {$_.foo * 10 }
+        $result.Sum | Should -Be 140
+    }
+
+    #
+    # Since PSPropertyExtression is now a public type, this function is used to test its
+    # operation as a parameter on a PowerShell function, independent of Measure-Object
+    #
+    function Test-PSPropertyExpression {
+        [CmdletBinding()]
+        param (
+            [Parameter(Mandatory,Position=0)]
+            [PSPropertyExpression]
+                $pe,
+            [Parameter(ValueFromPipeline)]
+                $InputObject
+        )
+        begin { $sum = 0}
+        process { $sum += $pe.GetValues($InputObject).result }
+        end { $sum }
+    }
+
+    It "Test-PropertyExpression function with a wildcard property expression should sum numbers" {
+        $result = (1..10).foreach{@{value = $_}} | Test-PSPropertyExpression val*
+        $result | Should -Be 55
+    }
+
+    It "Test-PropertyExpression function with a scriptblock property expression should sum numbers" {
+        $result = 1..10 | Test-PSPropertyExpression {$_}
+        $result | Should -Be 55
+    }
+
+    It "Test-PropertyExpression function with a scriptblock property expression should be able to transform input" {
+        # Count the number of 'e's in the words.
+        $result = "one", "two", "three", "four", "five" | Test-PSPropertyExpression {($_.ToCharArray() -match 'e').Count}
+        $result | Should -Be 4
+    }
     It "Measure-Object with multiple lines should work"{
         $result = "123`n4" | Measure-Object -Line
         $result.Lines | Should -Be 2
