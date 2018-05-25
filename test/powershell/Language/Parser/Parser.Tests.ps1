@@ -784,6 +784,11 @@ foo``u{2195}abc
         { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should -Not -Throw
     }
 
+    It "A here string closing characters can be indented with spaces" {
+        { ExecuteCommand "@`"`n   here`n   string`n   `"@"} | Should -Not -Throw
+        ExecuteCommand "@`"`n   here`n   string`n   `"@" | Should -BeExactly "   here`n   string"
+    }
+
     It "Throw better error when statement should be put in named blocks - <name>" -TestCases @(
         @{ script = "Function foo { [CmdletBinding()] param() DynamicParam {} Hi"; name = "function" }
         @{ script = "{ begin {} Hi"; name = "script-block" }
