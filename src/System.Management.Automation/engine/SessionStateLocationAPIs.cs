@@ -233,9 +233,8 @@ namespace System.Management.Automation
 
             // Replace path with last working directory when '-' was passed.
             bool pushNextLocation = true;
-            if (originalPath.Equals("-"))            
+            if (originalPath.Equals("-", StringComparison.OrdinalIgnoreCase))
             {
-
                 if (_workingLocationHistoryStack.Count > 0)
                 {
                     var previousLocation =  _workingLocationHistoryStack.Pop();
@@ -247,6 +246,7 @@ namespace System.Management.Automation
                     throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
                 }
             }
+
             if (pushNextLocation)
             {
                 var newPushPathInfo = GetNewPushPathInfo();
@@ -839,7 +839,6 @@ namespace System.Management.Automation
             }
 
             // Get the location stack from the hashtable
-
             Stack<PathInfo> locationStack = null;
 
             if (!_workingLocationStack.TryGetValue(stackName, out locationStack))
