@@ -88,7 +88,7 @@ NuspecTemplate = @'
     <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
     <language>en-US</language>
     <dependencies>
-      <group targetFramework=".NETCoreApp2.0"></group>
+      <group targetFramework=".NETCoreApp2.1"></group>
     </dependencies>
   </metadata>
 </package>

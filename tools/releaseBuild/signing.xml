@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <SignConfigXML>
-  <!-- ****Begin**** BothDual - Dual (Sha256 and Sha1) AuthenticodeDual) and should be StrongName, but we will add this in 6.1.0 ******** -->
+  <!-- ****Begin**** Authenticode - Authenticode SHA256 and should be StrongName, but we will add this in 6.1.0 ******** -->
  <job platform="" configuration="" dest="__OUTPATHROOT__\signed" jobname="PowerShell Core" approvers="vigarg;gstolt">
-    <file src="__INPATHROOT__\Microsoft.Management.Infrastructure.CimCmdlets.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.Management.Infrastructure.CimCmdlets.dll" />
-    <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Diagnostics.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Diagnostics.dll" />
-    <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Management.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Management.dll" />
-    <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Utility.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Utility.dll" />
-    <file src="__INPATHROOT__\Microsoft.PowerShell.ConsoleHost.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.ConsoleHost.dll" />
-    <file src="__INPATHROOT__\Microsoft.PowerShell.CoreCLR.Eventing.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.CoreCLR.Eventing.dll" />
-    <file src="__INPATHROOT__\Microsoft.PowerShell.Security.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.Security.dll" />
-    <file src="__INPATHROOT__\Microsoft.WSMan.Management.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.WSMan.Management.dll" />
-    <file src="__INPATHROOT__\Microsoft.WSMan.Runtime.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.WSMan.Runtime.dll" />
-    <file src="__INPATHROOT__\System.Management.Automation.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\System.Management.Automation.dll" />
-    <file src="__INPATHROOT__\pwsh.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\pwsh.dll" />
+    <file src="__INPATHROOT__\Microsoft.Management.Infrastructure.CimCmdlets.dll" signType="Authenticode" dest="__OUTPATHROOT__\Microsoft.Management.Infrastructure.CimCmdlets.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Diagnostics.dll" signType="Authenticode" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Diagnostics.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Management.dll" signType="Authenticode" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Management.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Utility.dll" signType="Authenticode" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Utility.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.ConsoleHost.dll" signType="Authenticode" dest="__OUTPATHROOT__\Microsoft.PowerShell.ConsoleHost.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.CoreCLR.Eventing.dll" signType="Authenticode" dest="__OUTPATHROOT__\Microsoft.PowerShell.CoreCLR.Eventing.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.Security.dll" signType="Authenticode" dest="__OUTPATHROOT__\Microsoft.PowerShell.Security.dll" />
+    <file src="__INPATHROOT__\Microsoft.WSMan.Management.dll" signType="Authenticode" dest="__OUTPATHROOT__\Microsoft.WSMan.Management.dll" />
+    <file src="__INPATHROOT__\Microsoft.WSMan.Runtime.dll" signType="Authenticode" dest="__OUTPATHROOT__\Microsoft.WSMan.Runtime.dll" />
+    <file src="__INPATHROOT__\System.Management.Automation.dll" signType="Authenticode" dest="__OUTPATHROOT__\System.Management.Automation.dll" />
+    <file src="__INPATHROOT__\pwsh.dll" signType="Authenticode" dest="__OUTPATHROOT__\pwsh.dll" />
 
     <!-- not actually a code file, don't sign for now
     <file src="__INPATHROOT__\Microsoft.PowerShell.SDK.dll" signType="BothDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.SDK.dll" />
     -->
 
-    <!-- ****Begin**** AuthenticodeDual - Dual (Sha256 and Sha1) Authenticode ************* -->
+    <!-- ****Begin**** Authenticode - Authenticode SHA256 ************* -->
 
-    <file src="__INPATHROOT__\pwsh.exe" signType="AuthenticodeDual" dest="__OUTPATHROOT__\pwsh.exe" />
+    <file src="__INPATHROOT__\pwsh.exe" signType="Authenticode" dest="__OUTPATHROOT__\pwsh.exe" />
 
 
     <!-- ****Begin**** Authenticode - Authenticode SHA256 ************* -->

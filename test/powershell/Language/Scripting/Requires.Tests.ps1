@@ -15,16 +15,25 @@ Describe "Requires tests" -Tags "CI" {
 
         It "throws ParserException - <testname>" -TestCases $testcases {
             param($command)
-            try
-            {
-                [scriptblock]::Create($command)
-                throw "'$command' should have thrown ParserError"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -BeExactly "ParseException"
-            }
+            { [scriptblock]::Create($command) } | Should -Throw -ErrorId "ParseException"
         }
     }
 
+    Context "Interactive requires" {
+
+        BeforeAll {
+            $ps = [powershell]::Create()
+        }
+
+        AfterAll {
+            $ps.Dispose()
+        }
+
+        It "Successfully does nothing when given '#requires' interactively" {
+            $settings = [System.Management.Automation.PSInvocationSettings]::new()
+            $settings.AddToHistory = $true
+
+            { $ps.AddScript("#requires").Invoke(@(), $settings) } | Should -Not -Throw
+        }
+    }
 }

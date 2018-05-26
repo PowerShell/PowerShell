@@ -651,7 +651,6 @@ namespace System.Management.Automation
                     break;
                 case CommandTypes.Filter:
                 case CommandTypes.Function:
-                case CommandTypes.Workflow:
                 case CommandTypes.Configuration:
                     FunctionInfo functionInfo = (FunctionInfo)commandInfo;
                     processor = CreateCommandProcessorForScript(functionInfo, Context, useLocalScope ?? true, sessionState);

@@ -993,7 +993,7 @@ namespace Microsoft.PowerShell.Commands
             return httpClient;
         }
 
-        internal virtual HttpRequestMessage GetRequest(Uri uri, bool stripAuthorization)
+        internal virtual HttpRequestMessage GetRequest(Uri uri)
         {
             Uri requestUri = PrepareUri(uri);
             HttpMethod httpMethod = null;
@@ -1032,14 +1032,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (stripAuthorization
-                            &&
-                            String.Equals(entry.Key, HttpKnownHeaderNames.Authorization.ToString(), StringComparison.OrdinalIgnoreCase)
-                        )
-                        {
-                            continue;
-                        }
-
                         if (SkipHeaderValidation)
                         {
                             request.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
@@ -1268,15 +1260,15 @@ namespace Microsoft.PowerShell.Commands
                 ||
                 code == HttpStatusCode.RedirectMethod
                 ||
-                code == HttpStatusCode.TemporaryRedirect
-                ||
-                code == HttpStatusCode.RedirectKeepVerb
-                ||
                 code == HttpStatusCode.SeeOther
+                ||
+                code == HttpStatusCode.Ambiguous
+                ||
+                code == HttpStatusCode.MultipleChoices
             );
         }
 
-        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool stripAuthorization)
+        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
         {
             if (client == null) { throw new ArgumentNullException("client"); }
             if (request == null) { throw new ArgumentNullException("request"); }
@@ -1287,7 +1279,7 @@ namespace Microsoft.PowerShell.Commands
             _cancelToken = new CancellationTokenSource();
             HttpResponseMessage response = client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
-            if (stripAuthorization && IsRedirectCode(response.StatusCode) && response.Headers.Location != null)
+            if (keepAuthorization && IsRedirectCode(response.StatusCode) && response.Headers.Location != null)
             {
                 _cancelToken.Cancel();
                 _cancelToken = null;
@@ -1306,14 +1298,12 @@ namespace Microsoft.PowerShell.Commands
                     Method = WebRequestMethod.Get;
                 }
 
-                // recreate the HttpClient with redirection enabled since the first call suppressed redirection
                 currentUri = new Uri(request.RequestUri, response.Headers.Location);
-                using (client = GetHttpClient(false))
-                using (HttpRequestMessage redirectRequest = GetRequest(currentUri, stripAuthorization:true))
+                // Continue to handle redirection
+                using (client = GetHttpClient(handleRedirect: true))
+                using (HttpRequestMessage redirectRequest = GetRequest(currentUri))
                 {
-                    FillRequestStream(redirectRequest);
-                    _cancelToken = new CancellationTokenSource();
-                    response = client.SendAsync(redirectRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+                    response = GetResponse(client, redirectRequest, keepAuthorization);
                 }
             }
 
@@ -1333,7 +1323,7 @@ namespace Microsoft.PowerShell.Commands
                 // are treated as a standard -OutFile request. This also disables appending local file.
                 Resume = new SwitchParameter(false);
 
-                using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri, stripAuthorization:false))
+                using (HttpRequestMessage requestWithoutRange = GetRequest(currentUri))
                 {
                     FillRequestStream(requestWithoutRange);
                     long requestContentLength = 0;
@@ -1347,7 +1337,7 @@ namespace Microsoft.PowerShell.Commands
                         requestContentLength);
                     WriteVerbose(reqVerboseMsg);
 
-                    return GetResponse(client, requestWithoutRange, stripAuthorization);
+                    return GetResponse(client, requestWithoutRange, keepAuthorization);
                 }
             }
 
@@ -1377,15 +1367,15 @@ namespace Microsoft.PowerShell.Commands
 
                 // if the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
                 // it needs to be stripped on the first redirect.
-                bool stripAuthorization = null != WebSession
+                bool keepAuthorization = null != WebSession
                                           &&
                                           null != WebSession.Headers
                                           &&
-                                          !PreserveAuthorizationOnRedirect.IsPresent
+                                          PreserveAuthorizationOnRedirect.IsPresent
                                           &&
                                           WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization.ToString());
 
-                using (HttpClient client = GetHttpClient(stripAuthorization))
+                using (HttpClient client = GetHttpClient(keepAuthorization))
                 {
                     int followedRelLink = 0;
                     Uri uri = Uri;
@@ -1399,7 +1389,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteVerbose(linkVerboseMsg);
                         }
 
-                        using (HttpRequestMessage request = GetRequest(uri, stripAuthorization:false))
+                        using (HttpRequestMessage request = GetRequest(uri))
                         {
                             FillRequestStream(request);
                             try
@@ -1415,7 +1405,7 @@ namespace Microsoft.PowerShell.Commands
                                     requestContentLength);
                                 WriteVerbose(reqVerboseMsg);
 
-                                HttpResponseMessage response = GetResponse(client, request, stripAuthorization);
+                                HttpResponseMessage response = GetResponse(client, request, keepAuthorization);
 
                                 string contentType = ContentHelper.GetContentType(response);
                                 string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
@@ -1817,7 +1807,8 @@ namespace Microsoft.PowerShell.Commands
         private StringContent GetMultipartStringContent(Object fieldName, Object fieldValue)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
-            contentDisposition.Name = LanguagePrimitives.ConvertTo<String>(fieldName);
+            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
+            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<String>(fieldName) + "\"";
 
             var result = new StringContent(LanguagePrimitives.ConvertTo<String>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
@@ -1833,7 +1824,8 @@ namespace Microsoft.PowerShell.Commands
         private StreamContent GetMultipartStreamContent(Object fieldName, Stream stream)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
-            contentDisposition.Name = LanguagePrimitives.ConvertTo<String>(fieldName);
+            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
+            contentDisposition.Name = "\"" + LanguagePrimitives.ConvertTo<String>(fieldName) + "\"";
 
             var result = new StreamContent(stream);
             result.Headers.ContentDisposition = contentDisposition;
@@ -1850,7 +1842,8 @@ namespace Microsoft.PowerShell.Commands
         private StreamContent GetMultipartFileContent(Object fieldName, FileInfo file)
         {
             var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
-            result.Headers.ContentDisposition.FileName = file.Name;
+            // .NET does not enclose field names in quotes, however, modern browsers and curl do.
+            result.Headers.ContentDisposition.FileName = "\"" + file.Name + "\"";
 
             return result;
         }

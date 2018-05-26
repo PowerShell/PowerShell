@@ -27,6 +27,22 @@ class CommitNode {
     }
 }
 
+# These powershell team members don't use 'microsoft.com' for Github email or choose to not show their emails.
+# We have their names in this array so that we don't need to query Github to find out if they are powershell team members.
+$Script:powershell_team = @(
+    "Klaudia Algiz"
+    "Robert Holt"
+    "Dan Travison"
+)
+
+# They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
+$Script:community_login_map = @{
+    "darpa@yandex.ru" = "iSazonov"
+    "c.bergmeister@gmail.com" = "bergmeister"
+    "github@markekraus.com" = "markekraus"
+    "info@powercode-consulting.se" = "powercode"
+}
+
 ##############################
 #.SYNOPSIS
 #In the release workflow, the release branch will be merged back to master after the release is done,
@@ -55,10 +71,10 @@ function Get-ChildMergeCommit
     )
 
     $tag_hash = $CommitHash
-    if ($PSCmdlet.ParameterSetName -eq "TagName") { git rev-parse "$LastReleaseTag^0" }
+    if ($PSCmdlet.ParameterSetName -eq "TagName") { $tag_hash = git rev-parse "$LastReleaseTag^0" }
 
     ## Get the merge commits that are reachable from 'HEAD' but not from the release tag
-    $merge_commits_not_in_release_branch = git --no-pager log --merges "$tag_hash..HEAD" --format='%H|%P'
+    $merge_commits_not_in_release_branch = git --no-pager log --merges "$tag_hash..HEAD" --format='%H||%P'
     ## Find the child merge commit, whose parent-commit-hashes contains the release tag hash
     $child_merge_commit = $merge_commits_not_in_release_branch | Select-String -SimpleMatch $tag_hash
     return $child_merge_commit.Line
@@ -88,7 +104,7 @@ function New-CommitNode
     )
 
     Process {
-        $hash, $parents, $name, $email, $subject = $CommitMetadata.Split("|")
+        $hash, $parents, $name, $email, $subject = $CommitMetadata.Split("||")
         $body = (git --no-pager show $hash -s --format=%b) -join "`n"
         return [CommitNode]::new($hash, $parents, $name, $email, $subject, $body)
     }
@@ -124,8 +140,14 @@ function Get-ChangeLog
     )
 
     $tag_hash = git rev-parse "$LastReleaseTag^0"
-    $format = '%H|%P|%aN|%aE|%s'
+    $format = '%H||%P||%aN||%aE||%s'
     $header = @{"Authorization"="token $Token"}
+
+    # Find the merge commit that merged the release branch to master.
+    $child_merge_commit = Get-ChildMergeCommit -CommitHash $tag_hash
+    $commit_hash, $parent_hashes = $child_merge_commit.Split("||")
+    # Find the other parent of the merge commit, which represents the original head of master right before merging.
+    $other_parent_hash = ($parent_hashes -replace $tag_hash).Trim()
 
     if ($HasCherryPick) {
         ## Sometimes we need to cherry-pick some commits from the master branch to the release branch during the release,
@@ -137,16 +159,10 @@ function Get-ChangeLog
         ## but not reachable from the last release tag. Instead, we need to exclude the commits that were cherry-picked,
         ## and only include the commits that are not in the last release into the change log.
 
-        # Find the merge commit that merged the release branch to master.
-        $child_merge_commit = Get-ChildMergeCommit -CommitHash $tag_hash
-        $commit_hash, $parent_hashes = $child_merge_commit.Split("|")
-        # Find the other parent of the merge commit, which represents the original head of master right before merging.
-        $other_parent_hash = ($parent_hashes -replace $tag_hash).Trim()
-
         # Find the commits that were only in the orginal master, excluding those that were cherry-picked to release branch.
-        $new_commits_from_other_parent = git --no-pager log --no-merges --cherry-pick --right-only "$tag_hash...$other_parent_hash" --format=$format | New-CommitNode
+        $new_commits_from_other_parent = git --no-pager log --first-parent --cherry-pick --right-only "$tag_hash...$other_parent_hash" --format=$format | New-CommitNode
         # Find the commits that were only in the release branch, excluding those that were cherry-picked from master branch.
-        $new_commits_from_last_release = git --no-pager log --no-merges --cherry-pick  --left-only "$tag_hash...$other_parent_hash" --format=$format | New-CommitNode
+        $new_commits_from_last_release = git --no-pager log --first-parent --cherry-pick --left-only "$tag_hash...$other_parent_hash" --format=$format | New-CommitNode
         # Find the commits that are actually duplicate but having different patch-ids due to resolving conflicts during the cherry-pick.
         $duplicate_commits = Compare-Object $new_commits_from_last_release $new_commits_from_other_parent -Property PullRequest -ExcludeDifferent -IncludeEqual -PassThru
         if ($duplicate_commits) {
@@ -155,18 +171,26 @@ function Get-ChangeLog
         }
 
         # Find the commits that were made after the merge commit.
-        $new_commits_after_merge_commit = git --no-pager log --no-merges "$commit_hash..HEAD" --format=$format | New-CommitNode
+        $new_commits_after_merge_commit = @(git --no-pager log --first-parent "$commit_hash..HEAD" --format=$format | New-CommitNode)
         $new_commits = $new_commits_after_merge_commit + $new_commits_from_other_parent
     } else {
         ## No cherry-pick was involved in the last release branch.
-        ## We can get all new commits using the revision range "$tag_hash..HEAD", meaning the commits that are
-        ## reachable from 'HEAD' but not reachable from the last release tag.
-        $new_commits = git --no-pager log --no-merges "$tag_hash..HEAD" --format=$format | New-CommitNode
+        ## Using a ref rang like "$tag_hash..HEAD" with 'git log' means getting the commits that are reachable from 'HEAD' but not reachable from the last release tag.
+
+        ## We use '--first-parent' for 'git log'. It means for any merge node, only follow the parent node on the master branch side.
+        ## In case we merge a branch to master for a PR, only the merge node will show up in this way, the individual commits from that branch will be ignored.
+        ## This is what we want because the merge commit itself already represents the PR.
+
+        ## First, we want to get all new commits merged during the last release
+        $new_commits_during_last_release = @(git --no-pager log --first-parent "$tag_hash..$other_parent_hash" --format=$format | New-CommitNode)
+        ## Then, we want to get all new commits merged after the last release
+        $new_commits_after_last_release  = @(git --no-pager log --first-parent "$commit_hash..HEAD" --format=$format | New-CommitNode)
+        ## Last, we get the full list of new commits
+        $new_commits = $new_commits_during_last_release + $new_commits_after_last_release
     }
 
-    $community_login_map = @{}
     foreach ($commit in $new_commits) {
-        if ($commit.AuthorEmail.EndsWith("@microsoft.com")) {
+        if ($commit.AuthorEmail.EndsWith("@microsoft.com") -or $powershell_team -contains $commit.AuthorName) {
             $commit.ChangeLogMessage = "- {0}" -f $commit.Subject
         } else {
             if ($community_login_map.ContainsKey($commit.AuthorEmail)) {

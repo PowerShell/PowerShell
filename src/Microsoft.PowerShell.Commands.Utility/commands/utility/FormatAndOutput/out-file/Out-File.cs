@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         /// mandatory file name to write to
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public string LiteralPath
         {
             get

@@ -231,43 +231,27 @@ Describe "Exception error position" -Tags "CI" {
         static f1() { [MSFT_3090412]::bar = 42 }
         static f2() { throw "an error in f2" }
         static f3() { "".Substring(0, 10) }
-        static f4() { dir nosuchfile -ea Stop }
+        static f4() { dir nosuchfile -ErrorAction Stop }
     }
 
     It "Setting a property that doesn't exist" {
-        try {
-            [MSFT_3090412]::f1()
-            throw "f1 should have thrown"
-        } catch {
-            $_.InvocationInfo.Line | Should -Match ([regex]::Escape('[MSFT_3090412]::bar = 42'))
-        }
+        $e = { [MSFT_3090412]::f1() } | Should -Throw -PassThru -ErrorId 'PropertyAssignmentException'
+        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('[MSFT_3090412]::bar = 42'))
     }
 
     It "Throwing an exception" {
-        try {
-            [MSFT_3090412]::f2()
-            throw "f2 should have thrown"
-        } catch {
-            $_.InvocationInfo.Line | Should -Match ([regex]::Escape('throw "an error in f2"'))
-        }
+        $e = { [MSFT_3090412]::f2() } | Should -Throw -PassThru -ErrorId 'an error in f2'
+        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('throw "an error in f2"'))
     }
 
     It "Calling a .Net method that throws" {
-        try {
-            [MSFT_3090412]::f3()
-            throw "f3 should have thrown"
-        } catch {
-            $_.InvocationInfo.Line | Should -Match ([regex]::Escape('"".Substring(0, 10)'))
-        }
+        $e = { [MSFT_3090412]::f3() } | Should -Throw -PassThru -ErrorId 'ArgumentOutOfRangeException'
+        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('"".Substring(0, 10)'))
     }
 
     It "Terminating error" {
-        try {
-            [MSFT_3090412]::f4()
-            throw "f4 should have thrown"
-        } catch {
-            $_.InvocationInfo.Line | Should -Match ([regex]::Escape('dir nosuchfile -ea Stop'))
-        }
+        $e = { [MSFT_3090412]::f4() } | Should -Throw -PassThru -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand'
+        $e.InvocationInfo.Line | Should -Match ([regex]::Escape('dir nosuchfile -ErrorAction Stop'))
     }
 }
 
@@ -295,56 +279,26 @@ Describe "Exception from initializer" -Tags "CI" {
     }
 
     It "instance member w/ ctor" {
-        try {
-            [MSFT_6397334a]::new()
-            throw "[MSFT_6397334a]::new() should have thrown"
-        }
-        catch
-        {
-            $e = $_
-            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
-            $e.InvocationInfo.Line | Should -Match 'a = "zz"'
-        }
+        $e = { [MSFT_6397334a]::new() } | Should -Throw -ErrorId 'InvalidCastFromStringToInteger' -PassThru
+        $e.InvocationInfo.Line | Should -Match 'a = "zz"'
     }
 
     It "instance member w/o ctor" {
-        try {
-            [MSFT_6397334b]::new()
-            throw "[MSFT_6397334b]::new() should have thrown"
-        }
-        catch
-        {
-            $e = $_
-            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
-            $e.InvocationInfo.Line | Should -Match 'a = "zz"'
-        }
+        $e = { [MSFT_6397334b]::new() } | Should -Throw -ErrorId 'InvalidCastFromStringToInteger' -PassThru
+        $e.InvocationInfo.Line | Should -Match 'a = "zz"'
     }
 
     It "static member w/ ctor" {
-        try {
-            $null = [MSFT_6397334c]::a
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.Exception | Should -BeOfType System.TypeInitializationException
-            $e  = $_.Exception.InnerException.InnerException.ErrorRecord
-            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
-            $e.InvocationInfo.Line | Should -Match 'a = "zz"'
-        }
+        $e = { $null = [MSFT_6397334c]::a } | Should -Throw -PassThru
+        $e.Exception | Should -BeOfType 'System.TypeInitializationException'
+        $e.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
+        $e.Exception.InnerException.InnerException.ErrorRecord.InvocationInfo.Line | Should -Match 'a = "zz"'
     }
 
     It "static member w/o ctor" {
-        try {
-            $null = [MSFT_6397334d]::a
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.Exception | Should -BeOfType System.TypeInitializationException
-            $e  = $_.Exception.InnerException.InnerException.ErrorRecord
-            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
-            $e.InvocationInfo.Line | Should -Match 'a = "zz"'
-        }
+        $e = { $null = [MSFT_6397334d]::a } | Should -Throw -PassThru
+        $e.Exception | Should -BeOfType System.TypeInitializationException
+        $e.Exception.InnerException.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
+        $e.Exception.InnerException.InnerException.ErrorRecord.InvocationInfo.Line | Should -Match 'a = "zz"'
     }
 }

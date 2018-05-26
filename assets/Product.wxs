@@ -195,6 +195,12 @@
                 <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
               </RegistryKey>
+              <!-- When being in a Library folder in Explorer -->
+              <RegistryKey Root="HKCR" Key="LibraryFolder\background\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
+                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
+              </RegistryKey>
               <!-- Sub menus to open PowerShell at the current location either as a normal shell or as Administrator -->
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\open">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextSubMenuDialogText)"/>

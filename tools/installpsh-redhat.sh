@@ -14,6 +14,7 @@
 #Switches
 #  -includeide - the script is being run headless, do not perform actions that require response from the console
 #  -interactivetests - requires a human user in front of the machine - loads a script into the ide to test with F5 to ensure the IDE can run scripts
+#  -skip-sudo-check - skips the check that the user has permission to use sudo.  This is required to run in the VSTS Hosted Linux Preview.
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
@@ -96,7 +97,7 @@ if (( $EUID != 0 )); then
 fi
 
 #Check that sudo is available
-if [[ "$SUDO" -ne "" ]]; then
+if [[ "$SUDO" == "sudo" && ! ("'$*'" =~ skip-sudo-check) ]]; then
 
     $SUDO -v
     if [ $? -ne 0 ]; then

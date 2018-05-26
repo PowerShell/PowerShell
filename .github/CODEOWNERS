@@ -68,6 +68,9 @@ src/System.Management.Automation/engine/remoting   @dantraMSFT @mirichmo @PaulHi
 # Area: Side-By-Side
 # @mirichmo @charub
 
+# Area: Libpsl-native
+src/libpsl-native                                  @dantraMSFT
+
 # Areas: Build
 # Must be last
 *.config   @daxian-dbw @TravisEz13 @adityapatwardhan

@@ -79,7 +79,7 @@ Describe "Test-Json" -Tags "CI" {
     }
 
     It "Test-Json throw if a schema is invalid" {
-        { Test-Json -Json $validJson -Schema $invalidSchemaJson -ErrorAction Stop } | ShouldBeErrorId "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+        { Test-Json -Json $validJson -Schema $invalidSchemaJson -ErrorAction Stop } | Should -Throw -ErrorId "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Test-Json write an error on invalid (<name>) Json aganist a valid schema" -TestCases @(

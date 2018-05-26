@@ -26,12 +26,12 @@ Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
 
     foreach ($filePath in @("$PSScriptRoot\assets\HelpURI\V2Cmdlets.csv", "$PSScriptRoot\assets\HelpURI\V3Cmdlets.csv"))
     {
-        $cmdletList = Import-Csv $filePath -ea Stop
+        $cmdletList = Import-Csv $filePath -ErrorAction Stop
 
         foreach ($cmdlet in $cmdletList)
         {
             # If the cmdlet is not preset in CoreCLR, skip it.
-            $skipTest = $null -eq (Get-Command $cmdlet.TopicTitle -ea SilentlyContinue)
+            $skipTest = $null -eq (Get-Command $cmdlet.TopicTitle -ErrorAction SilentlyContinue)
 
             # TopicTitle - is the cmdlet name in the csv file
             # HelpURI - is the expected help URI in the csv file
@@ -91,15 +91,6 @@ Describe 'Get-Help -Online is not supported on Nano Server and IoT' -Tags "CI" {
     $skipTest = -not ([System.Management.Automation.Platform]::IsIoT -or [System.Management.Automation.Platform]::IsNanoServer)
 
     It "Get-help -online <cmdletName> throws InvalidOperation." -skip:$skipTest {
-
-        try
-        {
-            Get-Help Get-Help -Online
-            throw "Execution should not have succeeded"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand"
-        }
+        { Get-Help Get-Help -Online } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand"
     }
 }

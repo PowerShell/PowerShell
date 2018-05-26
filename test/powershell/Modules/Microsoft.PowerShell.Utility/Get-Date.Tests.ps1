@@ -77,7 +77,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         @{ name = "empty string"; value = "" }
     ) {
         param($value)
-        { Get-date -Date 1/1/1970 -uformat $value -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetDateCommand"
+        { Get-date -Date 1/1/1970 -uformat $value -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetDateCommand"
     }
 
     It "Get-date works with pipeline input" {

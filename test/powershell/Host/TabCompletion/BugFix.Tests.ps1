@@ -65,4 +65,21 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result.CompletionMatches[1].CompletionText | Should -Be 'Ascending'
         $result.CompletionMatches[2].CompletionText | Should -Be 'Descending'
     }
+
+    It "'Get-Date | Sort-Object @{Expression=<tab>' should work without completion" {
+        $cmd = "Get-Date | Sort-Object @{Expression="
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CompletionMatches.Count | Should -Be 0
+    }
+
+    It "Issue#5322 - 'Get-Date | Sort-Object @{Expression=...;' should work" {
+        $cmd = "Get-Date | Sort-Object @{Expression=...;"
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CurrentMatchIndex | Should -Be -1
+        $result.ReplacementIndex | Should -Be 40
+        $result.ReplacementLength | Should -Be 0
+        $result.CompletionMatches[0].CompletionText | Should -Be 'Expression'
+        $result.CompletionMatches[1].CompletionText | Should -Be 'Ascending'
+        $result.CompletionMatches[2].CompletionText | Should -Be 'Descending'
+    }
 }
