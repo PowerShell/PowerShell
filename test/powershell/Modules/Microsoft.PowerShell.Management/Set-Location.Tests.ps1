@@ -95,12 +95,12 @@ Describe "Set-Location" -Tags "CI" {
     }
 
     Context 'Set-Location with last location history' {
-        
+
         It 'Should go to last location when specifying minus as a path' {
             $initialLocation = Get-Location
             Set-Location ([System.IO.Path]::GetTempPath())
             Set-Location -
-            (Get-Location).Path | Should Be ($initialLocation).Path
+            (Get-Location).Path | Should -Be ($initialLocation).Path
         }
 
         It 'Should go back to previous locations when specifying minus twice' {
@@ -109,9 +109,9 @@ Describe "Set-Location" -Tags "CI" {
             $firstLocationChange = (Get-Location).Path
             Set-Location ([System.Environment]::GetFolderPath("user"))
             Set-Location -
-            (Get-Location).Path | Should Be $firstLocationChange
+            (Get-Location).Path | Should -Be $firstLocationChange
             Set-Location -
-            (Get-Location).Path | Should Be $initialLocation
+            (Get-Location).Path | Should -Be $initialLocation
         }
 
         It 'Location History is limited' {
@@ -124,7 +124,7 @@ Describe "Set-Location" -Tags "CI" {
                 Set-Location -
             }
             (Get-Location).Path | Should Be $initialLocation
-            { Set-Location - } | ShouldBeErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
+            { Set-Location - } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
         }
     }
 }
