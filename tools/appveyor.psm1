@@ -555,5 +555,9 @@ function Invoke-AppveyorFinish
 # Clean the Cache of files which should not be cached
 function Invoke-AppVeyorCleanCache
 {
-    Remove-Item $env:LocalAppData\Microsoft\dotnet\optimizationdata -Recurse -force
+    $dotnetOptimizationCachePath = "$env:LocalAppData\Microsoft\dotnet\optimizationdata"
+    if (Test-Path $dotnetOptimizationCachePath)
+    {
+        Remove-Item $dotnetOptimizationCachePath -Recurse -Force
+    }
 }
