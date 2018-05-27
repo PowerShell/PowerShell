@@ -1,6 +1,11 @@
 # version is set in tools\appveyor.psm1 - Invoke-AppVeyorInstall
 
-image: Visual Studio 2017
+environment:
+  matrix:
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    Purpose: Testing
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    Purpose: Packaging
 
 # cache version - netcoreapp.2.1-sdk.2.1.300-rc1
 cache:
@@ -19,15 +24,15 @@ install:
   - ps: Invoke-AppveyorInstall
 
 build_script:
-  - ps: Invoke-AppveyorBuild
+  - ps: if ($env:Purpose -eq 'Testing'){ Invoke-AppveyorBuild }
 
 test_script:
-  - ps: Invoke-AppveyorTest
+  - ps: if ($env:Purpose -eq 'Testing'){ Invoke-AppveyorTest }
 
 after_test:
-  - ps: Invoke-AppVeyorAfterTest
+  - ps: (if ($env:Purpose -eq 'Testing'){ Invoke-AppVeyorAfterTest }
 
 # Run the finish command and delete files which should not be in the cache
 on_finish:
-  - ps: Invoke-AppveyorFinish
+  - ps: if ($env:Packaging -eq 'Packaging'){ Invoke-AppveyorFinish }
   - ps: Invoke-AppVeyorCleanCache
