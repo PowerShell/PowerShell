@@ -1,6 +1,6 @@
 # version is set in tools\appveyor.psm1 - Invoke-AppVeyorInstall
-
 environment:
+  POWERSHELL_TELEMETRY_OPTOUT: 1
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     Purpose: Testing
@@ -14,9 +14,6 @@ cache:
 
 nuget:
   project_feed: true
-
-environment:
-  POWERSHELL_TELEMETRY_OPTOUT: 1
 
 install:
   - git submodule update --init
