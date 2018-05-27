@@ -140,7 +140,7 @@ namespace PSTests.Parallel
             {
                 if(property.Name == "Name")
                 {
-                    Assert.Equal("test", property.Value);
+                    Assert.Equal(testPath, property.Value);
                 }
             }
         }
