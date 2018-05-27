@@ -17,11 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
-    <Compile Remove="WindowsTaskbarJumpList\ComInterfaces.cs" />
-    <Compile Remove="WindowsTaskbarJumpList\HResult.cs" />
-    <Compile Remove="WindowsTaskbarJumpList\PropertyKey.cs" />
-    <Compile Remove="WindowsTaskbarJumpList\PropVariant.cs" />
-    <Compile Remove="WindowsTaskbarJumpList\TaskbarJumpList.cs" />
+    <Compile Remove="WindowsTaskbarJumpList\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
