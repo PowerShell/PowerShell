@@ -25,7 +25,7 @@ namespace PSTests.Parallel
         private string testContent;
         public FileSystemProviderTests()
         {
-            testPath = Path.Combine(Path.GetTempPath(),"test");
+            testPath = Path.GetTempFileName();
             testContent = "test content!";
             if(File.Exists(testPath)) File.Delete(testPath);
             File.AppendAllText(testPath,testContent);
