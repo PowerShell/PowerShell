@@ -183,4 +183,28 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         $transcriptFilePath | Should -Not -FileContentMatch $message
     }
+
+    It "Transcription should record Write-Host output when InformationAction is set to Continue" {
+        [String]$message = New-Guid
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Host -Message $message -InformationAction Continue
+            Stop-Transcript }
+        & $script
+        Test-Path $transcriptFilePath | Should -BeTrue
+
+        $transcriptFilePath | Should -FileContentMatch $message
+    }
+
+    It "Transcription should record Write-Host output when InformationAction is set to SilentlyContinue" {
+        [String]$message = New-Guid
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Host -Message $message -InformationAction SilentlyContinue
+            Stop-Transcript }
+        & $script
+        Test-Path $transcriptFilePath | Should -BeTrue
+
+        $transcriptFilePath | Should -FileContentMatch $message
+    }
 }
