@@ -138,7 +138,7 @@ namespace PSTests.Parallel
             PSObject psobject1=PSObject.AsPSObject(fileSystemObject1);
             foreach(PSPropertyInfo property in psobject1.Properties)
             {
-                if(property.Name == "Name")
+                if(property.Name == "FullName")
                 {
                     Assert.Equal(testPath, property.Value);
                 }
