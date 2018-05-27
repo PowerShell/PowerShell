@@ -27,7 +27,7 @@ test_script:
   - ps: if ($env:Purpose -eq 'Testing'){ Invoke-AppveyorTest }
 
 after_test:
-  - ps: (if ($env:Purpose -eq 'Testing'){ Invoke-AppVeyorAfterTest }
+  - ps: if ($env:Purpose -eq 'Testing'){ Invoke-AppVeyorAfterTest }
 
 # Run the finish command and delete files which should not be in the cache
 on_finish:
