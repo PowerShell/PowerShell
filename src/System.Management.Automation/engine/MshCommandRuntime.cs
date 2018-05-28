@@ -2031,7 +2031,7 @@ namespace System.Management.Automation
             errorRecord.SetInvocationInfo(MyInvocation);
 
             if (errorRecord.ErrorDetails != null
-                && null != errorRecord.ErrorDetails.TextLookupError)
+                && errorRecord.ErrorDetails.TextLookupError != null)
             {
                 Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
                 errorRecord.ErrorDetails.TextLookupError = null;
@@ -2757,7 +2757,7 @@ namespace System.Management.Automation
             ThrowIfStopping();
 
             if (errorRecord.ErrorDetails != null
-                && null != errorRecord.ErrorDetails.TextLookupError)
+                && errorRecord.ErrorDetails.TextLookupError != null)
             {
                 Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
                 errorRecord.ErrorDetails.TextLookupError = null;

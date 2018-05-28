@@ -1196,7 +1196,7 @@ namespace System.Management.Automation
                 _accumulatedErrorObjects.Add(errorRecord);
 
                 if (errorRecord.ErrorDetails != null
-                    && null != errorRecord.ErrorDetails.TextLookupError)
+                    && errorRecord.ErrorDetails.TextLookupError != null)
                 {
                     Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
                     errorRecord.ErrorDetails.TextLookupError = null;
