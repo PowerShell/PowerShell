@@ -469,7 +469,7 @@ namespace System.Management.Automation
                     parameterSetData.IsMandatory, parameterSetData.ValueFromPipeline,
                     parameterSetData.ValueFromPipelineByPropertyName,
                     parameterSetData.IsPositional ? (1 + parameterSetData.Position).ToString(CultureInfo.InvariantCulture) : "named",
-                    parameter.Type, description, supportsWildcards, defaultValue: "", forSyntax: true);
+                    parameter.Type, description, supportsWildcards, defaultValue: string.Empty, forSyntax: true);
                 syntaxItem.AppendChild(parameterElement);
             }
             command.AppendChild(syntax).AppendChild(syntaxItem);
