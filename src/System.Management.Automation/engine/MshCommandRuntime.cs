@@ -132,7 +132,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsStopping
         {
-            get { return (null != this.PipelineProcessor && this.PipelineProcessor.Stopping); }
+            get { return (this.PipelineProcessor != null && this.PipelineProcessor.Stopping); }
         }
 
         #region Write

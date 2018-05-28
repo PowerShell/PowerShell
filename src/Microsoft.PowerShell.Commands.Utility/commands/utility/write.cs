@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.Commands
                     TargetObject
                     );
 
-                if ((null != this.Exception && !String.IsNullOrEmpty(msg)))
+                if (this.Exception != null && !String.IsNullOrEmpty(msg))
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(msg);
                 }
