@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // otherwise the PSComputerName property does not belong to a remote object:
                 // Ex: icm $s { gps } | select pscomputername --> In this case we want to show
                 // PSComputerName
-                if ((null != so.Properties[RemotingConstants.ComputerNameNoteProperty]) &&
+                if ((so.Properties[RemotingConstants.ComputerNameNoteProperty] != null) &&
                     (!PSObjectHelper.ShouldShowComputerNameProperty(so)))
                 {
                     foreach (MshResolvedExpressionParameterAssociation cpProp in activeAssociationList)

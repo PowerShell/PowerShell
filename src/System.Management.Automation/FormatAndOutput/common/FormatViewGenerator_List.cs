@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             Diagnostics.Assert(so != null, "so cannot be null");
 
             // make sure computername property exists.
-            Diagnostics.Assert(null != so.Properties[RemotingConstants.ComputerNameNoteProperty],
+            Diagnostics.Assert(so.Properties[RemotingConstants.ComputerNameNoteProperty] != null,
                 "PrepareForRemoteObjects cannot be called when the object does not contain ComputerName property.");
 
             if ((dataBaseInfo != null) && (dataBaseInfo.view != null) && (dataBaseInfo.view.mainControl != null))
