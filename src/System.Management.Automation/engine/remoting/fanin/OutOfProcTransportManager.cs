@@ -519,7 +519,7 @@ namespace System.Management.Automation.Remoting.Client
                 // will know that we are closing.
                 isClosed = true;
 
-                if (null == stdInWriter)
+                if (stdInWriter == null)
                 {
                     // this will happen if CloseAsync() is called
                     // before ConnectAsync()..in which case we
@@ -835,7 +835,7 @@ namespace System.Management.Automation.Remoting.Client
         private void OnCommandCreationAckReceived(Guid psGuid)
         {
             OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-            if (null == cmdTM)
+            if (cmdTM == null)
             {
                 throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownCommandGuid,
                     RemotingErrorIdStrings.IPCUnknownCommandGuid,
@@ -1084,7 +1084,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void KillServerProcess()
         {
-            if (null == _serverProcess)
+            if (_serverProcess == null)
             {
                 // this can happen if Dispose is called before ConnectAsync()
                 return;

@@ -4464,7 +4464,7 @@ namespace System.Management.Automation
         public DefaultParameterDictionary(IDictionary dictionary)
             : this()
         {
-            if (null == dictionary)
+            if (dictionary == null)
             {
                 throw PSTraceSource.NewArgumentNullException("dictionary");
             }

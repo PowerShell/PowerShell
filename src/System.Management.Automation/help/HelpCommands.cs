@@ -731,14 +731,14 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings")]
         public static string GetHelpUri(PSObject commandInfoPSObject)
         {
-            if (null == commandInfoPSObject)
+            if (commandInfoPSObject == null)
             {
                 return string.Empty;
             }
             CommandInfo cmdInfo = PSObject.Base(commandInfoPSObject) as CommandInfo;
             // GetHelpUri helper method is expected to be used only by System.Management.Automation.CommandInfo
             // objects from types.ps1xml
-            if ((null == cmdInfo) || (string.IsNullOrEmpty(cmdInfo.Name)))
+            if ((cmdInfo == null) || (string.IsNullOrEmpty(cmdInfo.Name)))
             {
                 return string.Empty;
             }

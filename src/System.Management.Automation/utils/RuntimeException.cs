@@ -153,7 +153,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -222,7 +222,7 @@ namespace System.Management.Automation
         #region Internal
         internal static string RetrieveMessage(ErrorRecord errorRecord)
         {
-            if (null == errorRecord)
+            if (errorRecord == null)
                 return "";
             if (errorRecord.ErrorDetails != null &&
                 !String.IsNullOrEmpty(errorRecord.ErrorDetails.Message))
@@ -236,17 +236,17 @@ namespace System.Management.Automation
 
         internal static string RetrieveMessage(Exception e)
         {
-            if (null == e)
+            if (e == null)
                 return "";
 
             IContainsErrorRecord icer = e as IContainsErrorRecord;
-            if (null == icer)
+            if (icer == null)
                 return e.Message;
             ErrorRecord er = icer.ErrorRecord;
-            if (null == er)
+            if (er == null)
                 return e.Message;
             ErrorDetails ed = er.ErrorDetails;
-            if (null == ed)
+            if (ed == null)
                 return e.Message;
             string detailsMessage = ed.Message;
             return (String.IsNullOrEmpty(detailsMessage)) ? e.Message : detailsMessage;
@@ -254,7 +254,7 @@ namespace System.Management.Automation
 
         internal static Exception RetrieveException(ErrorRecord errorRecord)
         {
-            if (null == errorRecord)
+            if (errorRecord == null)
                 return null;
             return errorRecord.Exception;
         }

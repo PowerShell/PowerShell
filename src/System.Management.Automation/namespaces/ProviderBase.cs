@@ -1577,7 +1577,7 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (null == errorRecord)
+                if (errorRecord == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("errorRecord");
                 }

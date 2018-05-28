@@ -519,7 +519,7 @@ namespace System.Management.Automation
             ManagementClass mgmtClass = mgmtBaseObject as ManagementClass;
 
             // try to use the actual object sent to this method..otherwise construct one
-            if (null == mgmtClass)
+            if (mgmtClass == null)
             {
                 mgmtClass = new ManagementClass(mgmtBaseObject.ClassPath);
 

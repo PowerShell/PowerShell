@@ -1497,7 +1497,7 @@ namespace System.Management.Automation
                 bindingTracer.WriteLine(
                     "Binding collection parameter {0}: argument type [{1}], parameter type [{2}], collection type {3}, element type [{4}], {5}",
                     parameterName,
-                    (null == currentValue) ? "null" : currentValue.GetType().Name,
+                    (currentValue == null) ? "null" : currentValue.GetType().Name,
                     toType,
                     collectionTypeInformation.ParameterCollectionType,
                     collectionTypeInformation.ElementType,
@@ -1615,7 +1615,7 @@ namespace System.Management.Automation
                                     "ArgumentException matching Add(T) for type {0}: {1}", toType.FullName, e.Message);
                                 getMethodError = e;
                             }
-                            if (null == addMethod)
+                            if (addMethod == null)
                             {
                                 ParameterBindingException bindingException =
                                     new ParameterBindingException(
@@ -1727,7 +1727,7 @@ namespace System.Management.Automation
                         {
                             bindingTracer.WriteLine(
                                 "COERCE collection element from type {0} to type {1}",
-                                (null == valueElement) ? "null" : valueElement.GetType().Name,
+                                (valueElement == null) ? "null" : valueElement.GetType().Name,
                                 collectionElementType);
 
                             // Coerce the element to the appropriate type.
@@ -1752,7 +1752,7 @@ namespace System.Management.Automation
                             {
                                 bindingTracer.WriteLine(
                                     "COERCION REQUIRED: Did not attempt to coerce collection element from type {0} to type {1}",
-                                    (null == valueElement) ? "null" : valueElement.GetType().Name,
+                                    (valueElement == null) ? "null" : valueElement.GetType().Name,
                                     collectionElementType);
 
                                 coercionRequired = true;
@@ -1769,7 +1769,7 @@ namespace System.Management.Automation
                             {
                                 bindingTracer.WriteLine(
                                     "Adding element of type {0} to array position {1}",
-                                    (null == currentValueElement) ? "null" : currentValueElement.GetType().Name,
+                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name,
                                     arrayIndex);
                                 resultAsIList[arrayIndex++] = currentValueElement;
                             }
@@ -1777,14 +1777,14 @@ namespace System.Management.Automation
                             {
                                 bindingTracer.WriteLine(
                                     "Adding element of type {0} via IList.Add",
-                                    (null == currentValueElement) ? "null" : currentValueElement.GetType().Name);
+                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name);
                                 resultAsIList.Add(currentValueElement);
                             }
                             else
                             {
                                 bindingTracer.WriteLine(
                                     "Adding element of type {0} via ICollection<T>::Add()",
-                                    (null == currentValueElement) ? "null" : currentValueElement.GetType().Name);
+                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name);
                                 addMethod.Invoke(resultCollection, new object[1] { currentValueElement });
                             }
                         }
@@ -1866,7 +1866,7 @@ namespace System.Management.Automation
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} to array position {1}",
-                                (null == currentValue) ? "null" : currentValue.GetType().Name,
+                                (currentValue == null) ? "null" : currentValue.GetType().Name,
                                 0);
                             resultAsIList[0] = currentValue;
                         }
@@ -1874,14 +1874,14 @@ namespace System.Management.Automation
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} via IList.Add",
-                                (null == currentValue) ? "null" : currentValue.GetType().Name);
+                                (currentValue == null) ? "null" : currentValue.GetType().Name);
                             resultAsIList.Add(currentValue);
                         }
                         else
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} via ICollection<T>::Add()",
-                                (null == currentValue) ? "null" : currentValue.GetType().Name);
+                                (currentValue == null) ? "null" : currentValue.GetType().Name);
                             addMethod.Invoke(resultCollection, new object[1] { currentValue });
                         }
                     }

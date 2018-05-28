@@ -2288,7 +2288,7 @@ else
                     CommonSecurityDescriptor c = new CommonSecurityDescriptor(false, false, value);
                     // this will never be the case..as constructor either constructs or throws.
                     // this is used here to avoid FxCop violation.
-                    if (null == c)
+                    if (c == null)
                     {
                         throw new NotSupportedException();
                     }
@@ -4407,7 +4407,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
                     CommonSecurityDescriptor c = new CommonSecurityDescriptor(false, false, value);
                     // this will never be the case..as constructor either constructs or throws.
                     // this is used here to avoid FxCop violation.
-                    if (null == c)
+                    if (c == null)
                     {
                         throw new NotSupportedException();
                     }

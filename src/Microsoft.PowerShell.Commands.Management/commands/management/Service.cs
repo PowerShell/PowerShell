@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(errorMessage,
                 serviceName,
                 displayName,
-                (null == innerException) ? String.Empty : innerException.Message);
+                (innerException == null) ? String.Empty : innerException.Message);
 
             var exception = new ServiceCommandException(message, innerException);
             exception.ServiceName = serviceName;
@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (null == _allServices)
+                if (_allServices == null)
                 {
                     _allServices = ServiceController.GetServices();
                 }
@@ -339,7 +339,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<ServiceController> matchingServices = new List<ServiceController>();
 
-            if (null == serviceNames)
+            if (serviceNames == null)
             {
                 foreach (ServiceController service in AllServices)
                 {
@@ -399,7 +399,7 @@ namespace Microsoft.PowerShell.Commands
         private List<ServiceController> MatchingServicesByDisplayName()
         {
             List<ServiceController> matchingServices = new List<ServiceController>();
-            if (null == DisplayName)
+            if (DisplayName == null)
             {
                 Diagnostics.Assert(false, "null DisplayName");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands
         private List<ServiceController> MatchingServicesByInput()
         {
             List<ServiceController> matchingServices = new List<ServiceController>();
-            if (null == InputObject)
+            if (InputObject == null)
             {
                 Diagnostics.Assert(false, "null InputObject");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private bool Matches(ServiceController service, string[] matchList)
         {
-            if (null == matchList)
+            if (matchList == null)
                 throw PSTraceSource.NewArgumentNullException("matchList");
             string serviceID = (selectionMode == SelectionMode.DisplayName)
                                 ? service.DisplayName

@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public LocalGroup Clone()
         {
-            if (null == this)
+            if (this == null)
             {
                 throw new NullReferenceException();
             }

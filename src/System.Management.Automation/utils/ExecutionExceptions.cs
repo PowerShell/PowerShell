@@ -31,7 +31,7 @@ namespace System.Management.Automation
         internal CmdletInvocationException(ErrorRecord errorRecord)
             : base(RetrieveMessage(errorRecord), RetrieveException(errorRecord))
         {
-            if (null == errorRecord)
+            if (errorRecord == null)
             {
                 throw new ArgumentNullException("errorRecord");
             }
@@ -55,7 +55,7 @@ namespace System.Management.Automation
                                            InvocationInfo invocationInfo)
             : base(RetrieveMessage(innerException), innerException)
         {
-            if (null == innerException)
+            if (innerException == null)
             {
                 throw new ArgumentNullException("innerException");
             }
@@ -161,7 +161,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -202,7 +202,7 @@ namespace System.Management.Automation
                     InvocationInfo myInvocation)
             : base(GetInnerException(innerException), myInvocation)
         {
-            if (null == innerException)
+            if (innerException == null)
             {
                 throw new ArgumentNullException("innerException");
             }
@@ -281,7 +281,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (null == _providerInvocationException)
+                return (_providerInvocationException == null)
                     ? null
                     : _providerInvocationException.ProviderInfo;
             }
@@ -465,7 +465,7 @@ namespace System.Management.Automation
         internal ActionPreferenceStopException(ErrorRecord error)
             : this(RetrieveMessage(error))
         {
-            if (null == error)
+            if (error == null)
             {
                 throw new ArgumentNullException("error");
             }
@@ -888,7 +888,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -996,7 +996,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),

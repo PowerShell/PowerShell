@@ -5519,7 +5519,7 @@ namespace System.Management.Automation.Language
             if (alias != null)
             {
                 aliasConversionType = alias.ConversionType;
-                if (null == aliasRestrictions)
+                if (aliasRestrictions == null)
                 {
                     aliasRestrictions = new List<BindingRestrictions>();
                 }

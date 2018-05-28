@@ -2011,7 +2011,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     Hashtable hashVal = values[i] as Hashtable;
-                    if (null == hashVal)
+                    if (hashVal == null)
                     {
                         string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
                                                            ConfigFileConstants.ModulesToImport);

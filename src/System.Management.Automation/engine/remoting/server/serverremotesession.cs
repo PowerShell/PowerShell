@@ -798,7 +798,7 @@ namespace System.Management.Automation.Remoting
                 rsSessionStateToUse = _sessionConfigProvider.GetInitialSessionState(_senderInfo);
             }
 
-            if (null == rsSessionStateToUse)
+            if (rsSessionStateToUse == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.InitialSessionStateNull, _configProviderId);
             }

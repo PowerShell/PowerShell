@@ -206,7 +206,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static void RemoveTemporaryDirectory()
         {
-            if (null == _tempDirectory)
+            if (_tempDirectory == null)
             {
                 return;
             }
@@ -267,7 +267,7 @@ namespace System.Management.Automation
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
             string envHome = System.Environment.GetEnvironmentVariable(CommonEnvVariableNames.Home);
-            if (null == envHome)
+            if (envHome == null)
             {
                 envHome = GetTemporaryDirectory();
             }
@@ -426,7 +426,7 @@ namespace System.Management.Automation
             string folderPath = null;
 #if UNIX
             string envHome = System.Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
-            if (null == envHome)
+            if (envHome == null)
             {
                 envHome = Platform.GetTemporaryDirectory();
             }

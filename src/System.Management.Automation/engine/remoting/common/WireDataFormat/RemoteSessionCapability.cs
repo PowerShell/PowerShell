@@ -95,7 +95,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static byte[] GetCurrentTimeZoneInByteFormat()
         {
-            if (null == _timeZoneInByteFormat)
+            if (_timeZoneInByteFormat == null)
             {
                 Exception e = null;
                 try

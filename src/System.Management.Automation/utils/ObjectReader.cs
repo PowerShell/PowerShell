@@ -44,7 +44,7 @@ namespace System.Management.Automation.Internal
             {
                 lock (_monitorObject)
                 {
-                    bool firstRegistrant = (null == InternalDataReady);
+                    bool firstRegistrant = (InternalDataReady == null);
                     InternalDataReady += value;
                     if (firstRegistrant)
                     {
@@ -57,7 +57,7 @@ namespace System.Management.Automation.Internal
                 lock (_monitorObject)
                 {
                     InternalDataReady -= value;
-                    if (null == InternalDataReady)
+                    if (InternalDataReady == null)
                     {
                         _stream.DataReady -= new EventHandler(this.OnDataReady);
                     }
@@ -449,7 +449,7 @@ namespace System.Management.Automation.Internal
         #region Private
         private static PSObject MakePSObject(object o)
         {
-            if (null == o)
+            if (o == null)
                 return null;
 
             return PSObject.AsPSObject(o);
@@ -462,7 +462,7 @@ namespace System.Management.Automation.Internal
         private static Collection<PSObject> MakePSObjectCollection(
             Collection<object> coll)
         {
-            if (null == coll)
+            if (coll == null)
                 return null;
             Collection<PSObject> retval = new Collection<PSObject>();
             foreach (object o in coll)

@@ -911,7 +911,7 @@ namespace System.Management.Automation.Remoting.Client
             ReceivedDataCollection.PrepareForStreamConnect();
             // additional content with connect shell call. Negotiation and connect related messages
             // should be included in payload
-            if (null == _openContent)
+            if (_openContent == null)
             {
                 DataPriorityType additionalDataType;
                 byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
@@ -1065,7 +1065,7 @@ namespace System.Management.Automation.Remoting.Client
 
             // additional content with create shell call. Piggy back first fragment from
             // the dataToBeSent buffer.
-            if (null == _openContent)
+            if (_openContent == null)
             {
                 DataPriorityType additionalDataType;
                 byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
@@ -1470,7 +1470,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 result = WSManNativeApi.WSManCreateSession(WSManAPIData.WSManAPIHandle, connectionStr, 0,
                      authCredentials.GetMarshalledObject(),
-                     (null == proxyInfo) ? IntPtr.Zero : (IntPtr)proxyInfo,
+                     (proxyInfo == null) ? IntPtr.Zero : (IntPtr)proxyInfo,
                      ref _wsManSessionHandle);
             }
             finally

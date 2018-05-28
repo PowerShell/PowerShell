@@ -691,7 +691,7 @@ namespace System.Management.Automation.Remoting
 
                 while (dataWritten < count)
                 {
-                    if (null == _readStream)
+                    if (_readStream == null)
                     {
                         if (_queuedStreams.Count > 0)
                         {
@@ -779,7 +779,7 @@ namespace System.Management.Automation.Remoting
                         return;
                     }
 
-                    if (null == _writeStream)
+                    if (_writeStream == null)
                     {
                         _writeStream = new MemoryStream(_fragmentSize);
                         s_trace.WriteLine("Created write stream: {0}", _writeStream.GetHashCode());

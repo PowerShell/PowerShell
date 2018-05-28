@@ -41,7 +41,7 @@ namespace System.Management.Automation
             {
                 string key = pair.Key;
                 RuntimeDefinedParameter pp = pair.Value;
-                string ppName = (null == pp) ? null : pp.Name;
+                string ppName = (pp == null) ? null : pp.Name;
                 if (null == pp || key != ppName)
                 {
                     ParameterBindingException bindingException =

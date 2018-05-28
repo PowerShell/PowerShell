@@ -219,7 +219,7 @@ namespace System.Management.Automation
             }
 
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
-            if (null == context)
+            if (context == null)
             {
                 return null;
             }
@@ -356,12 +356,12 @@ namespace System.Management.Automation
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (null == synopsis)
+            if (synopsis == null)
             {
                 synopsis = string.Empty;
             }
 
-            if (null == detailedDescription)
+            if (detailedDescription == null)
             {
                 detailedDescription = string.Empty;
             }
@@ -464,7 +464,7 @@ namespace System.Management.Automation
                     }
 
                     PSObject descriptionObject = PSObject.AsPSObject(descriptionItem);
-                    if ((null == descriptionObject) ||
+                    if ((descriptionObject == null) ||
                         (null == descriptionObject.Properties["Text"]) ||
                         (null == descriptionObject.Properties["Text"].Value))
                     {

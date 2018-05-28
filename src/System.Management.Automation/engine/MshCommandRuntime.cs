@@ -1398,7 +1398,7 @@ namespace System.Management.Automation
         {
             // retrieve ConfirmImpact from commandInfo
             CommandMetadata commandMetadata = _commandInfo.CommandMetadata;
-            if (null == commandMetadata)
+            if (commandMetadata == null)
             {
                 Dbg.Assert(false, "Expected CommandMetadata");
                 return true;
@@ -2024,7 +2024,7 @@ namespace System.Management.Automation
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             ThrowIfStopping();
-            if (null == errorRecord)
+            if (errorRecord == null)
             {
                 throw PSTraceSource.NewArgumentNullException("errorRecord");
             }
@@ -2278,7 +2278,7 @@ namespace System.Management.Automation
             /// </summary>
             internal AllowWrite(InternalCommand permittedToWrite, bool permittedToWriteToPipeline)
             {
-                if (null == permittedToWrite)
+                if (permittedToWrite == null)
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite");
                 MshCommandRuntime mcr = permittedToWrite.commandRuntime as MshCommandRuntime;
                 if (mcr == null)
@@ -2328,7 +2328,7 @@ namespace System.Management.Automation
         /// <returns>PipelineStoppedException</returns>
         public Exception ManageException(Exception e)
         {
-            if (null == e)
+            if (e == null)
                 throw PSTraceSource.NewArgumentNullException("e");
 
             if (PipelineProcessor != null)
@@ -2501,7 +2501,7 @@ namespace System.Management.Automation
                 variableName = variableName.Substring(1);
                 object oldValue = PSObject.Base(_state.PSVariable.GetValue(variableName));
                 varList = oldValue as IList;
-                if (null == varList)
+                if (varList == null)
                 {
                     varList = new ArrayList();
 
@@ -2585,7 +2585,7 @@ namespace System.Management.Automation
         internal void _WriteObjectsSkipAllowCheck(object sendToPipeline)
         {
             IEnumerable enumerable = LanguagePrimitives.GetEnumerable(sendToPipeline);
-            if (null == enumerable)
+            if (enumerable == null)
             {
                 _WriteObjectSkipAllowCheck(sendToPipeline);
                 return;
@@ -2707,7 +2707,7 @@ namespace System.Management.Automation
             KeyValuePair<ErrorRecord, ActionPreference> pair = (KeyValuePair<ErrorRecord, ActionPreference>)obj;
             ErrorRecord errorRecord = pair.Key;
             ActionPreference preference = pair.Value;
-            if (null == errorRecord)
+            if (errorRecord == null)
             {
                 throw PSTraceSource.NewArgumentNullException("errorRecord");
             }

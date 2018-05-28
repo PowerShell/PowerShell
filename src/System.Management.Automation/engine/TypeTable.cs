@@ -2429,7 +2429,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="referencedProperties"></param>
         public PropertySetData(IEnumerable<string> referencedProperties)
         {
-            if (null == referencedProperties)
+            if (referencedProperties == null)
             {
                 throw PSTraceSource.NewArgumentNullException("referencedProperties");
             }
@@ -3464,7 +3464,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal TypeTable(IEnumerable<string> typeFiles, AuthorizationManager authorizationManager, PSHost host)
         {
-            if (null == typeFiles)
+            if (typeFiles == null)
             {
                 throw PSTraceSource.NewArgumentNullException("typeFiles");
             }

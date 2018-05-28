@@ -435,7 +435,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             Diagnostics.Assert(so != null, "Shell Object to process cannot be null");
             var typeNames = so.InternalTypeNames;
             Collection<string> typeNamesWithoutDeserializedPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-            if (null == typeNamesWithoutDeserializedPrefix)
+            if (typeNamesWithoutDeserializedPrefix == null)
             {
                 return null;
             }

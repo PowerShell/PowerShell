@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private void RetrieveMatchingProcessesByProcessName()
         {
-            if (null == processNames)
+            if (processNames == null)
             {
                 _matchingProcesses = new List<Process>(AllProcesses);
                 return;
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private void RetrieveMatchingProcessesById()
         {
-            if (null == processIds)
+            if (processIds == null)
             {
                 Diagnostics.Assert(false, "null processIds");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private void RetrieveProcessesByInput()
         {
-            if (null == InputObject)
+            if (InputObject == null)
             {
                 Diagnostics.Assert(false, "null InputObject");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (null == _allProcesses)
+                if (_allProcesses == null)
                 {
                     List<Process> processes = new List<Process>();
                     processes.AddRange(Process.GetProcesses());
@@ -347,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(resourceId,
                 processName,
                 processId,
-                (null == innerException) ? "" : innerException.Message);
+                (innerException == null) ? "" : innerException.Message);
             ProcessCommandException exception =
                 new ProcessCommandException(message, innerException);
             exception.ProcessName = processName;

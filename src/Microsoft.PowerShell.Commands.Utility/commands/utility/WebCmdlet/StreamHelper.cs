@@ -437,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
             bool isDefaultEncoding = false;
-            if (null == encoding)
+            if (encoding == null)
             {
                 // Use the default encoding if one wasn't provided
                 encoding = ContentHelper.GetDefaultEncoding();
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static Byte[] EncodeToBytes(String str, Encoding encoding)
         {
-            if (null == encoding)
+            if (encoding == null)
             {
                 // just use the default encoding if one wasn't provided
                 encoding = ContentHelper.GetDefaultEncoding();

@@ -631,11 +631,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _adapterSet)
+                if (_adapterSet == null)
                 {
                     lock (_lockObject)
                     {
-                        if (null == _adapterSet)
+                        if (_adapterSet == null)
                         {
                             _adapterSet = GetMappedAdapter(_immediateBaseObject, GetTypeTable());
                         }

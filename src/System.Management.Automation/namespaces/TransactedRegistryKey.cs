@@ -2042,7 +2042,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private void VerifyTransaction()
         {
             // Require a transaction. This will throw for "Base" keys because they aren't associated with a transaction.
-            if (null == _myTransaction)
+            if (_myTransaction == null)
             {
                 throw new InvalidOperationException(RegistryProviderStrings.InvalidOperation_NotAssociatedWithTransaction);
             }

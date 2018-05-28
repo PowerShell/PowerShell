@@ -80,11 +80,11 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (null == _completedWaitHandle)
+                if (_completedWaitHandle == null)
                 {
                     lock (SyncObject)
                     {
-                        if (null == _completedWaitHandle)
+                        if (_completedWaitHandle == null)
                         {
                             _completedWaitHandle = new ManualResetEvent(IsCompleted);
                         }

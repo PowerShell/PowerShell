@@ -3354,11 +3354,11 @@ namespace System.Management.Automation
                 }
 
                 // cache "psbase" and "psobject"
-                if (null == internalMembers)
+                if (internalMembers == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == internalMembers)
+                        if (internalMembers == null)
                         {
                             internalMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
 

@@ -112,11 +112,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (null == _parentCI)
+                if (_parentCI == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == _parentCI)
+                        if (_parentCI == null)
                         {
                             string parentCulture = base.Parent.Name;
                             // remove the parentCulture from the m_fallbacks list.
@@ -177,11 +177,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (null == s_uiCulture)
+                if (s_uiCulture == null)
                 {
                     lock (s_syncObject)
                     {
-                        if (null == s_uiCulture)
+                        if (s_uiCulture == null)
                         {
                             s_uiCulture = GetUICulture();
                         }
@@ -196,11 +196,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (null == s_culture)
+                if (s_culture == null)
                 {
                     lock (s_syncObject)
                     {
-                        if (null == s_culture)
+                        if (s_culture == null)
                         {
                             s_culture = GetCulture();
                         }

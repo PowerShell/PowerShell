@@ -913,7 +913,7 @@ namespace System.Management.Automation.Internal.Host
             Collection<int> result = null;
             try
             {
-                if (null == hostForMultipleChoices)
+                if (hostForMultipleChoices == null)
                 {
                     // host did not implement this new interface..
                     // so work with V1 host API to get the behavior..

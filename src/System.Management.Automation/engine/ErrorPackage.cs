@@ -214,7 +214,7 @@ namespace System.Management.Automation
         #region ctor
         internal ErrorCategoryInfo(ErrorRecord errorRecord)
         {
-            if (null == errorRecord)
+            if (errorRecord == null)
                 throw new ArgumentNullException("errorRecord");
             _errorRecord = errorRecord;
         }
@@ -801,7 +801,7 @@ namespace System.Management.Automation
             string resourceId,
             params object[] args)
         {
-            if (null == cmdlet)
+            if (cmdlet == null)
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
 
             if (String.IsNullOrEmpty(baseName))
@@ -834,7 +834,7 @@ namespace System.Management.Automation
             string resourceId,
             params object[] args)
         {
-            if (null == resourceSupplier)
+            if (resourceSupplier == null)
                 throw PSTraceSource.NewArgumentNullException("resourceSupplier");
 
             if (String.IsNullOrEmpty(baseName))
@@ -867,7 +867,7 @@ namespace System.Management.Automation
             string resourceId,
             params object[] args)
         {
-            if (null == assembly)
+            if (assembly == null)
                 throw PSTraceSource.NewArgumentNullException("assembly");
 
             if (String.IsNullOrEmpty(baseName))
@@ -986,7 +986,7 @@ namespace System.Management.Automation
             ErrorCategory errorCategory,
             object targetObject)
         {
-            if (null == exception)
+            if (exception == null)
                 throw PSTraceSource.NewArgumentNullException("exception");
 
             if (errorId == null)
@@ -1658,16 +1658,16 @@ namespace System.Management.Automation
         private string GetInvocationTypeName()
         {
             InvocationInfo invocationInfo = this.InvocationInfo;
-            if (null == invocationInfo)
+            if (invocationInfo == null)
                 return "";
             CommandInfo commandInfo = invocationInfo.MyCommand;
-            if (null == commandInfo)
+            if (commandInfo == null)
                 return "";
             IScriptCommandInfo scriptInfo = commandInfo as IScriptCommandInfo;
             if (scriptInfo != null)
                 return commandInfo.Name;
             CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
-            if (null == cmdletInfo)
+            if (cmdletInfo == null)
                 return "";
             return cmdletInfo.ImplementingType.FullName;
         }

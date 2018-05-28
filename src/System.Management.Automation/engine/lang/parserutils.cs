@@ -1868,7 +1868,7 @@ namespace System.Management.Automation
             Exception innerException)
         {
             string message;
-            if (null == innerException)
+            if (innerException == null)
             {
                 // there is no reason this string lookup should fail
                 message = StringUtil.Format(ParserStrings.BackupParserMessage, errorId);

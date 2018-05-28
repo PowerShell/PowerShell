@@ -873,7 +873,7 @@ namespace System.Management.Automation.Internal
                 // since otherwise, these are just references
                 // to the static members
 
-                if (null == s_hStaticRSAKey)
+                if (s_hStaticRSAKey == null)
                 {
                     if (_hRSAKey != null)
                     {
@@ -885,7 +885,7 @@ namespace System.Management.Automation.Internal
                     }
                 }
 
-                if (null == s_hStaticProv)
+                if (s_hStaticProv == null)
                 {
                     if (_hProv != null)
                     {

@@ -389,13 +389,13 @@ namespace Microsoft.PowerShell.Commands
                                                        "WebCmdletAuthenticationTokenConflictException");
                 ThrowTerminatingError(error);
             }
-            if ((Authentication == WebAuthenticationType.Basic) && (null == Credential))
+            if ((Authentication == WebAuthenticationType.Basic) && (Credential == null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationCredentialNotSupplied,
                                                        "WebCmdletAuthenticationCredentialNotSuppliedException");
                 ThrowTerminatingError(error);
             }
-            if ((Authentication == WebAuthenticationType.OAuth || Authentication == WebAuthenticationType.Bearer) && (null == Token))
+            if ((Authentication == WebAuthenticationType.OAuth || Authentication == WebAuthenticationType.Bearer) && (Token == null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenNotSupplied,
                                                        "WebCmdletAuthenticationTokenNotSuppliedException");
@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands
                                                        "WebCmdletProxyCredentialConflictException");
                 ThrowTerminatingError(error);
             }
-            else if ((null == Proxy) && ((ProxyCredential != null) || ProxyUseDefaultCredentials))
+            else if ((Proxy == null) && ((ProxyCredential != null) || ProxyUseDefaultCredentials))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyUriNotSupplied,
                                                        "WebCmdletProxyUriNotSuppliedException");
@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void PrepareSession()
         {
             // make sure we have a valid WebRequestSession object to work with
-            if (null == WebSession)
+            if (WebSession == null)
             {
                 WebSession = new WebRequestSession();
             }
@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
 
         private Uri CheckProtocol(Uri uri)
         {
-            if (null == uri) { throw new ArgumentNullException("uri"); }
+            if (uri == null) { throw new ArgumentNullException("uri"); }
 
             if (!uri.IsAbsoluteUri)
             {
@@ -1112,7 +1112,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void FillRequestStream(HttpRequestMessage request)
         {
-            if (null == request) { throw new ArgumentNullException("request"); }
+            if (request == null) { throw new ArgumentNullException("request"); }
 
             // set the content type
             if (ContentType != null)
@@ -1752,7 +1752,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="enumerate">If true, collection types in <paramref name="fieldValue" /> will be enumerated. If false, collections will be treated as single value.</param>
         private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
         {
-            if (null == formData)
+            if (formData == null)
             {
                 throw new ArgumentNullException("formDate");
             }

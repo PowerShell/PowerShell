@@ -313,11 +313,11 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal int AddCommand(CommandProcessorBase commandProcessor, int readFromCommand, bool readErrorQueue)
         {
-            if (null == commandProcessor)
+            if (commandProcessor == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandProcessor");
             }
-            if (null == _commands)
+            if (_commands == null)
             {
                 // "_commands == null"
                 throw PSTraceSource.NewInvalidOperationException();
@@ -366,7 +366,7 @@ namespace System.Management.Automation.Internal
                 }
                 Pipe UpstreamPipe = (readErrorQueue) ?
                     prevcommandProcessor.CommandRuntime.ErrorOutputPipe : prevcommandProcessor.CommandRuntime.OutputPipe;
-                if (null == UpstreamPipe)
+                if (UpstreamPipe == null)
                 {
                     // "PipelineProcessor.AddCommand(): UpstreamPipe == null"
                     throw PSTraceSource.NewInvalidOperationException();
@@ -585,7 +585,7 @@ namespace System.Management.Automation.Internal
                 {
                     CommandProcessorBase commandProcessor = _commands[i];
 
-                    if (null == commandProcessor)
+                    if (commandProcessor == null)
                     {
                         // "null command " + i
                         throw PSTraceSource.NewInvalidOperationException();
@@ -779,7 +779,7 @@ namespace System.Management.Automation.Internal
 
             // Retain copy of _commands in case Dispose() is called
             List<CommandProcessorBase> commands = _commands;
-            if (null == commands)
+            if (commands == null)
                 return;
 
             // Call StopProcessing() for all the commands.
@@ -787,7 +787,7 @@ namespace System.Management.Automation.Internal
             {
                 CommandProcessorBase commandProcessor = commands[i];
 
-                if (null == commandProcessor)
+                if (commandProcessor == null)
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
@@ -990,7 +990,7 @@ namespace System.Management.Automation.Internal
             for (int i = 0; i < _commands.Count; i++)
             {
                 CommandProcessorBase commandProcessor = _commands[i];
-                if (null == commandProcessor)
+                if (commandProcessor == null)
                 {
                     // "null command " + i
                     throw PSTraceSource.NewInvalidOperationException();
@@ -1374,7 +1374,7 @@ namespace System.Management.Automation.Internal
             bool wasStopping = false;
             lock (_stopReasonLock)
             {
-                if (null == _firstTerminatingError)
+                if (_firstTerminatingError == null)
                 {
                     _firstTerminatingError = ExceptionDispatchInfo.Capture(e);
                 }

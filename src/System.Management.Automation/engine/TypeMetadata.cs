@@ -612,7 +612,7 @@ namespace System.Management.Automation
         /// </exception>
         public static Dictionary<string, ParameterMetadata> GetParameterMetadata(Type type)
         {
-            if (null == type)
+            if (type == null)
             {
                 throw PSTraceSource.NewArgumentNullException("type");
             }
@@ -1310,7 +1310,7 @@ namespace System.Management.Automation
                 // Create the compiled parameter and add it to the bindable parameters collection
 
                 // NTRAID#Windows Out Of Band Releases-926374-2005/12/22-JonN
-                if (null == parameterDefinition)
+                if (parameterDefinition == null)
                     continue;
 
                 CompiledCommandParameter parameter = new CompiledCommandParameter(parameterDefinition, processingDynamicParameters);

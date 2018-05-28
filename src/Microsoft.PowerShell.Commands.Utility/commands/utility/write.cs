@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Exception e = this.Exception;
                 string msg = Message;
-                if (null == e)
+                if (e == null)
                 {
                     e = new WriteErrorException(msg);
                 }

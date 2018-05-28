@@ -298,7 +298,7 @@ namespace System.Management.Automation
             PSSnapinQualifiedName snapinQualifiedNameForPattern =
                 PSSnapinQualifiedName.GetInstance(pattern);
 
-            if (null == snapinQualifiedNameForPattern)
+            if (snapinQualifiedNameForPattern == null)
             {
                 yield break;
             }

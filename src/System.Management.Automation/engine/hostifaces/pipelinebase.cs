@@ -126,7 +126,7 @@ namespace System.Management.Automation.Runspaces
             : this(pipeline.Runspace, null, false, pipeline.IsNested)
         {
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
-            if (null == pipeline)
+            if (pipeline == null)
             {
                 throw PSTraceSource.NewArgumentNullException("pipeline");
             }

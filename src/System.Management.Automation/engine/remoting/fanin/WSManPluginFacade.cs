@@ -750,7 +750,7 @@ namespace System.Management.Automation.Remoting
             object operationContext,
             bool timedOut)
         {
-            if (null == operationContext)
+            if (operationContext == null)
             {
                 return;
             }

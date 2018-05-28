@@ -144,7 +144,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if (null == inboundData)
+            if (inboundData == null)
             {
                 // no data is supplied..just ignore.
                 WSManPluginInstance.ReportOperationComplete(
@@ -202,7 +202,7 @@ namespace System.Management.Automation.Remoting
                 return false;
             }
 
-            if ((null == streamSet) ||
+            if ((streamSet == null) ||
                 (1 != streamSet.streamIDsCount))
             {
                 // only "stdout" is the supported output stream.
@@ -442,7 +442,7 @@ namespace System.Management.Automation.Remoting
             int flags, // in
             WSManNativeApi.WSManData_UnToMan inboundConnectInformation) // in optional
         {
-            if (null == inboundConnectInformation)
+            if (inboundConnectInformation == null)
             {
                 WSManPluginInstance.ReportOperationComplete(
                     requestDetails,
@@ -564,7 +564,7 @@ namespace System.Management.Automation.Remoting
             WSManPluginOperationShutdownContext context)
         {
             WSManPluginCommandSession mgdCmdSession = GetCommandSession(context.commandContext);
-            if (null == mgdCmdSession)
+            if (mgdCmdSession == null)
             {
                 // this should never be the case. this will protect the service.
                 return;

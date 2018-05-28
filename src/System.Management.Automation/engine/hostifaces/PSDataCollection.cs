@@ -1308,11 +1308,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _readWaitHandle)
+                if (_readWaitHandle == null)
                 {
                     lock (SyncObject)
                     {
-                        if (null == _readWaitHandle)
+                        if (_readWaitHandle == null)
                         {
                             // Create the handle signaled if there are objects in the buffer
                             // or the buffer has been closed.
@@ -1498,7 +1498,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void InternalAddRange(Guid psInstanceId, ICollection collection)
         {
-            if (null == collection)
+            if (collection == null)
             {
                 throw PSTraceSource.NewArgumentNullException("collection");
             }
@@ -1612,7 +1612,7 @@ namespace System.Management.Automation
         /// </exception>
         private static void VerifyValueType(object value)
         {
-            if (null == value)
+            if (value == null)
             {
                 if (typeof(T).IsValueType)
                 {

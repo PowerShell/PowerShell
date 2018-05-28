@@ -3499,7 +3499,7 @@ namespace System.Management.Automation
 
                 bool isKnownPrimitiveType;
                 object result = ReadOneDeserializedObject(out streamName, out isKnownPrimitiveType);
-                if (null == result)
+                if (result == null)
                 {
                     return null;
                 }

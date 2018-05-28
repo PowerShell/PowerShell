@@ -338,7 +338,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         private string ExtractText(PSObject psObject)
         {
-            if (null == psObject)
+            if (psObject == null)
             {
                 return string.Empty;
             }

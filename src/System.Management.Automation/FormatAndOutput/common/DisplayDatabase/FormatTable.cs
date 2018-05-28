@@ -250,7 +250,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal FormatTable(IEnumerable<string> formatFiles, AuthorizationManager authorizationManager, PSHost host)
         {
-            if (null == formatFiles)
+            if (formatFiles == null)
             {
                 throw PSTraceSource.NewArgumentNullException("formatFiles");
             }

@@ -83,7 +83,7 @@ namespace System.Management.Automation
         internal BreakpointAction Trigger()
         {
             ++HitCount;
-            if (null == Action)
+            if (Action == null)
             {
                 return BreakpointAction.Break;
             }

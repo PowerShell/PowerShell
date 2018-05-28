@@ -355,7 +355,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Host");
                 }
@@ -1424,7 +1424,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Command");
                 }
@@ -1466,7 +1466,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Error");
                 }
@@ -1500,7 +1500,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Progress");
                 }
@@ -1533,7 +1533,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Verbose");
                 }
@@ -1566,7 +1566,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Debug");
                 }
@@ -1602,7 +1602,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Warning");
                 }
@@ -1638,7 +1638,7 @@ namespace System.Management.Automation
 
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Information");
                 }
@@ -2695,7 +2695,7 @@ namespace System.Management.Automation
         /// </exception>
         public void Invoke<T>(IEnumerable input, IList<T> output, PSInvocationSettings settings)
         {
-            if (null == output)
+            if (output == null)
             {
                 throw PSTraceSource.NewArgumentNullException("output");
             }
@@ -2769,7 +2769,7 @@ namespace System.Management.Automation
         /// </exception>
         public void Invoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
-            if (null == output)
+            if (output == null)
             {
                 throw PSTraceSource.NewArgumentNullException("output");
             }
@@ -2998,7 +2998,7 @@ namespace System.Management.Automation
         /// </exception>
         public IAsyncResult BeginInvoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
         {
-            if (null == output)
+            if (output == null)
             {
                 throw PSTraceSource.NewArgumentNullException("output");
             }
@@ -3390,14 +3390,14 @@ namespace System.Management.Automation
             {
                 _commandInvokedSynchronously = true;
 
-                if (null == asyncResult)
+                if (asyncResult == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("asyncResult");
                 }
 
                 PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
-                if ((null == psAsyncResult) ||
+                if ((psAsyncResult == null) ||
                     (psAsyncResult.OwnerId != InstanceId) ||
                     (psAsyncResult.IsAssociatedWithAsyncInvoke != true))
                 {
@@ -3491,14 +3491,14 @@ namespace System.Management.Automation
         /// </exception>
         public void EndStop(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
             PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
-            if ((null == psAsyncResult) ||
+            if ((psAsyncResult == null) ||
                 (psAsyncResult.OwnerId != InstanceId) ||
                 (psAsyncResult.IsAssociatedWithAsyncInvoke != false))
             {
@@ -4679,7 +4679,7 @@ namespace System.Management.Automation
 
             lock (_syncObject)
             {
-                if ((null == _psCommand) || (null == _psCommand.Commands) || (0 == _psCommand.Commands.Count))
+                if ((_psCommand == null) || (null == _psCommand.Commands) || (0 == _psCommand.Commands.Count))
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.NoCommandToInvoke);
                 }
@@ -5092,7 +5092,7 @@ namespace System.Management.Automation
                 {
                     // Set the host for this local runspace if user specified one.
                     LocalRunspace rs = rsToUse as LocalRunspace;
-                    if (null == rs)
+                    if (rs == null)
                     {
                         lock (_shell._syncObject)
                         {
@@ -5351,7 +5351,7 @@ namespace System.Management.Automation
                     _outputStream.Close();
                     _errorStream.Close();
 
-                    if (null == CurrentlyRunningPipeline)
+                    if (CurrentlyRunningPipeline == null)
                     {
                         return;
                     }
@@ -5360,7 +5360,7 @@ namespace System.Management.Automation
                     // and pipeline.dispose will not change powershell instances state
                     CurrentlyRunningPipeline.StateChanged -= _shell.PipelineStateChanged;
 
-                    if ((null == GetRunspaceAsyncResult) && (null == _shell._rsConnection))
+                    if ((GetRunspaceAsyncResult == null) && (null == _shell._rsConnection))
                     {
                         // user did not supply a runspace..Invoke* method created
                         // a new runspace..so close it.

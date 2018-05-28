@@ -2536,7 +2536,7 @@ function Get-PSImplicitRemotingSession
         private string GenerateConnectionStringForNewRunspace()
         {
             WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
-            if (null == connectionInfo)
+            if (connectionInfo == null)
             {
                 VMConnectionInfo vmConnectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as VMConnectionInfo;
                 if (vmConnectionInfo != null)

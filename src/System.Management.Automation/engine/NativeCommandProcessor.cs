@@ -1278,7 +1278,7 @@ namespace System.Management.Automation
 
             if (_runStandAlone)
             {
-                if (null == s_supportScreenScrape)
+                if (s_supportScreenScrape == null)
                 {
                     try
                     {

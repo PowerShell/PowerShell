@@ -684,7 +684,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Results");
                 }
@@ -1073,7 +1073,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Output");
                 }
@@ -1107,7 +1107,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Error");
                 }
@@ -1141,7 +1141,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Progress");
                 }
@@ -1172,7 +1172,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Verbose");
                 }
@@ -1206,7 +1206,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Debug");
                 }
@@ -1239,7 +1239,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Warning");
                 }
@@ -1273,7 +1273,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Information");
                 }

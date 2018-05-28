@@ -540,7 +540,7 @@ namespace System.Management.Automation.Remoting
                     assemblyName, shellId);
 
                 assembly = LoadSsnStateProviderAssembly(applicationBase, assemblyName);
-                if (null == assembly)
+                if (assembly == null)
                 {
                     throw PSTraceSource.NewArgumentException("assemblyName", RemotingErrorIdStrings.UnableToLoadAssembly,
                         assemblyName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
@@ -557,7 +557,7 @@ namespace System.Management.Automation.Remoting
                         typeToLoad, shellId);
 
                     Type type = assembly.GetType(typeToLoad, true, true);
-                    if (null == type)
+                    if (type == null)
                     {
                         throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
                             typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);

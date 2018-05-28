@@ -110,7 +110,7 @@ namespace System.Management.Automation
                 foreach (object descriptionItem in descriptionItems)
                 {
                     PSObject descriptionObject = PSObject.AsPSObject(descriptionItem);
-                    if ((null == descriptionObject) ||
+                    if ((descriptionObject == null) ||
                         (null == descriptionObject.Properties["Text"]) ||
                         (null == descriptionObject.Properties["Text"].Value))
                     {
@@ -169,12 +169,12 @@ namespace System.Management.Automation
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (null == synopsis)
+            if (synopsis == null)
             {
                 synopsis = string.Empty;
             }
 
-            if (null == detailedDescription)
+            if (detailedDescription == null)
             {
                 detailedDescription = string.Empty;
             }

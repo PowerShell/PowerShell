@@ -1127,7 +1127,7 @@ namespace System.Management.Automation.Runspaces
             string property, T defaultValue)
         {
             WSManConnectionInfo wsCI = rsCI as WSManConnectionInfo;
-            if (null == wsCI)
+            if (wsCI == null)
             {
                 return defaultValue;
             }
