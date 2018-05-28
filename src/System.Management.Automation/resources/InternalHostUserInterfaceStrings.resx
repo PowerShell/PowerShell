@@ -186,9 +186,6 @@
   <data name="DebugFormatString" xml:space="preserve">
     <value>DEBUG: {0}</value>
   </data>
-  <data name="InformationFormatString" xml:space="preserve">
-    <value>INFO: {0}</value>
-  </data>
   <data name="HostNotTranscribing" xml:space="preserve">
     <value>The host is not currently transcribing.</value>
   </data>

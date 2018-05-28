@@ -826,7 +826,7 @@ namespace System.Management.Automation
                 if (!record.Tags.Contains("PSHOST") && (preference == ActionPreference.Continue))
                 {
                     // Only transcribe informational messages here. Transcription of PSHost-targeted messages is done in the InternalUI.Write* methods.
-                    CBhost.InternalUI.TranscribeResult(StringUtil.Format(InternalHostUserInterfaceStrings.InformationFormatString, record.ToString()));
+                    CBhost.InternalUI.TranscribeResult(record.ToString());
                 }
             }
 
