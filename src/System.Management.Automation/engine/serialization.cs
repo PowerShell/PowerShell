@@ -729,7 +729,7 @@ namespace System.Management.Automation
         /// </returns>
         internal static Collection<string> MaskDeserializationPrefix(Collection<string> typeNames)
         {
-            Dbg.Assert(null != typeNames, "typeNames cannot be null");
+            Dbg.Assert(typeNames != null, "typeNames cannot be null");
 
             bool atleastOneDeserializedTypeFound = false;
 

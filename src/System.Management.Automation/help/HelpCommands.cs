@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="uriToLaunch"></param>
         private void LaunchOnlineHelp(Uri uriToLaunch)
         {
-            Diagnostics.Assert(null != uriToLaunch, "uriToLaunch should not be null");
+            Diagnostics.Assert(uriToLaunch != null, "uriToLaunch should not be null");
 
             if (!uriToLaunch.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) &&
                 !uriToLaunch.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))

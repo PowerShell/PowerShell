@@ -287,7 +287,7 @@ namespace System.Management.Automation.Remoting
             string stream,
             ReceiveDataCollection.OnDataAvailableCallback dataAvailableCallback)
         {
-            Dbg.Assert(null != data, "Cannot process null data");
+            Dbg.Assert(data != null, "Cannot process null data");
 
             s_baseTracer.WriteLine("Processing incoming data for stream {0}.", stream);
 
@@ -1344,7 +1344,7 @@ namespace System.Management.Automation.Remoting.Server
 
         private void OnDataAvailable(byte[] dataToSend, bool isEndFragment)
         {
-            Dbg.Assert(null != dataToSend, "ServerTransportManager cannot send null fragment");
+            Dbg.Assert(dataToSend != null, "ServerTransportManager cannot send null fragment");
             // log to crimson log.
             PSEtwLog.LogAnalyticInformational(PSEventId.ServerSendData, PSOpcode.Send, PSTask.None,
                 PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,

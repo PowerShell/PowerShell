@@ -38,7 +38,7 @@ namespace System.Management.Automation
         /// <param name="psMD"></param>
         internal ParameterSetMetadata(ParameterSetSpecificMetadata psMD)
         {
-            Dbg.Assert(null != psMD, "ParameterSetSpecificMetadata cannot be null");
+            Dbg.Assert(psMD != null, "ParameterSetSpecificMetadata cannot be null");
             Initialize(psMD);
         }
 
@@ -474,7 +474,7 @@ namespace System.Management.Automation
         /// </param>
         internal ParameterMetadata(CompiledCommandParameter cmdParameterMD)
         {
-            Dbg.Assert(null != cmdParameterMD,
+            Dbg.Assert(cmdParameterMD != null,
                 "CompiledCommandParameter cannot be null");
 
             Initialize(cmdParameterMD);
@@ -669,7 +669,7 @@ namespace System.Management.Automation
         internal static Dictionary<string, ParameterMetadata> GetParameterMetadata(MergedCommandParameterMetadata
             cmdParameterMetadata)
         {
-            Dbg.Assert(null != cmdParameterMetadata, "cmdParameterMetadata cannot be null");
+            Dbg.Assert(cmdParameterMetadata != null, "cmdParameterMetadata cannot be null");
 
             Dictionary<string, ParameterMetadata> result = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
 

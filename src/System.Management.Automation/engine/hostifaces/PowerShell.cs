@@ -4253,7 +4253,7 @@ namespace System.Management.Automation
                 else
                 {
                     rsToUse = _rsConnection as Runspace;
-                    Dbg.Assert(null != rsToUse,
+                    Dbg.Assert(rsToUse != null,
                         "Nested PowerShell can only work on a Runspace");
 
                     // Perform work on the current thread. Nested Pipeline
@@ -4675,7 +4675,7 @@ namespace System.Management.Automation
         /// </exception>
         private void Prepare<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, bool shouldCreateWorker)
         {
-            Dbg.Assert(null != output, "Output cannot be null");
+            Dbg.Assert(output != null, "Output cannot be null");
 
             lock (_syncObject)
             {

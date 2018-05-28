@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="so"></param>
         internal override void PrepareForRemoteObjects(PSObject so)
         {
-            Diagnostics.Assert(null != so, "so cannot be null");
+            Diagnostics.Assert(so != null, "so cannot be null");
 
             // make sure computername property exists.
             Diagnostics.Assert(null != so.Properties[RemotingConstants.ComputerNameNoteProperty],

@@ -1438,7 +1438,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Diagnostics.Assert(null != _error, "_error is null");
+                Diagnostics.Assert(_error != null, "_error is null");
                 return _error;
             }
         }

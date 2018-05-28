@@ -432,7 +432,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="newURI"></param>
         private void PerformURIRedirectionStep2(System.Uri newURI)
         {
-            Dbg.Assert(null != newURI, "Uri cannot be null");
+            Dbg.Assert(newURI != null, "Uri cannot be null");
             lock (_syncObject)
             {
                 // if connection is closed by the user..no need to redirect

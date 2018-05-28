@@ -212,7 +212,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private static void ProcessElement(XmlReader xmlReader, DataProcessingDelegates callbacks)
         {
-            Dbg.Assert(null != xmlReader, "xmlReader cannot be null.");
+            Dbg.Assert(xmlReader != null, "xmlReader cannot be null.");
             Dbg.Assert(xmlReader.NodeType == XmlNodeType.Element, "xmlReader's NodeType should be of type Element");
 
             PowerShellTraceSource tracer = PowerShellTraceSourceFactory.GetTraceSource();
@@ -398,7 +398,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="writerToWrap"></param>
         internal OutOfProcessTextWriter(TextWriter writerToWrap)
         {
-            Dbg.Assert(null != writerToWrap, "Cannot wrap a null writer.");
+            Dbg.Assert(writerToWrap != null, "Cannot wrap a null writer.");
             _writer = writerToWrap;
         }
 
@@ -574,7 +574,7 @@ namespace System.Management.Automation.Remoting.Client
             ClientRemotePowerShell cmd,
             bool noInput)
         {
-            Dbg.Assert(null != cmd, "Cmd cannot be null");
+            Dbg.Assert(cmd != null, "Cmd cannot be null");
 
             OutOfProcessClientCommandTransportManager result = new
                 OutOfProcessClientCommandTransportManager(cmd, noInput, this, stdInWriter);
@@ -729,7 +729,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnDataAvailableCallback(byte[] data, DataPriorityType priorityType)
         {
-            Dbg.Assert(null != data, "data cannot be null in the data available callback");
+            Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
             tracer.WriteLine("Received data to be sent from the callback.");
             SendData(data, priorityType);
@@ -2162,7 +2162,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </param>
         internal override void ProcessPrivateData(object privateData)
         {
-            Dbg.Assert(null != privateData, "privateData cannot be null.");
+            Dbg.Assert(privateData != null, "privateData cannot be null.");
 
             // For this version...only a boolean can be used for privateData.
             bool shouldRaiseSignalCompleted = (bool)privateData;
@@ -2230,7 +2230,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnDataAvailableCallback(byte[] data, DataPriorityType priorityType)
         {
-            Dbg.Assert(null != data, "data cannot be null in the data available callback");
+            Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
             tracer.WriteLine("Received data from dataToBeSent store.");
             SendData(data, priorityType);
@@ -2258,8 +2258,8 @@ namespace System.Management.Automation.Remoting.Server
         internal OutOfProcessServerSessionTransportManager(OutOfProcessTextWriter outWriter, OutOfProcessTextWriter errWriter, PSRemotingCryptoHelperServer cryptoHelper)
             : base(BaseTransportManager.DefaultFragmentSize, cryptoHelper)
         {
-            Dbg.Assert(null != outWriter, "outWriter cannot be null.");
-            Dbg.Assert(null != errWriter, "errWriter cannot be null.");
+            Dbg.Assert(outWriter != null, "outWriter cannot be null.");
+            Dbg.Assert(errWriter != null, "errWriter cannot be null.");
             _stdOutWriter = outWriter;
             _stdErrWriter = errWriter;
             _cmdTransportManagers = new Dictionary<Guid, OutOfProcessServerTransportManager>();

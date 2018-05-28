@@ -1248,7 +1248,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         protected Runspace CreateRunspace()
         {
-            Dbg.Assert(null != _initialSessionState, "_initialSessionState should not be null");
+            Dbg.Assert(_initialSessionState != null, "_initialSessionState should not be null");
             // TODO: exceptions thrown here need to be documented
             // runspace.Open() did not document all the exceptions.
             Runspace result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
@@ -1296,7 +1296,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </param>
         protected void DestroyRunspace(Runspace runspace)
         {
-            Dbg.Assert(null != runspace, "Runspace cannot be null");
+            Dbg.Assert(runspace != null, "Runspace cannot be null");
             runspace.Events.ForwardEvent -= OnRunspaceForwardEvent; // this must be done after open since open initializes the ExecutionContext
             runspace.Close();
             runspace.Dispose();

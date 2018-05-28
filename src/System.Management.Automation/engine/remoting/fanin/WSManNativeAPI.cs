@@ -651,7 +651,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="data"></param>
             internal WSManData_ManToUn(byte[] data)
             {
-                Dbg.Assert(null != data, "Data cannot be null");
+                Dbg.Assert(data != null, "Data cannot be null");
 
                 _internalData = new WSManDataStruct();
                 _internalData.binaryOrTextData = new WSManBinaryOrTextDataStruct();
@@ -674,7 +674,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="data"></param>
             internal WSManData_ManToUn(string data)
             {
-                Dbg.Assert(null != data, "Data cannot be null");
+                Dbg.Assert(data != null, "Data cannot be null");
 
                 _internalData = new WSManDataStruct();
                 _internalData.binaryOrTextData = new WSManBinaryOrTextDataStruct();
@@ -1098,7 +1098,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="options"></param>
             internal WSManOptionSet(WSManOption[] options)
             {
-                Dbg.Assert(null != options, "options cannot be null");
+                Dbg.Assert(options != null, "options cannot be null");
 
                 int sizeOfOption = Marshal.SizeOf<WSManOption>();
                 _optionSet = new WSManOptionSetStruct();

@@ -123,7 +123,7 @@ namespace System.Management.Automation.Remoting
             string initializationParameters,
             AbstractServerSessionTransportManager transportManager)
         {
-            Dbg.Assert(null != transportManager, "transportManager cannot be null.");
+            Dbg.Assert(transportManager != null, "transportManager cannot be null.");
 
             // let input,output and error from native commands redirect as we have
             // to send (or receive) them back to client for action.
@@ -1157,7 +1157,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal void ApplyQuotaOnCommandTransportManager(AbstractServerTransportManager cmdTransportManager)
         {
-            Dbg.Assert(null != cmdTransportManager, "cmdTransportManager cannot be null");
+            Dbg.Assert(cmdTransportManager != null, "cmdTransportManager cannot be null");
             cmdTransportManager.ReceivedDataCollection.MaximumReceivedDataSize = _maxRecvdDataSizeCommand;
             cmdTransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
         }

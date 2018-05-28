@@ -257,7 +257,7 @@ namespace System.Management.Automation
             : base(BuildMessage(commandName, requiresPSVersion.ToString(), currentPSVersion, false))
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(commandName), "commandName is null or empty when constructing ScriptRequiresException");
-            Diagnostics.Assert(null != requiresPSVersion, "requiresPSVersion is null or empty when constructing ScriptRequiresException");
+            Diagnostics.Assert(requiresPSVersion != null, "requiresPSVersion is null or empty when constructing ScriptRequiresException");
             Diagnostics.Assert(!string.IsNullOrEmpty(errorId), "errorId is null or empty when constructing ScriptRequiresException");
             _commandName = commandName;
             _requiresPSVersion = requiresPSVersion;

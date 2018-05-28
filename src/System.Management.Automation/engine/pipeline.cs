@@ -569,7 +569,7 @@ namespace System.Management.Automation.Internal
 
             // The only reason we should get here is if
             // an exception should be rethrown.
-            Diagnostics.Assert(null != toRethrowInfo, "Alternate protocol path failure");
+            Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
             toRethrowInfo.Throw();
             return null; // UNREACHABLE
         } // internal Array SynchronousExecuteEnumerate()
@@ -724,7 +724,7 @@ namespace System.Management.Automation.Internal
 
             // The only reason we should get here is if
             // an exception should be rethrown.
-            Diagnostics.Assert(null != toRethrowInfo, "Alternate protocol path failure");
+            Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
             toRethrowInfo.Throw();
             return null; // UNREACHABLE
         } // internal Array DoComplete()

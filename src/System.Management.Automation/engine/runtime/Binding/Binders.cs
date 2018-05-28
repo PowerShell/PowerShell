@@ -5388,7 +5388,7 @@ namespace System.Management.Automation.Language
         private PSMemberInfo ResolveAlias(PSAliasProperty alias, DynamicMetaObject target, HashSet<string> aliases,
             List<BindingRestrictions> aliasRestrictions)
         {
-            Diagnostics.Assert(null != aliasRestrictions, "aliasRestrictions cannot be null");
+            Diagnostics.Assert(aliasRestrictions != null, "aliasRestrictions cannot be null");
             if (aliases == null)
             {
                 aliases = new HashSet<string> { alias.Name };

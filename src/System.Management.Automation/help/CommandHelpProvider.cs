@@ -805,7 +805,7 @@ namespace System.Management.Automation
         /// <returns>HelpInfo object.</returns>
         private HelpInfo GetFromCommandCache(string helpFileIdentifier, CommandInfo commandInfo)
         {
-            Debug.Assert(null != commandInfo, "commandInfo cannot be null");
+            Debug.Assert(commandInfo != null, "commandInfo cannot be null");
             HelpInfo result = GetFromCommandCache(helpFileIdentifier, commandInfo.Name, commandInfo.HelpCategory);
             if (null == result)
             {
@@ -835,7 +835,7 @@ namespace System.Management.Automation
         /// </returns>
         private HelpInfo GetFromCommandCacheOrCmdletInfo(CmdletInfo cmdletInfo)
         {
-            Debug.Assert(null != cmdletInfo, "cmdletInfo cannot be null");
+            Debug.Assert(cmdletInfo != null, "cmdletInfo cannot be null");
             HelpInfo result = GetFromCommandCache(cmdletInfo.ModuleName, cmdletInfo.Name, cmdletInfo.HelpCategory);
             if (result == null)
             {
@@ -886,7 +886,7 @@ namespace System.Management.Automation
         /// </returns>
         private MamlCommandHelpInfo GetFromCommandCacheByRemovingPrefix(string helpIdentifier, CommandInfo cmdInfo)
         {
-            Dbg.Assert(null != cmdInfo, "cmdInfo cannot be null");
+            Dbg.Assert(cmdInfo != null, "cmdInfo cannot be null");
 
             MamlCommandHelpInfo result = null;
             MamlCommandHelpInfo originalHelpInfo = GetFromCommandCache(helpIdentifier,

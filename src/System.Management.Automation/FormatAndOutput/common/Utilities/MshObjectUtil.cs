@@ -432,7 +432,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static PSMemberSet MaskDeserializedAndGetStandardMembers(PSObject so)
         {
-            Diagnostics.Assert(null != so, "Shell Object to process cannot be null");
+            Diagnostics.Assert(so != null, "Shell Object to process cannot be null");
             var typeNames = so.InternalTypeNames;
             Collection<string> typeNamesWithoutDeserializedPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
             if (null == typeNamesWithoutDeserializedPrefix)

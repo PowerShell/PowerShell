@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="differenceEntry"></param>
         private void Process(OrderByPropertyEntry differenceEntry)
         {
-            Diagnostics.Assert(null != _referenceEntries, "null referenceEntries");
+            Diagnostics.Assert(_referenceEntries != null, "null referenceEntries");
 
             // Retrieve the next reference object (referenceEntry) if any
             OrderByPropertyEntry referenceEntry = null;
@@ -274,11 +274,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (null == match || null == list)
                 return null;
-            Diagnostics.Assert(null != _comparer, "null comparer");
+            Diagnostics.Assert(_comparer != null, "null comparer");
             for (int i = 0; i < list.Count; i++)
             {
                 OrderByPropertyEntry listEntry = list[i];
-                Diagnostics.Assert(null != listEntry, "null listEntry " + i);
+                Diagnostics.Assert(listEntry != null, "null listEntry " + i);
                 if (0 == _comparer.Compare(match, listEntry))
                 {
                     list.RemoveAt(i);
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void Emit(OrderByPropertyEntry entry, string sideIndicator)
         {
-            Diagnostics.Assert(null != entry, "null entry");
+            Diagnostics.Assert(entry != null, "null entry");
 
             PSObject mshobj;
             if (PassThru)
@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     List<MshParameter> mshParameterList = _orderByProperty.MshParameterList;
-                    Diagnostics.Assert(null != mshParameterList, "null mshParameterList");
+                    Diagnostics.Assert(mshParameterList != null, "null mshParameterList");
                     Diagnostics.Assert(mshParameterList.Count == Property.Length, "mshParameterList.Count " + mshParameterList.Count);
 
                     for (int i = 0; i < Property.Length; i++)
@@ -336,11 +336,11 @@ namespace Microsoft.PowerShell.Commands
                         // 2005/07/05 This is the closest we can come to
                         // the string typed by the user
                         MshParameter mshParameter = mshParameterList[i];
-                        Diagnostics.Assert(null != mshParameter, "null mshParameter");
+                        Diagnostics.Assert(mshParameter != null, "null mshParameter");
                         Hashtable hash = mshParameter.hash;
-                        Diagnostics.Assert(null != hash, "null hash");
+                        Diagnostics.Assert(hash != null, "null hash");
                         object prop = hash[FormatParameterDefinitionKeys.ExpressionEntryKey];
-                        Diagnostics.Assert(null != prop, "null prop");
+                        Diagnostics.Assert(prop != null, "null prop");
                         string propName = prop.ToString();
                         PSNoteProperty propertyNote = new PSNoteProperty(
                             propName,

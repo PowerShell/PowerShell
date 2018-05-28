@@ -91,7 +91,7 @@ namespace System.Management.Automation.Remoting
             get { return _fragmentor; }
             set
             {
-                Dbg.Assert(null != value, "Fragmentor cannot be null.");
+                Dbg.Assert(value != null, "Fragmentor cannot be null.");
                 _fragmentor = value;
                 // create serialized streams using fragment size.
                 string[] names = Enum.GetNames(typeof(DataPriorityType));
@@ -120,9 +120,9 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal void Add<T>(RemoteDataObject<T> data, DataPriorityType priority)
         {
-            Dbg.Assert(null != data, "Cannot send null data object");
-            Dbg.Assert(null != _fragmentor, "Fragmentor cannot be null while adding objects");
-            Dbg.Assert(null != _dataToBeSent, "Serialized streams are not initialized");
+            Dbg.Assert(data != null, "Cannot send null data object");
+            Dbg.Assert(_fragmentor != null, "Fragmentor cannot be null while adding objects");
+            Dbg.Assert(_dataToBeSent != null, "Serialized streams are not initialized");
 
             // make sure the only one object is fragmented and added to the collection
             // at any give time. This way the order of fragment is maintained
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal ReceiveDataCollection(Fragmentor defragmentor, bool createdByClientTM)
         {
-            Dbg.Assert(null != defragmentor, "ReceiveDataCollection needs a defragmentor to work with");
+            Dbg.Assert(defragmentor != null, "ReceiveDataCollection needs a defragmentor to work with");
 
             // Memory streams created with an unsigned byte array provide a non-resizable stream view
             // of the data, and can only be written to. When using a byte array, you can neither append
@@ -431,8 +431,8 @@ namespace System.Management.Automation.Remoting
         /// </remarks>
         internal void ProcessRawData(byte[] data, OnDataAvailableCallback callback)
         {
-            Dbg.Assert(null != data, "Cannot process null data");
-            Dbg.Assert(null != callback, "Callback cannot be null");
+            Dbg.Assert(data != null, "Cannot process null data");
+            Dbg.Assert(callback != null, "Callback cannot be null");
 
             lock (_syncObject)
             {
@@ -852,7 +852,7 @@ namespace System.Management.Automation.Remoting
             DataPriorityType priorityType,
             ReceiveDataCollection.OnDataAvailableCallback callback)
         {
-            Dbg.Assert(null != data, "Cannot process null data");
+            Dbg.Assert(data != null, "Cannot process null data");
 
             try
             {

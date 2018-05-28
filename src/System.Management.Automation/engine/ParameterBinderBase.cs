@@ -1598,7 +1598,7 @@ namespace System.Management.Automation
                             // extract the ICollection<T>::Add(T) method
                             const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
                             Type elementType = collectionTypeInformation.ElementType;
-                            Diagnostics.Assert(null != elementType, "null ElementType");
+                            Diagnostics.Assert(elementType != null, "null ElementType");
                             Exception getMethodError = null;
                             try
                             {

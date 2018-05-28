@@ -484,7 +484,7 @@ namespace System.Management.Automation
         /// <exception cref="ManagementException"></exception>
         private static void PopulateMethodTable(ManagementClass mgmtClass, CacheTable methodTable, bool staticBinding)
         {
-            Dbg.Assert(null != mgmtClass, "ManagementClass cannot be null in this method");
+            Dbg.Assert(mgmtClass != null, "ManagementClass cannot be null in this method");
             MethodDataCollection mgmtMethods = mgmtClass.Methods;
             if (mgmtMethods != null)
             {

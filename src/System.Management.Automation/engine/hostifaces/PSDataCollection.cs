@@ -1164,7 +1164,7 @@ namespace System.Management.Automation
         /// <param name="readCount">maximum number of elements to read</param>
         internal Collection<T> ReadAndRemove(int readCount)
         {
-            Dbg.Assert(null != _data, "Collection cannot be null");
+            Dbg.Assert(_data != null, "Collection cannot be null");
 
             Dbg.Assert(readCount >= 0, "ReadCount cannot be negative");
 
@@ -1844,7 +1844,7 @@ namespace System.Management.Automation
         /// </param>
         internal PSDataCollectionEnumerator(PSDataCollection<W> collection, bool neverBlock)
         {
-            Dbg.Assert(null != collection,
+            Dbg.Assert(collection != null,
                 "Collection cannot be null");
             Dbg.Assert(!collection.ReleaseOnEnumeration || !collection.IsEnumerated,
                 "shouldn't enumerate more than once if ReleaseOnEnumeration is true");

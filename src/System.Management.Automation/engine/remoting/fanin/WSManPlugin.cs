@@ -948,7 +948,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManSenderDetails senderDetails)
         {
             // senderDetails will not be null.
-            Dbg.Assert(null != senderDetails, "senderDetails cannot be null");
+            Dbg.Assert(senderDetails != null, "senderDetails cannot be null");
 
             // Construct PSIdentity
             PSCertificateDetails psCertDetails = null;
@@ -1394,7 +1394,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails,
             WSManPluginErrorCodes errorCode)
         {
-            Dbg.Assert(null != requestDetails, "requestDetails cannot be null in operation complete.");
+            Dbg.Assert(requestDetails != null, "requestDetails cannot be null in operation complete.");
 
             PSEtwLog.LogAnalyticInformational(PSEventId.ReportOperationComplete,
                 PSOpcode.Close, PSTask.None,
@@ -1416,7 +1416,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails,
             Exception reasonForClose)
         {
-            Dbg.Assert(null != requestDetails, "requestDetails cannot be null in operation complete.");
+            Dbg.Assert(requestDetails != null, "requestDetails cannot be null in operation complete.");
 
             WSManPluginErrorCodes error = WSManPluginErrorCodes.NoError;
             String errorMessage = String.Empty;
@@ -1466,7 +1466,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails)
         {
             // requestDetails cannot not be null.
-            Dbg.Assert(null != requestDetails, "requestDetails cannot be null");
+            Dbg.Assert(requestDetails != null, "requestDetails cannot be null");
 
             //IntPtr nativeLocaleData = IntPtr.Zero;
             WSManNativeApi.WSManDataStruct outputStruct = new WSManNativeApi.WSManDataStruct();

@@ -960,7 +960,7 @@ namespace System.Management.Automation.Internal.Host
             Collection<ChoiceDescription> choices,
             IEnumerable<int> defaultChoices)
         {
-            Dbg.Assert(null != _externalUI, "externalUI cannot be null.");
+            Dbg.Assert(_externalUI != null, "externalUI cannot be null.");
 
             if (choices == null)
             {

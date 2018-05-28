@@ -1137,7 +1137,7 @@ namespace System.Management.Automation.Runspaces
 
         internal void SetConnectionUri(Uri newUri)
         {
-            Dbg.Assert(null != newUri, "newUri cannot be null.");
+            Dbg.Assert(newUri != null, "newUri cannot be null.");
             _connectionUri = newUri;
         }
 

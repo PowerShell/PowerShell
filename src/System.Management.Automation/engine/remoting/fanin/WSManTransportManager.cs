@@ -567,7 +567,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSRemotingTransportException(
                     StringUtil.Format(RemotingErrorIdStrings.WSManInitFailed, WSManAPIData.ErrorCode));
             }
-            Dbg.Assert(null != connectionInfo, "connectionInfo cannot be null");
+            Dbg.Assert(connectionInfo != null, "connectionInfo cannot be null");
 
             CryptoHelper = cryptoHelper;
             dataToBeSent.Fragmentor = base.Fragmentor;
@@ -1333,10 +1333,10 @@ namespace System.Management.Automation.Remoting.Client
         internal override BaseClientCommandTransportManager CreateClientCommandTransportManager(RunspaceConnectionInfo connectionInfo,
                     ClientRemotePowerShell cmd, bool noInput)
         {
-            Dbg.Assert(null != cmd, "Cmd cannot be null");
+            Dbg.Assert(cmd != null, "Cmd cannot be null");
 
             WSManConnectionInfo wsmanConnectionInfo = connectionInfo as WSManConnectionInfo;
-            Dbg.Assert(null != wsmanConnectionInfo, "ConnectionInfo must be WSManConnectionInfo");
+            Dbg.Assert(wsmanConnectionInfo != null, "ConnectionInfo must be WSManConnectionInfo");
 
             WSManClientCommandTransportManager result = new
                 WSManClientCommandTransportManager(wsmanConnectionInfo, _wsManShellOperationHandle, cmd, noInput, this);
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         private void Initialize(Uri connectionUri, WSManConnectionInfo connectionInfo)
         {
-            Dbg.Assert(null != connectionInfo, "connectionInfo cannot be null.");
+            Dbg.Assert(connectionInfo != null, "connectionInfo cannot be null.");
 
             ConnectionInfo = connectionInfo;
 
@@ -2411,7 +2411,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnDataAvailableCallback(byte[] data, DataPriorityType priorityType)
         {
-            Dbg.Assert(null != data, "data cannot be null in the data available callback");
+            Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
             tracer.WriteLine("Received data to be sent from the callback.");
             SendData(data, priorityType);
@@ -2867,7 +2867,7 @@ namespace System.Management.Automation.Remoting.Client
             base(shell, sessnTM.CryptoHelper, sessnTM)
         {
             Dbg.Assert(IntPtr.Zero != wsManShellOperationHandle, "Shell operation handle cannot be IntPtr.Zero.");
-            Dbg.Assert(null != connectionInfo, "connectionInfo cannot be null");
+            Dbg.Assert(connectionInfo != null, "connectionInfo cannot be null");
 
             _wsManShellOperationHandle = wsManShellOperationHandle;
 
@@ -3192,7 +3192,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </param>
         internal override void ProcessPrivateData(object privateData)
         {
-            Dbg.Assert(null != privateData, "privateData cannot be null.");
+            Dbg.Assert(privateData != null, "privateData cannot be null.");
 
             // For this version...only a boolean can be used for privateData.
             bool shouldRaiseSignalCompleted = (bool)privateData;
@@ -3858,7 +3858,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnDataAvailableCallback(byte[] data, DataPriorityType priorityType)
         {
-            Dbg.Assert(null != data, "data cannot be null in the data available callback");
+            Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
             tracer.WriteLine("Received data from dataToBeSent store.");
             Dbg.Assert(_chunkToSend == null, "data callback received while a chunk is pending to be sent");
