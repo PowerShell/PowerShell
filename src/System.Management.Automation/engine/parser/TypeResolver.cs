@@ -875,7 +875,7 @@ namespace System.Management.Automation
         {
             // Taking attributes as special case. In this case, we only want to return the
             // accelerator.
-            if (null == expectedKey || typeof(Attribute).IsAssignableFrom(type))
+            if (expectedKey == null || typeof(Attribute).IsAssignableFrom(type))
             {
                 foreach (KeyValuePair<string, Type> entry in builtinTypeAccelerators)
                 {

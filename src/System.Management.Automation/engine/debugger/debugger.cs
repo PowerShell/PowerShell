@@ -3916,7 +3916,7 @@ namespace System.Management.Automation
             ActionPreference pref = ActionPreference.Continue;
 
             string message;
-            if (null == args || 0 == args.Length)
+            if (args == null || 0 == args.Length)
             {
                 // Don't format in case the string contains literal curly braces
                 message = resourceString;

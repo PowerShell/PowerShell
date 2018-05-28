@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.Commands
             OrderByPropertyEntry match,
             List<OrderByPropertyEntry> list)
         {
-            if (null == match || null == list)
+            if (match == null || null == list)
                 return null;
             Diagnostics.Assert(_comparer != null, "null comparer");
             for (int i = 0; i < list.Count; i++)
@@ -319,7 +319,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 mshobj = new PSObject();
-                if (null == Property || 0 == Property.Length)
+                if (Property == null || 0 == Property.Length)
                 {
                     PSNoteProperty inputNote = new PSNoteProperty(
                         InputObjectPropertyName, entry.inputObject);
@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (null == _comparer && 0 < DifferenceObject.Length)
+            if (_comparer == null && 0 < DifferenceObject.Length)
             {
                 InitComparer();
             }

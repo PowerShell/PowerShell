@@ -359,7 +359,7 @@ namespace System.Management.Automation.Internal
             else
             {
                 CommandProcessorBase prevcommandProcessor = _commands[readFromCommand - 1] as CommandProcessorBase;
-                if (null == prevcommandProcessor || null == prevcommandProcessor.CommandRuntime)
+                if (prevcommandProcessor == null || null == prevcommandProcessor.CommandRuntime)
                 {
                     // "PipelineProcessor.AddCommand(): previous request object == null"
                     throw PSTraceSource.NewInvalidOperationException();
@@ -390,7 +390,7 @@ namespace System.Management.Automation.Internal
                     for (int i = 0; i < _commands.Count; i++)
                     {
                         prevcommandProcessor = _commands[i];
-                        if (null == prevcommandProcessor || null == prevcommandProcessor.CommandRuntime)
+                        if (prevcommandProcessor == null || null == prevcommandProcessor.CommandRuntime)
                         {
                             // "PipelineProcessor.AddCommand(): previous request object == null"
                             throw PSTraceSource.NewInvalidOperationException();
@@ -928,7 +928,7 @@ namespace System.Management.Automation.Internal
             if (_executionStarted)
                 return;
 
-            if (null == _commands || 0 == _commands.Count)
+            if (_commands == null || 0 == _commands.Count)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
@@ -966,7 +966,7 @@ namespace System.Management.Automation.Internal
             // output is not yet claimed
             SetExternalErrorOutput();
 
-            if (null == ExternalInput && !incomingStream)
+            if (ExternalInput == null && !incomingStream)
             {
                 // no upstream cmdlet from the first command
                 firstcommandProcessor.CommandRuntime.IsClosed = true;
@@ -1082,7 +1082,7 @@ namespace System.Management.Automation.Internal
             for (int i = 0; i < _commands.Count; i++)
             {
                 CommandProcessorBase commandProcessor = _commands[i];
-                if (null == commandProcessor || null == commandProcessor.CommandRuntime)
+                if (commandProcessor == null || null == commandProcessor.CommandRuntime)
                 {
                     // "null command " + i
                     throw PSTraceSource.NewInvalidOperationException();

@@ -1511,7 +1511,7 @@ namespace Microsoft.WSMan.Management
                         return true;
                     }
 
-                    if (null == arrResources || arrResources.Count == 0)
+                    if (arrResources == null || arrResources.Count == 0)
                     {
                         return false;
                     }
@@ -2770,7 +2770,7 @@ namespace Microsoft.WSMan.Management
             XmlDocument outval = null;
             if (ResourceURI.Contains(WSManStringLiterals.containerListener) || ResourceURI.Contains(WSManStringLiterals.containerPlugin) || ResourceURI.Contains(WSManStringLiterals.containerCertMapping))
             {
-                if (null == cmdlinevalues || cmdlinevalues.Count == 0)
+                if (cmdlinevalues == null || cmdlinevalues.Count == 0)
                 {
                     outval = EnumerateResourceValue(sessionobj, ResourceURI);
                 }
@@ -3596,7 +3596,7 @@ namespace Microsoft.WSMan.Management
             }
             else
             { return; }
-            if (null == Objcache || null == Keyscache)
+            if (Objcache == null || null == Keyscache)
             {
                 return;
             }
@@ -3661,7 +3661,7 @@ namespace Microsoft.WSMan.Management
             }
             else
             { return; }
-            if (null == Objcache || null == Keyscache)
+            if (Objcache == null || null == Keyscache)
             {
                 return;
             }

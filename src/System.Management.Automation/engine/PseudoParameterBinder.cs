@@ -42,7 +42,7 @@ namespace System.Management.Automation
                 string key = pair.Key;
                 RuntimeDefinedParameter pp = pair.Value;
                 string ppName = (pp == null) ? null : pp.Name;
-                if (null == pp || key != ppName)
+                if (pp == null || key != ppName)
                 {
                     ParameterBindingException bindingException =
                         new ParameterBindingException(
