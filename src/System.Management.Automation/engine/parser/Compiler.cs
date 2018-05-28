@@ -531,7 +531,7 @@ namespace System.Management.Automation.Language
         internal static readonly Expression NullType = Expression.Constant(null, typeof(Type));
         internal static readonly Expression NullDelegateArray = Expression.Constant(null, typeof(Action<FunctionContext>[]));
         internal static readonly Expression NullPipe = Expression.Constant(new Pipe { NullPipe = true });
-        internal static readonly Expression ConstEmptyString = Expression.Constant("");
+        internal static readonly Expression ConstEmptyString = Expression.Constant(string.Empty);
         internal static readonly Expression CompareOptionsIgnoreCase = Expression.Constant(CompareOptions.IgnoreCase);
         internal static readonly Expression CompareOptionsNone = Expression.Constant(CompareOptions.None);
         internal static readonly Expression Ordinal = Expression.Constant(StringComparison.Ordinal);

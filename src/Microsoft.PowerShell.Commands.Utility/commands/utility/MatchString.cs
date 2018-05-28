@@ -970,7 +970,7 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                _inputObject = LanguagePrimitives.IsNull(value) ? PSObject.AsPSObject("") : value;
+                _inputObject = LanguagePrimitives.IsNull(value) ? PSObject.AsPSObject(string.Empty) : value;
             }
         }
         private PSObject _inputObject = AutomationNull.Value;

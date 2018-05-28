@@ -371,7 +371,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private static readonly PSObject s_emptyPSObject = new PSObject("");
+        private static readonly PSObject s_emptyPSObject = new PSObject(string.Empty);
 
         internal static PSObject AsPSObject(object obj)
         {

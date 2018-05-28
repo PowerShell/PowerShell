@@ -192,7 +192,7 @@ namespace Microsoft.WSMan.Management
                 }
 
                 string inputXml = resultopxml.SelectSingleNode(xpathUpdate, nsmgr).OuterXml;
-                if (resultAction.Equals("") || inputXml.Equals(""))
+                if (resultAction.Equals(string.Empty) || inputXml.Equals(string.Empty))
                 {
                     ArgumentException e = new ArgumentException(WSManResourceLoader.GetResourceString("L_ERR_Message") + WSManResourceLoader.GetResourceString("L_QuickConfig_MissingUpdateXml_0_ErrorMessage"));
                     ErrorRecord er = new ErrorRecord(e, "InvalidOperation", ErrorCategory.InvalidOperation, null);

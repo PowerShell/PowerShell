@@ -2137,7 +2137,7 @@ namespace Microsoft.PowerShell
                 if (_displayDebuggerBanner)
                 {
                     WriteDebuggerMessage(ConsoleHostStrings.EnteringDebugger);
-                    WriteDebuggerMessage("");
+                    WriteDebuggerMessage(string.Empty);
                     _displayDebuggerBanner = false;
                 }
 
@@ -2153,7 +2153,7 @@ namespace Microsoft.PowerShell
                         WriteDebuggerMessage(String.Format(CultureInfo.CurrentCulture, format, breakpoint));
                     }
 
-                    WriteDebuggerMessage("");
+                    WriteDebuggerMessage(string.Empty);
                 }
 
                 //

@@ -973,7 +973,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private string BuildXPathFromHashTable(Hashtable hash)
         {
-            StringBuilder xpathString = new StringBuilder("");
+            StringBuilder xpathString = new StringBuilder(string.Empty);
             bool bDateTimeHandled = false;
 
             foreach (string key in hash.Keys)
@@ -1062,7 +1062,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private string BuildStructuredQueryFromHashTable(EventLogSession eventLogSession)
         {
-            StringBuilder result = new StringBuilder("");
+            StringBuilder result = new StringBuilder(string.Empty);
 
             result.Append(queryListOpen);
 

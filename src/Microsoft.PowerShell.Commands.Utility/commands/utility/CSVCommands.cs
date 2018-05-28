@@ -725,7 +725,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 //Write property information
                 string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
-                if (!properties.Equals(""))
+                if (!properties.Equals(string.Empty))
                     WriteCsvLine(properties);
             }
 

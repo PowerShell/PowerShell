@@ -680,7 +680,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                split.Add("");
+                                split.Add(string.Empty);
                             }
                             break;
                         }
@@ -690,7 +690,7 @@ namespace System.Management.Automation
                         // it.
                         if (strIndex == (item.Length - 1))
                         {
-                            split.Add("");
+                            split.Add(string.Empty);
                         }
                     }
                     else

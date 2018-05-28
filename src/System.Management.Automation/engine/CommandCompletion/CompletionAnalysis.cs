@@ -513,7 +513,7 @@ namespace System.Management.Automation
                         // Handle operator completion: 55 -<tab> || "string" -<tab> || (Get-Something) -<tab>
                         if (CompleteOperator(tokenAtCursor, lastAst))
                         {
-                            result = CompletionCompleters.CompleteOperator("");
+                            result = CompletionCompleters.CompleteOperator(string.Empty);
                             break;
                         }
 

@@ -2244,7 +2244,7 @@ namespace Microsoft.WSMan.Management
             }
             if (!String.IsNullOrEmpty(ExtendedTypeName))
             {
-                StringBuilder types = new StringBuilder("");
+                StringBuilder types = new StringBuilder(string.Empty);
                 if (mshObject != null)
                 {
                     types.Append(mshObject.ImmediateBaseObject.GetType().FullName);
@@ -2992,7 +2992,7 @@ namespace Microsoft.WSMan.Management
                 }
                 if (!String.IsNullOrEmpty(ExtendedTypeName))
                 {
-                    StringBuilder types = new StringBuilder("");
+                    StringBuilder types = new StringBuilder(string.Empty);
                     if (mshObject != null)
                     {
                         types.Append(mshObject.ImmediateBaseObject.GetType().FullName);
@@ -5034,7 +5034,7 @@ namespace Microsoft.WSMan.Management
 
         private string ConstructResourceXml(PSObject objinputparams, ArrayList resources, ArrayList securities)
         {
-            StringBuilder sbvalues = new StringBuilder("");
+            StringBuilder sbvalues = new StringBuilder(string.Empty);
             if (objinputparams == null && resources == null)
             {
                 return sbvalues.ToString();
@@ -5118,7 +5118,7 @@ namespace Microsoft.WSMan.Management
         private string ConstructSecurityXml(PSObject objinputparams, ArrayList securities, string strResourceIdentity)
         {
             //<Security Uri="" ExactMatch="false" Sddl="O:NSG:BAD:P(A;;GA;;;BA)(A;;GR;;;ER)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)"/>
-            StringBuilder sbvalues = new StringBuilder("");
+            StringBuilder sbvalues = new StringBuilder(string.Empty);
             if (objinputparams == null && securities == null)
             {
                 return sbvalues.ToString();
@@ -5169,7 +5169,7 @@ namespace Microsoft.WSMan.Management
             // <InitializationParameters>
             //<Param Name="Param1" Value="Value1" />
             //</InitializationParameters>
-            StringBuilder sbvalues = new StringBuilder("");
+            StringBuilder sbvalues = new StringBuilder(string.Empty);
             if (objinputparams == null && initparams == null)
             {
                 return sbvalues.ToString();
@@ -5216,7 +5216,7 @@ namespace Microsoft.WSMan.Management
 
         private string ConstructCapabilityXml(object[] capabilities)
         {
-            StringBuilder sbvalues = new StringBuilder("");
+            StringBuilder sbvalues = new StringBuilder(string.Empty);
             foreach (object cap in capabilities)
             {
                 sbvalues.Append("<Capability");

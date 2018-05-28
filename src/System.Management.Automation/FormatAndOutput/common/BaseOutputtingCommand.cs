@@ -445,7 +445,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void ProcessFormatStart(FormatMessagesContextManager.OutputContext c)
         {
             // we just add an empty line to the display
-            this.LineOutput.WriteLine("");
+            this.LineOutput.WriteLine(string.Empty);
         }
 
         /// <summary>
@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             //Console.WriteLine("ProcessFormatEnd");
             // we just add an empty line to the display
-            this.LineOutput.WriteLine("");
+            this.LineOutput.WriteLine(string.Empty);
         }
 
         /// <summary>
@@ -471,13 +471,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (goc.Data.groupingEntry != null)
             {
-                _lo.WriteLine("");
+                _lo.WriteLine(string.Empty);
 
                 ComplexWriter writer = new ComplexWriter();
                 writer.Initialize(_lo, _lo.ColumnNumber);
                 writer.WriteObject(goc.Data.groupingEntry.formatValueList);
 
-                this.LineOutput.WriteLine("");
+                this.LineOutput.WriteLine(string.Empty);
             }
             goc.GroupStart();
         }
@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             GroupOutputContext goc = (GroupOutputContext)c;
 
             goc.GroupEnd();
-            this.LineOutput.WriteLine("");
+            this.LineOutput.WriteLine(string.Empty);
         }
 
         /// <summary>
@@ -573,14 +573,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 ListWriter listWriter = new ListWriter();
 
-                _lo.WriteLine("");
+                _lo.WriteLine(string.Empty);
 
                 string[] properties = ListOutputContext.GetProperties(lve);
                 listWriter.Initialize(properties, _lo.ColumnNumber, _lo.DisplayCells);
                 string[] values = ListOutputContext.GetValues(lve);
                 listWriter.WriteProperties(values, _lo);
 
-                _lo.WriteLine("");
+                _lo.WriteLine(string.Empty);
 
                 return;
             }
@@ -1099,7 +1099,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// </summary>
             internal override void GroupStart()
             {
-                this.InnerCommand._lo.WriteLine("");
+                this.InnerCommand._lo.WriteLine(string.Empty);
             }
 
             /// <summary>
@@ -1112,7 +1112,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 InternalInitialize(lve);
                 string[] values = GetValues(lve);
                 _listWriter.WriteProperties(values, this.InnerCommand._lo);
-                this.InnerCommand._lo.WriteLine("");
+                this.InnerCommand._lo.WriteLine(string.Empty);
             }
 
             /// <summary>
@@ -1187,7 +1187,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// </summary>
             internal override void GroupStart()
             {
-                this.InnerCommand._lo.WriteLine("");
+                this.InnerCommand._lo.WriteLine(string.Empty);
             }
 
             /// <summary>

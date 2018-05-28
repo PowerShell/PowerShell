@@ -419,7 +419,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>
         /// The path to the specified system special folder, if that folder physically exists on your computer.
-        /// Otherwise, an empty string ("").
+        /// Otherwise, an empty string (string.Empty).
         /// </returns>
         private static string InternalGetFolderPath(System.Environment.SpecialFolder folder)
         {

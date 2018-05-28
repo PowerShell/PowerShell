@@ -199,8 +199,8 @@ namespace Microsoft.WSMan.Management
 #endif
 
         /// <summary><para><c>CreateSession</c> method of <c>IWSMan</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
-        // IDL: HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
+        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        // IDL: HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
 
         [DispId(1)]
 #if CORECLR
@@ -480,8 +480,8 @@ namespace Microsoft.WSMan.Management
 #endif
 
         /// <summary><para><c>CreateSession</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
-        // IDL: HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
+        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        // IDL: HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
 
         [DispId(1)]
 #if CORECLR
@@ -533,8 +533,8 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary><para><c>CreateResourceLocator</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CreateResourceLocator</c> method was the following:  <c>HRESULT CreateResourceLocator ([optional, defaultvalue("")] BSTR strResourceLocator, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
-        // IDL: HRESULT CreateResourceLocator ([optional, defaultvalue("")] BSTR strResourceLocator, [out, retval] IDispatch** ReturnValue);
+        /// <remarks><para>An original IDL definition of <c>CreateResourceLocator</c> method was the following:  <c>HRESULT CreateResourceLocator ([optional, defaultvalue(string.Empty)] BSTR strResourceLocator, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        // IDL: HRESULT CreateResourceLocator ([optional, defaultvalue(string.Empty)] BSTR strResourceLocator, [out, retval] IDispatch** ReturnValue);
 
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "str")]
         [DispId(5)]
@@ -942,8 +942,8 @@ namespace Microsoft.WSMan.Management
         String Invoke([MarshalAs(UnmanagedType.BStr)] string actionURI, [In] object resourceUri, [MarshalAs(UnmanagedType.BStr)] string parameters, [In] int flags);
 
         /// <summary><para><c>Enumerate</c> method of <c>IWSManSession</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Enumerate</c> method was the following:  <c>HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue("")] BSTR filter, [optional, defaultvalue("")] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
-        // IDL: HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue("")] BSTR filter, [optional, defaultvalue("")] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue);
+        /// <remarks><para>An original IDL definition of <c>Enumerate</c> method was the following:  <c>HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue(string.Empty)] BSTR filter, [optional, defaultvalue(string.Empty)] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        // IDL: HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue(string.Empty)] BSTR filter, [optional, defaultvalue(string.Empty)] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue);
 
         [DispId(6)]
 #if CORECLR

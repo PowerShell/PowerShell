@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         // if the column is beyond the last column with content, just use empty string
                         if (col > lastColWithContent[row])
                         {
-                            scArray[col].Add("");
+                            scArray[col].Add(string.Empty);
                         }
                         else
                         {

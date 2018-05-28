@@ -211,7 +211,7 @@ namespace System.Management.Automation
                 cultureNameList.Add(culture.Name);
                 culture = culture.Parent;
             }
-            cultureNameList.Add("");
+            cultureNameList.Add(string.Empty);
 
             // Add en-US and en as fallback languages
             if (!cultureNameList.Contains("en-US"))
