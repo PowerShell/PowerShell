@@ -5788,7 +5788,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static List<CompletionResult> CompleteNamespace(CompletionContext context, string prefix = "", string suffix = string.Empty)
+        internal static List<CompletionResult> CompleteNamespace(CompletionContext context, string prefix = string.Empty, string suffix = string.Empty)
         {
             var localTypeCache = s_typeCache ?? InitializeTypeCache();
             var results = new List<CompletionResult>();
@@ -5829,7 +5829,7 @@ namespace System.Management.Automation
             return CompleteType(new CompletionContext { WordToComplete = typeName, Helper = helper, ExecutionContext = executionContext });
         }
 
-        internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = "", string suffix = string.Empty)
+        internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = string.Empty, string suffix = string.Empty)
         {
             var localTypeCache = s_typeCache ?? InitializeTypeCache();
 
