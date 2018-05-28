@@ -146,7 +146,7 @@ namespace Microsoft.WSMan.Management
             // Add the "msh" and "command" namespaces from the MAML schema
             XmlNamespaceManager nsMgr = new XmlNamespaceManager(document.NameTable);
             // XPath 1.0 associates empty prefix with "null" namespace; must use non-empty prefix for default namespace.
-            // This will not work: nsMgr.AddNamespace("", "http://msh");
+            // This will not work: nsMgr.AddNamespace(string.Empty, "http://msh");
             nsMgr.AddNamespace("msh", "http://msh");
             nsMgr.AddNamespace("command", "http://schemas.microsoft.com/maml/dev/command/2004/10");
 

@@ -956,16 +956,16 @@ namespace Microsoft.PowerShell.Commands
                     StringBuilder result = new StringBuilder();
 
                     // Insert the formatted manifest header...
-                    result.Append(ManifestComment("", streamWriter));
+                    result.Append(ManifestComment(string.Empty, streamWriter));
                     result.Append(ManifestComment(StringUtil.Format(Modules.ManifestHeaderLine1, System.IO.Path.GetFileNameWithoutExtension(filePath)),
                             streamWriter));
-                    result.Append(ManifestComment("", streamWriter));
+                    result.Append(ManifestComment(string.Empty, streamWriter));
                     result.Append(ManifestComment(StringUtil.Format(Modules.ManifestHeaderLine2, _author),
                             streamWriter));
-                    result.Append(ManifestComment("", streamWriter));
+                    result.Append(ManifestComment(string.Empty, streamWriter));
                     result.Append(ManifestComment(StringUtil.Format(Modules.ManifestHeaderLine3, DateTime.Now.ToString("d", CultureInfo.CurrentCulture)),
                             streamWriter));
-                    result.Append(ManifestComment("", streamWriter));
+                    result.Append(ManifestComment(string.Empty, streamWriter));
                     result.Append(streamWriter.NewLine);
                     result.Append("@{");
                     result.Append(streamWriter.NewLine);

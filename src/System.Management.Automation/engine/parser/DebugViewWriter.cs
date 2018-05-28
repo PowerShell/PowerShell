@@ -1001,7 +1001,7 @@ namespace System.Management.Automation.Language {
             Dedent();
             Out(Flow.NewLine, "}");
             if (node.BreakLabel != null) {
-                Out("", Flow.NewLine);
+                Out(string.Empty, Flow.NewLine);
                 DumpLabel(node.BreakLabel);
             }
             return node;

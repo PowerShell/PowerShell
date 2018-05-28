@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell.Commands
                     AddItemToCache(StoreLocation.LocalMachine.ToString(),
                                    machine);
 
-                    AddItemToCache("", s_storeLocations);
+                    AddItemToCache(string.Empty, s_storeLocations);
                 }
             }
         } // constructor

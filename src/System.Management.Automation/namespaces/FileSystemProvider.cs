@@ -5305,7 +5305,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     Stack<string> tokenizedPathStack = TokenizePathToStack(path, string.Empty);
-                    Stack<string> normalizedPath = NormalizeThePath("", tokenizedPathStack);
+                    Stack<string> normalizedPath = NormalizeThePath(string.Empty, tokenizedPathStack);
                     return CreateNormalizedRelativePathFromStack(normalizedPath);
                 }
                 catch (UnauthorizedAccessException)
@@ -6933,7 +6933,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // For filesystem once content is cleared
-                WriteItemObject("", path, false);
+                WriteItemObject(string.Empty, path, false);
             }
             catch (ArgumentException argException)
             {
@@ -6960,7 +6960,7 @@ namespace Microsoft.PowerShell.Commands
                         fileStream.Dispose();
 
                         //For filesystem once content is cleared
-                        WriteItemObject("", path, false);
+                        WriteItemObject(string.Empty, path, false);
                     }
                     catch (UnauthorizedAccessException failure)
                     {
