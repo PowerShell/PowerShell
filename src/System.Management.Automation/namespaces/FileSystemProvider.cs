@@ -5153,7 +5153,7 @@ namespace Microsoft.PowerShell.Commands
             if (secondColon > 0)
             {
                 string newPath = path.Substring(0, secondColon);
-                alternateDataStream = path.Replace(newPath, "");
+                alternateDataStream = path.Replace(newPath, string.Empty);
                 path = newPath;
             }
 #endif
@@ -5304,7 +5304,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    Stack<string> tokenizedPathStack = TokenizePathToStack(path, "");
+                    Stack<string> tokenizedPathStack = TokenizePathToStack(path, string.Empty);
                     Stack<string> normalizedPath = NormalizeThePath("", tokenizedPathStack);
                     return CreateNormalizedRelativePathFromStack(normalizedPath);
                 }
@@ -8576,13 +8576,13 @@ namespace System.Management.Automation.Internal
                     string dataStream = ":$DATA";
                     if (!String.Equals(findStreamData.Name, dataStream, StringComparison.OrdinalIgnoreCase))
                     {
-                        findStreamData.Name = findStreamData.Name.Replace(dataStream, "");
+                        findStreamData.Name = findStreamData.Name.Replace(dataStream, string.Empty);
                     }
 
                     AlternateStreamData data = new AlternateStreamData();
                     data.Stream = findStreamData.Name;
                     data.Length = findStreamData.Length;
-                    data.FileName = path.Replace(data.Stream, "");
+                    data.FileName = path.Replace(data.Stream, string.Empty);
                     data.FileName = data.FileName.Trim(Utils.Separators.Colon);
 
                     alternateStreams.Add(data);

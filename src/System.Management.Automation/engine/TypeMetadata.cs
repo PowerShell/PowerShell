@@ -716,7 +716,7 @@ namespace System.Management.Automation
             }
 
             var wildcardPattern = WildcardPattern.Get(
-                "*" + (psTypeName.Name ?? ""),
+                "*" + (psTypeName.Name ?? string.Empty),
                 WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
             if (wildcardPattern.IsMatch(this.ParameterType.FullName))
             {

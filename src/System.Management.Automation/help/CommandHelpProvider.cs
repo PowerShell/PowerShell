@@ -595,7 +595,7 @@ namespace System.Management.Automation
                 // Actual help file name: Microsoft.PowerShell.Commands.Management.dll-Help.xml
 
                 // Make sure that the assembly name contains more than '.ni.dll'
-                string assemblyName = helpFile.Replace(".ni.dll-Help.xml", "");
+                string assemblyName = helpFile.Replace(".ni.dll-Help.xml", string.Empty);
 
                 if (!String.IsNullOrEmpty(assemblyName))
                 {

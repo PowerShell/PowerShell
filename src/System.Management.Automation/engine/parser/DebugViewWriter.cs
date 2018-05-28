@@ -1040,7 +1040,7 @@ namespace System.Management.Automation.Language {
         protected override CatchBlock VisitCatchBlock(CatchBlock node) {
             Out(Flow.NewLine, "} .Catch (" + node.Test.ToString());
             if (node.Variable != null) {
-                Out(Flow.Space, "");
+                Out(Flow.Space, string.Empty);
                 VisitParameter(node.Variable);
             }
             if (node.Filter != null) {

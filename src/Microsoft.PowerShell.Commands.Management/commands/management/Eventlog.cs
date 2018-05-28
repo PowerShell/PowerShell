@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.Commands
             }
             if (!matchesfound && _isThrowError)
             {
-                Exception Ex = new ArgumentException(StringUtil.Format(EventlogResources.NoEntriesFound, log.Log, ""));
+                Exception Ex = new ArgumentException(StringUtil.Format(EventlogResources.NoEntriesFound, log.Log, string.Empty));
                 WriteError(new ErrorRecord(Ex, "GetEventLogNoEntriesFound", ErrorCategory.ObjectNotFound, null));
             }
         }

@@ -102,7 +102,7 @@ namespace System.Management.Automation.Remoting
         private static string CleanAppDomainNameForPipeName(string appDomainName)
         {
             // Pipe names cannot contain the ':' character.  Remove unwanted characters.
-            return appDomainName.Replace(":", "").Replace(" ", "");
+            return appDomainName.Replace(":", string.Empty).Replace(" ", string.Empty);
         }
 
         /// <summary>

@@ -590,7 +590,7 @@ namespace System.Management.Automation.Language
                 var loop = parent as LoopStatementAst;
                 if (loop != null)
                 {
-                    if (LoopFlowException.MatchLoopLabel(label, loop.Label ?? ""))
+                    if (LoopFlowException.MatchLoopLabel(label, loop.Label ?? string.Empty))
                         break;
                 }
             }
@@ -621,7 +621,7 @@ namespace System.Management.Automation.Language
                 // of the finally.
                 if (label != null && parent is LoopStatementAst)
                 {
-                    if (LoopFlowException.MatchLoopLabel(label, ((LoopStatementAst)parent).Label ?? ""))
+                    if (LoopFlowException.MatchLoopLabel(label, ((LoopStatementAst)parent).Label ?? string.Empty))
                         break;
                 }
 

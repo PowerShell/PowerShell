@@ -731,7 +731,7 @@ namespace Microsoft.PowerShell.Commands
 
             string csv = _helper.ConvertPSObjectToCSV(InputObject, _propertyNames);
             //write to the console
-            if (csv != "")
+            if (csv != string.Empty)
                 WriteCsvLine(csv);
         }
 

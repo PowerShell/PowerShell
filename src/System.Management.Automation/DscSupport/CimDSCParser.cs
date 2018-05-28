@@ -2820,17 +2820,17 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     if (dscProperty.Key)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : "");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
                     if (dscProperty.Mandatory)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : "");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
                     if (dscProperty.NotConfigurable)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : "");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
                     continue;
@@ -2841,7 +2841,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     bool valueMapComma = false;
                     StringBuilder sbValues = new StringBuilder(", Values{");
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : "");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                     needComma = true;
 
                     foreach (var value in validateSet.ValidValues)
@@ -2865,7 +2865,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (enumNames != null)
             {
-                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : "");
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                 needComma = false;
                 foreach (var name in enumNames)
                 {

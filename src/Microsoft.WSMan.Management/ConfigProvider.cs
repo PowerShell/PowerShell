@@ -901,7 +901,7 @@ namespace Microsoft.WSMan.Management
             }
 
             string whatIfMessage = String.Format(CultureInfo.CurrentUICulture, helper.GetResourceMsgFromResourcetext("SetItemWhatIfAndConfirmText"), path, value);
-            if (!ShouldProcess(whatIfMessage, "", ""))
+            if (!ShouldProcess(whatIfMessage, "", string.Empty))
             {
                 return;
             }
@@ -1698,7 +1698,7 @@ namespace Microsoft.WSMan.Management
                     {
                         // Remove-Item is called for one of the initialization Parameters.
                         throwerror = false;
-                        InitParamArray = RemoveItemfromResourceArray(InitParamArray, ChildName, "InitParams", "");
+                        InitParamArray = RemoveItemfromResourceArray(InitParamArray, ChildName, "InitParams", string.Empty);
                     }
                     if (throwerror)
                     {
@@ -2809,7 +2809,7 @@ namespace Microsoft.WSMan.Management
                     {
                         valuexml = valuexml + ((IWSManEnumerator)value).ReadItem();
                     }
-                    if ((valuexml != "") && !(String.IsNullOrEmpty(valuexml)))
+                    if ((valuexml != string.Empty) && !(String.IsNullOrEmpty(valuexml)))
                     {
                         valuexml = "<WsManResults>" + valuexml + "</WsManResults>";
                     }

@@ -253,7 +253,7 @@ $result
             {
                 Dbg.Assert(installation != null, "the CurrentVersion subkey should exist");
 
-                string installationType = (string)installation.GetValue("InstallationType", "");
+                string installationType = (string)installation.GetValue("InstallationType", string.Empty);
 
                 if (installationType.Equals("Server Core"))
                 {

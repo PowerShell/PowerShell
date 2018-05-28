@@ -764,7 +764,7 @@ namespace System.Management.Automation
         /// <returns>The result of the operator</returns>
         internal static object UnaryJoinOperator(ExecutionContext context, IScriptExtent errorPosition, object lval)
         {
-            return JoinOperator(context, errorPosition, lval, "");
+            return JoinOperator(context, errorPosition, lval, string.Empty);
         }
 
         /// <summary>

@@ -1189,7 +1189,7 @@ namespace System.Management.Automation
                                         ParameterBinderStrings.CannotConvertArgument,
                                         "CannotConvertArgument",
                                         boType,
-                                        "");
+                                        string.Empty);
 
                                 throw pbe;
                             }
@@ -1388,7 +1388,7 @@ namespace System.Management.Automation
                         null,
                         ParameterBinderStrings.ParameterArgumentValidationErrorNullNotAllowed,
                         "ParameterArgumentValidationErrorNullNotAllowed",
-                        "");
+                        string.Empty);
 
                 throw exception;
             }

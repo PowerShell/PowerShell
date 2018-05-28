@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
                 bytehash = hasher.ComputeHash(InputStream);
 
                 hash = BitConverter.ToString(bytehash).Replace("-","");
-                WriteHashResult(Algorithm, hash, "");
+                WriteHashResult(Algorithm, hash, string.Empty);
             }
         }
 

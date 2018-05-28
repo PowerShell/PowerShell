@@ -5165,8 +5165,8 @@ namespace System.Management.Automation
             {
                 memberName = propertyInfo.Name;
                 getToolTip = () => ToStringCodeMethods.Type(propertyInfo.PropertyType) + " " + memberName
-                    + " { " + (propertyInfo.GetGetMethod() != null ? "get; " : "")
-                    + (propertyInfo.GetSetMethod() != null ? "set; " : "") + "}";
+                    + " { " + (propertyInfo.GetGetMethod() != null ? "get; " : string.Empty)
+                    + (propertyInfo.GetSetMethod() != null ? "set; " : string.Empty) + "}";
             }
             var fieldInfo = member as FieldInfo;
             if (fieldInfo != null)
@@ -5788,7 +5788,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static List<CompletionResult> CompleteNamespace(CompletionContext context, string prefix = "", string suffix = "")
+        internal static List<CompletionResult> CompleteNamespace(CompletionContext context, string prefix = "", string suffix = string.Empty)
         {
             var localTypeCache = s_typeCache ?? InitializeTypeCache();
             var results = new List<CompletionResult>();
@@ -5829,7 +5829,7 @@ namespace System.Management.Automation
             return CompleteType(new CompletionContext { WordToComplete = typeName, Helper = helper, ExecutionContext = executionContext });
         }
 
-        internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = "", string suffix = "")
+        internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = "", string suffix = string.Empty)
         {
             var localTypeCache = s_typeCache ?? InitializeTypeCache();
 

@@ -6365,7 +6365,7 @@ namespace System.Management.Automation.Language
         {
             return string.Format(CultureInfo.InvariantCulture,
                 "PSInvokeMember: {0}{1}{2} ver:{3} args:{4} constraints:<{5}>", _static ? "static " : "", _propertySetter ? "propset " : "",
-                Name, _getMemberBinder._version, CallInfo.ArgumentCount, _invocationConstraints != null ? _invocationConstraints.ToString() : "");
+                Name, _getMemberBinder._version, CallInfo.ArgumentCount, _invocationConstraints != null ? _invocationConstraints.ToString() : string.Empty);
         }
 
         public override DynamicMetaObject FallbackInvokeMember(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)
@@ -7241,7 +7241,7 @@ namespace System.Management.Automation.Language
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "PSCreateInstanceBinder: ver:{0} args:{1} constraints:<{2}>", _version, _callInfo.ArgumentCount, _constraints != null ? _constraints.ToString() : "");
+                "PSCreateInstanceBinder: ver:{0} args:{1} constraints:<{2}>", _version, _callInfo.ArgumentCount, _constraints != null ? _constraints.ToString() : string.Empty);
         }
 
         public override DynamicMetaObject FallbackCreateInstance(DynamicMetaObject target, DynamicMetaObject[] args, DynamicMetaObject errorSuggestion)

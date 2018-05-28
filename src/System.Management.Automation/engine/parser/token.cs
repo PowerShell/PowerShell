@@ -1298,7 +1298,7 @@ namespace System.Management.Automation.Language
         internal override string ToDebugString(int indent)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <-{2}{3}>", StringUtil.Padding(indent), Kind, _parameterName, _usedColon ? ":" : "");
+                "{0}{1}: <-{2}{3}>", StringUtil.Padding(indent), Kind, _parameterName, _usedColon ? ":" : string.Empty);
         }
     }
 
