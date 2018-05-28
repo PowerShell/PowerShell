@@ -142,8 +142,8 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             hostname
             Stop-Transcript }
         & $script
-        Test-Path $transcriptFilePath | Should -BeTrue
 
+        Test-Path $transcriptFilePath | Should -BeTrue
         $machineName = [System.Environment]::MachineName
         $transcriptFilePath | Should -FileContentMatch $machineName
     }
@@ -155,8 +155,8 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             Write-Information -Message $message -InformationAction Continue
             Stop-Transcript }
         & $script
-        Test-Path $transcriptFilePath | Should -BeTrue
 
+        Test-Path $transcriptFilePath | Should -BeTrue
         $transcriptFilePath | Should -FileContentMatch $message
     }
 
@@ -167,8 +167,8 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             Write-Information -Message $message -InformationAction SilentlyContinue
             Stop-Transcript }
         & $script
-        Test-Path $transcriptFilePath | Should -BeTrue
 
+        Test-Path $transcriptFilePath | Should -BeTrue
         $transcriptFilePath | Should -Not -FileContentMatch $message
     }
 
@@ -179,8 +179,8 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             Write-Information -Message $message -InformationAction Ignore
             Stop-Transcript }
         & $script
-        Test-Path $transcriptFilePath | Should -BeTrue
 
+        Test-Path $transcriptFilePath | Should -BeTrue
         $transcriptFilePath | Should -Not -FileContentMatch $message
     }
 
@@ -191,8 +191,8 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             Write-Host -Message $message -InformationAction Continue
             Stop-Transcript }
         & $script
-        Test-Path $transcriptFilePath | Should -BeTrue
 
+        Test-Path $transcriptFilePath | Should -BeTrue
         $transcriptFilePath | Should -FileContentMatch $message
     }
 
@@ -203,8 +203,20 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             Write-Host -Message $message -InformationAction SilentlyContinue
             Stop-Transcript }
         & $script
-        Test-Path $transcriptFilePath | Should -BeTrue
 
+        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -FileContentMatch $message
+    }
+
+    It "Transcription should record Write-Host output when InformationAction is set to Ignore" {
+        [String]$message = New-Guid
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Host -Message $message -InformationAction Ignore
+            Stop-Transcript }
+        & $script
+
+        Test-Path $transcriptFilePath | Should -BeTrue
         $transcriptFilePath | Should -FileContentMatch $message
     }
 }
