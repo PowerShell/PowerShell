@@ -3678,7 +3678,7 @@ namespace Microsoft.PowerShell.Commands
                             foundSubkey = true;
 
                             remainingPath = remainingPath.Equals(normalizedSubkey, StringComparison.OrdinalIgnoreCase)
-                                                ? ""
+                                                ? string.Empty
                                                 : remainingPath.Substring((normalizedSubkey + StringLiterals.DefaultPathSeparator).Length);
 
                             break;

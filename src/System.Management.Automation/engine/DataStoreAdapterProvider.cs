@@ -418,8 +418,8 @@ namespace System.Management.Automation
                 new PSDriveInfo(
                     this.FullName,
                     this,
-                    "",
-                    "",
+                    string.Empty,
+                    string.Empty,
                     null);
 
             _hiddenDrive.Hidden = true;

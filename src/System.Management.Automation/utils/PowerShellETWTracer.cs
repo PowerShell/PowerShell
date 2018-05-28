@@ -1085,7 +1085,7 @@ namespace System.Management.Automation.Tracing
             {
                 return DebugChannel.TraceDebug(PowerShellTraceEvent.Job,
                                                PowerShellTraceOperationCode.Method, PowerShellTraceTask.None,
-                                               "", string.Empty, "NULL job");
+                                               string.Empty, string.Empty, "NULL job");
             }
         }
 
