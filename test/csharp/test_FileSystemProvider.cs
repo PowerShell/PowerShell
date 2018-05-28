@@ -61,11 +61,11 @@ namespace PSTests.Parallel
         {
             if(!Platform.IsWindows)
             {
-                Assert.False(InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty,""));
+                Assert.False(InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty));
             }
             else
             {
-                Assert.Throws<System.ArgumentNullException>(delegate { InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty,""); });
+                Assert.Throws<System.ArgumentNullException>(delegate { InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty); });
             }
         }
 

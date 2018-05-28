@@ -1441,7 +1441,7 @@ namespace Microsoft.PowerShell.Commands
                                     {
                                         reader = new StreamReader(StreamHelper.GetResponseStream(response));
                                         // remove HTML tags making it easier to read
-                                        detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>","");
+                                        detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
                                     }
                                     catch (Exception)
                                     {

@@ -4693,7 +4693,7 @@ namespace Microsoft.PowerShell.Commands
 
             // if the module path is empty string, means it is a dynamically generated assembly.
             // We have set the module path to be module name as key to make it unique, we need update here as well in case the module can be removed.
-            if (module.Path == "")
+            if (module.Path == string.Empty)
             {
                 module.Path = module.Name;
             }
@@ -6049,7 +6049,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (SessionStateUtilities.MatchesAnyWildcardPattern(command, scriptAnalysisPatterns, true))
                 {
-                    if (!HasInvalidCharacters(command.Replace("-", "")))
+                    if (!HasInvalidCharacters(command.Replace("-", string.Empty)))
                     {
                         module.AddDetectedFunctionExport(command);
                     }
@@ -6061,7 +6061,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 var commandName = pair.Key;
                 // These are already filtered
-                if (!HasInvalidCharacters(commandName.Replace("-", "")))
+                if (!HasInvalidCharacters(commandName.Replace("-", string.Empty)))
                 {
                     module.AddDetectedAliasExport(commandName, pair.Value);
                 }
@@ -6133,7 +6133,7 @@ namespace Microsoft.PowerShell.Commands
                         if (SessionStateUtilities.MatchesAnyWildcardPattern(commandName, patterns, true) &&
                             SessionStateUtilities.MatchesAnyWildcardPattern(commandName, scriptAnalysisPatterns, true))
                         {
-                            if (!HasInvalidCharacters(commandName.Replace("-", "")))
+                            if (!HasInvalidCharacters(commandName.Replace("-", string.Empty)))
                             {
                                 module.AddDetectedFunctionExport(commandName);
                             }
@@ -6145,7 +6145,7 @@ namespace Microsoft.PowerShell.Commands
                         if (SessionStateUtilities.MatchesAnyWildcardPattern(commandName, patterns, true) &&
                             SessionStateUtilities.MatchesAnyWildcardPattern(commandName, scriptAnalysisPatterns, true))
                         {
-                            if (!HasInvalidCharacters(commandName.Replace("-", "")))
+                            if (!HasInvalidCharacters(commandName.Replace("-", string.Empty)))
                             {
                                 module.AddDetectedCmdletExport(commandName);
                             }
@@ -6742,7 +6742,7 @@ namespace Microsoft.PowerShell.Commands
 
             // if the module path is empty (assembly module in memory), we add the modulename as key
             string moduleTableKey;
-            if (module.Path != "")
+            if (module.Path != string.Empty)
             {
                 moduleTableKey = module.Path;
             }
