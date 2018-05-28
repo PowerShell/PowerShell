@@ -722,7 +722,9 @@ abc bcd
             [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $true)
             try
             {
-                [console]::WindowWidth | Should -Be 120
+                # Fill the console window with the string, so that it reaches its max width.
+                # Check if the max width is equal to default value (120), to test test hook set.
+                Format-table -inputobject @{ test = '1'*200} | Out-String -str | %{$_.length} | Sort-Object | Select-Object -last 1 | Should -Be 120
                 Format-Table -inputobject @{'test'= 1, 2} | Should -Not -BeNullOrEmpty
             }
             finally {
