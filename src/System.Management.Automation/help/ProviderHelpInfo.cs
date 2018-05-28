@@ -112,7 +112,7 @@ namespace System.Management.Automation
                     PSObject descriptionObject = PSObject.AsPSObject(descriptionItem);
                     if ((descriptionObject == null) ||
                         (null == descriptionObject.Properties["Text"]) ||
-                        (null == descriptionObject.Properties["Text"].Value))
+                        (descriptionObject.Properties["Text"].Value == null))
                     {
                         continue;
                     }
