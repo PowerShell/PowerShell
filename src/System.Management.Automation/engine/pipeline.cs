@@ -935,7 +935,7 @@ namespace System.Management.Automation.Internal
             }
 
             CommandProcessorBase firstcommandProcessor = _commands[0];
-            if (null == firstcommandProcessor
+            if (firstcommandProcessor == null
                 || null == firstcommandProcessor.CommandRuntime)
             {
                 throw PSTraceSource.NewInvalidOperationException(
@@ -950,7 +950,7 @@ namespace System.Management.Automation.Internal
 
             // add ExternalSuccessOutput to the last command
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
-            if (null == LastCommandProcessor
+            if (LastCommandProcessor == null
                 || null == LastCommandProcessor.CommandRuntime)
             {
                 // "PipelineProcessor.Start(): LastCommandProcessor == null"
@@ -1125,7 +1125,7 @@ namespace System.Management.Automation.Internal
         {
             // Add any input to the first command.
             CommandProcessorBase firstcommandProcessor = _commands[0];
-            if (null == firstcommandProcessor
+            if (firstcommandProcessor == null
                 || null == firstcommandProcessor.CommandRuntime)
             {
                 throw PSTraceSource.NewInvalidOperationException(
@@ -1177,7 +1177,7 @@ namespace System.Management.Automation.Internal
                 for (int i = 0; i < _commands.Count; i++)
                 {
                     CommandProcessorBase commandProcessor = _commands[i];
-                    if (null == commandProcessor
+                    if (commandProcessor == null
                         || null == commandProcessor.CommandRuntime)
                     {
                         // "null command or request or ErrorOutputPipe " + i
@@ -1200,7 +1200,7 @@ namespace System.Management.Automation.Internal
                 return MshCommandRuntime.StaticEmptyArray;
 
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
-            if (null == LastCommandProcessor
+            if (LastCommandProcessor == null
                 || null == LastCommandProcessor.CommandRuntime)
             {
                 // "PipelineProcessor.RetrieveResults(): LastCommandProcessor == null"
@@ -1230,7 +1230,7 @@ namespace System.Management.Automation.Internal
             Dbg.Assert(pipeToUse != null, "Caller should verify pipeToUse != null");
 
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
-            if (null == LastCommandProcessor
+            if (LastCommandProcessor == null
                 || null == LastCommandProcessor.CommandRuntime)
             {
                 // "PipelineProcessor.RetrieveResults(): LastCommandProcessor == null"
@@ -1248,7 +1248,7 @@ namespace System.Management.Automation.Internal
             for (int i = 0; i < _commands.Count; i++)
             {
                 CommandProcessorBase commandProcessor = _commands[i];
-                if (null == commandProcessor
+                if (commandProcessor == null
                     || null == commandProcessor.CommandRuntime)
                 {
                     // "null command or request or ErrorOutputPipe " + i

@@ -2244,7 +2244,7 @@ namespace System.Management.Automation
         /// <exception cref="System.InvalidOperationException"></exception>
         internal void ThrowIfWriteNotPermitted(bool needsToWriteToPipeline)
         {
-            if (null == this.PipelineProcessor
+            if (this.PipelineProcessor == null
                 || _thisCommand != this.PipelineProcessor._permittedToWrite
                 || needsToWriteToPipeline && !this.PipelineProcessor._permittedToWriteToPipeline
                 || Thread.CurrentThread != this.PipelineProcessor._permittedToWriteThread
@@ -2430,7 +2430,7 @@ namespace System.Management.Automation
         {
             if (obj is Exception)
             {
-                if (null == this.PipelineProcessor || !this.PipelineProcessor.TopLevel)
+                if (this.PipelineProcessor == null || !this.PipelineProcessor.TopLevel)
                     return; // not outermost scope
             }
 
