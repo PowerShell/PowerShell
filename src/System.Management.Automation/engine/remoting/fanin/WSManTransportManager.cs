@@ -1415,7 +1415,7 @@ namespace System.Management.Automation.Remoting.Client
                 // use credential based authentication
                 string userName = null;
                 System.Security.SecureString password = null;
-                if ((null != connectionInfo.Credential) && (!string.IsNullOrEmpty(connectionInfo.Credential.UserName)))
+                if ((connectionInfo.Credential != null) && (!string.IsNullOrEmpty(connectionInfo.Credential.UserName)))
                 {
                     userName = connectionInfo.Credential.UserName;
                     password = connectionInfo.Credential.Password;
@@ -1900,7 +1900,7 @@ namespace System.Management.Automation.Remoting.Client
             // openContent is used by redirection ie., while redirecting to
             // a new machine.. this is not needed anymore as the connection
             // is successfully established.
-            if (null != sessionTM._openContent)
+            if (sessionTM._openContent != null)
             {
                 sessionTM._openContent.Dispose();
                 sessionTM._openContent = null;
@@ -2008,7 +2008,7 @@ namespace System.Management.Automation.Remoting.Client
             //LOG ETW EVENTS
 
             // Dispose the OnDisconnect callback as it is not needed anymore
-            if (null != sessionTM._disconnectSessionCompleted)
+            if (sessionTM._disconnectSessionCompleted != null)
             {
                 sessionTM._disconnectSessionCompleted.Dispose();
                 sessionTM._disconnectSessionCompleted = null;
@@ -2076,7 +2076,7 @@ namespace System.Management.Automation.Remoting.Client
             //Add ETW events
 
             // Dispose the OnCreate callback as it is not needed anymore
-            if (null != sessionTM._reconnectSessionCompleted)
+            if (sessionTM._reconnectSessionCompleted != null)
             {
                 sessionTM._reconnectSessionCompleted.Dispose();
                 sessionTM._reconnectSessionCompleted = null;
@@ -2207,7 +2207,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             //dispose openContent
-            if (null != sessionTM._openContent)
+            if (sessionTM._openContent != null)
             {
                 sessionTM._openContent.Dispose();
                 sessionTM._openContent = null;
@@ -2380,7 +2380,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             WSManNativeApi.WSManReceiveDataResult dataReceived = WSManNativeApi.WSManReceiveDataResult.UnMarshal(data);
-            if (null != dataReceived.data)
+            if (dataReceived.data != null)
             {
                 tracer.WriteLine("Session Received Data : {0}", dataReceived.data.Length);
                 PSEtwLog.LogAnalyticInformational(
@@ -3303,7 +3303,7 @@ namespace System.Management.Automation.Remoting.Client
                 cmdTM.RunspacePoolInstanceId.ToString(), cmdTM.powershellInstanceId.ToString());
 
             // dispose the cmdCompleted callback as it is not needed any more
-            if (null != cmdTM._createCmdCompleted)
+            if (cmdTM._createCmdCompleted != null)
             {
                 cmdTM._createCmdCompletedGCHandle.Free();
                 cmdTM._createCmdCompleted.Dispose();
@@ -3400,7 +3400,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // dispose the cmdCompleted callback as it is not needed any more
-            if (null != cmdTM._connectCmdCompleted)
+            if (cmdTM._connectCmdCompleted != null)
             {
                 cmdTM._connectCmdCompleted.Dispose();
                 cmdTM._connectCmdCompleted = null;
@@ -3655,7 +3655,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             WSManNativeApi.WSManReceiveDataResult dataReceived = WSManNativeApi.WSManReceiveDataResult.UnMarshal(data);
-            if (null != dataReceived.data)
+            if (dataReceived.data != null)
             {
                 tracer.WriteLine("Cmd Received Data : {0}", dataReceived.data.Length);
                 PSEtwLog.LogAnalyticInformational(
@@ -3772,7 +3772,7 @@ namespace System.Management.Automation.Remoting.Client
                 cmdTM._cmdSignalOperationHandle = IntPtr.Zero;
             }
 
-            if (null != cmdTM._signalCmdCompleted)
+            if (cmdTM._signalCmdCompleted != null)
             {
                 cmdTM._signalCmdCompleted.Dispose();
                 cmdTM._signalCmdCompleted = null;

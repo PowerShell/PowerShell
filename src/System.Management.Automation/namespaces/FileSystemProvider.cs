@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
             if (fspDynamicParam != null)
             {
                 attributeFilterSet = (
-                    (null != fspDynamicParam.Attributes)
+                    (fspDynamicParam.Attributes != null)
                         || (fspDynamicParam.Directory)
                         || (fspDynamicParam.File)
                         || (fspDynamicParam.Hidden)

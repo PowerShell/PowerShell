@@ -953,7 +953,7 @@ namespace System.Management.Automation.Remoting
             // Construct PSIdentity
             PSCertificateDetails psCertDetails = null;
             // Construct Certificate Details
-            if (null != senderDetails.certificateDetails)
+            if (senderDetails.certificateDetails != null)
             {
                 psCertDetails = new PSCertificateDetails(
                     senderDetails.certificateDetails.subject,

@@ -255,7 +255,7 @@ namespace System.Management.Automation
                 PSInvalidCastException e = new PSInvalidCastException(ErrorCategory.InvalidArgument.ToString(),
                         null,
                         ParameterBinderStrings.MismatchedPSTypeName,
-                        (_invocationInfo != null) && (null != _invocationInfo.MyCommand) ? _invocationInfo.MyCommand.Name : string.Empty,
+                        (_invocationInfo != null) && (_invocationInfo.MyCommand != null) ? _invocationInfo.MyCommand.Name : string.Empty,
                         parameterMetadata.Name,
                         parameterMetadata.Type,
                         parameterValue.GetType(),

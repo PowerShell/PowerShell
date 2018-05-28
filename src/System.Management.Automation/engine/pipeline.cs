@@ -371,7 +371,7 @@ namespace System.Management.Automation.Internal
                     // "PipelineProcessor.AddCommand(): UpstreamPipe == null"
                     throw PSTraceSource.NewInvalidOperationException();
                 }
-                if (null != UpstreamPipe.DownstreamCmdlet)
+                if (UpstreamPipe.DownstreamCmdlet != null)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                         PipelineStrings.PipeAlreadyTaken);
@@ -1302,7 +1302,7 @@ namespace System.Management.Automation.Internal
                         catch (Exception e) // Catch-all OK, 3rd party callout.
                         {
                             InvocationInfo myInvocation = null;
-                            if (null != commandProcessor.Command)
+                            if (commandProcessor.Command != null)
                                 myInvocation = commandProcessor.Command.MyInvocation;
 
                             ProviderInvocationException pie =
@@ -1388,7 +1388,7 @@ namespace System.Management.Automation.Internal
                 {
                     Exception ex = e;
                     while ((ex is TargetInvocationException || ex is CmdletInvocationException)
-                            && (null != ex.InnerException))
+                            && (ex.InnerException != null))
                     {
                         ex = ex.InnerException;
                     }

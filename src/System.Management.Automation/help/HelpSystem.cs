@@ -254,7 +254,7 @@ namespace System.Management.Automation
             _searchPaths = new Collection<String>();
 
             // add loaded modules paths to the search path
-            if (null != ExecutionContext.Modules)
+            if (ExecutionContext.Modules != null)
             {
                 foreach (PSModuleInfo loadedModule in ExecutionContext.Modules.ModuleTable.Values)
                 {

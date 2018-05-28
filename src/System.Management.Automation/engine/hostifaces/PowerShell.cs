@@ -881,7 +881,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "ps", Justification = "ps represents PowerShell and is used at many places.")]
         public PowerShell CreateNestedPowerShell()
         {
-            if ((_worker != null) && (null != _worker.CurrentlyRunningPipeline))
+            if ((_worker != null) && (_worker.CurrentlyRunningPipeline != null))
             {
                 PowerShell result = new PowerShell(new PSCommand(),
                     null, _worker.CurrentlyRunningPipeline.Runspace);
@@ -4303,7 +4303,7 @@ namespace System.Management.Automation
             EndInvokeAsyncResult = null;
 
             if ((PSInvocationState.Failed == InvocationStateInfo.State) &&
-                        (null != InvocationStateInfo.Reason))
+                        (InvocationStateInfo.Reason != null))
             {
                 throw InvocationStateInfo.Reason;
             }
@@ -5104,7 +5104,7 @@ namespace System.Management.Automation
                             {
                                 Runspace runspace = null;
 
-                                if ((_settings != null) && (null != _settings.Host))
+                                if ((_settings != null) && (_settings.Host != null))
                                 {
                                     runspace = RunspaceFactory.CreateRunspace(_settings.Host);
                                 }
@@ -5341,7 +5341,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if ((_settings != null) && (null != _settings.WindowsIdentityToImpersonate))
+                    if ((_settings != null) && (_settings.WindowsIdentityToImpersonate != null))
                     {
                         _settings.WindowsIdentityToImpersonate.Dispose();
                         _settings.WindowsIdentityToImpersonate = null;

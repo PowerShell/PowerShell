@@ -726,7 +726,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             // throw the exception that occurred while
             // processing the async operation
-            if (null != asyncResult.Exception)
+            if (asyncResult.Exception != null)
             {
                 throw asyncResult.Exception;
             }

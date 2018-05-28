@@ -909,7 +909,7 @@ namespace System.Management.Automation
                     else
                     {
                         string argument = StringLiterals.DollarNull;
-                        if (null != parameter.ArgumentValue)
+                        if (parameter.ArgumentValue != null)
                         {
                             try
                             {

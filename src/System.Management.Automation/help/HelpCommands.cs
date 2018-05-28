@@ -757,7 +757,7 @@ namespace Microsoft.PowerShell.Commands
 
             AliasInfo aliasInfo = cmdInfo as AliasInfo;
             if ((aliasInfo != null) &&
-                (null != aliasInfo.ExternalCommandMetadata) &&
+                (aliasInfo.ExternalCommandMetadata != null) &&
                 (!string.IsNullOrEmpty(aliasInfo.ExternalCommandMetadata.HelpUri)))
             {
                 return aliasInfo.ExternalCommandMetadata.HelpUri;
@@ -776,7 +776,7 @@ namespace Microsoft.PowerShell.Commands
                 // Win8: 651300 if core get-help is present in the runspace (and it is the only get-help command), use
                 // help system directly and avoid perf penalty.
                 var currentContext = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-                if ((currentContext != null) && (null != currentContext.HelpSystem))
+                if ((currentContext != null) && (currentContext.HelpSystem != null))
                 {
                     HelpRequest helpRequest = new HelpRequest(cmdName, cmdInfo.HelpCategory);
                     helpRequest.ProviderContext = new ProviderContext(

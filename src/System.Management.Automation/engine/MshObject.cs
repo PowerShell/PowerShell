@@ -171,7 +171,7 @@ namespace System.Management.Automation
         private static PSMemberInfoInternalCollection<T> DotNetGetMembersDelegate<T>(PSObject msjObj) where T : PSMemberInfo
         {
             // Don't lookup dotnet members if the object doesn't insist.
-            if (null != msjObj.InternalBaseDotNetAdapter)
+            if (msjObj.InternalBaseDotNetAdapter != null)
             {
                 PSMemberInfoInternalCollection<T> retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
                 PSObject.memberResolution.WriteLine("DotNet members: {0}.", retValue.VisibleCount);
@@ -184,7 +184,7 @@ namespace System.Management.Automation
         private static T DotNetGetMemberDelegate<T>(PSObject msjObj, string name) where T : PSMemberInfo
         {
             // Don't lookup dotnet member if the object doesn't insist.
-            if (null != msjObj.InternalBaseDotNetAdapter)
+            if (msjObj.InternalBaseDotNetAdapter != null)
             {
                 T retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
                 PSObject.memberResolution.WriteLine("DotNet member: {0}.", retValue == null ? "not found" : retValue.Name);

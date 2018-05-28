@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell
                 // This is required because there is difference in the parent hierarchy
                 // between CLR and Windows for Chinese. Ex: Native windows has
                 // zh-CN->zh-Hans->neutral whereas CLR has zh-CN->zh-CHS->zh-Hans->neutral
-                if ((null != base.Parent) && (!string.IsNullOrEmpty(base.Parent.Name)))
+                if ((base.Parent != null) && (!string.IsNullOrEmpty(base.Parent.Name)))
                 {
                     return ImmediateParent;
                 }

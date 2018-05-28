@@ -278,7 +278,7 @@ namespace System.Management.Automation
                 _reasonIsExceptionType = false;
                 if (!String.IsNullOrEmpty(_errorRecord._reasonOverride))
                     return _errorRecord._reasonOverride;
-                if (null != _errorRecord.Exception)
+                if (_errorRecord.Exception != null)
                 {
                     _reasonIsExceptionType = true;
                     return _errorRecord.Exception.GetType().Name;
@@ -309,7 +309,7 @@ namespace System.Management.Automation
             {
                 if (!String.IsNullOrEmpty(_errorRecord._targetNameOverride))
                     return _errorRecord._targetNameOverride;
-                if (null != _errorRecord.TargetObject)
+                if (_errorRecord.TargetObject != null)
                 {
                     string targetInString;
                     try
@@ -347,7 +347,7 @@ namespace System.Management.Automation
             {
                 if (!String.IsNullOrEmpty(_errorRecord._targetTypeOverride))
                     return _errorRecord._targetTypeOverride;
-                if (null != _errorRecord.TargetObject)
+                if (_errorRecord.TargetObject != null)
                 {
                     return _errorRecord.TargetObject.GetType().Name;
                 }
@@ -1401,7 +1401,7 @@ namespace System.Management.Automation
             _reasonOverride = errorRecord._reasonOverride;
             _targetNameOverride = errorRecord._targetNameOverride;
             _targetTypeOverride = errorRecord._targetTypeOverride;
-            if (null != errorRecord.ErrorDetails)
+            if (errorRecord.ErrorDetails != null)
                 _errorDetails = new ErrorDetails(errorRecord.ErrorDetails);
             SetInvocationInfo(errorRecord._invocationInfo);
             _scriptStackTrace = errorRecord._scriptStackTrace;

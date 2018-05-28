@@ -832,12 +832,12 @@ namespace System.Management.Automation.Remoting.Client
                     if (rcvdDataInfo != null)
                     {
                         // Handling transport exception in thread-pool thread
-                        if (null != rcvdDataInfo.transportError)
+                        if (rcvdDataInfo.transportError != null)
                         {
                             RaiseErrorHandler(rcvdDataInfo.transportError);
                             break;
                         }
-                        else if (null != rcvdDataInfo.privateData)
+                        else if (rcvdDataInfo.privateData != null)
                         {
                             ProcessPrivateData(rcvdDataInfo.privateData);
                         }

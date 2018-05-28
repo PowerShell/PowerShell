@@ -947,7 +947,7 @@ namespace Microsoft.PowerShell.Commands
                 handler.Proxy = WebSession.Proxy;
             }
 
-            if (null != WebSession.Certificates)
+            if (WebSession.Certificates != null)
             {
                 handler.ClientCertificates.AddRange(WebSession.Certificates);
             }

@@ -36,7 +36,7 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("errorRecord");
             }
             _errorRecord = errorRecord;
-            if (null != errorRecord.Exception)
+            if (errorRecord.Exception != null)
             {
                 // 2005/04/13-JonN Can't do this in an unsealed class: HelpLink = errorRecord.Exception.HelpLink;
                 // Exception.Source is set by Throw

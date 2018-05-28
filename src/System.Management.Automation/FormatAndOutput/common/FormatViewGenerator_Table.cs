@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void Initialize(TerminatingErrorContext terminatingErrorContext, MshExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
         {
             base.Initialize(terminatingErrorContext, mshExpressionFactory, db, view, formatParameters);
-            if ((null != this.dataBaseInfo) && (null != this.dataBaseInfo.view))
+            if ((this.dataBaseInfo != null) && (null != this.dataBaseInfo.view))
             {
                 _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
             }
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
 
-            if ((null != this.dataBaseInfo) && (null != this.dataBaseInfo.view))
+            if ((this.dataBaseInfo != null) && (null != this.dataBaseInfo.view))
             {
                 _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
             }
