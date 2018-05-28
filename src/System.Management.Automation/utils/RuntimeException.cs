@@ -229,7 +229,7 @@ namespace System.Management.Automation
             {
                 return errorRecord.ErrorDetails.Message;
             }
-            if (null == errorRecord.Exception)
+            if (errorRecord.Exception == null)
                 return "";
             return errorRecord.Exception.Message;
         }

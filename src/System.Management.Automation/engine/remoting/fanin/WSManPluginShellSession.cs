@@ -273,7 +273,7 @@ namespace System.Management.Automation.Remoting
                             shutDownContext,
                             -1, // INFINITE
                             true); // TODO: Do I need to worry not being able to set missing WT_TRANSFER_IMPERSONATION?
-                        if (null == this.registeredShutDownWaitHandle)
+                        if (this.registeredShutDownWaitHandle == null)
                         {
                             isRegisterWaitForSingleObjectFailed = true;
                             registeredShutdownNotification = 0;

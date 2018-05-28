@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
             string recact = RecommendedAction;
             if (!String.IsNullOrEmpty(recact))
             {
-                if (null == errorRecord.ErrorDetails)
+                if (errorRecord.ErrorDetails == null)
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(errorRecord.ToString());
                 }

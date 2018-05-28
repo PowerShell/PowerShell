@@ -4679,7 +4679,7 @@ namespace System.Management.Automation
 
             lock (_syncObject)
             {
-                if ((_psCommand == null) || (null == _psCommand.Commands) || (0 == _psCommand.Commands.Count))
+                if ((_psCommand == null) || (_psCommand.Commands == null) || (0 == _psCommand.Commands.Count))
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.NoCommandToInvoke);
                 }
@@ -5360,7 +5360,7 @@ namespace System.Management.Automation
                     // and pipeline.dispose will not change powershell instances state
                     CurrentlyRunningPipeline.StateChanged -= _shell.PipelineStateChanged;
 
-                    if ((GetRunspaceAsyncResult == null) && (null == _shell._rsConnection))
+                    if ((GetRunspaceAsyncResult == null) && (_shell._rsConnection == null))
                     {
                         // user did not supply a runspace..Invoke* method created
                         // a new runspace..so close it.

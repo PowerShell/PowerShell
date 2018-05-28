@@ -203,8 +203,8 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if ((null == requestDetails.senderDetails) ||
-                (null == requestDetails.operationInfo))
+            if ((requestDetails.senderDetails == null) ||
+                (requestDetails.operationInfo == null))
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -404,7 +404,7 @@ namespace System.Management.Automation.Remoting
                                  context,
                                  -1, // INFINITE
                                  true); // TODO: Do I need to worry not being able to set missing WT_TRANSFER_IMPERSONATION?
-                if (null == mgdShellSession.registeredShutDownWaitHandle)
+                if (mgdShellSession.registeredShutDownWaitHandle == null)
                 {
                     isRegisterWaitForSingleObjectSucceeded = false;
                 }

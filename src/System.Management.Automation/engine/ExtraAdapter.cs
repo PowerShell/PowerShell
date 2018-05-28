@@ -62,7 +62,7 @@ namespace System.Management.Automation
                 object invokeGetValue = entry.InvokeGet(memberName);
                 // if entry.Properties[memberName] returns empty value and invokeGet non-empty
                 // value..take invokeGet's value. This will fix bug Windows Bug 121188.
-                if ((collection == null) || ((null == collection.Value) && (invokeGetValue != null)))
+                if ((collection == null) || ((collection.Value == null) && (invokeGetValue != null)))
                 {
                     valueToTake = invokeGetValue;
                 }

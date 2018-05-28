@@ -287,12 +287,12 @@ namespace System.Management.Automation.Remoting
             }
 
             // assign defaults after parsing the xml content.
-            if (null == result.MaxReceivedObjectSizeMB)
+            if (result.MaxReceivedObjectSizeMB == null)
             {
                 result.MaxReceivedObjectSizeMB = BaseTransportManager.MaximumReceivedObjectSize;
             }
 
-            if (null == result.MaxReceivedCommandSizeMB)
+            if (result.MaxReceivedCommandSizeMB == null)
             {
                 result.MaxReceivedCommandSizeMB = BaseTransportManager.MaximumReceivedDataSize;
             }
