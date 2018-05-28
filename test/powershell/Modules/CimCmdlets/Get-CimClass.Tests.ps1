@@ -17,11 +17,13 @@ try {
         }
 
         It 'produces an error when a non-existent class is used' {
-            { Get-CimClass -ClassName thisclasstypedoesnotexist -ErrorAction Stop } | Should -Throw -ErrorId "HRESULT 0x80041002,Microsoft.Management.Infrastructure.CimCmdlets.GetCimClassCommand"
+            { Get-CimClass -ClassName thisclasstypedoesnotexist -ErrorAction stop } |
+                Should -Throw -ErrorId "HRESULT 0x80041002,Microsoft.Management.Infrastructure.CimCmdlets.GetCimClassCommand"
         }
 
         It 'produces an error when an improper namespace is used' {
-            { Get-CimClass -ClassName CIM_OperatingSystem -Namespace badnamespace -ErrorAction Stop } | Should -Throw -ErrorId "HRESULT 0x8004100e,Microsoft.Management.Infrastructure.CimCmdlets.GetCimClassCommand"
+            { Get-CimClass -ClassName CIM_OperatingSystem -Namespace badnamespace -ErrorAction stop } |
+                Should -Throw -ErrorId "HRESULT 0x8004100e,Microsoft.Management.Infrastructure.CimCmdlets.GetCimClassCommand"
         }
     }
 

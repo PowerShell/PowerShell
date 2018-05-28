@@ -2,7 +2,7 @@
 
 image: Visual Studio 2017
 
-# cache version - netcoreapp.2.1-sdk.2.1.300-rc1-008662
+# cache version - netcoreapp.2.1-sdk.2.1.300-rc1
 cache:
   - '%LocalAppData%\Microsoft\dotnet -> appveyor.yml'
   - '%HOMEDRIVE%%HOMEPATH%\.nuget\packages -> appveyor.yml'
@@ -27,5 +27,7 @@ test_script:
 after_test:
   - ps: Invoke-AppVeyorAfterTest
 
+# Run the finish command and delete files which should not be in the cache
 on_finish:
   - ps: Invoke-AppveyorFinish
+  - ps: Invoke-AppVeyorCleanCache

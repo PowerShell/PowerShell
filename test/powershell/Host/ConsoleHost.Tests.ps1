@@ -93,35 +93,20 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     Context "ShellInterop" {
         It "Verify Parsing Error Output Format Single Shell should throw exception" {
-            try
-            {
-                & $powershell -outp blah -comm { $input }
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "IncorrectValueForFormatParameter"
-            }
+            { & $powershell -outp blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
 
         It "Verify Validate Dollar Error Populated should throw exception" {
             $origEA = $ErrorActionPreference
             $ErrorActionPreference = "Stop"
-            try
-            {
-                $a = 1,2,3
+            $a = 1,2,3
+            $e = {
                 $a | & $powershell -noprofile -command { wgwg-wrwrhqwrhrh35h3h3}
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.ToString() | Should -Match "wgwg-wrwrhqwrhrh35h3h3"
-                $_.FullyQualifiedErrorId | Should -Be "CommandNotFoundException"
-            }
-            finally
-            {
-                $ErrorActionPreference = $origEA
-            }
+            } | Should -Throw -ErrorId "CommandNotFoundException" -PassThru
+
+            $e.ToString() | Should -Match "wgwg-wrwrhqwrhrh35h3h3"
+
+            $ErrorActionPreference = $origEA
         }
 
         It "Verify Validate Output Format As Text Explicitly Child Single Shell does not throw" {
@@ -131,15 +116,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "Verify Parsing Error Input Format Single Shell should throw exception" {
-            try
-            {
-                & $powershell -input blah -comm { $input }
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "IncorrectValueForFormatParameter"
-            }
+            { & $powershell -input blah -comm { $input } } | Should -Throw -ErrorId "IncorrectValueForFormatParameter"
         }
     }
     Context "CommandLine" {
@@ -496,15 +473,7 @@ foo
                 recurse $args
             }
 
-            try
-            {
-                recurse "args"
-                Throw "Incorrect exception"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "CallDepthOverflow"
-            }
+            { recurse "args" } | Should -Throw -ErrorId "CallDepthOverflow"
         }
     }
 

@@ -2013,6 +2013,9 @@ namespace System.Management.Automation
             // Check to see if the path is relative or absolute
             bool isPathForCurrentDrive = false;
 
+            // Check to see if the path is to the root of a drive
+            bool isPathForRootOfDrive = false;
+
             if (IsAbsolutePath(path, out driveName))
             {
                 Dbg.Diagnostics.Assert(
@@ -2080,6 +2083,12 @@ namespace System.Management.Automation
                         // this is the default behavior for all windows drives, and all non-filesystem
                         // drives on non-windows
                         path = path.Substring(driveName.Length + 1);
+
+                        if (String.IsNullOrEmpty(path))
+                        {
+                            // path was to the root of a drive such as 'c:'
+                            isPathForRootOfDrive = true;
+                        }
                     }
                 }
             }
@@ -2111,14 +2120,23 @@ namespace System.Management.Automation
                 // have access to it.
                 context.Drive = workingDriveForPath;
 
-                string relativePath =
-                    GenerateRelativePath(
-                        workingDriveForPath,
-                        path,
-                        escapeCurrentLocation,
-                        providerInstance,
-                        context);
+                string relativePath = String.Empty;
 
+                if (isPathForRootOfDrive)
+                {
+                    relativePath = context.Drive.Root;
+                }
+                else
+                {
+                    relativePath =
+                        GenerateRelativePath(
+                            workingDriveForPath,
+                            path,
+                            escapeCurrentLocation,
+                            providerInstance,
+                            context);
+                }
+                
                 return relativePath;
             }
             catch (PSNotSupportedException)

@@ -349,19 +349,19 @@ Describe "FormatHex" -tags "CI" {
 
         $testCases = @(
             @{
-                Name = "If given invalid path in array, continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ev e -ErrorAction SilentlyContinue'"
+                Name = "If given invalid path in array, continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ErrorVariable e -ErrorAction SilentlyContinue'"
                 PathCase = $true
                 InvalidPath = "$($inputFile1.DirectoryName)\fakefile8888845345345348709.txt"
                 ExpectedFullyQualifiedErrorId = "FileNotFound,Microsoft.PowerShell.Commands.FormatHex"
             }
             @{
-                Name = "If given a non FileSystem path in array, continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ev e -ErrorAction SilentlyContinue'"
+                Name = "If given a non FileSystem path in array, continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ErrorVariable e -ErrorAction SilentlyContinue'"
                 PathCase = $true
                 InvalidPath = "Cert:\CurrentUser\My\$thumbprint"
                 ExpectedFullyQualifiedErrorId = "FormatHexOnlySupportsFileSystemPaths,Microsoft.PowerShell.Commands.FormatHex"
             }
             @{
-                Name = "If given a non FileSystem path in array (with LiteralPath), continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ev e -ErrorAction SilentlyContinue'"
+                Name = "If given a non FileSystem path in array (with LiteralPath), continues to process valid paths 'fhx -Path `$invalidPath, `$inputFile1  -ErrorVariable e -ErrorAction SilentlyContinue'"
                 InvalidPath = "Cert:\CurrentUser\My\$thumbprint"
                 ExpectedFullyQualifiedErrorId = "FormatHexOnlySupportsFileSystemPaths,Microsoft.PowerShell.Commands.FormatHex"
             }

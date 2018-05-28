@@ -47,7 +47,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         New-ModuleManifest -Path $testModulePath @args
         [string]$errorId = "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
 
-        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId $errorId
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $errorId
     }
 
     It "module manifest containing valid unprocessed rootmodule file type succeeds: <rootModuleValue>" -TestCases (
@@ -79,7 +79,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         New-Item -ItemType File -Path testdrive:/module/$rootModuleValue
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 
     It "module manifest containing empty rootmodule succeeds: <rootModuleValue>" -TestCases (
@@ -109,7 +109,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         New-Item -ItemType File -Path testdrive:/module/$rootModuleValue
 
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 
     It "module manifest containing non-existing rootmodule returns error: <rootModuleValue>" -TestCases (
@@ -122,7 +122,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         New-Item -ItemType Directory -Path testdrive:/module
 
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 }
 
@@ -215,7 +215,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
     }
 
     It "Add a circular reference to RequiredModules and verify error" {
-        { TestImportModule $false $false $true } | ShouldBeErrorId "Modules_InvalidManifest,Microsoft.PowerShell.Commands.ImportModuleCommand"
+        { TestImportModule $false $false $true } | Should -Throw -ErrorId "Modules_InvalidManifest,Microsoft.PowerShell.Commands.ImportModuleCommand"
     }
 }
 

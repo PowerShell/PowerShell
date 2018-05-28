@@ -15,7 +15,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $err = $null
             try
             {
-                get-childitem nosuchfile.nosuchextension -ea stop -ev err
+                get-childitem nosuchfile.nosuchextension -ErrorAction stop -ErrorVariable err
             }
             catch {}
 
@@ -34,29 +34,23 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         }
 
         It 'action preference of Ignore cannot be set as a preference variable' {
-            try {
+            $e = {
                 $GLOBAL:errorActionPreference = "Ignore"
                 Get-Process -Name asdfasdfasdf
-                Throw "Exception expected, execution should not have reached here"
-             } catch {
-                     $_.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
-             } finally {
-                $GLOBAL:errorActionPreference = $orgin
-             }
+            } | Should -Throw -ErrorId 'System.NotSupportedException,Microsoft.PowerShell.Commands.GetProcessCommand' -PassThru
+            $e.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
 
+            $GLOBAL:errorActionPreference = $orgin
         }
 
         It 'action preference of Suspend cannot be set as a preference variable' {
-            try {
-                    $GLOBAL:errorActionPreference = "Suspend"
-                    Get-Process -Name asdfasdfasdf
-                    Throw "Exception expected, execution should not have reached here"
-                } catch {
-                    $_.CategoryInfo.Reason | Should -BeExactly 'ArgumentTransformationMetadataException'
-                }
-                finally {
-                    $GLOBAL:errorActionPreference = $orgin
-                }
+            $e = {
+                $GLOBAL:errorActionPreference = "Suspend"
+                Get-Process -Name asdfasdfasdf
+            } | Should -Throw -ErrorId 'RuntimeException' -PassThru
+            $e.CategoryInfo.Reason | Should -BeExactly 'ArgumentTransformationMetadataException'
+
+            $GLOBAL:errorActionPreference = $orgin
         }
 
         It 'enum disambiguation works' {
@@ -78,35 +72,15 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                 "Hello"
             }
 
-            try
-            {
-                MyHelperFunction -ErrorAction Suspend
-                Throw "Exception expected, execution should not have reached here"
-            } catch {
-                $_.FullyQualifiedErrorId | Should -BeExactly "ParameterBindingFailed,MyHelperFunction"
-            }
+            { MyHelperFunction -ErrorAction Suspend } | Should -Throw -ErrorId "ParameterBindingFailed,MyHelperFunction"
         }
 
         It 'ErrorAction = Suspend does not work on cmdlets' {
-            try
-            {
-                Get-Process -ErrorAction Suspend
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should -BeExactly "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
-            }
+            { Get-Process -ErrorAction Suspend } | Should -Throw -ErrorId "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
         }
 
         It 'WarningAction = Suspend does not work' {
-            try
-            {
-                Get-Process -WarningAction Suspend
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should -BeExactly "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
-            }
+            { Get-Process -WarningAction Suspend } | Should -Throw -ErrorId "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
         }
 
         #issue 2076
@@ -118,15 +92,8 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
 
             $params | ForEach-Object {
                         $input=@{'InputObject' = 'Test';$_='Suspend'}
-
-                        try {
-                            Write-Output @input
-                            } catch {
-                                $_.FullyQualifiedErrorId | Should -BeExactly "ParameterBindingFailed,Microsoft.PowerShell.Commands.WriteOutputCommand"
-                                $num++
-                            }
+                        { Write-Output @input } | Should -Throw -ErrorId "ParameterBindingFailed,Microsoft.PowerShell.Commands.WriteOutputCommand"
                     }
-            $num | Should -Be 2
         }
 
         It '<switch> does not take precedence over $ErrorActionPreference' -TestCases @(
@@ -144,7 +111,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $params += @{$switch=$true}
             { New-Item @params } | Should -Not -Throw
             $ErrorActionPreference = "Stop"
-            { New-Item @params } | ShouldBeErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
+            { New-Item @params } | Should -Throw -ErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
             Remove-Item "$testdrive\test.txt" -Force
         }
 }

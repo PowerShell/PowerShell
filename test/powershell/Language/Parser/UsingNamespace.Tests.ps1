@@ -96,7 +96,7 @@ Describe "Using Namespace" -Tags "CI" {
     }
 
     It "Ambiguous type reference" {
-        { [ThreadState] } | ShouldBeErrorId AmbiguousTypeReference
+        { [ThreadState] } | Should -Throw -ErrorId AmbiguousTypeReference
     }
 
     It "Parameters" {

@@ -37,7 +37,8 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     It "Verify Get-PfxCertificate wrong password" {
         #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Test secret.")]
         $pass = ConvertTo-SecureString "wrongpass" -AsPlainText -Force
-        $e = { Get-PfxCertificate $protectedCertLocation -Password $pass -ErrorAction Stop } | ShouldBeErrorId "GetPfxCertificateUnknownCryptoError,Microsoft.PowerShell.Commands.GetPfxCertificateCommand"
+        { Get-PfxCertificate $protectedCertLocation -Password $pass -ErrorAction Stop } |
+            Should -Throw -ErrorId "GetPfxCertificateUnknownCryptoError,Microsoft.PowerShell.Commands.GetPfxCertificateCommand"
     }
 
     It "Verify CMS message recipient resolution by path" -Skip:(!$IsWindows) {
@@ -222,12 +223,8 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify Protect-CmsMessage emits recipient errors" {
-        try {
-            "Hello World" | Protect-CmsMessage -To "SomeThumbprintThatDoesNotExist" -ErrorAction Stop
-            throw "No Exception!"
-        } catch {
-            $_.FullyQualifiedErrorId | Should -Be "NoCertificateFound,Microsoft.PowerShell.Commands.ProtectCmsMessageCommand"
-        }
+        { "Hello World" | Protect-CmsMessage -To "SomeThumbprintThatDoesNotExist" -ErrorAction Stop } |
+            Should -Throw -ErrorId "NoCertificateFound,Microsoft.PowerShell.Commands.ProtectCmsMessageCommand"
     }
 
     It "Verify CmsMessage cmdlets works with paths" {
@@ -269,30 +266,18 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify Unprotect-CmsMessage emits recipient errors" {
-        try {
-            "" | Unprotect-CmsMessage -To "SomeThumbprintThatDoesNotExist" -IncludeContext -ErrorAction Stop
-            throw "No Exception!"
-        } catch {
-            $_.FullyQualifiedErrorId | Should -Be "NoCertificateFound,Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand"
-        }
+        { "" | Unprotect-CmsMessage -To "SomeThumbprintThatDoesNotExist" -IncludeContext -ErrorAction Stop } |
+            Should -Throw -ErrorId "NoCertificateFound,Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand"
     }
 
     It "Verify failure to extract Ascii armor generates an error [Unprotect-CmsMessage]" {
-        try {
-            "Hello World" | Unprotect-CmsMessage -ErrorAction Stop
-            throw "No Exception!"
-        } catch {
-            $_.FullyQualifiedErrorId | Should -Be "InputContainedNoEncryptedContentIncludeContext,Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand"
-        }
+        { "Hello World" | Unprotect-CmsMessage -ErrorAction Stop } |
+            Should -Throw -ErrorId "InputContainedNoEncryptedContentIncludeContext,Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand"
     }
 
     It "Verify failure to extract Ascii armor generates an error [Get-CmsMessage]" {
-        try {
-            "Hello World" | Get-CmsMessage -ErrorAction Stop
-            throw "No Exception!"
-        } catch {
-            $_.FullyQualifiedErrorId | Should -Be "InputContainedNoEncryptedContent,Microsoft.PowerShell.Commands.GetCmsMessageCommand"
-        }
+        { "Hello World" | Get-CmsMessage -ErrorAction Stop } |
+            Should -Throw -ErrorId "InputContainedNoEncryptedContent,Microsoft.PowerShell.Commands.GetCmsMessageCommand"
     }
 
     It "Verify 'Unprotect-CmsMessage -IncludeContext' with no encrypted input" {

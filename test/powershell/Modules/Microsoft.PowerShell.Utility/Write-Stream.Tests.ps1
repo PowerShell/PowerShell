@@ -34,7 +34,7 @@ Describe "Stream writer tests" -Tags "CI" {
         }
 
         It "Should write debug messages to the debug stream" {
-            Write-Messages -Debug -EA SilentlyContinue 5>&1 > $targetfile
+            Write-Messages -Debug -ErrorAction SilentlyContinue 5>&1 > $targetfile
             # The contents of the debug stream should contain the expected text
             $targetfile | Should -FileContentMatch "Debug Message"
         }

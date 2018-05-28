@@ -180,7 +180,7 @@ function Start-PSPackage {
                 # Zip symbols.zip to the root package
                 $zipSource = Join-Path $symbolsSource -ChildPath '*'
                 $zipPath = Join-Path -Path $Source -ChildPath 'symbols.zip'
-                $Script:Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath (Join-Path -Path $source -ChildPath 'psoptions.json')
+                Save-PSOptions -PSOptionsPath (Join-Path -Path $source -ChildPath 'psoptions.json') -Options $Script:Options
                 Compress-Archive -Path $zipSource -DestinationPath $zipPath
             }
             finally
@@ -493,11 +493,9 @@ function Expand-PSSignedBuild
     Restore-PSModuleToBuild -PublishPath $buildPath
 
     $psOptionsPath = Join-Path $buildPath -ChildPath 'psoptions.json'
-    $options = Get-Content -Path $psOptionsPath | ConvertFrom-Json
+    Restore-PSOptions -PSOptionsPath $psOptionsPath -Remove
 
-    # Remove PSOptions.
-    # The file is only used to set the PSOptions.
-    Remove-Item -Path $psOptionsPath
+    $options = Get-PSOptions
 
     $options.PSModuleRestore = $true
 

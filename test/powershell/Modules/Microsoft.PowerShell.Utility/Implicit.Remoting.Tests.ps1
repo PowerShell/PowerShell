@@ -340,13 +340,12 @@ try
         }
 
         It "Verifies that Export-PSSession fails when a module directory already exists" {
-            try {
-                Export-PSSession -Session $session -CommandName Get-Variable -AllowClobber -ModuleName $file -EA SilentlyContinue -ErrorVariable expectedError
-            } catch { }
+            $e = { Export-PSSession -Session $session -CommandName Get-Variable -AllowClobber -ModuleName $file -ErrorAction Stop } |
+                Should -Throw -PassThru
 
-            $expectedError | Should -Not -BeNullOrEmpty
+            $e | Should -Not -BeNullOrEmpty
             # Error contains reference to the directory that already exists
-            ([string]($expectedError[0]) -like "*$file*") | Should -BeTrue
+            ([string]($e[0]) -like "*$file*") | Should -BeTrue
         }
 
         It "Verifies that overwriting an existing directory succeeds with -Force" {
@@ -1686,19 +1685,15 @@ try
         }
 
         It "Get-Command returns something that is not CommandInfo" {
-            try {
-                Invoke-Command $session { $oldGetCommand = ${function:Get-Command} }
-                Invoke-Command $session { function Get-Command { Microsoft.PowerShell.Utility\Get-Variable } }
+            Invoke-Command $session { $oldGetCommand = ${function:Get-Command} }
+            Invoke-Command $session { function Get-Command { Microsoft.PowerShell.Utility\Get-Variable } }
+            $e = { $module = Import-PSSession -Session $session -AllowClobber } | Should -Throw -PassThru
 
-                $module = Import-PSSession -Session $session -AllowClobber
-                throw "Import-PSSession should throw"
-            } catch {
-                $msg = [string]($_)
-                $msg.Contains("Get-Command") | Should -BeTrue
-            } finally {
-                if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
-                Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
-            }
+            $msg = [string]($e)
+            $msg.Contains("Get-Command") | Should -BeTrue
+
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
         }
 
         # Test order of remote commands (alias > function > cmdlet > external script)

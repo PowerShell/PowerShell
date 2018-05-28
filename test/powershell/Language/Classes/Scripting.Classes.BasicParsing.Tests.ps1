@@ -646,7 +646,7 @@ function test-it([EE]$ee){$ee}
         }
         finally
         {
-            Remove-Module -ea ignore MSFT_2081529
+            Remove-Module -ErrorAction ignore MSFT_2081529
         }
 }
 

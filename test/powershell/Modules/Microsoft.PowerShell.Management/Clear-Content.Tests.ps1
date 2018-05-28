@@ -97,87 +97,50 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
     }
 
     It "the '-Stream' dynamic parameter should not be visible to get-command in the function provider" {
-      try {
-        Push-Location -Path function:
-        Get-Command Clear-Content -Stream $streamName
-        throw "ExpectedExceptionNotDelivered"
-      }
-      catch {
-        $_.FullyQualifiedErrorId | Should -Be "NamedParameterNotFound,Microsoft.PowerShell.Commands.GetCommandCommand"
-      }
-      finally {
-        Pop-Location
-      }
+      Push-Location -Path function:
+      { Get-Command Clear-Content -Stream $streamName } |
+        Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.GetCommandCommand"
+      Pop-Location
     }
   }
 
   Context "Proper errors should be delivered when bad locations are specified" {
     It "should throw `"Cannot bind argument to parameter 'Path'`" when -Path is `$null" {
-      try {
-        Clear-Content -Path $null -ErrorAction Stop
-        throw "expected exception was not delivered"
-      }
-      catch {
-        $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
-      }
+      { Clear-Content -Path $null -ErrorAction Stop } |
+        Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
     }
 
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 903880)]
     It "should throw `"Cannot bind argument to parameter 'Path'`" when -Path is `$()" {
-      try {
-        Clear-Content -Path $() -ErrorAction Stop
-        throw "expected exception was not delivered"
-      }
-      catch {
-        $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
-      }
+      { Clear-Content -Path $() -ErrorAction Stop } |
+        Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
     }
 
     #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
     It "should throw 'PSNotSupportedException' when you clear-content to an unsupported provider" {
       $functionName = Get-NonExistantFunctionName
       $null = New-Item -Path function:$functionName -Value { 1 }
-      try {
-        Clear-Content -Path function:$functionName -ErrorAction Stop
-        throw "Expected exception was not thrown"
-      }
-      catch {
-        $_.FullyQualifiedErrorId | Should -Be "NotSupported,Microsoft.PowerShell.Commands.ClearContentCommand"
-      }
+      { Clear-Content -Path function:$functionName -ErrorAction Stop } |
+        Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.ClearContentCommand"
     }
 
     It "should throw FileNotFound error when referencing a non-existant file" {
-      try {
-        $badFile = "TestDrive:/badfilename.txt"
-        Clear-Content -Path $badFile -ErrorAction Stop
-        throw "ExpectedExceptionNotDelivered"
-      }
-      catch {
-        $_.FullyQualifiedErrorId | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
-      }
+      $badFile = "TestDrive:/badfilename.txt"
+      { Clear-Content -Path $badFile -ErrorAction Stop } |
+        Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
     }
 
     It "should throw DriveNotFound error when referencing a non-existant drive" {
-       try {
-         $badDrive = "{0}:/file.txt" -f (Get-NonExistantDriveName)
-         Clear-Content -Path $badDrive -ErrorAction Stop
-         throw "ExpectedExceptionNotDelivered"
-       }
-       catch {
-         $_.FullyQualifiedErrorId | Should -Be "DriveNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
-       }
+      $badDrive = "{0}:/file.txt" -f (Get-NonExistantDriveName)
+      { Clear-Content -Path $badDrive -ErrorAction Stop } |
+        Should -Throw -ErrorId "DriveNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
     }
 
     # we'll use a provider qualified path to produce this error
     It "should throw ProviderNotFound error when referencing a non-existant provider" {
-       try {
-         $badProviderPath = "{0}::C:/file.txt" -f (Get-NonExistantProviderName)
-         Clear-Content -Path $badProviderPath -ErrorAction Stop
-         throw "ExpectedExceptionNotDelivered"
-       }
-       catch {
-         $_.FullyQualifiedErrorId | Should -Be "ProviderNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
-       }
+      $badProviderPath = "{0}::C:/file.txt" -f (Get-NonExistantProviderName)
+      { Clear-Content -Path $badProviderPath -ErrorAction Stop } |
+        Should -Throw -ErrorId "ProviderNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
     }
   }
 }

@@ -14,6 +14,6 @@ Describe "Set-Date for admin" -Tag @('CI', 'RequireAdminOnWindows', 'RequireSudo
 
 Describe "Set-Date" -Tag 'CI' {
     It "Set-Date should produce an error in a non-elevated context" {
-        { Get-Date | Set-Date } | ShouldBeErrorId "System.ComponentModel.Win32Exception,Microsoft.PowerShell.Commands.SetDateCommand"
+        { Get-Date | Set-Date } | Should -Throw -ErrorId "System.ComponentModel.Win32Exception,Microsoft.PowerShell.Commands.SetDateCommand"
     }
 }
