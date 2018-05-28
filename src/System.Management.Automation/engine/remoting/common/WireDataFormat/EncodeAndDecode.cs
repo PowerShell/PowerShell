@@ -2250,9 +2250,9 @@ namespace System.Management.Automation
             }
 
             ModuleSpecification[] fullyQualifiedName = null;
-            if (null != DeserializingTypeConverter.GetPropertyValue<PSObject>(dataAsPSObject,
-                                                                             RemoteDataNameStrings.DiscoveryFullyQualifiedModule,
-                                                                             DeserializingTypeConverter.RehydrationFlags.NullValueOk | DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk))
+            if (DeserializingTypeConverter.GetPropertyValue<PSObject>(dataAsPSObject,
+                                                                      RemoteDataNameStrings.DiscoveryFullyQualifiedModule,
+                                                                      DeserializingTypeConverter.RehydrationFlags.NullValueOk | DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk) != null)
             {
                 IEnumerable<ModuleSpecification> tmp = EnumerateListProperty<ModuleSpecification>(dataAsPSObject, RemoteDataNameStrings.DiscoveryFullyQualifiedModule);
                 fullyQualifiedName = new List<ModuleSpecification>(tmp).ToArray();
