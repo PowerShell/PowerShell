@@ -2127,7 +2127,7 @@ namespace Microsoft.WSMan.Management
                         }
                         // Construct the Uri from Resource_XXXX resource dir.
                         PSObject resourceDirProperties = GetItemValue(strPathChk);
-                        if ((resourceDirProperties == null) || (null == resourceDirProperties.Properties["ResourceUri"]))
+                        if ((resourceDirProperties == null) || (resourceDirProperties.Properties["ResourceUri"] == null))
                         {
                             string message = helper.FormatResourceMsgFromResourcetext("ResourceURIMissingInResourceDir",
                                 "ResourceUri", strPathChk);
