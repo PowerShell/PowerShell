@@ -2145,7 +2145,7 @@ namespace System.Management.Automation
                 // always be empty
 
                 providerInstance = null;
-                return "";
+                return string.Empty;
             }
         } // GetDriveRootRelativePathFromPSPath
 

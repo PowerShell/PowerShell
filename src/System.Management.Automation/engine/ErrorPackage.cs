@@ -254,7 +254,7 @@ namespace System.Management.Automation
                 {
                     return _errorRecord.InvocationInfo.MyCommand.Name;
                 }
-                return "";
+                return string.Empty;
             }
             set
             {
@@ -283,7 +283,7 @@ namespace System.Management.Automation
                     _reasonIsExceptionType = true;
                     return _errorRecord.Exception.GetType().Name;
                 }
-                return "";
+                return string.Empty;
             }
             set
             {
@@ -323,7 +323,7 @@ namespace System.Management.Automation
 
                     return ErrorRecord.NotNull(targetInString);
                 }
-                return "";
+                return string.Empty;
             }
             set
             {
@@ -351,7 +351,7 @@ namespace System.Management.Automation
                 {
                     return _errorRecord.TargetObject.GetType().Name;
                 }
-                return "";
+                return string.Empty;
             }
             set
             {
@@ -819,12 +819,12 @@ namespace System.Management.Automation
             catch (MissingManifestResourceException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
             catch (ArgumentException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
         } // BuildMessage
@@ -852,12 +852,12 @@ namespace System.Management.Automation
             catch (MissingManifestResourceException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
             catch (ArgumentException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
         } // BuildMessage
@@ -890,7 +890,7 @@ namespace System.Management.Automation
             catch (MissingManifestResourceException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
         } // BuildMessage
@@ -906,7 +906,7 @@ namespace System.Management.Automation
                     ErrorPackage.ErrorDetailsEmptyTemplate,
                     baseName,
                     resourceId);
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
 
             try
@@ -919,7 +919,7 @@ namespace System.Management.Automation
             catch (FormatException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
         } // BuildMessage
         #endregion Private
@@ -1659,16 +1659,16 @@ namespace System.Management.Automation
         {
             InvocationInfo invocationInfo = this.InvocationInfo;
             if (null == invocationInfo)
-                return "";
+                return string.Empty;
             CommandInfo commandInfo = invocationInfo.MyCommand;
             if (null == commandInfo)
-                return "";
+                return string.Empty;
             IScriptCommandInfo scriptInfo = commandInfo as IScriptCommandInfo;
             if (scriptInfo != null)
                 return commandInfo.Name;
             CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
             if (null == cmdletInfo)
-                return "";
+                return string.Empty;
             return cmdletInfo.ImplementingType.FullName;
         }
 

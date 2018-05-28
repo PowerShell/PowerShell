@@ -5479,7 +5479,7 @@ namespace System.Management.Automation
                 if (typeof(ValueType).IsAssignableFrom(Type))
                     return "Struct ";
 
-                return ""; // what other interesting types are there?
+                return string.Empty; // what other interesting types are there?
             }
 
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)

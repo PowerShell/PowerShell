@@ -997,7 +997,7 @@ end
 
                 return parameters.ToString();
             }
-            return "";
+            return string.Empty;
         }
 
         internal string GetBeginBlock()

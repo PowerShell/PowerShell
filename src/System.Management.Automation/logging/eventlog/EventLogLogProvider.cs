@@ -630,12 +630,12 @@ namespace System.Management.Automation
         private string GetMessage(string messageId, Hashtable mapArgs)
         {
             if (_resourceManager == null)
-                return "";
+                return string.Empty;
 
             string messageTemplate = _resourceManager.GetString(messageId);
 
             if (String.IsNullOrEmpty(messageTemplate))
-                return "";
+                return string.Empty;
 
             return FillMessageTemplate(messageTemplate, mapArgs);
         }

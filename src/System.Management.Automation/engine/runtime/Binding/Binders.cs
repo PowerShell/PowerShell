@@ -2231,7 +2231,7 @@ namespace System.Management.Automation.Language
                 case ExpressionType.RightShift: return TokenKind.Shr.Text();
             }
             Diagnostics.Assert(false, "Unexpected operator");
-            return "";
+            return string.Empty;
         }
 
         private static DynamicMetaObject CallImplicitOp(string methodName, DynamicMetaObject target, DynamicMetaObject arg, string errorOperator, DynamicMetaObject errorSuggestion)

@@ -130,7 +130,7 @@ namespace System.Management.Automation.Language
         {
             if (PositionUtilities.EmptyExtent.Equals(position))
             {
-                return "";
+                return string.Empty;
             }
 
             string fileName = position.File;
@@ -485,7 +485,7 @@ namespace System.Management.Automation.Language
                 // StartOffset can be > the length for the EOF token.
                 if (StartOffset > PositionHelper.ScriptText.Length)
                 {
-                    return "";
+                    return string.Empty;
                 }
                 return PositionHelper.ScriptText.Substring(StartOffset, EndOffset - StartOffset);
             }
@@ -511,7 +511,7 @@ namespace System.Management.Automation.Language
         public int LineNumber { get { return 0; } }
         public int ColumnNumber { get { return 0; } }
         public int Offset { get { return 0; } }
-        public string Line { get { return ""; } }
+        public string Line { get { return string.Empty; } }
         public string GetFullScript() { return null; }
     }
 
@@ -526,7 +526,7 @@ namespace System.Management.Automation.Language
         public int EndColumnNumber { get { return 0; } }
         public int StartOffset { get { return 0; } }
         public int EndOffset { get { return 0; } }
-        public string Text { get { return ""; } }
+        public string Text { get { return string.Empty; } }
 
         public override bool Equals(object obj)
         {

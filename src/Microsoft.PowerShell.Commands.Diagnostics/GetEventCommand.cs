@@ -1378,7 +1378,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!KeywordStringToInt64(value.ToString(), ref keywordLong))
                 {
-                    return "";
+                    return string.Empty;
                 }
                 keywordsMask |= keywordLong;
             }
@@ -1416,7 +1416,7 @@ namespace Microsoft.PowerShell.Commands
                     string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("InvalidContext"), value.ToString());
                     Exception outerExc = new Exception(msg, exc);
                     WriteError(new ErrorRecord(outerExc, "InvalidContext", ErrorCategory.InvalidArgument, null));
-                    return "";
+                    return string.Empty;
                 }
             }
 
@@ -1434,7 +1434,7 @@ namespace Microsoft.PowerShell.Commands
             DateTime startTime = new DateTime();
             if (!StringToDateTime(value.ToString(), ref startTime))
             {
-                return "";
+                return string.Empty;
             }
 
             startTime = startTime.ToUniversalTime();
@@ -1445,7 +1445,7 @@ namespace Microsoft.PowerShell.Commands
                 DateTime endTime = new DateTime();
                 if (!StringToDateTime(hash[hashkey_endtime_lc].ToString(), ref endTime))
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 endTime = endTime.ToUniversalTime();
@@ -1477,7 +1477,7 @@ namespace Microsoft.PowerShell.Commands
             DateTime endTime = new DateTime();
             if (!StringToDateTime(value.ToString(), ref endTime))
             {
-                return "";
+                return string.Empty;
             }
 
             endTime = endTime.ToUniversalTime();
@@ -1489,7 +1489,7 @@ namespace Microsoft.PowerShell.Commands
                 DateTime startTime = new DateTime();
                 if (!StringToDateTime(hash[hashkey_starttime_lc].ToString(), ref startTime))
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 startTime = startTime.ToUniversalTime();
@@ -1859,7 +1859,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (providers.Count == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             StringBuilder predicate = new StringBuilder("System/Provider[");
@@ -1887,7 +1887,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_providersByLogMap.Count == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             StringBuilder predicate = new StringBuilder("System/Provider[");

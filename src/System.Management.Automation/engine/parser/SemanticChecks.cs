@@ -646,7 +646,7 @@ namespace System.Management.Automation.Language
             // we just use the empty string.
             if (expr == null)
             {
-                return "";
+                return string.Empty;
             }
 
             var str = expr as StringConstantExpressionAst;

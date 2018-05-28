@@ -384,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (obj == null)
             {
-                return "";
+                return string.Empty;
             }
             try
             {
@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // eats exception if safe
             }
-            return "";
+            return string.Empty;
         }
 
         /// <summary>

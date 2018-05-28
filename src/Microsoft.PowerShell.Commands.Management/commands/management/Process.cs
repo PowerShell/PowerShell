@@ -366,11 +366,11 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Win32Exception)
             {
-                return "";
+                return string.Empty;
             }
             catch (InvalidOperationException)
             {
-                return "";
+                return string.Empty;
             }
         }
 
