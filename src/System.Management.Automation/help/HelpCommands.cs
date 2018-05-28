@@ -787,7 +787,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (
                         Uri result in
                             currentContext.HelpSystem.ExactMatchHelp(helpRequest).Select(
-                                helpInfo => helpInfo.GetUriForOnlineHelp()).Where(result => null != result))
+                                helpInfo => helpInfo.GetUriForOnlineHelp()).Where(result => result != null))
                     {
                         return result.OriginalString;
                     }

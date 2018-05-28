@@ -1666,7 +1666,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     // Modify startup type or display name or credential
                     if (!String.IsNullOrEmpty(DisplayName)
-                        || ServiceStartupType.InvalidValue != StartupType || null != Credential)
+                        || ServiceStartupType.InvalidValue != StartupType || Credential != null)
                     {
                         DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                         if (!NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))
