@@ -54,7 +54,7 @@ src/System.Management.Automation/help              @Francisco-Gamino @adityapatw
 # @daxian-dbw @charub
 
 # Area: Language
-src/System.Management.Automation/engine/parser     @daxian-dbw @vors @BrucePay
+src/System.Management.Automation/engine/parser     @daxian-dbw @BrucePay
 
 # Area: Providers
 src/System.Management.Automation/namespaces        @BrucePay @anmenaga
