@@ -1767,7 +1767,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (null != wsmanConnectionInfo)
+            if (wsmanConnectionInfo != null)
             {
                 wsmanConnectionInfo.ConnectionUri = eventArgs.Data;
                 URIRedirectionReported.SafeInvoke(this, eventArgs);

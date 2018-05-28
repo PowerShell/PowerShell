@@ -163,7 +163,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             outputstream.Close();
             errorstream.Close();
-            if (null != inputstream)
+            if (inputstream != null)
             {
                 inputstream.Close();
             }

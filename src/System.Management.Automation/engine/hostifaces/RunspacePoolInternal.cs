@@ -1611,7 +1611,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
             }
 
-            if ((useCallingThread) && (null != runspaceRequester))
+            if ((useCallingThread) && (runspaceRequester != null))
             {
                 // call DoComplete outside of the lock and finally..as the
                 // DoComplete handler may handle the runspace in the same

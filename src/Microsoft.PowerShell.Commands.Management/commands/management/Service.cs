@@ -852,7 +852,7 @@ namespace Microsoft.PowerShell.Commands
                     exception = e;
                 }
             }
-            if (null != exception)
+            if (exception != null)
             {
                 // This service refused to accept the start command,
                 // so write a non-terminating error.
@@ -968,7 +968,7 @@ namespace Microsoft.PowerShell.Commands
                     exception = e;
                 }
             }
-            if (null != exception)
+            if (exception != null)
             {
                 // This service refused to accept the stop command,
                 // so write a non-terminating error.
@@ -1074,7 +1074,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 exception = e;
             }
-            if (null != exception)
+            if (exception != null)
             {
                 // This service refused to accept the pause command,
                 // so write a non-terminating error.
@@ -1152,7 +1152,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 exception = e;
             }
-            if (null != exception)
+            if (exception != null)
             {
                 // This service refused to accept the continue command,
                 // so write a non-terminating error.
@@ -1679,7 +1679,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         string username = null;
-                        if (null != Credential)
+                        if (Credential != null)
                         {
                             username = Credential.UserName;
                             password = Marshal.SecureStringToCoTaskMemUnicode(Credential.Password);
@@ -2024,7 +2024,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 // set up the double-null-terminated lpDependencies parameter
                 IntPtr lpDependencies = IntPtr.Zero;
-                if (null != DependsOn)
+                if (DependsOn != null)
                 {
                     int numchars = 1; // final null
                     foreach (string dependedOn in DependsOn)
@@ -2052,7 +2052,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // set up the Credential parameter
                 string username = null;
-                if (null != Credential)
+                if (Credential != null)
                 {
                     username = Credential.UserName;
                     password = Marshal.SecureStringToCoTaskMemUnicode(Credential.Password);

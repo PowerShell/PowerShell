@@ -548,7 +548,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // configuration xml specified an assembly and typetoload.
-            if (null != assembly)
+            if (assembly != null)
             {
                 try
                 {
@@ -673,7 +673,7 @@ namespace System.Management.Automation.Remoting
                     s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
                 }
 
-                if (null != result)
+                if (result != null)
                 {
                     return result;
                 }
@@ -2073,7 +2073,7 @@ namespace System.Management.Automation.Remoting
                     throw ioe;
                 }
 
-                if (null != modules)
+                if (modules != null)
                 {
                     Collection<ModuleSpecification> modulesToImport = new Collection<ModuleSpecification>();
                     foreach (object module in modules)
@@ -2087,14 +2087,14 @@ namespace System.Management.Automation.Remoting
                         else
                         {
                             Hashtable moduleHash = module as Hashtable;
-                            if (null != moduleHash)
+                            if (moduleHash != null)
                             {
                                 moduleSpec = new ModuleSpecification(moduleHash);
                             }
                         }
 
                         // Now add the moduleSpec to modulesToImport
-                        if (null != moduleSpec)
+                        if (moduleSpec != null)
                         {
                             if (string.Equals(InitialSessionState.CoreModule, moduleSpec.Name,
                                               StringComparison.OrdinalIgnoreCase))

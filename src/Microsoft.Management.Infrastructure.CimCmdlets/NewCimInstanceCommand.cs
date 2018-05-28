@@ -325,7 +325,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     conflictParameterName = @"CimSession";
                 }
-                if (null != conflictParameterName)
+                if (conflictParameterName != null)
                 {
                     ThrowConflictParameterWasSet(@"New-CimInstance", conflictParameterName, @"ClientOnly");
                     return;

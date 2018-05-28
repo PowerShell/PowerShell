@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // write first help object only once.
-                        if (null != firstHelpInfoObject)
+                        if (firstHelpInfoObject != null)
                         {
                             WriteObjectsOrShowOnlineHelp(firstHelpInfoObject, false);
                             firstHelpInfoObject = null;
@@ -523,7 +523,7 @@ namespace Microsoft.PowerShell.Commands
                     // show online help
                     s_tracer.WriteLine("Preparing to show help online.");
                     Uri onlineUri = helpInfo.GetUriForOnlineHelp();
-                    if (null != onlineUri)
+                    if (onlineUri != null)
                     {
                         onlineUriFound = true;
                         LaunchOnlineHelp(onlineUri);
@@ -628,7 +628,7 @@ namespace Microsoft.PowerShell.Commands
                 exception = we;
             }
 
-            if (null != exception)
+            if (exception != null)
             {
                 if (wrapCaughtException)
                     throw PSTraceSource.NewInvalidOperationException(exception, HelpErrors.CannotLaunchURI, uriToLaunch.OriginalString);
@@ -708,7 +708,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (SessionStateCommandEntry getHelpEntry in publicGetHelpEntries)
                 {
                     SessionStateCmdletEntry getHelpCmdlet = getHelpEntry as SessionStateCmdletEntry;
-                    if ((null != getHelpCmdlet) && (getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand))))
+                    if ((getHelpCmdlet != null) && (getHelpCmdlet.ImplementingType.Equals(typeof(GetHelpCommand))))
                     {
                         return true;
                     }
@@ -756,7 +756,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             AliasInfo aliasInfo = cmdInfo as AliasInfo;
-            if ((null != aliasInfo) &&
+            if ((aliasInfo != null) &&
                 (null != aliasInfo.ExternalCommandMetadata) &&
                 (!string.IsNullOrEmpty(aliasInfo.ExternalCommandMetadata.HelpUri)))
             {
@@ -776,7 +776,7 @@ namespace Microsoft.PowerShell.Commands
                 // Win8: 651300 if core get-help is present in the runspace (and it is the only get-help command), use
                 // help system directly and avoid perf penalty.
                 var currentContext = System.Management.Automation.Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-                if ((null != currentContext) && (null != currentContext.HelpSystem))
+                if ((currentContext != null) && (null != currentContext.HelpSystem))
                 {
                     HelpRequest helpRequest = new HelpRequest(cmdName, cmdInfo.HelpCategory);
                     helpRequest.ProviderContext = new ProviderContext(
@@ -809,7 +809,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Collection<PSObject> helpInfos = getHelpPS.Invoke();
 
-                    if (null != helpInfos)
+                    if (helpInfos != null)
                     {
                         for (int index = 0; index < helpInfos.Count; index++)
                         {
@@ -817,7 +817,7 @@ namespace Microsoft.PowerShell.Commands
                             if (LanguagePrimitives.TryConvertTo<HelpInfo>(helpInfos[index], out helpInfo))
                             {
                                 Uri result = helpInfo.GetUriForOnlineHelp();
-                                if (null != result)
+                                if (result != null)
                                 {
                                     return result.OriginalString;
                                 }

@@ -1406,7 +1406,7 @@ namespace Microsoft.PowerShell.Commands
                 exception = e;
             }
 
-            if (null != exception)
+            if (exception != null)
             {
                 if (!TryHasExited(process))
                 {

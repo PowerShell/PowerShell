@@ -1851,7 +1851,7 @@ namespace System.Management.Automation
             int result = 0;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (null != typeTable)
+            if (typeTable != null)
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
@@ -1888,7 +1888,7 @@ namespace System.Management.Automation
             SerializationMethod result = TypeTable.defaultSerializationMethod;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (null != typeTable)
+            if (typeTable != null)
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
@@ -1927,7 +1927,7 @@ namespace System.Management.Automation
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(
                     this, typeTable, TypeTable.PSStandardMembers);
-                if (null != standardMemberSet)
+                if (standardMemberSet != null)
                 {
                     standardMemberSet.ReplicateInstance(this);
                     PSMemberInfoIntegratingCollection<PSMemberInfo> members =
@@ -1953,7 +1953,7 @@ namespace System.Management.Automation
         internal Type GetTargetTypeForDeserialization(TypeTable backupTypeTable)
         {
             PSMemberInfo targetType = this.GetPSStandardMember(backupTypeTable, TypeTable.TargetTypeForDeserialization);
-            if (null != targetType)
+            if (targetType != null)
             {
                 return (targetType.Value as Type);
             }
@@ -1975,7 +1975,7 @@ namespace System.Management.Automation
         internal Collection<string> GetSpecificPropertiesToSerialize(TypeTable backupTypeTable)
         {
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (null != typeTable)
+            if (typeTable != null)
             {
                 Collection<string> tmp = typeTable.GetSpecificProperties(this.InternalTypeNames);
                 return tmp;

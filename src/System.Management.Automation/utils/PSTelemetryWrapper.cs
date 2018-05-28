@@ -125,7 +125,7 @@ namespace System.Management.Automation.Internal
 
         public static void TraceMessage<T>(string message, T arguments)
         {
-            if (null != s_eventSourceOptionsForWrite)
+            if (s_eventSourceOptionsForWrite != null)
             {
                 try
                 {

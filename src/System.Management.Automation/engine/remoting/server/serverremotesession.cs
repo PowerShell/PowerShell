@@ -952,14 +952,14 @@ namespace System.Management.Automation.Remoting
         /// <param name="eventArgs"></param>
         private void HandleSessionDSHandlerClosing(object sender, EventArgs eventArgs)
         {
-            if (null != _runspacePoolDriver)
+            if (_runspacePoolDriver != null)
             {
                 _runspacePoolDriver.Close();
             }
 
             // dispose the session configuration object..this will let them
             // clean their resources.
-            if (null != _sessionConfigProvider)
+            if (_sessionConfigProvider != null)
             {
                 _sessionConfigProvider.Dispose();
                 _sessionConfigProvider = null;

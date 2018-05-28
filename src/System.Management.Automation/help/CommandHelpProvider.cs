@@ -372,7 +372,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (null != result)
+            if (result != null)
             {
                 if (isScriptCommand && result.GetUriForOnlineHelp() == null)
                 {
@@ -788,7 +788,7 @@ namespace System.Management.Automation
             HelpInfo result = GetCache(key);
 
             // Win8: Win8:477680: When Function/Workflow Use External Help, Category Property is "Cmdlet"
-            if ((null != result) && (result.HelpCategory != helpCategory))
+            if ((result != null) && (result.HelpCategory != helpCategory))
             {
                 MamlCommandHelpInfo original = (MamlCommandHelpInfo)result;
                 result = original.Copy(helpCategory);
@@ -813,7 +813,7 @@ namespace System.Management.Automation
                 if ((commandInfo.Module != null) && (!string.IsNullOrEmpty(commandInfo.Prefix)))
                 {
                     MamlCommandHelpInfo newMamlHelpInfo = GetFromCommandCacheByRemovingPrefix(helpFileIdentifier, commandInfo);
-                    if (null != newMamlHelpInfo)
+                    if (newMamlHelpInfo != null)
                     {
                         // caching the changed help content under the prefixed name for faster
                         // retrieval later.
@@ -844,7 +844,7 @@ namespace System.Management.Automation
                 {
                     MamlCommandHelpInfo newMamlHelpInfo = GetFromCommandCacheByRemovingPrefix(cmdletInfo.ModuleName, cmdletInfo);
 
-                    if (null != newMamlHelpInfo)
+                    if (newMamlHelpInfo != null)
                     {
                         // Noun exists only for cmdlets...since prefix will change the Noun, updating
                         // the help content accordingly
@@ -893,7 +893,7 @@ namespace System.Management.Automation
                         Microsoft.PowerShell.Commands.ModuleCmdletBase.RemovePrefixFromCommandName(cmdInfo.Name, cmdInfo.Prefix),
                         cmdInfo.HelpCategory) as MamlCommandHelpInfo;
 
-            if (null != originalHelpInfo)
+            if (originalHelpInfo != null)
             {
                 result = originalHelpInfo.Copy();
                 // command's name can be changed using -Prefix while importing module.To give better user experience for

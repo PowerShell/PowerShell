@@ -505,7 +505,7 @@ namespace System.Management.Automation
             T policy = null;
 #if !UNIX
             // On Windows, group policy settings from registry take precedence.
-            // If the requested policy is not defined in registry, we query the configuration file. 
+            // If the requested policy is not defined in registry, we query the configuration file.
             policy = GetPolicySettingFromGPO<T>(preferenceOrder);
             if (policy != null) { return policy; }
 #endif
@@ -743,7 +743,7 @@ namespace System.Management.Automation
                     finally
                     {
                         context.AutoLoadingModuleInProgress.Remove(module);
-                        if (null != ps)
+                        if (ps != null)
                         {
                             ps.Dispose();
                         }
@@ -807,7 +807,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (null != ps)
+                if (ps != null)
                 {
                     ps.Dispose();
                 }
@@ -868,7 +868,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (null != ps)
+                if (ps != null)
                 {
                     ps.Dispose();
                 }

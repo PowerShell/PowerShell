@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (false == result)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     result = IsObjectApplicable(typesWithoutPrefix);
                 }

@@ -431,7 +431,7 @@ namespace System.Management.Automation.Internal
             {
                 _resultList.Add(obj);
             }
-            else if (null != _externalWriter)
+            else if (_externalWriter != null)
             {
                 _externalWriter.Write(obj);
             }
@@ -502,7 +502,7 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            if (null != _externalWriter)
+            if (_externalWriter != null)
                 return;
 
             // If there are objects waiting for the downstream command
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Internal
 
                 return ParserOps.Current(null, _enumeratorToProcess);
             }
-            else if (null != ExternalReader)
+            else if (ExternalReader != null)
             {
                 try
                 {

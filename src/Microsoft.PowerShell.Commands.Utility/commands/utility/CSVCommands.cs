@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
                 _fs.Dispose();
                 _fs = null;
                 // reset the read-only attribute
-                if (null != _readOnlyFileInfo)
+                if (_readOnlyFileInfo != null)
                     _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
             }
             if (_helper != null)

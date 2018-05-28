@@ -721,7 +721,7 @@ namespace System.Management.Automation.Remoting.Client
             // This will either return data or register callback but doesn't do both.
             byte[] data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback,
                 out priorityType);
-            if (null != data)
+            if (data != null)
             {
                 SendData(data, priorityType);
             }
@@ -794,7 +794,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // this is for a command
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (null != cmdTM)
+                if (cmdTM != null)
                 {
                     // not throwing the exception in null case as the command might have already
                     // closed. The RS data structure handler does not wait for the close ack before
@@ -815,7 +815,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // this is for a command
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (null != cmdTM)
+                if (cmdTM != null)
                 {
                     // not throwing the exception in null case as the command might have already
                     // closed. The RS data structure handler does not wait for the close ack before
@@ -865,7 +865,7 @@ namespace System.Management.Automation.Remoting.Client
             else
             {
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (null != cmdTM)
+                if (cmdTM != null)
                 {
                     cmdTM.OnRemoteCmdSignalCompleted();
                 }
@@ -898,7 +898,7 @@ namespace System.Management.Automation.Remoting.Client
                 _tracer.WriteMessage("OutOfProcessClientSessionTransportManager.OnCloseAckReceived, in progress command count should be greater than zero: " + commandCount + ", RunSpacePool Id : " + this.RunspacePoolInstanceId + ", psGuid : " + psGuid.ToString());
 
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (null != cmdTM)
+                if (cmdTM != null)
                 {
                     // this might legitimately happen if cmd is already closed before we get an
                     // ACK back from server.
@@ -957,7 +957,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         internal override void CreateAsync()
         {
-            if (null != _connectionInfo)
+            if (_connectionInfo != null)
             {
                 _processInstance = _connectionInfo.Process ?? new PowerShellProcessInstance(_connectionInfo.PSVersion,
                                                                                            _connectionInfo.Credential,
@@ -2200,7 +2200,7 @@ namespace System.Management.Automation.Remoting.Client
                 data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback, out priorityType);
             }
 
-            if (null != data)
+            if (data != null)
             {
                 SendData(data, priorityType);
             }

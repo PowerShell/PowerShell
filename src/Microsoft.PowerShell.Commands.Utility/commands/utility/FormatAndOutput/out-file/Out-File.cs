@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // reset the read-only attribute
-            if (null != _readOnlyFileInfo)
+            if (_readOnlyFileInfo != null)
             {
                 _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
                 _readOnlyFileInfo = null;

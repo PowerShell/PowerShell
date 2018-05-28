@@ -314,7 +314,7 @@ namespace System.Management.Automation.Remoting
         internal void HandleTransportError(Object sender, TransportErrorOccuredEventArgs eventArgs)
         {
             Exception reasonForClose = null;
-            if (null != eventArgs)
+            if (eventArgs != null)
             {
                 reasonForClose = eventArgs.Exception;
             }
@@ -334,7 +334,7 @@ namespace System.Management.Automation.Remoting
             if (Interlocked.Exchange(ref registeredShutdownNotification, 0) == 1)
             {
                 // release the shutdown notification handle.
-                if (null != registeredShutDownWaitHandle)
+                if (registeredShutDownWaitHandle != null)
                 {
                     registeredShutDownWaitHandle.Unregister(null);
                     registeredShutDownWaitHandle = null;
@@ -344,7 +344,7 @@ namespace System.Management.Automation.Remoting
             // Delete the context only if isShuttingDown != true. isShuttingDown will
             // be true only when the method is called from RegisterWaitForSingleObject
             // handler..in which case the context will be freed from the callback.
-            if (null != shutDownContext)
+            if (shutDownContext != null)
             {
                 shutDownContext = null;
             }
@@ -373,7 +373,7 @@ namespace System.Management.Automation.Remoting
         {
             lock (_syncObject)
             {
-                if (null != sendRequestDetails)
+                if (sendRequestDetails != null)
                 {
                     // report and clear the send request details
                     WSManPluginInstance.ReportWSManOperationComplete(sendRequestDetails, lastErrorReported);
@@ -663,7 +663,7 @@ namespace System.Management.Automation.Remoting
             RemoteSessionStateMachineEventArgs eventArgs)
         {
             Exception reasonForClose = null;
-            if (null != eventArgs)
+            if (eventArgs != null)
             {
                 reasonForClose = eventArgs.Reason;
             }

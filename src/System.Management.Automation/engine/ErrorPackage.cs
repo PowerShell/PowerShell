@@ -1354,7 +1354,7 @@ namespace System.Management.Automation
                 _invocationInfo = new InvocationInfo(serializedErrorRecord);
 
                 ArrayList iterationInfo = RemotingDecoder.GetPropertyValue<ArrayList>(serializedErrorRecord, "PipelineIterationInfo");
-                if (null != iterationInfo)
+                if (iterationInfo != null)
                 {
                     _pipelineIterationInfo = new ReadOnlyCollection<int>((int[])iterationInfo.ToArray(typeof(Int32)));
                 }
@@ -1686,7 +1686,7 @@ namespace System.Management.Automation
             {
                 return ErrorDetails.Message;
             }
-            if (null != Exception)
+            if (Exception != null)
             {
                 if (!String.IsNullOrEmpty(Exception.Message))
                 {

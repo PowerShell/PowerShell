@@ -247,7 +247,7 @@ namespace System.Management.Automation
         internal Collection<string> GetSearchPaths()
         {
             // return the cache if already present.
-            if (null != _searchPaths)
+            if (_searchPaths != null)
             {
                 return _searchPaths;
             }

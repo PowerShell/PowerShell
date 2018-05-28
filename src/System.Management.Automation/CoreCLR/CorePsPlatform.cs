@@ -227,7 +227,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetTemporaryDirectory()
         {
-            if (null != _tempDirectory)
+            if (_tempDirectory != null)
             {
                 return _tempDirectory;
             }

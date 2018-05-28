@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (matchingRowDefinition == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typesWithoutPrefix);
 

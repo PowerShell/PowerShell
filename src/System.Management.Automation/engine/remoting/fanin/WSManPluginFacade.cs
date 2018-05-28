@@ -327,7 +327,7 @@ namespace System.Management.Automation.Remoting
         private void CleanUpDelegates()
         {
             // Free GCHandles so that the memory they point to may be unpinned (garbage collected)
-            if (null != _pluginShellGCHandle)
+            if (_pluginShellGCHandle != null)
             {
                 _pluginShellGCHandle.Free();
                 _pluginReleaseShellContextGCHandle.Free();
@@ -479,7 +479,7 @@ namespace System.Management.Automation.Remoting
         {
             WSManPluginInstance.PerformShutdown(pluginContext);
 
-            if (null != workerPtrs)
+            if (workerPtrs != null)
             {
                 workerPtrs.Dispose();
             }

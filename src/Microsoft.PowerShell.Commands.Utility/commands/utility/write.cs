@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             ErrorRecord errorRecord = this.ErrorRecord;
-            if (null != errorRecord)
+            if (errorRecord != null)
             {
                 // copy constructor
                 errorRecord = new ErrorRecord(errorRecord, null);
@@ -374,7 +374,7 @@ namespace Microsoft.PowerShell.Commands
             // 2005/07/14-913791 "write-error output is confusing and misleading"
             // set InvocationInfo to the script not the command
             InvocationInfo myInvocation = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-            if (null != myInvocation)
+            if (myInvocation != null)
             {
                 errorRecord.SetInvocationInfo(myInvocation);
                 errorRecord.PreserveInvocationInfoOnce = true;

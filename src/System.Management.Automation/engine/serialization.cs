@@ -3514,7 +3514,7 @@ namespace System.Management.Automation
 
                     // Convert deserialized object to a user-defined type (specified in a types.ps1xml file)
                     Type targetType = mshSource.GetTargetTypeForDeserialization(_typeTable);
-                    if (null != targetType)
+                    if (targetType != null)
                     {
                         Exception rehydrationException = null;
                         try
@@ -6420,14 +6420,14 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static PSPrimitiveDictionary CloneAndAddPSVersionTable(PSPrimitiveDictionary originalHash)
         {
-            if ((null != originalHash) &&
+            if ((originalHash != null) &&
                 (originalHash.ContainsKey(PSVersionInfo.PSVersionTableName)))
             {
                 return (PSPrimitiveDictionary)originalHash.Clone();
             }
 
             PSPrimitiveDictionary result = originalHash;
-            if (null != originalHash)
+            if (originalHash != null)
             {
                 result = (PSPrimitiveDictionary)originalHash.Clone();
             }

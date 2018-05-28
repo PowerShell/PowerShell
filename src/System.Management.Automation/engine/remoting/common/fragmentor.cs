@@ -97,7 +97,7 @@ namespace System.Management.Automation.Remoting
         internal FragmentedRemoteObject(byte[] blob, long objectId, long fragmentId,
             bool isEndFragment)
         {
-            Dbg.Assert((null != blob) || (blob.Length == 0), "Cannot create a fragment for null or empty data.");
+            Dbg.Assert((blob != null) || (blob.Length == 0), "Cannot create a fragment for null or empty data.");
             Dbg.Assert(objectId >= 0, "Object Id cannot be < 0");
             Dbg.Assert(fragmentId >= 0, "Fragment Id cannot be < 0");
 
@@ -503,7 +503,7 @@ namespace System.Management.Automation.Remoting
         internal SerializedDataStream(int fragmentSize,
             OnDataAvailableCallback callbackToNotify) : this(fragmentSize)
         {
-            if (null != callbackToNotify)
+            if (callbackToNotify != null)
             {
                 _notifyOnWriteFragmentImmediately = true;
                 _onDataAvailableCallback = callbackToNotify;
@@ -809,7 +809,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // call the callback since we have data available
-            if (null != _onDataAvailableCallback)
+            if (_onDataAvailableCallback != null)
             {
                 _onDataAvailableCallback(data, _currentFragment.IsEndFragment);
             }
@@ -862,12 +862,12 @@ namespace System.Management.Automation.Remoting
                         }
                     }
 
-                    if ((null != _readStream) && (_readStream.CanRead))
+                    if ((_readStream != null) && (_readStream.CanRead))
                     {
                         _readStream.Dispose();
                     }
 
-                    if ((null != _writeStream) && (_writeStream.CanRead))
+                    if ((_writeStream != null) && (_writeStream.CanRead))
                     {
                         _writeStream.Dispose();
                     }

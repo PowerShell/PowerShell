@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     EnumerableExpansion result = GetEnumerableExpansionFromType(expressionFactory, db, typesWithoutPrefix);
                     return result;
@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     FormatShape result = GetShapeFromType(expressionFactory, db, typesWithoutPrefix);
                     return result;
@@ -385,7 +385,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (null == result)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     result = GetOutOfBandView(expressionFactory, db, typesWithoutPrefix);
                 }
@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (null == result)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     result = GetView(expressionFactory, db, mainControlType, typesWithoutPrefix, viewName);
                 }
@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (null == result)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     result = GetDefaultView(expressionFactory, db, typesWithoutPrefix);
                 }

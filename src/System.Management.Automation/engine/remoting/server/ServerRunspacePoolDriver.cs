@@ -678,7 +678,7 @@ namespace System.Management.Automation
                 cmdToRun = new Command(_configData.InitializationScriptForOutOfProcessRunspace, true, false);
             }
 
-            if (null != cmdToRun)
+            if (cmdToRun != null)
             {
                 InvokeScript(cmdToRun, args);
 

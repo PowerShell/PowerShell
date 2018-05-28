@@ -453,10 +453,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static List<MshExpression> GetDefaultPropertySet(PSMemberSet standardMembersSet)
         {
-            if (null != standardMembersSet)
+            if (standardMembersSet != null)
             {
                 PSPropertySet defaultDisplayPropertySet = standardMembersSet.Members[TypeTable.DefaultDisplayPropertySet] as PSPropertySet;
-                if (null != defaultDisplayPropertySet)
+                if (defaultDisplayPropertySet != null)
                 {
                     List<MshExpression> retVal = new List<MshExpression>();
                     foreach (string prop in defaultDisplayPropertySet.ReferencedPropertyNames)
@@ -491,10 +491,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static MshExpression GetDefaultNameExpression(PSMemberSet standardMembersSet)
         {
-            if (null != standardMembersSet)
+            if (standardMembersSet != null)
             {
                 PSNoteProperty defaultDisplayProperty = standardMembersSet.Members[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
-                if (null != defaultDisplayProperty)
+                if (defaultDisplayProperty != null)
                 {
                     string expressionString = defaultDisplayProperty.Value.ToString();
                     if (string.IsNullOrEmpty(expressionString))
@@ -564,7 +564,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static bool ShouldShowComputerNameProperty(PSObject so)
         {
             bool result = false;
-            if (null != so)
+            if (so != null)
             {
                 try
                 {
@@ -573,7 +573,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     // if computer name property exists then this must be a remote object. see
                     // if it can be displayed.
-                    if ((null != computerNameProperty) && (null != showComputerNameProperty))
+                    if ((computerNameProperty != null) && (showComputerNameProperty != null))
                     {
                         LanguagePrimitives.TryConvertTo<bool>(showComputerNameProperty.Value, out result);
                     }

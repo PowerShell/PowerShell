@@ -700,7 +700,7 @@ namespace System.Management.Automation.Remoting.Client
 
             lock (_callbackNotificationQueue)
             {
-                if ((null != remoteObject) || (null != transportErrorArgs) || (null != privateData))
+                if ((remoteObject != null) || (transportErrorArgs != null) || (privateData != null))
                 {
                     CallbackNotificationInformation rcvdDataInfo = new CallbackNotificationInformation();
                     rcvdDataInfo.remoteObject = remoteObject;
@@ -829,7 +829,7 @@ namespace System.Management.Automation.Remoting.Client
                         rcvdDataInfo = _callbackNotificationQueue.Dequeue();
                     }
                     // Handle callback.
-                    if (null != rcvdDataInfo)
+                    if (rcvdDataInfo != null)
                     {
                         // Handling transport exception in thread-pool thread
                         if (null != rcvdDataInfo.transportError)

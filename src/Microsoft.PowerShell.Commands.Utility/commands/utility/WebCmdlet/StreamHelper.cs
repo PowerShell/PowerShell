@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
                 ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
                 for (int read = 1; 0 < read; totalLength += read)
                 {
-                    if (null != _ownerCmdlet)
+                    if (_ownerCmdlet != null)
                     {
                         record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus, totalLength);
                         _ownerCmdlet.WriteProgress(record);

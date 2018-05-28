@@ -144,7 +144,7 @@ namespace System.Management.Automation
             }
 
             base.GetObjectData(info, context);
-            bool hasErrorRecord = (null != _errorRecord);
+            bool hasErrorRecord = (_errorRecord != null);
             info.AddValue("HasErrorRecord", hasErrorRecord);
             if (hasErrorRecord)
                 info.AddValue("ErrorRecord", _errorRecord);
@@ -533,9 +533,9 @@ namespace System.Management.Automation
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            if (null != info)
+            if (info != null)
             {
-                bool hasErrorRecord = (null != _errorRecord);
+                bool hasErrorRecord = (_errorRecord != null);
                 info.AddValue("HasErrorRecord", hasErrorRecord);
                 if (hasErrorRecord)
                 {
@@ -702,7 +702,7 @@ namespace System.Management.Automation
         public override string Message
         {
             get {
-                return _message ?? (_message = (null != _wrapperException) ? _wrapperException.Message : String.Empty);
+                return _message ?? (_message = (_wrapperException != null) ? _wrapperException.Message : String.Empty);
             }
         }
 

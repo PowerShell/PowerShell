@@ -744,7 +744,7 @@ namespace Microsoft.WSMan.Management
                                 }
                                 else if (path.EndsWith(host + WSManStringLiterals.DefaultPathSeparator + WSManStringLiterals.containerPlugin + WSManStringLiterals.DefaultPathSeparator + currentpluginname + WSManStringLiterals.DefaultPathSeparator + WSManStringLiterals.containerInitParameters, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    if (null != arrInitParams)
+                                    if (arrInitParams != null)
                                     {
                                         foreach (PSObject p in arrInitParams)
                                         {
@@ -3099,7 +3099,7 @@ namespace Microsoft.WSMan.Management
             }
             else
             {
-                if (null != objSessionObject)
+                if (objSessionObject != null)
                 {
                     XmlDocument ConfigXml = GetResourceValue(objSessionObject, uri, null);
                     //Moving in to <Config>
@@ -3822,7 +3822,7 @@ namespace Microsoft.WSMan.Management
                         {
                             return true;
                         }
-                        if (null != arrResources)
+                        if (arrResources != null)
                         {
                             strpathChk = strpathChk + WSManStringLiterals.DefaultPathSeparator + WSManStringLiterals.containerResources;
                             foreach (PSObject objresource in arrResources)
@@ -3882,7 +3882,7 @@ namespace Microsoft.WSMan.Management
                         }
                         else
                         {
-                            if (null != arrInitParams)
+                            if (arrInitParams != null)
                             {
                                 foreach (PSObject obj in arrInitParams)
                                 {
@@ -4198,7 +4198,7 @@ namespace Microsoft.WSMan.Management
                             strPathchk = strPathchk + currentpluginname + WSManStringLiterals.DefaultPathSeparator;
                             if (path.EndsWith(strPathchk + WSManStringLiterals.containerResources, StringComparison.OrdinalIgnoreCase))
                             {
-                                if (null != arrResources)
+                                if (arrResources != null)
                                 {
                                     foreach (PSObject p in arrResources)
                                     {
@@ -4263,7 +4263,7 @@ namespace Microsoft.WSMan.Management
                                 strPathchk = strPathchk + sResourceDirName + WSManStringLiterals.DefaultPathSeparator;
                                 if (path.EndsWith(strPathchk + WSManStringLiterals.containerSecurity, StringComparison.OrdinalIgnoreCase) || path.Contains(WSManStringLiterals.DefaultPathSeparator + WSManStringLiterals.containerSecurity + "_"))
                                 {
-                                    if (null != arrSecurity)
+                                    if (arrSecurity != null)
                                     {
                                         foreach (PSObject objsecurity in arrSecurity)
                                         {
@@ -4679,7 +4679,7 @@ namespace Microsoft.WSMan.Management
         {
             PSObject objConfiglvl = null;
 
-            if (null != xmldoc)
+            if (xmldoc != null)
             {
                 XmlNodeList nodelistPlugin = xmldoc.GetElementsByTagName("PlugInConfiguration");
                 if (nodelistPlugin.Count > 0)
@@ -4720,7 +4720,7 @@ namespace Microsoft.WSMan.Management
         {
             ArrayList Resources = null;
             ArrayList nSecurity = null;
-            if (null != xmldoc)
+            if (xmldoc != null)
             {
                 XmlNodeList xmlpluginResource = xmldoc.GetElementsByTagName("Resource");
                 if (xmlpluginResource.Count > 0)
@@ -4800,7 +4800,7 @@ namespace Microsoft.WSMan.Management
         private ArrayList ProcessPluginInitParamLevel(XmlDocument xmldoc)
         {
             ArrayList InitParamLvl = null;
-            if (null != xmldoc)
+            if (xmldoc != null)
             {
                 XmlNodeList nodelistInitParam = xmldoc.GetElementsByTagName("Param");
                 if (nodelistInitParam.Count > 0)

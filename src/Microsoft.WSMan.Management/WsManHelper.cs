@@ -190,7 +190,7 @@ namespace Microsoft.WSMan.Management
             string template = resourceManager.GetString(resourceName);
 
             string result = null;
-            if (null != template)
+            if (template != null)
             {
                 result = String.Format(CultureInfo.CurrentCulture,
                     template, args);

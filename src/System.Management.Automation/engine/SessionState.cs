@@ -535,7 +535,7 @@ namespace System.Management.Automation
             //  ProviderInvocationException, and we don't want to
             //  re-wrap it.
             ProviderInvocationException pie = e as ProviderInvocationException;
-            if (null != pie)
+            if (pie != null)
             {
                 pie._providerInfo = provider;
                 return pie;

@@ -118,7 +118,7 @@ namespace System.Management.Automation.Runspaces
 
             base.GetObjectData(info, context);
             // If there are simple fields, serialize them with info.AddValue
-            if (null != _errors)
+            if (_errors != null)
             {
                 int errorCount = _errors.Count;
                 info.AddValue("ErrorCount", errorCount);

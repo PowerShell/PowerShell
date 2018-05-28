@@ -884,11 +884,11 @@ namespace Microsoft.PowerShell.Commands
                 gmi.Sum = sum;
                 gmi.Average = average;
                 gmi.StandardDeviation = StandardDeviation;
-                if (null != max)
+                if (max != null)
                 {
                     gmi.Maximum = (double)max;
                 }
-                if (null != min)
+                if (min != null)
                 {
                     gmi.Minimum = (double)min;
                 }

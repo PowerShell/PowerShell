@@ -859,7 +859,7 @@ namespace System.Management.Automation.Internal
         {
             if (disposing)
             {
-                if (null != _hSessionKey)
+                if (_hSessionKey != null)
                 {
                     if (!_hSessionKey.IsInvalid)
                     {
@@ -875,7 +875,7 @@ namespace System.Management.Automation.Internal
 
                 if (null == s_hStaticRSAKey)
                 {
-                    if (null != _hRSAKey)
+                    if (_hRSAKey != null)
                     {
                         if (!_hRSAKey.IsInvalid)
                         {
@@ -887,7 +887,7 @@ namespace System.Management.Automation.Internal
 
                 if (null == s_hStaticProv)
                 {
-                    if (null != _hProv)
+                    if (_hProv != null)
                     {
                         if (!_hProv.IsInvalid)
                         {

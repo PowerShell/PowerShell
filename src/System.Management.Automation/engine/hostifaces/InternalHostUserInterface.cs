@@ -596,7 +596,7 @@ namespace System.Management.Automation.Internal.Host
             }
 
             // Write to Information Buffers
-            if (null != _informationalBuffers)
+            if (_informationalBuffers != null)
             {
                 _informationalBuffers.AddProgress(record);
             }
@@ -974,7 +974,7 @@ namespace System.Management.Automation.Internal.Host
             }
 
             Dictionary<int, bool> defaultChoiceKeys = new Dictionary<int, bool>();
-            if (null != defaultChoices)
+            if (defaultChoices != null)
             {
                 foreach (int defaultChoice in defaultChoices)
                 {

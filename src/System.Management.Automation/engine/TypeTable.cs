@@ -1613,7 +1613,7 @@ namespace System.Management.Automation.Runspaces
             base.GetObjectData(info, context);
 
             // If there are simple fields, serialize them with info.AddValue
-            if (null != _errors)
+            if (_errors != null)
             {
                 int errorCount = _errors.Count;
                 info.AddValue("ErrorCount", errorCount);
@@ -2882,7 +2882,7 @@ namespace System.Management.Automation.Runspaces
             }
             else
             {
-                if (null != targetTypeForDeserialization)
+                if (targetTypeForDeserialization != null)
                 {
                     // GetCheckNote converts the value from string to System.Type.. We should store value as Type
                     // as this will save time spent converting string to Type.

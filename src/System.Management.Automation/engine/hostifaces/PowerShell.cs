@@ -881,7 +881,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "ps", Justification = "ps represents PowerShell and is used at many places.")]
         public PowerShell CreateNestedPowerShell()
         {
-            if ((null != _worker) && (null != _worker.CurrentlyRunningPipeline))
+            if ((_worker != null) && (null != _worker.CurrentlyRunningPipeline))
             {
                 PowerShell result = new PowerShell(new PSCommand(),
                     null, _worker.CurrentlyRunningPipeline.Runspace);
@@ -3062,7 +3062,7 @@ namespace System.Management.Automation
             }
 
             RunspacePool pool = _rsConnection as RunspacePool;
-            if ((null != pool) && (pool.IsRemote))
+            if ((pool != null) && (pool.IsRemote))
             {
                 // Server supports batch invocation, in this case, we just send everything to the server and return immediately
                 if (ServerSupportsBatchInvocation())
@@ -3136,7 +3136,7 @@ namespace System.Management.Automation
                     SetHadErrors(true);
 
                     // Stop if necessarily
-                    if ((null != _batchInvocationSettings) && _batchInvocationSettings.ErrorActionPreference == ActionPreference.Stop)
+                    if ((_batchInvocationSettings != null) && _batchInvocationSettings.ErrorActionPreference == ActionPreference.Stop)
                     {
                         _stopBatchExecution = true;
                         AppendExceptionToErrorStream(e);
@@ -3849,7 +3849,7 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (null != _worker)
+                if (_worker != null)
                 {
                     _worker.InternalClearSuppressExceptions();
                 }
@@ -3976,7 +3976,7 @@ namespace System.Management.Automation
                     {
                         if (RunningExtraCommands)
                         {
-                            if (null != tempInvokeAsyncResult)
+                            if (tempInvokeAsyncResult != null)
                             {
                                 tempInvokeAsyncResult.SetAsCompleted(InvocationStateInfo.Reason);
                             }
@@ -3987,13 +3987,13 @@ namespace System.Management.Automation
                         {
                             RaiseStateChangeEvent(InvocationStateInfo.Clone());
 
-                            if (null != tempInvokeAsyncResult)
+                            if (tempInvokeAsyncResult != null)
                             {
                                 tempInvokeAsyncResult.SetAsCompleted(InvocationStateInfo.Reason);
                             }
                         }
 
-                        if (null != tempStopAsyncResult)
+                        if (tempStopAsyncResult != null)
                         {
                             tempStopAsyncResult.SetAsCompleted(null);
                         }
@@ -4009,7 +4009,7 @@ namespace System.Management.Automation
                     finally
                     {
                         // takes care exception occured with invokeAsyncResult
-                        if (isExceptionOccured && (null != tempStopAsyncResult))
+                        if (isExceptionOccured && (tempStopAsyncResult != null))
                         {
                             tempStopAsyncResult.Release();
                         }
@@ -4059,7 +4059,7 @@ namespace System.Management.Automation
                     finally
                     {
                         // takes care exception occured with invokeAsyncResult
-                        if (isExceptionOccured && (null != tempStopAsyncResult))
+                        if (isExceptionOccured && (tempStopAsyncResult != null))
                         {
                             tempStopAsyncResult.Release();
                         }
@@ -4103,7 +4103,7 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                if (null != RemotePowerShell)
+                if (RemotePowerShell != null)
                 {
                     RemotePowerShell.Clear();
                 }
@@ -4181,7 +4181,7 @@ namespace System.Management.Automation
         private void CoreInvoke<TOutput>(IEnumerable input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             PSDataCollection<object> inputBuffer = null;
-            if (null != input)
+            if (input != null)
             {
                 inputBuffer = new PSDataCollection<object>();
                 foreach (object o in input)
@@ -4214,7 +4214,7 @@ namespace System.Management.Automation
                 Runspace rsToUse = null;
                 if (!IsNested)
                 {
-                    if (null != pool)
+                    if (pool != null)
                     {
 #if !CORECLR            // No ApartmentState In CoreCLR
                         VerifyThreadSettings(settings, pool.ApartmentState, pool.ThreadOptions, false);
@@ -4228,7 +4228,7 @@ namespace System.Management.Automation
                     else
                     {
                         rsToUse = _rsConnection as Runspace;
-                        if (null != rsToUse)
+                        if (rsToUse != null)
                         {
 #if !CORECLR                // No ApartmentState In CoreCLR
                             VerifyThreadSettings(settings, rsToUse.ApartmentState, rsToUse.ThreadOptions, false);
@@ -4332,7 +4332,7 @@ namespace System.Management.Automation
 
             SetHadErrors(false);
             RunspacePool pool = _rsConnection as RunspacePool;
-            if ((null != pool) && (pool.IsRemote))
+            if ((pool != null) && (pool.IsRemote))
             {
                 if (ServerSupportsBatchInvocation())
                 {
@@ -4393,13 +4393,13 @@ namespace System.Management.Automation
                             SetHadErrors(true);
 
                             // Stop if necessarily
-                            if ((null != settings) && settings.ErrorActionPreference == ActionPreference.Stop)
+                            if ((settings != null) && settings.ErrorActionPreference == ActionPreference.Stop)
                             {
                                 throw;
                             }
 
                             // Ignore the exception if necessary.
-                            if ((null != settings) && settings.ErrorActionPreference == ActionPreference.Ignore)
+                            if ((settings != null) && settings.ErrorActionPreference == ActionPreference.Ignore)
                             {
                                 continue;
                             }
@@ -4493,7 +4493,7 @@ namespace System.Management.Automation
                 // IsNested is true for the icm | % { icm } scenario
                 if (!IsNested || (pool != null && pool.IsRemote))
                 {
-                    if (null != pool)
+                    if (pool != null)
                     {
 #if !CORECLR            // No ApartmentState In CoreCLR
                         VerifyThreadSettings(settings, pool.ApartmentState, pool.ThreadOptions, pool.IsRemote);
@@ -4569,7 +4569,7 @@ namespace System.Management.Automation
                     else
                     {
                         LocalRunspace rs = _rsConnection as LocalRunspace;
-                        if (null != rs)
+                        if (rs != null)
                         {
 #if !CORECLR                // No ApartmentState In CoreCLR
                             VerifyThreadSettings(settings, rs.ApartmentState, rs.ThreadOptions, false);
@@ -4694,7 +4694,7 @@ namespace System.Management.Automation
                     InvocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Running, null);
 
                     // update settings for impersonation policy
-                    if ((null != settings) && (settings.FlowImpersonationPolicy))
+                    if ((settings != null) && (settings.FlowImpersonationPolicy))
                     {
                         // get the identity of the thread.
                         // false behavior: If the thread is impersonating the WindowsIdentity for the
@@ -4708,7 +4708,7 @@ namespace System.Management.Automation
                     // this way pipeline will not waste resources creating
                     // the same.
                     ObjectStreamBase inputStream;
-                    if (null != input)
+                    if (input != null)
                     {
                         inputStream = new PSDataCollectionStream<TInput>(InstanceId, input);
                     }
@@ -5104,7 +5104,7 @@ namespace System.Management.Automation
                             {
                                 Runspace runspace = null;
 
-                                if ((null != _settings) && (null != _settings.Host))
+                                if ((_settings != null) && (null != _settings.Host))
                                 {
                                     runspace = RunspaceFactory.CreateRunspace(_settings.Host);
                                 }
@@ -5233,12 +5233,12 @@ namespace System.Management.Automation
                         return false;
                     }
 
-                    if (null != lrs)
+                    if (lrs != null)
                     {
                         LocalPipeline localPipeline = new LocalPipeline(
                             lrs,
                             _shell.Commands.Commands,
-                            ((null != _settings) && (_settings.AddToHistory)) ? true : false,
+                            ((_settings != null) && (_settings.AddToHistory)) ? true : false,
                             _shell.IsNested,
                             _inputStream,
                             _outputStream,
@@ -5297,7 +5297,7 @@ namespace System.Management.Automation
                     }
 
                     _isNotActive = true;
-                    if (null != CurrentlyRunningPipeline)
+                    if (CurrentlyRunningPipeline != null)
                     {
                         if (isSyncCall)
                         {
@@ -5310,7 +5310,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    if (null != GetRunspaceAsyncResult)
+                    if (GetRunspaceAsyncResult != null)
                     {
                         RunspacePool pool = _shell._rsConnection as RunspacePool;
                         Dbg.Assert(pool != null, "RunspaceConnection must be a runspace pool");
@@ -5341,7 +5341,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if ((null != _settings) && (null != _settings.WindowsIdentityToImpersonate))
+                    if ((_settings != null) && (null != _settings.WindowsIdentityToImpersonate))
                     {
                         _settings.WindowsIdentityToImpersonate.Dispose();
                         _settings.WindowsIdentityToImpersonate = null;
@@ -5369,7 +5369,7 @@ namespace System.Management.Automation
                     else
                     {
                         RunspacePool pool = _shell._rsConnection as RunspacePool;
-                        if (null != pool)
+                        if (pool != null)
                         {
                             pool.ReleaseRunspace(CurrentlyRunningPipeline.Runspace);
                         }

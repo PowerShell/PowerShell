@@ -97,13 +97,13 @@ namespace System.Management.Automation
             // the immediate parent class, the next is its parent, and so on; the last element
             // is the base class.
             PropertyData derivationData = managementObj.SystemProperties["__Derivation"];
-            if (null != derivationData)
+            if (derivationData != null)
             {
                 Dbg.Assert(derivationData.IsArray, "__Derivation must be a string array as per MSDN documentation");
 
                 // give the typenames based on NameSpace + __Derivation
                 string[] typeHierarchy = PropertySetAndMethodArgumentConvertTo(derivationData.Value, typeof(string[]), CultureInfo.InvariantCulture) as string[];
-                if (null != typeHierarchy)
+                if (typeHierarchy != null)
                 {
                     foreach (string t in typeHierarchy)
                     {
@@ -486,7 +486,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(null != mgmtClass, "ManagementClass cannot be null in this method");
             MethodDataCollection mgmtMethods = mgmtClass.Methods;
-            if (null != mgmtMethods)
+            if (mgmtMethods != null)
             {
                 ManagementPath classPath = mgmtClass.ClassPath;
                 // new operation will never fail
@@ -525,7 +525,7 @@ namespace System.Management.Automation
 
                 // inherit ManagementObject properties
                 ManagementObject mgmtObject = mgmtBaseObject as ManagementObject;
-                if (null != mgmtObject)
+                if (mgmtObject != null)
                 {
                     mgmtClass.Scope = mgmtObject.Scope;
                     mgmtClass.Options = mgmtObject.Options;

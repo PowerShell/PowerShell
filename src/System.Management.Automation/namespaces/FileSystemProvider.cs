@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (null != reader)
+                if (reader != null)
                 {
                     ((IDisposable)reader).Dispose();
                 }
@@ -1239,11 +1239,11 @@ namespace Microsoft.PowerShell.Commands
             bool filterHidden = false;           // "Hidden" is specified somewhere in the expression
             bool switchFilterHidden = false;     // "Hidden" is specified somewhere in the parameters
 
-            if (null != evaluator)
+            if (evaluator != null)
             {
                 filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
             }
-            if (null != switchEvaluator)
+            if (switchEvaluator != null)
             {
                 switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
             }
@@ -1563,12 +1563,12 @@ namespace Microsoft.PowerShell.Commands
                     bool filterHidden = false;           // "Hidden" is specified somewhere in the expression
                     bool switchFilterHidden = false;     // "Hidden" is specified somewhere in the parameters
 
-                    if (null != evaluator)
+                    if (evaluator != null)
                     {
                         attributeFilter = evaluator.Evaluate(fileInfo.Attributes);  // expressions
                         filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
                     }
-                    if (null != switchEvaluator)
+                    if (switchEvaluator != null)
                     {
                         switchAttributeFilter = switchEvaluator.Evaluate(fileInfo.Attributes);  // switch parameters
                         switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
@@ -1689,12 +1689,12 @@ namespace Microsoft.PowerShell.Commands
                             // 'Hidden' is specified somewhere in the parameters
                             bool switchFilterHidden = false;
 
-                            if (null != evaluator)
+                            if (evaluator != null)
                             {
                                 attributeFilter = evaluator.Evaluate(filesystemInfo.Attributes);
                                 filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
                             }
-                            if (null != switchEvaluator)
+                            if (switchEvaluator != null)
                             {
                                 switchAttributeFilter = switchEvaluator.Evaluate(filesystemInfo.Attributes);
                                 switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
@@ -1747,11 +1747,11 @@ namespace Microsoft.PowerShell.Commands
                 bool isFilterHiddenSpecified = false;           // "Hidden" is specified somewhere in the expression
                 bool isSwitchFilterHiddenSpecified = false;     // "Hidden" is specified somewhere in the parameters
 
-                if (null != evaluator)
+                if (evaluator != null)
                 {
                     isFilterHiddenSpecified = evaluator.ExistsInExpression(FileAttributes.Hidden);
                 }
-                if (null != switchEvaluator)
+                if (switchEvaluator != null)
                 {
                     isSwitchFilterHiddenSpecified = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
                 }

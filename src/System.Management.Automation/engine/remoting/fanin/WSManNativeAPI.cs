@@ -345,7 +345,7 @@ namespace System.Management.Automation.Remoting.Client
                 _cred = new WSManUserNameCredentialStruct();
                 _cred.authenticationMechanism = authMechanism;
                 _cred.userName = name;
-                if (null != pwd)
+                if (pwd != null)
                 {
                     _cred.password = Marshal.SecureStringToCoTaskMemUnicode(pwd);
                 }
@@ -752,7 +752,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <returns></returns>
             public static implicit operator IntPtr(WSManData_ManToUn data)
             {
-                if (null != data)
+                if (data != null)
                 {
                     return data._marshalledObject;
                 }
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation.Remoting.Client
                 internalInfo.proxyAuthCredentialsStruct = new WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct();
                 internalInfo.proxyAuthCredentialsStruct.authenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
 
-                if (null != authCredentials)
+                if (authCredentials != null)
                 {
                     internalInfo.proxyAuthCredentialsStruct = authCredentials.CredentialStruct;
                 }

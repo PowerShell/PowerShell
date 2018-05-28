@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!Force)
                     {
                         PSMethod memberAsPSMethod = member as PSMethod;
-                        if ((null != memberAsPSMethod) && (memberAsPSMethod.IsSpecial))
+                        if ((memberAsPSMethod != null) && (memberAsPSMethod.IsSpecial))
                         {
                             continue;
                         }

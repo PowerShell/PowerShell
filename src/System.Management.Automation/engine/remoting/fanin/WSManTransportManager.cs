@@ -916,7 +916,7 @@ namespace System.Management.Automation.Remoting.Client
                 DataPriorityType additionalDataType;
                 byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
 
-                if (null != additionalData)
+                if (additionalData != null)
                 {
                     // WSMan expects the data to be in XML format (which is text + xml tags)
                     // so convert byte[] into base64 encoded format
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 #endregion
 
-                if (null != additionalData)
+                if (additionalData != null)
                 {
                     // WSMan expects the data to be in XML format (which is text + xml tags)
                     // so convert byte[] into base64 encoded format
@@ -1476,17 +1476,17 @@ namespace System.Management.Automation.Remoting.Client
             finally
             {
                 // release resources
-                if (null != proxyAuthCredentials)
+                if (proxyAuthCredentials != null)
                 {
                     proxyAuthCredentials.Dispose();
                 }
 
-                if (null != proxyInfo)
+                if (proxyInfo != null)
                 {
                     proxyInfo.Dispose();
                 }
 
-                if (null != authCredentials)
+                if (authCredentials != null)
                 {
                     authCredentials.Dispose();
                 }
@@ -1662,7 +1662,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (shouldClearSend)
             {
-                if (null != _sendToRemoteCompleted)
+                if (_sendToRemoteCompleted != null)
                 {
                     _sendToRemoteCompleted.Dispose();
                     _sendToRemoteCompleted = null;
@@ -1686,7 +1686,7 @@ namespace System.Management.Automation.Remoting.Client
                         _wsManReceiveOperationHandle = IntPtr.Zero;
                     }
 
-                    if (null != _receivedFromRemote)
+                    if (_receivedFromRemote != null)
                     {
                         _receivedFromRemote.Dispose();
                         _receivedFromRemote = null;
@@ -2403,7 +2403,7 @@ namespace System.Management.Automation.Remoting.Client
             // This will either return data or register callback but doesn't do both.
             byte[] data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback,
                 out priorityType);
-            if (null != data)
+            if (data != null)
             {
                 SendData(data, priorityType);
             }
@@ -2485,7 +2485,7 @@ namespace System.Management.Automation.Remoting.Client
             // openContent is used by redirection ie., while redirecting to
             // a new machine and hence this is cleared only when the session
             // is disposing.
-            if (isDisposing && (null != _openContent))
+            if (isDisposing && (_openContent != null))
             {
                 _openContent.Dispose();
                 _openContent = null;
@@ -2523,7 +2523,7 @@ namespace System.Management.Automation.Remoting.Client
             // remove session context from session handles dictionary
             RemoveSessionTransportManager(_sessionContextID);
 
-            if (null != _closeSessionCompleted)
+            if (_closeSessionCompleted != null)
             {
                 _closeSessionCompleted.Dispose();
                 _closeSessionCompleted = null;
@@ -2532,7 +2532,7 @@ namespace System.Management.Automation.Remoting.Client
             // Dispose the create session completed callback here, since it is
             // used for periodic robust connection retry/auto-disconnect
             // notifications while the shell is active.
-            if (null != _createSessionCallback)
+            if (_createSessionCallback != null)
             {
                 _createSessionCallbackGCHandle.Free();
                 _createSessionCallback.Dispose();
@@ -2540,7 +2540,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // Dispose the OnConnect callback if one present
-            if (null != _connectSessionCallback)
+            if (_connectSessionCallback != null)
             {
                 _connectSessionCallback.Dispose();
                 _connectSessionCallback = null;
@@ -2964,7 +2964,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CreateAsync()
         {
             byte[] cmdPart1 = serializedPipeline.ReadOrRegisterCallback(null);
-            if (null != cmdPart1)
+            if (cmdPart1 != null)
             {
                 #region SHIM: Redirection code for command code send.
 
@@ -3214,7 +3214,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (shouldClearSend)
             {
-                if (null != _sendToRemoteCompleted)
+                if (_sendToRemoteCompleted != null)
                 {
                     _sendToRemoteCompleted.Dispose();
                     _sendToRemoteCompleted = null;
@@ -3238,7 +3238,7 @@ namespace System.Management.Automation.Remoting.Client
                         _wsManReceiveOperationHandle = IntPtr.Zero;
                     }
 
-                    if (null != _receivedFromRemote)
+                    if (_receivedFromRemote != null)
                     {
                         _receivedFromRemote.Dispose();
                         _receivedFromRemote = null;
@@ -3844,7 +3844,7 @@ namespace System.Management.Automation.Remoting.Client
                 data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback, out priorityType);
             }
 
-            if (null != data)
+            if (data != null)
             {
                 _isSendingInput = true;
                 SendData(data, priorityType);
@@ -3969,19 +3969,19 @@ namespace System.Management.Automation.Remoting.Client
             RemoveCmdTransportManager(_cmdContextId);
 
             // unregister event handlers
-            if (null != _sessnTm)
+            if (_sessnTm != null)
             {
                 _sessnTm.RobustConnectionsInitiated -= HandleRobustConnectionsInitiated;
                 _sessnTm.RobustConnectionsCompleted -= HandleRobusConnectionsCompleted;
             }
 
-            if (null != _closeCmdCompleted)
+            if (_closeCmdCompleted != null)
             {
                 _closeCmdCompleted.Dispose();
                 _closeCmdCompleted = null;
             }
 
-            if (null != _reconnectCmdCompleted)
+            if (_reconnectCmdCompleted != null)
             {
                 _reconnectCmdCompleted.Dispose();
                 _reconnectCmdCompleted = null;

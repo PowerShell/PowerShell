@@ -181,7 +181,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(null != fragmentor, "Fragmentor cannot be null.");
             SerializeHeader(streamToWriteTo);
 
-            if (null != Data)
+            if (Data != null)
             {
                 fragmentor.SerializeToBytes(Data, streamToWriteTo);
             }

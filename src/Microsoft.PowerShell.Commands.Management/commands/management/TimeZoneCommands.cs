@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else // ParameterSetName == "Name"
             {
-                if (null != Name)
+                if (Name != null)
                 {
                     // lookup each time zone name (or wildcard pattern)
                     foreach (string tzname in Name)

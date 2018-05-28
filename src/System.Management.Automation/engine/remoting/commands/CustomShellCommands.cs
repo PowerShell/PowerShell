@@ -1379,7 +1379,7 @@ else
             // confirm is always true to start with
             confirm = false;
             MshCommandRuntime cmdRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-            if (null != cmdRuntime)
+            if (cmdRuntime != null)
             {
                 whatIf = cmdRuntime.WhatIf;
                 // take the value of confirm only if it is explicitly set by the user
@@ -2940,7 +2940,7 @@ $args[0] | ForEach-Object {{
 
             string csNotFoundMessageFormat = RemotingErrorIdStrings.CustomShellNotFound;
             object arguments = "*";
-            if (null != Name)
+            if (Name != null)
             {
                 arguments = Name;
             }

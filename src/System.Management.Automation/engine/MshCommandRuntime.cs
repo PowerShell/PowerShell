@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public override string ToString()
         {
-            if (null != _commandInfo)
+            if (_commandInfo != null)
                 return _commandInfo.ToString();
             return "<NullCommandInfo>"; // does not require localization
         }
@@ -2331,7 +2331,7 @@ namespace System.Management.Automation
             if (null == e)
                 throw PSTraceSource.NewArgumentNullException("e");
 
-            if (null != PipelineProcessor)
+            if (PipelineProcessor != null)
             {
                 PipelineProcessor.RecordFailure(e, _thisCommand);
             }
@@ -2508,7 +2508,7 @@ namespace System.Management.Automation
                     if (null != oldValue && AutomationNull.Value != oldValue)
                     {
                         IEnumerable enumerable = LanguagePrimitives.GetEnumerable(oldValue);
-                        if (null != enumerable)
+                        if (enumerable != null)
                         {
                             foreach (object o in enumerable)
                             {

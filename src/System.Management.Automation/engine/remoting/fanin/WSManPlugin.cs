@@ -312,7 +312,7 @@ namespace System.Management.Automation.Remoting
                 AddToActiveShellSessions(mgdShellSession);
                 mgdShellSession.SessionClosed += new EventHandler<EventArgs>(HandleShellSessionClosed);
 
-                if (null != inboundShellInformation)
+                if (inboundShellInformation != null)
                 {
                     if ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT != inboundShellInformation.Type)
                     {
@@ -1097,7 +1097,7 @@ namespace System.Management.Automation.Remoting
             System.Version clientVersion = Utils.StringToVersion(clientVersionString);
             System.Version serverVersion = Utils.StringToVersion(WSManPluginConstants.PowerShellStartupProtocolVersionValue);
 
-            if ((null != clientVersion) && (null != serverVersion) &&
+            if ((clientVersion != null) && (serverVersion != null) &&
                 (clientVersion.Major == serverVersion.Major) &&
                 (clientVersion.Minor >= serverVersion.Minor))
             {
@@ -1283,7 +1283,7 @@ namespace System.Management.Automation.Remoting
                 {
                     // Close operations associated with this command..
                     WSManPluginOperationShutdownContext cmdCtxt = new WSManPluginOperationShutdownContext(pluginContext, shellContext, commandContext, false);
-                    if (null != cmdCtxt)
+                    if (cmdCtxt != null)
                     {
                         PerformCloseOperation(cmdCtxt);
                     }
@@ -1422,7 +1422,7 @@ namespace System.Management.Automation.Remoting
             String errorMessage = String.Empty;
             String stackTrace = String.Empty;
 
-            if (null != reasonForClose)
+            if (reasonForClose != null)
             {
                 error = WSManPluginErrorCodes.ManagedException;
                 errorMessage = reasonForClose.Message;
@@ -1437,7 +1437,7 @@ namespace System.Management.Automation.Remoting
                 errorMessage,
                 stackTrace);
 
-            if (null != reasonForClose)
+            if (reasonForClose != null)
             {
                 // report operation complete to wsman with the error message (if any).
                 ReportOperationComplete(
@@ -1556,7 +1556,7 @@ namespace System.Management.Automation.Remoting
             WSManPluginErrorCodes errorCode,
             string errorMessage)
         {
-            if (null != requestDetails)
+            if (requestDetails != null)
             {
                 ReportOperationComplete(requestDetails.unmanagedHandle, errorCode, errorMessage);
             }

@@ -306,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual object Body { get; set; }
 
         /// <summary>
-        /// Dictionary for use with RFC-7578 multipart/form-data submissions. 
+        /// Dictionary for use with RFC-7578 multipart/form-data submissions.
         /// Keys are form fields and their respective values are form values.
         /// A value may be a collection of form values or single form value.
         /// </summary>
@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void ValidateParameters()
         {
             // sessions
-            if ((null != WebSession) && (null != SessionVariable))
+            if ((WebSession != null) && (SessionVariable != null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.SessionConflict,
                                                        "WebCmdletSessionConflictException");
@@ -383,7 +383,7 @@ namespace Microsoft.PowerShell.Commands
                                                        "WebCmdletAuthenticationConflictException");
                 ThrowTerminatingError(error);
             }
-            if ((Authentication != WebAuthenticationType.None) && (null != Token) && (null != Credential))
+            if ((Authentication != WebAuthenticationType.None) && (Token != null) && (Credential != null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenConflict,
                                                        "WebCmdletAuthenticationTokenConflictException");
@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // credentials
-            if (UseDefaultCredentials && (null != Credential))
+            if (UseDefaultCredentials && (Credential != null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.CredentialConflict,
                                                        "WebCmdletCredentialConflictException");
@@ -423,13 +423,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Proxy server
-            if (ProxyUseDefaultCredentials && (null != ProxyCredential))
+            if (ProxyUseDefaultCredentials && (ProxyCredential != null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyCredentialConflict,
                                                        "WebCmdletProxyCredentialConflictException");
                 ThrowTerminatingError(error);
             }
-            else if ((null == Proxy) && ((null != ProxyCredential) || ProxyUseDefaultCredentials))
+            else if ((null == Proxy) && ((ProxyCredential != null) || ProxyUseDefaultCredentials))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyUriNotSupplied,
                                                        "WebCmdletProxyUriNotSuppliedException");
@@ -437,19 +437,19 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // request body content
-            if ((null != Body) && (null != InFile))
+            if ((Body != null) && (InFile != null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.BodyConflict,
                                                        "WebCmdletBodyConflictException");
                 ThrowTerminatingError(error);
             }
-            if ((null != Body) && (null != Form))
+            if ((Body != null) && (Form != null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.BodyFormConflict,
                                                        "WebCmdletBodyFormConflictException");
                 ThrowTerminatingError(error);
             }
-            if ((null != InFile) && (null != Form))
+            if ((InFile != null) && (Form != null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.FormInFileConflict,
                                                        "WebCmdletFormInFileConflictException");
@@ -539,7 +539,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession = new WebRequestSession();
             }
 
-            if (null != SessionVariable)
+            if (SessionVariable != null)
             {
                 // save the session back to the PS environment if requested
                 PSVariableIntrinsics vi = SessionState.PSVariable;
@@ -567,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.UseDefaultCredentials = true;
             }
 
-            if (null != CertificateThumbprint)
+            if (CertificateThumbprint != null)
             {
                 X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
                 store.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
@@ -585,7 +585,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (null != Certificate)
+            if (Certificate != null)
             {
                 WebSession.AddCertificate(Certificate);
             }
@@ -593,17 +593,17 @@ namespace Microsoft.PowerShell.Commands
             //
             // handle the user agent
             //
-            if (null != UserAgent)
+            if (UserAgent != null)
             {
                 // store the UserAgent string
                 WebSession.UserAgent = UserAgent;
             }
 
-            if (null != Proxy)
+            if (Proxy != null)
             {
                 WebProxy webProxy = new WebProxy(Proxy);
                 webProxy.BypassProxyOnLocal = false;
-                if (null != ProxyCredential)
+                if (ProxyCredential != null)
                 {
                     webProxy.Credentials = ProxyCredential.GetNetworkCredential();
                 }
@@ -622,7 +622,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // store the other supplied headers
-            if (null != Headers)
+            if (Headers != null)
             {
                 foreach (string key in Headers.Keys)
                 {
@@ -671,7 +671,7 @@ namespace Microsoft.PowerShell.Commands
             // preprocess Body if content is a dictionary and method is GET (set as query)
             IDictionary bodyAsDictionary;
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
-            if ((null != bodyAsDictionary)
+            if ((bodyAsDictionary != null)
                 && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
                      || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
             {
@@ -727,7 +727,7 @@ namespace Microsoft.PowerShell.Commands
                 // URLEncode the key and value
                 string encodedKey = WebUtility.UrlEncode(key);
                 string encodedValue = String.Empty;
-                if (null != value)
+                if (value != null)
                 {
                     encodedValue = WebUtility.UrlEncode(value.ToString());
                 }
@@ -1132,7 +1132,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (null != Form)
+            if (Form != null)
             {
                 // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
                 WebSession.ContentHeaders.Clear();
@@ -1310,8 +1310,8 @@ namespace Microsoft.PowerShell.Commands
             // Request again without the Range header because the server indicated the range was not satisfiable.
             // This happens when the local file is larger than the remote file.
             // If the size of the remote file is the same as the local file, there is nothing to resume.
-            if (Resume.IsPresent && 
-                response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable && 
+            if (Resume.IsPresent &&
+                response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
                 (response.Content.Headers.ContentRange.HasLength &&
                 response.Content.Headers.ContentRange.Length != _resumeFileSize))
             {
@@ -1419,8 +1419,8 @@ namespace Microsoft.PowerShell.Commands
                                 // Check if the Resume range was not satisfiable because the file already completed downloading.
                                 // This happens when the local file is the same size as the remote file.
                                 if (Resume.IsPresent &&
-                                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable && 
-                                    response.Content.Headers.ContentRange.HasLength && 
+                                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
+                                    response.Content.Headers.ContentRange.HasLength &&
                                     response.Content.Headers.ContentRange.Length == _resumeFileSize)
                                 {
                                     _isSuccess = true;
@@ -1779,7 +1779,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Treat Strings and other single values as a StringContent. 
+            // Treat Strings and other single values as a StringContent.
             // If enumeration is false, also treat IEnumerables as StringContents.
             // String implements IEnumerable so the explicit check is required.
             if (enumerate == false || fieldValue is String || !(fieldValue is IEnumerable))

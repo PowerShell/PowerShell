@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             ListControlBody result = new ListControlBody();
             result.autosize = this.autosize;
-            if (null != defaultEntryDefinition)
+            if (defaultEntryDefinition != null)
             {
                 result.defaultEntryDefinition = this.defaultEntryDefinition.Copy();
             }

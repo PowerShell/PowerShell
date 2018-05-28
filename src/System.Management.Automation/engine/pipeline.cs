@@ -491,7 +491,7 @@ namespace System.Management.Automation.Internal
                     CommandProcessorBase firstCommandProcessor = _commands[0];
 
                     // Add any input to the first command.
-                    if (null != ExternalInput)
+                    if (ExternalInput != null)
                     {
                         firstCommandProcessor.CommandRuntime.InputPipe.ExternalReader
                             = ExternalInput;
@@ -544,7 +544,7 @@ namespace System.Management.Automation.Internal
                 // The error we want to report is the first terminating error
                 // which occurred during pipeline execution, regardless
                 // of whether other errors occurred afterward.
-                if (null != _firstTerminatingError)
+                if (_firstTerminatingError != null)
                 {
                     toRethrowInfo = _firstTerminatingError;
                 }
@@ -699,7 +699,7 @@ namespace System.Management.Automation.Internal
                 // The error we want to report is the first terminating error
                 // which occurred during pipeline execution, regardless
                 // of whether other errors occurred afterward.
-                if (null != _firstTerminatingError)
+                if (_firstTerminatingError != null)
                 {
                     toRethrowInfo = _firstTerminatingError;
                 }
@@ -744,7 +744,7 @@ namespace System.Management.Automation.Internal
                 Start(expectInput);
 
                 // If a terminating error occurred, report it now.
-                if (null != _firstTerminatingError)
+                if (_firstTerminatingError != null)
                 {
                     _firstTerminatingError.Throw();
                 }
@@ -756,7 +756,7 @@ namespace System.Management.Automation.Internal
                 // The error we want to report is the first terminating error
                 // which occurred during pipeline execution, regardless
                 // of whether other errors occurred afterward.
-                if (null != _firstTerminatingError)
+                if (_firstTerminatingError != null)
                 {
                     _firstTerminatingError.Throw();
                 }
@@ -856,7 +856,7 @@ namespace System.Management.Automation.Internal
                 Inject(input, enumerate: false);
 
                 // If a terminating error occurred, report it now.
-                if (null != _firstTerminatingError)
+                if (_firstTerminatingError != null)
                 {
                     _firstTerminatingError.Throw();
                 }
@@ -870,7 +870,7 @@ namespace System.Management.Automation.Internal
                 // The error we want to report is the first terminating error
                 // which occurred during pipeline execution, regardless
                 // of whether other errors occurred afterward.
-                if (null != _firstTerminatingError)
+                if (_firstTerminatingError != null)
                 {
                     _firstTerminatingError.Throw();
                 }
@@ -956,7 +956,7 @@ namespace System.Management.Automation.Internal
                 // "PipelineProcessor.Start(): LastCommandProcessor == null"
                 throw PSTraceSource.NewInvalidOperationException();
             }
-            if (null != ExternalSuccessOutput)
+            if (ExternalSuccessOutput != null)
             {
                 LastCommandProcessor.CommandRuntime.OutputPipe.ExternalWriter
                     = ExternalSuccessOutput;
@@ -1056,7 +1056,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         private void SetExternalErrorOutput()
         {
-            if (null != ExternalErrorOutput)
+            if (ExternalErrorOutput != null)
             {
                 for (int i = 0; i < _commands.Count; i++)
                 {
@@ -1285,7 +1285,7 @@ namespace System.Management.Automation.Internal
                 for (int i = 0; i < _commands.Count; i++)
                 {
                     CommandProcessorBase commandProcessor = _commands[i];
-                    if (null != commandProcessor)
+                    if (commandProcessor != null)
                     {
 #pragma warning disable 56500
                         // If Dispose throws an exception, record it as a
@@ -1307,7 +1307,7 @@ namespace System.Management.Automation.Internal
 
                             ProviderInvocationException pie =
                                 e as ProviderInvocationException;
-                            if (null != pie)
+                            if (pie != null)
                             {
                                 e = new CmdletProviderInvocationException(
                                     pie,

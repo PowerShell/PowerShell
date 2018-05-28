@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
                 exRef = ex;
                 doc = null;
             }
-            return (null != doc);
+            return (doc != null);
         }
 
         private bool TryConvertToJson(string json, out object obj, ref Exception exRef)
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (null == obj)
                 {
-                    // This ensures that a null returned by ConvertFromJson() is the actual JSON null literal. 
+                    // This ensures that a null returned by ConvertFromJson() is the actual JSON null literal.
                     // if not, the ArgumentException will be caught.
                     JToken.Parse(json);
                 }

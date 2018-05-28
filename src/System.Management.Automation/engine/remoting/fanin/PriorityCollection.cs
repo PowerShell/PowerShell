@@ -252,13 +252,13 @@ namespace System.Management.Automation.Remoting
                 _isHandlingCallback = true;
             }
 
-            if (null != _onDataAvailableCallback)
+            if (_onDataAvailableCallback != null)
             {
                 DataPriorityType prType;
                 // now get the fragment and call the callback..
                 byte[] result = ReadOrRegisterCallback(_onDataAvailableCallback, out prType);
 
-                if (null != result)
+                if (result != null)
                 {
                     // reset the onDataAvailableCallback so that we dont notify
                     // multiple times. we are resetting before actually calling
@@ -568,7 +568,7 @@ namespace System.Management.Automation.Remoting
                     // reset incoming stream.
                     _pendingDataStream.Dispose();
                     _pendingDataStream = new MemoryStream();
-                    if (null != extraData)
+                    if (extraData != null)
                     {
                         _pendingDataStream.Write(extraData, 0, extraData.Length);
                     }
@@ -672,7 +672,7 @@ namespace System.Management.Automation.Remoting
         private void ResetReceiveData()
         {
             // reset resources used to store incoming data (for a single object)
-            if (null != _dataToProcessStream)
+            if (_dataToProcessStream != null)
             {
                 _dataToProcessStream.Dispose();
             }
@@ -683,13 +683,13 @@ namespace System.Management.Automation.Remoting
 
         private void ReleaseResources()
         {
-            if (null != _pendingDataStream)
+            if (_pendingDataStream != null)
             {
                 _pendingDataStream.Dispose();
                 _pendingDataStream = null;
             }
 
-            if (null != _dataToProcessStream)
+            if (_dataToProcessStream != null)
             {
                 _dataToProcessStream.Dispose();
                 _dataToProcessStream = null;
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Remoting
 
         internal virtual void Dispose(bool isDisposing)
         {
-            if (null != _recvdData)
+            if (_recvdData != null)
             {
                 for (int index = 0; index < _recvdData.Length; index++)
                 {

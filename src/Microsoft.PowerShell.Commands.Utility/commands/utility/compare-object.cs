@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
             //   Clear differenceEntry
             OrderByPropertyEntry matchingEntry =
                 MatchAndRemove(differenceEntry, _referenceEntryBacklog);
-            if (null != matchingEntry)
+            if (matchingEntry != null)
             {
                 EmitMatch(matchingEntry);
                 differenceEntry = null;
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
             //   Clear referenceEntry
             matchingEntry =
                 MatchAndRemove(referenceEntry, _differenceEntryBacklog);
-            if (null != matchingEntry)
+            if (matchingEntry != null)
             {
                 EmitMatch(referenceEntry);
                 referenceEntry = null;
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
             //       Emit oldest entry in differenceEntryBacklog as unmatched
             //       Remove oldest entry from differenceEntryBacklog
             //     Add differenceEntry to differenceEntryBacklog
-            if (null != differenceEntry)
+            if (differenceEntry != null)
             {
                 if (0 < SyncWindow)
                 {
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
             //       Emit oldest entry in referenceEntryBacklog as unmatched
             //       Remove oldest entry from referenceEntryBacklog
             //     Add referenceEntry to referenceEntryBacklog
-            if (null != referenceEntry)
+            if (referenceEntry != null)
             {
                 if (0 < SyncWindow)
                 {
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitComparer()
         {
-            if (null != _comparer)
+            if (_comparer != null)
                 return;
 
             List<PSObject> referenceObjectList = new List<PSObject>(ReferenceObject);

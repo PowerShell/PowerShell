@@ -5661,7 +5661,7 @@ namespace System.Management.Automation.Language
             {
                 ConsolidatedString typenames = PSObject.GetTypeNames(obj);
                 memberInfo = context.TypeTable.GetMembers<PSMemberInfo>(typenames)[member];
-                if (null != memberInfo)
+                if (memberInfo != null)
                 {
                     memberInfo = CloneMemberInfo(memberInfo, obj);
                 }
@@ -6203,7 +6203,7 @@ namespace System.Management.Automation.Language
                 {
                     ConsolidatedString typenames = PSObject.GetTypeNames(obj);
                     memberInfo = context.TypeTable.GetMembers<PSMemberInfo>(typenames)[member];
-                    if (null != memberInfo)
+                    if (memberInfo != null)
                     {
                         memberInfo = PSGetMemberBinder.CloneMemberInfo(memberInfo, obj);
                     }

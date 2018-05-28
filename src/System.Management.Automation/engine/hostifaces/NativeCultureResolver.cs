@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell
                 // returns fallback cultures (specified by the user)
                 // and also adds neutral culture where appropriate.
                 // Ex: ja-jp ja en-us en
-                while ((null != _fallbacks) && (_fallbacks.Length > 0))
+                while ((_fallbacks != null) && (_fallbacks.Length > 0))
                 {
                     string fallback = _fallbacks[0];
                     string[] fallbacksForParent = null;
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell
                             // remove the parentCulture from the m_fallbacks list.
                             // ie., remove duplicates from the parent hierarchy.
                             string[] fallbacksForTheParent = null;
-                            if (null != _fallbacks)
+                            if (_fallbacks != null)
                             {
                                 fallbacksForTheParent = new string[_fallbacks.Length];
                                 int currentIndex = 0;

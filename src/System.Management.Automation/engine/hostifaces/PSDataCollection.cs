@@ -545,7 +545,7 @@ namespace System.Management.Automation
                 // raise the events outside of the lock.
                 if (raiseEvents)
                 {
-                    if (null != _readWaitHandle)
+                    if (_readWaitHandle != null)
                     {
                         // unblock any readers waiting on the handle
                         _readWaitHandle.Set();
@@ -554,7 +554,7 @@ namespace System.Management.Automation
                     // A temporary variable is used as the Completed may
                     // reach null (because of -='s) after the null check
                     EventHandler tempCompleted = Completed;
-                    if (null != tempCompleted)
+                    if (tempCompleted != null)
                     {
                         tempCompleted(this, EventArgs.Empty);
                     }
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (null != _readWaitHandle)
+                if (_readWaitHandle != null)
                 {
                     if (_data.Count > 0 || !_isOpen)
                     {
@@ -1341,7 +1341,7 @@ namespace System.Management.Automation
             bool raiseDataAdded = false;
             lock (SyncObject)
             {
-                if (null != _readWaitHandle)
+                if (_readWaitHandle != null)
                 {
                     // TODO: Should ObjectDisposedException be caught.
 
@@ -1392,7 +1392,7 @@ namespace System.Management.Automation
             // A temporary variable is used as the DataAdding may
             // reach null (because of -='s) after the null check
             EventHandler<DataAddingEventArgs> tempDataAdding = DataAdding;
-            if (null != tempDataAdding)
+            if (tempDataAdding != null)
             {
                 tempDataAdding(this, new DataAddingEventArgs(psInstanceId, itemAdded));
             }
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
             // A temporary variable is used as the DataAdded may
             // reach null (because of -='s) after the null check
             EventHandler<DataAddedEventArgs> tempDataAdded = DataAdded;
-            if (null != tempDataAdded)
+            if (tempDataAdded != null)
             {
                 tempDataAdded(this, new DataAddedEventArgs(psInstanceId, index));
             }
@@ -1557,7 +1557,7 @@ namespace System.Management.Automation
                 if (_refCount != 0 && (!_blockingEnumerator || _refCount != 1)) return;
 
                 // release threads blocked on waithandle
-                if (null != _readWaitHandle)
+                if (_readWaitHandle != null)
                 {
                     _readWaitHandle.Set();
                 }
@@ -2080,7 +2080,7 @@ namespace System.Management.Automation
         /// <param name="item"></param>
         internal void AddProgress(ProgressRecord item)
         {
-            if (null != progress)
+            if (progress != null)
             {
                 progress.InternalAdd(_psInstanceId, item);
             }
@@ -2093,7 +2093,7 @@ namespace System.Management.Automation
         /// <param name="item"></param>
         internal void AddVerbose(VerboseRecord item)
         {
-            if (null != verbose)
+            if (verbose != null)
             {
                 verbose.InternalAdd(_psInstanceId, item);
             }
@@ -2106,7 +2106,7 @@ namespace System.Management.Automation
         /// <param name="item"></param>
         internal void AddDebug(DebugRecord item)
         {
-            if (null != debug)
+            if (debug != null)
             {
                 debug.InternalAdd(_psInstanceId, item);
             }
@@ -2119,7 +2119,7 @@ namespace System.Management.Automation
         /// <param name="item"></param>
         internal void AddWarning(WarningRecord item)
         {
-            if (null != Warning)
+            if (Warning != null)
             {
                 Warning.InternalAdd(_psInstanceId, item);
             }
@@ -2132,7 +2132,7 @@ namespace System.Management.Automation
         /// <param name="item"></param>
         internal void AddInformation(InformationRecord item)
         {
-            if (null != Information)
+            if (Information != null)
             {
                 Information.InternalAdd(_psInstanceId, item);
             }

@@ -204,7 +204,7 @@ namespace System.Management.Automation
             if (this.FullHelp.Properties["ModuleName"] != null)
             {
                 PSNoteProperty moduleNameNP = this.FullHelp.Properties["ModuleName"] as PSNoteProperty;
-                if (null != moduleNameNP)
+                if (moduleNameNP != null)
                 {
                     LanguagePrimitives.TryConvertTo<string>(moduleNameNP.Value, CultureInfo.InvariantCulture,
                                                             out moduleName);
@@ -306,7 +306,7 @@ namespace System.Management.Automation
 
                 PSObject navigationLink = PSObject.AsPSObject(navigationLinkAsObject);
                 PSNoteProperty uriNP = navigationLink.Properties["uri"] as PSNoteProperty;
-                if (null != uriNP)
+                if (uriNP != null)
                 {
                     string uriString = string.Empty;
                     LanguagePrimitives.TryConvertTo<string>(uriNP.Value, CultureInfo.InvariantCulture, out uriString);
