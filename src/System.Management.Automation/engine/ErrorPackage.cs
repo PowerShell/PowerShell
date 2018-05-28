@@ -247,7 +247,7 @@ namespace System.Management.Automation
                 if (!String.IsNullOrEmpty(_errorRecord._activityOverride))
                     return _errorRecord._activityOverride;
 
-                if (null != _errorRecord.InvocationInfo
+                if (_errorRecord.InvocationInfo != null
                     && (_errorRecord.InvocationInfo.MyCommand is CmdletInfo || _errorRecord.InvocationInfo.MyCommand is IScriptCommandInfo)
                     && !String.IsNullOrEmpty(_errorRecord.InvocationInfo.MyCommand.Name)
                     )
@@ -1385,7 +1385,7 @@ namespace System.Management.Automation
                 throw new PSArgumentNullException("errorRecord");
             }
 
-            if (null != replaceParentContainsErrorRecordException
+            if (replaceParentContainsErrorRecordException != null
                 && (errorRecord.Exception is ParentContainsErrorRecordException))
             {
                 _error = replaceParentContainsErrorRecordException;
@@ -1681,7 +1681,7 @@ namespace System.Management.Automation
         /// <returns>developer-readable identifier</returns>
         public override string ToString()
         {
-            if (null != ErrorDetails
+            if (ErrorDetails != null
                 && !String.IsNullOrEmpty(ErrorDetails.Message))
             {
                 return ErrorDetails.Message;

@@ -224,7 +224,7 @@ namespace System.Management.Automation
         {
             if (null == errorRecord)
                 return "";
-            if (null != errorRecord.ErrorDetails &&
+            if (errorRecord.ErrorDetails != null &&
                 !String.IsNullOrEmpty(errorRecord.ErrorDetails.Message))
             {
                 return errorRecord.ErrorDetails.Message;

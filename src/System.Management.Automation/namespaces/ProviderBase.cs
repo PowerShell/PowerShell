@@ -1582,7 +1582,7 @@ namespace System.Management.Automation.Provider
                     throw PSTraceSource.NewArgumentNullException("errorRecord");
                 }
 
-                if (null != errorRecord.ErrorDetails
+                if (errorRecord.ErrorDetails != null
                     && null != errorRecord.ErrorDetails.TextLookupError)
                 {
                     Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
@@ -2113,7 +2113,7 @@ namespace System.Management.Automation.Provider
                     throw PSTraceSource.NewArgumentNullException("errorRecord");
                 }
 
-                if (null != errorRecord.ErrorDetails
+                if (errorRecord.ErrorDetails != null
                     && null != errorRecord.ErrorDetails.TextLookupError)
                 {
                     MshLog.LogProviderHealthEvent(

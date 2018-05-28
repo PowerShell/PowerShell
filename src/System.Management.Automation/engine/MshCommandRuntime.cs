@@ -2030,7 +2030,7 @@ namespace System.Management.Automation
             }
             errorRecord.SetInvocationInfo(MyInvocation);
 
-            if (null != errorRecord.ErrorDetails
+            if (errorRecord.ErrorDetails != null
                 && null != errorRecord.ErrorDetails.TextLookupError)
             {
                 Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
@@ -2042,7 +2042,7 @@ namespace System.Management.Automation
             }
 
             // This code forces the stack trace and source fields to be populated
-            if (null != errorRecord.Exception
+            if (errorRecord.Exception != null
                 && String.IsNullOrEmpty(errorRecord.Exception.StackTrace))
             {
                 try
@@ -2756,7 +2756,7 @@ namespace System.Management.Automation
         {
             ThrowIfStopping();
 
-            if (null != errorRecord.ErrorDetails
+            if (errorRecord.ErrorDetails != null
                 && null != errorRecord.ErrorDetails.TextLookupError)
             {
                 Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
