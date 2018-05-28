@@ -359,7 +359,7 @@ namespace System.Management.Automation.Internal
             else
             {
                 CommandProcessorBase prevcommandProcessor = _commands[readFromCommand - 1] as CommandProcessorBase;
-                if (prevcommandProcessor == null || null == prevcommandProcessor.CommandRuntime)
+                if (prevcommandProcessor == null || prevcommandProcessor.CommandRuntime == null)
                 {
                     // "PipelineProcessor.AddCommand(): previous request object == null"
                     throw PSTraceSource.NewInvalidOperationException();
@@ -390,7 +390,7 @@ namespace System.Management.Automation.Internal
                     for (int i = 0; i < _commands.Count; i++)
                     {
                         prevcommandProcessor = _commands[i];
-                        if (prevcommandProcessor == null || null == prevcommandProcessor.CommandRuntime)
+                        if (prevcommandProcessor == null || prevcommandProcessor.CommandRuntime == null)
                         {
                             // "PipelineProcessor.AddCommand(): previous request object == null"
                             throw PSTraceSource.NewInvalidOperationException();
@@ -936,7 +936,7 @@ namespace System.Management.Automation.Internal
 
             CommandProcessorBase firstcommandProcessor = _commands[0];
             if (firstcommandProcessor == null
-                || null == firstcommandProcessor.CommandRuntime)
+                || firstcommandProcessor.CommandRuntime == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
@@ -951,7 +951,7 @@ namespace System.Management.Automation.Internal
             // add ExternalSuccessOutput to the last command
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
             if (LastCommandProcessor == null
-                || null == LastCommandProcessor.CommandRuntime)
+                || LastCommandProcessor.CommandRuntime == null)
             {
                 // "PipelineProcessor.Start(): LastCommandProcessor == null"
                 throw PSTraceSource.NewInvalidOperationException();
@@ -1082,7 +1082,7 @@ namespace System.Management.Automation.Internal
             for (int i = 0; i < _commands.Count; i++)
             {
                 CommandProcessorBase commandProcessor = _commands[i];
-                if (commandProcessor == null || null == commandProcessor.CommandRuntime)
+                if (commandProcessor == null || commandProcessor.CommandRuntime == null)
                 {
                     // "null command " + i
                     throw PSTraceSource.NewInvalidOperationException();
@@ -1126,7 +1126,7 @@ namespace System.Management.Automation.Internal
             // Add any input to the first command.
             CommandProcessorBase firstcommandProcessor = _commands[0];
             if (firstcommandProcessor == null
-                || null == firstcommandProcessor.CommandRuntime)
+                || firstcommandProcessor.CommandRuntime == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
@@ -1178,7 +1178,7 @@ namespace System.Management.Automation.Internal
                 {
                     CommandProcessorBase commandProcessor = _commands[i];
                     if (commandProcessor == null
-                        || null == commandProcessor.CommandRuntime)
+                        || commandProcessor.CommandRuntime == null)
                     {
                         // "null command or request or ErrorOutputPipe " + i
                         throw PSTraceSource.NewInvalidOperationException();
@@ -1201,7 +1201,7 @@ namespace System.Management.Automation.Internal
 
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
             if (LastCommandProcessor == null
-                || null == LastCommandProcessor.CommandRuntime)
+                || LastCommandProcessor.CommandRuntime == null)
             {
                 // "PipelineProcessor.RetrieveResults(): LastCommandProcessor == null"
                 throw PSTraceSource.NewInvalidOperationException();
@@ -1231,7 +1231,7 @@ namespace System.Management.Automation.Internal
 
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
             if (LastCommandProcessor == null
-                || null == LastCommandProcessor.CommandRuntime)
+                || LastCommandProcessor.CommandRuntime == null)
             {
                 // "PipelineProcessor.RetrieveResults(): LastCommandProcessor == null"
                 throw PSTraceSource.NewInvalidOperationException();
@@ -1249,7 +1249,7 @@ namespace System.Management.Automation.Internal
             {
                 CommandProcessorBase commandProcessor = _commands[i];
                 if (commandProcessor == null
-                    || null == commandProcessor.CommandRuntime)
+                    || commandProcessor.CommandRuntime == null)
                 {
                     // "null command or request or ErrorOutputPipe " + i
                     throw PSTraceSource.NewInvalidOperationException();

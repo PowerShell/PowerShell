@@ -174,7 +174,7 @@ namespace System.Management.Automation
 #else
             if (UseSecurityContextRun)
             {
-                if (PipelineProcessor == null || null == PipelineProcessor.SecurityContext)
+                if (PipelineProcessor == null || PipelineProcessor.SecurityContext == null)
                     throw PSTraceSource.NewInvalidOperationException(PipelineStrings.WriteNotPermitted);
                 ContextCallback delegateCallback =
                     new ContextCallback(DoWriteObject);
@@ -252,7 +252,7 @@ namespace System.Management.Automation
 #else
             if (UseSecurityContextRun)
             {
-                if (PipelineProcessor == null || null == PipelineProcessor.SecurityContext)
+                if (PipelineProcessor == null || PipelineProcessor.SecurityContext == null)
                     throw PSTraceSource.NewInvalidOperationException(PipelineStrings.WriteNotPermitted);
                 ContextCallback delegateCallback =
                     new ContextCallback(DoWriteObjects);
@@ -393,7 +393,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("progressRecord");
             }
 
-            if (Host == null || null == Host.UI)
+            if (Host == null || Host.UI == null)
             {
                 Diagnostics.Assert(false, "No host in CommandBase.WriteProgress()");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -499,7 +499,7 @@ namespace System.Management.Automation
                     //
                     // If no pipe, write directly to host.
                     //
-                    if (Host == null || null == Host.UI)
+                    if (Host == null || Host.UI == null)
                     {
                         Diagnostics.Assert(false, "No host in CommandBase.WriteDebug()");
                         throw PSTraceSource.NewInvalidOperationException();
@@ -590,7 +590,7 @@ namespace System.Management.Automation
                     //
                     // If no pipe, write directly to host.
                     //
-                    if (Host == null || null == Host.UI)
+                    if (Host == null || Host.UI == null)
                     {
                         Diagnostics.Assert(false, "No host in CommandBase.WriteVerbose()");
                         throw PSTraceSource.NewInvalidOperationException();
@@ -681,7 +681,7 @@ namespace System.Management.Automation
                     //
                     // If no pipe, write directly to host.
                     //
-                    if (Host == null || null == Host.UI)
+                    if (Host == null || Host.UI == null)
                     {
                         Diagnostics.Assert(false, "No host in CommandBase.WriteWarning()");
                         throw PSTraceSource.NewInvalidOperationException();
@@ -746,7 +746,7 @@ namespace System.Management.Automation
                     //
                     // If no pipe, write directly to host.
                     //
-                    if (Host == null || null == Host.UI)
+                    if (Host == null || Host.UI == null)
                     {
                         Diagnostics.Assert(false, "No host in CommandBase.WriteVerbose()");
                         throw PSTraceSource.NewInvalidOperationException();
@@ -2669,7 +2669,7 @@ namespace System.Management.Automation
 #else
             if (UseSecurityContextRun)
             {
-                if (PipelineProcessor == null || null == PipelineProcessor.SecurityContext)
+                if (PipelineProcessor == null || PipelineProcessor.SecurityContext == null)
                     throw PSTraceSource.NewInvalidOperationException(PipelineStrings.WriteNotPermitted);
                 ContextCallback delegateCallback =
                     new ContextCallback(DoWriteError);
