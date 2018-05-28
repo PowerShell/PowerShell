@@ -1195,7 +1195,7 @@ namespace System.Management.Automation
                 return true;
 
             if (String.IsNullOrEmpty(target))
-                target = "";
+                target = string.Empty;
 
             WildcardPattern matcher = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
 

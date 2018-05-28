@@ -884,7 +884,7 @@ namespace System.Management.Automation
             if (!xmlNode.LocalName.Equals("listItem", StringComparison.OrdinalIgnoreCase))
                 return null;
 
-            string text = "";
+            string text = string.Empty;
 
             if (xmlNode.ChildNodes.Count > 1)
             {
@@ -902,7 +902,7 @@ namespace System.Management.Automation
                 WriteMamlInvalidChildNodeError(xmlNode, childNode);
             }
 
-            string tag = "";
+            string tag = string.Empty;
             if (ordered)
             {
                 tag = index.ToString("d2", CultureInfo.CurrentCulture);
@@ -1058,7 +1058,7 @@ namespace System.Management.Automation
                 WriteMamlInvalidChildNodeCountError(xmlNode, "para", 1);
             }
 
-            string text = "";
+            string text = string.Empty;
 
             foreach (XmlNode childNode in xmlNode.ChildNodes)
             {

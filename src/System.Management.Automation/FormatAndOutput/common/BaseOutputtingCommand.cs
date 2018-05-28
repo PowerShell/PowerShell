@@ -1021,7 +1021,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        values[k] = "";
+                        values[k] = string.Empty;
                         alignment[k] = TextAlignment.Left; // hard coded default
                     }
                 }
@@ -1235,7 +1235,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (k < _buffer.CurrentCount)
                         values[k] = _buffer[k];
                     else
-                        values[k] = "";
+                        values[k] = string.Empty;
                 }
                 this.Writer.GenerateRow(values, this.InnerCommand._lo, false, null, InnerCommand._lo.DisplayCells);
                 _buffer.Reset();

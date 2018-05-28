@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the text of the matching line.
         /// </summary>
         /// <value>The text of the matching line.</value>
-        public string Line { get; set; } = "";
+        public string Line { get; set; } = string.Empty;
 
         /// <summary>
         /// Returns the base name of the file containing the matching line.
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
         // the empty prefix is used.
         private const string MatchPrefix = "> ";
         private const string ContextPrefix = "  ";
-        private const string EmptyPrefix = "";
+        private const string EmptyPrefix = string.Empty;
 
         /// <summary>
         /// Returns the string representation of this object. The format

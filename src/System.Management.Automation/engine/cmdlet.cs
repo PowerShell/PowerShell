@@ -119,7 +119,7 @@ namespace System.Management.Automation
         {
             _parameterSetName = parameterSetName;
         }
-        private string _parameterSetName = "";
+        private string _parameterSetName = string.Empty;
 
         #region Override Internal
 

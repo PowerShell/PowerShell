@@ -2882,7 +2882,7 @@ namespace Microsoft.PowerShell
 
         internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
 
-        private string _savedWindowTitle = "";
+        private string _savedWindowTitle = string.Empty;
         private Version _ver = PSVersionInfo.PSVersion;
         private int _exitCodeFromRunspace;
         private bool _noExit = true;

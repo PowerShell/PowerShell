@@ -818,8 +818,8 @@ namespace System.Management.Automation
     /// </summary>
     internal class HelpProviderInfo
     {
-        internal string AssemblyName = "";
-        internal string ClassName = "";
+        internal string AssemblyName = string.Empty;
+        internal string ClassName = string.Empty;
         internal HelpCategory HelpCategory = HelpCategory.None;
 
         /// <summary>

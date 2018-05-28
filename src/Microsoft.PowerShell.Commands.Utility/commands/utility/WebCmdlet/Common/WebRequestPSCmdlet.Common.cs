@@ -306,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual object Body { get; set; }
 
         /// <summary>
-        /// Dictionary for use with RFC-7578 multipart/form-data submissions. 
+        /// Dictionary for use with RFC-7578 multipart/form-data submissions.
         /// Keys are form fields and their respective values are form values.
         /// A value may be a collection of form values or single form value.
         /// </summary>
@@ -1310,8 +1310,8 @@ namespace Microsoft.PowerShell.Commands
             // Request again without the Range header because the server indicated the range was not satisfiable.
             // This happens when the local file is larger than the remote file.
             // If the size of the remote file is the same as the local file, there is nothing to resume.
-            if (Resume.IsPresent && 
-                response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable && 
+            if (Resume.IsPresent &&
+                response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
                 (response.Content.Headers.ContentRange.HasLength &&
                 response.Content.Headers.ContentRange.Length != _resumeFileSize))
             {
@@ -1419,8 +1419,8 @@ namespace Microsoft.PowerShell.Commands
                                 // Check if the Resume range was not satisfiable because the file already completed downloading.
                                 // This happens when the local file is the same size as the remote file.
                                 if (Resume.IsPresent &&
-                                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable && 
-                                    response.Content.Headers.ContentRange.HasLength && 
+                                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
+                                    response.Content.Headers.ContentRange.HasLength &&
                                     response.Content.Headers.ContentRange.Length == _resumeFileSize)
                                 {
                                     _isSuccess = true;
@@ -1435,7 +1435,7 @@ namespace Microsoft.PowerShell.Commands
                                         (int)response.StatusCode, response.ReasonPhrase);
                                     HttpResponseException httpEx = new HttpResponseException(message, response);
                                     ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                                    string detailMsg = "";
+                                    string detailMsg = string.Empty;
                                     StreamReader reader = null;
                                     try
                                     {
@@ -1779,7 +1779,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Treat Strings and other single values as a StringContent. 
+            // Treat Strings and other single values as a StringContent.
             // If enumeration is false, also treat IEnumerables as StringContents.
             // String implements IEnumerable so the explicit check is required.
             if (enumerate == false || fieldValue is String || !(fieldValue is IEnumerable))

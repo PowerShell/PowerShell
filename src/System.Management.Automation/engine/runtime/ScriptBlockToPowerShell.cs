@@ -780,7 +780,7 @@ namespace System.Management.Automation
             }
             else
             {
-                nameSuffix = "";
+                nameSuffix = string.Empty;
                 argument = null;
             }
 

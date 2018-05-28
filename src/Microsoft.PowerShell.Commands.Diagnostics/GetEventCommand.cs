@@ -836,7 +836,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // Force the destruction of cached password
             //
-            netCred.Password = "";
+            netCred.Password = string.Empty;
 
             return eventLogSession;
         }
@@ -978,7 +978,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string key in hash.Keys)
             {
-                string added = "";
+                string added = string.Empty;
 
                 switch (key.ToLowerInvariant())
                 {
@@ -1070,8 +1070,8 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (Hashtable hash in _selector)
             {
-                string xpathString = "";
-                string xpathStringSuppress = "";
+                string xpathString = string.Empty;
+                string xpathStringSuppress = string.Empty;
 
                 CheckHashTableForQueryPathPresence(hash);
 

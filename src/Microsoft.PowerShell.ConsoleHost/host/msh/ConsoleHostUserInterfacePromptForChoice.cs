@@ -353,10 +353,10 @@ namespace Microsoft.PowerShell
                 WriteLineToConsole();
             }
 
-            string defaultPrompt = "";
+            string defaultPrompt = string.Empty;
             if (defaultChoiceKeys.Count > 0)
             {
-                string prepend = "";
+                string prepend = string.Empty;
                 StringBuilder defaultChoicesBuilder = new StringBuilder();
                 foreach (int defaultChoice in defaultChoiceKeys.Keys)
                 {

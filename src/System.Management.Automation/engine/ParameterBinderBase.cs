@@ -648,7 +648,7 @@ namespace System.Management.Automation
                             if (values != null)
                             {
                                 var sb = new Text.StringBuilder(256);
-                                var sep = "";
+                                var sep = string.Empty;
                                 foreach (var value in values)
                                 {
                                     sb.Append(sep);

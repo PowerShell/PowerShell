@@ -751,7 +751,7 @@ namespace System.Management.Automation
         {
             get { return ErrorRecord.NotNull(_message); }
         }
-        private string _message = "";
+        private string _message = string.Empty;
 
         /// <summary>
         /// Text describing the recommended action in the event that this error
@@ -771,7 +771,7 @@ namespace System.Management.Automation
                 _recommendedAction = value;
             }
         }
-        private string _recommendedAction = "";
+        private string _recommendedAction = string.Empty;
         #endregion Public Properties
 
         #region Internal Properties
@@ -810,7 +810,7 @@ namespace System.Management.Automation
             if (String.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
-            string template = "";
+            string template = string.Empty;
 
             try
             {
@@ -843,7 +843,7 @@ namespace System.Management.Automation
             if (String.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
-            string template = "";
+            string template = string.Empty;
 
             try
             {
@@ -876,7 +876,7 @@ namespace System.Management.Automation
             if (String.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
-            string template = "";
+            string template = string.Empty;
 
             ResourceManager manager =
                 ResourceManagerCache.GetResourceManager(
@@ -990,7 +990,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("exception");
 
             if (errorId == null)
-                errorId = "";
+                errorId = string.Empty;
 
             // targetObject may be null
 

@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // the column can be hidden
                 if (_si.columnInfo[k].width <= 0)
                 {
-                    breakLine[k] = "";
+                    breakLine[k] = string.Empty;
                     continue;
                 }
                 // the title can be larger than the width

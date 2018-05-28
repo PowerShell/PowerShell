@@ -1394,7 +1394,7 @@ namespace System.Management.Automation
             {
                 if (strConst.Value.Equals("$", StringComparison.Ordinal))
                 {
-                    completionContext.WordToComplete = "";
+                    completionContext.WordToComplete = string.Empty;
                     return CompletionCompleters.CompleteVariable(completionContext);
                 }
                 else

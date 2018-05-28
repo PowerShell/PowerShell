@@ -4279,7 +4279,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // To accomodate empty files
-                    String content = "";
+                    String content = string.Empty;
                     if (op["b64Fragment"] != null)
                     {
                         content = (String)op["b64Fragment"];
@@ -5458,7 +5458,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            currentPath = "";
+                            currentPath = string.Empty;
                         }
 
                         s_tracer.WriteLine("normalizedPathStack.Pop() : {0}", poppedName);

@@ -147,7 +147,7 @@ namespace System.Management.Automation.Runspaces
                 allErrors.Append('\n');
             }
 
-            string message = "";
+            string message = string.Empty;
             if (category == RunspaceConfigurationCategory.Types)
             {
                 message =
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Runspaces
                 allErrors.Append('\n');
             }
 
-            string message = "";
+            string message = string.Empty;
             if (category == RunspaceConfigurationCategory.Types)
             {
                 message =

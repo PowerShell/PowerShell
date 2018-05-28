@@ -3218,7 +3218,7 @@ namespace Microsoft.PowerShell.Commands
                 case RegistryValueKind.ExpandString:
                 case RegistryValueKind.String:
                     {
-                        defaultValue = "";
+                        defaultValue = string.Empty;
                     }
                     break;
                 case RegistryValueKind.MultiString:

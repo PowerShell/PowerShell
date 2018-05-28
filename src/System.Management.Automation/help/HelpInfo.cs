@@ -107,7 +107,7 @@ namespace System.Management.Automation
         /// alias.
         /// </summary>
         /// <value>forward target object name</value>
-        internal string ForwardTarget { get; set; } = "";
+        internal string ForwardTarget { get; set; } = string.Empty;
 
         /// <summary>
         /// Full help object for this help item.

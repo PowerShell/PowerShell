@@ -3462,7 +3462,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     if (filesProcessed.TryAdd(sste.FileName, null))
                     {
-                        string moduleName = "";
+                        string moduleName = string.Empty;
                         if (sste.PSSnapIn != null && !String.IsNullOrEmpty(sste.PSSnapIn.Name))
                         {
                             moduleName = sste.PSSnapIn.Name;

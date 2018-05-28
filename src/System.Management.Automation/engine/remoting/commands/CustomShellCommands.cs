@@ -1133,7 +1133,7 @@ else
                 }
             }
 
-            string securityParameters = "";
+            string securityParameters = string.Empty;
             if (!string.IsNullOrEmpty(sddl))
             {
                 securityParameters = string.Format(CultureInfo.InvariantCulture,

@@ -470,7 +470,7 @@ namespace System.Management.Automation.Security
 
         internal static string DumpLockdownState(uint pdwLockdownState)
         {
-            string returnValue = "";
+            string returnValue = string.Empty;
 
             if ((pdwLockdownState & WldpNativeConstants.WLDP_LOCKDOWN_DEFINED_FLAG) == WldpNativeConstants.WLDP_LOCKDOWN_DEFINED_FLAG)
             {

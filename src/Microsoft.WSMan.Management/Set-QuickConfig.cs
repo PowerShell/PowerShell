@@ -155,10 +155,10 @@ namespace Microsoft.WSMan.Management
                 {
                     source = sourceAttribute.Value;
                 }
-                string rxml = "";
+                string rxml = string.Empty;
                 if (enabled.Equals("true"))
                 {
-                    string Err_Msg = "";
+                    string Err_Msg = string.Empty;
                     if (serviceonly)
                     {
                         Err_Msg = WSManResourceLoader.GetResourceString("L_QuickConfigNoServiceChangesNeeded_Message");

@@ -2438,7 +2438,7 @@ namespace Microsoft.WSMan.Management
 
         private string GetRootNodeName(string ResourceURI)
         {
-            string tempuri = "";
+            string tempuri = string.Empty;
             if (ResourceURI.Contains("?"))
             {
                 ResourceURI = ResourceURI.Split(new char[] { '?' }).GetValue(0).ToString();

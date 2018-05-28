@@ -889,8 +889,8 @@ namespace System.Management.Automation
         /// <returns>The result of the operator</returns>
         internal static object ReplaceOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, bool ignoreCase)
         {
-            object pattern = "";
-            object substitute = "";
+            object pattern = string.Empty;
+            object substitute = string.Empty;
 
             rval = PSObject.Base(rval);
             IList rList = rval as IList;

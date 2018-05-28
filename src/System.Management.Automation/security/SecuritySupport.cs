@@ -822,14 +822,14 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                string filterString = "";
+                string filterString = string.Empty;
 
                 if (_dnsName != null)
                 {
                     filterString = AppendFilter(filterString, "dns", _dnsName);
                 }
 
-                string ekuT = "";
+                string ekuT = string.Empty;
                 if (_eku != null)
                 {
                     for (int i = 0; i < _eku.Length; i++)

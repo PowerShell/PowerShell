@@ -2695,7 +2695,7 @@ namespace System.Management.Automation
             CompletionContext context)
         {
             string containerNamespace = "root";
-            string prefixOfChildNamespace = "";
+            string prefixOfChildNamespace = string.Empty;
             if (!string.IsNullOrEmpty(context.WordToComplete))
             {
                 int lastSlashOrBackslash = context.WordToComplete.LastIndexOfAny(Utils.Separators.Directory);
@@ -3738,8 +3738,8 @@ namespace System.Management.Automation
         {
             var wordToComplete = context.WordToComplete;
             var isQuoted = wordToComplete.Length > 0 && (wordToComplete[0].IsSingleQuote() || wordToComplete[0].IsDoubleQuote());
-            string prefix = "";
-            string suffix = "";
+            string prefix = string.Empty;
+            string suffix = string.Empty;
             if (isQuoted)
             {
                 prefix = suffix = wordToComplete.Substring(0, 1);
@@ -3781,7 +3781,7 @@ namespace System.Management.Automation
                     // if we only replace the minimum.
                     context.ReplacementIndex = typeNameToComplete.Extent.StartOffset + context.TokenAtCursor.Extent.StartOffset + 1;
                     context.ReplacementLength = wordToComplete.Length;
-                    prefix = suffix = "";
+                    prefix = suffix = string.Empty;
                 }
                 else
                 {
@@ -4574,7 +4574,7 @@ namespace System.Management.Automation
             if (colon == -1)
             {
                 pattern = "variable:" + wordToComplete + "*";
-                provider = "";
+                provider = string.Empty;
             }
             else
             {

@@ -1579,7 +1579,7 @@ namespace Microsoft.PowerShell
             {
 
                 ConsoleKeyInfo keyInfo;
-                string s = "";
+                string s = string.Empty;
                 int index = 0;
                 int cursorLeft = Console.CursorLeft;
                 int cursorCurrent = cursorLeft;
@@ -1588,7 +1588,7 @@ namespace Microsoft.PowerShell
 #else
             _rawui.ClearKeyCache();
             uint keyState = 0;
-            string s = "";
+            string s = string.Empty;
 #endif
                 do
                 {
@@ -1773,7 +1773,7 @@ namespace Microsoft.PowerShell
                     {
                         Console.CursorLeft = cursorLeft;
                         index = s.Length;
-                        s = "";
+                        s = string.Empty;
                         continue;
                     }
 
@@ -1897,14 +1897,14 @@ namespace Microsoft.PowerShell
         internal string ReadLineWithTabCompletion(Executor exec)
         {
             string input = null;
-            string lastInput = "";
+            string lastInput = string.Empty;
 
             ReadLineResult rlResult = ReadLineResult.endedOnEnter;
 
 #if !UNIX
             ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
 
-            string lastCompletion = "";
+            string lastCompletion = string.Empty;
             Size screenBufferSize = RawUI.BufferSize;
 
             // Save the cursor position at the end of the prompt string so that we can restore it later to write the

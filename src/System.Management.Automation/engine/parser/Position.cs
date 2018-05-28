@@ -141,7 +141,7 @@ namespace System.Management.Automation.Language
 
             string sourceLine = position.StartScriptPosition.Line.TrimEnd();
 
-            string message = "";
+            string message = string.Empty;
             if (!String.IsNullOrEmpty(sourceLine))
             {
                 int spacesBeforeError = position.StartColumnNumber - 1;

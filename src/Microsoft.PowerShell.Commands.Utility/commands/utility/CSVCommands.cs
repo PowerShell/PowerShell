@@ -1539,7 +1539,7 @@ namespace Microsoft.PowerShell.Commands
         bool
         IsNewLine(char ch, out string newLine)
         {
-            newLine = "";
+            newLine = string.Empty;
             if (ch == '\r')
             {
                 if (PeekNextChar('\n'))
@@ -1557,7 +1557,7 @@ namespace Microsoft.PowerShell.Commands
                 newLine = "\n";
             }
 
-            return newLine != "";
+            return newLine != string.Empty;
         }
 
         /// <summary>

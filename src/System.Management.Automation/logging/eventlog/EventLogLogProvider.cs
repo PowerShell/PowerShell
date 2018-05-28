@@ -118,8 +118,8 @@ namespace System.Management.Automation
             else
             {
                 mapArgs["ExceptionClass"] = exception.GetType().Name;
-                mapArgs["ErrorCategory"] = "";
-                mapArgs["ErrorId"] = "";
+                mapArgs["ErrorCategory"] = string.Empty;
+                mapArgs["ErrorId"] = string.Empty;
                 mapArgs["ErrorMessage"] = exception.Message;
             }
 
@@ -239,8 +239,8 @@ namespace System.Management.Automation
             else
             {
                 mapArgs["ExceptionClass"] = exception.GetType().Name;
-                mapArgs["ErrorCategory"] = "";
-                mapArgs["ErrorId"] = "";
+                mapArgs["ErrorCategory"] = string.Empty;
+                mapArgs["ErrorId"] = string.Empty;
                 mapArgs["ErrorMessage"] = exception.Message;
             }
 
@@ -418,8 +418,8 @@ namespace System.Management.Automation
             else
             {
                 mapArgs["ExceptionClass"] = exception.GetType().Name;
-                mapArgs["ErrorCategory"] = "";
-                mapArgs["ErrorId"] = "";
+                mapArgs["ErrorCategory"] = string.Empty;
+                mapArgs["ErrorId"] = string.Empty;
                 mapArgs["ErrorMessage"] = exception.Message;
             }
 
@@ -587,8 +587,8 @@ namespace System.Management.Automation
                 {
                     string id = ((int)(i + 1)).ToString("d1", CultureInfo.CurrentCulture);
 
-                    mapArgs["AdditionalInfo_Name" + id] = "";
-                    mapArgs["AdditionalInfo_Value" + id] = "";
+                    mapArgs["AdditionalInfo_Name" + id] = string.Empty;
+                    mapArgs["AdditionalInfo_Value" + id] = string.Empty;
                 }
 
                 return;
@@ -610,8 +610,8 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    mapArgs["AdditionalInfo_Name" + id] = "";
-                    mapArgs["AdditionalInfo_Value" + id] = "";
+                    mapArgs["AdditionalInfo_Name" + id] = string.Empty;
+                    mapArgs["AdditionalInfo_Value" + id] = string.Empty;
                 }
             }
 
