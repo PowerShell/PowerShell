@@ -304,7 +304,7 @@ namespace System.Management.Automation.Remoting.Server
                 currentIdentity);
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #else
-            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity(string.Empty, true, "", null),
+            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity(string.Empty, true, string.Empty, null),
                 null);
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #endif

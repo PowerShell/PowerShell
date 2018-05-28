@@ -1709,27 +1709,27 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PSNotSupportedException notSupported)
             {
-                WriteError(new ErrorRecord(notSupported, "", ErrorCategory.ObjectNotFound, path));
+                WriteError(new ErrorRecord(notSupported, string.Empty, ErrorCategory.ObjectNotFound, path));
                 return retColl;
             }
             catch (System.Management.Automation.DriveNotFoundException driveNotFound)
             {
-                WriteError(new ErrorRecord(driveNotFound, "", ErrorCategory.ObjectNotFound, path));
+                WriteError(new ErrorRecord(driveNotFound, string.Empty, ErrorCategory.ObjectNotFound, path));
                 return retColl;
             }
             catch (ProviderNotFoundException providerNotFound)
             {
-                WriteError(new ErrorRecord(providerNotFound, "", ErrorCategory.ObjectNotFound, path));
+                WriteError(new ErrorRecord(providerNotFound, string.Empty, ErrorCategory.ObjectNotFound, path));
                 return retColl;
             }
             catch (ItemNotFoundException pathNotFound)
             {
-                WriteError(new ErrorRecord(pathNotFound, "", ErrorCategory.ObjectNotFound, path));
+                WriteError(new ErrorRecord(pathNotFound, string.Empty, ErrorCategory.ObjectNotFound, path));
                 return retColl;
             }
             catch (Exception exc)
             {
-                WriteError(new ErrorRecord(exc, "", ErrorCategory.ObjectNotFound, path));
+                WriteError(new ErrorRecord(exc, string.Empty, ErrorCategory.ObjectNotFound, path));
                 return retColl;
             }
 

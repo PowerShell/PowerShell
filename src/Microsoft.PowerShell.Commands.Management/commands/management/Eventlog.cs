@@ -1372,7 +1372,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                                 else
                                 {
-                                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.SourceDoesNotExist, "", computer, src)), null, ErrorCategory.InvalidOperation, null);
+                                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.SourceDoesNotExist, string.Empty, computer, src)), null, ErrorCategory.InvalidOperation, null);
                                     WriteError(er);
                                     continue;
                                 }

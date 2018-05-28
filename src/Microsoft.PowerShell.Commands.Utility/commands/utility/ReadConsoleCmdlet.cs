@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                 Collection<FieldDescription> fdc = new Collection<FieldDescription>();
                 fdc.Add(fd);
 
-                Dictionary<string, PSObject> result = Host.UI.Prompt(string.Empty, "", fdc);
+                Dictionary<string, PSObject> result = Host.UI.Prompt(string.Empty, string.Empty, fdc);
                 // Result can be null depending on the host implementation. One typical
                 // example of a null return is for a canceled dialog.
                 if (result != null)

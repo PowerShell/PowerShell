@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell
             // call our internal version such that it does not end input on a tab
             ReadLineResult unused;
 
-            return ReadLine(false, "", out unused, true, true);
+            return ReadLine(false, string.Empty, out unused, true, true);
         }
 
         /// <summary>

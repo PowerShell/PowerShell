@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell
                     WriteChoicePrompt(hotkeysAndPlainLabels, defaultChoiceKeys, false);
 
                     ReadLineResult rlResult;
-                    string response = ReadLine(false, "", out rlResult, true, true);
+                    string response = ReadLine(false, string.Empty, out rlResult, true, true);
 
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell
                     WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(choiceMsg));
 
                     ReadLineResult rlResult;
-                    string response = ReadLine(false, "", out rlResult, true, true);
+                    string response = ReadLine(false, string.Empty, out rlResult, true, true);
 
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {

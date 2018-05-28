@@ -2489,7 +2489,7 @@ namespace System.Management.Automation.Language
 
             if (!ScanAfterHereStringHeader("@\""))
             {
-                return NewStringExpandableToken(string.Empty, "", TokenKind.HereStringExpandable, null, TokenFlags.TokenInError);
+                return NewStringExpandableToken(string.Empty, string.Empty, TokenKind.HereStringExpandable, null, TokenFlags.TokenInError);
             }
 
             TokenFlags flags = TokenFlags.None;

@@ -429,7 +429,7 @@ $result
                     string errMsg = withCategoryFilter
                                         ? ControlPanelResources.NoControlPanelItemFoundWithNullCanonicalNameWithCategory
                                         : ControlPanelResources.NoControlPanelItemFoundWithNullCanonicalName;
-                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "",
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), string.Empty,
                                                         ErrorCategory.InvalidArgument, CanonicalNames);
                     WriteError(error);
                 }

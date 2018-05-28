@@ -901,7 +901,7 @@ namespace Microsoft.WSMan.Management
             }
 
             string whatIfMessage = String.Format(CultureInfo.CurrentUICulture, helper.GetResourceMsgFromResourcetext("SetItemWhatIfAndConfirmText"), path, value);
-            if (!ShouldProcess(whatIfMessage, "", string.Empty))
+            if (!ShouldProcess(whatIfMessage, string.Empty, string.Empty))
             {
                 return;
             }
@@ -1671,7 +1671,7 @@ namespace Microsoft.WSMan.Management
                         if (path.EndsWith(strPathCheck + WSManStringLiterals.containerResources, StringComparison.OrdinalIgnoreCase))
                         {
                             throwerror = false;
-                            ResourceArray = RemoveItemfromResourceArray(ResourceArray, ChildName, "", "ResourceDir");
+                            ResourceArray = RemoveItemfromResourceArray(ResourceArray, ChildName, string.Empty, "ResourceDir");
                         }
                         if (throwerror)
                         {
@@ -1690,7 +1690,7 @@ namespace Microsoft.WSMan.Management
                             if (path.EndsWith(strPathCheck + WSManStringLiterals.containerSecurity, StringComparison.OrdinalIgnoreCase))
                             {
                                 throwerror = false;
-                                SecurityArray = RemoveItemfromResourceArray(SecurityArray, ChildName, "", "SecurityDIR");
+                                SecurityArray = RemoveItemfromResourceArray(SecurityArray, ChildName, string.Empty, "SecurityDIR");
                             }
                         }
                     }
@@ -2669,7 +2669,7 @@ namespace Microsoft.WSMan.Management
             {
                 try
                 {
-                    object value = ((IWSManSession)sessionobj).Enumerate(ResourceURI, "", "", 0);
+                    object value = ((IWSManSession)sessionobj).Enumerate(ResourceURI, string.Empty, "", 0);
                     string strXmlValue = string.Empty;
 
                     while (!((IWSManEnumerator)value).AtEndOfStream)
@@ -2803,7 +2803,7 @@ namespace Microsoft.WSMan.Management
             {
                 if (ResourceURI.Contains(WSManStringLiterals.containerListener) || ResourceURI.Contains(WSManStringLiterals.containerPlugin) || ResourceURI.Contains(WSManStringLiterals.containerCertMapping))
                 {
-                    object value = ((IWSManSession)sessionobj).Enumerate(ResourceURI, "", "", 0);
+                    object value = ((IWSManSession)sessionobj).Enumerate(ResourceURI, string.Empty, "", 0);
 
                     while (!((IWSManEnumerator)value).AtEndOfStream)
                     {
@@ -4020,7 +4020,7 @@ namespace Microsoft.WSMan.Management
                 switch (methodname)
                 {
                     case ProviderMethods.GetChildItems:
-                        PSObject obj = BuildHostLevelPSObjectArrayList(null, "", true);
+                        PSObject obj = BuildHostLevelPSObjectArrayList(null, string.Empty, true);
                         WritePSObjectPropertiesAsWSManElementObjects(obj, WSManStringLiterals.rootpath, null,
                             "ComputerLevel", WsManElementObjectTypes.WSManConfigContainerElement, recurse);
                         break;
