@@ -3941,7 +3941,7 @@ namespace Microsoft.PowerShell.Commands
                             value,
                             typeof(string),
                             CultureInfo.CurrentCulture)
-                        : "";
+                        : string.Empty;
                     break;
 
                 case RegistryValueKind.MultiString:
@@ -3978,7 +3978,7 @@ namespace Microsoft.PowerShell.Commands
                             value,
                             typeof(string),
                             CultureInfo.CurrentCulture)
-                        : "";
+                        : string.Empty;
                     break;
 
                     // If kind is Unknown then just leave the value as-is.
