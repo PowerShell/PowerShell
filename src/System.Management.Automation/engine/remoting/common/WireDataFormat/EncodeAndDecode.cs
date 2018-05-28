@@ -2228,7 +2228,7 @@ namespace System.Management.Automation
             CommandTypes commandType = GetPropertyValue<CommandTypes>(dataAsPSObject, RemoteDataNameStrings.DiscoveryType);
 
             string[] name;
-            if (null != GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryName))
+            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryName) != null)
             {
                 IEnumerable<string> tmp = EnumerateListProperty<string>(dataAsPSObject, RemoteDataNameStrings.DiscoveryName);
                 name = new List<string>(tmp).ToArray();
@@ -2239,7 +2239,7 @@ namespace System.Management.Automation
             }
 
             string[] module;
-            if (null != GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryModule))
+            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryModule) != null)
             {
                 IEnumerable<string> tmp = EnumerateListProperty<string>(dataAsPSObject, RemoteDataNameStrings.DiscoveryModule);
                 module = new List<string>(tmp).ToArray();
@@ -2259,7 +2259,7 @@ namespace System.Management.Automation
             }
 
             object[] argumentList;
-            if (null != GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryArgumentList))
+            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryArgumentList) != null)
             {
                 IEnumerable<object> tmp = EnumerateListProperty<object>(dataAsPSObject, RemoteDataNameStrings.DiscoveryArgumentList);
                 argumentList = new List<object>(tmp).ToArray();

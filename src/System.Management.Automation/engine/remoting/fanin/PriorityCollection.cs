@@ -167,7 +167,7 @@ namespace System.Management.Automation.Remoting
 
                 lock (_dataSyncObjects[promptResponseIndex])
                 {
-                    if (null != _dataToBeSent[promptResponseIndex])
+                    if (_dataToBeSent[promptResponseIndex] != null)
                     {
                         _dataToBeSent[promptResponseIndex].Dispose();
                         _dataToBeSent[promptResponseIndex] = null;
@@ -176,7 +176,7 @@ namespace System.Management.Automation.Remoting
 
                 lock (_dataSyncObjects[defaultIndex])
                 {
-                    if (null != _dataToBeSent[defaultIndex])
+                    if (_dataToBeSent[defaultIndex] != null)
                     {
                         _dataToBeSent[defaultIndex].Dispose();
                         _dataToBeSent[defaultIndex] = null;

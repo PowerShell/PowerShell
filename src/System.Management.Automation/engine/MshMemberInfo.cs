@@ -4371,7 +4371,7 @@ namespace System.Management.Automation
         internal static void GeneratePSTypeNames(object obj)
         {
             PSObject mshOwner = PSObject.AsPSObject(obj);
-            if (null != mshOwner.InstanceMembers[PSObject.PSTypeNames])
+            if (mshOwner.InstanceMembers[PSObject.PSTypeNames] != null)
             {
                 // PSTypeNames member set is already generated..just return.
                 return;

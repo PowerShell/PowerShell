@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="activeAssociationList"></param>
         internal static void HandleComputerNameProperties(PSObject so, List<MshResolvedExpressionParameterAssociation> activeAssociationList)
         {
-            if (null != so.Properties[RemotingConstants.ShowComputerNameNoteProperty])
+            if (so.Properties[RemotingConstants.ShowComputerNameNoteProperty] != null)
             {
                 // always remove PSShowComputerName for the display. This is an internal property
                 // that should never be visible to the user.
