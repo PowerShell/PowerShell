@@ -396,9 +396,9 @@ namespace System.Management.Automation.Internal
                             throw PSTraceSource.NewInvalidOperationException();
                         }
                         // check whether the error output is already claimed
-                        if (null != prevcommandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet)
+                        if (prevcommandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet != null)
                             continue;
-                        if (null != prevcommandProcessor.CommandRuntime.ErrorOutputPipe.ExternalWriter)
+                        if (prevcommandProcessor.CommandRuntime.ErrorOutputPipe.ExternalWriter != null)
                             continue;
 
                         // Set the upstream cmdlet's error output to go down
