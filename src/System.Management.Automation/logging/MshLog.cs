@@ -222,7 +222,7 @@ namespace System.Management.Automation
 
             InvocationInfo invocationInfo = null;
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && null != icer.ErrorRecord)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {
@@ -425,7 +425,7 @@ namespace System.Management.Automation
 
             InvocationInfo invocationInfo = null;
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && null != icer.ErrorRecord)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {
@@ -617,7 +617,7 @@ namespace System.Management.Automation
 
             InvocationInfo invocationInfo = null;
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && null != icer.ErrorRecord)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {

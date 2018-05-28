@@ -1050,7 +1050,7 @@ namespace System.Management.Automation.Remoting.Client
             if (isDisposing)
             {
                 KillServerProcess();
-                if (null != _serverProcess && _processCreated)
+                if (_serverProcess != null && _processCreated)
                 {
                     // null can happen if Dispose is called before ConnectAsync()
                     _serverProcess.Dispose();

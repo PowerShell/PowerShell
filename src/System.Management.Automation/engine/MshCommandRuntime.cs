@@ -2505,7 +2505,7 @@ namespace System.Management.Automation
                 {
                     varList = new ArrayList();
 
-                    if (null != oldValue && AutomationNull.Value != oldValue)
+                    if (oldValue != null && AutomationNull.Value != oldValue)
                     {
                         IEnumerable enumerable = LanguagePrimitives.GetEnumerable(oldValue);
                         if (enumerable != null)

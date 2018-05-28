@@ -466,9 +466,9 @@ namespace Microsoft.PowerShell.Commands
             ServiceController service,
             bool checkDuplicates)
         {
-            if (null != include && !Matches(service, include))
+            if (include != null && !Matches(service, include))
                 return;
-            if (null != exclude && Matches(service, exclude))
+            if (exclude != null && Matches(service, exclude))
                 return;
             if (checkDuplicates)
             {

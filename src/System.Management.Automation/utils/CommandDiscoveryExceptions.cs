@@ -171,7 +171,7 @@ namespace System.Management.Automation
             )
         {
             object[] a;
-            if (null != messageArgs && 0 < messageArgs.Length)
+            if (messageArgs != null && 0 < messageArgs.Length)
             {
                 a = new object[messageArgs.Length + 1];
                 a[0] = commandName;

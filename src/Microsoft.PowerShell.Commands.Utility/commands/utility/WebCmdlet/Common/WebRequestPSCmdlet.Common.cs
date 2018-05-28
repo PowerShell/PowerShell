@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands
                                                        "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
             }
-            if (!AllowUnencryptedAuthentication && (null != Credential || UseDefaultCredentials) && (Uri.Scheme != "https"))
+            if (!AllowUnencryptedAuthentication && (Credential != null || UseDefaultCredentials) && (Uri.Scheme != "https"))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired,
                                                        "WebCmdletAllowUnencryptedAuthenticationRequiredException");
@@ -549,7 +549,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // handle credentials
             //
-            if (null != Credential && Authentication == WebAuthenticationType.None)
+            if (Credential != null && Authentication == WebAuthenticationType.None)
             {
                 // get the relevant NetworkCredential
                 NetworkCredential netCred = Credential.GetNetworkCredential();
@@ -558,7 +558,7 @@ namespace Microsoft.PowerShell.Commands
                 // supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
             }
-            else if ((null != Credential || null!= Token) && Authentication != WebAuthenticationType.None)
+            else if ((Credential != null || null!= Token) && Authentication != WebAuthenticationType.None)
             {
                 ProcessAuthentication();
             }

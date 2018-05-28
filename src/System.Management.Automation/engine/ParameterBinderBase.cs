@@ -1742,7 +1742,7 @@ namespace System.Management.Automation
                                         null,
                                         valueElement);
                         }
-                        else if (null != collectionElementType && null != currentValueElement)
+                        else if (collectionElementType != null && null != currentValueElement)
                         {
                             Type currentValueElementType = currentValueElement.GetType();
                             Type desiredElementType = collectionElementType;

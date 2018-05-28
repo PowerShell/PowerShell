@@ -100,7 +100,7 @@ namespace System.Management.Automation
             Hashtable mapArgs = new Hashtable();
 
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && null != icer.ErrorRecord)
             {
                 mapArgs["ExceptionClass"] = exception.GetType().Name;
                 mapArgs["ErrorCategory"] = icer.ErrorRecord.CategoryInfo.Category;
@@ -221,7 +221,7 @@ namespace System.Management.Automation
             Hashtable mapArgs = new Hashtable();
 
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && null != icer.ErrorRecord)
             {
                 mapArgs["ExceptionClass"] = exception.GetType().Name;
                 mapArgs["ErrorCategory"] = icer.ErrorRecord.CategoryInfo.Category;
@@ -399,7 +399,7 @@ namespace System.Management.Automation
             mapArgs["ProviderName"] = providerName;
 
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && null != icer.ErrorRecord)
             {
                 mapArgs["ExceptionClass"] = exception.GetType().Name;
                 mapArgs["ErrorCategory"] = icer.ErrorRecord.CategoryInfo.Category;

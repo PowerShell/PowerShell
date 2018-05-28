@@ -251,7 +251,7 @@ namespace System.Management.Automation
             var context = SessionState != null
                               ? SessionState.ExecutionContext
                               : LocalPipeline.GetExecutionContextFromTLS();
-            if (null != context && context._debuggingMode > 0)
+            if (context != null && context._debuggingMode > 0)
             {
                 context.Debugger.CheckVariableRead(Name);
             }
@@ -262,7 +262,7 @@ namespace System.Management.Automation
             var context = SessionState != null
                               ? SessionState.ExecutionContext
                               : LocalPipeline.GetExecutionContextFromTLS();
-            if (null != context && context._debuggingMode > 0)
+            if (context != null && context._debuggingMode > 0)
             {
                 context.Debugger.CheckVariableWrite(Name);
             }

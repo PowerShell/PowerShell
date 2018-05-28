@@ -440,7 +440,7 @@ namespace System.Management.Automation.Internal
                 ObjectQueue.Enqueue(obj);
 
                 // This is the "streamlet" recursive call
-                if (null != _downstreamCmdlet && ObjectQueue.Count > OutBufferCount)
+                if (_downstreamCmdlet != null && ObjectQueue.Count > OutBufferCount)
                 {
                     _downstreamCmdlet.DoExecute();
                 }

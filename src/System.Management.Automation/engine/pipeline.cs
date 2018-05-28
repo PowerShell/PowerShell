@@ -187,7 +187,7 @@ namespace System.Management.Automation.Internal
         private string GetCommand(Exception exception)
         {
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && null != icer.ErrorRecord)
                 return GetCommand(icer.ErrorRecord.InvocationInfo);
 
             return "";

@@ -873,7 +873,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void ManageScriptException(RuntimeException e)
         {
-            if (null != Command && null != commandRuntime.PipelineProcessor)
+            if (Command != null && null != commandRuntime.PipelineProcessor)
             {
                 commandRuntime.PipelineProcessor.RecordFailure(e, Command);
 
@@ -892,7 +892,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void ForgetScriptException()
         {
-            if (null != Command && null != commandRuntime.PipelineProcessor)
+            if (Command != null && null != commandRuntime.PipelineProcessor)
             {
                 commandRuntime.PipelineProcessor.ForgetFailure();
             }

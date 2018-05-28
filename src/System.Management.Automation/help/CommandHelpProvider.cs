@@ -339,7 +339,7 @@ namespace System.Management.Automation
             }
 
             // Set the HelpFile property to the file that contains the help content
-            if (null != result && !String.IsNullOrEmpty(helpFile))
+            if (result != null && !String.IsNullOrEmpty(helpFile))
             {
                 if (isCmdlet)
                 {

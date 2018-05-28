@@ -73,7 +73,7 @@ namespace System.Management.Automation
             _providerInfo = provider;
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && null != icer.ErrorRecord)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, innerException);
             }
@@ -226,7 +226,7 @@ namespace System.Management.Automation
             }
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && null != icer.ErrorRecord)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, errorRecordException);
             }
@@ -559,7 +559,7 @@ namespace System.Management.Automation
             params object[] messageArgs)
         {
             object[] a;
-            if (null != messageArgs && 0 < messageArgs.Length)
+            if (messageArgs != null && 0 < messageArgs.Length)
             {
                 a = new object[messageArgs.Length + 1];
                 a[0] = itemName;

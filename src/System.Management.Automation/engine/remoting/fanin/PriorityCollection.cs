@@ -160,7 +160,7 @@ namespace System.Management.Automation.Remoting
                 causing an unhandled exception in finalize and a process crash.
                 Verify arrays and dataToBeSent objects before referencing.
             */
-            if (null != _dataSyncObjects && null != _dataToBeSent)
+            if (_dataSyncObjects != null && null != _dataToBeSent)
             {
                 int promptResponseIndex = (int)DataPriorityType.PromptResponse;
                 int defaultIndex = (int)DataPriorityType.Default;

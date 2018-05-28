@@ -889,7 +889,7 @@ namespace System.Management.Automation
             {
                 Type resultType = null;
                 builtinTypeAccelerators.TryGetValue(expectedKey, out resultType);
-                if (null != resultType && resultType == type)
+                if (resultType != null && resultType == type)
                 {
                     return expectedKey;
                 }

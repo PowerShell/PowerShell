@@ -472,7 +472,7 @@ namespace Microsoft.WSMan.Management
                     strPathCheck = strPathCheck + WSManStringLiterals.DefaultPathSeparator;
                     if (path.EndsWith(strPathCheck + WSManStringLiterals.containerResources, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (null != arrResources && arrResources.Count > 0)
+                        if (arrResources != null && arrResources.Count > 0)
                         {
                             return true;
                         }
@@ -512,7 +512,7 @@ namespace Microsoft.WSMan.Management
                                 {
                                     if (path.EndsWith(strPathCheck + WSManStringLiterals.containerSecurity, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        if (null != arrSecurities && arrSecurities.Count > 0)
+                                        if (arrSecurities != null && arrSecurities.Count > 0)
                                         {
                                             return true;
                                         }

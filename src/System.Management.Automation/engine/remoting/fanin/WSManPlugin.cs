@@ -1572,7 +1572,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails,
             WSManPluginErrorCodes errorCode)
         {
-            if (null != requestDetails &&
+            if (requestDetails != null &&
                 IntPtr.Zero != requestDetails.unmanagedHandle)
             {
                 wsmanPinvokeStatic.WSManPluginOperationComplete(

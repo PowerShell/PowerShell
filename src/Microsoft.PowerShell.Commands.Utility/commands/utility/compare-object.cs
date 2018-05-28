@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
             //   Return
             // 2005/07/19 Switched order of referenceEntry and differenceEntry
             //   so that we cast differenceEntry to the type of referenceEntry.
-            if (null != referenceEntry && null != differenceEntry &&
+            if (referenceEntry != null && null != differenceEntry &&
                 0 == _comparer.Compare(referenceEntry, differenceEntry))
             {
                 EmitMatch(referenceEntry);
