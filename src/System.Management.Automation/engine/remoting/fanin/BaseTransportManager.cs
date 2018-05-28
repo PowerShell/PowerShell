@@ -1516,7 +1516,7 @@ namespace System.Management.Automation.Remoting.Server
         /// <returns>The extracted tag converted from a base-64 string.</returns>
         internal static System.Byte[] ExtractEncodedXmlElement(String xmlBuffer, String xmlTag)
         {
-            if (xmlBuffer == null || null == xmlTag)
+            if (xmlBuffer == null || xmlTag == null)
                 return new System.Byte[1];
 
             // the inboundShellInformation is in Xml format as per the SOAP WSMan spec.

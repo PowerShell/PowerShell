@@ -3596,7 +3596,7 @@ namespace Microsoft.WSMan.Management
             }
             else
             { return; }
-            if (Objcache == null || null == Keyscache)
+            if (Objcache == null || Keyscache == null)
             {
                 return;
             }
@@ -3661,7 +3661,7 @@ namespace Microsoft.WSMan.Management
             }
             else
             { return; }
-            if (Objcache == null || null == Keyscache)
+            if (Objcache == null || Keyscache == null)
             {
                 return;
             }

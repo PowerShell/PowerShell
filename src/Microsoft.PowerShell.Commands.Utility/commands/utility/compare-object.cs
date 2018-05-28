@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.Commands
             OrderByPropertyEntry match,
             List<OrderByPropertyEntry> list)
         {
-            if (match == null || null == list)
+            if (match == null || list == null)
                 return null;
             Diagnostics.Assert(_comparer != null, "null comparer");
             for (int i = 0; i < list.Count; i++)
