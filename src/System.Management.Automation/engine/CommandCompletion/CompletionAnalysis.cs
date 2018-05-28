@@ -473,6 +473,16 @@ namespace System.Management.Automation
                         replacementLength = 0;
                         break;
 
+                    case TokenKind.Semi:
+                        // Handle scenarios such as 'gci | Format-Table @{Label=...;<tab>'
+                        if (lastAst is HashtableAst)
+                        {
+                            result = GetResultForHashtable(completionContext);
+                            replacementIndex += 1;
+                            replacementLength = 0;
+                        }
+                        break;
+
                     case TokenKind.Number:
                         // Handle scenarios such as Get-Process -Id 5<tab> || Get-Process -Id 5210, 3<tab> || Get-Process -Id: 5210, 3<tab>
                         if (lastAst is ConstantExpressionAst &&
@@ -537,10 +547,15 @@ namespace System.Management.Automation
                                 completionContext.ReplacementLength = replacementLength = 0;
                                 result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                             }
+                            else if (lastAst is HashtableAst hashTableAst && !(lastAst.Parent is DynamicKeywordStatementAst) && CheckForPendingAssignment(hashTableAst))
+                            {
+                                // Handle scenarios such as 'gci | Format-Table @{Label=<tab>' if incomplete parsing of the assignment.
+                                return null;
+                            }
                             else
                             {
-                                //
-                                // Handle auto completion for enum/dependson property of DSC resource,
+                                // Handle scenarios such as 'configuration foo { File ab { Attributes ='
+                                // (auto completion for enum/dependson property of DSC resource),
                                 // cursor is right after '=', '(' or '@('
                                 //
                                 // Configuration config
@@ -552,8 +567,7 @@ namespace System.Management.Automation
                                 //         DependsOn=(|
                                 //
                                 bool unused;
-                                result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty,
-                                    ref replacementIndex, ref replacementLength, out unused);
+                                result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                             }
                             break;
                         }
