@@ -104,7 +104,7 @@ namespace System.Management.Automation
     {
         internal LoopFlowException(string label)
         {
-            this.Label = label ?? "";
+            this.Label = label ?? string.Empty;
         }
 
         internal LoopFlowException(SerializationInfo info, StreamingContext context)

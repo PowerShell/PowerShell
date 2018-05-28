@@ -1652,7 +1652,7 @@ namespace System.Management.Automation
 
         internal static string NotNull(string s)
         {
-            return s ?? "";
+            return s ?? string.Empty;
         }
 
         private string GetInvocationTypeName()
