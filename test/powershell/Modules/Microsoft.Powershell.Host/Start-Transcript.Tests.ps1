@@ -140,7 +140,9 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $script = {
             Start-Transcript -Path $transcriptFilePath
             hostname
-            Stop-Transcript }
+            Stop-Transcript
+        }
+
         & $script
 
         Test-Path $transcriptFilePath | Should -BeTrue
@@ -153,7 +155,9 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Write-Information -Message $message -InformationAction Continue
-            Stop-Transcript }
+            Stop-Transcript
+        }
+
         & $script
 
         Test-Path $transcriptFilePath | Should -BeTrue
@@ -165,7 +169,9 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Write-Information -Message $message -InformationAction SilentlyContinue
-            Stop-Transcript }
+            Stop-Transcript
+        }
+
         & $script
 
         Test-Path $transcriptFilePath | Should -BeTrue
@@ -177,7 +183,9 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Write-Information -Message $message -InformationAction Ignore
-            Stop-Transcript }
+            Stop-Transcript
+        }
+
         & $script
 
         Test-Path $transcriptFilePath | Should -BeTrue
@@ -189,7 +197,9 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Write-Host -Message $message -InformationAction Continue
-            Stop-Transcript }
+            Stop-Transcript
+        }
+
         & $script
 
         Test-Path $transcriptFilePath | Should -BeTrue
@@ -201,7 +211,9 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Write-Host -Message $message -InformationAction SilentlyContinue
-            Stop-Transcript }
+            Stop-Transcript
+        }
+
         & $script
 
         Test-Path $transcriptFilePath | Should -BeTrue
@@ -213,7 +225,9 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $script = {
             Start-Transcript -Path $transcriptFilePath
             Write-Host -Message $message -InformationAction Ignore
-            Stop-Transcript }
+            Stop-Transcript
+        }
+
         & $script
 
         Test-Path $transcriptFilePath | Should -BeTrue
