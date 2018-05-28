@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
         // the empty prefix is used.
         private const string MatchPrefix = "> ";
         private const string ContextPrefix = "  ";
-        private const string EmptyPrefix = string.Empty;
+        private const string EmptyPrefix = "";
 
         /// <summary>
         /// Returns the string representation of this object. The format

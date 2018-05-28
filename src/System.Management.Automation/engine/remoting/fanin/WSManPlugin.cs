@@ -1594,7 +1594,7 @@ namespace System.Management.Automation.Remoting
         internal static void ReportOperationComplete(
             IntPtr requestDetails,
             WSManPluginErrorCodes errorCode,
-            string errorMessage = string.Empty)
+            string errorMessage = "")
         {
             if (IntPtr.Zero == requestDetails)
             {

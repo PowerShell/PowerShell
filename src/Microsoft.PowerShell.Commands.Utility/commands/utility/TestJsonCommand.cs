@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Test-Json command.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "Json", HelpUri = string.Empty)]
+    [Cmdlet(VerbsDiagnostic.Test, "Json", HelpUri = "")]
     public class TestJsonCommand : PSCmdlet
     {
         /// <summary>
