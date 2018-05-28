@@ -1628,7 +1628,7 @@ namespace System.Management.Automation
                                         currentValue.GetType(),
                                         ParameterBinderStrings.CannotExtractAddMethod,
                                         "CannotExtractAddMethod",
-                                        (getMethodError == null) ? "" : getMethodError.Message);
+                                        (getMethodError == null) ? string.Empty : getMethodError.Message);
                                 throw bindingException;
                             }
                         }

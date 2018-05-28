@@ -1492,7 +1492,7 @@ namespace System.Management.Automation
                 string delimiter =
                     (String.IsNullOrEmpty(typeName)
                      || String.IsNullOrEmpty(_errorId))
-                        ? "" : ",";
+                        ? string.Empty : ",";
                 return NotNull(_errorId) + delimiter + NotNull(typeName);
             }
         }

@@ -3862,8 +3862,8 @@ namespace System.Management.Automation.Language
             return string.Format(CultureInfo.InvariantCulture,
                                  "PSGetIndexBinder indexCount={0}{1}{2} ver:{3}",
                                  this.CallInfo.ArgumentCount,
-                                 _allowSlicing ? "" : " slicing disallowed",
-                                 _constraints == null ? "" : " constraints: " + _constraints,
+                                 _allowSlicing ? string.Empty : " slicing disallowed",
+                                 _constraints == null ? string.Empty : " constraints: " + _constraints,
                                  _version);
         }
 
@@ -4388,7 +4388,7 @@ namespace System.Management.Automation.Language
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture, "PSSetIndexBinder indexCnt={0}{1} ver:{2}",
-                CallInfo.ArgumentCount, _constraints == null ? "" : " constraints: " + _constraints, _version);
+                CallInfo.ArgumentCount, _constraints == null ? string.Empty : " constraints: " + _constraints, _version);
         }
 
         internal static void InvalidateCache()

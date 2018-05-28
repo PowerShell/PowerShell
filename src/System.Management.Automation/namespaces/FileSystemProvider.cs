@@ -257,9 +257,9 @@ namespace Microsoft.PowerShell.Commands
                 XmlDocument document = new XmlDocument();
                 CultureInfo currentUICulture = CultureInfo.CurrentUICulture;
                 string fullHelpPath = Path.Combine(
-                    string.IsNullOrEmpty(this.ProviderInfo.ApplicationBase) ? "" : this.ProviderInfo.ApplicationBase,
+                    string.IsNullOrEmpty(this.ProviderInfo.ApplicationBase) ? string.Empty : this.ProviderInfo.ApplicationBase,
                     currentUICulture.ToString(),
-                    string.IsNullOrEmpty(this.ProviderInfo.HelpFile) ? "" : this.ProviderInfo.HelpFile);
+                    string.IsNullOrEmpty(this.ProviderInfo.HelpFile) ? string.Empty : this.ProviderInfo.HelpFile);
 
                 XmlReaderSettings settings = new XmlReaderSettings();
                 settings.XmlResolver = null;

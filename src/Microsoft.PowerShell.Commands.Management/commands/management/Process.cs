@@ -347,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(resourceId,
                 processName,
                 processId,
-                (null == innerException) ? "" : innerException.Message);
+                (null == innerException) ? string.Empty : innerException.Message);
             ProcessCommandException exception =
                 new ProcessCommandException(message, innerException);
             exception.ProcessName = processName;
