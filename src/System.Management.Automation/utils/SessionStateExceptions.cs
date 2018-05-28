@@ -73,7 +73,7 @@ namespace System.Management.Automation
             _providerInfo = provider;
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
-            if (icer != null && null != icer.ErrorRecord)
+            if (icer != null && icer.ErrorRecord != null)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, innerException);
             }
@@ -226,7 +226,7 @@ namespace System.Management.Automation
             }
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
-            if (icer != null && null != icer.ErrorRecord)
+            if (icer != null && icer.ErrorRecord != null)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, errorRecordException);
             }

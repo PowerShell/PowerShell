@@ -1793,7 +1793,7 @@ namespace System.Management.Automation
                             // The inner exception to TargetInvocationException
                             // (if present) has a better Message
                             if (error is TargetInvocationException &&
-                                null != error.InnerException)
+                                error.InnerException != null)
                             {
                                 error = error.InnerException;
                             }
@@ -1890,7 +1890,7 @@ namespace System.Management.Automation
                         // The inner exception to TargetInvocationException
                         // (if present) has a better Message
                         if (error is TargetInvocationException &&
-                            null != error.InnerException)
+                            error.InnerException != null)
                         {
                             error = error.InnerException;
                         }

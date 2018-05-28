@@ -187,7 +187,7 @@ namespace System.Management.Automation.Internal
         private string GetCommand(Exception exception)
         {
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (icer != null && null != icer.ErrorRecord)
+            if (icer != null && icer.ErrorRecord != null)
                 return GetCommand(icer.ErrorRecord.InvocationInfo);
 
             return "";
@@ -1384,7 +1384,7 @@ namespace System.Management.Automation.Internal
                 // before hitting the error, therefore we check whether
                 // firstTerminatingError is PipelineStoppedException.
                 else if ((!(_firstTerminatingError.SourceException is PipelineStoppedException))
-                    && null != command && null != command.Context)
+                    && null != command && command.Context != null)
                 {
                     Exception ex = e;
                     while ((ex is TargetInvocationException || ex is CmdletInvocationException)
