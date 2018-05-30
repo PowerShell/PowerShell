@@ -900,12 +900,13 @@ namespace System.Management.Automation
             bool result = false;
             try
             {
-                result =  ItemExists(path, out bool unused);
+                result = ItemExists(path, out bool unused);
             }
             catch
             {
             }
-            return false;
+
+            return result;
         }
 
         internal static bool ItemExists(string path, out bool isDirectory)
