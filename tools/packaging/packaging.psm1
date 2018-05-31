@@ -613,7 +613,7 @@ function New-UnixPackage {
 
         # Break the version down into its components, we are interested in the major version
         $VersionMatch = [regex]::Match($Version, '(\d+)(?:.(\d+)(?:.(\d+)(?:-preview(?:.(\d+))?)?)?)?')
-        $MajorVersion = $VersionMatch.Groups[1]
+        $MajorVersion = $VersionMatch.Groups[1].Value
 
         # Suffix is used for side-by-side preview/release package installation
         $Suffix = if ($IsPreview) { $MajorVersion + "-preview" } else { $MajorVersion }
