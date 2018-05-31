@@ -617,10 +617,6 @@ function New-UnixPackage {
 
         # Suffix is used for side-by-side preview/release package installation
         $Suffix = if ($IsPreview) { $MajorVersion + "-preview" } else { $MajorVersion }
-        if (!$Suffix) {
-            Write-Verbose "Suffix not given, building primary PowerShell package!"
-            $Suffix = $packageVersion
-        }
 
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
