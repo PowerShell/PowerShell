@@ -983,7 +983,6 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "liblttng-ust0",
                 "libstdc++6",
-                "libunwind8",
                 "libuuid1",
                 "zlib1g"
             )
