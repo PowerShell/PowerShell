@@ -600,13 +600,23 @@ function New-UnixPackage {
             }
         }
 
+        # Determine if the version is a preview version
+        $IsPreview = $Version.Contains("-preview")
+
+        # Preview versions have preview in the name
+        $Name = if ($IsPreview) { "powershell-preview" } else { "powershell" }
+
         # Verify dependencies are installed and in the path
         Test-Dependencies
 
         $Description = $packagingStrings.Description
 
-        # Suffix is used for side-by-side package installation
-        $Suffix = $Name -replace "^powershell"
+        # Break the version down into its components, we are interested in the major version
+        $VersionMatch = [regex]::Match($Version, '(\d+)(?:.(\d+)(?:.(\d+)(?:-preview(?:.(\d+))?)?)?)?')
+        $MajorVersion = $VersionMatch.Groups[1]
+
+        # Suffix is used for side-by-side preview/release package installation
+        $Suffix = if ($IsPreview) { $MajorVersion + "-preview" } else { $MajorVersion }
         if (!$Suffix) {
             Write-Verbose "Suffix not given, building primary PowerShell package!"
             $Suffix = $packageVersion
@@ -627,9 +637,9 @@ function New-UnixPackage {
 
         # Destination for symlink to powershell executable
         $Link = if ($Environment.IsLinux) {
-            "/usr/bin/"
+            if ($IsPreview) { "/usr/bin/pwsh-preview" } else { "/usr/bin/pwsh" }
         } elseif ($Environment.IsMacOS) {
-            "/usr/local/bin/"
+            if ($IsPreview) { "/usr/local/bin/pwsh-preview" } else { "/usr/local/bin/pwsh" }
         }
         $linkSource = "/tmp/pwsh"
 
