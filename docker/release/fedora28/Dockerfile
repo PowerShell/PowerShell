@@ -1,10 +1,10 @@
-# Docker image file that describes an fedora 25 image with PowerShell installed from Microsoft YUM Repo
-ARG FromTag=26
+# Docker image file that describes an fedora 28 image with PowerShell installed from Microsoft YUM Repo
+ARG FromTag=28
 
 FROM fedora:${FromTag}
 
 ARG POWERSHELL_VERSION=6.0.2
-ARG IMAGE_NAME=microsoft/powershell:fedora26
+ARG IMAGE_NAME=microsoft/powershell:fedora28
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
       readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md" \
@@ -27,6 +27,7 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
 RUN dnf install -y \
         curl \
         glibc-locale-source \
+        compat-openssl10 \
     && dnf upgrade-minimal -y --security \
     && dnf clean all
 
