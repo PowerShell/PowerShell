@@ -16,6 +16,10 @@
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
 
+  <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
+    <Compile Remove="WindowsTaskbarJumpList\*.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Remove="singleshell\installer\EngineInstaller.cs" />
     <Compile Remove="singleshell\installer\MshHostMshSnapin.cs" />

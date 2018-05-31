@@ -25,7 +25,6 @@ using System.Management.Automation.Language;
 
 using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using NakedWin32Handle = System.IntPtr;
 using System.Management.Automation.Tracing;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
@@ -119,6 +118,10 @@ namespace Microsoft.PowerShell
                     Thread.Sleep(1000);
                 }
             }
+#endif
+
+#if !UNIX
+            Microsoft.PowerShell.TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
 #endif
 
             // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
@@ -1350,7 +1353,7 @@ namespace Microsoft.PowerShell
 
         private uint Run(CommandLineParameterParser cpp, bool isPrestartWarned)
         {
-            Dbg.Assert(null != cpp, "CommandLine parameter parser cannot be null.");
+            Dbg.Assert(cpp != null, "CommandLine parameter parser cannot be null.");
             uint exitCode = ExitCodeSuccess;
 
             do
