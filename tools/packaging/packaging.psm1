@@ -979,7 +979,6 @@ function Get-PackageDependencies
         if ($Environment.IsUbuntu -or $Environment.IsDebian) {
             $Dependencies = @(
                 "libc6",
-                "libcurl3",
                 "libgcc1",
                 "libgssapi-krb5-2",
                 "liblttng-ust0",
@@ -990,12 +989,12 @@ function Get-PackageDependencies
             )
 
             switch ($Distribution) {
-                "ubuntu.14.04" { $Dependencies += @("libssl1.0.0", "libicu52") }
-                "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
-                "ubuntu.17.10" { $Dependencies += @("libssl1.0.0", "libicu57") }
-                "ubuntu.18.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
-                "debian.8" { $Dependencies += @("libssl1.0.0", "libicu52") }
-                "debian.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
+                "ubuntu.14.04" { $Dependencies += @("libssl1.0.0", "libicu52", "libcurl3" ) }
+                "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55", "libcurl3") }
+                "ubuntu.17.10" { $Dependencies += @("libssl1.0.0", "libicu57", "libcurl3") }
+                "ubuntu.18.04" { $Dependencies += @("libssl1.0.0", "libicu60", "libcurl4") }
+                "debian.8" { $Dependencies += @("libssl1.0.0", "libicu52", "libcurl3") }
+                "debian.9" { $Dependencies += @("libssl1.0.2", "libicu57", "libcurl3") }
                 default { throw "Debian distro '$Distribution' is not supported." }
             }
         } elseif ($Environment.IsRedHatFamily) {
