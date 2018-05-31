@@ -24,18 +24,14 @@ function VerifyFailingTest
     )
 
     $backupEAP = $script:ErrorActionPreference
-    $script:ErrorActionPreference = "Stop"
-
-    try {
-        & $sb
-        throw "Expected FullyQualifiedErrorId: $expectedFqeid"
-    }
-    catch {
-        $_.FullyQualifiedErrorId | Should Be $expectedFqeid
-    }
-    finally {
-        $script:ErrorActionPreference = $backupEAP
-    }
+    {
+        $script:ErrorActionPreference = "Stop"
+        try {
+            & $sb
+        } finally {
+             $script:ErrorActionPreference = $backupEAP
+        }
+    } | Should -Throw -ErrorId $expectedFqeid
 }
 
 try {
@@ -49,11 +45,11 @@ try {
         It "Test command presence" {
             $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
 
-            $result -contains "New-LocalGroup" | Should Be $true
-            $result -contains "Set-LocalGroup" | Should Be $true
-            $result -contains "Get-LocalGroup" | Should Be $true
-            $result -contains "Rename-LocalGroup" | Should Be $true
-            $result -contains "Remove-LocalGroup" | Should Be $true
+            $result | Should -Contain 'New-LocalGroup'
+            $result | Should -Contain 'Set-LocalGroup'
+            $result | Should -Contain 'Get-LocalGroup'
+            $result | Should -Contain 'Rename-LocalGroup'
+            $result | Should -Contain 'Remove-LocalGroup'
         }
     }
 
@@ -68,8 +64,8 @@ try {
         It "Creates New-LocalGroup using only name" {
             $result = New-LocalGroup -Name TestGroupAddRemove
 
-            $result.Name | Should BeExactly TestGroupAddRemove
-            $result.ObjectClass | Should Be Group
+            $result.Name | Should -BeExactly 'TestGroupAddRemove'
+            $result.ObjectClass | Should -BeExactly 'Group'
         }
     }
 
@@ -84,10 +80,10 @@ try {
         It "Creates New-LocalGroup with name and description" {
             $result = New-LocalGroup -Name TestGroupAddRemove -Description "Test Group New 1 Description"
 
-            $result.Name | Should BeExactly TestGroupAddRemove
-            $result.Description | Should BeExactly "Test Group New 1 Description"
-            $result.SID | Should Not BeNullOrEmpty
-            $result.ObjectClass | Should Be Group
+            $result.Name | Should -BeExactly 'TestGroupAddRemove'
+            $result.Description | Should -BeExactly "Test Group New 1 Description"
+            $result.SID | Should -Not -BeNullOrEmpty
+            $result.ObjectClass | Should -BeExactly 'Group'
         }
 
         It "Errors on New-LocalGroup with name collision" {
@@ -103,10 +99,10 @@ try {
             try {
                 $result = New-LocalGroup -Name $sidName
 
-                $result | Should Not BeNullOrEmpty
-                $result.Name | Should BeExactly $sidName
-                $result.SID | Should Not BeExactly $sidName
-                $result.ObjectClass | Should Be Group
+                $result | Should -Not -BeNullOrEmpty
+                $result.Name | Should -BeExactly $sidName
+                $result.SID | Should -Not -BeExactly $sidName
+                $result.ObjectClass | Should -BeExactly 'Group'
             }
             finally {
                 RemoveTestGroups -basename $sidName
@@ -125,10 +121,10 @@ try {
             try {
                 $result = New-LocalGroup -Name $nameMax -Description $desc
 
-                $result.Name | Should BeExactly $nameMax
-                $result.Description | Should BeExactly $desc
-                $result.SID | Should Not BeNullOrEmpty
-                $result.ObjectClass | Should Be Group
+                $result.Name | Should -BeExactly $nameMax
+                $result.Description | Should -BeExactly $desc
+                $result.SID | Should -Not -BeNullOrEmpty
+                $result.ObjectClass | Should -BeExactly 'Group'
             }
             finally {
                 RemoveTestGroups -basename $nameMax
@@ -140,11 +136,8 @@ try {
             $desc = "D"*129
 
             try {
-                $shouldBeNull = New-LocalGroup -Name $name -Description $desc
-                throw "An error was expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.NewLocalGroupCommand"
+                {$shouldBeNull = New-LocalGroup -Name $name -Description $desc} |
+                    Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.NewLocalGroupCommand"
             }
             finally {
                 #clean up erroneous creation
@@ -156,7 +149,7 @@ try {
             $descMax = "Test Group Add Description that is longer than 48 characters"
             $result = New-LocalGroup -Name TestGroupAddRemove -Description $descMax
 
-            $result.Description | Should BeExactly $descMax
+            $result.Description | Should -BeExactly $descMax
         }
 
         It "Errors on Invalid characters" {
@@ -185,7 +178,7 @@ try {
             }
 
             if ($failedCharacters.Count -gt 0) { Write-Host "characters causing test fail: $failedCharacters" }
-            $failedCharacters.Count -eq 0 | Should Be true
+            $failedCharacters | Should -HaveCount 0
         }
 
         It "Error on names containing only spaces" {
@@ -245,9 +238,9 @@ try {
         It "Can Get-LocalGroup by specific group name" {
             $result = Get-LocalGroup TestGroupGet1
 
-            $result.Name | Should Be "TestGroupGet1"
-            $result.Description | Should Be "Test Group Get 1 Description"
-            $result.ObjectClass | Should Be "Group"
+            $result.Name | Should -BeExactly "TestGroupGet1"
+            $result.Description | Should -BeExactly "Test Group Get 1 Description"
+            $result.ObjectClass | Should -BeExactly "Group"
         }
     }
 
@@ -270,38 +263,38 @@ try {
         It "Can Get-LocalGroup of all groups"  {
             $result = Get-LocalGroup
 
-            $result.Count -gt 2 | Should Be true
+            $result.Count | Should -BeGreaterThan 2
         }
 
         It "Can Get-LocalGroup of a specific group by SID" {
             $result = Get-LocalGroup TestGroupGet1
             $resultBySID = Get-LocalGroup -SID $result.SID
 
-            $resultBySID.SID | Should Not BeNullOrEmpty
-            $resultBySID.Name | Should Be TestGroupGet1
+            $resultBySID.SID | Should -Not -BeNullOrEmpty
+            $resultBySID.Name | Should -BeExactly 'TestGroupGet1'
         }
 
         It "Can Get-LocalGroup of a well-known group by SID string" {
             $sid = New-Object System.Security.Principal.SecurityIdentifier -ArgumentList BG
             $guestGroup = Get-LocalGroup -SID BG
 
-            $guestGroup.SID | Should Be $sid.Value
+            $guestGroup.SID | Should -Be $sid.Value
         }
 
         It "Can Get-LocalGroup by wildcard" {
             $result = Get-LocalGroup TestGroupGet*
 
-            $result.Count -eq 2 | Should Be true
-            $result.Name -contains "TestGroupGet1" | Should Be true
-            $result.Name -contains "TestGroupGet2" | Should Be true
+            $result | Should -HaveCount 2
+            $result.Name | Should -Contain 'TestGroupGet1'
+            $result.Name | Should -Contain 'TestGroupGet2'
         }
 
         It "Can Get-LocalGroup gets by array of names" {
             $result = Get-LocalGroup @("TestGroupGet1", "TestGroupGet2")
 
-            $result.Count -eq 2 | Should Be true
-            $result.Name -contains "TestGroupGet1" | Should Be true
-            $result.Name -contains "TestGroupGet2" | Should Be true
+            $result | Should -HaveCount 2
+            $result.Name | Should -Contain 'TestGroupGet1'
+            $result.Name | Should -Contain 'TestGroupGet2'
         }
 
         It "Can Get-LocalGroups by array of SIDs" {
@@ -309,18 +302,18 @@ try {
             $sid2 = (Get-LocalGroup TestGroupGet2).SID
             $result = Get-LocalGroup -SID @($sid1, $sid2)
 
-            $result.Count -eq 2 | Should Be true
-            $result.Name -contains "TestGroupGet1" | Should Be true
-            $result.Name -contains "TestGroupGet2" | Should Be true
+            $result | Should -HaveCount 2
+            $result.Name | Should -Contain 'TestGroupGet1'
+            $result.Name | Should -Contain 'TestGroupGet2'
         }
 
         It "Can Get-LocalGroups by pipe of an array of Group objects" {
             $testGroups = Get-LocalGroup TestGroupGet*
             $result = @($testGroups, $testGroups) | Get-LocalGroup
 
-            $result.Count -eq 4 | Should Be true
-            $result.Name -contains "TestGroupGet1" | Should Be true
-            $result.Name -contains "TestGroupGet2" | Should Be true
+            $result | Should -HaveCount 4
+            $result.Name | Should -Contain 'TestGroupGet1'
+            $result.Name | Should -Contain 'TestGroupGet2'
         }
 
         It "Can respond to -ErrorAction Stop" {
@@ -335,13 +328,13 @@ try {
             if ($null -eq $result)
             {
                 # Force failing the test because an unexpected outcome occurred
-                $false | Should Be $true
+                $false | Should -BeTrue
             }
             else
             {
-                $result[0] -eq 1 | Should Be true
-                $result[1] -match "GroupNotFound" | Should Be true
-                $result[2] -match "TestGroupGet1" | Should Be true
+                $result[0] | Should -Be 1
+                $result[1] | Should -MatchExactly "GroupNotFound"
+                $result[2] | Should -MatchExactly "TestGroupGet1"
             }
         }
 
@@ -365,7 +358,7 @@ try {
             $localGroupName = 'TestGroupGetNameThatDoesntExist'
             $result = (Get-LocalGroup $localGroupName*).Count
 
-            $result -eq 0 | Should Be true
+            $result | Should -Be 0
         }
     }
 
@@ -394,7 +387,7 @@ try {
             Set-LocalGroup -Name TestGroupSet1 -Description "Test Group Set 1 new description"
             $result = Get-LocalGroup -Name TestGroupSet1
 
-            $result.Description | Should BeExactly "Test Group Set 1 new description"
+            $result.Description | Should -BeExactly "Test Group Set 1 new description"
         }
     }
 
@@ -423,7 +416,7 @@ try {
             Set-LocalGroup -SID $group1SID -Description "Test Group Set 1 newer description"
             $result = Get-LocalGroup -Name TestGroupSet1
 
-            $result.Description | Should BeExactly "Test Group Set 1 newer description"
+            $result.Description | Should -BeExactly "Test Group Set 1 newer description"
         }
 
         It "Can Set-LocalGroup using -InputObject" {
@@ -431,14 +424,14 @@ try {
             Set-LocalGroup -InputObject $group -Description "Test Group Set 1 newer still description"
             $result = Get-LocalGroup TestGroupSet1
 
-            $result.Description | Should BeExactly "Test Group Set 1 newer still description"
+            $result.Description | Should -BeExactly "Test Group Set 1 newer still description"
         }
 
         It "Can Set-LocalGroup using pipeline" {
             Get-LocalGroup TestGroupSet1 | Set-LocalGroup -Description "Test Group Set 1 newer still description"
             $result = Get-LocalGroup TestGroupSet1
 
-            $result.Description | Should BeExactly "Test Group Set 1 newer still description"
+            $result.Description | Should -BeExactly "Test Group Set 1 newer still description"
         }
 
         It "Errors on Set-LocalGroup without specifying a Group" {
@@ -468,7 +461,7 @@ try {
             Set-LocalGroup -Name TestGroupSet1 -Description $desc
             $result = Get-LocalGroup -Name TestGroupSet1
 
-            $result.Description | Should BeExactly $desc
+            $result.Description | Should -BeExactly $desc
         }
     }
 
@@ -501,11 +494,11 @@ try {
         }
 
         It "Can Rename-LocalGroup using a valid group name" {
-            $group1SID | Should Not BeNullOrEmpty
+            $group1SID | Should -Not -BeNullOrEmpty
             Rename-LocalGroup TestGroupRename1 TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
 
-            $result.Name | Should BeExactly TestGroupRename1x
+            $result.Name | Should -BeExactly 'TestGroupRename1x'
         }
     }
 
@@ -538,28 +531,28 @@ try {
         }
 
         It "Can Rename-LocalGroup using a valid group SID" {
-            $group1SID | Should Not BeNullOrEmpty
+            $group1SID | Should -Not -BeNullOrEmpty
             Rename-LocalGroup -SID $group1SID TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
 
-            $result.Name | Should BeExactly TestGroupRename1x
+            $result.Name | Should -BeExactly 'TestGroupRename1x'
         }
 
         It "Can Rename-LocalGroup using a valid group -InputObject" {
-            $group1SID | Should Not BeNullOrEmpty
+            $group1SID | Should -Not -BeNullOrEmpty
             $group = Get-LocalGroup TestGroupRename1
             Rename-LocalGroup -InputObject $group -NewName TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
 
-            $result.Name | Should BeExactly TestGroupRename1x
+            $result.Name | Should -BeExactly 'TestGroupRename1x'
         }
 
         It "Can Rename-LocalGroup using a valid group sent using pipeline" {
-            $group1SID | Should Not BeNullOrEmpty
+            $group1SID | Should -Not -BeNullOrEmpty
             Get-LocalGroup TestGroupRename1 | Rename-LocalGroup -NewName TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
 
-            $result.Name | Should BeExactly TestGroupRename1x
+            $result.Name | Should -BeExactly 'TestGroupRename1x'
         }
 
         It "Errors on Rename-LocalGroup without specifying a Group" {
@@ -595,8 +588,8 @@ try {
             $group1Name = (Get-LocalGroup -SID $group1SID).Name
             $group2Name = (Get-LocalGroup -SID $group2SID).Name
 
-            $group1Name | Should BeExactly TestGroupRename1
-            $group2Name | Should BeExactly $newName
+            $group1Name | Should -BeExactly 'TestGroupRename1'
+            $group2Name | Should -BeExactly $newName
         }
 
         It "Errors on Invalid characters" {
@@ -627,7 +620,7 @@ try {
 
             #Assert
             if ($failedCharacters.Count -gt 0) { Write-Host "characters causing test fail: $failedCharacters" }
-            $failedCharacters.Count -eq 0 | Should Be true
+            $failedCharacters | Should -HaveCount 0
         }
 
         It "Error on names containing only spaces" {
@@ -668,7 +661,7 @@ try {
             Rename-LocalGroup TestGroupRename1 $newName
             $result = Get-LocalGroup -SID $group1SID
 
-            $result.Name | Should BeExactly $newName
+            $result.Name | Should -BeExactly $newName
         }
 
         It "Errors on Rename-LocalGroup using a valid group name over max length 256" {
@@ -678,7 +671,7 @@ try {
             }
             VerifyFailingTest $sb "InvalidName,Microsoft.PowerShell.Commands.RenameLocalGroupCommand"
 
-            (Get-LocalGroup -SID $group1SID).Name | Should BeExactly TestGroupRename1
+            (Get-LocalGroup -SID $group1SID).Name | Should -BeExactly 'TestGroupRename1'
         }
     }
 
@@ -705,10 +698,10 @@ try {
 
         It "Can Remove-LocalGroup by name" {
             $initialCount = (Get-LocalGroup).Count
-            $initialCount -gt 1 | Should Be true
+            $initialCount | Should -BeGreaterThan 1
 
             $removeResult = Remove-LocalGroup TestGroupRemove1 2>&1
-            $removeResult | Should BeNullOrEmpty
+            $removeResult | Should -BeNullOrEmpty
 
             $sb = {
                 Get-LocalGroup -SID $group1SID
@@ -716,7 +709,7 @@ try {
             VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.GetLocalGroupCommand"
 
             $finalCount = (Get-LocalGroup).Count
-            $initialCount -eq $finalCount + 1 | Should Be true
+            $initialCount | Should -Be ($finalCount + 1)
         }
     }
 
@@ -732,7 +725,7 @@ try {
                         [scriptblock]$removalAction
                     )
                     $initialCount = (Get-LocalGroup).Count
-                    $initialCount -gt 1 | Should Be true
+                    $initialCount | Should -BeGreaterThan 1
 
                     & $removalAction
 
@@ -742,7 +735,7 @@ try {
                     VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.GetLocalGroupCommand"
 
                     $finalCount = (Get-LocalGroup).Count
-                    $initialCount -eq $finalCount + 1 | Should Be true
+                    $initialCount | Should -Be ($finalCount + 1)
                 }
 
                 function VerifyArrayRemoval {
@@ -750,7 +743,7 @@ try {
                         [scriptblock]$removalAction
                     )
                     $initialCount = (Get-LocalGroup).Count
-                    $initialCount -gt 1 | Should Be $true
+                    $initialCount | Should -BeGreaterThan 1
 
                     & $removalAction
 
@@ -765,7 +758,7 @@ try {
                     VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.GetLocalGroupCommand"
 
                     $finalCount = (Get-LocalGroup).Count
-                    $initialCount -eq $finalCount + 2 | Should Be $true
+                    $initialCount | Should -Be ($finalCount + 2)
                 }
             }
         }
@@ -788,7 +781,7 @@ try {
         It "Can Remove-LocalGroup by SID" {
             $sb = {
                 $removeResult = Remove-LocalGroup -SID $group1SID 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyBasicRemoval $sb
         }
@@ -797,7 +790,7 @@ try {
             $sb = {
                 $group = Get-LocalGroup TestGroupRemove1
                 $removeResult = Remove-LocalGroup -InputObject $group 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyBasicRemoval $sb
         }
@@ -805,7 +798,7 @@ try {
         It "Can Remove-LocalGroup using pipeline" {
             $sb = {
                 $removeResult = Get-LocalGroup TestGroupRemove1 | Remove-LocalGroup 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyBasicRemoval $sb
         }
@@ -813,7 +806,7 @@ try {
         It "Can Remove-LocalGroup by array of names" {
             $sb = {
                 $removeResult = Remove-LocalGroup @("TestGroupRemove1","TestGroupRemove2") 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }
@@ -821,7 +814,7 @@ try {
         It "Can Remove-LocalGroup by array of SIDs" {
             $sb = {
                 $removeResult = Remove-LocalGroup -SID @($group1SID, $group2SID) 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }
@@ -830,7 +823,7 @@ try {
             $sb = {
                 $groups = Get-LocalGroup -Name @("TestGroupRemove1","TestGroupRemove2")
                 $removeResult = Remove-LocalGroup -InputObject $groups 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }
@@ -838,7 +831,7 @@ try {
         It "Can Remove-LocalGroup by array using pipeline" {
             $sb = {
                 $removeResult = Get-LocalGroup -Name @("TestGroupRemove1","TestGroupRemove2") | Remove-LocalGroup 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }
@@ -852,10 +845,10 @@ try {
             New-LocalUser TestUserRemove1 -NoPassword | Out-Null
             Add-LocalGroupMember TestGroupRemove1 -Member TestUserRemove1 | Out-Null
             $initialCount = (Get-LocalGroup).Count
-            $initialCount -gt 1 | Should Be true
+            $initialCount | Should -BeGreaterThan 1
 
             $removeResult = Remove-LocalGroup TestGroupRemove1 2>&1
-            $removeResult | Should BeNullOrEmpty
+            $removeResult | Should -BeNullOrEmpty
 
             #clean-up
             Remove-LocalUser TestUserRemove1 | Out-Null
@@ -866,12 +859,12 @@ try {
             VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.GetLocalGroupCommand"
 
             $finalCount = (Get-LocalGroup).Count
-            $initialCount -eq $finalCount + 1 | Should Be true
+            $initialCount | Should -Be ($finalCount + 1)
         }
 
         It "Errors on Remove-LocalGroup by invalid name" {
             $initialCount = (Get-LocalGroup).Count
-            $initialCount -gt 1 | Should Be true
+            $initialCount | Should -BeGreaterThan 1
 
             $sb = {
                 Remove-LocalGroup TestGroupRemove1NameThatDoesntExist
@@ -879,12 +872,12 @@ try {
             VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupCommand"
 
             $finalCount = (Get-LocalGroup).Count
-            $initialCount -eq $finalCount | Should Be true
+            $initialCount | Should -Be $finalCount
         }
 
         It "Errors on Remove-LocalGroup by invalid SID" {
             $initialCount = (Get-LocalGroup).Count
-            $initialCount -gt 1 | Should Be true
+            $initialCount | Should -BeGreaterThan 1
 
             $sb = {
                 Remove-LocalGroup -SID $group1SID
@@ -893,7 +886,7 @@ try {
             VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupCommand"
 
             $finalCount = (Get-LocalGroup).Count
-            $initialCount -eq $finalCount + 1 | Should Be $true
+            $initialCount | Should -Be ($finalCount + 1)
         }
 
         It "Can respond to -ErrorAction Stop" {
@@ -908,8 +901,8 @@ try {
             }
 
             # Confirm that the expected errors were caught
-            $errCount | Should Be 2
-            $fqeid | Should Be "GroupNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupCommand"
+            $errCount | Should -Be 2
+            $fqeid | Should -BeExactly "GroupNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupCommand"
 
             # confirm that the first group was removed
             $sb = {
