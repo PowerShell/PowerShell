@@ -983,7 +983,6 @@ function Get-PackageDependencies
                 "libgssapi-krb5-2",
                 "liblttng-ust0",
                 "libstdc++6",
-                "libuuid1",
                 "zlib1g"
             )
 
@@ -998,8 +997,6 @@ function Get-PackageDependencies
             }
         } elseif ($Environment.IsRedHatFamily) {
             $Dependencies = @(
-                "libunwind",
-                "libcurl",
                 "openssl-libs",
                 "libicu"
             )
