@@ -349,6 +349,11 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
         }
     }
 
+    It "Measure-Object with multiple lines should work"{
+        $result = "123`n4" | Measure-Object -Line
+        $result.Lines | Should -Be 2
+    }
+
     It "Measure-Object with ScriptBlock properties should work" {
         $result = 1..10 | Measure-Object -Sum -Average -Minimum -Maximum -Property {$_ * 10}
         $result.Count    | Should -Be 10
@@ -360,8 +365,8 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
     }
 
     It "Measure-Object with ScriptBlock properties should work with -word" {
-        $result = "a,b,c" | Measure-Object -Word  {$_ -split ','}
-        $result.Words | Should -Be 3
+        $result = "a,b,c", "d,e" | Measure-Object -Word  {$_ -split ','}
+        $result.Words | Should -Be 5
     }
 
     It "Measure-Object ScriptBlock properties should be able to transform input" {
@@ -381,11 +386,13 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
         $result = $htables | Measure-Object -Sum {$_.foo * 10 }
         $result.Sum | Should -Be 140
     }
+}
 
-    #
-    # Since PSPropertyExtression is now a public type, this function is used to test its
-    # operation as a parameter on a PowerShell function, independent of Measure-Object
-    #
+# Since PSPropertyExpression is now a public type, it can be tested
+# directly, independent of the Measure-Object cmdlet
+Describe "Directly test the PSPropertyExpression type" -Tags "CI" {
+    # this function is used to test the use of PSPropertyExpression
+    # as a parameter in script,
     function Test-PSPropertyExpression {
         [CmdletBinding()]
         param (
@@ -414,9 +421,5 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
         # Count the number of 'e's in the words.
         $result = "one", "two", "three", "four", "five" | Test-PSPropertyExpression {($_.ToCharArray() -match 'e').Count}
         $result | Should -Be 4
-    }
-    It "Measure-Object with multiple lines should work"{
-        $result = "123`n4" | Measure-Object -Line
-        $result.Lines | Should -Be 2
     }
 }
