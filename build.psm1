@@ -1438,7 +1438,8 @@ function Start-PSxUnit {
 
             $requiredDependencies = @(
                 $nativeLib,
-                "$Content/Microsoft.Management.Infrastructure.dll"
+                "$Content/Microsoft.Management.Infrastructure.dll",
+                "$Content/System.Text.Encoding.CodePages.dll"
             )
 
             if((Test-Path $requiredDependencies) -notcontains $false)
