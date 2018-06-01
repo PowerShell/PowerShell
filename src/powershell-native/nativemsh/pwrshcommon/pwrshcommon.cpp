@@ -671,7 +671,6 @@ namespace NativeMsh
         "Microsoft.ApplicationInsights",
         "Microsoft.CodeAnalysis.CSharp",
         "Microsoft.CodeAnalysis",
-        "Microsoft.CodeAnalysis.VisualBasic",
         "Microsoft.CSharp",
         "Microsoft.DiaSymReader.Native.amd64",
         "Microsoft.Management.Infrastructure",
