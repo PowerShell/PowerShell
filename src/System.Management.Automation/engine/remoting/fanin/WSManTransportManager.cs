@@ -1526,6 +1526,15 @@ namespace System.Management.Automation.Remoting.Client
                 // config provider.
                 SetWSManSessionOption(WSManNativeApi.WSManSessionOption.WSMAN_OPTION_USE_SSL, 1);
             }
+
+#if UNIX
+            // explicitly disallow Basic auth over HTTP on Unix.
+            if (connectionInfo.AuthenticationMechanism == AuthenticationMechanism.Basic && !isSSLSpecified)
+            {
+                throw new PSRemotingTransportException(PSRemotingErrorId.ConnectFailed, RemotingErrorIdStrings.BasicAuthOverHttpNotSupported);
+            }
+#endif
+
             if (connectionInfo.NoEncryption)
             {
                 // send unencrypted messages

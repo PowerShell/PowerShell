@@ -46,6 +46,6 @@ Describe "New-ModuleManifest tests" -tags "CI" {
     It "Relative URIs are not allowed" {
         $testUri = [Uri]"../foo"
 
-        { New-ModuleManifest -Path $testModulePath -ProjectUri $testUri -LicenseUri $testUri -IconUri $testUri } | ShouldBeErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.NewModuleManifestCommand"
+        { New-ModuleManifest -Path $testModulePath -ProjectUri $testUri -LicenseUri $testUri -IconUri $testUri } | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.NewModuleManifestCommand"
     }
 }

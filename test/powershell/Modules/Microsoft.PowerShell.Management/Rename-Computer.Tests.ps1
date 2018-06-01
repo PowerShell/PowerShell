@@ -65,7 +65,7 @@ try
             It "Renaming '<OldName>' to '<NewName>' creates the right error" -testcase $testcases {
                 param ( $OldName, $NewName, $ExpectedError )
                 Set-TesthookResult -testhookName $RenameResultName -value 0x1
-                { Rename-Computer -ComputerName $OldName -NewName $NewName -ErrorAction Stop } | ShouldBeErrorId $ExpectedError
+                { Rename-Computer -ComputerName $OldName -NewName $NewName -ErrorAction Stop } | Should -Throw -ErrorId $ExpectedError
             }
         }
     }

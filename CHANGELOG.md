@@ -1,5 +1,93 @@
 # Changelog
 
+## v6.1.0-preview.2 - 2018-04-27
+
+### Breaking Changes
+
+- Remove support for file to opt-out of telemetry, only support environment variable (#6601)
+- Simplify the installation paths the MSI uses (#6442)
+
+### Engine Updates and Fixes
+
+- Fix running `pwsh` produced from `dotnet build` (#6549)
+- Remove the `FullCLR-only` symbol-info related code from `EventManager.cs` (#6563)
+- Improve `PSMethod-to-Delegate` conversion (#6570)
+- Fix `PsUtils.GetManModule()` to avoid infinite loop when there was no main module (#6358)
+- Fix error in windows environment provider when the environment variable has duplicates that differ only by case (#6489) (Thanks @mklement0!)
+- Make sure that the width of the header is at least the size of the label (or property name) (#6487)
+- Enable `[Environment]::OSVersion` to return current OS rather than compatible version (#6457)
+- Change the `SaveError` method in Parser to use `nameof` for error ids (#6498)
+- Fix error when `Format-Wide -AutoSize | Out-String` is called (#6491) (Thanks @stknohg!)
+- Make `LanguagePrimitive.GetEnumerable` treat `DataTable` as Enumerable (#6511)
+- Fix formatting of tables where headers span multiple rows (#6504)
+- Improve performance of parsing `RegexOption` for `-split` by using `if` branches (#6605) (Thanks @iSazonov!)
+- Enable specifying `sshd` subsystem to use via `-Subsystem` (#6603)
+- Add some optimizations in formatting subsystem (#6678) (Thanks @iSazonov!)
+- Throw better parsing error when statements should be put in named block (#6434)
+- Use `Unregister-Event` to remove an event subscriber when removing `PSEdit` function (#6449)
+- Make the `PSISERemoteSessionOpenFile` a support event (#6582)
+- Add `-WorkingDirectory` parameter to `pwsh` (#6612)
+- Support importing module paths that end in trailing directory separator (#6602)
+- Formatting: Use cache for dash padding strings for tables (#6625) (Thanks @iSazonov!)
+- Port Windows PowerShell AppLocker and DeviceGuard `UMCI` application white listing support (#6133)
+- Reduce allocations in `TableWriter` (#6648) (Thanks @iSazonov!)
+
+### General Cmdlet Updates and Fixes
+
+- Add `-Resume` Feature to WebCmdlets (#6447) (Thanks @markekraus!)
+- Support `user@host:port` syntax for `SSH` transport (#6558)
+- Add ported `Test-Connection` cmdlet (#5328) (Thanks @iSazonov!)
+- Added line break to Access-Denied error message (#6607)
+- Some fixes in `Get-Date -UFormat` (#6542) (Thanks @iSazonov!)
+- Added check for existence of Location HTTP header before using it (#6560) (Thanks @ffeldhaus!)
+- Enable `Update-Help` to save help content in user scope by default (#6352)
+- Update `Enable-PSRemoting` to create PowerShell.6 endpoint and version specific endpoint (#6519, #6630)
+- Update error message that `Disconnect-PSSession` is only supported with `WSMan` (#6689)
+- Make `Export-FormatData` print pretty XML output (#6691) (Thanks @iSazonov!)
+- Add `-AsArray` parameter to `ConvertoTo-Json` command (#6438)
+- Add `Test-Json` cmdlet (`NJsonSchema`) (#5229) (Thanks @iSazonov!)
+- Correct a typo in comment for `Invoke-WebRequest` (#6700) (Thanks @gabrielsroka!)
+- Re-order `UFormat` options in `Get-Date` (#6627) (Thanks @iSazonov!)
+- Add the parameter `-Not` to `Where-Object` (#6464) (Thanks @SimonWahlin!)
+
+### Code Cleanup
+
+- Engine: Fix several code cleanup issues (#6552, #6609)
+- Clean up workflow logic in the module loading component (#6523)
+- Engine: Clean up unneeded `GetTypeInfo()` calls (#6613, #6636, #6633, #6635, #6634)
+
+### Test
+
+- Fix line ending in `DefaultCommands.Tests.ps1` from `CRLF` to `LF` (#6553)
+- Use new Pester parameter syntax in tests (#6490, #6574, #6535, #6536, #6488, #6366, #6351, #6349, #6256, #6250) (Thanks @KevinMarquette, @sethvs, @bergmeister!)
+- Fix `Copy.Item.Tests.ps1` (#6596) (Thanks @sethvs!)
+- Fix typos or formatting in some test files (#6595, #6593, #6594, #6592, #6591) (Thanks @sethvs!)
+- Add missing `Start-WebListener` to WebCmdlets tests (#6604) (Thanks @markekraus!)
+- Update Dockerfile test to use Ubuntu 17.10 as the base image (#6503)
+- Add PowerShell logging tests for macOS and Linux (#6025)
+- Add tests for `Format-Table -Wrap` (#6670) (Thanks @iSazonov!)
+- Reformat `Format-Table` tests (#6657) (Thanks @iSazonov!)
+- Add new reliable tests for `Get-Date -UFormat` (#6614) (Thanks @iSazonov!)
+
+### Build and Packaging Improvements
+
+- Use C# latest language in `.csproj` files (#6559) (Thanks @iSazonov!)
+- Update `installpsh-<distrofamily>.sh` installers to handle "preview" in version number (#6573) (Thanks @DarwinJS!)
+- Enable `PowerShell.sln` to work in VisualStudio (#6546)
+- Remove duplicate `Restore-PSPackage` (#6544)
+- Use `-WorkingDirectory` parameter to handle context menu when path contains single quotes (#6660) (Thanks @bergmeister!)
+- Make `-CI` not depend on `-PSModuleRestore` in `Start-PSBuild` (#6450)
+- Restore for official Linux arm builds (#6455)
+- Fix error about setting readonly variable in `install-powershell.sh` (#6617)
+- Make release macOS build work better (#6619, #6610)
+- MSI: add function to generate a `MSP` package (#6445)
+
+### Documentation and Help Content
+
+- Doc: Update Ubuntu source creation commands to use `curl -o` (#6510) (Thanks @M-D-M!)
+- Update stale bot message (#6462) (Thanks @iSazonov!)
+- Remove extraneous SSH and install docs from the 'demos' folder (#6628)
+
 ## v6.1.0-preview.1 - 2018-03-23
 
 ### Breaking Changes

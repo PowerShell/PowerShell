@@ -17,15 +17,7 @@ Describe "Command Discovery tests" -Tags "CI" {
 
     It "<testName>" -TestCases $TestCasesCommandNotFound {
         param($command)
-        try
-        {
-            & $command
-            throw "Should not have found command: '$command'"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be 'CommandNotFoundException'
-        }
+        { & $command } | Should -Throw -ErrorId 'CommandNotFoundException'
     }
 
     It "Command lookup with duplicate paths" {
@@ -57,32 +49,20 @@ Describe "Command Discovery tests" -Tags "CI" {
     }
 
     It "Cyclic aliases - direct" {
-        try
         {
             Set-Alias CyclicAliasA CyclicAliasB -Force
             Set-Alias CyclicAliasB CyclicAliasA -Force
             & CyclicAliasA
-            throw "Execution should not reach here. '& CyclicAliasA' should have thrown."
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be 'CommandNotFoundException'
-        }
+        } | Should -Throw -ErrorId 'CommandNotFoundException'
     }
 
     It "Cyclic aliases - indirect" {
-        try
         {
             Set-Alias CyclicAliasA CyclicAliasB -Force
             Set-Alias CyclicAliasB CyclicAliasC -Force
             Set-Alias CyclicAliasC CyclicAliasA -Force
             & CyclicAliasA
-            throw "Execution should not reach here. '& CyclicAliasA' should have thrown."
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be 'CommandNotFoundException'
-        }
+        } | Should -Throw -ErrorId 'CommandNotFoundException'
     }
 
     It "Get-Command should return only CmdletInfo, FunctionInfo, AliasInfo or FilterInfo" {

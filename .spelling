@@ -207,6 +207,7 @@ WSMan
 wsmansessionoption.cs
 xUnit
 0-powershell-crossplatform
+ReportGenerator
 #endregion
 
 #region ./tools/install-powershell.readme.md Overrides
@@ -414,6 +415,17 @@ ppadmavilasom
 Stanzilla
 mababio
 v4
+preview.2
+AppLocker
+DeviceGuard
+ffeldhaus
+gabrielsroka
+SimonWahlin
+sethvs
+Dockerfile
+VisualStudio
+readonly
+PowerShell.6
 #endregion
 
 #region CODE_OF_CONDUCT.md Overrides

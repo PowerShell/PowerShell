@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter()]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string LiteralPath
         {
@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
@@ -874,11 +874,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="delimiter"></param>
+        /// <exception cref="ArgumentNullException">throw if cmdlet is null</exception>
         internal
         ExportCsvHelper(PSCmdlet cmdlet, char delimiter)
         {
             if (cmdlet == null)
             {
+                throw new ArgumentNullException("cmdlet");
             }
             _cmdlet = cmdlet;
             _delimiter = delimiter;

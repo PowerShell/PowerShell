@@ -484,7 +484,7 @@ namespace System.Management.Automation
                             Globalization.CultureInfo.CurrentCulture,
                             "{0} {1}",
                             Name,
-                            parameterSet.ToString((this.CommandType & CommandTypes.Workflow) == CommandTypes.Workflow)));
+                            parameterSet.ToString()));
                 }
 
                 return synopsis.ToString();

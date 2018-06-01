@@ -188,17 +188,18 @@ elseif($Stage -eq 'Build')
     $releaseTag = Get-ReleaseTag
 
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
-    $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
     $originalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     try {
         ## We use CrossGen build to run tests only if it's the daily build.
-        Start-PSBuild -CrossGen -PSModuleRestore -CI -ReleaseTag $releaseTag
+        Start-PSBuild -CrossGen -PSModuleRestore -CI -ReleaseTag $releaseTag -Configuration 'Release'
     }
     finally{
         $ProgressPreference = $originalProgressPreference
     }
+
+    $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
 
     $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
     $testResultsSudo = "$pwd/TestResultsSudo.xml"
@@ -285,7 +286,7 @@ elseif($Stage -eq 'Build')
         if ($IsLinux)
         {
             # Create and package Raspbian .tgz
-            Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm
+            Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
             Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
         }
     }

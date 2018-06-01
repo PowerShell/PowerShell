@@ -95,7 +95,7 @@ Describe "Trace-Command" -tags "CI" {
         }
 
         It "Get non-existing trace source" {
-            { '34E7F9FA-EBFB-4D21-A7D2-D7D102E2CC2F' | get-tracesource -ErrorAction Stop} | ShouldBeErrorID 'TraceSourceNotFound,Microsoft.PowerShell.Commands.GetTraceSourceCommand'
+            { '34E7F9FA-EBFB-4D21-A7D2-D7D102E2CC2F' | get-tracesource -ErrorAction Stop} | Should -Throw -ErrorId 'TraceSourceNotFound,Microsoft.PowerShell.Commands.GetTraceSourceCommand'
         }
 
         It "Set-TraceSource to file and RemoveFileListener wildcard" {
@@ -105,11 +105,12 @@ Describe "Trace-Command" -tags "CI" {
         }
 
         It "Trace-Command -Command with error" {
-            { Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -ArgumentList 'NonExistingDrive' -Option ExecutionFlow -FilePath $filePath -Force -ListenerOption "ProcessId,TimeStamp" -ErrorAction Stop } | ShouldBeErrorID 'GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.TraceCommandCommand'
+            { Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -ArgumentList 'NonExistingDrive' -Option ExecutionFlow -FilePath $filePath -Force -ListenerOption "ProcessId,TimeStamp" -ErrorAction Stop } |
+                Should -Throw -ErrorId 'GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.TraceCommandCommand'
         }
 
         It "Trace-Command fails for non-filesystem paths" {
-            { Trace-Command -Name ParameterBinding -Expression {$null} -FilePath "Env:\Test" -ErrorAction Stop } | ShouldBeErrorID 'FileListenerPathResolutionFailed,Microsoft.PowerShell.Commands.TraceCommandCommand'
+            { Trace-Command -Name ParameterBinding -Expression {$null} -FilePath "Env:\Test" -ErrorAction Stop } | Should -Throw -ErrorId 'FileListenerPathResolutionFailed,Microsoft.PowerShell.Commands.TraceCommandCommand'
         }
 
         It "Trace-Command to readonly file" {

@@ -2,7 +2,7 @@
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16], [Ubuntu 17.04][u17], [Debian 8][deb8], [Debian 9][deb9],
 [CentOS 7][cos], [Red Hat Enterprise Linux (RHEL) 7][rhel7], [OpenSUSE 42.2][opensuse], [Fedora 25][fed25],
-[Fedora 26][fed26], and [Arch Linux][arch].
+[Fedora 26][fed26], [Arch Linux][arch], [Kali Linux][kali] and [Raspbian][rasp].
 
 For Linux distributions that are not officially supported,
 you can try using the [PowerShell AppImage][lai].
@@ -23,6 +23,8 @@ Once the package is installed, run `pwsh` from a terminal.
 [fed25]: #fedora-25
 [fed26]: #fedora-26
 [arch]: #arch-linux
+[kali]: #kali
+[rasp]: #raspbian
 [lai]: #linux-appimage
 [mac]: #macos-1012
 [tar]: #binary-archives
@@ -634,12 +636,13 @@ Optionally you can create a symbolic link to be able to start PowerShell without
 
 ```sh
 # Start PowerShell from bash with sudo to create a symbolic link
-sudo ~/powershell/pwsh -c New-Item -ItemType SymbolicLink -Path "/usr/bin/pwsh" -Target "\$PSHOME/pwsh" -Force
+sudo ~/powershell/pwsh -c New-Item -ItemType SymbolicLink -Path "/usr/bin/pwsh" -Target "$PSHOME/pwsh" -Force
 
 # alternatively you can run following to create a symbolic link
-# sudo ln -s ~/powershell/pwsh /usr/bin/pwsh
+sudo ln -s ~/powershell/pwsh /usr/bin/pwsh
 
 # Now to start PowerShell you can just run "pwsh"
+pwsh
 ```
 
 ### Uninstallation - Raspbian

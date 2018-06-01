@@ -218,6 +218,6 @@ Categories=Application;
     }
 
     It "Opening a file with an unregistered extension on Windows should fail" -Skip:(!$IsWindows) {
-        { $dllFile = "$PSHOME\System.Management.Automation.dll"; & $dllFile } | ShouldBeErrorId "NativeCommandFailed"
+        { $dllFile = "$PSHOME\System.Management.Automation.dll"; & $dllFile } | Should -Throw -ErrorId "NativeCommandFailed"
     }
 }

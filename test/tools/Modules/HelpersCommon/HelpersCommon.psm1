@@ -56,30 +56,6 @@ function Test-IsElevated
     }
     return $IsElevated
 }
-#This function follows the pester naming convention
-function ShouldBeErrorId
-{
-    param([Parameter(ValueFromPipeline, Mandatory)]
-        [ScriptBlock]
-        $sb,
-
-        [Parameter(Mandatory, Position=0)]
-        [string]
-        $FullyQualifiedErrorId)
-
-        try
-        {
-            & $sb | Out-Null
-            Throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be $FullyQualifiedErrorId | Out-Null
-            # Write the exception to output that allow us to check later other properies of the exception
-            Write-Output $_
-        }
-}
-
 function Get-RandomFileName
 {
     [System.IO.Path]::GetFileNameWithoutExtension([IO.Path]::GetRandomFileName())
@@ -90,7 +66,7 @@ function Get-RandomFileName
 # note these manipulate private data in the PowerShell engine which will
 # enable us to not actually alter the system or mock returned data
 #
-$SCRIPT:TesthookType = [system.management.automation.internal.internaltesthooks] 
+$SCRIPT:TesthookType = [system.management.automation.internal.internaltesthooks]
 function Test-TesthookIsSet
 {
     param (
@@ -132,7 +108,7 @@ function Set-TesthookResult
     param (
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory=$true)]
-        $testhookName, 
+        $testhookName,
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory=$true)]
         $value

@@ -597,7 +597,6 @@ namespace Microsoft.PowerShell
 
                 case CommandTypes.Function:
                 case CommandTypes.Filter:
-                case CommandTypes.Workflow:
                 case CommandTypes.Configuration:
                     //
                     // we do not check functions/filters.

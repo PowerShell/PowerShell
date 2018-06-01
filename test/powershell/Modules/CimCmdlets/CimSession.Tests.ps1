@@ -4,43 +4,45 @@ try {
     if ( ! $IsWindows ) {
         $PSDefaultParameterValues['it:pending'] = $true
     }
+
     Describe "New-CimSession" -Tag @("CI") {
         BeforeAll {
             $sessions = @()
         }
+
         AfterEach {
-            try {
-                $sessions | remove-cimsession
-            }
-            finally {
+                $sessions | Remove-CimSession -ErrorAction SilentlyContinue
                 $sessions = @()
-            }
         }
+
         It "A cim session can be created" {
             $sessionName = [guid]::NewGuid()
-            $session = New-CimSession -ComputerName . -name $sessionName
+            $session = New-CimSession -ComputerName . -Name $sessionName
             $sessions += $session
-            $session.Name | Should -Be $sessionName
+            $session.Name | Should -BeExactly $sessionName
             $session.InstanceId  | Should -BeOfType "System.Guid"
         }
+
         It "A Cim session can be retrieved" {
             $sessionName = [guid]::NewGuid()
-            $session = New-CimSession -ComputerName . -name $sessionName
+            $session = New-CimSession -ComputerName . -Name $sessionName
             $sessions += $session
-            (get-cimsession -Name $sessionName).InstanceId | Should -Be $session.InstanceId
-            (get-cimsession -Id $session.Id).InstanceId | Should -Be $session.InstanceId
-            (get-cimsession -InstanceId $session.InstanceId).InstanceId | Should -Be $session.InstanceId
+            (Get-CimSession -Name $sessionName).InstanceId | Should -Be $session.InstanceId
+            (Get-CimSession -Id $session.Id).InstanceId | Should -Be $session.InstanceId
+            (Get-CimSession -InstanceId $session.InstanceId).InstanceId | Should -Be $session.InstanceId
         }
+
         It "A cim session can be removed" {
             $sessionName = [guid]::NewGuid()
-            $session = New-CimSession -ComputerName . -name $sessionName
+            $session = New-CimSession -ComputerName . -Name $sessionName
             $sessions += $session
-            $session.Name | Should -Be $sessionName
+            $session.Name | Should -BeExactly $sessionName
             $session | Remove-CimSession
             Get-CimSession $session.Id -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
         }
     }
 }
+
 finally {
-    $PSDefaultParameterValues.remove('it:pending')
+    $PSDefaultParameterValues.Remove('it:pending')
 }

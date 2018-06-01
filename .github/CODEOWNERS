@@ -54,7 +54,7 @@ src/System.Management.Automation/help              @Francisco-Gamino @adityapatw
 # @daxian-dbw @charub
 
 # Area: Language
-src/System.Management.Automation/engine/parser     @daxian-dbw @vors @BrucePay
+src/System.Management.Automation/engine/parser     @daxian-dbw @BrucePay
 
 # Area: Providers
 src/System.Management.Automation/namespaces        @BrucePay @anmenaga
@@ -67,6 +67,9 @@ src/System.Management.Automation/engine/remoting   @dantraMSFT @mirichmo @PaulHi
 
 # Area: Side-By-Side
 # @mirichmo @charub
+
+# Area: Libpsl-native
+src/libpsl-native                                  @dantraMSFT
 
 # Areas: Build
 # Must be last

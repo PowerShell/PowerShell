@@ -14,6 +14,7 @@ param(
 # VSTS passes it as 'refs/heads/release-v6.0.2'
 
 $branchOnly = $Branch -replace '^refs/heads/';
+$branchOnly = $branchOnly -replace '[_\-]'
 
 if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 {

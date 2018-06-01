@@ -67,4 +67,30 @@ Describe "Set-Location" -Tags "CI" {
             (Get-Location).Path | Should -BeExactly (Get-PSProvider FileSystem).Home
         }
     }
+
+    It "Should set location to new drive's current working directory when path is the colon-terminated name of a different drive" {
+        try
+        {
+            $oldLocation = Get-Location
+            Set-Location 'TestDrive:\'
+            New-Item -Path 'TestDrive:\' -Name 'Directory1' -ItemType Directory
+            New-PSDrive -Name 'Z' -PSProvider FileSystem -Root 'TestDrive:\Directory1'
+            New-Item -Path 'Z:\' -Name 'Directory2' -ItemType Directory
+
+            Set-Location 'TestDrive:\Directory1'
+            $pathToTest1 = (Get-Location).Path
+            Set-Location 'Z:\Directory2'
+            $pathToTest2 = (Get-Location).Path
+
+            Set-Location 'TestDrive:'
+            (Get-Location).Path | Should -BeExactly $pathToTest1
+            Set-Location 'Z:'
+            (Get-Location).Path | Should -BeExactly $pathToTest2
+        }
+        finally
+        {
+            Set-Location $oldLocation
+            Remove-PSDrive -Name 'Z'
+        }
+    }
 }

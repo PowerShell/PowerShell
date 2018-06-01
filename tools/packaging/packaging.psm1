@@ -3,7 +3,7 @@
 $Environment = Get-EnvironmentInformation
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
-$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.17.04", "debian.8", "debian.9")
+$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.17.10", "ubuntu.18.04", "debian.8", "debian.9")
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -106,7 +106,7 @@ function Start-PSPackage {
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-            $Script:Options.Framework -ne "netcoreapp2.0")          ## Last build wasn't for CoreCLR
+            $Script:Options.Framework -ne "netcoreapp2.1")          ## Last build wasn't for CoreCLR
         {
             # It's possible that the most recent build doesn't satisfy the package requirement but
             # an earlier build does.
@@ -180,7 +180,7 @@ function Start-PSPackage {
                 # Zip symbols.zip to the root package
                 $zipSource = Join-Path $symbolsSource -ChildPath '*'
                 $zipPath = Join-Path -Path $Source -ChildPath 'symbols.zip'
-                $Script:Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath (Join-Path -Path $source -ChildPath 'psoptions.json')
+                Save-PSOptions -PSOptionsPath (Join-Path -Path $source -ChildPath 'psoptions.json') -Options $Script:Options
                 Compress-Archive -Path $zipSource -DestinationPath $zipPath
             }
             finally
@@ -493,11 +493,9 @@ function Expand-PSSignedBuild
     Restore-PSModuleToBuild -PublishPath $buildPath
 
     $psOptionsPath = Join-Path $buildPath -ChildPath 'psoptions.json'
-    $options = Get-Content -Path $psOptionsPath | ConvertFrom-Json
+    Restore-PSOptions -PSOptionsPath $psOptionsPath -Remove
 
-    # Remove PSOptions.
-    # The file is only used to set the PSOptions.
-    Remove-Item -Path $psOptionsPath
+    $options = Get-PSOptions
 
     $options.PSModuleRestore = $true
 
@@ -573,7 +571,9 @@ function New-UnixPackage {
                 } elseif ($Environment.IsUbuntu16) {
                     $DebDistro = "ubuntu.16.04"
                 } elseif ($Environment.IsUbuntu17) {
-                    $DebDistro = "ubuntu.17.04"
+                    $DebDistro = "ubuntu.17.10"
+                } elseif ($Environment.IsUbuntu18) {
+                    $DebDistro = "ubuntu.18.04"
                 } elseif ($Environment.IsDebian8) {
                     $DebDistro = "debian.8"
                 } elseif ($Environment.IsDebian9) {
@@ -992,7 +992,8 @@ function Get-PackageDependencies
             switch ($Distribution) {
                 "ubuntu.14.04" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
-                "ubuntu.17.04" { $Dependencies += @("libssl1.0.0", "libicu57") }
+                "ubuntu.17.10" { $Dependencies += @("libssl1.0.0", "libicu57") }
+                "ubuntu.18.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
                 "debian.8" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "debian.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
                 default { throw "Debian distro '$Distribution' is not supported." }
@@ -2218,7 +2219,7 @@ function New-MSIPatch
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.1\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIPackage
 {
