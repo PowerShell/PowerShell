@@ -344,8 +344,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // If the object passed in is a hashtable, then turn it into a PSCustomObject so
             // that property expressions can work on it.
-            Hashtable targetAsHash = PSObject.Base(target) as Hashtable;
-            if (targetAsHash != null)
+            if (PSObject.Base(target) is Hashtable targetAsHash)
             {
                 target = (PSObject)(LanguagePrimitives.ConvertPSObjectToType(targetAsHash, typeof(PSObject), false, null, true));
             }
