@@ -55,6 +55,7 @@ namespace System.Management.Automation.Language
         bool HasAnyScriptBlockAttributes();
         RuntimeDefinedParameterDictionary GetParameterMetadata(bool automaticPositions, ref bool usesCmdletBinding);
         IEnumerable<Attribute> GetScriptBlockAttributes();
+        IEnumerable<ExperimentalAttribute> GetExperimentalAttributes();
 
         bool UsesCmdletBinding();
         ReadOnlyCollection<ParameterAst> Parameters { get; }
@@ -1367,6 +1368,61 @@ namespace System.Management.Automation.Language
                     var attributeAst = ParamBlock.Attributes[index];
                     yield return Compiler.GetAttribute(attributeAst);
                 }
+            }
+        }
+
+        IEnumerable<ExperimentalAttribute> IParameterMetadataProvider.GetExperimentalAttributes()
+        {
+            for (int index = 0; index < Attributes.Count; index++)
+            {
+                var attributeAst = Attributes[index];
+                var expAttr = GetExpAttributeHelper(attributeAst);
+                if (expAttr != null) { yield return expAttr; }
+            }
+
+            if (ParamBlock != null)
+            {
+                for (int index = 0; index < ParamBlock.Attributes.Count; index++)
+                {
+                    var attributeAst = ParamBlock.Attributes[index];
+                    var expAttr = GetExpAttributeHelper(attributeAst);
+                    if (expAttr != null) { yield return expAttr; }
+                }
+            }
+
+            ExperimentalAttribute GetExpAttributeHelper(AttributeAst attributeAst)
+            {
+                AttributeAst potentialExpAttr = null;
+                string expAttrTypeName = typeof(ExperimentalAttribute).FullName;
+                string attrAstTypeName = attributeAst.TypeName.Name;
+
+                if (TypeAccelerators.Get.TryGetValue(attrAstTypeName, out Type attrType) && attrType == typeof(ExperimentalAttribute))
+                {
+                    potentialExpAttr = attributeAst;
+                }
+                else if (expAttrTypeName.EndsWith(attrAstTypeName, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Handle two cases:
+                    //   1. declare the attribute using full type name;
+                    //   2. declare the attribute using partial type name due to 'using namespace'.
+                    int expAttrLength = expAttrTypeName.Length;
+                    int attrAstLength = attrAstTypeName.Length;
+                    if (expAttrLength == attrAstLength || expAttrTypeName[expAttrLength - attrAstLength - 1] == '.')
+                    {
+                        potentialExpAttr = attributeAst;
+                    }
+                }
+
+                if (potentialExpAttr != null)
+                {
+                    try
+                    {
+                        return Compiler.GetAttribute(potentialExpAttr) as ExperimentalAttribute;
+                    }
+                    catch (Exception) { /* catch all and assume it's not a declaration of ExperimentalAttribute */ }
+                }
+
+                return null;
             }
         }
 
@@ -3299,6 +3355,11 @@ namespace System.Management.Automation.Language
             return ((IParameterMetadataProvider)_functionDefinitionAst).GetScriptBlockAttributes();
         }
 
+        IEnumerable<ExperimentalAttribute> IParameterMetadataProvider.GetExperimentalAttributes()
+        {
+            return ((IParameterMetadataProvider)_functionDefinitionAst).GetExperimentalAttributes();
+        }
+
         bool IParameterMetadataProvider.UsesCmdletBinding()
         {
             return ((IParameterMetadataProvider)_functionDefinitionAst).UsesCmdletBinding();
@@ -3410,6 +3471,11 @@ namespace System.Management.Automation.Language
         public IEnumerable<Attribute> GetScriptBlockAttributes()
         {
             return ((IParameterMetadataProvider)Body).GetScriptBlockAttributes();
+        }
+
+        public IEnumerable<ExperimentalAttribute> GetExperimentalAttributes()
+        {
+            return ((IParameterMetadataProvider)Body).GetExperimentalAttributes();
         }
 
         public bool UsesCmdletBinding()
@@ -3691,6 +3757,11 @@ namespace System.Management.Automation.Language
         IEnumerable<Attribute> IParameterMetadataProvider.GetScriptBlockAttributes()
         {
             return ((IParameterMetadataProvider)Body).GetScriptBlockAttributes();
+        }
+
+        IEnumerable<ExperimentalAttribute> IParameterMetadataProvider.GetExperimentalAttributes()
+        {
+            return ((IParameterMetadataProvider)Body).GetExperimentalAttributes();
         }
 
         ReadOnlyCollection<ParameterAst> IParameterMetadataProvider.Parameters

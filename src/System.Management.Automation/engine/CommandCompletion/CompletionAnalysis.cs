@@ -1758,8 +1758,10 @@ namespace System.Management.Automation
                 List<CompletionResult> result = new List<CompletionResult>();
                 foreach (PropertyInfo pro in propertyInfos)
                 {
-                    //Ignore TypeId (all attributes inherit it)
-                    if (pro.Name != "TypeId" && (pro.Name.StartsWith(argName, StringComparison.OrdinalIgnoreCase)))
+                    // Ignore getter-only properties, including 'TypeId' (all attributes inherit it).
+                    if (!pro.CanWrite) { continue; }
+
+                    if (pro.Name.StartsWith(argName, StringComparison.OrdinalIgnoreCase))
                     {
                         result.Add(new CompletionResult(pro.Name, pro.Name, CompletionResultType.Property,
                             pro.PropertyType.ToString() + " " + pro.Name));

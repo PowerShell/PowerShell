@@ -64,6 +64,18 @@ namespace System.Management.Automation
             // First, process attributes that aren't type conversions
             foreach (Attribute attribute in runtimeDefinedParameter.Attributes)
             {
+                if (processingDynamicParameters)
+                {
+                    // When processing dynamic parameters, the attribute list may contain experimental attributes
+                    // and disabled parameter attributes. We should ignore those attributes.
+                    // When processing non-dynamic parameters, the experimental attributes and disabled parameter
+                    // attributes have already been filtered out when constructing the RuntimeDefinedParameter.
+                    if (attribute is ExperimentalAttribute || attribute is ParameterAttribute param && param.ToHide)
+                    {
+                        continue;
+                    }
+                }
+
                 if (!(attribute is ArgumentTypeConverterAttribute))
                 {
                     ProcessAttribute(runtimeDefinedParameter.Name, attribute, ref validationAttributes, ref argTransformationAttributes, ref aliases);
@@ -78,7 +90,7 @@ namespace System.Management.Automation
             }
 
             // Now process type converters
-            foreach (ArgumentTypeConverterAttribute attribute in runtimeDefinedParameter.Attributes.OfType<ArgumentTypeConverterAttribute>())
+            foreach (var attribute in runtimeDefinedParameter.Attributes.OfType<ArgumentTypeConverterAttribute>())
             {
                 ProcessAttribute(runtimeDefinedParameter.Name, attribute, ref validationAttributes, ref argTransformationAttributes, ref aliases);
             }
@@ -169,7 +181,15 @@ namespace System.Management.Automation
 
             foreach (Attribute attr in memberAttributes)
             {
-                ProcessAttribute(member.Name, attr, ref validationAttributes, ref argTransformationAttributes, ref aliases);
+                switch (attr)
+                {
+                    case ExperimentalAttribute _:
+                    case ParameterAttribute param when param.ToHide:
+                        break;
+                    default:
+                        ProcessAttribute(member.Name, attr, ref validationAttributes, ref argTransformationAttributes, ref aliases);
+                        break;
+                }
             }
 
             this.ValidationAttributes = validationAttributes == null
@@ -436,7 +456,6 @@ namespace System.Management.Automation
             ref Collection<ArgumentTransformationAttribute> argTransformationAttributes,
             ref string[] aliases)
         {
-            // NTRAID#Windows Out Of Band Releases-926374-2005/12/22-JonN
             if (attribute == null)
                 return;
 

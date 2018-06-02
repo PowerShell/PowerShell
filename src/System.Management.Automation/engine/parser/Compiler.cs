@@ -1001,15 +1001,17 @@ namespace System.Management.Automation.Language
         internal static RuntimeDefinedParameterDictionary GetParameterMetaData(ReadOnlyCollection<ParameterAst> parameters, bool automaticPositions, ref bool usesCmdletBinding)
         {
             var md = new RuntimeDefinedParameterDictionary();
-            var listMd = new List<RuntimeDefinedParameter>();
+            var listMd = new List<RuntimeDefinedParameter>(parameters.Count);
             var customParameterSet = false;
             for (int index = 0; index < parameters.Count; index++)
             {
                 var param = parameters[index];
                 var rdp = GetRuntimeDefinedParameter(param, ref customParameterSet, ref usesCmdletBinding);
-
-                listMd.Add(rdp);
-                md.Add(param.Name.VariablePath.UserPath, rdp);
+                if (rdp != null)
+                {
+                    listMd.Add(rdp);
+                    md.Add(param.Name.VariablePath.UserPath, rdp);
+                }
             }
 
             int pos = 0;
@@ -1447,27 +1449,46 @@ namespace System.Management.Automation.Language
 
         private static RuntimeDefinedParameter GetRuntimeDefinedParameter(ParameterAst parameterAst, ref bool customParameterSet, ref bool usesCmdletBinding)
         {
-            List<Attribute> attributes = new List<Attribute>();
+            List<Attribute> attributes = new List<Attribute>(parameterAst.Attributes.Count);
             bool hasParameterAttribute = false;
+            bool hasEnabledParamAttribute = false;
+            bool hasSeenExpAttribute = false;
+
             for (int index = 0; index < parameterAst.Attributes.Count; index++)
             {
                 var attributeAst = parameterAst.Attributes[index];
                 var attribute = attributeAst.GetAttribute();
-                attributes.Add(attribute);
 
-                var parameterAttribute = attribute as ParameterAttribute;
-                if (parameterAttribute != null)
+                if (attribute is ExperimentalAttribute expAttribute)
+                {
+                    // Only honor the first seen experimental attribute, ignore the others. 
+                    if (!hasSeenExpAttribute && expAttribute.ToHide) { return null; }
+
+                    // Do not add experimental attributes to the attribute list.
+                    hasSeenExpAttribute = true;
+                    continue;
+                }
+                else if (attribute is ParameterAttribute paramAttribute)
                 {
                     hasParameterAttribute = true;
+                    if (paramAttribute.ToHide) { continue; }
+
+                    hasEnabledParamAttribute = true;
                     usesCmdletBinding = true;
-                    if (parameterAttribute.Position != int.MinValue ||
-                        !parameterAttribute.ParameterSetName.Equals(ParameterAttribute.AllParameterSets,
+                    if (paramAttribute.Position != int.MinValue ||
+                        !paramAttribute.ParameterSetName.Equals(ParameterAttribute.AllParameterSets,
                                                                     StringComparison.OrdinalIgnoreCase))
                     {
                         customParameterSet = true;
                     }
                 }
+
+                attributes.Add(attribute);
             }
+
+            // If all 'ParameterAttribute' declared for the parameter are hidden due to
+            // an experimental feature, then the parameter should be ignored.
+            if (hasParameterAttribute && !hasEnabledParamAttribute) { return null; }
 
             attributes.Reverse();
             if (!hasParameterAttribute)
@@ -1476,7 +1497,7 @@ namespace System.Management.Automation.Language
             }
 
             var result = new RuntimeDefinedParameter(parameterAst.Name.VariablePath.UserPath, parameterAst.StaticType,
-                                                     new Collection<Attribute>(attributes.ToArray()));
+                                                     new Collection<Attribute>(attributes));
 
             if (parameterAst.DefaultValue != null)
             {

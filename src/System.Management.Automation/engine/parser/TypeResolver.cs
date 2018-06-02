@@ -732,6 +732,7 @@ namespace System.Management.Automation
                     { typeof(decimal),                                     new[] { "decimal" } },
                     { typeof(double),                                      new[] { "double" } },
                     { typeof(DscResourceAttribute),                        new[] { "DscResource"} },
+                    { typeof(ExperimentalAttribute),                       new[] { "Experimental" } },
                     { typeof(float),                                       new[] { "float", "single" } },
                     { typeof(Guid),                                        new[] { "guid" } },
                     { typeof(Hashtable),                                   new[] { "hashtable" } },
