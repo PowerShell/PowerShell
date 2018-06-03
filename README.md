@@ -211,7 +211,7 @@ Also make sure to check out our [PowerShell-RFC repository](https://github.com/p
 
 [check out our FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
 [Contribution Guide]: https://github.com/PowerShell/PowerShell/tree/master/.github/CONTRIBUTING.md
-[known issues]: https://github.com/PowerShell/PowerShell/tree/master/docs/KNOWNISSUES.md
+[known issues]: https://docs.microsoft.com/en-us/powershell/scripting/whats-new/known-issues-ps6?view=powershell-6
 [GitHub issues]: https://github.com/PowerShell/PowerShell/issues
 [new issue]:https://github.com/PowerShell/PowerShell/issues/new
 
