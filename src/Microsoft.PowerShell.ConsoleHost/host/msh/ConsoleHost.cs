@@ -26,6 +26,7 @@ using System.Management.Automation.Language;
 using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using System.Management.Automation.Tracing;
+using System.Threading.Tasks;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
@@ -121,7 +122,7 @@ namespace Microsoft.PowerShell
 #endif
 
 #if !UNIX
-            Microsoft.PowerShell.TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
+            Task.Run(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
 #endif
 
             // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
