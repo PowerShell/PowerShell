@@ -1,8 +1,7 @@
 $repoRoot = Join-Path $PSScriptRoot '..'
 Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global
 $isPR = $env:BUILD_REASON -eq "PullRequest"
-$commitMessage = git log --format=%B -n 1 $env:BUILD_SOURCEVERSIONMESSAGE
-Write-Host $commitMessage
+$commitMessage = git log --format=%B -n 1 $env:BUILD_SOURCEVERSION
 $hasFeatureTag = $commitMessage -match '\[feature\]'
 $hasPackageTag = $commitMessage -match '\[package\]'
 $createPackages = -not $isPr -or $hasPackageTag
@@ -223,14 +222,10 @@ function Invoke-PSTest {
     $pesterPassThruSudoObject = Start-PSPester @pesterParam
 
     # Determine whether the build passed
-    $result = "PASS"
     try {
         @($pesterPassThruNoSudoObject) | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
     }
-    catch {
-        $resultError = $_
-        $result = "FAIL"
-    }
+    catch {}
 
     try {
         $SequentialXUnitTestResultsFile = "$pwd/SequentialXUnitTestResults.xml"
@@ -240,13 +235,7 @@ function Invoke-PSTest {
         # If there are failures, Test-XUnitTestResults throws
         $SequentialXUnitTestResultsFile, $ParallelXUnitTestResultsFile | ForEach-Object { Test-XUnitTestResults -TestResultsFile $_ }
     }
-    catch {
-        $result = "FAIL"
-        if (!$resultError)
-        {
-            $resultError = $_
-        }
-    }
+    catch {}
 
     if ($createPackages) {
 
@@ -273,11 +262,6 @@ function Invoke-PSTest {
         # Create and package Raspbian .tgz
         Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm
         Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
-    }
-
-    # if the tests did not pass, throw the reason why
-    if ( $result -eq "FAIL" ) {
-        Throw $resultError
     }
 }
 
