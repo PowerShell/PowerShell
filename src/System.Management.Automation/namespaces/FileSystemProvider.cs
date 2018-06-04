@@ -1216,16 +1216,14 @@ namespace Microsoft.PowerShell.Commands
         private FileSystemInfo GetFileSystemItem(string path, ref bool isContainer, bool showHidden)
         {
             path = NormalizePath(path);
+            FileInfo result = new FileInfo(path);
 
-            FileSystemInfo result = null;
-
-            // First see if the path is to a file by
-            // constructing a FileInfo object
-
-            int attribs = SafeGetFileAttributes(path);
-            bool exists = (attribs != -1);
-            bool directory = (attribs & ((int)NativeMethods.FileAttributes.Directory)) == ((int)NativeMethods.FileAttributes.Directory);
-            bool hidden = (attribs & ((int)NativeMethods.FileAttributes.Hidden)) == ((int)NativeMethods.FileAttributes.Hidden);
+            var attributes = result.Attributes;
+            // FileInfo.Exists is true for files but false for directories
+            // so we check attributes directly.
+            bool exists = (int)attributes != -1;
+            bool hidden = attributes.HasFlag(FileAttributes.Hidden);
+            isContainer = attributes.HasFlag(FileAttributes.Directory);
 
             FlagsExpression<FileAttributes> evaluator = null;
             FlagsExpression<FileAttributes> switchEvaluator = null;
@@ -1250,47 +1248,36 @@ namespace Microsoft.PowerShell.Commands
 
             // if "Hidden" is specified in the attribute filter dynamic parameters
             // also return the object
-            if (exists && !directory && (!hidden || Force || showHidden || filterHidden || switchFilterHidden))
+            if (!isContainer)
             {
-                FileInfo fileObj = new FileInfo(path);
+                if (exists && (!hidden || Force || showHidden || filterHidden || switchFilterHidden))
+                {
+                    s_tracer.WriteLine("Got file info: {0}", result);
 
-                result = fileObj;
-                s_tracer.WriteLine("Got FileInfo: {0}", fileObj);
+                    return result;
+                }
             }
             else
             {
-                // if its not a file, maybe its a directory
-
-                DirectoryInfo directoryObj =
-                    new DirectoryInfo(path);
-
                 // Check to see if the path is the root of a file system drive.
                 // Since all root paths are hidden we need to show the directory
                 // anyway
-
                 bool isRootPath =
                     String.Compare(
                         Path.GetPathRoot(path),
-                        directoryObj.FullName,
+                        result.FullName,
                         StringComparison.OrdinalIgnoreCase) == 0;
 
                 // if "Hidden" is specified in the attribute filter dynamic parameters
                 // also return the object
                 if (exists && (isRootPath || !hidden || Force || showHidden || filterHidden || switchFilterHidden))
                 {
-                    Dbg.Diagnostics.Assert(
-                        (directoryObj.Attributes &
-                        FileAttributes.Directory) ==
-                        FileAttributes.Directory,
-                        "The object is not a directory?");
+                    s_tracer.WriteLine("Got directory info: {0}", result);
 
-                    result = directoryObj;
-
-                    isContainer = true;
-                    s_tracer.WriteLine("Got DirectoryInfo: {0}", directoryObj);
+                    return new DirectoryInfo(path);
                 }
             }
-            return result;
+            return null;
         } // GetFileSystemItem
 
         /// <summary>
@@ -7012,88 +6999,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion IContentCmdletProvider
-
-        internal static int SafeGetFileAttributes(string path)
-        {
-#if UNIX
-            System.IO.FileAttributes attr = System.IO.File.GetAttributes(path);
-
-            int result = 0;
-            if ((attr & FileAttributes.Archive) == FileAttributes.Archive)
-                result |= 0x20;
-            if ((attr & FileAttributes.Compressed) == FileAttributes.Compressed)
-                result |= 0x800;
-            if ((attr & FileAttributes.Device) == FileAttributes.Device)
-                result |= 0x40;
-            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-                result |= 0x10;
-            if ((attr & FileAttributes.Encrypted) == FileAttributes.Encrypted)
-                result |= 0x4000;
-            if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden)
-                result |= 0x2;
-            if ((attr & FileAttributes.IntegrityStream) == FileAttributes.IntegrityStream)
-                result |= 0x8000;
-            if ((attr & FileAttributes.Normal) == FileAttributes.Normal)
-                result |= 0x80;
-            if ((attr & FileAttributes.NoScrubData) == FileAttributes.NoScrubData)
-                result |= 0x20000;
-            if ((attr & FileAttributes.NotContentIndexed) == FileAttributes.NotContentIndexed)
-                result |= 0x2000;
-            if ((attr & FileAttributes.Offline) == FileAttributes.Offline)
-                result |= 0x1000;
-            if ((attr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                result |= 0x1;
-            if ((attr & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
-                result |= 0x400;
-            if ((attr & FileAttributes.SparseFile) == FileAttributes.SparseFile)
-                result |= 0x200;
-            if ((attr & FileAttributes.System) == FileAttributes.System)
-                result |= 0x4;
-            if ((attr & FileAttributes.Temporary) == FileAttributes.Temporary)
-                result |= 0x100;
-
-            return result;
-#else
-            return WinSafeGetFileAttributes(path);
-#endif
-        }
-
-        internal static int WinSafeGetFileAttributes(string path)
-        {
-            int result = Utils.NativeMethods.GetFileAttributes(path);
-            if (result == -1)
-            {
-                int errorCode = Marshal.GetLastWin32Error();
-                if (errorCode == 5)
-                {
-                    // Handle "Access denied" specifically.
-                    Win32Exception win32Exception = new Win32Exception(errorCode);
-                    throw new UnauthorizedAccessException(win32Exception.Message, win32Exception);
-                }
-                else if (errorCode == 32)
-                {
-                    // Errorcode 32 is 'ERROR_SHARING_VIOLATION' i.e.
-                    // The process cannot access the file because it is being used by another process.
-                    // GetFileAttributes may return INVALID_FILE_ATTRIBUTES for a system file or directory because of this error.
-                    // GetFileAttributes function tries to open the file with FILE_READ_ATTRIBUTES access right but it fails if the
-                    // sharing flag for the file is set to 0x00000000.This flag prevents it from opening a file for delete, read, or
-                    // write access. For example: C:\pagefile.sys is always opened by OS with sharing flag 0x00000000.
-                    // But FindFirstFile is still able to get attributes as this api retrieves the required information using a find
-                    // handle generated with FILE_LIST_DIRECTORY access.
-                    // Fall back to FindFirstFile to check if the file actually exists.
-                    IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-                    Utils.NativeMethods.WIN32_FIND_DATA findData;
-                    IntPtr findHandle = Utils.NativeMethods.FindFirstFile(path, out findData);
-                    if (findHandle != INVALID_HANDLE_VALUE)
-                    {
-                        Utils.NativeMethods.FindClose(findHandle);
-                        return (int)findData.dwFileAttributes;
-                    }
-                }
-            }
-
-            return result;
-        }
 
         /// <summary>
         /// -raw is not allowed when -first,-last or -wait is specified
