@@ -748,7 +748,7 @@ namespace System.Management.Automation
                     //
                     if (null == Host || null == Host.UI)
                     {
-                        Diagnostics.Assert(false, "No host in CommandBase.WriteVerbose()");
+                        Diagnostics.Assert(false, "No host in CommandBase.WriteInformation()");
                         throw PSTraceSource.NewInvalidOperationException();
                     }
 
@@ -823,9 +823,11 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (!record.Tags.Contains("PSHOST") && (preference != ActionPreference.SilentlyContinue))
+                // Both informational and PSHost-targeted messages are transcribed here.
+                // The only difference between these two is that PSHost-targeted messages are transcribed
+                // even if InformationAction is SilentlyContinue.
+                if (record.Tags.Contains("PSHOST") || (preference != ActionPreference.SilentlyContinue))
                 {
-                    // Only transcribe informational messages here. Transcription of PSHost-targeted messages is done in the InternalUI.Write* methods.
                     CBhost.InternalUI.TranscribeResult(record.ToString());
                 }
             }

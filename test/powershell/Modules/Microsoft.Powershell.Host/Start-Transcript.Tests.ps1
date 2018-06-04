@@ -220,7 +220,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $transcriptFilePath | Should -FileContentMatch $message
     }
 
-    It "Transcription should record Write-Host output when InformationAction is set to Ignore" {
+    It "Transcription should not record Write-Host output when InformationAction is set to Ignore" {
         [String]$message = New-Guid
         $script = {
             Start-Transcript -Path $transcriptFilePath
@@ -231,6 +231,6 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         & $script
 
         Test-Path $transcriptFilePath | Should -BeTrue
-        $transcriptFilePath | Should -FileContentMatch $message
+        $transcriptFilePath | Should -Not -FileContentMatch $message
     }
 }
