@@ -121,10 +121,6 @@ namespace Microsoft.PowerShell
             }
 #endif
 
-#if !UNIX
-            Task.Run(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
-#endif
-
             // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
             string path = Environment.GetEnvironmentVariable("PATH");
             if (path != null)
@@ -214,6 +210,10 @@ namespace Microsoft.PowerShell
                     }
                     return ExitCodeBadCommandLineParameter;
                 }
+
+#if !UNIX
+                Task.Run(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
+#endif
 
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
