@@ -748,8 +748,7 @@ namespace System.Management.Automation
                     //
                     if (null == Host || null == Host.UI)
                     {
-                        Diagnostics.Assert(false, "No host in CommandBase.WriteInformation()");
-                        throw PSTraceSource.NewInvalidOperationException();
+                        throw PSTraceSource.NewInvalidOperationException("No host in CommandBase.WriteInformation()");
                     }
 
                     CBhost.InternalUI.WriteInformationRecord(record);
