@@ -12,7 +12,7 @@ environment:
 matrix:
   fast_finish: true
 
-# cache version - netcoreapp.2.1-sdk.2.1.300-rc1cache:
+cache:
   - '%HOMEDRIVE%%HOMEPATH%\.nuget\packages -> appveyor.yml'
 
 nuget:
