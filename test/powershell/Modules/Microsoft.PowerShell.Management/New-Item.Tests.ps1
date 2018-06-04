@@ -214,12 +214,14 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
 }
 
 Describe "New-Item with links fails for non elevated user." -Tags "CI" {
-    $tmpDirectory         = $TestDrive
-    $testfile             = "testfile.txt"
-    $testfolder           = "newDirectory"
-    $testlink             = "testlink"
-    $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
-    $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+    BeforeAll {
+        $tmpDirectory         = $TestDrive
+        $testfile             = "testfile.txt"
+        $testfolder           = "newDirectory"
+        $testlink             = "testlink"
+        $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
+        $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+    }
 
     It "Should error correctly when failing to create a symbolic link" {
         # This test expects that /sbin exists but is not writable by the user
