@@ -159,9 +159,9 @@ If you have any problems building, please consult the developer [FAQ][].
 
 ### Build status of nightly builds
 
-| AppVeyor (Windows)       | Travis CI (Linux) | Travis CI (macOS) | Code Coverage Status |
-|--------------------------|-------------------|-------------------|----------------------|
-| [![av-nightly-image][]][av-nightly-site] | [![linux-nightly-image][]][tv-site] | [![macOS-nightly-image][]][tv-site] | [![cc-image][]][cc-site] |
+| AppVeyor (Windows)       | Travis CI (Linux) | Travis CI (macOS) | Code Coverage Status | Code Factor Status |
+|--------------------------|-------------------|-------------------|----------------------|--------------------|
+| [![av-nightly-image][]][av-nightly-site] | [![linux-nightly-image][]][tv-site] | [![macOS-nightly-image][]][tv-site] | [![cc-image][]][cc-site] | [![cf-image][]][cf-site] |
 
 [bd-linux]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/linux.md
 [bd-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/windows-core.md
@@ -179,6 +179,8 @@ If you have any problems building, please consult the developer [FAQ][].
 [av-nightly-site]: https://ci.appveyor.com/project/PowerShell/powershell-f975h
 [cc-site]: https://codecov.io/gh/PowerShell/PowerShell
 [cc-image]: https://codecov.io/gh/PowerShell/PowerShell/branch/master/graph/badge.svg
+[cf-site]: https://www.codefactor.io/repository/github/powershell/powershell
+[cf-image]: https://www.codefactor.io/repository/github/powershell/powershell/badge
 
 ## Downloading the Source Code
 
