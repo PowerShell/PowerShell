@@ -979,13 +979,10 @@ function Get-PackageDependencies
         if ($Environment.IsUbuntu -or $Environment.IsDebian) {
             $Dependencies = @(
                 "libc6",
-                "libcurl3",
                 "libgcc1",
                 "libgssapi-krb5-2",
                 "liblttng-ust0",
                 "libstdc++6",
-                "libunwind8",
-                "libuuid1",
                 "zlib1g"
             )
 
@@ -1000,8 +997,6 @@ function Get-PackageDependencies
             }
         } elseif ($Environment.IsRedHatFamily) {
             $Dependencies = @(
-                "libunwind",
-                "libcurl",
                 "openssl-libs",
                 "libicu"
             )
