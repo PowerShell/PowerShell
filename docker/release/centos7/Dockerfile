@@ -35,7 +35,8 @@ RUN yum install -y \
     && yum clean all
 
 # Download and configure Microsoft Repository config file
-RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.repos.d/microsoft.repo
+RUN set -o pipefail \
+    && curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.repos.d/microsoft.repo
 
 # Install latest powershell from Microsoft YUM Repo
 RUN yum install -y \

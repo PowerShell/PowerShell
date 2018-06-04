@@ -45,7 +45,8 @@ RUN locale-gen $LANG && update-locale
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 
 # Register the Microsoft Ubuntu 16.04 repository
-RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | tee /etc/apt/sources.list.d/microsoft.list
+RUN set -o pipefail \
+    && curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | tee /etc/apt/sources.list.d/microsoft.list
 
 # Install powershell from Microsoft Repo
 RUN apt-get update \

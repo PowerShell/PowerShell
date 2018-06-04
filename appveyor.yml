@@ -4,7 +4,7 @@ environment:
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     Purpose: BuildingAndPackaging
-    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1 # avoid expensive initialization of dotnet cli, see: http://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     Purpose: BuildingAndTesting
 
@@ -12,7 +12,7 @@ environment:
 matrix:
   fast_finish: true
 
-cache:
+# cache version - netcoreapp.2.1-sdk.2.1.300-rc1cache:
   - '%HOMEDRIVE%%HOMEPATH%\.nuget\packages -> appveyor.yml'
 
 nuget:

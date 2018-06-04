@@ -979,13 +979,10 @@ function Get-PackageDependencies
         if ($Environment.IsUbuntu -or $Environment.IsDebian) {
             $Dependencies = @(
                 "libc6",
-                "libcurl3",
                 "libgcc1",
                 "libgssapi-krb5-2",
                 "liblttng-ust0",
                 "libstdc++6",
-                "libunwind8",
-                "libuuid1",
                 "zlib1g"
             )
 
@@ -1000,8 +997,6 @@ function Get-PackageDependencies
             }
         } elseif ($Environment.IsRedHatFamily) {
             $Dependencies = @(
-                "libunwind",
-                "libcurl",
                 "openssl-libs",
                 "libicu"
             )
@@ -1409,12 +1404,12 @@ function New-UnifiedNugetPackage
 
                 'Microsoft.PowerShell.Commands.Management' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceProcess.ServiceController'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceProcess.ServiceController'), [tuple]::Create('version', '4.5.0'))) > $null
                 }
 
                 'Microsoft.PowerShell.Commands.Utility' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.CodeAnalysis.CSharp'), [tuple]::Create('version', '2.6.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.CodeAnalysis.CSharp'), [tuple]::Create('version', '2.7.0'))) > $null
                 }
 
                 'Microsoft.PowerShell.ConsoleHost' {
@@ -1423,7 +1418,7 @@ function New-UnifiedNugetPackage
                 }
 
                 'Microsoft.PowerShell.CoreCLR.Eventing' {
-                    $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Security.Principal.Windows'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Security.Principal.Windows'), [tuple]::Create('version', '4.5.0'))) > $null
                 }
 
                 'Microsoft.PowerShell.SDK' {
@@ -1432,17 +1427,17 @@ function New-UnifiedNugetPackage
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.ConsoleHost'), [tuple]::Create('version', $PackageVersion))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Data.SqlClient'), [tuple]::Create('version', '4.4.2'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.IO.Packaging'), [tuple]::Create('version', '4.4.1'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Net.Http.WinHttpHandler'), [tuple]::Create('version', '4.4.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Duplex'), [tuple]::Create('version', '4.4.1'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Http'), [tuple]::Create('version', '4.4.1'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.NetTcp'), [tuple]::Create('version', '4.4.1'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Primitives'), [tuple]::Create('version', '4.4.1'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Security'), [tuple]::Create('version', '4.4.1'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Text.Encodings.Web'), [tuple]::Create('version', '4.4.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Threading.AccessControl'), [tuple]::Create('version', '4.4.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Private.ServiceModel'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Data.SqlClient'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.IO.Packaging'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Net.Http.WinHttpHandler'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Duplex'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Http'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.NetTcp'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Primitives'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Security'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Text.Encodings.Web'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Threading.AccessControl'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Private.ServiceModel'), [tuple]::Create('version', '4.5.0'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.NETCore.Windows.ApiSets'), [tuple]::Create('version', '1.0.1'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
@@ -1455,7 +1450,7 @@ function New-UnifiedNugetPackage
                 'Microsoft.WSMan.Management' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Runtime'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceProcess.ServiceController'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceProcess.ServiceController'), [tuple]::Create('version', '4.5.0'))) > $null
                 }
 
                 'Microsoft.WSMan.Runtime' {
@@ -1464,13 +1459,13 @@ function New-UnifiedNugetPackage
 
                 'System.Management.Automation' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.CoreCLR.Eventing'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Win32.Registry.AccessControl'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Win32.Registry.AccessControl'), [tuple]::Create('version', '4.5.0'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Newtonsoft.Json'), [tuple]::Create('version', '10.0.3'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.IO.FileSystem.AccessControl'), [tuple]::Create('version', '4.4.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.AccessControl'), [tuple]::Create('version', '4.4.1'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.Cryptography.Pkcs'), [tuple]::Create('version', '4.4.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.Permissions'), [tuple]::Create('version', '4.4.1'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Text.Encoding.CodePages'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.IO.FileSystem.AccessControl'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.AccessControl'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.Cryptography.Pkcs'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.Permissions'), [tuple]::Create('version', '4.5.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Text.Encoding.CodePages'), [tuple]::Create('version', '4.3.0'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure'), [tuple]::Create('version', '1.0.0-alpha08'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'PowerShell.Core.Instrumentation'), [tuple]::Create('version', '6.0.0-RC2'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'libpsl'), [tuple]::Create('version', '6.0.0-rc'))) > $null

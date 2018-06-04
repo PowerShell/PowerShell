@@ -545,22 +545,6 @@ namespace System.Management.Automation
             return Unix.NativeMethods.SetDate(&tm) == 0;
         }
 
-        internal static string NonWindowsGetDomainName()
-        {
-            string name = Unix.NativeMethods.GetFullyQualifiedName();
-            if (!string.IsNullOrEmpty(name))
-            {
-                // name is hostname.domainname, so extract domainname
-                int index = name.IndexOf('.');
-                if (index >= 0)
-                {
-                    return name.Substring(index + 1);
-                }
-            }
-            // if the domain name could not be found, do not throw, just return empty
-            return string.Empty;
-        }
-
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
