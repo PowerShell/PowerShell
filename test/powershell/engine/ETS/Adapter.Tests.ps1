@@ -190,7 +190,6 @@ Describe "Adapter Tests" -tags "CI" {
 
         # Pending: https://github.com/PowerShell/PowerShell/issues/6567
         It "ForEach magic method works for dynamic (DLR) things" -Pending:$true {
-            Import-Module HelpersCommon
             Add-TestDynamicType
 
             $dynObj = [TestDynamic]::new()

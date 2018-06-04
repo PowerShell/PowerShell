@@ -1,6 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Import-Module HelpersCommon
 Add-TestDynamicType
 
 Describe "Where-Object" -Tags "CI" {

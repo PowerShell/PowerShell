@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
-Import-Module HelpersCommon
 Add-TestDynamicType
 
 Describe "Select-Object" -Tags "CI" {
