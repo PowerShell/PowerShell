@@ -120,6 +120,18 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem -Path $searchRoot -File -Recurse).Count | Should -Be 1
             (Get-ChildItem -Path $searchRoot -Directory -Recurse).Count | Should -Be 1
         }
+
+        It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Pending:$true {
+        # Enable the test after move to .Net Core 2.1.1
+        # The tracking issue https://github.com/dotnet/corefx/issues/29782
+        #
+        #It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Skip:(!$IsWindows){
+            # Don't remove!!! It is special test for hidden and opened file with exclusive lock.
+            $file = Get-ChildItem -path "$env:SystemDrive\\pagefile.sys" -Hidden
+            $file | Should not be $null
+            $file.Count | Should be 1
+            $file.Name | Should be "pagefile.sys"
+        }
     }
 
     Context 'Env: Provider' {
