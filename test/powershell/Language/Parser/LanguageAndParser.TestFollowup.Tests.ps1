@@ -212,3 +212,22 @@ Describe "Members of System.Type" -Tags "CI" {
         [MyType].ImplementedInterfaces | Should -Be System.Collections.IEnumerable
     }
 }
+
+Describe "Hash expression with if statement as value" -Tags "CI" {
+    It "Key-value pairs after an if-statement-value in a HashExpression should continue to be parsed" {
+        $result = @{
+            a = if (1) {'a'}
+            b = 'b'
+            c = if (0) {2} elseif (1) {'c'}
+            d = 'd'
+            e = if (0) {2} else {'e'}
+            f = 'f'
+        }
+        $result['a'] | Should -BeExactly 'a'
+        $result['b'] | Should -BeExactly 'b'
+        $result['c'] | Should -BeExactly 'c'
+        $result['d'] | Should -BeExactly 'd'
+        $result['e'] | Should -BeExactly 'e'
+        $result['f'] | Should -BeExactly 'f'
+    }
+}
