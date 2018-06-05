@@ -612,7 +612,7 @@ function New-UnixPackage {
         }
 
         # Determine if the version is a preview version
-        $IsPreview = $Version.Contains("-preview")
+        $IsPreview = Test-IsPreview -Version $Version
 
         # Preview versions have preview in the name
         $Name = if ($IsPreview) { "powershell-preview" } else { "powershell" }
@@ -752,7 +752,7 @@ function New-UnixPackage {
         if ($Environment.IsMacOS) {
             if ($pscmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
             {
-                $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage
+                $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage -IsPreview:$IsPreview
             }
         }
 
@@ -772,7 +772,8 @@ function New-MacOsDistributionPackage
 {
     param(
         [Parameter(Mandatory,HelpMessage='The FileInfo of the file created by FPM')]
-        [System.IO.FileInfo]$FpmPackage
+        [System.IO.FileInfo]$FpmPackage,
+        [Switch] $IsPreview
     )
 
     if(!$Environment.IsMacOS)
@@ -811,12 +812,15 @@ function New-MacOsDistributionPackage
     # Create the distribution xml
     $distributionXmlPath = Join-Path -Path $tempDir -ChildPath 'powershellDistribution.xml'
 
+    $packageId = Get-MacOSPackageId -IsPreview:$IsPreview.IsPresent
+
     # format distribution template with:
     # 0 - title
     # 1 - version
     # 2 - package path
-    # 2 - minimum os version
-    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+    # 3 - minimum os version
+    # 4 - Package Identifier
+    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.12', $packageId | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
 
     Write-Log "Applying distribution.xml to package..."
     Push-Location $tempDir
@@ -1097,12 +1101,33 @@ function New-ManGzip
         ManFile = $ManFile
     }
 }
+
+# Returns the macOS Package Identifier
+function Get-MacOSPackageId
+{
+    param(
+        [switch]
+        $IsPreview
+    )
+    if($IsPreview.IsPresent)
+    {
+        return 'com.microsoft.powershell-preview'
+    }
+    else
+    {
+        return 'com.microsoft.powershell'
+    }
+}
+
 function New-MacOSLauncher
 {
     param(
         [Parameter(Mandatory)]
         [String]$Version
     )
+
+    $IsPreview = Test-IsPreview -Version $Version
+    $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
 
     # Define folder for launch application.
     $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
@@ -1118,7 +1143,7 @@ function New-MacOSLauncher
     # Set values in plist.
     $plist = "$macosapp/Contents/Info.plist"
     Start-NativeExecution {
-        defaults write $plist CFBundleIdentifier com.microsoft.powershell
+        defaults write $plist CFBundleIdentifier $packageId
         defaults write $plist CFBundleVersion $Version
         defaults write $plist CFBundleShortVersionString $Version
         defaults write $plist CFBundleGetInfoString $Version
@@ -2225,6 +2250,24 @@ function New-MSIPatch
 
 <#
     .Synopsis
+        Tests if a version is preview
+    .EXAMPLE
+        Test-IsPreview -version '6.1.0-sometthing' # returns true
+        Test-IsPreview -version '6.1.0' # returns false
+#>
+function Test-IsPreview
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version
+    )
+
+    return $Version -like '*-*'
+}
+
+<#
+    .Synopsis
         Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
         This only works on a Windows machine due to the usage of WiX.
     .EXAMPLE
@@ -2294,7 +2337,7 @@ function New-MSIPackage
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
     $simpleProductVersion = '6'
-    $isPreview = $ProductSemanticVersion -like '*-*'
+    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
     if($isPreview)
     {
         $simpleProductVersion += '-preview'
