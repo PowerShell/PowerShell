@@ -911,22 +911,33 @@ namespace System.Management.Automation
 
         internal static bool ItemExists(string path, out bool isDirectory)
         {
+            isDirectory = false;
+
             if (String.IsNullOrEmpty(path))
             {
-                isDirectory = false;
                 return false;
             }
 #if !UNIX
             if (IsReservedDeviceName(path))
             {
-                isDirectory = false;
                 return false;
             }
 #endif
-            // Use 'File.GetAttributes()' to get access exceptions
-            FileAttributes attributes = File.GetAttributes(path);
-            isDirectory = attributes.HasFlag(FileAttributes.Directory);
-            return (int)attributes != -1;
+            try
+            {
+                // Use 'File.GetAttributes()' because we want to get access exceptions.
+                // TODO: we should review the tricky logic
+                // (historically we throw 'UnauthorizedAccessException' here) and migrate
+                // to standard methods 'File.Exist()' and 'Directory.Exists()' where possible.
+                FileAttributes attributes = File.GetAttributes(path);
+                isDirectory = attributes.HasFlag(FileAttributes.Directory);
+
+                return (int)attributes != -1;
+            }
+            catch (IOException)
+            {
+                return false;
+            }
         }
 
         internal static bool FileExists(string path)
