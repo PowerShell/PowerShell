@@ -1,17 +1,24 @@
 # version is set in tools\appveyor.psm1 - Invoke-AppVeyorInstall
+environment:
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  # Avoid expensive initialization of dotnet cli, see: http://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  matrix:
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    Purpose: BuildingAndPackaging
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    Purpose: BuildingAndTesting
 
-image: Visual Studio 2017
+# Stop all jobs in the matrix if any one them fail
+matrix:
+  fast_finish: true
 
 # cache version - netcoreapp.2.1-sdk.2.1.300
 cache:
-  - '%LocalAppData%\Microsoft\dotnet -> appveyor.yml'
   - '%HOMEDRIVE%%HOMEPATH%\.nuget\packages -> appveyor.yml'
 
 nuget:
   project_feed: true
-
-environment:
-  POWERSHELL_TELEMETRY_OPTOUT: 1
 
 install:
   - git submodule update --init
@@ -19,15 +26,14 @@ install:
   - ps: Invoke-AppveyorInstall
 
 build_script:
-  - ps: Invoke-AppveyorBuild
+  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppveyorBuild }
 
 test_script:
-  - ps: Invoke-AppveyorTest
+  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppveyorTest }
 
 after_test:
-  - ps: Invoke-AppVeyorAfterTest
+  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppVeyorAfterTest }
 
 # Run the finish command and delete files which should not be in the cache
 on_finish:
-  - ps: Invoke-AppveyorFinish
-  - ps: Invoke-AppVeyorCleanCache
+  - ps: if ($env:Purpose -eq 'BuildingAndPackaging'){ Invoke-AppveyorFinish }
