@@ -161,6 +161,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         & $script
 
         Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
         $transcriptFilePath | Should -FileContentMatch $message
     }
 
@@ -175,6 +176,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         & $script
 
         Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
         $transcriptFilePath | Should -Not -FileContentMatch $message
     }
 
@@ -189,7 +191,26 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         & $script
 
         Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
         $transcriptFilePath | Should -Not -FileContentMatch $message
+    }
+
+    It "Transcription should record Write-Information output in correct order when InformationAction is set to Inquire" {
+        [String]$message = New-Guid
+        $newLine = [System.Environment]::NewLine
+        $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
+        $script = {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $True)
+            Start-Transcript -Path $transcriptFilePath
+            Write-Information -Message $message -InformationAction Inquire
+            Stop-Transcript
+        }
+
+        & $script
+
+        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
+        $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
     }
 
     It "Transcription should record Write-Host output when InformationAction is set to Continue" {
@@ -232,5 +253,22 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         Test-Path $transcriptFilePath | Should -BeTrue
         $transcriptFilePath | Should -Not -FileContentMatch $message
+    }
+
+    It "Transcription should record Write-Host output in correct order when InformationAction is set to Inquire" {
+        [String]$message = New-Guid
+        $newLine = [System.Environment]::NewLine
+        $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
+        $script = {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $True)
+            Start-Transcript -Path $transcriptFilePath
+            Write-Host -Message $message -InformationAction Inquire
+            Stop-Transcript
+        }
+
+        & $script
+
+        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
     }
 }

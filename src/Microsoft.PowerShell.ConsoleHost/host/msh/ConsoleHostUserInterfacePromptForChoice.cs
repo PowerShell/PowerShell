@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell
                     WriteChoicePrompt(hotkeysAndPlainLabels, defaultChoiceKeys, false);
 
                     ReadLineResult rlResult;
-                    string response = ReadLine(false, string.Empty, out rlResult, true, true);
+                    string response = ReadChoiceResponse(out rlResult);
 
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell
                     WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(choiceMsg));
 
                     ReadLineResult rlResult;
-                    string response = ReadLine(false, string.Empty, out rlResult, true, true);
+                    string response = ReadChoiceResponse(out rlResult);
 
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {
@@ -412,6 +412,14 @@ namespace Microsoft.PowerShell
             WriteToConsole(fg, bg, trimEnd ? text.TrimEnd(null) : text);
         }
 
+        private string ReadChoiceResponse(out ReadLineResult result)
+        {
+            result = ReadLineResult.endedOnEnter;
+            return InternalTestHooks.ForcePromptForChoiceDefaultOption
+                   ? string.Empty
+                   : ReadLine(false, string.Empty, out result, true, true);
+        }
+
         private void ShowChoiceHelp(Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)
         {
             Dbg.Assert(choices != null, "choices: expected a value");
@@ -473,4 +481,3 @@ namespace Microsoft.PowerShell
         }
     }
 }   // namespace
-
