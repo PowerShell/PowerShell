@@ -32,7 +32,9 @@ function Start-PSPackage {
 
         [Switch] $Force,
 
-        [Switch] $SkipReleaseChecks
+        [Switch] $SkipReleaseChecks,
+
+        [switch] $NoSudo
     )
 
     DynamicParam {
@@ -318,6 +320,7 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
+                    NoSudo = $NoSudo
                 }
                 foreach ($Distro in $Script:DebianDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -333,6 +336,7 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
+                    NoSudo = $NoSudo
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
@@ -534,7 +538,10 @@ function New-UnixPackage {
         [string]$Iteration = "1",
 
         [Switch]
-        $Force
+        $Force,
+
+        [switch]
+        $NoSudo
     )
 
     DynamicParam {
@@ -555,6 +562,10 @@ function New-UnixPackage {
     }
 
     End {
+        # This allows sudo install to be optional; needed when running in containers / as root
+        # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
+        $sudo = if (!$NoSudo) { "sudo" }
+
         # Validate platform
         $ErrorMessage = "Must be on {0} to build '$Type' packages!"
         switch ($Type) {
@@ -655,7 +666,7 @@ function New-UnixPackage {
             if ($Environment.IsMacOS) {
                 if (Test-Path $symlink_dest) {
                     Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
-                    Move-Item $symlink_dest $hack_dest
+                    Start-NativeExecution ([ScriptBlock]::Create("$sudo mv $symlink_dest $hack_dest"))
                 }
             }
 
@@ -723,7 +734,7 @@ function New-UnixPackage {
                 # this is continuation of a fpm hack for a weird bug
                 if (Test-Path $hack_dest) {
                     Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
-                    Move-Item $hack_dest $symlink_dest
+                    Start-NativeExecution ([ScriptBlock]::Create("$sudo mv $hack_dest $symlink_dest"))
                 }
             }
             if ($AfterScriptInfo.AfterInstallScript) {
