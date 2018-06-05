@@ -110,12 +110,12 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-appimage]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#linux-appimage
 [in-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6
 [in-docker]: https://github.com/PowerShell/PowerShell/tree/master/docker
-[in-kali]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#kali
+[in-kali]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#kali
 [in-windows-zip]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6#zip
 [in-tar-linux]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#binary-archives
 [in-tar-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6#binary-archives
 [in-raspbian]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#raspbian
-[in-arm]: https://docs.microsoft.com/en-us/powershell/scripting/setup/powershell-core-on-arm?view=powershell-6
+[in-arm]: https://docs.microsoft.com/powershell/scripting/setup/powershell-core-on-arm?view=powershell-6
 [corefx-win]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#windows
 [corefx-linux]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#linux
 [corefx-macos]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#macos
