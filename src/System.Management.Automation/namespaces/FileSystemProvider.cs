@@ -1218,10 +1218,10 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
             FileInfo result = new FileInfo(path);
 
+            // FileInfo.Exists is always false for a directory path, so we check the attribute for existence.
             var attributes = result.Attributes;
-            // FileInfo.Exists is true for files but false for directories
-            // so we check attributes directly.
-            bool exists = (int)attributes != -1;
+            if ((int)attributes == -1) { /* Path doesn't exist. */ return null; }
+
             bool hidden = attributes.HasFlag(FileAttributes.Hidden);
             isContainer = attributes.HasFlag(FileAttributes.Directory);
 
@@ -1250,10 +1250,9 @@ namespace Microsoft.PowerShell.Commands
             // also return the object
             if (!isContainer)
             {
-                if (exists && (!hidden || Force || showHidden || filterHidden || switchFilterHidden))
+                if (!hidden || Force || showHidden || filterHidden || switchFilterHidden)
                 {
                     s_tracer.WriteLine("Got file info: {0}", result);
-
                     return result;
                 }
             }
@@ -1270,10 +1269,9 @@ namespace Microsoft.PowerShell.Commands
 
                 // if "Hidden" is specified in the attribute filter dynamic parameters
                 // also return the object
-                if (exists && (isRootPath || !hidden || Force || showHidden || filterHidden || switchFilterHidden))
+                if (isRootPath || !hidden || Force || showHidden || filterHidden || switchFilterHidden)
                 {
                     s_tracer.WriteLine("Got directory info: {0}", result);
-
                     return new DirectoryInfo(path);
                 }
             }
