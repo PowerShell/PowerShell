@@ -95,26 +95,26 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell-6.1.0-preview.2-linux-x64.tar.gz
 [pv-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell-6.1.0-preview.2-linux-arm32.tar.gz
 
-[in-windows]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
-[in-ubuntu14]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1404
-[in-ubuntu16]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1604
-[in-ubuntu17]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1704
-[in-deb8]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#debian-8
-[in-deb9]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#debian-9
-[in-centos]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#centos-7
-[in-rhel7]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#red-hat-enterprise-linux-rhel-7
-[in-opensuse422]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#opensuse-422
-[in-fedora25]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#fedora-25
-[in-fedora26]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#fedora-26
-[in-archlinux]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#arch-linux
-[in-appimage]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#linux-appimage
-[in-macos]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6
+[in-windows]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
+[in-ubuntu14]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1404
+[in-ubuntu16]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1604
+[in-ubuntu17]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1704
+[in-deb8]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#debian-8
+[in-deb9]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#debian-9
+[in-centos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#centos-7
+[in-rhel7]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#red-hat-enterprise-linux-rhel-7
+[in-opensuse422]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#opensuse-422
+[in-fedora25]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#fedora-25
+[in-fedora26]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#fedora-26
+[in-archlinux]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#arch-linux
+[in-appimage]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#linux-appimage
+[in-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6
 [in-docker]: https://github.com/PowerShell/PowerShell/tree/master/docker
 [in-kali]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#kali
-[in-windows-zip]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6#zip
-[in-tar-linux]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#binary-archives
-[in-tar-macos]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6#binary-archives
-[in-raspbian]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#raspbian
+[in-windows-zip]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6#zip
+[in-tar-linux]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#binary-archives
+[in-tar-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6#binary-archives
+[in-raspbian]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#raspbian
 [in-arm]: https://docs.microsoft.com/en-us/powershell/scripting/setup/powershell-core-on-arm?view=powershell-6
 [corefx-win]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#windows
 [corefx-linux]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#linux
@@ -211,7 +211,7 @@ Also make sure to check out our [PowerShell-RFC repository](https://github.com/p
 
 [check out our FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
 [Contribution Guide]: https://github.com/PowerShell/PowerShell/tree/master/.github/CONTRIBUTING.md
-[known issues]: https://docs.microsoft.com/en-us/powershell/scripting/whats-new/known-issues-ps6?view=powershell-6
+[known issues]: https://docs.microsoft.com/powershell/scripting/whats-new/known-issues-ps6?view=powershell-6
 [GitHub issues]: https://github.com/PowerShell/PowerShell/issues
 [new issue]:https://github.com/PowerShell/PowerShell/issues/new
 
