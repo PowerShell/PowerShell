@@ -2420,7 +2420,7 @@ namespace System.Management.Automation.Language
                 //       a = if (1) {}
                 //       b = 10
                 //    }
-                var restorePoint = PeekToken();
+                int restorePoint = _ungotToken == null ? _tokenizer.GetRestorePoint() : _ungotToken.Extent.StartOffset;
                 SkipNewlines();
                 keyword = PeekToken();
 
