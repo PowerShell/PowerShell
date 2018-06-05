@@ -57,19 +57,17 @@ after_success:
 
 # travis-ci will quit using the cache if an enviroment variable changes.
 # CACHE_VERSION is not used for anything other than invalidating the cache.
+# DOTNET_SKIP_FIRST_TIME_EXPERIENCE is to skip the dotnet-cli initialization,
+# which is expensive and unneeded for build agents.
 env:
   global:
     - CACHE_VERSION=netcoreapp.2.1-sdk.2.1.300
     - POWERSHELL_TELEMETRY_OPTOUT=1
+    - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 
 # timeout uploading cache after 6 minutes (360 seconds)
 cache:
   timeout: 360
   directories:
     - $HOME/.nuget
-    - $HOME/.dotnet
     - $HOME/Library/Caches/Homebrew
-# cleanup data that should not be cache, before caching
-before_cache:
-  - rm -r -f $HOME/.dotnet/optimizationdata
-  - rm -r -f $HOME/.dotnet/pids
