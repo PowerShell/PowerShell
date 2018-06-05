@@ -4111,7 +4111,7 @@ namespace Microsoft.PowerShell.Commands
 
                 String filePath = stringBuilder.ToString();
 
-                if (Utils.FileExists(filePath))
+                if (File.Exists(filePath))
                 {
                     localizedFile = filePath;
                     break;

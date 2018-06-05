@@ -233,7 +233,7 @@ namespace System.Management.Automation.Internal
                 foreach (string ext in ModuleIntrinsics.PSModuleExtensions)
                 {
                     string moduleFile = Path.Combine(directoryToCheck, proposedModuleName) + ext;
-                    if (!Utils.FileExists(moduleFile))
+                    if (!File.Exists(moduleFile))
                     {
                         continue;
                     }
