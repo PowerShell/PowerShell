@@ -26,6 +26,7 @@ using System.Management.Automation.Language;
 using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using System.Management.Automation.Tracing;
+using System.Threading.Tasks;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
@@ -120,10 +121,6 @@ namespace Microsoft.PowerShell
             }
 #endif
 
-#if !UNIX
-            Microsoft.PowerShell.TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator);
-#endif
-
             // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
             string path = Environment.GetEnvironmentVariable("PATH");
             if (path != null)
@@ -213,6 +210,16 @@ namespace Microsoft.PowerShell
                     }
                     return ExitCodeBadCommandLineParameter;
                 }
+
+#if !UNIX
+                // Creating a JumpList entry takes around 55ms when the PowerShell process is interactive and
+                // owns the current window (otherwise it does a fast exit anyway). Since there is no 'GET' like API,
+                // we always have to execute this call because we do not know if it has been created yet.
+                // The JumpList does persist as long as the filepath of the executable does not change but there
+                // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
+                // not over-optimize this and always create the JumpList as a non-blocking background task instead.
+                Task.Run(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
+#endif
 
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
