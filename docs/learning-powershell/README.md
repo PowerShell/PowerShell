@@ -31,7 +31,7 @@ At the end of this exercise, you should be able to launch the PowerShell session
 
 [inst-linux]: ../installation/linux.md
 [inst-win]: ../installation/windows.md
-[inst-macos]: ../installation/macos.md
+[inst-macos]: https://github.com/PowerShell/PowerShell-Docs/blob/staging/reference/docs-conceptual/setup/Installing-PowerShell-Core-on-macOS.md
 
 Getting Started with PowerShell
 ----
