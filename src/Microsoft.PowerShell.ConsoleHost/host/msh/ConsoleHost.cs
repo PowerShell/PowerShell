@@ -212,6 +212,12 @@ namespace Microsoft.PowerShell
                 }
 
 #if !UNIX
+                // Creating a JumpList entry takes around 55ms when the PowerShell process is interactive and
+                // owns the current window (otherwise it does a fast exit anyway). Since there is not 'GET' API,
+                // we always have to execute this call because we do not know if it has been created yet.
+                // The JumpList does persist as long as the filepath of the executable does not change but there
+                // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
+                // not over-optimize this and always create the JumpList as a non-blocking background task instead.
                 Task.Run(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
 #endif
 

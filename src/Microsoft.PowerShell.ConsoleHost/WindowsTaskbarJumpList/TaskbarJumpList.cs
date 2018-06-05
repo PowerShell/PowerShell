@@ -12,7 +12,8 @@ namespace Microsoft.PowerShell
     {
         internal static void CreateElevatedEntry(string title)
         {
-            // check startupInfo to know if the current shell owns a window before proceeding
+            // Check startupInfo first to know if the current shell is interactive and owns a window before proceeding
+            // This check is fast (less than 1ms) and allows for quick-exit
             GetStartupInfo(out StartUpInfo startupInfo);
             var STARTF_USESHOWWINDOW = 0x00000001;
             var SW_HIDE = 0;
