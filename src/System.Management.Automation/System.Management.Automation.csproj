@@ -101,13 +101,6 @@
     <Compile Remove="engine\TransactionManager.cs" />
     <Compile Remove="engine\hostifaces\NativeCultureResolver.cs" />
     <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
-    <Compile Remove="engine\remoting\commands\ReceivePSSession.cs" />
-    <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
-    <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
-    <Compile Remove="engine\remoting\commands\EnterPSHostProcessCommand.cs" />
-    <Compile Remove="engine\remoting\commands\NewPSSessionOptionCommand.cs" />
-    <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
-    <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
     <Compile Remove="logging\eventlog\EventLogLogProvider.cs" />
     <Compile Remove="namespaces\SafeTransactionHandle.cs" />
     <Compile Remove="namespaces\SafeRegistryHandle.cs" />
@@ -133,6 +126,16 @@
 
     <EmbeddedResource Remove="resources\CoreMshSnapinResources.resx" />
     <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
+    <Compile Remove="engine\remoting\commands\ReceivePSSession.cs" />
+    <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
+    <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
+    <Compile Remove="engine\remoting\commands\EnterPSHostProcessCommand.cs" />
+    <Compile Remove="engine\remoting\commands\NewPSSessionOptionCommand.cs" />
+    <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
+    <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
   </ItemGroup>
 
 </Project>
