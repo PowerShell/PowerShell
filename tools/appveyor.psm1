@@ -318,7 +318,10 @@ function Update-AppVeyorTestResults
 function Invoke-AppVeyorTest
 {
     [CmdletBinding()]
-    param()
+    param(
+        [ValidateSet('PesterCI', 'PesterAdminAndOptionallyFeatureTests_xUnit')]
+        [string] $TestCategory
+    )
     #
     # CoreCLR
 
@@ -333,7 +336,7 @@ function Invoke-AppVeyorTest
         throw "CoreCLR pwsh.exe was not built"
     }
 
-    if(-not (Test-DailyBuild))
+    if (-not (Test-DailyBuild) -and $TestCategory -eq 'PesterCI')
     {
         # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
         # https://github.com/pester/Pester/issues/608
@@ -347,18 +350,22 @@ function Invoke-AppVeyorTest
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
 
-    Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
-    Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
-    Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
+    if ($TestCategory -eq 'PesterCoreClrNonAdmin') {
+        Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
+        Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
+        Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
+    }
 
-    Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
-    Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
-    Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
+    if ($TestCategory -eq 'PesterCoreClrAdmin_xUnit') {
+        Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
+        Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
+        Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
-    Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
-    Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-    Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFile
-    Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
+        Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
+        Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFile
+        Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
+    }
 
     #
     # Fail the build, if tests failed
@@ -383,9 +390,12 @@ function Invoke-AppVeyorTest
 function Invoke-AppVeyorAfterTest
 {
     [CmdletBinding()]
-    param()
+    param(
+        [ValidateSet('PesterCI', 'PesterAdminAndOptionallyFeatureTests_xUnit')]
+        [string] $TestCategory
+    )
 
-    if(Test-DailyBuild)
+    if (Test-DailyBuild -and $TestCategory -eq 'PesterAdminAndOptionallyFeatureTests_xUnit')
     {
         ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
         ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish.
@@ -440,6 +450,12 @@ function Get-ReleaseTag
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
+    [CmdletBinding()]
+    param(
+        [ValidateSet('PesterCI', 'PesterAdminAndOptionallyFeatureTests_xUnit')]
+        [string] $TestCategory
+    )
+
     try {
         $releaseTag = Get-ReleaseTag
 

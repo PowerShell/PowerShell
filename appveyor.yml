@@ -8,6 +8,10 @@ environment:
     Purpose: BuildingAndPackaging
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     Purpose: BuildingAndTesting
+    TestCategory: PesterCI
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    Purpose: BuildingAndTesting
+    TestCategory: PesterAdminAndOptionallyFeatureTests_xUnit
 
 # Stop all jobs in the matrix if any one them fail
 matrix:
@@ -29,11 +33,11 @@ build_script:
   - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppveyorBuild }
 
 test_script:
-  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppveyorTest }
+  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppveyorTest $env:TestCategory }
 
 after_test:
-  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppVeyorAfterTest }
+  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppVeyorAfterTest $env:TestCategory }
 
 # Run the finish command and delete files which should not be in the cache
 on_finish:
-  - ps: if ($env:Purpose -eq 'BuildingAndPackaging'){ Invoke-AppveyorFinish }
+  - ps: if ($env:Purpose -eq 'BuildingAndPackaging'){ Invoke-AppveyorFinish $env:TestCategory }
