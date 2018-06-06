@@ -449,7 +449,7 @@ function New-PSSignedBuildZip
     # Replace unsigned binaries with signed
     $signedFilesFilter = Join-Path -Path $signedFilesPath -ChildPath '*'
     Get-ChildItem -path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
-        $relativePath = $_.Replace($signedFilesPath,'')
+        $relativePath = $_.ToLowerInvariant().Replace($signedFilesPath.ToLowerInvariant(),'')
         $destination = Join-Path -Path $buildPath -ChildPath $relativePath
         Write-Log "replacing $destination with $_"
         Copy-Item -Path $_ -Destination $destination -force
