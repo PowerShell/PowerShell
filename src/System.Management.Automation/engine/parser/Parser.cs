@@ -2411,6 +2411,16 @@ namespace System.Management.Automation.Language
 
                 clauses.Add(new IfClause(condition, body));
 
+                // Save a restore point here. In case there is no 'elseif' or 'else' following,
+                // we should resync back here to preserve the possible new lines. The new lines
+                // could be important for the following parsing. For example, in case we are in
+                // a HashExpression, a new line might be needed for parsing the key-value that
+                // is following the if statement:
+                //    @{
+                //       a = if (1) {}
+                //       b = 10
+                //    }
+                int restorePoint = _ungotToken == null ? _tokenizer.GetRestorePoint() : _ungotToken.Extent.StartOffset;
                 SkipNewlines();
                 keyword = PeekToken();
 
@@ -2419,8 +2429,7 @@ namespace System.Management.Automation.Language
                     SkipToken();
                     continue;
                 }
-
-                if (keyword.Kind == TokenKind.Else)
+                else if (keyword.Kind == TokenKind.Else)
                 {
                     SkipToken();
                     SkipNewlines();
@@ -2435,6 +2444,11 @@ namespace System.Management.Automation.Language
                             ParserStrings.MissingStatementBlockAfterElse);
                         return new ErrorStatementAst(ExtentOf(ifToken, keyword), componentAsts);
                     }
+                }
+                else
+                {
+                    // There is no 'elseif' or 'else' following, so resync back to the possible new lines.
+                    Resync(restorePoint);
                 }
                 break;
             }
