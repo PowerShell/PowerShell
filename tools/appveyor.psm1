@@ -350,13 +350,13 @@ function Invoke-AppVeyorTest
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
 
-    if ($TestCategory -eq 'PesterCoreClrNonAdmin') {
+    if ($TestCategory -eq 'PesterCI') {
         Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
         Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
     }
 
-    if ($TestCategory -eq 'PesterCoreClrAdmin_xUnit') {
+    if ($TestCategory -eq 'PesterAdminAndOptionallyFeatureTests_xUnit') {
         Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
