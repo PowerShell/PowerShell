@@ -243,9 +243,50 @@ Describe "Hash expression with if statement as value" -Tags "CI" {
             h = 'h'
         }
 
+        # With expanded if-statement
+        $hash3 = @{
+            a = if (1)
+                {
+                    'a'
+                }
+            b = 'b'
+            c = if (0)
+                {
+                    2
+                }
+                elseif (1)
+                {
+                    'c'
+                }
+            d = 'd'
+            e = if (0)
+                {
+                    2
+                }
+                elseif (0)
+                {
+                    2
+                }
+                else
+                {
+                    'e'
+                }
+            f = 'f'
+            g = if (0)
+                {
+                    2
+                }
+                else
+                {
+                    'g'
+                }
+            h = 'h'
+        }
+
         $testCases = @(
             @{ name = "No extra new lines"; hash = $hash1 }
             @{ name = "With extra new lines"; hash = $hash2 }
+            @{ name = "With expanded if-statement"; hash = $hash3 }
         )
     }
 
