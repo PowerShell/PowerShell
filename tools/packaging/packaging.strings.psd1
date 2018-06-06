@@ -60,7 +60,7 @@ OsxDistributionTemplate = @'
         <os-version min="{3}" />
     </allowed-os-versions>
     <options customize="never" require-scripts="false"/>
-    <product id="com.microsoft.powershell" version="{1}" />
+    <product id="{4}" version="{1}" />
     <choices-outline>
         <line choice="default">
             <line choice="powershell"/>
@@ -68,9 +68,9 @@ OsxDistributionTemplate = @'
     </choices-outline>
     <choice id="default"/>
     <choice id="powershell" visible="false">
-        <pkg-ref id="com.microsoft.powershell"/>
+        <pkg-ref id="{4}"/>
     </choice>
-    <pkg-ref id="com.microsoft.powershell" version="{1}" onConclusion="none">{2}</pkg-ref>
+    <pkg-ref id="{4}" version="{1}" onConclusion="none">{2}</pkg-ref>
 </installer-gui-script>
 '@
 NuspecTemplate = @'

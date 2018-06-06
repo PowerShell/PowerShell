@@ -32,7 +32,9 @@ function Start-PSPackage {
 
         [Switch] $Force,
 
-        [Switch] $SkipReleaseChecks
+        [Switch] $SkipReleaseChecks,
+
+        [switch] $NoSudo
     )
 
     DynamicParam {
@@ -318,6 +320,7 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
+                    NoSudo = $NoSudo
                 }
                 foreach ($Distro in $Script:DebianDistributions) {
                     $Arguments["Distribution"] = $Distro
@@ -333,6 +336,7 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
+                    NoSudo = $NoSudo
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
@@ -534,7 +538,10 @@ function New-UnixPackage {
         [string]$Iteration = "1",
 
         [Switch]
-        $Force
+        $Force,
+
+        [switch]
+        $NoSudo
     )
 
     DynamicParam {
@@ -555,6 +562,10 @@ function New-UnixPackage {
     }
 
     End {
+        # This allows sudo install to be optional; needed when running in containers / as root
+        # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
+        $sudo = if (!$NoSudo) { "sudo" }
+
         # Validate platform
         $ErrorMessage = "Must be on {0} to build '$Type' packages!"
         switch ($Type) {
@@ -601,7 +612,7 @@ function New-UnixPackage {
         }
 
         # Determine if the version is a preview version
-        $IsPreview = $Version.Contains("-preview")
+        $IsPreview = Test-IsPreview -Version $Version
 
         # Preview versions have preview in the name
         $Name = if ($IsPreview) { "powershell-preview" } else { "powershell" }
@@ -655,7 +666,7 @@ function New-UnixPackage {
             if ($Environment.IsMacOS) {
                 if (Test-Path $symlink_dest) {
                     Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
-                    Move-Item $symlink_dest $hack_dest
+                    Start-NativeExecution ([ScriptBlock]::Create("$sudo mv $symlink_dest $hack_dest"))
                 }
             }
 
@@ -723,7 +734,7 @@ function New-UnixPackage {
                 # this is continuation of a fpm hack for a weird bug
                 if (Test-Path $hack_dest) {
                     Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
-                    Move-Item $hack_dest $symlink_dest
+                    Start-NativeExecution ([ScriptBlock]::Create("$sudo mv $hack_dest $symlink_dest"))
                 }
             }
             if ($AfterScriptInfo.AfterInstallScript) {
@@ -741,7 +752,7 @@ function New-UnixPackage {
         if ($Environment.IsMacOS) {
             if ($pscmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
             {
-                $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage
+                $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage -IsPreview:$IsPreview
             }
         }
 
@@ -761,7 +772,8 @@ function New-MacOsDistributionPackage
 {
     param(
         [Parameter(Mandatory,HelpMessage='The FileInfo of the file created by FPM')]
-        [System.IO.FileInfo]$FpmPackage
+        [System.IO.FileInfo]$FpmPackage,
+        [Switch] $IsPreview
     )
 
     if(!$Environment.IsMacOS)
@@ -800,12 +812,15 @@ function New-MacOsDistributionPackage
     # Create the distribution xml
     $distributionXmlPath = Join-Path -Path $tempDir -ChildPath 'powershellDistribution.xml'
 
+    $packageId = Get-MacOSPackageId -IsPreview:$IsPreview.IsPresent
+
     # format distribution template with:
     # 0 - title
     # 1 - version
     # 2 - package path
-    # 2 - minimum os version
-    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+    # 3 - minimum os version
+    # 4 - Package Identifier
+    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.12', $packageId | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
 
     Write-Log "Applying distribution.xml to package..."
     Push-Location $tempDir
@@ -1086,12 +1101,33 @@ function New-ManGzip
         ManFile = $ManFile
     }
 }
+
+# Returns the macOS Package Identifier
+function Get-MacOSPackageId
+{
+    param(
+        [switch]
+        $IsPreview
+    )
+    if($IsPreview.IsPresent)
+    {
+        return 'com.microsoft.powershell-preview'
+    }
+    else
+    {
+        return 'com.microsoft.powershell'
+    }
+}
+
 function New-MacOSLauncher
 {
     param(
         [Parameter(Mandatory)]
         [String]$Version
     )
+
+    $IsPreview = Test-IsPreview -Version $Version
+    $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
 
     # Define folder for launch application.
     $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
@@ -1107,7 +1143,7 @@ function New-MacOSLauncher
     # Set values in plist.
     $plist = "$macosapp/Contents/Info.plist"
     Start-NativeExecution {
-        defaults write $plist CFBundleIdentifier com.microsoft.powershell
+        defaults write $plist CFBundleIdentifier $packageId
         defaults write $plist CFBundleVersion $Version
         defaults write $plist CFBundleShortVersionString $Version
         defaults write $plist CFBundleGetInfoString $Version
@@ -2214,6 +2250,24 @@ function New-MSIPatch
 
 <#
     .Synopsis
+        Tests if a version is preview
+    .EXAMPLE
+        Test-IsPreview -version '6.1.0-sometthing' # returns true
+        Test-IsPreview -version '6.1.0' # returns false
+#>
+function Test-IsPreview
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version
+    )
+
+    return $Version -like '*-*'
+}
+
+<#
+    .Synopsis
         Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
         This only works on a Windows machine due to the usage of WiX.
     .EXAMPLE
@@ -2283,7 +2337,7 @@ function New-MSIPackage
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
     $simpleProductVersion = '6'
-    $isPreview = $ProductSemanticVersion -like '*-*'
+    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
     if($isPreview)
     {
         $simpleProductVersion += '-preview'
