@@ -615,7 +615,7 @@ function New-UnixPackage {
         $IsPreview = Test-IsPreview -Version $Version
 
         # Preview versions have preview in the name
-        $Name = if ($IsPreview) { "powershell-preview" } else { "powershell" }
+        $Name = if ($IsPreview -and $Environment.IsLinux) { "powershell-preview" } else { "powershell" }
 
         # Verify dependencies are installed and in the path
         Test-Dependencies
