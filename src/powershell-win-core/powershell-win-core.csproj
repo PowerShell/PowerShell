@@ -15,7 +15,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="..\Modules\Windows-Core\**\*;..\Modules\Windows-Core+Full\**\*;..\Modules\Shared\**\*">
+    <Content Include="..\Modules\Windows-Core\**\*;..\Modules\Shared\**\*">
       <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
