@@ -39,8 +39,6 @@
     <file src="__INPATHROOT__\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psm1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psm1" />
     <file src="__INPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psd1" />
     <file src="__INPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psm1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psm1" />
-    <file src="__INPATHROOT__\Modules\PSReadLine\PSReadLine.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\PSReadLine\PSReadLine.psd1" />
-    <file src="__INPATHROOT__\Modules\PSReadLine\PSReadLine.psm1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\PSReadLine\PSReadLine.psm1" />
     <file src="__INPATHROOT__\Modules\Microsoft.WSMan.Management\WSMan.format.ps1xml" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.WSMan.Management\WSMan.format.ps1xml" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Event.format.ps1xml" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Event.format.ps1xml" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\GetEvent.types.ps1xml" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\GetEvent.types.ps1xml" />
