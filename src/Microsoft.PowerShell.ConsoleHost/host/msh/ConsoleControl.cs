@@ -2688,8 +2688,11 @@ namespace Microsoft.PowerShell
             {
                 int err = Marshal.GetLastWin32Error();
 
-                HostException e = CreateHostException(err, "WriteConsole",
-                    ErrorCategory.WriteError, ConsoleControlStrings.WriteConsoleExceptionTemplate);
+                HostException e = CreateHostException(
+                    err,
+                    "WriteConsole",
+                    ErrorCategory.WriteError,
+                    ConsoleControlStrings.WriteConsoleExceptionTemplate);
                 throw e;
             }
         }

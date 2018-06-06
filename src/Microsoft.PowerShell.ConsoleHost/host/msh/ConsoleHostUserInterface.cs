@@ -700,12 +700,12 @@ namespace Microsoft.PowerShell
 
         private void WriteLineToConsole(string text)
         {
-            WriteLineToConsole(text, true);
+            WriteLineToConsole(text, transcribeResult: true);
         }
 
         private void WriteLineToConsole()
         {
-            WriteLineToConsole("", true);
+            WriteLineToConsole(string.Empty, transcribeResult: true);
         }
 
         #endregion WriteToConsole
