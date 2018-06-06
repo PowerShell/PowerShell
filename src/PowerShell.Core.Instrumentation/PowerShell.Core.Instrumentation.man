@@ -2187,12 +2187,11 @@
               />
         </events>
         <channels>
-          <!--There are four channels defined for Windows PowerShell instrumentation
+          <!--There are three channels defined for Windows PowerShell instrumentation
               event provider
                 1. Operational - for high level diagnostic messages
                 2. Analytic - for high volume high performance trace messages
                 3. Debug - for high volume high performance trace messages
-                4. Admin - for high level diagnostic messages
 		-->
           <channel
               chid="C_OPERATIONAL"
