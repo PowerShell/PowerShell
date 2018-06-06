@@ -2547,12 +2547,12 @@ namespace Microsoft.PowerShell
         /// <param name="output">
         /// string that is written
         /// </param>
-        /// <exception cref="HostException">
         /// <param name="newLine">
         ///
         /// New line is written
         ///
         /// </param>
+        /// <exception cref="HostException">
         ///
         /// if the Win32's WriteConsole fails
         /// </exception>
