@@ -1671,7 +1671,7 @@ function Start-PSBootstrap {
                     if($Environment.IsMacOS) {
                         $gemsudo = $sudo
                     }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.9.3"))
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.10.0"))
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3"))
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
