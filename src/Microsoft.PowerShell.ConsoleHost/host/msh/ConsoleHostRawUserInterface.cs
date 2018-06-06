@@ -1473,7 +1473,7 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.PowerShell
 {
-    // this is all originally from https://msdn.microsoft.com/en-us/library/ee706570%28v=vs.85%29.aspx
+    // this is all originally from https://msdn.microsoft.com/library/ee706570%28v=vs.85%29.aspx
 
     internal sealed class ConsoleHostRawUserInterface : PSHostRawUserInterface
     {

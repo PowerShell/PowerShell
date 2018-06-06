@@ -1,6 +1,6 @@
 ## DSC MOF Compilation Demo
 
-[PowerShell Desired State Configuration](https://msdn.microsoft.com/en-us/PowerShell/dsc/overview) is a declarative configuration platform for Windows and Linux. DSC configurations can be authored in PowerShell and compiled into the resultant MOF document. 
+[PowerShell Desired State Configuration](https://docs.microsoft.com/powershell/dsc/overview) is a declarative configuration platform for Windows and Linux. DSC configurations can be authored in PowerShell and compiled into the resultant MOF document. 
 
 This demo shows use of PowerShell to author a DSC configuration to set the configuration of an Apache web server. PowerShell scripting is used to assess distro and version-specific properties, such as the service controller and repo manager tools, for use in the configuration. 
 

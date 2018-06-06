@@ -112,7 +112,7 @@ Recommended Training and Reading
 - [Learn PowerShell Video Library][powershell.com-learn-powershell] from PowerShell.com
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
-- [PowerShell TechNet Resources](https://technet.microsoft.com/en-us/scriptcenter/dd742419.aspx) from ScriptCenter
+- [PowerShell TechNet Resources](https://technet.microsoft.com/scriptcenter/dd742419.aspx) from ScriptCenter
 
 
 Commercial Resources
@@ -128,7 +128,7 @@ Commercial Resources
 
 [getstarted-with-powershell]: https://channel9.msdn.com/Series/GetStartedPowerShell3
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/
-[basic-cookbooks]: https://msdn.microsoft.com/en-us/powershell/scripting/getting-started/basic-cookbooks
+[Using Windows PowerShell for Administration]: https://docs.microsoft.com/powershell/scripting/getting-started/fundamental/using-windows-powershell-for-administration?view=powershell-6
 [ebook-from-powershell.com]: http://powershell.com/cs/blogs/ebookv2/default.aspx
 [channel9-learn-powershell]: https://channel9.msdn.com/Search?term=powershell#ch9Search
 [powershell.com-learn-powershell]: http://powershell.com/cs/media/14/default.aspx

@@ -296,14 +296,14 @@ Commercial Resources
 [ebooks-powershell.com]: http://powershell.com/cs/blogs/ebookv2/default.aspx
 [tutorial]: http://www.computerperformance.co.uk/powershell/index.htm
 [to-learn]:https://blogs.technet.microsoft.com/heyscriptingguy/2015/01/04/weekend-scripter-the-best-ways-to-learn-powershell/
-[ps-module]:https://msdn.microsoft.com/en-us/library/dd878324%28v=vs.85%29.aspx
+[ps-module]:https://msdn.microsoft.com/library/dd878324%28v=vs.85%29.aspx
 [create-ps-module]:http://www.tomsitpro.com/articles/powershell-modules,2-846.html
 [remoting]:https://channel9.msdn.com/Series/GetStartedPowerShell3/06
 [in-depth]: https://channel9.msdn.com/events/MMS/2012/SV-B406
 [remote-mgmt]:http://windowsitpro.com/powershell/powershell-basics-remote-management
-[remote-commands]:https://msdn.microsoft.com/en-us/powershell/scripting/core-powershell/running-remote-commands
+[remote-commands]:https://docs.microsoft.com/powershell/scripting/core-powershell/running-remote-commands?view=powershell-6
 [examples]:http://examples.oreilly.com/9780596528492/
-[examples-ps-module]:https://msdn.microsoft.com/en-us/library/dd878340%28v=vs.85%29.aspx
+[examples-ps-module]:https://msdn.microsoft.com/library/dd878340%28v=vs.85%29.aspx
 [writing-ps-module]:http://www.powershellmagazine.com/2014/03/18/writing-a-powershell-module-in-c-part-1-the-basics/
-[sample-code]:https://msdn.microsoft.com/en-us/library/ff602031%28v=vs.85%29.aspx
+[sample-code]:https://msdn.microsoft.com/library/ff602031%28v=vs.85%29.aspx
 [create-run-script]:./create-powershell-scripts.md

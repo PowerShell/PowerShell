@@ -672,7 +672,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = true;
 
-                // CLR 4.0 Port note - use https://msdn.microsoft.com/en-us/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
+                // CLR 4.0 Port note - use https://msdn.microsoft.com/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
                 string localName = System.Net.Dns.GetHostName();
 
                 // And for this, use PsUtils.GetHostname()

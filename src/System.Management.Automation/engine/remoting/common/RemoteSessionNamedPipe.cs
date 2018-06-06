@@ -326,7 +326,7 @@ namespace System.Management.Automation.Remoting
 
         // Access mask constant taken from PipeSecurity access rights and is equivalent to
         // PipeAccessRights.FullControl.
-        // See: https://msdn.microsoft.com/en-us/library/vstudio/bb348408(v=vs.100).aspx
+        // See: https://msdn.microsoft.com/library/vstudio/bb348408(v=vs.100).aspx
         //
         private const int _pipeAccessMaskFullControl = 0x1f019f;
 
