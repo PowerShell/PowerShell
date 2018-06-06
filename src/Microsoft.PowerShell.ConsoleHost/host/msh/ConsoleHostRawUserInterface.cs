@@ -1741,7 +1741,6 @@ namespace Microsoft.PowerShell
             {
                 PSTraceSource.NewArgumentNullException("contents");
             }
-            
             //if the cursor is on the last line, we need to make more space to print the specified buffer
             if (origin.Y == BufferSize.Height - 1 && origin.X >= BufferSize.Width)
             {
