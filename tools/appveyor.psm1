@@ -336,7 +336,7 @@ function Invoke-AppVeyorTest
         throw "CoreCLR pwsh.exe was not built"
     }
 
-    if (-not (Test-DailyBuild) -and $TestCategory -eq 'PesterCI')
+    if (-not (Test-DailyBuild))
     {
         # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
         # https://github.com/pester/Pester/issues/608
@@ -450,12 +450,6 @@ function Get-ReleaseTag
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
-    [CmdletBinding()]
-    param(
-        [ValidateSet('PesterCI', 'PesterAdminAndOptionallyFeatureTests_xUnit')]
-        [string] $TestCategory
-    )
-
     try {
         $releaseTag = Get-ReleaseTag
 
