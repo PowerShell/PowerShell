@@ -128,4 +128,14 @@
     <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
+    <Compile Remove="engine\remoting\commands\ReceivePSSession.cs" />
+    <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
+    <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
+    <Compile Remove="engine\remoting\commands\EnterPSHostProcessCommand.cs" />
+    <Compile Remove="engine\remoting\commands\NewPSSessionOptionCommand.cs" />
+    <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
+    <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
+  </ItemGroup>
+
 </Project>

@@ -15,6 +15,7 @@ using System.Globalization;
 
 namespace Microsoft.PowerShell.Commands
 {
+#if !UNIX
     /// <summary>
     /// New-PSSessionConfigurationFile command implementation
     ///
@@ -1064,6 +1065,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
     }
+#endif
 
     /// <summary>
     /// New-PSRoleCapabilityFile command implementation
