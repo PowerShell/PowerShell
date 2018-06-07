@@ -29,9 +29,9 @@ At the end of this exercise, you should be able to launch the PowerShell session
 
 - Alternatively you can get the PowerShell by [building it](../../README.md#building-powershell)
 
-[inst-linux]: ../installation/linux.md
-[inst-win]: ../installation/windows.md
-[inst-macos]: https://github.com/PowerShell/PowerShell-Docs/blob/staging/reference/docs-conceptual/setup/Installing-PowerShell-Core-on-macOS.md
+[inst-linux]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6
+[inst-win]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
+[inst-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6
 
 Getting Started with PowerShell
 ----
