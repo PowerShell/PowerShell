@@ -29,10 +29,10 @@ build_script:
   - ps: Invoke-AppveyorBuild
 
 test_script:
-  - ps: Invoke-AppveyorTest -TestCategory $env:TestCategory
+  - ps: Invoke-AppveyorTest -Purpose $env:Purpose
 
 after_test:
-  - ps: Invoke-AppVeyorAfterTest -TestCategory $env:TestCategory
+  - ps: Invoke-AppVeyorAfterTest -Purpose $env:Purpose
 
 # Packaging
 on_finish:
