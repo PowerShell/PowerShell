@@ -897,16 +897,15 @@ namespace System.Management.Automation
 
         internal static bool ItemExists(string path)
         {
-            bool result = false;
             try
             {
-                result = ItemExists(path, out bool unused);
+                return ItemExists(path, out bool _);
             }
             catch
             {
             }
 
-            return result;
+            return false;
         }
 
         internal static bool ItemExists(string path, out bool isDirectory)

@@ -2893,7 +2893,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (!Utils.ItemExists(directory.FullName, out bool unused))
+                    if (!Utils.ItemExists(directory.FullName, out bool _))
                     {
                         // Directory does not exist
                         return;
@@ -3219,7 +3219,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                result = Utils.ItemExists(path, out bool unused);
+                result = Utils.ItemExists(path, out bool _);
 
                 FileSystemItemProviderDynamicParameters itemExistsDynamicParameters =
                     DynamicParameters as FileSystemItemProviderDynamicParameters;
