@@ -426,6 +426,17 @@ Dockerfile
 VisualStudio
 readonly
 PowerShell.6
+preview.3
+Auth
+mcbobke
+wesholton84
+Patochun
+Jumplist
+bjh7242
+beta2
+PSGallery
+adelton
+qmfrederik
 #endregion
 
 #region CODE_OF_CONDUCT.md Overrides
