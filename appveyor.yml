@@ -5,13 +5,9 @@ environment:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    Purpose: BuildingAndPackaging
+    Purpose: PesterCI
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    Purpose: BuildingAndTesting
-    TestCategory: PesterCI
-  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    Purpose: BuildingAndTesting
-    TestCategory: PesterAdminAndOptionallyFeatureTests_xUnit
+    Purpose: AdvancedPesterTests_xUnit_Packaging
 
 # Stop all jobs in the matrix if any one them fail
 matrix:
@@ -30,14 +26,14 @@ install:
   - ps: Invoke-AppveyorInstall
 
 build_script:
-  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppveyorBuild }
+  - ps: Invoke-AppveyorBuild
 
 test_script:
-  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppveyorTest $env:TestCategory }
+  - ps: Invoke-AppveyorTest -TestCategory $env:TestCategory
 
 after_test:
-  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppVeyorAfterTest $env:TestCategory }
+  - ps: Invoke-AppVeyorAfterTest -TestCategory $env:TestCategory
 
-# Run the finish command and delete files which should not be in the cache
+# Packaging
 on_finish:
-  - ps: if ($env:Purpose -eq 'BuildingAndPackaging'){ Invoke-AppveyorFinish }
+  - ps: if ($env:Purpose -eq 'AdvancedPesterTests_xUnit_Packaging'){ Invoke-AppveyorFinish }

@@ -319,7 +319,7 @@ function Invoke-AppVeyorTest
 {
     [CmdletBinding()]
     param(
-        [ValidateSet('PesterCI', 'PesterAdminAndOptionallyFeatureTests_xUnit')]
+        [ValidateSet('PesterCI', 'AdvancedPesterTests_xUnit_Packaging')]
         [string] $TestCategory
     )
     #
@@ -359,7 +359,7 @@ function Invoke-AppVeyorTest
         $testResultsNonAdminFile | Test-PSPesterResults -TestResultsFile $_
     }
 
-    if ($TestCategory -eq 'PesterAdminAndOptionallyFeatureTests_xUnit') {
+    if ($TestCategory -eq 'AdvancedPesterTests_xUnit_Packaging') {
         Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
@@ -387,11 +387,11 @@ function Invoke-AppVeyorAfterTest
 {
     [CmdletBinding()]
     param(
-        [ValidateSet('PesterCI', 'PesterAdminAndOptionallyFeatureTests_xUnit')]
+        [ValidateSet('PesterCI', 'AdvancedPesterTests_xUnit_Packaging')]
         [string] $TestCategory
     )
 
-    if (Test-DailyBuild -and $TestCategory -eq 'PesterAdminAndOptionallyFeatureTests_xUnit')
+    if (Test-DailyBuild -and $TestCategory -eq 'AdvancedPesterTests_xUnit_Packaging')
     {
         ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
         ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish.
