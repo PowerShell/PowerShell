@@ -2907,41 +2907,20 @@ namespace Microsoft.PowerShell.Commands
                 continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
-            if ((directory.Attributes & FileAttributes.ReparsePoint) != 0)
+            if (directory.Attributes.HasFlag(FileAttributes.ReparsePoint))
             {
-                bool success = InternalSymbolicLinkLinkCodeMethods.DeleteJunction(directory.FullName);
-
-                if (!success)
+                try
+                {
+                    directory.Delete();
+                }
+                catch (Exception exc)
                 {
                     string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
-                    Exception e = new IOException(error);
-                    WriteError(new ErrorRecord(e, "DeleteJunctionFailed", ErrorCategory.WriteError, directory));
-                    return;
+                    Exception exception = new IOException(error, exc);
+                    WriteError(new ErrorRecord(exception, "DeleteJunctionFailed", ErrorCategory.WriteError, directory));
                 }
 
-                bool isDirectory;
-                Exception accessException;
-
-                if (!Utils.NativeItemExists(directory.FullName, out isDirectory, out accessException))
-                {
-                    return;
-                }
-
-                if (accessException != null)
-                {
-                    ErrorRecord errorRecord = new ErrorRecord(accessException, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, directory);
-
-                    ErrorDetails errorDetails =
-                    new ErrorDetails(this, "FileSystemProviderStrings",
-                        "CannotRemoveItem",
-                        directory.FullName,
-                        accessException.Message);
-
-                    errorRecord.ErrorDetails = errorDetails;
-
-                    WriteError(errorRecord);
-                    return;
-                }
+                return;
             }
 
             if (continueRemoval)
@@ -8396,91 +8375,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentNullException("path");
             }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        internal static bool DeleteJunction(string junctionPath)
-        {
-            bool result = false;
-
-            if (!String.IsNullOrEmpty(junctionPath))
-            {
-                if (!Platform.IsWindows)
-                {
-                    // For non-Windows platform, treat it as a file.  Just delete it.
-                    try
-                    {
-                        File.Delete(junctionPath);
-                        return true;
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-                }
-
-                using (SafeHandle handle = OpenReparsePoint(junctionPath, FileDesiredAccess.GenericWrite))
-                {
-                    bool success = false;
-                    int inOutBufferSize = Marshal.SizeOf<REPARSE_GUID_DATA_BUFFER>();
-                    IntPtr outBuffer = Marshal.AllocHGlobal(inOutBufferSize);
-                    IntPtr inBuffer = Marshal.AllocHGlobal(inOutBufferSize);
-
-                    try
-                    {
-                        handle.DangerousAddRef(ref success);
-                        IntPtr dangerousHandle = handle.DangerousGetHandle();
-                        int bytesReturned;
-
-                        // Do a FSCTL_GET_REPARSE_POINT first because the ReparseTag could be
-                        // IO_REPARSE_TAG_MOUNT_POINT or IO_REPARSE_TAG_SYMLINK.
-                        // Using the wrong one results in mismatched-tag error.
-
-                        REPARSE_GUID_DATA_BUFFER junctionData = new REPARSE_GUID_DATA_BUFFER();
-                        Marshal.StructureToPtr<REPARSE_GUID_DATA_BUFFER>(junctionData, outBuffer, false);
-
-                        result = DeviceIoControl(dangerousHandle, FSCTL_GET_REPARSE_POINT, IntPtr.Zero, 0,
-                            outBuffer, inOutBufferSize, out bytesReturned, IntPtr.Zero);
-                        if (!result)
-                        {
-                            int lastError = Marshal.GetLastWin32Error();
-                            throw new Win32Exception(lastError);
-                        }
-
-                        junctionData = Marshal.PtrToStructure<REPARSE_GUID_DATA_BUFFER>(outBuffer);
-                        junctionData.ReparseDataLength = 0;
-                        junctionData.DataBuffer = new char[MAX_REPARSE_SIZE];
-
-                        Marshal.StructureToPtr<REPARSE_GUID_DATA_BUFFER>(junctionData, inBuffer, false);
-
-                        // To delete a reparse point:
-                        // ReparseDataLength must be 0
-                        // inBufferSize must be REPARSE_GUID_DATA_BUFFER_HEADER_SIZE
-                        result = DeviceIoControl(dangerousHandle, FSCTL_DELETE_REPARSE_POINT, inBuffer, REPARSE_GUID_DATA_BUFFER_HEADER_SIZE, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
-                        if (!result)
-                        {
-                            int lastError = Marshal.GetLastWin32Error();
-                            throw new Win32Exception(lastError);
-                        }
-                    }
-                    finally
-                    {
-                        if (success)
-                        {
-                            handle.DangerousRelease();
-                        }
-
-                        Marshal.FreeHGlobal(outBuffer);
-                        Marshal.FreeHGlobal(inBuffer);
-                    }
-                }
-            }
-            else
-            {
-                throw new ArgumentNullException("junctionPath");
-            }
-
-            return result;
         }
 
         private static SafeFileHandle OpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)
