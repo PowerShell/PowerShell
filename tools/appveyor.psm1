@@ -356,7 +356,7 @@ function Invoke-AppVeyorTest
         Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
 
         # Fail the build, if tests failed
-        $testResultsNonAdminFile | Test-PSPesterResults -TestResultsFile $_
+        Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
     }
 
     if ($Purpose -eq 'AdvancedPesterTests_xUnit_Packaging') {
@@ -370,7 +370,7 @@ function Invoke-AppVeyorTest
         Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
 
         # Fail the build, if tests failed
-        $testResultsAdminFile | Test-PSPesterResults -TestResultsFile $_
+        Test-PSPesterResults -TestResultsFile $testResultsAdminFile
         @(
             $SequentialXUnitTestResultsFile,
             $ParallelXUnitTestResultsFile
