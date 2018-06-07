@@ -354,6 +354,9 @@ function Invoke-AppVeyorTest
         Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
         Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
+
+        # Fail the build, if tests failed
+        $testResultsNonAdminFile | Test-PSPesterResults -TestResultsFile $_
     }
 
     if ($TestCategory -eq 'PesterAdminAndOptionallyFeatureTests_xUnit') {
@@ -365,22 +368,15 @@ function Invoke-AppVeyorTest
         Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
         Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFile
         Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
-    }
 
-    #
-    # Fail the build, if tests failed
-    @(
-        $testResultsNonAdminFile,
-        $testResultsAdminFile
-    ) | ForEach-Object {
-        Test-PSPesterResults -TestResultsFile $_
-    }
-
-    @(
-        $SequentialXUnitTestResultsFile,
-        $ParallelXUnitTestResultsFile
-    ) | ForEach-Object {
-        Test-XUnitTestResults -TestResultsFile $_
+        # Fail the build, if tests failed
+        $testResultsAdminFile | Test-PSPesterResults -TestResultsFile $_
+        @(
+            $SequentialXUnitTestResultsFile,
+            $ParallelXUnitTestResultsFile
+        ) | ForEach-Object {
+            Test-XUnitTestResults -TestResultsFile $_
+        }
     }
 
     Set-BuildVariable -Name TestPassed -Value True
