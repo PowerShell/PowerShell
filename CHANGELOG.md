@@ -7,6 +7,8 @@
 - Clean up uses of `CommandTypes.Workflow` and `WorkflowInfo` (#6708)
 - Disallow Basic Auth over HTTP in PowerShell Remoting on Unix (#6787)
 - Change packaging to differentiate only between major versions and previews (#6968)
+- Enhance and refactor `Add-Type` cmdlet (#6141) (Thanks @iSazonov!)
+  - A few error strings were removed and thus the corresponding fully-qualified error ids are not in use anymore.
 
 ### Engine Updates and Fixes
 
@@ -22,7 +24,6 @@
 
 ### General Cmdlet Updates and Fixes
 
-- Enhance and refactor `Add-Type` cmdlet (#6141) (Thanks @iSazonov!)
 - Improve parameter validation in `ExportCsvHelper` (#6816) (Thanks @sethvs!)
 - Quote `Multipart` form-data field names (#6782) (Thanks @markekraus!)
 - Fix Web Cmdlets for .NET Core 2.1 (#6806) (Thanks @markekraus!)
