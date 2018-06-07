@@ -8541,11 +8541,7 @@ namespace System.Management.Automation.Internal
             }
             string resultPath = path + adjustedStreamName;
 
-            if (!NativeMethods.DeleteFile(resultPath))
-            {
-                int error = Marshal.GetLastWin32Error();
-                throw new Win32Exception(error);
-            }
+            File.Delete(resultPath);
         }
 
         internal static void SetZoneOfOrigin(string path, SecurityZone securityZone)
@@ -8572,9 +8568,6 @@ namespace System.Management.Automation.Internal
                 FileAccess dwDesiredAccess, FileShare dwShareMode,
                 IntPtr lpSecurityAttributes, FileMode dwCreationDisposition,
                 int dwFlagsAndAttributes, IntPtr hTemplateFile);
-
-            [DllImport(PinvokeDllNames.DeleteFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern bool DeleteFile(string lpFileName);
 
             [DllImport(PinvokeDllNames.FindFirstStreamDllName, ExactSpelling = true, CharSet = CharSet.Unicode, SetLastError = true)]
             [SuppressMessage("Microsoft.Globalization", "CA2101:SpecifyMarshalingForPInvokeStringArguments", MessageId = "AlternateStreamNativeData.Name")]

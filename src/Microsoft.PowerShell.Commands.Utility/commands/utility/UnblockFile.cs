@@ -119,18 +119,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         AlternateDataStreamUtilities.DeleteFileStream(path, "Zone.Identifier");
                     }
-                    catch (Win32Exception accessException)
+                    catch (Exception accessException)
                     {
-                        // NativeErrorCode=2 - File not found.
-                        // If the block stream not found the 'path' was not blocked and we successfully return.
-                        if (accessException.NativeErrorCode != 2)
-                        {
-                            WriteError(new ErrorRecord(accessException, "RemoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
-                        }
-                        else
-                        {
-                            WriteVerbose(StringUtil.Format(UtilityCommonStrings.NoZoneIdentifierFileStream, path));
-                        }
+                        WriteError(new ErrorRecord(accessException, "RemoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
                     }
                 }
             }
