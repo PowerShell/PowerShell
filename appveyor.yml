@@ -5,9 +5,9 @@ environment:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    Purpose: PesterCI
+    Purpose: UnelevatedPesterTests
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    Purpose: AdvancedPesterTests_xUnit_Packaging
+    Purpose: ElevatedPesterTests_xUnit_Packaging
 
 # cache version - netcoreapp.2.1-sdk.2.1.300
 cache:
@@ -32,4 +32,4 @@ after_test:
 
 # Packaging
 on_finish:
-  - ps: if ($env:Purpose -eq 'AdvancedPesterTests_xUnit_Packaging'){ Invoke-AppveyorFinish }
+  - ps: if ($env:Purpose -eq 'ElevatedPesterTests_xUnit_Packaging'){ Invoke-AppveyorFinish }

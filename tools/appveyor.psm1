@@ -319,7 +319,7 @@ function Invoke-AppVeyorTest
 {
     [CmdletBinding()]
     param(
-        [ValidateSet('PesterCI', 'AdvancedPesterTests_xUnit_Packaging')]
+        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests_xUnit_Packaging')]
         [string] $Purpose
     )
     #
@@ -336,7 +336,11 @@ function Invoke-AppVeyorTest
         throw "CoreCLR pwsh.exe was not built"
     }
 
-    if (-not (Test-DailyBuild))
+    if ($Purpose -eq 'ElevatedPesterTests_xUnit_Packaging' -and (Test-DailyBuild)) {
+        $ExcludeTag = @()
+        Write-Host -Foreground Green 'Running all CoreCLR tests..'
+    }
+    else
     {
         # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
         # https://github.com/pester/Pester/issues/608
@@ -344,13 +348,8 @@ function Invoke-AppVeyorTest
         $ExcludeTag = @('Slow', 'Feature', 'Scenario')
         Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
     }
-    else
-    {
-        $ExcludeTag = @()
-        Write-Host -Foreground Green 'Running all CoreCLR tests..'
-    }
 
-    if ($Purpose -eq 'PesterCI') {
+    if ($Purpose -eq 'UnelevatedPesterTests') {
         Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
         Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
@@ -359,7 +358,7 @@ function Invoke-AppVeyorTest
         Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
     }
 
-    if ($Purpose -eq 'AdvancedPesterTests_xUnit_Packaging') {
+    if ($Purpose -eq 'ElevatedPesterTests_xUnit_Packaging') {
         Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
@@ -387,11 +386,11 @@ function Invoke-AppVeyorAfterTest
 {
     [CmdletBinding()]
     param(
-        [ValidateSet('PesterCI', 'AdvancedPesterTests_xUnit_Packaging')]
+        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests_xUnit_Packaging')]
         [string] $Purpose
     )
 
-    if (Test-DailyBuild -and $Purpose -eq 'AdvancedPesterTests_xUnit_Packaging')
+    if (Test-DailyBuild -and $Purpose -eq 'ElevatedPesterTests_xUnit_Packaging')
     {
         ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
         ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish.
