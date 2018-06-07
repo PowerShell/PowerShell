@@ -9,10 +9,6 @@ environment:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     Purpose: AdvancedPesterTests_xUnit_Packaging
 
-# Stop all jobs in the matrix if any one them fail
-matrix:
-  fast_finish: true
-
 # cache version - netcoreapp.2.1-sdk.2.1.300
 cache:
   - '%HOMEDRIVE%%HOMEPATH%\.nuget\packages -> appveyor.yml'
