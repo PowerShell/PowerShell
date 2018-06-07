@@ -9,4 +9,4 @@ This demo shows use of PowerShell to author a DSC configuration to set the confi
 - OMI: >= 1.1.0  [https://www.github.com/microsoft/omi/releases](https://www.github.com/microsoft/omi/releases)
 - Desired State Configuration for Linux >= 1.1.1-278 [https://github.com/Microsoft/PowerShell-DSC-for-Linux/releases](https://github.com/Microsoft/PowerShell-DSC-for-Linux/releases)
 
-Note: applying the DSC configuration requires privileges. The user must have sudo authorization capabilities. You will be prompted for a sudo password when running the demo. 
+> Note: applying the DSC configuration requires privileges. The user must have sudo authorization capabilities. You will be prompted for a sudo password when running the demo.
