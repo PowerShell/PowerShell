@@ -655,7 +655,7 @@ function New-UnixPackage {
             New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" >$null
 
             # Generate After Install and After Remove scripts
-            $AfterScriptInfo = New-AfterScripts
+            $AfterScriptInfo = New-AfterScripts -IsPreview:$IsPreview
 
             # there is a weird bug in fpm
             # if the target of the powershell symlink exists, `fpm` aborts
@@ -671,7 +671,7 @@ function New-UnixPackage {
             }
 
             # Generate gzip of man file
-            $ManGzipInfo = New-ManGzip
+            $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview
 
             # Change permissions for packaging
             Start-NativeExecution {
@@ -1055,6 +1055,16 @@ function Test-Dependencies
 
 function New-AfterScripts
 {
+    param(
+        $IsPreview
+    )
+
+    $linkName = 'pwsh'
+    if($IsPreview.IsPresent)
+    {
+        $linkName = 'pwsh-preview'
+    }
+
     if ($Environment.IsRedHatFamily) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
@@ -1065,14 +1075,14 @@ function New-AfterScripts
 
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.RedHatAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.RedHatAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+        $packagingStrings.RedHatAfterInstallScript -f "$Link/$linkName" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.RedHatAfterRemoveScript -f "$Link/$linkName" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
     elseif ($Environment.IsUbuntu -or $Environment.IsDebian -or $Environment.IsSUSEFamily) {
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.UbuntuAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.UbuntuAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+        $packagingStrings.UbuntuAfterInstallScript -f "$Link/$linkName" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.UbuntuAfterRemoveScript -f "$Link/$linkName" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
 
     return [PSCustomObject] @{
@@ -1083,16 +1093,33 @@ function New-AfterScripts
 
 function New-ManGzip
 {
+    param(
+        [switch]
+        $IsPreview
+    )
+
     # run ronn to convert man page to roff
     $RonnFile = Join-Path $PSScriptRoot "/../../assets/pwsh.1.ronn"
+    if($IsPreview.IsPresent)
+    {
+        $newRonnFile = $RonnFile -replace 'pwsh', 'pwsh-preview'
+        Copy-Item -Path $RonnFile -Destination $newRonnFile -force
+        $RonnFile = $newRonnFile
+    }
+
     $RoffFile = $RonnFile -replace "\.ronn$"
 
     # Run ronn on assets file
-    Start-NativeExecution { ronn --roff $RonnFile }
+    Start-NativeExecution { ronn --roff $RonnFile } -VerboseOutputOnError
+
+    if($IsPreview.IsPresent)
+    {
+        Remove-item $RonnFile
+    }
 
     # gzip in assets directory
     $GzipFile = "$RoffFile.gz"
-    Start-NativeExecution { gzip -f $RoffFile }
+    Start-NativeExecution { gzip -f $RoffFile } -VerboseOutputOnError
 
     $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
 
