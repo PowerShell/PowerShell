@@ -383,12 +383,6 @@ function Invoke-AppVeyorTest
 #Implement AppVeyor 'after_test' phase
 function Invoke-AppVeyorAfterTest
 {
-    [CmdletBinding()]
-    param(
-        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests_xUnit_Packaging')]
-        [string] $Purpose
-    )
-
     if (Test-DailyBuild) {
         ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
         ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish.

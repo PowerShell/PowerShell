@@ -28,7 +28,7 @@ test_script:
   - ps: Invoke-AppveyorTest -Purpose $env:Purpose
 
 after_test:
-  - ps: Invoke-AppVeyorAfterTest -Purpose $env:Purpose
+  - ps: Invoke-AppVeyorAfterTest
 
 # Packaging
 on_finish:
