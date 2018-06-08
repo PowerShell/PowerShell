@@ -501,10 +501,10 @@ namespace System.Management.Automation
 
             Collection<string> stringResult = new Collection<string>();
 
-            // if the directory exists, just return it
+            // If filesystem provider and the directory exists, just return it.
             try
             {
-                if (Utils.NativeDirectoryExists(userPath))
+                if (provider.Name.Equals(Microsoft.PowerShell.Commands.FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase) && Utils.NativeDirectoryExists(userPath))
                 {
                     result.Add(new PathInfo(drive, provider, userPath, _sessionState));
                     return result;
@@ -1750,7 +1750,9 @@ namespace System.Management.Automation
                     break;
                 }
 
-                // check if we're on a single root filesystem and it's an absolute path
+                // Check if we're on a single root filesystem and it's an absolute path.
+                // This means that even if we are in a PSDrive, on non-Windows a path starting
+                // with DirectorySeparatorChar will always refer to the filesystem.
                 if (IsSingleFileSystemAbsolutePath(path))
                 {
                     driveName = StringLiterals.DefaultPathSeparatorString;
