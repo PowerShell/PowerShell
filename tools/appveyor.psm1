@@ -383,7 +383,11 @@ function Invoke-AppVeyorTest
 #Implement AppVeyor 'after_test' phase
 function Invoke-AppVeyorAfterTest
 {
-    if (Test-DailyBuild) {
+    [CmdletBinding()]
+    param()
+
+    if (Test-DailyBuild)
+    {
         ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
         ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish.
         $codeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
