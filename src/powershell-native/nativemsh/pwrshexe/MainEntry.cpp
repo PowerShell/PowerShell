@@ -1207,7 +1207,7 @@ unsigned int ValidateDownlevelSetupHadClrWhenInstalled(
         if (lResult == ERROR_SUCCESS)
         {
             // If the data has the REG_SZ, REG_MULTI_SZ or REG_EXPAND_SZ type, this size includes any terminating null character or characters
-            // unless the data was stored without them - http://msdn.microsoft.com/en-us/library/ms724911(VS.85).aspx
+            // unless the data was stored without them - http://msdn.microsoft.com/library/ms724911(VS.85).aspx
             NetFxV4IsInstalledKeyValue = new wchar_t[valueLengthInByte / sizeof(wchar_t)];
             if (NULL == NetFxV4IsInstalledKeyValue)
             {

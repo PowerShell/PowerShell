@@ -1294,7 +1294,7 @@ namespace Microsoft.PowerShell.Commands
                 // Since GET is the default; POST only occurs when -Method POST is used.
                 if (Method == WebRequestMethod.Post && IsRedirectToGet(response.StatusCode))
                 {
-                    // See https://msdn.microsoft.com/en-us/library/system.net.httpstatuscode(v=vs.110).aspx
+                    // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
                     Method = WebRequestMethod.Get;
                 }
 
