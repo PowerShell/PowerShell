@@ -244,7 +244,7 @@ namespace System.Management.Automation.Security
                             if (!error) { break; }
 
                             // Try again with the AppData\LocalLow\Temp path using known folder id:
-                            // https://msdn.microsoft.com/en-us/library/dd378457.aspx
+                            // https://msdn.microsoft.com/library/dd378457.aspx
                             Guid AppDatalocalLowFolderId = new Guid("A520A1A4-1780-4FF6-BD18-167343C5AF16");
                             tempPath = GetKnownFolderPath(AppDatalocalLowFolderId) + @"\Temp";
                         } // end while loop

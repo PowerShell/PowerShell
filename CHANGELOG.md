@@ -1009,7 +1009,7 @@ For more information on this, we invite you to read [this blog post explaining P
 - Once the pipeline is running as a job, all of the standard `*-Job` cmdlets can be used to manage the job.
 - Variables (ignoring process-specific variables) used in the pipeline are automatically copied to the job so `Copy-Item $foo $bar &` just works.
 - The job is also run in the current directory instead of the user's home directory.
-- For more information about PowerShell jobs, see [about_Jobs](https://msdn.microsoft.com/en-us/powershell/reference/6/about/about_jobs).
+- For more information about PowerShell jobs, see [about_Jobs](https://msdn.microsoft.com/powershell/reference/6/about/about_jobs).
 
 ### Engine updates and fixes
 

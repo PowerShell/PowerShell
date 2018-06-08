@@ -114,7 +114,7 @@ function Set-DailyBuildBadge
     }
 
     $contentType = "image/svg+xml"
-    # more info: https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/put-blob
+    # more info: https://docs.microsoft.com/rest/api/storageservices/fileservices/put-blob
     $sb = [text.stringbuilder]::new()
     # can't use AppendLine because the `r`n causes the command to fail, it must be `n and only `n
     $null = $sb.Append("$method`n")
