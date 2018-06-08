@@ -2094,7 +2094,7 @@ function script:Start-NativeExecution
     try {
         if($VerboseOutputOnError.IsPresent)
         {
-            $output = & $sb
+            $output = & $sb 2>&1
         }
         else
         {
