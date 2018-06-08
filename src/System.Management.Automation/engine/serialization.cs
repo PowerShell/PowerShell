@@ -5192,12 +5192,6 @@ namespace System.Management.Automation
                                       InternalSerializer.WriteVersion,
                                       InternalDeserializer.DeserializeVersion),
 
-            new TypeSerializationInfo(typeof(SemanticVersion),
-                                      SerializationStrings.SemanticVersionTag,
-                                      SerializationStrings.SemanticVersionTag,
-                                      InternalSerializer.WriteSemanticVersion,
-                                      InternalDeserializer.DeserializeSemanticVersion),
-
             s_xdInfo,
 
             new TypeSerializationInfo(typeof(ProgressRecord),
