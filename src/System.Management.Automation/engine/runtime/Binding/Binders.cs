@@ -5388,7 +5388,7 @@ namespace System.Management.Automation.Language
         private PSMemberInfo ResolveAlias(PSAliasProperty alias, DynamicMetaObject target, HashSet<string> aliases,
             List<BindingRestrictions> aliasRestrictions)
         {
-            Diagnostics.Assert(null != aliasRestrictions, "aliasRestrictions cannot be null");
+            Diagnostics.Assert(aliasRestrictions != null, "aliasRestrictions cannot be null");
             if (aliases == null)
             {
                 aliases = new HashSet<string> { alias.Name };
@@ -5519,7 +5519,7 @@ namespace System.Management.Automation.Language
             if (alias != null)
             {
                 aliasConversionType = alias.ConversionType;
-                if (null == aliasRestrictions)
+                if (aliasRestrictions == null)
                 {
                     aliasRestrictions = new List<BindingRestrictions>();
                 }
@@ -5661,7 +5661,7 @@ namespace System.Management.Automation.Language
             {
                 ConsolidatedString typenames = PSObject.GetTypeNames(obj);
                 memberInfo = context.TypeTable.GetMembers<PSMemberInfo>(typenames)[member];
-                if (null != memberInfo)
+                if (memberInfo != null)
                 {
                     memberInfo = CloneMemberInfo(memberInfo, obj);
                 }
@@ -6203,7 +6203,7 @@ namespace System.Management.Automation.Language
                 {
                     ConsolidatedString typenames = PSObject.GetTypeNames(obj);
                     memberInfo = context.TypeTable.GetMembers<PSMemberInfo>(typenames)[member];
-                    if (null != memberInfo)
+                    if (memberInfo != null)
                     {
                         memberInfo = PSGetMemberBinder.CloneMemberInfo(memberInfo, obj);
                     }
@@ -7002,7 +7002,7 @@ namespace System.Management.Automation.Language
                             Expression.Constant(null, typeof(Exception)),
                             Expression.Constant(ExtendedTypeSystem.MethodArgumentCountException),
                             Expression.NewArrayInit(typeof(object),
-                                Expression.Constant(".ForEach(expression [, arguments...])").Cast(typeof(object)),
+                                Expression.Constant(".ForEach({ expression } [, arguments...])").Cast(typeof(object)),
                                 ExpressionCache.Constant(args.Length).Cast(typeof(object)))),
                         this.ReturnType),
                     targetEnumerator.Restrictions.Merge(restrictions));
