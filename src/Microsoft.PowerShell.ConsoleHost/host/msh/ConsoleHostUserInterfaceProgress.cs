@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell
                 _progPane.Show(_pendingProgress);
 
                 // Reset the cursor back to where it started
-                if(record.RecordType == ProgressRecordType.Completed)
+                if (record.RecordType == ProgressRecordType.Completed)
                 {
                     _progPane.Hide();
                 }
