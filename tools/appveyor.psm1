@@ -336,16 +336,15 @@ function Invoke-AppVeyorTest
         throw "CoreCLR pwsh.exe was not built"
     }
 
-    if ($Purpose -eq 'ElevatedPesterTests_xUnit_Packaging' -and (Test-DailyBuild)) {
+    # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
+    # https://github.com/pester/Pester/issues/608
+    # To work-around it, we exlude all categories, but 'CI' from the list
+    $ExcludeTag = @('Slow', 'Feature', 'Scenario')
+    if (Test-DailyBuild) {
         $ExcludeTag = @()
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
-    else
-    {
-        # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
-        # https://github.com/pester/Pester/issues/608
-        # To work-around it, we exlude all categories, but 'CI' from the list
-        $ExcludeTag = @('Slow', 'Feature', 'Scenario')
+    else {
         Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
     }
 
@@ -390,8 +389,7 @@ function Invoke-AppVeyorAfterTest
         [string] $Purpose
     )
 
-    if (Test-DailyBuild -and $Purpose -eq 'ElevatedPesterTests_xUnit_Packaging')
-    {
+    if (Test-DailyBuild) {
         ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
         ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish.
         $codeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
