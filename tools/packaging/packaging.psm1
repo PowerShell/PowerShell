@@ -671,7 +671,7 @@ function New-UnixPackage {
             }
 
             # Generate gzip of man file
-            $ManGzipInfo = New-ManGzip
+            $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview
 
             # Change permissions for packaging
             Start-NativeExecution {
@@ -1083,16 +1083,33 @@ function New-AfterScripts
 
 function New-ManGzip
 {
+    param(
+        [switch]
+        $IsPreview
+    )
+
     # run ronn to convert man page to roff
     $RonnFile = Join-Path $PSScriptRoot "/../../assets/pwsh.1.ronn"
+    if($IsPreview.IsPresent)
+    {
+        $newRonnFile = $RonnFile -replace 'pwsh', 'pwsh-preview'
+        Copy-Item -Path $RonnFile -Destination $newRonnFile -force
+        $RonnFile = $newRonnFile
+    }
+
     $RoffFile = $RonnFile -replace "\.ronn$"
 
     # Run ronn on assets file
-    Start-NativeExecution { ronn --roff $RonnFile }
+    Start-NativeExecution { ronn --roff $RonnFile } -VerboseOutputOnError
+
+    if($IsPreview.IsPresent)
+    {
+        Remove-item $RonnFile
+    }
 
     # gzip in assets directory
     $GzipFile = "$RoffFile.gz"
-    Start-NativeExecution { gzip -f $RoffFile }
+    Start-NativeExecution { gzip -f $RoffFile } -VerboseOutputOnError
 
     $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
 
