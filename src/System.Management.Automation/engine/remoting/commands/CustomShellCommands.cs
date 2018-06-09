@@ -2298,10 +2298,10 @@ else
             get { return psVersion; }
             set
             {
-                RemotingCommandUtils.CheckPSVersion(value);
+                RemotingCommandUtil.CheckPSVersion(value);
 
                 // Check if specified version of PowerShell is installed
-                RemotingCommandUtils.CheckIfPowerShellVersionIsInstalled(value);
+                RemotingCommandUtil.CheckIfPowerShellVersionIsInstalled(value);
 
                 psVersion = value;
                 isPSVersionSpecified = true;

@@ -70,12 +70,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The existence of the following registry confirms that the host machine is a WinPE
-        /// HKLM\System\CurrentControlSet\Control\MiniNT
-        /// </summary>
-        internal static string WinPEIdentificationRegKey = @"System\CurrentControlSet\Control\MiniNT";
-
-        /// <summary>
         /// Allowed PowerShell Editions
         /// </summary>
         internal static string[] AllowedEditionValues = { "Desktop", "Core" };
@@ -344,7 +338,7 @@ namespace System.Management.Automation
             {
                 // The existence of the following registry confirms that the host machine is a WinPE
                 // HKLM\System\CurrentControlSet\Control\MiniNT
-                winPEKey = Registry.LocalMachine.OpenSubKey(WinPEIdentificationRegKey);
+                winPEKey = Registry.LocalMachine.OpenSubKey(@"System\CurrentControlSet\Control\MiniNT");
 
                 return winPEKey != null;
             }
