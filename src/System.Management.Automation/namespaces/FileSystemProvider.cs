@@ -3535,8 +3535,6 @@ namespace Microsoft.PowerShell.Commands
 
                     if (op["Items"] != null)
                     {
-                        bool destinationPathIsFile = Utils.FileExists(destinationPath);
-
                         PSObject obj = (PSObject)op["Items"];
                         ArrayList itemsList = (ArrayList)obj.BaseObject;
                         foreach (PSObject item in itemsList)
@@ -3548,7 +3546,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (isContainer)
                             {
-                                if (destinationPathIsFile)
+                                if (File.Exists(destinationPath))
                                 {
                                     Exception e = new IOException(String.Format(
                                         CultureInfo.InvariantCulture,
