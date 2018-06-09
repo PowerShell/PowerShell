@@ -3217,9 +3217,12 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
+            var fsinfo = new FileInfo(path);
+
             try
             {
-                result = Utils.ItemExists(path, out bool _);
+                // We don't use File.Exists() because we want to get exceptions.
+                result = (int)fsinfo.Attributes != -1;
 
                 FileSystemItemProviderDynamicParameters itemExistsDynamicParameters =
                     DynamicParameters as FileSystemItemProviderDynamicParameters;
@@ -3227,7 +3230,7 @@ namespace Microsoft.PowerShell.Commands
                 // If the items see if we need to check the age of the file...
                 if (result && itemExistsDynamicParameters != null)
                 {
-                    DateTime lastWriteTime = File.GetLastWriteTime(path);
+                    DateTime lastWriteTime = fsinfo.LastWriteTime;
 
                     if (itemExistsDynamicParameters.OlderThan.HasValue)
                     {
