@@ -115,14 +115,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ShouldProcess(path))
                 {
-                    try
-                    {
-                        AlternateDataStreamUtilities.DeleteFileStream(path, "Zone.Identifier");
-                    }
-                    catch (Exception accessException)
-                    {
-                        WriteError(new ErrorRecord(accessException, "RemoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
-                    }
+                    AlternateDataStreamUtilities.DeleteFileStream(path, "Zone.Identifier");
                 }
             }
         }
