@@ -2339,7 +2339,9 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        exists = Utils.ItemExists(strTargetPath, out isDirectory);
+                        var attrs = (new FileInfo(strTargetPath)).Attributes;
+                        exists = (int)attrs != -1;
+                        isDirectory = exists && attrs.HasFlag(FileAttributes.Directory);
                     }
                     catch (Exception e)
                     {
