@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation.Provider;
 using System.Text;
 using Dbg = System.Management.Automation;
@@ -501,18 +502,12 @@ namespace System.Management.Automation
 
             Collection<string> stringResult = new Collection<string>();
 
-            // if the directory exists, just return it
-            try
+            // If the directory exists, just return it.
+            // Otherwise fallback to previous behavior and let provider handle it.
+            if (Directory.Exists(userPath))
             {
-                if (Utils.DirectoryExists(userPath))
-                {
-                    result.Add(new PathInfo(drive, provider, userPath, _sessionState));
-                    return result;
-                }
-            }
-            catch
-            {
-                // in cases of Access Denied or other errors, fallback to previous behavior and let provider handle it
+                result.Add(new PathInfo(drive, provider, userPath, _sessionState));
+                return result;
             }
 
             if (!context.SuppressWildcardExpansion)
