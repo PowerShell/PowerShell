@@ -963,25 +963,9 @@ namespace System.Management.Automation
 
                         if (systemDriveInfo.DriveType == DriveType.NoRootDirectory)
                         {
-                            try
+                            if (!Directory.Exists(drive.Root))
                             {
-                                // Checking for the presence of mounted drive locally using Utils.DirectoryExists API as
-                                // the calls to this API is faster than normal Directory.Exist API.
-                                bool validDrive = Utils.DirectoryExists(drive.Root);
-                                if (!validDrive)
-                                {
-                                    result = true;
-                                }
-                            }
-                            // We don't want to have automounting cause an exception. We
-                            // rather it just fail silently as it wasn't a result of an
-                            // explicit request by the user anyway.
-                            // Following the same pattern as the Calling API.
-                            catch (IOException)
-                            {
-                            }
-                            catch (UnauthorizedAccessException)
-                            {
+                                result = true;
                             }
                         }
                     }
