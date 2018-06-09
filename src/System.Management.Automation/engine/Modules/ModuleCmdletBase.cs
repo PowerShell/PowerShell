@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
                             }
-                            else if (Utils.DirectoryExists(qualifiedPath))
+                            else if (Directory.Exists(qualifiedPath))
                             {
                                 // if it points to a directory, add the basename back onto the path...
                                 qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
@@ -906,10 +906,9 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string resolvedModulePath in modulePathCollection)
                     {
                         string moduleName = Path.GetFileName(resolvedModulePath);
-                        bool isDirectory = Utils.DirectoryExists(resolvedModulePath);
 
                         // If the given path is a valid module file, we will load the specific file
-                        if (!isDirectory && ModuleIntrinsics.IsPowerShellModuleExtension(Path.GetExtension(moduleName)))
+                        if (!Directory.Exists(resolvedModulePath) && ModuleIntrinsics.IsPowerShellModuleExtension(Path.GetExtension(moduleName)))
                         {
                             PSModuleInfo module = CreateModuleInfoForGetModule(resolvedModulePath, refresh);
                             if (module != null)
