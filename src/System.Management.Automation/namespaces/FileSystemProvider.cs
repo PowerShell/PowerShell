@@ -2879,41 +2879,20 @@ namespace Microsoft.PowerShell.Commands
                 continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
-            if ((directory.Attributes & FileAttributes.ReparsePoint) != 0)
+            if (directory.Attributes.HasFlag(FileAttributes.ReparsePoint))
             {
-                bool success = InternalSymbolicLinkLinkCodeMethods.DeleteJunction(directory.FullName);
-
-                if (!success)
-                {
-                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
-                    Exception e = new IOException(error);
-                    WriteError(new ErrorRecord(e, "DeleteJunctionFailed", ErrorCategory.WriteError, directory));
-                    return;
-                }
-
                 try
                 {
-                    if (!Utils.ItemExists(directory.FullName, out bool _))
-                    {
-                        // Directory does not exist
-                        return;
-                    }
+                    directory.Delete();
                 }
-                catch (Exception accessException)
+                catch (Exception exc)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(accessException, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, directory);
-
-                    ErrorDetails errorDetails =
-                    new ErrorDetails(this, "FileSystemProviderStrings",
-                        "CannotRemoveItem",
-                        directory.FullName,
-                        accessException.Message);
-
-                    errorRecord.ErrorDetails = errorDetails;
-
-                    WriteError(errorRecord);
-                    return;
+                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
+                    Exception exception = new IOException(error, exc);
+                    WriteError(new ErrorRecord(exception, "DeleteJunctionFailed", ErrorCategory.WriteError, directory));
                 }
+
+                return;
             }
 
             if (continueRemoval)
