@@ -925,9 +925,6 @@ namespace System.Management.Automation
             try
             {
                 // Use 'File.GetAttributes()' because we want to get access exceptions.
-                // TODO: we should review the tricky logic
-                // (historically we throw 'UnauthorizedAccessException' here) and migrate
-                // to standard methods 'File.Exist()' and 'Directory.Exists()' where possible.
                 FileAttributes attributes = File.GetAttributes(path);
                 isDirectory = attributes.HasFlag(FileAttributes.Directory);
 
