@@ -109,20 +109,36 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="isContainer">
         /// return true if path points to a directory else returns false.
         /// </param>
-        /// <returns></returns>
+        /// <returns>FileInfo or DirectoryInfo object.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// path is null
+        /// </exception>
+        /// <exception cref="System.IO.IOException">
+        /// I/O error occurs
+        /// </exception>
+        /// <exception cref="System.UnauthorizedAccessException">
+        /// an I/O error or a specific type of security error
+        /// </exception>
         private static FileSystemInfo GetFileSystemInfo(string path, ref bool isContainer)
         {
-            isContainer = false;
+            // We use 'FileInfo.Attributes' (not 'FileInfo.Exist')
+            // because we want to get exceptions
+            // like UnauthorizedAccessException or IOException.
+            FileSystemInfo fsinfo = new FileInfo(path);
+            var attr = fsinfo.Attributes;
+            var exists = (int)attr != -1;
+            isContainer = exists && attr.HasFlag(FileAttributes.Directory);
 
-            if (Utils.FileExists(path))
+            if (exists)
             {
-                return new FileInfo(path);
-            }
-
-            if (Utils.DirectoryExists(path))
-            {
-                isContainer = true;
-                return new DirectoryInfo(path);
+                if (isContainer)
+                {
+                    return new DirectoryInfo(path);
+                }
+                else
+                {
+                    return fsinfo;
+                }
             }
 
             return null;
