@@ -916,12 +916,12 @@ namespace System.Management.Automation
             {
                 return false;
             }
-#if !UNIX
+
             if (IsReservedDeviceName(path))
             {
                 return false;
             }
-#endif
+
             try
             {
                 // Use 'File.GetAttributes()' because we want to get access exceptions.
