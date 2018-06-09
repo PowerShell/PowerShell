@@ -889,47 +889,6 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static bool ItemExists(string path)
-        {
-            try
-            {
-                return ItemExists(path, out bool _);
-            }
-            catch
-            {
-            }
-
-            return false;
-        }
-
-        internal static bool ItemExists(string path, out bool isDirectory)
-        {
-            isDirectory = false;
-
-            if (String.IsNullOrEmpty(path))
-            {
-                return false;
-            }
-
-            if (IsReservedDeviceName(path))
-            {
-                return false;
-            }
-
-            try
-            {
-                // Use 'File.GetAttributes()' because we want to get access exceptions.
-                FileAttributes attributes = File.GetAttributes(path);
-                isDirectory = attributes.HasFlag(FileAttributes.Directory);
-
-                return (int)attributes != -1;
-            }
-            catch (IOException)
-            {
-                return false;
-            }
-        }
-
         internal static void NativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
         {
             IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
