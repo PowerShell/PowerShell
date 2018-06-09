@@ -5428,13 +5428,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     currentPath = MakePath(currentPath, childName);
 
-                    Boolean isContainer = false;
-                    FileSystemInfo fsinfo = GetFileSystemInfo(currentPath, ref isContainer);
+                    var fsinfo = new FileInfo(currentPath);
 
                     // Clean up the child name to proper casing and short-path
                     // expansion if required. Also verify that .NET hasn't over-normalized
                     // the path
-                    if (fsinfo != null)
+                    if ((int)fsinfo.Attributes != -1)
                     {
                         // This might happen if you've passed a child name of two or more dots,
                         // which the .NET APIs treat as the parent directory
@@ -5452,8 +5451,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // We couldn't find the item
-                        if ((!isContainer) &&
-                           (tokenizedPathStack.Count == 0))
+                        if (tokenizedPathStack.Count == 0)
                         {
                             throw PSTraceSource.NewArgumentException("path", FileSystemProviderStrings.ItemDoesNotExist, currentPath);
                         }
