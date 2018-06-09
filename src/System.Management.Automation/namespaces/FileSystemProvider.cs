@@ -2352,20 +2352,20 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool isPathDirectory = false;
-
                     bool pathExists = false;
+                    DirectoryInfo pathDirInfo = new DirectoryInfo(path);
 
                     try
                     {
-                        pathExists = Utils.ItemExists(path, out isPathDirectory);
+                        var attrs = pathDirInfo.Attributes;
+                        pathExists = (int)attrs != -1;
+                        isPathDirectory = pathExists && attrs.HasFlag(FileAttributes.Directory);
                     }
                     catch (Exception e)
                     {
                         WriteError(new ErrorRecord(e, "AccessException", ErrorCategory.PermissionDenied, strTargetPath));
                         return;
                     }
-
-                    DirectoryInfo pathDirInfo = new DirectoryInfo(path);
 
                     if (pathExists)
                     {
