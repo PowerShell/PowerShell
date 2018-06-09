@@ -100,29 +100,45 @@ namespace Microsoft.PowerShell.Commands
         } // NormalizePath
 
         /// <summary>
-        ///  Checks if the item exist at the specified path. if it exists then creates
+        /// Checks if the item exist at the specified path. if it exists then creates
         /// appropriate directoryinfo or fileinfo object.
         /// </summary>
         /// <param name="path">
-        /// refers to the item for which we are checking for existence and creating filesysteminfo object.
+        /// Refers to the item for which we are checking for existence and creating filesysteminfo object.
         /// </param>
         /// <param name="isContainer">
-        /// return true if path points to a directory else returns false.
+        /// Return true if path points to a directory else returns false.
         /// </param>
-        /// <returns></returns>
-        private static FileSystemInfo GetFileSystemInfo(string path, ref bool isContainer)
+        /// <returns>FileInfo or DirectoryInfo object.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// The path is null.
+        /// </exception>
+        /// <exception cref="System.IO.IOException">
+        /// I/O error occurs.
+        /// </exception>
+        /// <exception cref="System.UnauthorizedAccessException">
+        /// An I/O error or a specific type of security error.
+        /// </exception>
+        private static FileSystemInfo GetFileSystemInfo(string path, out bool isContainer)
         {
-            isContainer = false;
+            // We use 'FileInfo.Attributes' (not 'FileInfo.Exist')
+            // because we want to get exceptions
+            // like UnauthorizedAccessException or IOException.
+            FileSystemInfo fsinfo = new FileInfo(path);
+            var attr = fsinfo.Attributes;
+            var exists = (int)attr != -1;
+            isContainer = exists && attr.HasFlag(FileAttributes.Directory);
 
-            if (Utils.FileExists(path))
+            if (exists)
             {
-                return new FileInfo(path);
-            }
-
-            if (Utils.DirectoryExists(path))
-            {
-                isContainer = true;
-                return new DirectoryInfo(path);
+                if (isContainer)
+                {
+                    return new DirectoryInfo(path);
+                }
+                else
+                {
+                    return fsinfo;
+                }
             }
 
             return null;
@@ -2730,8 +2746,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 #endif
 
-                bool iscontainer = false;
-                FileSystemInfo fsinfo = GetFileSystemInfo(path, ref iscontainer);
+                FileSystemInfo fsinfo = GetFileSystemInfo(path, out bool iscontainer);
                 if (fsinfo == null)
                 {
                     String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
