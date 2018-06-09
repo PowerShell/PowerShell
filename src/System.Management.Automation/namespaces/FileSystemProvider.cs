@@ -461,18 +461,7 @@ namespace Microsoft.PowerShell.Commands
             if (driveIsFixed)
             {
                 // Since the drive is fixed, ensure the root is valid.
-                try
-                {
-                    validDrive = Utils.DirectoryExists(drive.Root);
-                }
-                catch (IOException)
-                {
-                    // Ignore, the network path may not be found.
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    // Ignore, we may be running in an AppContainer
-                }
+                validDrive = Directory.Exists(drive.Root);
             }
 
             if (validDrive)
@@ -3879,7 +3868,7 @@ namespace Microsoft.PowerShell.Commands
                 CreateDirectory(destination, false);
 
                 // If failed to create directory
-                if (!Utils.DirectoryExists(destination))
+                if (!Directory.Exists(destination))
                 {
                     return;
                 }
@@ -5584,7 +5573,7 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            return Utils.DirectoryExists(path);
+            return Directory.Exists(path);
         }
 
         #region MoveItem
