@@ -930,13 +930,6 @@ namespace System.Management.Automation
             }
         }
 
-        internal static bool FileExists(string path)
-        {
-            bool itemExists = ItemExists(path, out bool isDirectory);
-
-            return (itemExists && (!isDirectory));
-        }
-
         internal static bool DirectoryExists(string path)
         {
             bool itemExists = ItemExists(path, out bool isDirectory);
