@@ -38,6 +38,14 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem .).Name.Length | Should -BeGreaterThan 0
         }
 
+        It "Should list the contents of the current folder using Drive:\ notation" {
+            (Get-ChildItem TestDrive:\).Name.Length | Should -BeGreaterThan 0
+        }
+
+        It "Should list the contents of the current folder using Drive: notation" {
+            (Get-ChildItem TestDrive:).Name.Length | Should -BeGreaterThan 0
+        }
+
         It "Should list the contents of the home directory" {
             pushd $HOME
             (Get-ChildItem .).Name.Length | Should -BeGreaterThan 0
@@ -101,7 +109,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Include $item_G).Count | Should Be 1
             (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
         }
-        
+
         It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
             param($Parameters, $ExpectedCount)
 
