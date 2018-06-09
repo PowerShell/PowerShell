@@ -6161,11 +6161,18 @@ namespace Microsoft.PowerShell.Commands
             PSObject fileSystemInfoShell = null;
             bool isContainer = false;
 
-            // Create a PSObject with either a DirectoryInfo or FileInfo object
-            // at its core.
+            // We use 'FileInfo.Attributes' (not 'FileInfo.Exist')
+            // because we want to get exceptions
+            // like UnauthorizedAccessException or IOException.
+            var fileInfo = new FileInfo(path);
+            var attr = fileInfo.Attributes;
+            var exists = (int)attr != -1;
+            var isDirectory = exists && attr.HasFlag(FileAttributes.Directory);
 
-            if (Utils.ItemExists(path, out bool isDirectory))
+            if (exists)
             {
+                // Create a PSObject with either a DirectoryInfo or FileInfo object
+                // at its core.
                 if (isDirectory)
                 {
                     isContainer = true;
@@ -6174,7 +6181,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // Maybe the path is a file name so try a FileInfo instead
-                    fileSystemInfoShell = PSObject.AsPSObject(new FileInfo(path));
+                    fileSystemInfoShell = PSObject.AsPSObject(fileInfo);
                 }
             }
 
