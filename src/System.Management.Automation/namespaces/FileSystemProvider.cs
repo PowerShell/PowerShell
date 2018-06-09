@@ -5989,20 +5989,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                FileSystemInfo fileSystemObject = null;// Get the directory object
-
-                if (Utils.ItemExists(path, out bool isDirectory))
-                {
-                    if (isDirectory)
-                    {
-                        fileSystemObject = new DirectoryInfo(path);
-                    }
-                    else
-                    {
-                        // Maybe the path is a file name so try a FileInfo instead
-                        fileSystemObject = new FileInfo(path);
-                    }
-                }
+                var fileSystemObject = GetFileSystemInfo(path, out bool isDirectory);
 
                 if (fileSystemObject == null)
                 {
