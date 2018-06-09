@@ -2152,7 +2152,6 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ShouldProcess(resource, action))
                 {
-                    bool isDirectory = false;
                     string strTargetPath = value.ToString();
 
                     if (String.IsNullOrEmpty(strTargetPath))
@@ -2161,15 +2160,24 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool exists = false;
+                    bool isDirectory = false;
 
                     // It is legal to create symbolic links to non-existing targets on
                     // both Windows and Linux. It is not legal to create hard links to
                     // non-existing targets on either Windows or Linux.
                     try
                     {
-                        exists = Utils.ItemExists(strTargetPath, out isDirectory);
                         if (itemType == ItemType.SymbolicLink)
-                            exists = true; // pretend the target exists if we're making a symbolic link
+                        {
+                            // pretend the target exists if we're making a symbolic link
+                            exists = true;
+                        }
+                        else
+                        {
+                            var attrs = (new FileInfo(strTargetPath)).Attributes;
+                            exists = (int)attrs != -1;
+                            isDirectory = exists && attrs.HasFlag(FileAttributes.Directory);
+                        }
                     }
                     catch (Exception e)
                     {
