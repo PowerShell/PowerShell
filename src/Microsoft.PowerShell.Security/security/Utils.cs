@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell
                                                          string path)
         {
             string resolvedProviderPath = cmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path);
-            if (Utils.FileExists(resolvedProviderPath))
+            if (File.Exists(resolvedProviderPath))
             {
                 return resolvedProviderPath;
             }
