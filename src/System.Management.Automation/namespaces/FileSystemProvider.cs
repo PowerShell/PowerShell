@@ -4964,11 +4964,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
 #if UNIX
-                            // We don't use the Directory class for Unix because the path
-                            // may contain additional globbing patterns such as '[ab]'
-                            // which Directory.EnumerateFiles() processes, giving undesireable
-                            // results in this context.
-                            if (!Utils.ItemExists(result))
+                            if (!Directory.Exists(result))
                             {
                                 String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                                 Exception e = new IOException(error);
