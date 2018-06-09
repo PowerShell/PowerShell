@@ -2208,7 +2208,9 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        symLinkExists = Utils.ItemExists(path, out isSymLinkDirectory);
+                        var attrs = (new FileInfo(path)).Attributes;
+                        symLinkExists = (int)attrs != -1;
+                        isSymLinkDirectory = symLinkExists && attrs.HasFlag(FileAttributes.Directory);
                     }
                     catch (Exception e)
                     {
