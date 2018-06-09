@@ -2669,7 +2669,7 @@ namespace Microsoft.WSMan.Management
             {
                 try
                 {
-                    object value = ((IWSManSession)sessionobj).Enumerate(ResourceURI, string.Empty, "", 0);
+                    object value = ((IWSManSession)sessionobj).Enumerate(ResourceURI, string.Empty, string.Empty, 0);
                     string strXmlValue = string.Empty;
 
                     while (!((IWSManEnumerator)value).AtEndOfStream)
@@ -2803,7 +2803,7 @@ namespace Microsoft.WSMan.Management
             {
                 if (ResourceURI.Contains(WSManStringLiterals.containerListener) || ResourceURI.Contains(WSManStringLiterals.containerPlugin) || ResourceURI.Contains(WSManStringLiterals.containerCertMapping))
                 {
-                    object value = ((IWSManSession)sessionobj).Enumerate(ResourceURI, string.Empty, "", 0);
+                    object value = ((IWSManSession)sessionobj).Enumerate(ResourceURI, string.Empty, string.Empty, 0);
 
                     while (!((IWSManEnumerator)value).AtEndOfStream)
                     {

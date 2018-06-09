@@ -224,7 +224,7 @@ namespace System.Management.Automation
         // as loose PS1 files)
         public override AstVisitAction VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst)
         {
-            // $env:PATH += string.Empty;$psScriptRoot""
+            // $env:PATH += "";$psScriptRoot""
             if (String.Equals("$env:PATH", assignmentStatementAst.Left.ToString(), StringComparison.OrdinalIgnoreCase) &&
                 Regex.IsMatch(assignmentStatementAst.Right.ToString(), "\\$psScriptRoot", RegexOptions.IgnoreCase))
             {
