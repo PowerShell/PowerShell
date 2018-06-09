@@ -137,10 +137,10 @@ namespace System.Management.Automation
         internal static SecurityZone GetFileSecurityZone(string filePath)
         {
             Diagnostics.Assert(Path.IsPathRooted(filePath), "Caller makes sure the path is rooted.");
-            Diagnostics.Assert(File.Exists(filePath), "Caller makes sure the file exists.");
+            Diagnostics.Assert(Utils.FileExists(filePath), "Caller makes sure the file exists.");
             string sysRoot = System.Environment.GetEnvironmentVariable("SystemRoot");
             string urlmonPath = Path.Combine(sysRoot, @"System32\urlmon.dll");
-            if (File.Exists(urlmonPath))
+            if (Utils.FileExists(urlmonPath))
             {
                 return MapSecurityZoneWithUrlmon(filePath);
             }
