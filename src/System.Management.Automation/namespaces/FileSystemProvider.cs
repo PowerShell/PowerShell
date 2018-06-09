@@ -1505,7 +1505,15 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            if (Utils.ItemExists(path, out bool isDirectory))
+            // We use 'FileInfo.Attributes' (not 'FileInfo.Exist')
+            // because we want to get exceptions
+            // like UnauthorizedAccessException or IOException.
+            var fileInfo = new FileInfo(path);
+            var attr = fileInfo.Attributes;
+            var exists = (int)attr != -1;
+            var isDirectory = exists && attr.HasFlag(FileAttributes.Directory);
+
+            if (exists)
             {
                 if (isDirectory)
                 {
@@ -1526,9 +1534,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // Maybe the path is a file name so try a FileInfo instead
-                    FileInfo fileInfo = new FileInfo(path);
-
                     FlagsExpression<FileAttributes> evaluator = null;
                     FlagsExpression<FileAttributes> switchEvaluator = null;
                     GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
