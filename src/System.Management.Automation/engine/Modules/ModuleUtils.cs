@@ -175,7 +175,7 @@ namespace System.Management.Automation.Internal
             {
                 string moduleFile = Path.Combine(directory, fileName) + ext;
 
-                if (!Utils.FileExists(moduleFile))
+                if (!File.Exists(moduleFile))
                 {
                     continue;
                 }
