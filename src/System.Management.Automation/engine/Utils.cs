@@ -930,13 +930,6 @@ namespace System.Management.Automation
             }
         }
 
-        internal static bool DirectoryExists(string path)
-        {
-            bool itemExists = ItemExists(path, out bool isDirectory);
-
-            return (itemExists && isDirectory);
-        }
-
         internal static void NativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
         {
             IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
