@@ -417,7 +417,12 @@ namespace Microsoft.PowerShell
             result = ReadLineResult.endedOnEnter;
             return InternalTestHooks.ForcePromptForChoiceDefaultOption
                    ? string.Empty
-                   : ReadLine(false, string.Empty, out result, true, true);
+                   : ReadLine(
+                       endOnTab: false,
+                       initialContent: string.Empty,
+                       result: out result,
+                       calledFromPipeline: true,
+                       transcribeResult: true);
         }
 
         private void ShowChoiceHelp(Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)

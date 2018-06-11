@@ -53,6 +53,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
     AfterEach {
         Remove-Item $transcriptFilePath -ErrorAction SilentlyContinue
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $False)
     }
 
     It "Should create Transcript file at default path" {
@@ -122,7 +123,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             }
         }
 
-        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -FileContentMatch "After Dispose"
     }
 
@@ -131,7 +132,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $powerShellCommand = $powerShellPath + ' -c "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"'
         Invoke-Expression $powerShellCommand
 
-        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -FileContentMatch "Before Dispose"
         $transcriptFilePath | Should -FileContentMatch "PowerShell transcript end"
     }
@@ -145,7 +146,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         & $script
 
-        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Exist
         $machineName = [System.Environment]::MachineName
         $transcriptFilePath | Should -FileContentMatch $machineName
     }
@@ -160,7 +161,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         & $script
 
-        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
         $transcriptFilePath | Should -FileContentMatch $message
     }
@@ -175,7 +176,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         & $script
 
-        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
         $transcriptFilePath | Should -Not -FileContentMatch $message
     }
@@ -190,7 +191,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         & $script
 
-        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
         $transcriptFilePath | Should -Not -FileContentMatch $message
     }
@@ -208,7 +209,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         & $script
 
-        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
         $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
     }
@@ -223,7 +224,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         & $script
 
-        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -FileContentMatch $message
     }
 
@@ -237,7 +238,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         & $script
 
-        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -FileContentMatch $message
     }
 
@@ -251,7 +252,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         & $script
 
-        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -Not -FileContentMatch $message
     }
 
@@ -268,7 +269,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         & $script
 
-        Test-Path $transcriptFilePath | Should -BeTrue
+        $transcriptFilePath | Should -Exist
         $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
     }
 }
