@@ -318,7 +318,10 @@ function Update-AppVeyorTestResults
 function Invoke-AppVeyorTest
 {
     [CmdletBinding()]
-    param()
+    param(
+        [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests_xUnit_Packaging')]
+        [string] $Purpose
+    )
     #
     # CoreCLR
 
@@ -333,47 +336,45 @@ function Invoke-AppVeyorTest
         throw "CoreCLR pwsh.exe was not built"
     }
 
-    if(-not (Test-DailyBuild))
-    {
-        # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
-        # https://github.com/pester/Pester/issues/608
-        # To work-around it, we exlude all categories, but 'CI' from the list
-        $ExcludeTag = @('Slow', 'Feature', 'Scenario')
-        Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
-    }
-    else
-    {
+    # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
+    # https://github.com/pester/Pester/issues/608
+    # To work-around it, we exlude all categories, but 'CI' from the list
+    $ExcludeTag = @('Slow', 'Feature', 'Scenario')
+    if (Test-DailyBuild) {
         $ExcludeTag = @()
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
-
-    Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
-    Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
-    Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
-
-    Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
-    Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
-    Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
-
-    Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
-    Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-    Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFile
-    Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
-
-    #
-    # Fail the build, if tests failed
-    @(
-        $testResultsNonAdminFile,
-        $testResultsAdminFile
-    ) | ForEach-Object {
-        Test-PSPesterResults -TestResultsFile $_
+    else {
+        Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
     }
 
-    @(
-        $SequentialXUnitTestResultsFile,
-        $ParallelXUnitTestResultsFile
-    ) | ForEach-Object {
-        Test-XUnitTestResults -TestResultsFile $_
+    if ($Purpose -eq 'UnelevatedPesterTests') {
+        Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
+        Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
+        Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
+
+        # Fail the build, if tests failed
+        Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
+    }
+
+    if ($Purpose -eq 'ElevatedPesterTests_xUnit_Packaging') {
+        Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
+        Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
+        Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
+
+        Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
+        Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFile
+        Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
+
+        # Fail the build, if tests failed
+        Test-PSPesterResults -TestResultsFile $testResultsAdminFile
+        @(
+            $SequentialXUnitTestResultsFile,
+            $ParallelXUnitTestResultsFile
+        ) | ForEach-Object {
+            Test-XUnitTestResults -TestResultsFile $_
+        }
     }
 
     Set-BuildVariable -Name TestPassed -Value True
@@ -385,7 +386,7 @@ function Invoke-AppVeyorAfterTest
     [CmdletBinding()]
     param()
 
-    if(Test-DailyBuild)
+    if (Test-DailyBuild)
     {
         ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
         ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish.
