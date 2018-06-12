@@ -45,12 +45,12 @@ Describe "Get-ChildItem" -Tags "CI" {
         It "Should list the contents of the root folder using Drive:\ notation from within another folder" {
             try
             {
-                pushd -Path TestDrive:\$item_E
+                Push-Location -Path TestDrive:\$item_E
                 (Get-ChildItem TestDrive:\ -File).Name.Length | Should -BeExactly 4
             }
             finally
             {
-                popd
+                Pop-Location
             }
         }
 
@@ -61,19 +61,19 @@ Describe "Get-ChildItem" -Tags "CI" {
         It "Should list the contents of the current folder using Drive: notation when not in the root" {
             try
             {
-                pushd -Path TestDrive:\$item_E
+                Push-Location -Path TestDrive:\$item_E
                 (Get-ChildItem TestDrive:).Name | Should -BeExactly $item_G
             }
             finally
             {
-                popd
+                Pop-Location
             }
         }
 
         It "Should list the contents of the home directory" {
-            pushd $HOME
+            Push-Location $HOME
             (Get-ChildItem .).Name.Length | Should -BeGreaterThan 0
-            popd
+            Pop-Location
         }
 
         It "Should have a the proper fields and be populated" {
