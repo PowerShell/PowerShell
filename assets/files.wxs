@@ -922,6 +922,9 @@
             <Component Id="cmp5164D4CBB99078773111F0D68087D557" Guid="{74A71ECF-64E5-4563-8E99-C12D1A71923F}">
                 <File Id="fil9B11D1E6A4B8B6B9D5E9C946FCE5FF73" KeyPath="yes" Source="$(env.ProductSourcePath)\license_thirdparty_proprietary.txt" />
             </Component>
+            <Component Id="cmp0C712C23BAC746AABB5659096ED329EA" Guid="{0C712C23-BAC7-46AA-BB56-59096ED329EA}">
+                <File Id="fil0C712C23BAC746AABB5659096ED329EA" KeyPath="yes" Source="$(env.ProductSourcePath)\ThirdPartyNotices.txt" />
+            </Component>
             <Component Id="cmp2BFC761F21E7234B46E57BA4DD2D9992" Guid="{D2B2ED8E-C86F-40E7-B546-F9D1D6A12510}">
                 <File Id="fil9CD147A434F516BF71154AB7CC8D7D3E" KeyPath="yes" Source="$(env.ProductSourcePath)\api-ms-win-core-memory-l1-1-1.dll" />
             </Component>
@@ -2213,6 +2216,7 @@
             <ComponentRef Id="cmpF25DC4B00595182390A170310D95EA1D" />
             <ComponentRef Id="cmpB666825D77A8B064DA727325776EAE74" />
             <ComponentRef Id="cmp5164D4CBB99078773111F0D68087D557" />
+            <ComponentRef Id="cmp0C712C23BAC746AABB5659096ED329EA" />
             <ComponentRef Id="cmp2BFC761F21E7234B46E57BA4DD2D9992" />
             <ComponentRef Id="cmpAB383E4D8CF6F11984650BD4E72F4510" />
             <ComponentRef Id="cmp292CCC20E7FD700B54FBD52A473A57D8" />
