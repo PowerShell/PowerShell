@@ -21,4 +21,6 @@ RUN Import-Module ./containerFiles/wix.psm1; `
 
 COPY PowerShellPackage.ps1 /
 
+ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+
 ENTRYPOINT ["C:\\Program Files\\PowerShell\\latest\\pwsh.exe", "-command"]
