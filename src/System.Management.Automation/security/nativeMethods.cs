@@ -719,7 +719,7 @@ namespace System.Management.Automation.Security
             si.dwAdditionalCertChoice = GetCertChoiceFromSigningOption(option);
 
             CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO siex =
-                InitSignInfoExtendedStruct("", "", hashAlgorithm);
+                InitSignInfoExtendedStruct(string.Empty, string.Empty, hashAlgorithm);
             IntPtr pSiexBuffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(siex));
             Marshal.StructureToPtr(siex, pSiexBuffer, false);
             si.pSignExtInfo = pSiexBuffer;

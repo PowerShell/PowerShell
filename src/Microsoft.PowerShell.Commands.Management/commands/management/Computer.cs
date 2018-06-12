@@ -352,7 +352,7 @@ $result
         private readonly string _shortLocalMachineName = Dns.GetHostName();
 
         // And for this, use PsUtils.GetHostname()
-        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync("").Result.HostName;
+        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync(string.Empty).Result.HostName;
 
         private int _percent;
         private string _status;
@@ -1269,7 +1269,7 @@ $result
         private string _newNameForLocalHost = null;
 
         private readonly string _shortLocalMachineName = Dns.GetHostName();
-        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync("").Result.HostName;
+        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync(string.Empty).Result.HostName;
 
 #endregion
 

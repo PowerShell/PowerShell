@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty()]
-        public string Name { get; set; } = "";
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Path to provider location that user is curious about.
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public string[] Role { get; set; } = null;
 
-        private string _provider = "";
+        private string _provider = string.Empty;
 
         /// <summary>
         /// Changes the view of HelpObject returned

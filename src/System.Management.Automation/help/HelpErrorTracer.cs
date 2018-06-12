@@ -54,7 +54,7 @@ namespace System.Management.Automation
         internal sealed class TraceFrame : IDisposable
         {
             // Following are help context information
-            private string _helpFile = "";
+            private string _helpFile = string.Empty;
 
             // ErrorRecords accumulated during the help content loading.
             private Collection<ErrorRecord> _errors = new Collection<ErrorRecord>();

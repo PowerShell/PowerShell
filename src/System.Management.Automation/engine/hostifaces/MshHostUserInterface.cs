@@ -121,7 +121,7 @@ namespace System.Management.Automation.Host
         /// </summary>
         public virtual void WriteLine()
         {
-            WriteLine("");
+            WriteLine(string.Empty);
         }
 
         /// <summary>

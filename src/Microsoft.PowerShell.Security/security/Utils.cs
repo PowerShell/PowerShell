@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell
 
             hostUI.Write(prompt);
             ss = hostUI.ReadLineAsSecureString();
-            hostUI.WriteLine("");
+            hostUI.WriteLine(string.Empty);
 
             return ss;
         }

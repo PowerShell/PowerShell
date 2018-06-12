@@ -51,14 +51,14 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             get { return _path; }
             set { _path = value; }
         }
-        private string _path = "";
+        private string _path = string.Empty;
 
         public string InstanceName
         {
             get { return _instanceName; }
             set { _instanceName = value; }
         }
-        private string _instanceName = "";
+        private string _instanceName = string.Empty;
 
         public double CookedValue
         {

@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we have nothing, but we have to create an empty array
                 valuesToPrint = new string[_propertyLabels.Length];
                 for (int k = 0; k < _propertyLabels.Length; k++)
-                    valuesToPrint[k] = "";
+                    valuesToPrint[k] = string.Empty;
             }
             else if (values.Length < _propertyLabels.Length)
             {
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (k < values.Length)
                         valuesToPrint[k] = values[k];
                     else
-                        valuesToPrint[k] = "";
+                        valuesToPrint[k] = string.Empty;
                 }
             }
             else if (values.Length > _propertyLabels.Length)
@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void WriteProperty(int k, string propertyValue, LineOutput lo)
         {
             if (propertyValue == null)
-                propertyValue = "";
+                propertyValue = string.Empty;
 
             // make sure we honor embedded newlines
             string[] lines = StringManipulationHelper.SplitLines(propertyValue);
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void WriteSingleLineHelper(string prependString, string line, LineOutput lo)
         {
             if (line == null)
-                line = "";
+                line = string.Empty;
 
             // compute the width of the field for the value string (in screen cells)
             int fieldCellCount = _columnWidth - _propertyLabelsDisplayLength;

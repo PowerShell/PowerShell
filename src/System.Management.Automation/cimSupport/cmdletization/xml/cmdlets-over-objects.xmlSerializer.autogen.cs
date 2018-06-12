@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"ClassMetadata", @"");
+                WriteNullTagLiteral(@"ClassMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"ClassMetadataInstanceCmdlets", @"");
+                WriteNullTagLiteral(@"ClassMetadataInstanceCmdlets", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"GetCmdletParameters", @"");
+                WriteNullTagLiteral(@"GetCmdletParameters", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"PropertyMetadata", @"");
+                WriteNullTagLiteral(@"PropertyMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"TypeMetadata", @"");
+                WriteNullTagLiteral(@"TypeMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"Association", @"");
+                WriteNullTagLiteral(@"Association", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"AssociationAssociatedInstance", @"");
+                WriteNullTagLiteral(@"AssociationAssociatedInstance", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CmdletParameterMetadata", @"");
+                WriteNullTagLiteral(@"CmdletParameterMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CmdletParameterMetadataForGetCmdletParameter", @"");
+                WriteNullTagLiteral(@"CmdletParameterMetadataForGetCmdletParameter", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CmdletParameterMetadataForGetCmdletFilteringParameter", @"");
+                WriteNullTagLiteral(@"CmdletParameterMetadataForGetCmdletFilteringParameter", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CmdletParameterMetadataValidateCount", @"");
+                WriteNullTagLiteral(@"CmdletParameterMetadataValidateCount", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CmdletParameterMetadataValidateLength", @"");
+                WriteNullTagLiteral(@"CmdletParameterMetadataValidateLength", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CmdletParameterMetadataValidateRange", @"");
+                WriteNullTagLiteral(@"CmdletParameterMetadataValidateRange", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"ObsoleteAttributeMetadata", @"");
+                WriteNullTagLiteral(@"ObsoleteAttributeMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CmdletParameterMetadataForInstanceMethodParameter", @"");
+                WriteNullTagLiteral(@"CmdletParameterMetadataForInstanceMethodParameter", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CmdletParameterMetadataForStaticMethodParameter", @"");
+                WriteNullTagLiteral(@"CmdletParameterMetadataForStaticMethodParameter", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"QueryOption", @"");
+                WriteNullTagLiteral(@"QueryOption", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"GetCmdletMetadata", @"");
+                WriteNullTagLiteral(@"GetCmdletMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CommonCmdletMetadata", @"");
+                WriteNullTagLiteral(@"CommonCmdletMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteEmptyTag(@"ConfirmImpact", @"");
+                WriteEmptyTag(@"ConfirmImpact", string.Empty);
                 return;
             }
             WriteElementString(@"ConfirmImpact", @"", Write20_ConfirmImpact(((global::Microsoft.PowerShell.Cmdletization.Xml.ConfirmImpact)o)));
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"StaticCmdletMetadata", @"");
+                WriteNullTagLiteral(@"StaticCmdletMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"StaticCmdletMetadataCmdletMetadata", @"");
+                WriteNullTagLiteral(@"StaticCmdletMetadataCmdletMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CommonMethodMetadata", @"");
+                WriteNullTagLiteral(@"CommonMethodMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"StaticMethodMetadata", @"");
+                WriteNullTagLiteral(@"StaticMethodMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -322,7 +322,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CommonMethodParameterMetadata", @"");
+                WriteNullTagLiteral(@"CommonMethodParameterMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"StaticMethodParameterMetadata", @"");
+                WriteNullTagLiteral(@"StaticMethodParameterMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CmdletOutputMetadata", @"");
+                WriteNullTagLiteral(@"CmdletOutputMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -358,7 +358,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"InstanceMethodParameterMetadata", @"");
+                WriteNullTagLiteral(@"InstanceMethodParameterMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -370,7 +370,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"CommonMethodMetadataReturnValue", @"");
+                WriteNullTagLiteral(@"CommonMethodMetadataReturnValue", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"InstanceMethodMetadata", @"");
+                WriteNullTagLiteral(@"InstanceMethodMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"InstanceCmdletMetadata", @"");
+                WriteNullTagLiteral(@"InstanceCmdletMetadata", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"PropertyQuery", @"");
+                WriteNullTagLiteral(@"PropertyQuery", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -418,7 +418,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"WildcardablePropertyQuery", @"");
+                WriteNullTagLiteral(@"WildcardablePropertyQuery", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteEmptyTag(@"ItemsChoiceType", @"");
+                WriteEmptyTag(@"ItemsChoiceType", string.Empty);
                 return;
             }
             WriteElementString(@"ItemsChoiceType", @"", Write3_ItemsChoiceType(((global::Microsoft.PowerShell.Cmdletization.Xml.ItemsChoiceType)o)));
@@ -441,7 +441,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"ClassMetadataData", @"");
+                WriteNullTagLiteral(@"ClassMetadataData", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -453,7 +453,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"EnumMetadataEnum", @"");
+                WriteNullTagLiteral(@"EnumMetadataEnum", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             WriteStartDocument();
             if (o == null)
             {
-                WriteNullTagLiteral(@"EnumMetadataEnumValue", @"");
+                WriteNullTagLiteral(@"EnumMetadataEnumValue", string.Empty);
                 return;
             }
             TopLevelElement();
@@ -665,7 +665,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 global::System.String[] a = (global::System.String[])o.@Aliases;
                 if (a != null)
                 {
-                    Writer.WriteStartAttribute(null, @"Aliases", @"");
+                    Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
@@ -689,7 +689,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 global::System.String[] a = (global::System.String[])o.@CmdletParameterSets;
                 if (a != null)
                 {
-                    Writer.WriteStartAttribute(null, @"CmdletParameterSets", @"");
+                    Writer.WriteStartAttribute(null, @"CmdletParameterSets", string.Empty);
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
@@ -1428,7 +1428,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 global::System.String[] a = (global::System.String[])o.@Aliases;
                 if (a != null)
                 {
-                    Writer.WriteStartAttribute(null, @"Aliases", @"");
+                    Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
@@ -1557,7 +1557,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 global::System.String[] a = (global::System.String[])o.@Aliases;
                 if (a != null)
                 {
-                    Writer.WriteStartAttribute(null, @"Aliases", @"");
+                    Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
@@ -1650,7 +1650,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 global::System.String[] a = (global::System.String[])o.@Aliases;
                 if (a != null)
                 {
-                    Writer.WriteStartAttribute(null, @"Aliases", @"");
+                    Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
@@ -1755,7 +1755,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 global::System.String[] a = (global::System.String[])o.@Aliases;
                 if (a != null)
                 {
-                    Writer.WriteStartAttribute(null, @"Aliases", @"");
+                    Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
@@ -1779,7 +1779,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 global::System.String[] a = (global::System.String[])o.@CmdletParameterSets;
                 if (a != null)
                 {
-                    Writer.WriteStartAttribute(null, @"CmdletParameterSets", @"");
+                    Writer.WriteStartAttribute(null, @"CmdletParameterSets", string.Empty);
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
@@ -2018,7 +2018,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 global::System.String[] a = (global::System.String[])o.@Aliases;
                 if (a != null)
                 {
-                    Writer.WriteStartAttribute(null, @"Aliases", @"");
+                    Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
@@ -2143,7 +2143,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 global::System.String[] a = (global::System.String[])o.@Aliases;
                 if (a != null)
                 {
-                    Writer.WriteStartAttribute(null, @"Aliases", @"");
+                    Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
@@ -2197,7 +2197,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 global::System.String[] a = (global::System.String[])o.@Aliases;
                 if (a != null)
                 {
-                    Writer.WriteStartAttribute(null, @"Aliases", @"");
+                    Writer.WriteStartAttribute(null, @"Aliases", string.Empty);
                     for (int i = 0; i < a.Length; i++)
                     {
                         global::System.String ai = (global::System.String)a[i];
@@ -3558,11 +3558,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations0, ref readerCount0);
@@ -3697,11 +3697,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations2, ref readerCount2);
@@ -3754,7 +3754,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 string tmp = null;
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else if (Reader.NodeType == System.Xml.XmlNodeType.Text ||
                 Reader.NodeType == System.Xml.XmlNodeType.CDATA ||
@@ -3766,7 +3766,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations3, ref readerCount3);
@@ -4099,11 +4099,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations7, ref readerCount7);
@@ -4160,11 +4160,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations8, ref readerCount8);
@@ -4221,11 +4221,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations9, ref readerCount9);
@@ -4282,11 +4282,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations10, ref readerCount10);
@@ -4812,11 +4812,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations20, ref readerCount20);
@@ -4947,7 +4947,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 string tmp = null;
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else if (Reader.NodeType == System.Xml.XmlNodeType.Text ||
                 Reader.NodeType == System.Xml.XmlNodeType.CDATA ||
@@ -4959,7 +4959,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations22, ref readerCount22);
@@ -5523,11 +5523,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations30, ref readerCount30);
@@ -7901,11 +7901,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations63, ref readerCount63);
@@ -7962,11 +7962,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations64, ref readerCount64);
@@ -8023,11 +8023,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations65, ref readerCount65);
@@ -8369,7 +8369,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             _id1_PowerShellMetadata = Reader.NameTable.Add(@"PowerShellMetadata");
             _id98_HelpUri = Reader.NameTable.Add(@"HelpUri");
             _id91_DefaultValue = Reader.NameTable.Add(@"DefaultValue");
-            _id4_Item = Reader.NameTable.Add(@"");
+            _id4_Item = Reader.NameTable.Add(string.Empty);
             _id32_Item = Reader.NameTable.Add(@"CommonMethodMetadataReturnValue");
             _id43_EnumName = Reader.NameTable.Add(@"EnumName");
             _id122_Enums = Reader.NameTable.Add(@"Enums");
@@ -8493,7 +8493,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"ClassMetadata", @"");
+            return xmlReader.IsStartElement(@"ClassMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8512,7 +8512,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"ClassMetadataInstanceCmdlets", @"");
+            return xmlReader.IsStartElement(@"ClassMetadataInstanceCmdlets", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8531,7 +8531,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"GetCmdletParameters", @"");
+            return xmlReader.IsStartElement(@"GetCmdletParameters", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8550,7 +8550,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"PropertyMetadata", @"");
+            return xmlReader.IsStartElement(@"PropertyMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8569,7 +8569,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"TypeMetadata", @"");
+            return xmlReader.IsStartElement(@"TypeMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8588,7 +8588,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"Association", @"");
+            return xmlReader.IsStartElement(@"Association", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8607,7 +8607,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"AssociationAssociatedInstance", @"");
+            return xmlReader.IsStartElement(@"AssociationAssociatedInstance", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8626,7 +8626,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CmdletParameterMetadata", @"");
+            return xmlReader.IsStartElement(@"CmdletParameterMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8645,7 +8645,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CmdletParameterMetadataForGetCmdletParameter", @"");
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataForGetCmdletParameter", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8664,7 +8664,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CmdletParameterMetadataForGetCmdletFilteringParameter", @"");
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataForGetCmdletFilteringParameter", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8683,7 +8683,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateCount", @"");
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateCount", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8702,7 +8702,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateLength", @"");
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateLength", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8721,7 +8721,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateRange", @"");
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataValidateRange", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8740,7 +8740,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"ObsoleteAttributeMetadata", @"");
+            return xmlReader.IsStartElement(@"ObsoleteAttributeMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8759,7 +8759,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CmdletParameterMetadataForInstanceMethodParameter", @"");
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataForInstanceMethodParameter", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8778,7 +8778,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CmdletParameterMetadataForStaticMethodParameter", @"");
+            return xmlReader.IsStartElement(@"CmdletParameterMetadataForStaticMethodParameter", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8797,7 +8797,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"QueryOption", @"");
+            return xmlReader.IsStartElement(@"QueryOption", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8816,7 +8816,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"GetCmdletMetadata", @"");
+            return xmlReader.IsStartElement(@"GetCmdletMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8835,7 +8835,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CommonCmdletMetadata", @"");
+            return xmlReader.IsStartElement(@"CommonCmdletMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8854,7 +8854,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"ConfirmImpact", @"");
+            return xmlReader.IsStartElement(@"ConfirmImpact", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8873,7 +8873,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"StaticCmdletMetadata", @"");
+            return xmlReader.IsStartElement(@"StaticCmdletMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8892,7 +8892,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"StaticCmdletMetadataCmdletMetadata", @"");
+            return xmlReader.IsStartElement(@"StaticCmdletMetadataCmdletMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8911,7 +8911,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CommonMethodMetadata", @"");
+            return xmlReader.IsStartElement(@"CommonMethodMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8930,7 +8930,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"StaticMethodMetadata", @"");
+            return xmlReader.IsStartElement(@"StaticMethodMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8949,7 +8949,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CommonMethodParameterMetadata", @"");
+            return xmlReader.IsStartElement(@"CommonMethodParameterMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8968,7 +8968,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"StaticMethodParameterMetadata", @"");
+            return xmlReader.IsStartElement(@"StaticMethodParameterMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -8987,7 +8987,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CmdletOutputMetadata", @"");
+            return xmlReader.IsStartElement(@"CmdletOutputMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -9006,7 +9006,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"InstanceMethodParameterMetadata", @"");
+            return xmlReader.IsStartElement(@"InstanceMethodParameterMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -9025,7 +9025,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"CommonMethodMetadataReturnValue", @"");
+            return xmlReader.IsStartElement(@"CommonMethodMetadataReturnValue", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -9044,7 +9044,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"InstanceMethodMetadata", @"");
+            return xmlReader.IsStartElement(@"InstanceMethodMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -9063,7 +9063,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"InstanceCmdletMetadata", @"");
+            return xmlReader.IsStartElement(@"InstanceCmdletMetadata", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -9082,7 +9082,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"PropertyQuery", @"");
+            return xmlReader.IsStartElement(@"PropertyQuery", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -9101,7 +9101,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"WildcardablePropertyQuery", @"");
+            return xmlReader.IsStartElement(@"WildcardablePropertyQuery", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -9120,7 +9120,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"ItemsChoiceType", @"");
+            return xmlReader.IsStartElement(@"ItemsChoiceType", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -9139,7 +9139,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"ClassMetadataData", @"");
+            return xmlReader.IsStartElement(@"ClassMetadataData", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -9158,7 +9158,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"EnumMetadataEnum", @"");
+            return xmlReader.IsStartElement(@"EnumMetadataEnum", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)
@@ -9177,7 +9177,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
     {
         public override System.Boolean CanDeserialize(System.Xml.XmlReader xmlReader)
         {
-            return xmlReader.IsStartElement(@"EnumMetadataEnumValue", @"");
+            return xmlReader.IsStartElement(@"EnumMetadataEnumValue", string.Empty);
         }
 
         protected override void Serialize(object objectToSerialize, System.Xml.Serialization.XmlSerializationWriter writer)

@@ -234,7 +234,7 @@ namespace System.Management.Automation
                     return "object[]";
 
                 case VarEnum.VT_EMPTY:
-                    return "";
+                    return string.Empty;
 
                 default:
                     return "Unknown!";

@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _helpTopic = "";
+        private string _helpTopic = string.Empty;
 
         /// <summary>
         /// Gets help topic for which help is not found.

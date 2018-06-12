@@ -4956,28 +4956,28 @@ namespace System.Management.Automation
         /// </summary>
         private void DisplayHelp(PSHost host, IList<PSObject> output)
         {
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.StepHelp, StepShortcut, StepCommand), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.StepOverHelp, StepOverShortcut, StepOverCommand), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.StepOutHelp, StepOutShortcut, StepOutCommand), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.ContinueHelp, ContinueShortcut, ContinueCommand), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.StopHelp, StopShortcut, StopCommand), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.DetachHelp, DetachShortcut, DetachCommand), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.GetStackTraceHelp, GetStackTraceShortcut), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.ListHelp, ListShortcut, ListCommand), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.AdditionalListHelp1), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.AdditionalListHelp2), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.AdditionalListHelp3), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.EnterHelp, StepCommand, StepOverCommand, ListCommand), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.HelpCommandHelp, HelpShortcut, HelpCommand), host, output);
             WriteLine("\n", host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.PromptHelp), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
         }
 
         /// <summary>

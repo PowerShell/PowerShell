@@ -174,14 +174,14 @@ namespace System.Management.Automation.Internal
         private string GetCommand(InvocationInfo invocationInfo)
         {
             if (invocationInfo == null)
-                return "";
+                return string.Empty;
 
             if (invocationInfo.MyCommand != null)
             {
                 return invocationInfo.MyCommand.Name;
             }
 
-            return "";
+            return string.Empty;
         }
 
         private string GetCommand(Exception exception)
@@ -190,7 +190,7 @@ namespace System.Management.Automation.Internal
             if (null != icer && null != icer.ErrorRecord)
                 return GetCommand(icer.ErrorRecord.InvocationInfo);
 
-            return "";
+            return string.Empty;
         }
 
         private void Log(string logElement, InvocationInfo invocation, PipelineExecutionStatus pipelineExecutionStatus)

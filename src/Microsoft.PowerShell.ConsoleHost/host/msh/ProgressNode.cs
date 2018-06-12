@@ -297,13 +297,13 @@ namespace Microsoft.PowerShell
 
             // Second line: the status description with percentage and time remaining, if applicable.
 
-            string percent = "";
+            string percent = string.Empty;
             if (PercentComplete >= 0)
             {
                 percent = StringUtil.Format("{0}% ", PercentComplete);
             }
 
-            string secRemain = "";
+            string secRemain = string.Empty;
             if (SecondsRemaining >= 0)
             {
                 TimeSpan span = new TimeSpan(0, 0, SecondsRemaining);
@@ -366,13 +366,13 @@ namespace Microsoft.PowerShell
 
             // First line: Everything mushed into one line
 
-            string percent = "";
+            string percent = string.Empty;
             if (PercentComplete >= 0)
             {
                 percent = StringUtil.Format("{0}% ", PercentComplete);
             }
 
-            string secRemain = "";
+            string secRemain = string.Empty;
             if (SecondsRemaining >= 0)
             {
                 TimeSpan span = new TimeSpan(0, 0, SecondsRemaining);

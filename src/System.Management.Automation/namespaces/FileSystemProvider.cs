@@ -257,9 +257,9 @@ namespace Microsoft.PowerShell.Commands
                 XmlDocument document = new XmlDocument();
                 CultureInfo currentUICulture = CultureInfo.CurrentUICulture;
                 string fullHelpPath = Path.Combine(
-                    string.IsNullOrEmpty(this.ProviderInfo.ApplicationBase) ? "" : this.ProviderInfo.ApplicationBase,
+                    string.IsNullOrEmpty(this.ProviderInfo.ApplicationBase) ? string.Empty : this.ProviderInfo.ApplicationBase,
                     currentUICulture.ToString(),
-                    string.IsNullOrEmpty(this.ProviderInfo.HelpFile) ? "" : this.ProviderInfo.HelpFile);
+                    string.IsNullOrEmpty(this.ProviderInfo.HelpFile) ? string.Empty : this.ProviderInfo.HelpFile);
 
                 XmlReaderSettings settings = new XmlReaderSettings();
                 settings.XmlResolver = null;
@@ -4279,7 +4279,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // To accomodate empty files
-                    String content = "";
+                    String content = string.Empty;
                     if (op["b64Fragment"] != null)
                     {
                         content = (String)op["b64Fragment"];
@@ -5153,7 +5153,7 @@ namespace Microsoft.PowerShell.Commands
             if (secondColon > 0)
             {
                 string newPath = path.Substring(0, secondColon);
-                alternateDataStream = path.Replace(newPath, "");
+                alternateDataStream = path.Replace(newPath, string.Empty);
                 path = newPath;
             }
 #endif
@@ -5304,8 +5304,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    Stack<string> tokenizedPathStack = TokenizePathToStack(path, "");
-                    Stack<string> normalizedPath = NormalizeThePath("", tokenizedPathStack);
+                    Stack<string> tokenizedPathStack = TokenizePathToStack(path, string.Empty);
+                    Stack<string> normalizedPath = NormalizeThePath(string.Empty, tokenizedPathStack);
                     return CreateNormalizedRelativePathFromStack(normalizedPath);
                 }
                 catch (UnauthorizedAccessException)
@@ -5458,7 +5458,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            currentPath = "";
+                            currentPath = string.Empty;
                         }
 
                         s_tracer.WriteLine("normalizedPathStack.Pop() : {0}", poppedName);
@@ -6933,7 +6933,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // For filesystem once content is cleared
-                WriteItemObject("", path, false);
+                WriteItemObject(string.Empty, path, false);
             }
             catch (ArgumentException argException)
             {
@@ -6960,7 +6960,7 @@ namespace Microsoft.PowerShell.Commands
                         fileStream.Dispose();
 
                         //For filesystem once content is cleared
-                        WriteItemObject("", path, false);
+                        WriteItemObject(string.Empty, path, false);
                     }
                     catch (UnauthorizedAccessException failure)
                     {
@@ -8576,13 +8576,13 @@ namespace System.Management.Automation.Internal
                     string dataStream = ":$DATA";
                     if (!String.Equals(findStreamData.Name, dataStream, StringComparison.OrdinalIgnoreCase))
                     {
-                        findStreamData.Name = findStreamData.Name.Replace(dataStream, "");
+                        findStreamData.Name = findStreamData.Name.Replace(dataStream, string.Empty);
                     }
 
                     AlternateStreamData data = new AlternateStreamData();
                     data.Stream = findStreamData.Name;
                     data.Length = findStreamData.Length;
-                    data.FileName = path.Replace(data.Stream, "");
+                    data.FileName = path.Replace(data.Stream, string.Empty);
                     data.FileName = data.FileName.Trim(Utils.Separators.Colon);
 
                     alternateStreams.Add(data);

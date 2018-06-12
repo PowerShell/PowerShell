@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         //RootModule can be null, empty string or point to a valid .psm1, , .cdxml, .xaml or .dll.  Anything else is invalid.
-                        if (module.RootModule != null && module.RootModule != "")
+                        if (module.RootModule != null && module.RootModule != string.Empty)
                         {
                             string rootModuleExt = System.IO.Path.GetExtension(module.RootModule);
                             if ((!IsValidFilePath(module.RootModule, module, true) && !IsValidGacAssembly(module.RootModule)) ||

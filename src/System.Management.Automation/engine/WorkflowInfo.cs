@@ -281,7 +281,7 @@ namespace System.Management.Automation
         {
             get { return _definition; }
         }
-        private string _definition = "";
+        private string _definition = string.Empty;
 
         /// <summary>
         /// Gets the XAML that represents the definition of the workflow.
