@@ -38,12 +38,36 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem .).Name.Length | Should -BeGreaterThan 0
         }
 
-        It "Should list the contents of the current folder using Drive:\ notation" {
+        It "Should list the contents of the root folder using Drive:\ notation" {
             (Get-ChildItem TestDrive:\).Name.Length | Should -BeGreaterThan 0
         }
 
-        It "Should list the contents of the current folder using Drive: notation" {
+        It "Should list the contents of the root folder using Drive:\ notation from within another folder" {
+            try
+            {
+                pushd -Path TestDrive:\$item_E
+                (Get-ChildItem TestDrive:\ -File).Name.Length | Should -BeExactly 4
+            }
+            finally
+            {
+                popd
+            }
+        }
+
+        It "Should list the contents of the current folder using Drive: notation when in the root" {
             (Get-ChildItem TestDrive:).Name.Length | Should -BeGreaterThan 0
+        }
+
+        It "Should list the contents of the current folder using Drive: notation when not in the root" {
+            try
+            {
+                pushd -Path TestDrive:\$item_E
+                (Get-ChildItem TestDrive:).Name | Should -BeExactly $item_G
+            }
+            finally
+            {
+                popd
+            }
         }
 
         It "Should list the contents of the home directory" {
