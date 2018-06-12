@@ -151,6 +151,9 @@ function Start-PSPackage {
 
         $Source = Split-Path -Path $Script:Options.Output -Parent
 
+        # Copy the ThirdPartyNotices.txt so it's part of the package
+        Copy-Item "$PSScriptRoot/../../ThirdPartyNotices.txt" -Destination $Source -Force
+
         # If building a symbols package, we add a zip of the parent to publish
         if ($IncludeSymbols.IsPresent)
         {
