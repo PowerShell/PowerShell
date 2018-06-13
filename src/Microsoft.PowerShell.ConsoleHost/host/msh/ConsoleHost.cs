@@ -2137,7 +2137,7 @@ namespace Microsoft.PowerShell
                 if (_displayDebuggerBanner)
                 {
                     WriteDebuggerMessage(ConsoleHostStrings.EnteringDebugger);
-                    WriteDebuggerMessage("");
+                    WriteDebuggerMessage(string.Empty);
                     _displayDebuggerBanner = false;
                 }
 
@@ -2153,7 +2153,7 @@ namespace Microsoft.PowerShell
                         WriteDebuggerMessage(String.Format(CultureInfo.CurrentCulture, format, breakpoint));
                     }
 
-                    WriteDebuggerMessage("");
+                    WriteDebuggerMessage(string.Empty);
                 }
 
                 //
@@ -2882,7 +2882,7 @@ namespace Microsoft.PowerShell
 
         internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
 
-        private string _savedWindowTitle = "";
+        private string _savedWindowTitle = string.Empty;
         private Version _ver = PSVersionInfo.PSVersion;
         private int _exitCodeFromRunspace;
         private bool _noExit = true;

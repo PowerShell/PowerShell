@@ -128,7 +128,7 @@ namespace System.Management.Automation.Help
         /// <returns></returns>
         internal string GetExceptionMessage(UpdatableHelpCommandType commandType)
         {
-            string message = "";
+            string message = string.Empty;
             SortedSet<string> sortedModules = new SortedSet<string>(Modules, StringComparer.CurrentCultureIgnoreCase);
             SortedSet<string> sortedCultures = new SortedSet<string>(Cultures, StringComparer.CurrentCultureIgnoreCase);
             string modules = String.Join(", ", sortedModules);

@@ -2120,7 +2120,7 @@ namespace System.Management.Automation
                             escapeCurrentLocation,
                             providerInstance,
                             context);
-                
+
                 return relativePath;
             }
             catch (PSNotSupportedException)
@@ -2129,7 +2129,7 @@ namespace System.Management.Automation
                 // always be empty
 
                 providerInstance = null;
-                return "";
+                return string.Empty;
             }
         } // GetDriveRootRelativePathFromPSPath
 
@@ -2139,7 +2139,7 @@ namespace System.Management.Automation
             CmdletProviderContext context
             )
         {
-            string childPath = "";
+            string childPath = string.Empty;
 
             CmdletProvider providerInstance =
                 _sessionState.Internal.GetContainerProviderInstance(drive.Provider);
@@ -2457,7 +2457,7 @@ namespace System.Management.Automation
                         driveRootRelativeWorkingPath = normalizedRelativePath;
                 }
                 else
-                    driveRootRelativeWorkingPath = "";
+                    driveRootRelativeWorkingPath = string.Empty;
             }
 
             s_tracer.WriteLine(

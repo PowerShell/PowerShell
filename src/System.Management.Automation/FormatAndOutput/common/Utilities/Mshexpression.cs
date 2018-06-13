@@ -4,9 +4,11 @@
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -123,13 +125,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // get the members first: this will expand the globbing on each parameter
                 members = target.Members.Match(_stringValue,
-                                            PSMemberTypes.Properties | PSMemberTypes.PropertySet);
+                                            PSMemberTypes.Properties | PSMemberTypes.PropertySet | PSMemberTypes.Dynamic);
             }
             else
             {
                 // we have no globbing: try an exact match, because this is quicker.
                 PSMemberInfo x = target.Members[_stringValue];
 
+                if ((x == null) && (target.BaseObject is System.Dynamic.IDynamicMetaObjectProvider))
+                {
+                    // We could check if GetDynamicMemberNames includes the name...  but
+                    // GetDynamicMemberNames is only a hint, not a contract, so we'd want
+                    // to attempt the binding whether it's in there or not.
+                    x = new PSDynamicMember(_stringValue);
+                }
                 List<PSMemberInfo> temp = new List<PSMemberInfo>();
                 if (x != null)
                 {
@@ -165,10 +174,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             }
                         }
                     }
-                    continue;
                 }
                 // it can be a property
-                if (member is PSPropertyInfo)
+                else if (member is PSPropertyInfo)
+                {
+                    temporaryMemberList.Add(member);
+                }
+                // it can be a dynamic member
+                else if (member is PSDynamicMember)
                 {
                     temporaryMemberList.Add(member);
                 }
@@ -225,11 +238,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #region Private Members
 
+        private CallSite<Func<CallSite, object, object>> _getValueDynamicSite;
+
         private MshExpressionResult GetValue(PSObject target, bool eatExceptions)
         {
             try
             {
-                object result;
+                object result = null;
 
                 if (Script != null)
                 {
@@ -243,12 +258,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    PSMemberInfo member = target.Properties[_stringValue];
-                    if (member == null)
+                    if (_getValueDynamicSite == null)
                     {
-                        return new MshExpressionResult(null, this, null);
+                        _getValueDynamicSite =
+                            CallSite<Func<CallSite, object, object>>.Create(
+                                    PSGetMemberBinder.Get(
+                                        _stringValue,
+                                        classScope: (Type) null,
+                                        @static: false));
                     }
-                    result = member.Value;
+                    result = _getValueDynamicSite.Target.Invoke(_getValueDynamicSite, target);
                 }
 
                 return new MshExpressionResult(result, this, null);

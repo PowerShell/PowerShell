@@ -356,7 +356,7 @@ namespace System.Management.Automation
                 {
                     if (_parameterMetadata == null)
                     {
-                        CommandMetadata metadata = new CommandMetadata(scriptBlock, "", LocalPipeline.GetExecutionContextFromTLS());
+                        CommandMetadata metadata = new CommandMetadata(scriptBlock, string.Empty, LocalPipeline.GetExecutionContextFromTLS());
                         _parameterMetadata = metadata.StaticCommandParameterMetadata;
                     }
                 }
@@ -503,7 +503,7 @@ namespace System.Management.Automation
             s_cachedScripts.Clear();
         }
 
-        internal static ScriptBlock EmptyScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock("", isProductCode: true);
+        internal static ScriptBlock EmptyScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(string.Empty, isProductCode: true);
 
         internal static ScriptBlock Create(Parser parser, string fileName, string fileContents)
         {

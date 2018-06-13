@@ -40,7 +40,7 @@ namespace System.Management.Automation
             else
             {
                 // make sure _synopsis is never null
-                _synopsis = "";
+                _synopsis = string.Empty;
             }
 
             _filename = filename;
@@ -50,10 +50,10 @@ namespace System.Management.Automation
         /// Name for the help info
         /// </summary>
         /// <value>Name for the help info</value>
-        internal override string Name { get; } = "";
+        internal override string Name { get; } = string.Empty;
 
-        private string _filename = "";
-        private string _synopsis = "";
+        private string _filename = string.Empty;
+        private string _synopsis = string.Empty;
         /// <summary>
         /// Synopsis for the help info
         /// </summary>

@@ -3613,7 +3613,7 @@ namespace System.Management.Automation.Language
             }
 
             var sb = new StringBuilder("param(");
-            string separator = "";
+            string separator = string.Empty;
 
             if (additionalNewUsingParams != null)
             {

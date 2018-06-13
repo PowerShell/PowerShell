@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                 return _counterSetName;
             }
         }
-        private string _counterSetName = "";
+        private string _counterSetName = string.Empty;
 
         public string MachineName
         {
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands.GetCounter
                 return _description;
             }
         }
-        private string _description = "";
+        private string _description = string.Empty;
 
         internal Dictionary<string, string[]> CounterInstanceMapping
         {

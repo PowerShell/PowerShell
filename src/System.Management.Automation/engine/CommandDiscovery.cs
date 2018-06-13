@@ -749,7 +749,7 @@ namespace System.Management.Automation
 
             if (scriptblock.UsesCmdletBinding)
             {
-                FunctionInfo fi = new FunctionInfo("", scriptblock, context);
+                FunctionInfo fi = new FunctionInfo(string.Empty, scriptblock, context);
                 return GetScriptAsCmdletProcessor(fi, context, useNewScope, false, sessionState);
             }
 

@@ -478,7 +478,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (scriptBlock.UsesCmdletBinding)
                 {
-                    FunctionInfo functionInfo = new FunctionInfo("", scriptBlock, executionContext);
+                    FunctionInfo functionInfo = new FunctionInfo(string.Empty, scriptBlock, executionContext);
                     commandProcessorBase = new CommandProcessor(functionInfo, executionContext,
                                                                 _useLocalScope ?? false, fromScriptFile: false, sessionState: executionContext.EngineSessionState);
                 }

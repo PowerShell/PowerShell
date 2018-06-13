@@ -115,3 +115,80 @@ function Set-TesthookResult
     )
     ${Script:TesthookType}::SetTestHook($testhookName, $value)
 }
+
+function Add-TestDynamicType
+{
+    param()
+
+    Add-Type -TypeDefinition @'
+using System.Collections.Generic;
+using System.Dynamic;
+
+public class TestDynamic : DynamicObject
+{
+    private static readonly string[] s_dynamicMemberNames = new string[] { "FooProp", "BarProp", "FooMethod", "SerialNumber" };
+
+    private static int s_lastSerialNumber;
+
+    private readonly int _serialNumber;
+
+    public TestDynamic()
+    {
+        _serialNumber = ++s_lastSerialNumber;
+    }
+
+    public override IEnumerable<string> GetDynamicMemberNames()
+    {
+        return s_dynamicMemberNames;
+    }
+
+    public override bool TryGetMember(GetMemberBinder binder, out object result)
+    {
+        result = null;
+
+        if (binder.Name == "FooProp")
+        {
+            result = 123;
+            return true;
+        }
+        else if (binder.Name == "BarProp")
+        {
+            result = 456;
+            return true;
+        }
+        else if (binder.Name == "SerialNumber")
+        {
+            result = _serialNumber;
+            return true;
+        }
+        else if (binder.Name == "HiddenProp")
+        {
+            // Not presented in GetDynamicMemberNames
+            result = 789;
+            return true;
+        }
+
+        return false;
+    }
+
+    public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+    {
+        result = null;
+
+        if (binder.Name == "FooMethod")
+        {
+            result = "yes";
+            return true;
+        }
+        else if (binder.Name == "HiddenMethod")
+        {
+            // Not presented in GetDynamicMemberNames
+            result = _serialNumber;
+            return true;
+        }
+
+        return false;
+    }
+}
+'@
+}

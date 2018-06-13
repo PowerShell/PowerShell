@@ -725,13 +725,13 @@ namespace Microsoft.PowerShell.Commands
                 }
                 //Write property information
                 string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
-                if (!properties.Equals(""))
+                if (!properties.Equals(string.Empty))
                     WriteCsvLine(properties);
             }
 
             string csv = _helper.ConvertPSObjectToCSV(InputObject, _propertyNames);
             //write to the console
-            if (csv != "")
+            if (csv != string.Empty)
                 WriteCsvLine(csv);
         }
 
@@ -1539,7 +1539,7 @@ namespace Microsoft.PowerShell.Commands
         bool
         IsNewLine(char ch, out string newLine)
         {
-            newLine = "";
+            newLine = string.Empty;
             if (ch == '\r')
             {
                 if (PeekNextChar('\n'))
@@ -1557,7 +1557,7 @@ namespace Microsoft.PowerShell.Commands
                 newLine = "\n";
             }
 
-            return newLine != "";
+            return newLine != string.Empty;
         }
 
         /// <summary>

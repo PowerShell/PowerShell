@@ -79,7 +79,7 @@ namespace System.Management.Automation
                            caption,
                            prompt,
                            userName,
-                           "");
+                           string.Empty);
             }
 
             return cred;

@@ -1012,8 +1012,8 @@ namespace System.Management.Automation
         {
             computerName = computerName ?? string.Empty;
 
-            string sanitizedRemoteModuleName = Regex.Replace(remoteModuleName, "[^a-zA-Z0-9]", "");
-            string sanitizedComputerName = Regex.Replace(computerName, "[^a-zA-Z0-9]", "");
+            string sanitizedRemoteModuleName = Regex.Replace(remoteModuleName, "[^a-zA-Z0-9]", string.Empty);
+            string sanitizedComputerName = Regex.Replace(computerName, "[^a-zA-Z0-9]", string.Empty);
             string moduleName = string.Format(
                 CultureInfo.InvariantCulture,
                 "remoteIpMoProxy_{0}_{1}_{2}_{3}",

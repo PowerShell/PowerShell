@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                _typesAlreadyDisplayed.Add(typeName, "");
+                _typesAlreadyDisplayed.Add(typeName, string.Empty);
             }
 
             PSMemberTypes memberTypeToSearch = MemberType;

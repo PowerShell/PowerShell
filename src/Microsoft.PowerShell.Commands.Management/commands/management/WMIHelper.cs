@@ -676,7 +676,7 @@ namespace Microsoft.PowerShell.Commands
                 string localName = System.Net.Dns.GetHostName();
 
                 // And for this, use PsUtils.GetHostname()
-                string localFullName = System.Net.Dns.GetHostEntry("").HostName;
+                string localFullName = System.Net.Dns.GetHostEntry(string.Empty).HostName;
                 if (computer.Equals(".") || computer.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
                     computer.Equals(localName, StringComparison.OrdinalIgnoreCase) ||
                     computer.Equals(localFullName, StringComparison.OrdinalIgnoreCase))

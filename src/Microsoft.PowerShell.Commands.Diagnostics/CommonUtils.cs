@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
         //
         public static string StringArrayToString(IEnumerable input)
         {
-            string ret = "";
+            string ret = string.Empty;
             foreach (string element in input)
             {
                 ret += element + ", ";

@@ -237,7 +237,7 @@ namespace System.Management.Automation.ComInterop
                 return;
             }
 
-            String typeNames = "";
+            String typeNames = string.Empty;
             for (int i = 0; i < compatibleComTypes.Count; i++)
             {
                 string typeName = s_comToManagedPrimitiveTypes[compatibleComTypes[i]].Name;
