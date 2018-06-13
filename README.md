@@ -87,7 +87,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-preview_6.1.0-preview.3-1.debian.8_amd64.deb
 [pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-preview_6.1.0-preview.3-1.debian.9_amd64.deb
 [pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-preview-6.1.0-preview.3-1.rhel.7.x86_64.rpm
-[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-osx.10.12-x64.pkg
+[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-osx-x64.pkg
 [pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/PowerShell-6.1.0-preview.3-win-arm32.zip
 [pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/PowerShell-6.1.0-preview.3-win-arm64.zip
 [pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/PowerShell-6.1.0-preview.3-win-x86.zip
