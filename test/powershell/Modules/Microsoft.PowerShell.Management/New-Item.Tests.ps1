@@ -12,12 +12,12 @@ function Clean-State
         Remove-Item $FullyQualifiedFile -Force
     }
 
-    if (Test-Path $FullyQualifiedFileInFolder)
+    if ($FullyQualifiedFileInFolder -and (Test-Path $FullyQualifiedFileInFolder))
     {
         Remove-Item $FullyQualifiedFileInFolder -Force
     }
 
-    if (Test-Path $FullyQualifiedSubFolder)
+    if ($FullyQualifiedSubFolder -and (Test-Path $FullyQualifiedSubFolder))
     {
         Remove-Item $FullyQualifiedSubFolder -Force
     }
