@@ -338,11 +338,6 @@ namespace System.Management.Automation.Security
 
         private static SystemEnforcementMode GetDebugLockdownPolicy(string path)
         {
-            if (PsUtils.IsRunningOnProcessorArchitectureARM())
-            {
-                return SystemEnforcementMode.Enforce;
-            }
-
             s_wasSystemPolicyDebugPolicy = true;
 
             // Support fall-back debug hook for path exclusions on non-WOA platforms
