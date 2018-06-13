@@ -35,6 +35,25 @@
         "BinaryBucket": "release"
     },
     {
+        "Name": "win-x64-component-registration",
+        "RepoDestinationPath": "C:\\PowerShell",
+        "BuildCommand": "C:\\PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win7-x64 -ReleaseTag _ReleaseTag_ -ComponentRegistration",
+        "BuildDockerOptions": [
+            "-m",
+            "3968m"
+        ],
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "AdditionalContextFiles" :[
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
+        ],
+        "DockerImageName": "ps-winsrvcore",
+        "BinaryBucket": "results",
+        "ArtifactsExpected": 1,
+        "VariableForExtractedBinariesPath": "componentregistration"
+    },
+    {
         "Name": "win-x64-symbols",
         "RepoDestinationPath": "C:\\PowerShell",
         "BuildCommand": "C:\\PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win7-x64 -ReleaseTag _ReleaseTag_ -Symbols",
