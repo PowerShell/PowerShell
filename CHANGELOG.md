@@ -1,5 +1,98 @@
 # Changelog
 
+## v6.1.0-preview.3 - 2018-06-07
+
+### Breaking Changes
+
+- Clean up uses of `CommandTypes.Workflow` and `WorkflowInfo` (#6708)
+- Disallow Basic Auth over HTTP in PowerShell Remoting on Unix (#6787)
+- Change packaging to differentiate only between major versions and previews (#6968)
+- Enhance and refactor `Add-Type` cmdlet (#6141) (Thanks @iSazonov!)
+  - A few error strings were removed and thus the corresponding fully-qualified error ids are not in use anymore.
+
+### Engine Updates and Fixes
+
+- Fix crash when terminal is reset (#6777)
+- Fix a module-loading regression that caused an infinite loop (#6843)
+- Further improve `PSMethod` to `Delegate` conversion (#6851)
+- Blacklist `System.Windows.Forms` from loading to prevent a crash (#6822)
+- Fix `Format-Table` where rows were being trimmed unnecessarily if there's only one row of headers (#6772)
+- Fix `SetDate` function in `libpsl-native` to avoid corrupting memory during `P/Invoke` (#6881)
+- Fix tab completions for hash table (#6839) (Thanks @iSazonov!)
+- Fix parser to continue parsing key-value pairs after an `If-Statement` value in a `HashExpression` (#7002)
+- Add error handling for `#requires` in an interactive session (#6469)
+
+### General Cmdlet Updates and Fixes
+
+- Improve parameter validation in `ExportCsvHelper` (#6816) (Thanks @sethvs!)
+- Quote `Multipart` form-data field names (#6782) (Thanks @markekraus!)
+- Fix Web Cmdlets for .NET Core 2.1 (#6806) (Thanks @markekraus!)
+- Fix `Set-Location DriveName:` to restore current working directory in the drive (#6774) (Thanks @mcbobke!)
+- Add the alias `-lp` for `-LiteralPath` parameters #6732 (#6770) (Thanks @kvprasoon!)
+- Remove `more` function and move the `$env:PAGER` capability into the `help` function (#6059) (Thanks @iSazonov!)
+- Add line break to the error message for `Set-ExecutionPolicy` (#6803) (Thanks @wesholton84!)
+
+### Code Cleanup
+
+- Clean up `#if SILVERLIGHT` (#6907) (Thanks @iSazonov!)
+- Clean up the unused method `NonWindowsGetDomainName()` (#6948) (Thanks @iSazonov!)
+- Clean up FileSystem provider (#6909) (Thanks @iSazonov!)
+
+### Test
+
+- Add tests for PowerShell hosting API to verify MyGet packages (#6737)
+- Remove Web Cmdlets tests using proxy environment variables (#6808) (Thanks @iSazonov!)
+- Enable Web Cmdlets tests for greater platform support (#6836) (Thanks @markekraus!)
+- Convert `ShouldBeErrorId` to `Should -Throw -ErrorId` in PowerShell tests (#6682)
+- Fix CIM cmdlets tests (#6755) (Thanks @sethvs!)
+- Add tests for PowerShell classes inheriting from abstract .NET classes (#6752)
+- Fix `Select-Object.Tests.ps1` which previously failed intermittently on Unix platforms. (#6747)
+- Update docker package tests to fix error on OpenSUSE 42 (#6783)
+- Fix test and infrastructure that block code coverage runs (#6790)
+- Update Tests `Isfile` to correct response for `"/"` (#6754) (Thanks @Patochun!)
+- Improve code coverage in `Export-Csv.Tests.ps1` (#6795) (Thanks @sethvs!)
+- Change `-Quiet` parameter of `Invoke-Pester` to `-Show None` in `OpenCover.psm1` (#6798) (Thanks @sethvs!)
+- Replace `Dbg.Assert` with `if () throw` in `CSVCommands.cs` (#6910) (Thanks @sethvs!)
+- Fix xUnit test `GetTempFileName` (#6943) (Thanks @iSazonov!)
+
+### Build and Packaging Improvements
+
+- Add Windows Compatibility Pack 2.0.0 to PowerShell Core and adopt the official .NET Core 2.1 (#6958)
+- Add Jumplist 'Run as Administrator' to Taskbar on Windows (#6913, #6985) (Thanks @bergmeister!)
+- Use AppVeyor matrix for faster Pull Request builds (#6945) (Thanks @bergmeister!)
+- Fix `build.psm1` to not add tool path to $PATH twice (#6834)
+- Add script to create a container manifest (#6735)
+- Fix docker manifest creation script to work with more complex tags and with repeated use (#6852)
+- Add functions to merge Pester and xUnit logs (#6854)
+- Enable generating full symbols for the Windows debug build (#6853)
+- Add functions into `build.psm1` to save and restore `PSOptions` between different sessions. (#6884)
+- Update signing XML based on new signing guidelines (#6893)
+- Update the release docker files to allow specifying the version of to-be-installed PowerShell and the version of image to use (#6835)
+- Updates docker files for Fedora 27 and Kali Linux (#6819)
+- Change packaging to support Ubuntu 17.10 and 18.04 (#6769)
+- Update `Get-ChangeLog` to make it more accurate (#6764)
+- Fix comparison to see if sudo test is needed in `install-*.sh` (#6771) (Thanks @bjh7242!)
+- Packaging: Add registry keys to support library folder background for explorer context menu (#6784) (Thanks @bergmeister!)
+- Skip `dotnet-cli` initialization and stop caching the `dotnet` folder for Travis CI (#7007)
+- Skip compiling the non-supported cmdlets on Unix in `System.Management.Automation.dll` to fix the crash in Unix debug build (#6939)
+- Use `PSReadLine` 2.0.0-beta2 from PSGallery (#6998)
+- Update `PSRP` Linux NuGet package version to 1.4.2-* (#6711)
+- Add path cleanup utility `Reset-PWSHSystemPath.ps1` (#6892) (Thanks @DarwinJS!)
+- Add logic to create signing XML for NuGet packages (#6921)
+- Add and config the `Settings.StyleCop` file (#6930, #6986) (Thanks @iSazonov!)
+- Fix the double curly bracket typo in a docker file (#6960) (Thanks @adelton!)
+- Remove dependencies on `libcurl` and `libunwind` in packaging to match the .NET Core behavior (#6964) (Thanks @qmfrederik!)
+- Make the docker build fail when the curl operation fails. (#6961) (Thanks @adelton!)
+
+### Documentation and Help Content
+
+- Update installation doc about Raspbian (#6859)
+- Add code coverage report generation instructions (#6515)
+- Migrate docs from PowerShell repository to Docs repository (#6899)
+- Fix broken links due to migrating GitHub docs on Installation, Known Issues and Breaking Changes to `docs.microsoft.com` (#6981) (Thanks @bergmeister!)
+- Update documentation on how to write tests verifying errors conditions (#6687)
+- Fix preview download links in `README.md` (#6762)
+
 ## v6.1.0-preview.2 - 2018-04-27
 
 ### Breaking Changes

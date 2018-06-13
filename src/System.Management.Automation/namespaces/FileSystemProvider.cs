@@ -2599,10 +2599,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ShouldProcess(resource, action))
                 {
-                    // Use the parent directory to create the sub-directory
-
-                    DirectoryInfo parentDirectory = new DirectoryInfo(parentPath);
-                    DirectoryInfo result = parentDirectory.CreateSubdirectory(childName);
+                    var result = Directory.CreateDirectory(Path.Combine(parentPath, childName));
 
                     if (streamOutput)
                     {
