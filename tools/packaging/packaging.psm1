@@ -618,7 +618,7 @@ function New-UnixPackage {
         $IsPreview = Test-IsPreview -Version $Version
 
         # Preview versions have preview in the name
-        $Name = if ($IsPreview -and $Environment.IsLinux) { "powershell-preview" } else { "powershell" }
+        $Name = if ($IsPreview) { "powershell-preview" } else { "powershell" }
 
         # Verify dependencies are installed and in the path
         Test-Dependencies
@@ -804,7 +804,9 @@ function New-MacOsDistributionPackage
 
     # Add the OS information to the macOS package file name.
     $packageExt = [System.IO.Path]::GetExtension($FpmPackage.Name)
-    $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($FpmPackage.Name)
+
+    # get the package name from fpm without the extension, but replace powershell-preview at the beginning of the name with powershell.
+    $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($FpmPackage.Name) -replace '^powershell\-preview' , 'powershell'
 
     $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
     $newPackagePath = Join-Path $FpmPackage.DirectoryName $newPackageName
