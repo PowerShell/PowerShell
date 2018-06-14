@@ -26,9 +26,10 @@
       >
     <events xmlns="http://schemas.microsoft.com/win/2004/08/events">
       <!--Defines an event provider for PowerShell Core
-          The Guid for this provider should not be changed. If its
-          changed for any reason, then the manifest needs to be
-          first uninstalled and then installed again (using wevtutil)-->
+          The Guid for this provider should not be changed. If it's
+          changed for any reason, then the old manifest needs to be
+          first uninstalled and then the changed manifest installed
+          (using wevtutil)-->
       <provider
           guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}"
           messageFileName="PowerShell.Core.Instrumentation.dll"
@@ -2186,10 +2187,11 @@
               />
         </events>
         <channels>
-          <!--There are two channels defined for Windows PowerShell instrumentation
+          <!--There are three channels defined for Windows PowerShell instrumentation
               event provider
-                1. Operational - for high level diagnositc messages
+                1. Operational - for high level diagnostic messages
                 2. Analytic - for high volume high performance trace messages
+                3. Debug - for high volume high performance trace messages
 		-->
           <channel
               chid="C_OPERATIONAL"
@@ -2211,7 +2213,6 @@
           <channel
               chid="C_ANALYTIC"
               enabled="false"
-              isolation="Application"
               message="$(string.PS_CHANNEL_ANALYTIC.ChannelMessage)"
               name="PowerShellCore/Analytic"
               symbol="C_ANALYTIC"
@@ -2238,7 +2239,6 @@
           <channel
               chid="C_DEBUG"
               enabled="false"
-              isolation="Application"
               message="$(string.PS_CHANNEL_DEBUG.ChannelMessage)"
               name="PowerShellCore/Debug"
               symbol="C_DEBUG"
@@ -2261,27 +2261,6 @@
                   data-->
               <bufferSize>64</bufferSize>
             </publishing>
-          </channel>
-          <channel
-              chid="C_ADMIN"
-              enabled="true"
-              isolation="Application"
-              message="$(string.PS_CHANNEL_ADMIN.ChannelMessage)"
-              name="PowerShellCore/Admin"
-              symbol="C_ADMIN"
-              type="Admin"
-              >
-            <logging>
-              <!--this log is not circular, which means user has to
-					  manually clear logs-->
-              <retention>true</retention>
-              <!--max size of the analytic log file is 100 MB.
-					  It's ok to set it to this high a value because
-					  this channel is not enabled by default and the
-					  user will have to turn it on and this is the
-					  maximum size as well-->
-              <maxSize>1048985600</maxSize>
-            </logging>
           </channel>
         </channels>
         <levels>
