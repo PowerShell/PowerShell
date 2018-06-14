@@ -804,7 +804,9 @@ function New-MacOsDistributionPackage
 
     # Add the OS information to the macOS package file name.
     $packageExt = [System.IO.Path]::GetExtension($FpmPackage.Name)
-    $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($FpmPackage.Name) -replace 'powershell\-preview' , 'powershell'
+
+    # get the package name from fpm without the extension, but replace powershell-preview at the beginning of the name with powershell.
+    $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($FpmPackage.Name) -replace '^powershell\-preview' , 'powershell'
 
     $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
     $newPackagePath = Join-Path $FpmPackage.DirectoryName $newPackageName
