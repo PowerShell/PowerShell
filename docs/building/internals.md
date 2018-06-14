@@ -31,7 +31,7 @@ it should be listed as a dependency for `$Top` folder (`src\powershell-unix` or 
 ### ResGen
 
 Until the .NET CLI `dotnet-resgen` tool supports the generation of strongly typed resource access classes
-(tracked by [Microsoft/msbuild#2272](https://github.com/Microsoft/msbuild/issues/2272)),
+(tracked by [Microsoft/msbuild #2272](https://github.com/Microsoft/msbuild/issues/2272)),
 we run our own C# [ResGen tool](../../src/ResGen).
 While the `Start-PSBuild` command runs this automatically via the `Start-ResGen` function,
 it does *not* require PowerShell.
