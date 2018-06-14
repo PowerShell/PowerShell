@@ -3,10 +3,10 @@
 
 using System;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 using Microsoft.Win32;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -31,12 +31,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal static class RemotingCommandUtil
     {
-        /// <summary>
-        /// The existence of the following registry confirms that the host machine is a WinPE
-        /// HKLM\System\CurrentControlSet\Control\MiniNT
-        /// </summary>
-        internal static string WinPEIdentificationRegKey = @"System\CurrentControlSet\Control\MiniNT";
-
         internal static bool HasRepeatingRunspaces(PSSession[] runspaceInfos)
         {
             if (runspaceInfos == null)
@@ -168,6 +162,61 @@ namespace Microsoft.PowerShell.Commands
                 //     "WinPE does not support Windows PowerShell remoting");
                 ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.WinPERemotingNotSupported)), null, ErrorCategory.InvalidOperation, null);
                 throw new InvalidOperationException(errorRecord.ToString());
+            }
+        }
+
+        internal static void CheckPSVersion(Version version)
+        {
+            // PSVersion value can only be 2.0, 3.0, 4.0, 5.0, or 5.1
+            if (version != null)
+            {
+                // PSVersion value can only be 2.0, 3.0, 4.0, 5.0, or 5.1
+                if (!(version.Major >= 2 && version.Major <= 4 && version.Minor == 0) &&
+                    !(version.Major == 5 && version.Minor <= 1))
+                {
+                    throw new ArgumentException(
+                       StringUtil.Format(RemotingErrorIdStrings.PSVersionParameterOutOfRange, version, "PSVersion"));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if the specified version of PowerShell is installed
+        /// </summary>
+        /// <param name="version"></param>
+        internal static void CheckIfPowerShellVersionIsInstalled(Version version)
+        {
+            // Check if PowerShell 2.0 is installed
+            if (version != null && version.Major == 2)
+            {
+#if CORECLR
+                // PowerShell 2.0 is not available for CoreCLR
+                throw new ArgumentException(
+                    PSRemotingErrorInvariants.FormatResourceString(
+                        RemotingErrorIdStrings.PowerShellNotInstalled,
+                        version, "PSVersion"));
+#else
+                // Because of app-compat issues, in Win8, we will have PS 2.0 installed by default but not .NET 2.0
+                // In such a case, it is not enough if we check just PowerShell registry keys. We also need to check if .NET 2.0 is installed.
+                try
+                {
+                    RegistryKey engineKey = PSSnapInReader.GetPSEngineKey(PSVersionInfo.RegistryVersion1Key);
+                    // Also check for .NET 2.0 installation
+                    if (!PsUtils.FrameworkRegistryInstallation.IsFrameworkInstalled(2, 0, 0))
+                    {
+                        throw new ArgumentException(
+                            PSRemotingErrorInvariants.FormatResourceString(
+                                RemotingErrorIdStrings.NetFrameWorkV2NotInstalled));
+                    }
+                }
+                catch (PSArgumentException)
+                {
+                    throw new ArgumentException(
+                        PSRemotingErrorInvariants.FormatResourceString(
+                            RemotingErrorIdStrings.PowerShellNotInstalled,
+                            version, "PSVersion"));
+                }
+#endif
             }
         }
     }
