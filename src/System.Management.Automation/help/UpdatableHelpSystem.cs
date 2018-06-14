@@ -1636,7 +1636,7 @@ namespace System.Management.Automation.Help
             string fileName = item.Name;
 
             // Prerequisite: The directory in the given path must exist and it is case sensitive.
-            if (Utils.NativeDirectoryExists(directoryPath))
+            if (Utils.DirectoryExists(directoryPath))
             {
                 // Get the list of files in the directory.
                 string[] fileList = Directory.GetFiles(directoryPath);
@@ -1649,7 +1649,7 @@ namespace System.Management.Automation.Help
                 }
             }
 #else
-            if (Utils.NativeFileExists(path))
+            if (Utils.FileExists(path))
             {
                 return path;
             }

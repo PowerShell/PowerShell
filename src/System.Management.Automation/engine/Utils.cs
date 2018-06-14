@@ -499,7 +499,7 @@ namespace System.Management.Automation
             T policy = null;
 #if !UNIX
             // On Windows, group policy settings from registry take precedence.
-            // If the requested policy is not defined in registry, we query the configuration file. 
+            // If the requested policy is not defined in registry, we query the configuration file.
             policy = GetPolicySettingFromGPO<T>(preferenceOrder);
             if (policy != null) { return policy; }
 #endif
@@ -889,113 +889,57 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static bool NativeItemExists(string path)
+        internal static bool ItemExists(string path)
         {
-            bool unusedIsDirectory;
-            Exception unusedException;
+            try
+            {
+                return ItemExists(path, out bool _);
+            }
+            catch
+            {
+            }
 
-            return NativeItemExists(path, out unusedIsDirectory, out unusedException);
+            return false;
         }
 
-        // This is done through P/Invoke since File.Exists and Directory.Exists pay 13% performance degradation
-        // through the CAS checks, and are terribly slow for network paths.
-        internal static bool NativeItemExists(string path, out bool isDirectory, out Exception exception)
+        internal static bool ItemExists(string path, out bool isDirectory)
         {
-            exception = null;
+            isDirectory = false;
 
             if (String.IsNullOrEmpty(path))
             {
-                isDirectory = false;
                 return false;
             }
-#if UNIX
-            isDirectory = Platform.NonWindowsIsDirectory(path);
-            return Platform.NonWindowsIsFile(path);
-#else
 
             if (IsReservedDeviceName(path))
             {
-                isDirectory = false;
                 return false;
             }
 
-            int result = NativeMethods.GetFileAttributes(path);
-            if (result == -1)
+            try
             {
-                int errorCode = Marshal.GetLastWin32Error();
-                if (errorCode == 5)
-                {
-                    // Handle "Access denied" specifically.
-                    Win32Exception win32Exception = new Win32Exception(errorCode);
-                    exception = new UnauthorizedAccessException(win32Exception.Message, win32Exception);
-                }
-                else if (errorCode == 32)
-                {
-                    // Errorcode 32 is 'ERROR_SHARING_VIOLATION' i.e.
-                    // The process cannot access the file because it is being used by another process.
-                    // GetFileAttributes may return INVALID_FILE_ATTRIBUTES for a system file or directory because of this error.
-                    // GetFileAttributes function tries to open the file with FILE_READ_ATTRIBUTES access right but it fails if the
-                    // sharing flag for the file is set to 0x00000000.This flag prevents it from opening a file for delete, read, or
-                    // write access. For example: C:\pagefile.sys is always opened by OS with sharing flag 0x00000000.
-                    // But FindFirstFile is still able to get attributes as this api retrieves the required information using a find
-                    // handle generated with FILE_LIST_DIRECTORY access.
-                    // Fall back to FindFirstFile to check if the file actually exists.
-                    IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-                    NativeMethods.WIN32_FIND_DATA findData;
-                    IntPtr findHandle = NativeMethods.FindFirstFile(path, out findData);
-                    if (findHandle != INVALID_HANDLE_VALUE)
-                    {
-                        isDirectory = (findData.dwFileAttributes & NativeMethods.FileAttributes.Directory) != 0;
-                        NativeMethods.FindClose(findHandle);
-                        return true;
-                    }
-                }
-                else if (errorCode == 53)
-                {
-                    // ERROR_BAD_NETPATH - The network path was not found.
-                    Win32Exception win32Exception = new Win32Exception(errorCode);
-                    exception = new IOException(win32Exception.Message, win32Exception);
-                }
+                // Use 'File.GetAttributes()' because we want to get access exceptions.
+                FileAttributes attributes = File.GetAttributes(path);
+                isDirectory = attributes.HasFlag(FileAttributes.Directory);
 
-                isDirectory = false;
+                return (int)attributes != -1;
+            }
+            catch (IOException)
+            {
                 return false;
             }
-
-            isDirectory = (result & ((int)NativeMethods.FileAttributes.Directory)) ==
-                ((int)NativeMethods.FileAttributes.Directory);
-
-            return true;
-#endif
         }
 
-        // This is done through P/Invoke since we pay 13% performance degradation
-        // through the CAS checks required by File.Exists and Directory.Exists
-        internal static bool NativeFileExists(string path)
+        internal static bool FileExists(string path)
         {
-            bool isDirectory;
-            Exception ioException;
-
-            bool itemExists = NativeItemExists(path, out isDirectory, out ioException);
-            if (ioException != null)
-            {
-                throw ioException;
-            }
+            bool itemExists = ItemExists(path, out bool isDirectory);
 
             return (itemExists && (!isDirectory));
         }
 
-        // This is done through P/Invoke since we pay 13% performance degradation
-        // through the CAS checks required by File.Exists and Directory.Exists
-        internal static bool NativeDirectoryExists(string path)
+        internal static bool DirectoryExists(string path)
         {
-            bool isDirectory;
-            Exception ioException;
-
-            bool itemExists = NativeItemExists(path, out isDirectory, out ioException);
-            if (ioException != null)
-            {
-                throw ioException;
-            }
+            bool itemExists = ItemExists(path, out bool isDirectory);
 
             return (itemExists && isDirectory);
         }
