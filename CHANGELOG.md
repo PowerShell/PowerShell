@@ -8,7 +8,7 @@
 - Disallow Basic Auth over HTTP in PowerShell Remoting on Unix (#6787)
 - Change packaging to differentiate only between major versions and previews (#6968)
 - Enhance and refactor `Add-Type` cmdlet (#6141) (Thanks @iSazonov!)
-  - A few error strings were removed and thus the corresponding fully-qualified error ids are not in use anymore.
+    - A few error strings were removed and thus the corresponding fully qualified error ids are no longer in use.
 
 ### Engine Updates and Fixes
 
