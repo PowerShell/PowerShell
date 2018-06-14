@@ -525,6 +525,7 @@ src
 v141
 x64_arm
 x64_arm64
+msbuild
 #endregion
 
 #region docs/building/macos.md Overrides
