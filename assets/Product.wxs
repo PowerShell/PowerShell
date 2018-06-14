@@ -227,7 +227,8 @@
             <Shortcut Id="PowerShell_ProgramsMenuShortcut" 
                       Name="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
                       Description="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
-                      Target="[$(var.ProductDirectoryName)]pwsh.exe" 
+                      Target="[$(var.ProductDirectoryName)]pwsh.exe"
+                      Arguments="-WorkingDirectory ~"
                       WorkingDirectory="$(var.ProductDirectoryName)"
                       Icon = "PowerShellExe.ico" />
             <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
