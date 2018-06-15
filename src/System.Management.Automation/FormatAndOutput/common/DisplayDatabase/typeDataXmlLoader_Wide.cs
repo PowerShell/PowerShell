@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // finally build the item to return
                 List<FormatToken> formatTokenList = new List<FormatToken>();
 
-                // add either the text token or the MshExpression with optional format string
+                // add either the text token or the PSPropertyExpression with optional format string
                 if (match.TextToken != null)
                 {
                     formatTokenList.Add(match.TextToken);

@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ScriptBlock sb = val as ScriptBlock;
             if (sb != null)
             {
-                MshExpression ex = new MshExpression(sb);
+                PSPropertyExpression ex = new PSPropertyExpression(sb);
                 return ex;
             }
 
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ProcessEmptyStringError(originalParameterWasHashTable, invocationContext);
                 }
-                MshExpression ex = new MshExpression(s);
+                PSPropertyExpression ex = new PSPropertyExpression(s);
                 if (_noGlobbing)
                 {
                     if (ex.HasWildCardCharacters)

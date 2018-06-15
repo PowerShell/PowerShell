@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool LoadXmlFile(
             XmlFileLoadInfo info,
             TypeInfoDataBase db,
-            MshExpressionFactory expressionFactory,
+            PSPropertyExpressionFactory expressionFactory,
             AuthorizationManager authorizationManager,
             PSHost host,
             bool preValidated)
@@ -279,7 +279,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool LoadFormattingData(
             ExtendedTypeDefinition typeDefinition,
             TypeInfoDataBase db,
-            MshExpressionFactory expressionFactory,
+            PSPropertyExpressionFactory expressionFactory,
             bool isBuiltInFormatData,
             bool isForHelp)
         {

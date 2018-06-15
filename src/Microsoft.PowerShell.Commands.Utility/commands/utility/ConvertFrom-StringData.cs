@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The list of properties to display
-        /// These take the form of an MshExpression
+        /// These take the form of an PSPropertyExpression
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]

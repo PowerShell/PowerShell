@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     internal sealed class WideViewGenerator : ViewGenerator
     {
-        internal override void Initialize(TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory,
+        internal override void Initialize(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                                 PSObject so, TypeInfoDataBase db, FormattingCommandLineParameters parameters)
         {
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // we did not get any properties:
             //try to get the display property of the object
-            MshExpression displayNameExpression = PSObjectHelper.GetDisplayNameExpression(so, this.expressionFactory);
+            PSPropertyExpression displayNameExpression = PSObjectHelper.GetDisplayNameExpression(so, this.expressionFactory);
             if (displayNameExpression != null)
             {
                 this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();

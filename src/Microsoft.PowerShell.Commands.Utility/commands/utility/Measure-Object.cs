@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0)]
-        public string[] Property { get; set; } = null;
+        public PSPropertyExpression[] Property { get; set; } = null;
 
         #endregion Common parameters in both sets
 
@@ -486,10 +486,9 @@ namespace Microsoft.PowerShell.Commands
 
             // First iterate over the user-specified list of
             // properties...
-            foreach (string p in Property)
+            foreach (var expression in Property)
             {
-                MshExpression expression = new MshExpression(p);
-                List<MshExpression> resolvedNames = expression.ResolveNames(inObj);
+                List<PSPropertyExpression> resolvedNames = expression.ResolveNames(inObj);
                 if (resolvedNames == null || resolvedNames.Count == 0)
                 {
                     // Insert a blank entry so we can track
@@ -506,7 +505,7 @@ namespace Microsoft.PowerShell.Commands
                 // Each property value can potentially refer
                 // to multiple properties via globbing. Iterate over
                 // the actual property names.
-                foreach (MshExpression resolvedName in resolvedNames)
+                foreach (PSPropertyExpression resolvedName in resolvedNames)
                 {
                     string propertyName = resolvedName.ToString();
                     // skip duplicated properties
@@ -515,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    List<MshExpressionResult> tempExprRes = resolvedName.GetValues(inObj);
+                    List<PSPropertyExpressionResult> tempExprRes = resolvedName.GetValues(inObj);
                     if (tempExprRes == null || tempExprRes.Count == 0)
                     {
                         // Shouldn't happen - would somehow mean
@@ -573,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
                 AnalyzeNumber(numValue, stat);
             }
 
-            // Win8:343911 Measure-Object -MAX -MIN should work with ANYTHING that supports CompareTo
+            // Measure-Object -MAX -MIN should work with ANYTHING that supports CompareTo
             if (_measureMin)
             {
                 stat.min = Compare(objValue, stat.min, true);

@@ -756,6 +756,7 @@ namespace System.Management.Automation
                     { typeof(PSListModifier),                              new[] { "pslistmodifier" } },
                     { typeof(PSObject),                                    new[] { "psobject", "pscustomobject" } },
                     { typeof(PSPrimitiveDictionary),                       new[] { "psprimitivedictionary" } },
+                    { typeof(PSPropertyExpression),                        new[] { "pspropertyexpression"} },
                     { typeof(PSReference),                                 new[] { "ref" } },
                     { typeof(PSTypeNameAttribute),                         new[] { "PSTypeNameAttribute" } },
                     { typeof(Regex),                                       new[] { "regex" } },

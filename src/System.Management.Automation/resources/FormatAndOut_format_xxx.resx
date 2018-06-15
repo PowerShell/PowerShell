@@ -173,7 +173,7 @@
   <data name="FOD_RecursiveProperty" xml:space="preserve">
     <value>The {0} property is recursive.</value>
   </data>
-  <data name="MshExpressionError" xml:space="preserve">
+  <data name="PSPropertyExpressionError" xml:space="preserve">
     <value>Failed to evaluate expression "{0}".</value>
   </data>
   <data name="FormattingError" xml:space="preserve">
