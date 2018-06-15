@@ -379,6 +379,24 @@ function Start-BuildNativeUnixBinaries {
     }
 }
 
+<#
+    .Synopsis
+        Tests if a version is preview
+    .EXAMPLE
+        Test-IsPreview -version '6.1.0-sometthing' # returns true
+        Test-IsPreview -version '6.1.0' # returns false
+#>
+function Test-IsPreview
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version
+    )
+
+    return $Version -like '*-*'
+}
+
 function Start-PSBuild {
     [CmdletBinding()]
     param(
@@ -612,7 +630,13 @@ Fix steps:
             $pwshPath = Join-Path $Options.Output "pwsh.exe"
         }
 
-        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
+        if (Test-IsPreview $ReleaseVersion) {
+            $iconPath = "$PSScriptRoot\assets\Powershell_av_colors.ico"
+        } else {
+            $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
+        }
+
+        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon $iconPath `
             --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
             --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
             --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose

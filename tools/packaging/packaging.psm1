@@ -2281,24 +2281,6 @@ function New-MSIPatch
 
 <#
     .Synopsis
-        Tests if a version is preview
-    .EXAMPLE
-        Test-IsPreview -version '6.1.0-sometthing' # returns true
-        Test-IsPreview -version '6.1.0' # returns false
-#>
-function Test-IsPreview
-{
-    param(
-        [parameter(Mandatory)]
-        [string]
-        $Version
-    )
-
-    return $Version -like '*-*'
-}
-
-<#
-    .Synopsis
         Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
         This only works on a Windows machine due to the usage of WiX.
     .EXAMPLE
@@ -2402,12 +2384,14 @@ function New-MSIPackage
         [Environment]::SetEnvironmentVariable("AddPathDefault", '1', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '31ab5147-9a97-4452-8443-d9709f0516e1', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '1d00683b-0f84-4db8-a64f-2f98ad42fe06', "Process")
+        [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_black.ico', "Process")
     }
     else
     {
         [Environment]::SetEnvironmentVariable("AddPathDefault", '0', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
+        [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_av_colors.ico', "Process")
     }
     $fileArchitecture = 'amd64'
     $ProductProgFilesDir = "ProgramFiles64Folder"

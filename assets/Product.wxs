@@ -35,7 +35,7 @@
     <!-- Properties About The Package -->
     <Package Id="*" Keywords="Installer" Platform="$(sys.BUILDARCH)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
     <!-- Add PowerShell icon for executable -->
-    <Icon Id="PowerShellExe.ico" SourceFile="assets\Powershell_black.ico" />
+    <Icon Id="PowerShellExe.ico" SourceFile="$(env.IconPath)" />
     <!-- Add PowerShell icon in Add/Remove Programs -->
     <Property Id="ARPPRODUCTICON" Value="PowerShellExe.ico" />
     <!-- Set properties for add/remove programs -->
@@ -174,44 +174,44 @@
               <!-- When clicking on background in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\Background\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]$(env.IconPath)"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
               </RegistryKey>
               <!-- When clicking on Drive in Explorer -->
               <RegistryKey Root="HKCR" Key="Drive\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]$(env.IconPath)"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
               </RegistryKey>
               <!-- When clicking on Desktop background in Explorer -->
               <RegistryKey Root="HKCR" Key="DesktopBackground\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]$(env.IconPath)"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
               </RegistryKey>
               <!-- When clicking on folder in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]$(env.IconPath)"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
               </RegistryKey>
               <!-- When being in a Library folder in Explorer -->
               <RegistryKey Root="HKCR" Key="LibraryFolder\background\shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]$(env.IconPath)"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
               </RegistryKey>
               <!-- Sub menus to open PowerShell at the current location either as a normal shell or as Administrator -->
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\open">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextSubMenuDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]$(env.IconPath)"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\open\command">
                 <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe -NoExit -WorkingDirectory &quot;%V&quot; "/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\runas">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextSubMenuElevatedDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]$(env.IconPath)"/>
                 <RegistryValue Type="string" Value="" Name="HasLUAShield"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\runas\command">

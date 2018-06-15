@@ -174,7 +174,7 @@ try {
         }
 
         Write-Verbose "Change icon to disambiguate it from a released installation" -Verbose
-        & "~/.rcedit/rcedit-x64.exe" "$Destination\pwsh.exe" --set-icon "$Destination\assets\Powershell_av_colors.ico"
+        & "~/.rcedit/rcedit-x64.exe" "$Destination\pwsh.exe" --set-icon "$Destination\assets\Powershell_avatar.ico"
     }
 
     ## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
