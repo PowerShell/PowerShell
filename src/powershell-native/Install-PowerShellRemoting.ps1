@@ -124,7 +124,7 @@ function Install-PluginEndpoint {
     #                    #
     ######################
 
-    if ($PsCmdlet.ParameterSetName -eq "ByPath")
+    if ($PowerShellHome -ne $null)
     {
         $targetPsHome = $PowerShellHome
         $targetPsVersion = & "$targetPsHome\pwsh" -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
@@ -135,6 +135,7 @@ function Install-PluginEndpoint {
         $targetPsHome = $PSHOME
         $targetPsVersion = $PSVersionTable.PSVersion.ToString()
     }
+    Write-Verbose "PowerShellHome: $targetPsHome" -Verbose
 
     # For default, not tied to the specific version endpoint, we apply
     # only first number in the PSVersion string to the endpoint name.
@@ -163,7 +164,7 @@ function Install-PluginEndpoint {
         return
     }
 
-    $pluginBasePath = Join-Path ([System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows) + "\System32\PowerShell") $targetPsVersion
+    $pluginBasePath = Join-Path (Join-Path $env:Windir "System32\PowerShell") $targetPsVersion
 
     $resolvedPluginAbsolutePath = ""
     if (! (Test-Path $pluginBasePath))

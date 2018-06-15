@@ -86,6 +86,9 @@ namespace System.Management.Automation.Security
 
         /// MAX_PATH -> 260
         internal const int MAX_PATH = 260;
+
+        /// This function is not supported on this system
+        internal const int FUNCTION_NOT_SUPPORTED = 120;
     }
 
     /// <summary>
