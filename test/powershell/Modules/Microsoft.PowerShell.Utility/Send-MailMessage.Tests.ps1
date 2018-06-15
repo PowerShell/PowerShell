@@ -134,8 +134,8 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
        }
     }
 
-        $ItArgs = $PesterArgs.Clone()
-        $ItArgs['Name'] = "Can send mail message from user to self " + $ItArgs['Name']
+    $ItArgs = $PesterArgs.Clone()
+    $ItArgs['Name'] = "Can send mail message from user to self " + $ItArgs['Name']
 
     It @ItArgs {
         $body = "Greetings from me."
