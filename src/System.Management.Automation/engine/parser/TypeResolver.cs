@@ -20,7 +20,9 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Commands;
+#if !UNIX
 using System.DirectoryServices;
+#endif
 
 namespace System.Management.Automation.Language
 {
@@ -790,11 +792,13 @@ namespace System.Management.Automation
                     { typeof(CimSession),                                  new[] { "CimSession" } },
                     { typeof(MailAddress),                                 new[] { "mailaddress" } },
                     { typeof(SemanticVersion),                             new[] { "semver" } },
+#if !UNIX
                     { typeof(DirectoryEntry),                              new[] { "adsi" } },
                     { typeof(DirectorySearcher),                           new[] { "adsisearcher" } },
                     { typeof(ManagementClass),                             new[] { "wmiclass" } },
                     { typeof(ManagementObject),                            new[] { "wmi" } },
                     { typeof(ManagementObjectSearcher),                    new[] { "wmisearcher" } }
+#endif
                 }
             );
 

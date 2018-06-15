@@ -371,15 +371,14 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.PSVariableProperty]
                 }
                 @{
-<<<<<<< HEAD
                     Accelerator = 'pspropertyexpression'
                     Type = [Microsoft.PowerShell.Commands.PSPropertyExpression]
                 }
             )
 
-            if ( $IsCoreCLR )
+            if ( !$IsWindows )
             {
-                $totalAccelerators = 91
+                $totalAccelerators = 90
             }
             else
             {
@@ -408,29 +407,6 @@ Describe "Type accelerators" -Tags "CI" {
                     }
                 )
             }
-=======
-                    Accelerator = 'adsi'
-                    Type        = [System.DirectoryServices.DirectoryEntry]
-                }
-                @{
-                    Accelerator = 'adsisearcher'
-                    Type        = [System.DirectoryServices.DirectorySearcher]
-                }
-                @{
-                    Accelerator = 'wmiclass'
-                    Type        = [System.Management.ManagementClass]
-                }
-                @{
-                    Accelerator = 'wmi'
-                    Type        = [System.Management.ManagementObject]
-                }
-                @{
-                    Accelerator = 'wmisearcher'
-                    Type        = [System.Management.ManagementObjectSearcher]
-                }
-            )
-            $totalAccelerators = 95
->>>>>>> add back [adsi] and [wmi] type accelerators
         }
 
         It 'Should have all the type accelerators' {

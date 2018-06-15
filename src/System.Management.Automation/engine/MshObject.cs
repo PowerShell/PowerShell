@@ -23,8 +23,10 @@ using System.Runtime.Serialization;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Management.Infrastructure;
+#if !UNIX
 using System.Management;
 using System.DirectoryServices;
+#endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -377,9 +379,11 @@ namespace System.Management.Automation
             new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
                                     PSObject.dotNetInstanceAdapter);
+#if !UNIX
         private static readonly AdapterSet managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), dotNetInstanceAdapter);
         private static readonly AdapterSet managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), dotNetInstanceAdapter);
         private static readonly AdapterSet directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), dotNetInstanceAdapter);
+#endif
         private static readonly AdapterSet dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects);
         private static readonly AdapterSet dataRowAdapter = new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects);
         private static readonly AdapterSet s_xmlNodeAdapter = new AdapterSet(new XmlNodeAdapter(), s_baseAdapterForAdaptedObjects);
@@ -405,9 +409,11 @@ namespace System.Management.Automation
             if (obj is PSMemberSet) { return PSObject.s_mshMemberSetAdapter; }
             if (obj is PSObject) { return PSObject.s_mshObjectAdapter; }
             if (obj is CimInstance) { return PSObject.s_cimInstanceAdapter; }
+#if !UNIX
             if (obj is ManagementClass) { return PSObject.managementClassAdapter; }
             if (obj is ManagementBaseObject) { return PSObject.managementObjectAdapter; }
             if (obj is DirectoryEntry) { return PSObject.directoryEntryAdapter; }
+#endif
             if (obj is DataRowView) { return PSObject.dataRowViewAdapter; }
             if (obj is DataRow) { return PSObject.dataRowAdapter; }
             if (obj is XmlNode) { return PSObject.s_xmlNodeAdapter; }
