@@ -499,7 +499,7 @@ namespace System.Management.Automation
             T policy = null;
 #if !UNIX
             // On Windows, group policy settings from registry take precedence.
-            // If the requested policy is not defined in registry, we query the configuration file. 
+            // If the requested policy is not defined in registry, we query the configuration file.
             policy = GetPolicySettingFromGPO<T>(preferenceOrder);
             if (policy != null) { return policy; }
 #endif
@@ -1505,7 +1505,7 @@ namespace System.Management.Automation.Internal
         internal static bool DisableGACLoading;
 
         internal static int FailWebRequestCount;
-        
+
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
         {
