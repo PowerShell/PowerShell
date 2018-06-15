@@ -164,7 +164,16 @@ function Install-PluginEndpoint {
         return
     }
 
-    $pluginBasePath = Join-Path (Join-Path $env:Windir "System32\PowerShell") $targetPsVersion
+    if ($PSVersionTable.PSVersion -lt "6.0")
+    {
+        # This script is primarily used from Windows PowerShell for Win10 IoT and NanoServer to setup PSCore6 remoting endpoint
+        # so it's ok to hardcode to 'C:\Windows' for those systems
+        $pluginBasePath = Join-Path "C:\Windows\System32\PowerShell" $targetPsVersion
+    }
+    else
+    {
+        $pluginBasePath = Join-Path ([System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows) + "\System32\PowerShell") $targetPsVersion
+    }
 
     $resolvedPluginAbsolutePath = ""
     if (! (Test-Path $pluginBasePath))
