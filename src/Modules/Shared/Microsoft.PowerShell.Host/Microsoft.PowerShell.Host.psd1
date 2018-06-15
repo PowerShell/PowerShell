@@ -4,10 +4,8 @@ Author="PowerShell"
 CompanyName="Microsoft Corporation"
 Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="3.0.0.0"
-PowerShellVersion="3.0"
-CLRVersion="4.0"
-AliasesToExport = @()
-FunctionsToExport = @()
+CompatiblePSEditions = @("Core")
+PowerShellVersion="6.0"
 CmdletsToExport="Start-Transcript", "Stop-Transcript"
 NestedModules="Microsoft.PowerShell.ConsoleHost.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855956'

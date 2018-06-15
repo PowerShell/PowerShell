@@ -4,11 +4,11 @@ Author="PowerShell"
 CompanyName="Microsoft Corporation"
 Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="3.1.0.0"
-PowerShellVersion="3.0"
+CompatiblePSEditions = @("Core")
+PowerShellVersion="6.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855958'
 AliasesToExport = @("gtz")
-FunctionsToExport = @()
 CmdletsToExport=@("Add-Content",
     "Clear-Content",
     "Clear-ItemProperty",

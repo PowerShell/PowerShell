@@ -4,10 +4,8 @@ Author="PowerShell"
 CompanyName="Microsoft Corporation"
 Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="3.0.0.0"
-PowerShellVersion="3.0"
-CLRVersion="4.0"
-AliasesToExport = @()
-FunctionsToExport = @()
+CompatiblePSEditions = @("Core")
+PowerShellVersion="6.0"
 CmdletsToExport="Get-Acl", "Set-Acl", "Get-PfxCertificate", "Get-Credential", "Get-ExecutionPolicy", "Set-ExecutionPolicy", "Get-AuthenticodeSignature", "Set-AuthenticodeSignature", "ConvertFrom-SecureString", "ConvertTo-SecureString", "Get-CmsMessage", "Unprotect-CmsMessage", "Protect-CmsMessage" , "New-FileCatalog" , "Test-FileCatalog"
 NestedModules="Microsoft.PowerShell.Security.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855959'

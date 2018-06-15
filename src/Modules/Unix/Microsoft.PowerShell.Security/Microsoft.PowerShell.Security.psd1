@@ -4,9 +4,8 @@ Author="PowerShell"
 CompanyName="Microsoft Corporation"
 Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="3.0.0.0"
-PowerShellVersion="3.0"
-AliasesToExport = @()
-FunctionsToExport = @()
+CompatiblePSEditions = @("Core")
+PowerShellVersion="6.0"
 CmdletsToExport="Get-Credential", "Get-ExecutionPolicy", "Set-ExecutionPolicy", "ConvertFrom-SecureString", "ConvertTo-SecureString", "Get-PfxCertificate"
 NestedModules="Microsoft.PowerShell.Security.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855959'
