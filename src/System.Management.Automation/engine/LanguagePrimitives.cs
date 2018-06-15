@@ -22,11 +22,8 @@ using System.Management.Automation.Runspaces;
 using System.Diagnostics.CodeAnalysis;
 using Dbg = System.Management.Automation.Diagnostics;
 using MethodCacheEntry = System.Management.Automation.DotNetAdapter.MethodCacheEntry;
-
-#if !CORECLR
-// System.DirectoryServices are not in CoreCLR
+using System.Management;
 using System.DirectoryServices;
-#endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -2147,15 +2144,6 @@ namespace System.Management.Automation
             }
         }
 
-#if !CORECLR
-        // No Following Types In CoreCLR
-        //    ManagementObject
-        //    ManagementObjectSearcher
-        //    ManagementClass
-        //    CommaDelimitedStringCollection
-        //    DirectoryEntry
-        #region Converters_Not_Available_In_CorePS
-
         private static ManagementObject ConvertToWMI(object valueToConvert,
                                                      Type resultType,
                                                      bool recursion,
@@ -2280,6 +2268,7 @@ namespace System.Management.Automation
             }
         }
 
+#if !CORECLR // No CommaDelimitedStringCollection In CoreCLR
         // System.Configuration.CommaDelimitedStringCollection is derived from the StringCollection class
         private static System.Configuration.CommaDelimitedStringCollection ConvertToCommaDelimitedStringCollection(object valueToConvert,
                                                                                                                    Type resultType,
@@ -2293,6 +2282,7 @@ namespace System.Management.Automation
             AddItemsToCollection(valueToConvert, resultType, formatProvider, backupTable, commaDelimitedStringCollection);
             return commaDelimitedStringCollection;
         }
+#endif
 
         private static DirectoryEntry ConvertToADSI(object valueToConvert,
                                                     Type resultType,
@@ -2351,9 +2341,6 @@ namespace System.Management.Automation
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
             }
         }
-
-        #endregion Converters_Not_Available_In_CorePS
-#endif
 
         private static StringCollection ConvertToStringCollection(object valueToConvert,
                                                                   Type resultType,
@@ -4302,13 +4289,12 @@ namespace System.Management.Automation
                 CacheConversion<bool>(typeofString, typeofBool, LanguagePrimitives.ConvertStringToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(SwitchParameter), typeofBool, LanguagePrimitives.ConvertSwitchParameterToBool, ConversionRank.Language);
 
-#if !CORECLR    // No DirectoryService && WMIv1 In CoreCLR
+                // Conversions to WMI and ADSI
                 CacheConversion<ManagementObjectSearcher>(typeofString, typeof(ManagementObjectSearcher), LanguagePrimitives.ConvertToWMISearcher, ConversionRank.Language);
                 CacheConversion<ManagementClass>(typeofString, typeof(ManagementClass), LanguagePrimitives.ConvertToWMIClass, ConversionRank.Language);
                 CacheConversion<ManagementObject>(typeofString, typeof(ManagementObject), LanguagePrimitives.ConvertToWMI, ConversionRank.Language);
                 CacheConversion<DirectoryEntry>(typeofString, typeof(DirectoryEntry), LanguagePrimitives.ConvertToADSI, ConversionRank.Language);
                 CacheConversion<DirectorySearcher>(typeofString, typeof(DirectorySearcher), LanguagePrimitives.ConvertToADSISearcher, ConversionRank.Language);
-#endif
             }
         }
 
