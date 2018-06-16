@@ -139,19 +139,11 @@ namespace System.Management.Automation
             Diagnostics.Assert(Path.IsPathRooted(filePath), "Caller makes sure the path is rooted.");
             Diagnostics.Assert(Utils.FileExists(filePath), "Caller makes sure the file exists.");
             string sysRoot = System.Environment.GetEnvironmentVariable("SystemRoot");
-            string urlmonPath = Path.Combine(sysRoot, @"System32\urlmon.dll");
-            if (Utils.FileExists(urlmonPath))
-            {
-                return MapSecurityZoneWithUrlmon(filePath);
-            }
-            return MapSecurityZoneWithoutUrlmon(filePath);
+            return MapSecurityZone(filePath);
         }
 
-        #region WithoutUrlmon
-
         /// <summary>
-        /// Map the file to SecurityZone without using urlmon.dll.
-        /// This is needed on NanoServer because urlmon.dll is not in OneCore.
+        /// Map the file to SecurityZone.
         /// </summary>
         /// <remarks>
         /// The algorithm is as follows:
@@ -186,7 +178,7 @@ namespace System.Management.Automation
         ///   (2) When it's a UNC path and is actually a loopback (\\127.0.0.1\c$\test.txt), "Zone.CreateFromUrl" returns "Internet", but
         ///       the above algorithm changes it to be "MyComputer" because it's actually the same computer.
         /// </remarks>
-        private static SecurityZone MapSecurityZoneWithoutUrlmon(string filePath)
+        private static SecurityZone MapSecurityZone(string filePath)
         {
             SecurityZone reval = ReadFromZoneIdentifierDataStream(filePath);
             if (reval != SecurityZone.NoZone) { return reval; }
@@ -286,43 +278,6 @@ namespace System.Management.Automation
             }
 
             return SecurityZone.NoZone;
-        }
-        #endregion WithoutUrlmon
-
-        /// <summary>
-        /// Map the file to SecurityZone using urlmon.dll, depending on 'IInternetSecurityManager::MapUrlToZone'.
-        /// </summary>
-        private static SecurityZone MapSecurityZoneWithUrlmon(string filePath)
-        {
-            uint zoneId;
-            object curSecMgr = null;
-            const UInt32 MUTZ_DONT_USE_CACHE = 0x00001000;
-
-            int hr = NativeMethods.CoInternetCreateSecurityManager(null, out curSecMgr, 0);
-            if (hr != NativeMethods.S_OK)
-            {
-                // Returns an error value if it's not S_OK
-                throw new System.ComponentModel.Win32Exception(hr);
-            }
-
-            try
-            {
-                NativeMethods.IInternetSecurityManager ism = (NativeMethods.IInternetSecurityManager)curSecMgr;
-                hr = ism.MapUrlToZone(filePath, out zoneId, MUTZ_DONT_USE_CACHE);
-                if (hr == NativeMethods.S_OK)
-                {
-                    SecurityZone result;
-                    return LanguagePrimitives.TryConvertTo(zoneId, out result) ? result : SecurityZone.NoZone;
-                }
-                return SecurityZone.NoZone;
-            }
-            finally
-            {
-                if (curSecMgr != null)
-                {
-                    Marshal.ReleaseComObject(curSecMgr);
-                }
-            }
         }
 
         #endregion Security
@@ -448,60 +403,6 @@ namespace System.Management.Automation
             internal static extern uint GetACP();
 
             public const int S_OK = 0x00000000;
-
-            /// <summary>
-            /// Pinvoke to create an IInternetSecurityManager interface..
-            /// </summary>
-            [DllImport("urlmon.dll", ExactSpelling = true)]
-            internal static extern int CoInternetCreateSecurityManager([MarshalAs(UnmanagedType.Interface)] object pIServiceProvider,
-                                                                       [MarshalAs(UnmanagedType.Interface)] out object ppISecurityManager,
-                                                                       int dwReserved);
-
-            /// <summary>
-            /// IInternetSecurityManager interface
-            /// </summary>
-            [ComImport, ComVisible(false), Guid("79EAC9EE-BAF9-11CE-8C82-00AA004BA90B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-            internal interface IInternetSecurityManager
-            {
-                [return: MarshalAs(UnmanagedType.I4)]
-                [PreserveSig]
-                int SetSecuritySite([In] IntPtr pSite);
-
-                [return: MarshalAs(UnmanagedType.I4)]
-                [PreserveSig]
-                int GetSecuritySite([Out] IntPtr pSite);
-
-                [return: MarshalAs(UnmanagedType.I4)]
-                [PreserveSig]
-                int MapUrlToZone([In, MarshalAs(UnmanagedType.LPWStr)] string pwszUrl, out uint pdwZone, uint dwFlags);
-
-                [return: MarshalAs(UnmanagedType.I4)]
-                [PreserveSig]
-                int GetSecurityId([MarshalAs(UnmanagedType.LPWStr)] string pwszUrl,
-                                  [MarshalAs(UnmanagedType.LPArray)] byte[] pbSecurityId,
-                                  ref uint pcbSecurityId, uint dwReserved);
-
-                [return: MarshalAs(UnmanagedType.I4)]
-                [PreserveSig]
-                int ProcessUrlAction([In, MarshalAs(UnmanagedType.LPWStr)] string pwszUrl,
-                                     uint dwAction, out byte pPolicy, uint cbPolicy,
-                                     byte pContext, uint cbContext, uint dwFlags,
-                                     uint dwReserved);
-
-                [return: MarshalAs(UnmanagedType.I4)]
-                [PreserveSig]
-                int QueryCustomPolicy([In, MarshalAs(UnmanagedType.LPWStr)] string pwszUrl,
-                                      ref Guid guidKey, ref byte ppPolicy, ref uint pcbPolicy,
-                                      ref byte pContext, uint cbContext, uint dwReserved);
-
-                [return: MarshalAs(UnmanagedType.I4)]
-                [PreserveSig]
-                int SetZoneMapping(uint dwZone, [In, MarshalAs(UnmanagedType.LPWStr)] string lpszPattern, uint dwFlags);
-
-                [return: MarshalAs(UnmanagedType.I4)]
-                [PreserveSig]
-                int GetZoneMappings(uint dwZone, out IEnumString ppenumString, uint dwFlags);
-            }
         }
     }
 }
