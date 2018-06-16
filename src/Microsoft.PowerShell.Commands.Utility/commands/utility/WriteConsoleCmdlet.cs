@@ -137,7 +137,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             this.WriteInformation(informationMessage, new string[] { "PSHOST" });
-            this.Host.UI.TranscribeResult(result);
         }
 
         private Boolean _notAppendNewline = false;

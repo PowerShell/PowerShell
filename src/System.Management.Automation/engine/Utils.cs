@@ -1434,6 +1434,7 @@ namespace System.Management.Automation.Internal
         internal static bool UseDebugAmsiImplementation;
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
+        internal static bool ForcePromptForChoiceDefaultOption;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;
