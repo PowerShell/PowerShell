@@ -23,8 +23,8 @@ using System.Diagnostics.CodeAnalysis;
 using Dbg = System.Management.Automation.Diagnostics;
 using MethodCacheEntry = System.Management.Automation.DotNetAdapter.MethodCacheEntry;
 #if !UNIX
-using System.Management;
 using System.DirectoryServices;
+using System.Management;
 #endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -2272,7 +2272,6 @@ namespace System.Management.Automation
         }
 #endif
 
-#if !CORECLR // No CommaDelimitedStringCollection In CoreCLR
         // System.Configuration.CommaDelimitedStringCollection is derived from the StringCollection class
         private static System.Configuration.CommaDelimitedStringCollection ConvertToCommaDelimitedStringCollection(object valueToConvert,
                                                                                                                    Type resultType,
@@ -2286,7 +2285,6 @@ namespace System.Management.Automation
             AddItemsToCollection(valueToConvert, resultType, formatProvider, backupTable, commaDelimitedStringCollection);
             return commaDelimitedStringCollection;
         }
-#endif
 
 #if !UNIX
         private static DirectoryEntry ConvertToADSI(object valueToConvert,

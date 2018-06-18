@@ -12,6 +12,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.5.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.5.0" />
     <PackageReference Include="System.Security.AccessControl" Version="4.5.0" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.0" />
@@ -129,6 +130,8 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
+    <Compile Remove="engine\ExtraAdapter.cs" />
+    <Compile Remove="engine\ManagementObjectAdapter.cs" />
     <Compile Remove="engine\remoting\commands\ReceivePSSession.cs" />
     <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
     <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
