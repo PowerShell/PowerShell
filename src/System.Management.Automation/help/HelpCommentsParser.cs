@@ -283,7 +283,7 @@ namespace System.Management.Automation
                 var compiledAttributes = parameter.CompiledAttributes;
                 bool supportsWildcards = compiledAttributes.OfType<SupportsWildcardsAttribute>().Any();
 
-                string defaultValueStr = "";
+                string defaultValueStr = string.Empty;
                 object defaultValue = null;
                 var defaultValueAttribute = compiledAttributes.OfType<PSDefaultValueAttribute>().FirstOrDefault();
                 if (defaultValueAttribute != null)
@@ -469,7 +469,7 @@ namespace System.Management.Automation
                     parameterSetData.IsMandatory, parameterSetData.ValueFromPipeline,
                     parameterSetData.ValueFromPipelineByPropertyName,
                     parameterSetData.IsPositional ? (1 + parameterSetData.Position).ToString(CultureInfo.InvariantCulture) : "named",
-                    parameter.Type, description, supportsWildcards, defaultValue: "", forSyntax: true);
+                    parameter.Type, description, supportsWildcards, defaultValue: string.Empty, forSyntax: true);
                 syntaxItem.AppendChild(parameterElement);
             }
             command.AppendChild(syntax).AppendChild(syntaxItem);
@@ -477,7 +477,7 @@ namespace System.Management.Automation
 
         private static void GetExampleSections(string content, out string prompt_str, out string code_str, out string remarks_str)
         {
-            prompt_str = code_str = "";
+            prompt_str = code_str = string.Empty;
             StringBuilder builder = new StringBuilder();
 
             int collectingPart = 1;
@@ -509,7 +509,7 @@ namespace System.Management.Automation
             {
                 prompt_str = "PS C:\\>";
                 code_str = builder.ToString().Trim();
-                remarks_str = "";
+                remarks_str = string.Empty;
             }
             else
             {

@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         internal Collection<string> ParseCsv(string csv)
         {
             Collection<string> result = new Collection<string>();
-            string tempString = "";
+            string tempString = string.Empty;
             csv = csv.Trim();
             if (csv.Length == 0 || csv[0] == '#')
             {
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!inQuote)
                     {
                         result.Add(tempString);
-                        tempString = "";
+                        tempString = string.Empty;
                     }
                     else
                     {
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (i == csv.Length - 1)
                                 {
                                     result.Add(tempString);
-                                    tempString = "";
+                                    tempString = string.Empty;
                                     inQuote = false;
                                     break;
                                 }
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (csv[i + 1] == Delimiter)
                                 {
                                     result.Add(tempString);
-                                    tempString = "";
+                                    tempString = string.Empty;
                                     inQuote = false;
                                     i++;
                                 }

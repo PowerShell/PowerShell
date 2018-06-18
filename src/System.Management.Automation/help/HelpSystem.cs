@@ -603,15 +603,15 @@ namespace System.Management.Automation
         // help providers using reflection. This is not in v1 right now.
         //
         private static HelpProviderInfo[] _providerInfos = new HelpProviderInfo[]
-                            { new HelpProviderInfo("", "AliasHelpProvider", HelpCategory.Alias),
-                              new HelpProviderInfo("", "CommandHelpProvider", HelpCategory.Command),
-                              new HelpProviderInfo("", "ProviderHelpProvider", HelpCategory.Provider),
-                              new HelpProviderInfo("", "OverviewHelpProvider", HelpCategory.Overview),
-                              new HelpProviderInfo("", "GeneralHelpProvider", HelpCategory.General),
-                              new HelpProviderInfo("", "FAQHelpProvider", HelpCategory.FAQ),
-                              new HelpProviderInfo("", "GlossaryHelpProvider", HelpCategory.Glossary),
-                              new HelpProviderInfo("", "HelpFileHelpProvider", HelpCategory.HelpFile),
-                              new HelpProviderInfo("", "DefaultHelpHelpProvider", HelpCategory.DefaultHelp)
+                            { new HelpProviderInfo(string.Empty, "AliasHelpProvider", HelpCategory.Alias),
+                              new HelpProviderInfo(string.Empty, "CommandHelpProvider", HelpCategory.Command),
+                              new HelpProviderInfo(string.Empty, "ProviderHelpProvider", HelpCategory.Provider),
+                              new HelpProviderInfo(string.Empty, "OverviewHelpProvider", HelpCategory.Overview),
+                              new HelpProviderInfo(string.Empty, "GeneralHelpProvider", HelpCategory.General),
+                              new HelpProviderInfo(string.Empty, "FAQHelpProvider", HelpCategory.FAQ),
+                              new HelpProviderInfo(string.Empty, "GlossaryHelpProvider", HelpCategory.Glossary),
+                              new HelpProviderInfo(string.Empty, "HelpFileHelpProvider", HelpCategory.HelpFile),
+                              new HelpProviderInfo(string.Empty, "DefaultHelpHelpProvider", HelpCategory.DefaultHelp)
                             };
 
         private void InitializeHelpProviders()
@@ -818,8 +818,8 @@ namespace System.Management.Automation
     /// </summary>
     internal class HelpProviderInfo
     {
-        internal string AssemblyName = "";
-        internal string ClassName = "";
+        internal string AssemblyName = string.Empty;
+        internal string ClassName = string.Empty;
         internal HelpCategory HelpCategory = HelpCategory.None;
 
         /// <summary>

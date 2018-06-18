@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands.Management
         /// <summary>
         /// Constructor for the TransactedString class.
         /// </summary>
-        public TransactedString() : this("")
+        public TransactedString() : this(string.Empty)
         {
         }
 

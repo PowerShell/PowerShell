@@ -254,7 +254,7 @@ namespace System.Management.Automation
                 {
                     return _errorRecord.InvocationInfo.MyCommand.Name;
                 }
-                return "";
+                return string.Empty;
             }
             set
             {
@@ -283,7 +283,7 @@ namespace System.Management.Automation
                     _reasonIsExceptionType = true;
                     return _errorRecord.Exception.GetType().Name;
                 }
-                return "";
+                return string.Empty;
             }
             set
             {
@@ -323,7 +323,7 @@ namespace System.Management.Automation
 
                     return ErrorRecord.NotNull(targetInString);
                 }
-                return "";
+                return string.Empty;
             }
             set
             {
@@ -351,7 +351,7 @@ namespace System.Management.Automation
                 {
                     return _errorRecord.TargetObject.GetType().Name;
                 }
-                return "";
+                return string.Empty;
             }
             set
             {
@@ -751,7 +751,7 @@ namespace System.Management.Automation
         {
             get { return ErrorRecord.NotNull(_message); }
         }
-        private string _message = "";
+        private string _message = string.Empty;
 
         /// <summary>
         /// Text describing the recommended action in the event that this error
@@ -771,7 +771,7 @@ namespace System.Management.Automation
                 _recommendedAction = value;
             }
         }
-        private string _recommendedAction = "";
+        private string _recommendedAction = string.Empty;
         #endregion Public Properties
 
         #region Internal Properties
@@ -810,7 +810,7 @@ namespace System.Management.Automation
             if (String.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
-            string template = "";
+            string template = string.Empty;
 
             try
             {
@@ -819,12 +819,12 @@ namespace System.Management.Automation
             catch (MissingManifestResourceException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
             catch (ArgumentException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
         } // BuildMessage
@@ -843,7 +843,7 @@ namespace System.Management.Automation
             if (String.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
-            string template = "";
+            string template = string.Empty;
 
             try
             {
@@ -852,12 +852,12 @@ namespace System.Management.Automation
             catch (MissingManifestResourceException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
             catch (ArgumentException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
         } // BuildMessage
@@ -876,7 +876,7 @@ namespace System.Management.Automation
             if (String.IsNullOrEmpty(resourceId))
                 throw PSTraceSource.NewArgumentNullException("resourceId");
 
-            string template = "";
+            string template = string.Empty;
 
             ResourceManager manager =
                 ResourceManagerCache.GetResourceManager(
@@ -890,7 +890,7 @@ namespace System.Management.Automation
             catch (MissingManifestResourceException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
         } // BuildMessage
@@ -906,7 +906,7 @@ namespace System.Management.Automation
                     ErrorPackage.ErrorDetailsEmptyTemplate,
                     baseName,
                     resourceId);
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
 
             try
@@ -919,7 +919,7 @@ namespace System.Management.Automation
             catch (FormatException e)
             {
                 _textLookupError = e;
-                return ""; // fallback to Exception.Message
+                return string.Empty; // fallback to Exception.Message
             }
         } // BuildMessage
         #endregion Private
@@ -990,7 +990,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("exception");
 
             if (errorId == null)
-                errorId = "";
+                errorId = string.Empty;
 
             // targetObject may be null
 
@@ -1492,7 +1492,7 @@ namespace System.Management.Automation
                 string delimiter =
                     (String.IsNullOrEmpty(typeName)
                      || String.IsNullOrEmpty(_errorId))
-                        ? "" : ",";
+                        ? string.Empty : ",";
                 return NotNull(_errorId) + delimiter + NotNull(typeName);
             }
         }
@@ -1652,23 +1652,23 @@ namespace System.Management.Automation
 
         internal static string NotNull(string s)
         {
-            return s ?? "";
+            return s ?? string.Empty;
         }
 
         private string GetInvocationTypeName()
         {
             InvocationInfo invocationInfo = this.InvocationInfo;
             if (invocationInfo == null)
-                return "";
+                return string.Empty;
             CommandInfo commandInfo = invocationInfo.MyCommand;
             if (commandInfo == null)
-                return "";
+                return string.Empty;
             IScriptCommandInfo scriptInfo = commandInfo as IScriptCommandInfo;
             if (scriptInfo != null)
                 return commandInfo.Name;
             CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
             if (cmdletInfo == null)
-                return "";
+                return string.Empty;
             return cmdletInfo.ImplementingType.FullName;
         }
 

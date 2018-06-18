@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return FormatShape.Complex.ToString();
             }
-            return "";
+            return string.Empty;
         }
 
         /// <summary>

@@ -347,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(resourceId,
                 processName,
                 processId,
-                (innerException == null) ? "" : innerException.Message);
+                (innerException == null) ? string.Empty : innerException.Message);
             ProcessCommandException exception =
                 new ProcessCommandException(message, innerException);
             exception.ProcessName = processName;
@@ -366,11 +366,11 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Win32Exception)
             {
-                return "";
+                return string.Empty;
             }
             catch (InvalidOperationException)
             {
-                return "";
+                return string.Empty;
             }
         }
 

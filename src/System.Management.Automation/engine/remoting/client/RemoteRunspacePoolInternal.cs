@@ -1507,7 +1507,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (timeString != null)
             {
-                string timeoutString = timeString.Replace("PT", "").Replace("S", "");
+                string timeoutString = timeString.Replace("PT", string.Empty).Replace("S", string.Empty);
                 try
                 {
                     // Convert time from seconds to milliseconds.

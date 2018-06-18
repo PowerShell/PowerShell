@@ -2161,7 +2161,7 @@ namespace System.Management.Automation
             if (Commands.Commands.Count == 0 &&
                 invokeMustRun)
             {
-                Commands.Commands.AddScript("");
+                Commands.Commands.AddScript(string.Empty);
             }
 
             if (Commands.Commands.Count > 0)

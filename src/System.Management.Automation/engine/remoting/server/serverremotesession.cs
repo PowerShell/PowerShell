@@ -237,7 +237,7 @@ namespace System.Management.Automation.Remoting
             string configurationName)
         {
             ServerRemoteSession result = CreateServerRemoteSession(senderInfo,
-                "Microsoft.PowerShell", "", transportManager, configurationName);
+                "Microsoft.PowerShell", string.Empty, transportManager, configurationName);
             result._initScriptForOutOfProcRS = initializationScriptForOutOfProcessRunspace;
             return result;
         }

@@ -365,7 +365,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         # All of the following tests replace the prompt (either via an initial command or interactively)
         # so that we can read StandardOutput and reliably know exactly what the prompt is.
 
-        It "Interactive redirected input: <InteractiveSwitch>" -TestCases @(
+        It "Interactive redirected input: <InteractiveSwitch>" -Pending:($IsWindows) -TestCases @(
             @{InteractiveSwitch = ""}
             @{InteractiveSwitch = " -IntERactive"}
             @{InteractiveSwitch = " -i"}
@@ -392,7 +392,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             EnsureChildHasExited $process
         }
 
-        It "Interactive redirected input w/ initial command" {
+        It "Interactive redirected input w/ initial command" -Pending:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS> ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
@@ -406,7 +406,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             EnsureChildHasExited $process
         }
 
-        It "Redirected input explicit prompting (-File -)" {
+        It "Redirected input explicit prompting (-File -)" -Pending:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$function:prompt = { 'PS> ' }`n")
@@ -419,7 +419,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             EnsureChildHasExited $process
         }
 
-        It "Redirected input no prompting (-Command -)" {
+        It "Redirected input no prompting (-Command -)" -Pending:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -Command -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
@@ -452,7 +452,7 @@ foo
             EnsureChildHasExited $process
         }
 
-        It "Redirected input w/ nested prompt" {
+        It "Redirected input w/ nested prompt" -Pending:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$nestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$host.EnterNestedPrompt()`n")

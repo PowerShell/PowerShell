@@ -748,8 +748,7 @@ namespace System.Management.Automation
                     //
                     if (Host == null || Host.UI == null)
                     {
-                        Diagnostics.Assert(false, "No host in CommandBase.WriteVerbose()");
-                        throw PSTraceSource.NewInvalidOperationException();
+                        throw PSTraceSource.NewInvalidOperationException("No host in CommandBase.WriteInformation()");
                     }
 
                     CBhost.InternalUI.WriteInformationRecord(record);
@@ -821,11 +820,14 @@ namespace System.Management.Automation
                             CBhost.InternalUI.WriteLine(record.ToString());
                         }
                     }
-                    else
-                    {
-                        // Only transcribe informational messages here. Transcription of PSHost-targeted messages is done in the InternalUI.Write* methods.
-                        CBhost.InternalUI.TranscribeResult(StringUtil.Format(InternalHostUserInterfaceStrings.InformationFormatString, record.ToString()));
-                    }
+                }
+
+                // Both informational and PSHost-targeted messages are transcribed here.
+                // The only difference between these two is that PSHost-targeted messages are transcribed
+                // even if InformationAction is SilentlyContinue.
+                if (record.Tags.Contains("PSHOST") || (preference != ActionPreference.SilentlyContinue))
+                {
+                    CBhost.InternalUI.TranscribeResult(record.ToString());
                 }
             }
 
@@ -2252,7 +2254,7 @@ namespace System.Management.Automation
             {
                 // Only generate these exceptions if a pipeline has already been declared as the 'writing' pipeline.
                 // Otherwise, these are probably infrastructure messages and can be ignored.
-                if (this.PipelineProcessor._permittedToWrite != null)
+                if (this.PipelineProcessor?._permittedToWrite != null)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                         PipelineStrings.WriteNotPermitted);

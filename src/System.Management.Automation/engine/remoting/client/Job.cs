@@ -2852,7 +2852,7 @@ namespace System.Management.Automation
             get
             {
                 //ISSUE implement this.
-                return "";
+                return string.Empty;
             }
         }
 

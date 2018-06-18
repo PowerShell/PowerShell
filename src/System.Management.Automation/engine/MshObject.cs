@@ -2362,7 +2362,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string ToString()
         {
-            return "";
+            return string.Empty;
         }
     }
 

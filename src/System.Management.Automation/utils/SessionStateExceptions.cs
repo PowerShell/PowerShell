@@ -283,7 +283,7 @@ namespace System.Management.Automation
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs innerException");
-                return "";
+                return string.Empty;
             }
             if (String.IsNullOrEmpty(errorId))
             {

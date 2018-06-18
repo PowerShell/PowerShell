@@ -44,7 +44,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
 
-            return commandMetadata.GetProxyCommand("", true);
+            return commandMetadata.GetProxyCommand(string.Empty, true);
         }
 
         /// <summary>

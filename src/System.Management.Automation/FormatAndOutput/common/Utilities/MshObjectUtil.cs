@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static string SmartToString(PSObject so, MshExpressionFactory expressionFactory, int enumerationLimit, StringFormatError formatErrorObject)
         {
             if (so == null)
-                return "";
+                return string.Empty;
 
             try
             {
@@ -367,11 +367,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formatErrorObject.sourceObject = so;
                     formatErrorObject.exception = e;
                 }
-                return "";
+                return string.Empty;
             }
         }
 
-        private static readonly PSObject s_emptyPSObject = new PSObject("");
+        private static readonly PSObject s_emptyPSObject = new PSObject(string.Empty);
 
         internal static PSObject AsPSObject(object obj)
         {
@@ -420,7 +420,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         formatErrorObject.sourceObject = so;
                         formatErrorObject.exception = e;
                         formatErrorObject.formatString = directive.formatString;
-                        return "";
+                        return string.Empty;
                     }
                 }
             }
@@ -545,13 +545,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (resList.Count == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             result = resList[0];
             if (result.Exception != null)
             {
-                return "";
+                return string.Empty;
             }
             return PSObjectHelper.FormatField(directive, result.Result, enumerationLimit, formatErrorObject, expressionFactory);
         }

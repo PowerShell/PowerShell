@@ -822,14 +822,14 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                string filterString = "";
+                string filterString = string.Empty;
 
                 if (_dnsName != null)
                 {
                     filterString = AppendFilter(filterString, "dns", _dnsName);
                 }
 
-                string ekuT = "";
+                string ekuT = string.Empty;
                 if (_eku != null)
                 {
                     for (int i = 0; i < _eku.Length; i++)
@@ -1076,7 +1076,7 @@ namespace System.Management.Automation
             int startContent = startIndex + beginMarker.Length;
             int endContent = endIndex - endMarker.Length;
             string encodedContent = actualContent.Substring(startContent, endContent - startContent);
-            encodedContent = System.Text.RegularExpressions.Regex.Replace(encodedContent, "\\s", "");
+            encodedContent = System.Text.RegularExpressions.Regex.Replace(encodedContent, "\\s", string.Empty);
             messageBytes = Convert.FromBase64String(encodedContent);
 
             return messageBytes;

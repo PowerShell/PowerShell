@@ -223,21 +223,21 @@ namespace System.Management.Automation
         internal static string RetrieveMessage(ErrorRecord errorRecord)
         {
             if (errorRecord == null)
-                return "";
-            if (errorRecord.ErrorDetails != null &&
+                return string.Empty;
+            if (null != errorRecord.ErrorDetails &&
                 !String.IsNullOrEmpty(errorRecord.ErrorDetails.Message))
             {
                 return errorRecord.ErrorDetails.Message;
             }
             if (errorRecord.Exception == null)
-                return "";
+                return string.Empty;
             return errorRecord.Exception.Message;
         }
 
         internal static string RetrieveMessage(Exception e)
         {
             if (e == null)
-                return "";
+                return string.Empty;
 
             IContainsErrorRecord icer = e as IContainsErrorRecord;
             if (icer == null)

@@ -1473,7 +1473,7 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.PowerShell
 {
-    // this is all originally from https://msdn.microsoft.com/en-us/library/ee706570%28v=vs.85%29.aspx
+    // this is all originally from https://msdn.microsoft.com/library/ee706570%28v=vs.85%29.aspx
 
     internal sealed class ConsoleHostRawUserInterface : PSHostRawUserInterface
     {
@@ -1741,7 +1741,6 @@ namespace Microsoft.PowerShell
             {
                 PSTraceSource.NewArgumentNullException("contents");
             }
-
             //if the cursor is on the last line, we need to make more space to print the specified buffer
             if (origin.Y == BufferSize.Height - 1 && origin.X >= BufferSize.Width)
             {
@@ -1755,6 +1754,14 @@ namespace Microsoft.PowerShell
                     origin.Y -= rows;
                 }
             }
+
+#if UNIX
+            // Make sure that the physical cursor position matches where we think it is.
+            // This is a problem on *nix, because input that the user types is echoed
+            // and that moves the cursor. As a consequence, the cursor needs to be repositioned
+            // before we update the screen.
+            CursorPosition = origin;
+#endif
 
             //iterate through the buffer to set
             foreach (var charitem in contents)

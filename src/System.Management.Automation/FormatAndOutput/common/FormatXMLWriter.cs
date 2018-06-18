@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 if (formatdef.Control.OutOfBand)
                 {
-                    _writer.WriteElementString("OutOfBand", "");
+                    _writer.WriteElementString("OutOfBand", string.Empty);
                 }
 
                 formatdef.Control.WriteToXml(this);
@@ -143,11 +143,11 @@ namespace Microsoft.PowerShell.Commands
             _writer.WriteStartElement("TableControl");
             if (tableControl.AutoSize)
             {
-                _writer.WriteElementString("AutoSize", "");
+                _writer.WriteElementString("AutoSize", string.Empty);
             }
             if (tableControl.HideTableHeaders)
             {
-                _writer.WriteElementString("HideTableHeaders", "");
+                _writer.WriteElementString("HideTableHeaders", string.Empty);
             }
 
             _writer.WriteStartElement("TableHeaders");
@@ -301,7 +301,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (wideControl.AutoSize)
             {
-                _writer.WriteElementString("AutoSize", "");
+                _writer.WriteElementString("AutoSize", string.Empty);
             }
 
             _writer.WriteStartElement("WideEntries");
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 for (int i = 0; i < newline.Count; i++)
                 {
-                    _writer.WriteElementString("NewLine", "");
+                    _writer.WriteElementString("NewLine", string.Empty);
                 }
                 return;
             }
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
                 _writer.WriteStartElement("ExpressionBinding");
                 if (expr.EnumerateCollection)
                 {
-                    _writer.WriteElementString("EnumerateCollection", "");
+                    _writer.WriteElementString("EnumerateCollection", string.Empty);
                 }
 
                 if (expr.ItemSelectionCondition != null)

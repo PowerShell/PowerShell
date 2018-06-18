@@ -2421,7 +2421,7 @@ namespace System.Management.Automation.Remoting.Client
             // The error code taken from winerror.h used for getting buffer length.
             const int ERROR_INSUFFICIENT_BUFFER = 122;
 
-            string returnval = "";
+            string returnval = string.Empty;
             int bufferSize = 0;
             // calculate buffer size required
             if (ERROR_INSUFFICIENT_BUFFER != WSManGetSessionOptionAsString(wsManAPIHandle,
@@ -2774,7 +2774,7 @@ namespace System.Management.Automation.Remoting.Client
             // get language code.
             string langCode = CultureInfo.CurrentUICulture.Name;
 
-            string returnval = "";
+            string returnval = string.Empty;
             int bufferSize = 0;
             // calculate buffer size required
             if (ERROR_INSUFFICIENT_BUFFER != WSManGetErrorMessage(wsManAPIHandle,

@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                                       System.Transactions.Transaction transaction, SafeTransactionHandle txHandle)
         {
             _hkey = hkey;
-            _keyName = "";
+            _keyName = string.Empty;
             if (systemkey)
             {
                 _state |= STATE_SYSTEMKEY;

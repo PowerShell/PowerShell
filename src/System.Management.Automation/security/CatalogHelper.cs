@@ -451,7 +451,7 @@ namespace System.Management.Automation
 
                         byte[] hashBytes = new byte[size];
                         Marshal.Copy(hashBuffer, hashBytes, 0, size);
-                        hashValue = BitConverter.ToString(hashBytes).Replace("-", "");
+                        hashValue = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
                     }
                     finally
                     {

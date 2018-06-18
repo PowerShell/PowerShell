@@ -145,8 +145,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private string _PSSnapin = "";
-        private string _reason = "";
+        private string _PSSnapin = string.Empty;
+        private string _reason = string.Empty;
 
         /// <summary>
         /// Gets message for this exception.

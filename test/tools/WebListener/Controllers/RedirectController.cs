@@ -19,7 +19,7 @@ namespace mvc.Controllers
     {
         public IActionResult Index(int count)
         {
-            string url = Regex.Replace(input: Request.GetDisplayUrl(), pattern: "\\/Redirect.*", replacement: "", options: RegexOptions.IgnoreCase);
+            string url = Regex.Replace(input: Request.GetDisplayUrl(), pattern: "\\/Redirect.*", replacement: string.Empty, options: RegexOptions.IgnoreCase);
             if (count <= 1)
             {
                 url = $"{url}/Get/";

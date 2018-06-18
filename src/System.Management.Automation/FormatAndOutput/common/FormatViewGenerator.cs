@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else
             {
-                fpf.propertyValue = "";
+                fpf.propertyValue = string.Empty;
             }
             return fpf;
         }

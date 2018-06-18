@@ -252,7 +252,7 @@ namespace System.Management.Automation
         /// <value>The script name or "" if there was no script.</value>
         public string ScriptName
         {
-            get { return ScriptPosition.File ?? ""; }
+            get { return ScriptPosition.File ?? string.Empty; }
         }
 
         /// <summary>
@@ -315,7 +315,7 @@ namespace System.Management.Automation
         /// <value>The name string.</value>
         public string InvocationName
         {
-            get { return _invocationName ?? ""; }
+            get { return _invocationName ?? string.Empty; }
             internal set { _invocationName = value; }
         }
 

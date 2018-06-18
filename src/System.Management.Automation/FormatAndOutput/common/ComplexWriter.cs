@@ -701,7 +701,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (string.IsNullOrEmpty(s))
             {
-                return "";
+                return string.Empty;
             }
 
             int lineBreak = s.IndexOfAny(s_lineBreakChars);

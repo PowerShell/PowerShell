@@ -531,7 +531,7 @@ namespace System.Management.Automation.Language
         internal static readonly Expression NullType = Expression.Constant(null, typeof(Type));
         internal static readonly Expression NullDelegateArray = Expression.Constant(null, typeof(Action<FunctionContext>[]));
         internal static readonly Expression NullPipe = Expression.Constant(new Pipe { NullPipe = true });
-        internal static readonly Expression ConstEmptyString = Expression.Constant("");
+        internal static readonly Expression ConstEmptyString = Expression.Constant(string.Empty);
         internal static readonly Expression CompareOptionsIgnoreCase = Expression.Constant(CompareOptions.IgnoreCase);
         internal static readonly Expression CompareOptionsNone = Expression.Constant(CompareOptions.None);
         internal static readonly Expression Ordinal = Expression.Constant(StringComparison.Ordinal);
@@ -3964,7 +3964,7 @@ namespace System.Management.Automation.Language
                     Expression.IfThenElse(
                         Expression.Call(breakExceptionVar,
                                         CachedReflectionInfo.LoopFlowException_MatchLabel,
-                                        Expression.Constant(label ?? "", typeof(string))),
+                                        Expression.Constant(label ?? string.Empty, typeof(string))),
                         Expression.Break(breakLabel),
                         Expression.Rethrow())),
 
@@ -3973,7 +3973,7 @@ namespace System.Management.Automation.Language
                     Expression.IfThenElse(
                         Expression.Call(continueExceptionVar,
                                         CachedReflectionInfo.LoopFlowException_MatchLabel,
-                                        Expression.Constant(label ?? "", typeof(string))),
+                                        Expression.Constant(label ?? string.Empty, typeof(string))),
                         Expression.Continue(continueLabel),
                         Expression.Rethrow()))
             };
@@ -4041,7 +4041,7 @@ namespace System.Management.Automation.Language
             var loopBodyExprs = new List<Expression>();
             loopBodyExprs.Add(s_callCheckForInterrupts);
 
-            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? "", breakLabel, continueLabel));
+            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? string.Empty, breakLabel, continueLabel));
             _generatingWhileOrDoLoop = true;
             generateLoopBody(loopBodyExprs, breakLabel, continueLabel);
             _generatingWhileOrDoLoop = false;
@@ -4120,7 +4120,7 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Label(repeatLabel));
             exprs.Add(enterLoopExpression);
 
-            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? "", breakLabel, continueLabel));
+            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? string.Empty, breakLabel, continueLabel));
             _generatingWhileOrDoLoop = true;
             var loopBodyExprs = new List<Expression>
                                     {

@@ -361,7 +361,7 @@ namespace Microsoft.PowerShell
         {
             long numberLangs = 0;
             int bufferSize = 0;
-            string returnval = "";
+            string returnval = string.Empty;
 
             if (filterOutNonConsoleCultures)
             {

@@ -2,17 +2,20 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Linq;
-using System.Management.Automation;
-using System.Management.Automation.Remoting;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
+using System.Management.Automation;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
+using System.Management.Automation.Remoting;
+using System.Management.Automation.Remoting.Client;
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -3784,5 +3787,673 @@ namespace Microsoft.PowerShell.Commands
 
     #endregion
 
+    #region QueryRunspaces
+
+    internal class QueryRunspaces
+    {
+        #region Constructor
+
+        internal QueryRunspaces()
+        {
+            _stopProcessing = false;
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        /// <summary>
+        /// Queries all remote computers specified in collection of WSManConnectionInfo objects
+        /// and returns disconnected PSSession objects ready for connection to server.
+        /// Returned sessions can be matched to Guids or Names.
+        /// </summary>
+        /// <param name="connectionInfos">Collection of WSManConnectionInfo objects.</param>
+        /// <param name="host">Host for PSSession objects.</param>
+        /// <param name="stream">Out stream object.</param>
+        /// <param name="runspaceRepository">Runspace repository.</param>
+        /// <param name="throttleLimit">Throttle limit.</param>
+        /// <param name="filterState">Runspace state filter value.</param>
+        /// <param name="matchIds">Array of session Guids to match to.</param>
+        /// <param name="matchNames">Array of session Names to match to.</param>
+        /// <param name="configurationName">Configuration name to match to.</param>
+        /// <returns>Collection of disconnected PSSession objects.</returns>
+        internal Collection<PSSession> GetDisconnectedSessions(Collection<WSManConnectionInfo> connectionInfos, PSHost host,
+                                                               ObjectStream stream, RunspaceRepository runspaceRepository,
+                                                               int throttleLimit, SessionFilterState filterState,
+                                                               Guid[] matchIds, string[] matchNames, string configurationName)
+        {
+            Collection<PSSession> filteredPSSessions = new Collection<PSSession>();
+
+            // Create a query operation for each connection information object.
+            foreach (WSManConnectionInfo connectionInfo in connectionInfos)
+            {
+                Runspace[] runspaces = null;
+
+                try
+                {
+                    runspaces = Runspace.GetRunspaces(connectionInfo, host, BuiltInTypesTable);
+                }
+                catch (System.Management.Automation.RuntimeException e)
+                {
+                    if (e.InnerException is InvalidOperationException)
+                    {
+                        // The Get-WSManInstance cmdlet used to query remote computers for runspaces will throw
+                        // an Invalid Operation (inner) exception if the connectInfo object is invalid, including
+                        // invalid computer names.
+                        // We don't want to propagate the exception so just write error here.
+                        if (stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
+                        {
+                            int errorCode;
+                            string msg = StringUtil.Format(RemotingErrorIdStrings.QueryForRunspacesFailed, connectionInfo.ComputerName, ExtractMessage(e.InnerException, out errorCode));
+                            string FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(errorCode, "RemotePSSessionQueryFailed");
+                            Exception reason = new RuntimeException(msg, e.InnerException);
+                            ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);
+                            stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
+                        }
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                if (_stopProcessing)
+                {
+                    break;
+                }
+
+                // Add all runspaces meeting filter criteria to collection.
+                if (runspaces != null)
+                {
+                    // Convert configuration name into shell Uri for comparison.
+                    string shellUri = null;
+                    if (!string.IsNullOrEmpty(configurationName))
+                    {
+                        shellUri = (configurationName.IndexOf(
+                                    System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) != -1) ?
+                                    configurationName : System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + configurationName;
+                    }
+
+                    foreach (Runspace runspace in runspaces)
+                    {
+                        // Filter returned runspaces by ConfigurationName if provided.
+                        if (shellUri != null)
+                        {
+                            // Compare with returned shell Uri in connection info.
+                            WSManConnectionInfo wsmanConnectionInfo = runspace.ConnectionInfo as WSManConnectionInfo;
+                            if (wsmanConnectionInfo != null &&
+                                !shellUri.Equals(wsmanConnectionInfo.ShellUri, StringComparison.OrdinalIgnoreCase))
+                            {
+                                continue;
+                            }
+                        }
+
+                        // Check the repository for an existing viable PSSession for
+                        // this runspace (based on instanceId).  Use the existing
+                        // local runspace instead of the one returned from the server
+                        // query.
+                        PSSession existingPSSession = null;
+                        if (runspaceRepository != null)
+                        {
+                            existingPSSession = runspaceRepository.GetItem(runspace.InstanceId);
+                        }
+
+                        if (existingPSSession != null &&
+                            UseExistingRunspace(existingPSSession.Runspace, runspace))
+                        {
+                            if (TestRunspaceState(existingPSSession.Runspace, filterState))
+                            {
+                                filteredPSSessions.Add(existingPSSession);
+                            }
+                        }
+                        else if (TestRunspaceState(runspace, filterState))
+                        {
+                            filteredPSSessions.Add(new PSSession(runspace as RemoteRunspace));
+                        }
+                    }
+                }
+            }
+
+            // Return only PSSessions that match provided Ids or Names.
+            if ((matchIds != null) && (filteredPSSessions.Count > 0))
+            {
+                Collection<PSSession> matchIdsSessions = new Collection<PSSession>();
+                foreach (Guid id in matchIds)
+                {
+                    bool matchFound = false;
+                    foreach (PSSession psSession in filteredPSSessions)
+                    {
+                        if (_stopProcessing)
+                        {
+                            break;
+                        }
+
+                        if (psSession.Runspace.InstanceId.Equals(id))
+                        {
+                            matchFound = true;
+                            matchIdsSessions.Add(psSession);
+                            break;
+                        }
+                    }
+
+                    if (!matchFound && stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
+                    {
+                        string msg = StringUtil.Format(RemotingErrorIdStrings.SessionIdMatchFailed, id);
+                        Exception reason = new RuntimeException(msg);
+                        ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionIdMatchFail", ErrorCategory.InvalidOperation, id);
+                        stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
+                    }
+                }
+
+                // Return all found sessions.
+                return matchIdsSessions;
+            }
+            else if ((matchNames != null) && (filteredPSSessions.Count > 0))
+            {
+                Collection<PSSession> matchNamesSessions = new Collection<PSSession>();
+                foreach (string name in matchNames)
+                {
+                    WildcardPattern namePattern = WildcardPattern.Get(name, WildcardOptions.IgnoreCase);
+                    bool matchFound = false;
+                    foreach (PSSession psSession in filteredPSSessions)
+                    {
+                        if (_stopProcessing)
+                        {
+                            break;
+                        }
+
+                        if (namePattern.IsMatch(((RemoteRunspace)psSession.Runspace).RunspacePool.RemoteRunspacePoolInternal.Name))
+                        {
+                            matchFound = true;
+                            matchNamesSessions.Add(psSession);
+                        }
+                    }
+
+                    if (!matchFound && stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
+                    {
+                        string msg = StringUtil.Format(RemotingErrorIdStrings.SessionNameMatchFailed, name);
+                        Exception reason = new RuntimeException(msg);
+                        ErrorRecord errorRecord = new ErrorRecord(reason, "PSSessionNameMatchFail", ErrorCategory.InvalidOperation, name);
+                        stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
+                    }
+                }
+
+                return matchNamesSessions;
+            }
+            else
+            {
+                // Return all collected sessions.
+                return filteredPSSessions;
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the existing runspace should be returned to the user
+        /// a.  If the existing runspace is not broken
+        /// b.  If the queried runspace is not connected to a different user.
+        /// </summary>
+        /// <param name="existingRunspace"></param>
+        /// <param name="queriedrunspace"></param>
+        /// <returns></returns>
+        private static bool UseExistingRunspace(
+            Runspace existingRunspace,
+            Runspace queriedrunspace)
+        {
+            Dbg.Assert(existingRunspace != null, "Invalid parameter.");
+            Dbg.Assert(queriedrunspace != null, "Invalid parameter.");
+
+            if (existingRunspace.RunspaceStateInfo.State == RunspaceState.Broken)
+            {
+                return false;
+            }
+
+            if (existingRunspace.RunspaceStateInfo.State == RunspaceState.Disconnected &&
+                queriedrunspace.RunspaceAvailability == RunspaceAvailability.Busy)
+            {
+                return false;
+            }
+
+            // Update existing runspace to have latest DisconnectedOn/ExpiresOn data.
+            existingRunspace.DisconnectedOn = queriedrunspace.DisconnectedOn;
+            existingRunspace.ExpiresOn = queriedrunspace.ExpiresOn;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Returns Exception message.  If message is WSMan Xml then
+        /// the WSMan message and error code is extracted and returned.
+        /// </summary>
+        /// <param name="e">Exception</param>
+        /// <param name="errorCode">Returned WSMan error code</param>
+        /// <returns>WSMan message</returns>
+        internal static string ExtractMessage(
+            Exception e,
+            out int errorCode)
+        {
+            errorCode = 0;
+
+            if (e == null ||
+                e.Message == null)
+            {
+                return string.Empty;
+            }
+
+            string rtnMsg = null;
+            try
+            {
+                System.Xml.XmlReaderSettings xmlReaderSettings = InternalDeserializer.XmlReaderSettingsForUntrustedXmlDocument.Clone();
+                xmlReaderSettings.MaxCharactersInDocument = 4096;
+                xmlReaderSettings.MaxCharactersFromEntities = 1024;
+                xmlReaderSettings.DtdProcessing = System.Xml.DtdProcessing.Prohibit;
+
+                using (System.Xml.XmlReader reader = System.Xml.XmlReader.Create(
+                        new System.IO.StringReader(e.Message), xmlReaderSettings))
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.NodeType == System.Xml.XmlNodeType.Element)
+                        {
+                            if (reader.LocalName.Equals("Message", StringComparison.OrdinalIgnoreCase))
+                            {
+                                rtnMsg = reader.ReadElementContentAsString();
+                            }
+                            else if (reader.LocalName.Equals("WSManFault", StringComparison.OrdinalIgnoreCase))
+                            {
+                                string errorCodeString = reader.GetAttribute("Code");
+                                if (errorCodeString != null)
+                                {
+                                    try
+                                    {
+                                        // WinRM returns both signed and unsigned 32 bit string values.  Convert to signed 32 bit integer.
+                                        Int64 eCode = Convert.ToInt64(errorCodeString, System.Globalization.NumberFormatInfo.InvariantInfo);
+                                        unchecked
+                                        {
+                                            errorCode = (int)eCode;
+                                        }
+                                    }
+                                    catch (FormatException)
+                                    { }
+                                    catch (OverflowException)
+                                    { }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (System.Xml.XmlException)
+            { }
+
+            return rtnMsg ?? e.Message;
+        }
+
+        /// <summary>
+        /// Discontinue all remote server query operations.
+        /// </summary>
+        internal void StopAllOperations()
+        {
+            _stopProcessing = true;
+        }
+
+        /// <summary>
+        /// Compares the runspace filter state with the runspace state.
+        /// </summary>
+        /// <param name="runspace">Runspace object to test.</param>
+        /// <param name="filterState">Filter state to compare.</param>
+        /// <returns>Result of test.</returns>
+        public static bool TestRunspaceState(Runspace runspace, SessionFilterState filterState)
+        {
+            bool result;
+
+            switch (filterState)
+            {
+                case SessionFilterState.All:
+                    result = true;
+                    break;
+
+                case SessionFilterState.Opened:
+                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Opened);
+                    break;
+
+                case SessionFilterState.Closed:
+                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Closed);
+                    break;
+
+                case SessionFilterState.Disconnected:
+                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Disconnected);
+                    break;
+
+                case SessionFilterState.Broken:
+                    result = (runspace.RunspaceStateInfo.State == RunspaceState.Broken);
+                    break;
+
+                default:
+                    Dbg.Assert(false, "Invalid SessionFilterState value.");
+                    result = false;
+                    break;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns the default type table for built-in PowerShell types.
+        /// </summary>
+        internal static TypeTable BuiltInTypesTable
+        {
+            get
+            {
+                if (s_TypeTable == null)
+                {
+                    lock (s_SyncObject)
+                    {
+                        if (s_TypeTable == null)
+                        {
+                            s_TypeTable = TypeTable.LoadDefaultTypeFiles();
+                        }
+                    }
+                }
+
+                return s_TypeTable;
+            }
+        }
+
+        #endregion
+
+        #region Private Members
+
+        private bool _stopProcessing;
+
+        private static readonly object s_SyncObject = new object();
+        private static TypeTable s_TypeTable;
+
+        #endregion
+    }
+
+    #endregion
+
+    #region SessionFilterState Enum
+
+    /// <summary>
+    /// Runspace states that can be used as filters for querying remote runspaces.
+    /// </summary>
+    public enum SessionFilterState
+    {
+        /// <summary>
+        /// Return runspaces in any state.
+        /// </summary>
+        All = 0,
+
+        /// <summary>
+        /// Return runspaces in Opened state.
+        /// </summary>
+        Opened = 1,
+
+        /// <summary>
+        /// Return runspaces in Disconnected state.
+        /// </summary>
+        Disconnected = 2,
+
+        /// <summary>
+        /// Return runspaces in Closed state.
+        /// </summary>
+        Closed = 3,
+
+        /// <summary>
+        /// Return runspaces in Broken state.
+        /// </summary>
+        Broken = 4
+    }
+
+    #endregion
+
     #endregion Helper Classes
+}
+
+namespace System.Management.Automation.Remoting
+{
+    /// <summary>
+    /// IMPORTANT: proxy configuration is supported for HTTPS only; for HTTP, the direct
+    /// connection to the server is used
+    /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
+    public enum ProxyAccessType
+    {
+        /// <summary>
+        /// ProxyAccessType is not specified. That means Proxy information (ProxyAccessType, ProxyAuthenticationMechanism
+        /// and ProxyCredential)is not passed to WSMan at all.
+        /// </summary>
+        None = 0,
+        /// <summary>
+        /// use the Internet Explorer proxy configuration for the current user.
+        ///  Internet Explorer proxy settings for the current active network connection.
+        ///  This option requires the user profile to be loaded, so the option can
+        ///  be directly used when called within a process that is running under
+        ///  an interactive user account identity; if the client application is running
+        ///  under a user context different than the interactive user, the client
+        ///  application has to explicitly load the user profile prior to using this option.
+        /// </summary>
+        IEConfig = 1,
+        /// <summary>
+        /// proxy settings configured for WinHTTP, using the ProxyCfg.exe utility
+        /// </summary>
+        WinHttpConfig = 2,
+        /// <summary>
+        /// Force autodetection of proxy
+        /// </summary>
+        AutoDetect = 4,
+        /// <summary>
+        /// do not use a proxy server - resolves all host names locally
+        /// </summary>
+        NoProxyServer = 8
+    }
+    /// <summary>
+    /// Options for a remote PSSession
+    /// </summary>
+    public sealed class PSSessionOption
+    {
+        /// <summary>
+        /// Creates a new instance of <see cref="PSSessionOption"/>
+        /// </summary>
+        public PSSessionOption()
+        {
+        }
+
+        /// <summary>
+        /// The MaximumConnectionRedirectionCount parameter enables the implicit redirection functionality.
+        /// -1 = no limit
+        ///  0 = no redirection
+        /// </summary>
+        public int MaximumConnectionRedirectionCount { get; set; } = WSManConnectionInfo.defaultMaximumConnectionRedirectionCount;
+
+        /// <summary>
+        /// If false, underlying WSMan infrastructure will compress data sent on the network.
+        /// If true, data will not be compressed. Compression improves performance by
+        /// reducing the amount of data sent on the network. Compression my require extra
+        /// memory consumption and CPU usage. In cases where available memory / CPU is less,
+        /// set this property to "true".
+        /// By default the value of this property is "false".
+        /// </summary>
+        public bool NoCompression { get; set; } = false;
+
+        /// <summary>
+        /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
+        /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
+        /// already loaded the profile (i.e. in another session).
+        /// </summary>
+        public bool NoMachineProfile { get; set; } = false;
+
+        /// <summary>
+        /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType,
+        /// ProxyAuthenticationMechanism and ProxyCredential)is not passed to WSMan at all.
+        /// </summary>
+        public ProxyAccessType ProxyAccessType { get; set; } = ProxyAccessType.None;
+
+        /// <summary>
+        /// The following is the definition of the input parameter "ProxyAuthentication".
+        /// This parameter takes a set of authentication methods the user can select
+        /// from.  The available options should be as follows:
+        /// - Negotiate: Use the default authentication (as defined by the underlying
+        /// protocol) for establishing a remote connection.
+        /// - Basic:  Use basic authentication for establishing a remote connection
+        /// - Digest: Use Digest authentication for establishing a remote connection
+        ///
+        /// Default is Negotiate.
+        /// </summary>
+        public AuthenticationMechanism ProxyAuthentication
+        {
+            get { return _proxyAuthentication; }
+            set
+            {
+                switch (value)
+                {
+                    case AuthenticationMechanism.Basic:
+                    case AuthenticationMechanism.Negotiate:
+                    case AuthenticationMechanism.Digest:
+                        _proxyAuthentication = value;
+                        break;
+                    default:
+                        string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguousAuthentication,
+                            value,
+                            AuthenticationMechanism.Basic.ToString(),
+                            AuthenticationMechanism.Negotiate.ToString(),
+                            AuthenticationMechanism.Digest.ToString());
+                        throw new ArgumentException(message);
+                }
+            }
+        }
+        private AuthenticationMechanism _proxyAuthentication = AuthenticationMechanism.Negotiate;
+
+        /// <summary>
+        /// The following is the definition of the input parameter "ProxyCredential".
+        /// </summary>
+        public PSCredential ProxyCredential { get; set; }
+
+        /// <summary>
+        /// When connecting over HTTPS, the client does not validate that the server
+        /// certificate is signed by a trusted certificate authority (CA). Use only when
+        /// the remote computer is trusted by other means, for example, if the remote
+        /// computer is part of a network that is physically secure and isolated or the
+        /// remote computer is listed as a trusted host in WinRM configuration
+        /// </summary>
+        public bool SkipCACheck { get; set; }
+
+        /// <summary>
+        /// Indicates that certificate common name (CN) of the server need not match the
+        /// hostname of the server. Used only in remote operations using https. This
+        /// option should only be used for trusted machines.
+        /// </summary>
+        public bool SkipCNCheck { get; set; }
+
+        /// <summary>
+        /// Indicates that certificate common name (CN) of the server need not match the
+        /// hostname of the server. Used only in remote operations using https. This
+        /// option should only be used for trusted machines
+        /// </summary>
+        public bool SkipRevocationCheck { get; set; }
+
+        /// <summary>
+        /// The duration for which PowerShell remoting waits before timing out
+        /// for any operation. The user would like to tweak this timeout
+        /// depending on whether he/she is connecting to a machine in the data
+        /// center or across a slow WAN.
+        ///
+        /// Default: 3*60*1000 == 3minutes
+        /// </summary>
+        public TimeSpan OperationTimeout { get; set; } = TimeSpan.FromMilliseconds(BaseTransportManager.ClientDefaultOperationTimeoutMs);
+
+        /// <summary>
+        /// Specifies that no encryption will be used when doing remote operations over
+        /// http. Unencrypted traffic is not allowed by default and must be enabled in
+        /// the local configuration
+        /// </summary>
+        public bool NoEncryption { get; set; }
+
+        /// <summary>
+        /// Indicates the request is encoded in UTF16 format rather than UTF8 format;
+        /// UTF8 is the default.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
+        public bool UseUTF16 { get; set; }
+
+        /// <summary>
+        /// Uses Service Principal Name (SPN) along with the Port number during authentication.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
+        public bool IncludePortInSPN { get; set; }
+
+        /// <summary>
+        /// Determines how server in disconnected state deals with cached output
+        /// data when the cache becomes filled.
+        /// Default value is 'block mode' where command execution is blocked after
+        /// the server side data cache becomes filled.
+        /// </summary>
+        public OutputBufferingMode OutputBufferingMode { get; set; } = WSManConnectionInfo.DefaultOutputBufferingMode;
+
+        /// <summary>
+        /// Number of times a connection will be re-attempted when a connection fails due to network
+        /// issues.
+        /// </summary>
+        public int MaxConnectionRetryCount { get; set; } = WSManConnectionInfo.DefaultMaxConnectionRetryCount;
+
+        /// <summary>
+        /// Culture that the remote session should use
+        /// </summary>
+        public CultureInfo Culture { get; set; }
+
+        /// <summary>
+        /// UI culture that the remote session should use
+        /// </summary>
+        public CultureInfo UICulture { get; set; }
+
+        /// <summary>
+        /// Total data (in bytes) that can be received from a remote machine
+        /// targeted towards a command. If null, then the size is unlimited.
+        /// Default is unlimited data.
+        /// </summary>
+        public Nullable<int> MaximumReceivedDataSizePerCommand { get; set; }
+
+        /// <summary>
+        /// Maximum size (in bytes) of a deserialized object received from a remote machine.
+        /// If null, then the size is unlimited. Default is 200MB object size.
+        /// </summary>
+        public Nullable<int> MaximumReceivedObjectSize { get; set; } = 200 << 20;
+
+        /// <summary>
+        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
+        /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public PSPrimitiveDictionary ApplicationArguments { get; set; }
+
+        /// <summary>
+        /// The duration for which PowerShell remoting waits before timing out on a connection to a remote machine.
+        /// Simply put, the timeout for a remote runspace creation.
+        /// The user would like to tweak this timeout depending on whether
+        /// he/she is connecting to a machine in the data center or across a slow WAN.
+        ///
+        /// Default: 3 * 60 * 1000 = 3 minutes
+        /// </summary>
+        public TimeSpan OpenTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultOpenTimeout);
+
+        /// <summary>
+        /// The duration for which PowerShell should wait before it times out on cancel operations
+        /// (close runspace or stop powershell). For instance, when the user hits ctrl-C,
+        /// New-PSSession cmdlet tries to call a stop on all remote runspaces which are in the Opening state.
+        /// The user wouldn't mind waiting for 15 seconds, but this should be time bound and of a shorter duration.
+        /// A high timeout here like 3 minutes will give the user a feeling that the PowerShell client is not responding.
+        ///
+        /// Default: 60 * 1000 = 1 minute
+        /// </summary>
+        public TimeSpan CancelTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.defaultCancelTimeout);
+
+        /// <summary>
+        /// The duration for which a Runspace on server needs to wait before it declares the client dead and closes itself down.
+        /// This is especially important as these values may have to be configured differently for enterprise administration
+        /// and exchange scenarios.
+        ///
+        /// Default: -1 -> Use current server value for IdleTimeout.
+        /// </summary>
+        public TimeSpan IdleTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultIdleTimeout);
+    }
 }

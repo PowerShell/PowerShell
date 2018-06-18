@@ -605,7 +605,7 @@ namespace System.Management.Automation
                                 eventHandlerOutputFormatter,
                                 eventHandlerLeavingFormatter,
                                 methodName,
-                                "");
+                                string.Empty);
                 }
                 catch
                 {
@@ -1613,7 +1613,7 @@ namespace System.Management.Automation
                 scopeOutputFormatter,
                 leavingScopeFormatter,
                 scopeName,
-                "");
+                string.Empty);
         }
 
         /// <summary>
@@ -1687,7 +1687,7 @@ namespace System.Management.Automation
                     scopeOutputFormatter,
                     leavingScopeFormatter,
                     scopeName,
-                    "");
+                    string.Empty);
             }
         }
 

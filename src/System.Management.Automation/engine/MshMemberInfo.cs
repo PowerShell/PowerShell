@@ -2013,7 +2013,7 @@ namespace System.Management.Automation
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            string separator = "";
+            string separator = string.Empty;
             if (MethodTargetType != null)
             {
                 sb.Append("this: ");
@@ -2025,7 +2025,7 @@ namespace System.Management.Automation
             {
                 sb.Append(separator);
                 sb.Append("args: ");
-                separator = "";
+                separator = string.Empty;
                 foreach (var p in _parameterTypes)
                 {
                     sb.Append(separator);

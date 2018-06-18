@@ -648,7 +648,7 @@ namespace System.Management.Automation
                             if (values != null)
                             {
                                 var sb = new Text.StringBuilder(256);
-                                var sep = "";
+                                var sep = string.Empty;
                                 foreach (var value in values)
                                 {
                                     sb.Append(sep);
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation
                                         ParameterBinderStrings.CannotConvertArgument,
                                         "CannotConvertArgument",
                                         boType,
-                                        "");
+                                        string.Empty);
 
                                 throw pbe;
                             }
@@ -1388,7 +1388,7 @@ namespace System.Management.Automation
                         null,
                         ParameterBinderStrings.ParameterArgumentValidationErrorNullNotAllowed,
                         "ParameterArgumentValidationErrorNullNotAllowed",
-                        "");
+                        string.Empty);
 
                 throw exception;
             }
@@ -1628,7 +1628,7 @@ namespace System.Management.Automation
                                         currentValue.GetType(),
                                         ParameterBinderStrings.CannotExtractAddMethod,
                                         "CannotExtractAddMethod",
-                                        (getMethodError == null) ? "" : getMethodError.Message);
+                                        (getMethodError == null) ? string.Empty : getMethodError.Message);
                                 throw bindingException;
                             }
                         }

@@ -15,13 +15,13 @@ namespace System.Management.Automation
     {
         #region Context Properties
 
-        internal String Severity { get; set; } = "";
+        internal String Severity { get; set; } = string.Empty;
 
         /// <summary>
         /// Name of the host.
         /// </summary>
         /// <value></value>
-        internal string HostName { get; set; } = "";
+        internal string HostName { get; set; } = string.Empty;
 
         /// <summary>
         /// Name of the host application.
@@ -36,37 +36,37 @@ namespace System.Management.Automation
         /// Version of the host.
         /// </summary>
         /// <value></value>
-        internal string HostVersion { get; set; } = "";
+        internal string HostVersion { get; set; } = string.Empty;
 
         /// <summary>
         /// Id of the host that is hosting current monad engine.
         /// </summary>
         /// <value></value>
-        internal string HostId { get; set; } = "";
+        internal string HostId { get; set; } = string.Empty;
 
         /// <summary>
         /// Version of monad engine.
         /// </summary>
         /// <value></value>
-        internal string EngineVersion { get; set; } = "";
+        internal string EngineVersion { get; set; } = string.Empty;
 
         /// <summary>
         /// Id for currently running runspace
         /// </summary>
         /// <value></value>
-        internal string RunspaceId { get; set; } = "";
+        internal string RunspaceId { get; set; } = string.Empty;
 
         /// <summary>
         /// PipelineId of current running pipeline
         /// </summary>
         /// <value></value>
-        internal string PipelineId { get; set; } = "";
+        internal string PipelineId { get; set; } = string.Empty;
 
         /// <summary>
         /// Command text that is typed in from commandline
         /// </summary>
         /// <value></value>
-        internal string CommandName { get; set; } = "";
+        internal string CommandName { get; set; } = string.Empty;
 
         /// <summary>
         /// Type of the command, which can be Alias, CommandLet, Script, Application, etc.
@@ -74,32 +74,32 @@ namespace System.Management.Automation
         /// The value of this property is a usually conversion of CommandTypes enum into a string.
         /// </summary>
         /// <value></value>
-        internal string CommandType { get; set; } = "";
+        internal string CommandType { get; set; } = string.Empty;
 
         /// <summary>
         /// Script file name if current command is executed as a result of script run.
         /// </summary>
-        internal string ScriptName { get; set; } = "";
+        internal string ScriptName { get; set; } = string.Empty;
 
         /// <summary>
         /// Path to the command executable file.
         /// </summary>
-        internal string CommandPath { get; set; } = "";
+        internal string CommandPath { get; set; } = string.Empty;
 
         /// <summary>
         /// Extension for the command executable file.
         /// </summary>
-        internal string CommandLine { get; set; } = "";
+        internal string CommandLine { get; set; } = string.Empty;
 
         /// <summary>
         /// Sequence Id for the event to be logged.
         /// </summary>
-        internal string SequenceNumber { get; set; } = "";
+        internal string SequenceNumber { get; set; } = string.Empty;
 
         /// <summary>
         /// Current user.
         /// </summary>
-        internal string User { get; set; } = "";
+        internal string User { get; set; } = string.Empty;
 
         /// <summary>
         /// The user connected to the machine, if being done with
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Event happening time
         /// </summary>
-        internal string Time { get; set; } = "";
+        internal string Time { get; set; } = string.Empty;
 
         #endregion
 

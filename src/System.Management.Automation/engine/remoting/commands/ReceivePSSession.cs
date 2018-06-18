@@ -808,7 +808,7 @@ namespace Microsoft.PowerShell.Commands
         {
             WriteWarning(
                 GetMessage(RemotingErrorIdStrings.ReceivePSSessionInDebugMode));
-            WriteObject("");
+            WriteObject(string.Empty);
         }
 
         /// <summary>

@@ -701,7 +701,7 @@ namespace System.Management.Automation
         private static string GetNodePath(XmlNode xmlNode)
         {
             if (xmlNode == null)
-                return "";
+                return string.Empty;
 
             if (xmlNode.ParentNode == null)
                 return "\\" + xmlNode.LocalName;
@@ -712,7 +712,7 @@ namespace System.Management.Automation
         private static string GetNodeIndex(XmlNode xmlNode)
         {
             if (xmlNode == null || xmlNode.ParentNode == null)
-                return "";
+                return string.Empty;
 
             int index = 0;
             int total = 0;
@@ -736,7 +736,7 @@ namespace System.Management.Automation
                 return "[" + index.ToString("d", CultureInfo.CurrentCulture) + "]";
             }
 
-            return "";
+            return string.Empty;
         }
 
         /// <summary>
@@ -884,7 +884,7 @@ namespace System.Management.Automation
             if (!xmlNode.LocalName.Equals("listItem", StringComparison.OrdinalIgnoreCase))
                 return null;
 
-            string text = "";
+            string text = string.Empty;
 
             if (xmlNode.ChildNodes.Count > 1)
             {
@@ -902,7 +902,7 @@ namespace System.Management.Automation
                 WriteMamlInvalidChildNodeError(xmlNode, childNode);
             }
 
-            string tag = "";
+            string tag = string.Empty;
             if (ordered)
             {
                 tag = index.ToString("d2", CultureInfo.CurrentCulture);
@@ -1051,14 +1051,14 @@ namespace System.Management.Automation
                 return null;
 
             if (xmlNode.ChildNodes == null || xmlNode.ChildNodes.Count == 0)
-                return "";
+                return string.Empty;
 
             if (xmlNode.ChildNodes.Count > 1)
             {
                 WriteMamlInvalidChildNodeCountError(xmlNode, "para", 1);
             }
 
-            string text = "";
+            string text = string.Empty;
 
             foreach (XmlNode childNode in xmlNode.ChildNodes)
             {
@@ -1118,7 +1118,7 @@ namespace System.Management.Automation
             string[] trimedLines = TrimLines(lines);
 
             if (trimedLines == null || trimedLines.Length == 0)
-                return "";
+                return string.Empty;
 
             int minIndentation = GetMinIndentation(trimedLines);
 

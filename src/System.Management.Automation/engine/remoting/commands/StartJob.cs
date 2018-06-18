@@ -466,10 +466,10 @@ namespace Microsoft.PowerShell.Commands
             get { return _psVersion; }
             set
             {
-                PSSessionConfigurationCommandBase.CheckPSVersion(value);
+                RemotingCommandUtil.CheckPSVersion(value);
 
                 // Check if specified version of PowerShell is installed
-                PSSessionConfigurationCommandUtilities.CheckIfPowerShellVersionIsInstalled(value);
+                RemotingCommandUtil.CheckIfPowerShellVersionIsInstalled(value);
 
                 _psVersion = value;
             }

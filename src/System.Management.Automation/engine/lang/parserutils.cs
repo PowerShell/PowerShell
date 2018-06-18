@@ -104,7 +104,7 @@ namespace System.Management.Automation
     {
         internal LoopFlowException(string label)
         {
-            this.Label = label ?? "";
+            this.Label = label ?? string.Empty;
         }
 
         internal LoopFlowException(SerializationInfo info, StreamingContext context)
@@ -680,7 +680,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                split.Add("");
+                                split.Add(string.Empty);
                             }
                             break;
                         }
@@ -690,7 +690,7 @@ namespace System.Management.Automation
                         // it.
                         if (strIndex == (item.Length - 1))
                         {
-                            split.Add("");
+                            split.Add(string.Empty);
                         }
                     }
                     else
@@ -764,7 +764,7 @@ namespace System.Management.Automation
         /// <returns>The result of the operator</returns>
         internal static object UnaryJoinOperator(ExecutionContext context, IScriptExtent errorPosition, object lval)
         {
-            return JoinOperator(context, errorPosition, lval, "");
+            return JoinOperator(context, errorPosition, lval, string.Empty);
         }
 
         /// <summary>
@@ -889,8 +889,8 @@ namespace System.Management.Automation
         /// <returns>The result of the operator</returns>
         internal static object ReplaceOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, bool ignoreCase)
         {
-            object pattern = "";
-            object substitute = "";
+            object pattern = string.Empty;
+            object substitute = string.Empty;
 
             rval = PSObject.Base(rval);
             IList rList = rval as IList;

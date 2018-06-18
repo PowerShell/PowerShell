@@ -39,17 +39,17 @@ namespace System.Management.Automation
             get
             {
                 if (_fullHelpObject == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Name"] == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Name"].Value == null)
-                    return "";
+                    return string.Empty;
 
                 string name = _fullHelpObject.Properties["Name"].Value.ToString();
                 if (name == null)
-                    return "";
+                    return string.Empty;
 
                 return name.Trim();
             }
@@ -64,17 +64,17 @@ namespace System.Management.Automation
             get
             {
                 if (_fullHelpObject == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Synopsis"] == null)
-                    return "";
+                    return string.Empty;
 
                 if (_fullHelpObject.Properties["Synopsis"].Value == null)
-                    return "";
+                    return string.Empty;
 
                 string synopsis = _fullHelpObject.Properties["Synopsis"].Value.ToString();
                 if (synopsis == null)
-                    return "";
+                    return string.Empty;
 
                 return synopsis.Trim();
             }
@@ -89,18 +89,18 @@ namespace System.Management.Automation
             get
             {
                 if (this.FullHelp == null)
-                    return "";
+                    return string.Empty;
 
                 if (this.FullHelp.Properties["DetailedDescription"] == null ||
                     this.FullHelp.Properties["DetailedDescription"].Value == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 IList descriptionItems = FullHelp.Properties["DetailedDescription"].Value as IList;
                 if (descriptionItems == null || descriptionItems.Count == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 // I think every provider description should atleast have 400 characters...

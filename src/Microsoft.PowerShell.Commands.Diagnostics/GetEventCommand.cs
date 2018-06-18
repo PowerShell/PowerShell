@@ -836,7 +836,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // Force the destruction of cached password
             //
-            netCred.Password = "";
+            netCred.Password = string.Empty;
 
             return eventLogSession;
         }
@@ -973,12 +973,12 @@ namespace Microsoft.PowerShell.Commands
         //
         private string BuildXPathFromHashTable(Hashtable hash)
         {
-            StringBuilder xpathString = new StringBuilder("");
+            StringBuilder xpathString = new StringBuilder(string.Empty);
             bool bDateTimeHandled = false;
 
             foreach (string key in hash.Keys)
             {
-                string added = "";
+                string added = string.Empty;
 
                 switch (key.ToLowerInvariant())
                 {
@@ -1062,7 +1062,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private string BuildStructuredQueryFromHashTable(EventLogSession eventLogSession)
         {
-            StringBuilder result = new StringBuilder("");
+            StringBuilder result = new StringBuilder(string.Empty);
 
             result.Append(queryListOpen);
 
@@ -1070,8 +1070,8 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (Hashtable hash in _selector)
             {
-                string xpathString = "";
-                string xpathStringSuppress = "";
+                string xpathString = string.Empty;
+                string xpathStringSuppress = string.Empty;
 
                 CheckHashTableForQueryPathPresence(hash);
 
@@ -1378,7 +1378,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!KeywordStringToInt64(value.ToString(), ref keywordLong))
                 {
-                    return "";
+                    return string.Empty;
                 }
                 keywordsMask |= keywordLong;
             }
@@ -1416,7 +1416,7 @@ namespace Microsoft.PowerShell.Commands
                     string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("InvalidContext"), value.ToString());
                     Exception outerExc = new Exception(msg, exc);
                     WriteError(new ErrorRecord(outerExc, "InvalidContext", ErrorCategory.InvalidArgument, null));
-                    return "";
+                    return string.Empty;
                 }
             }
 
@@ -1434,7 +1434,7 @@ namespace Microsoft.PowerShell.Commands
             DateTime startTime = new DateTime();
             if (!StringToDateTime(value.ToString(), ref startTime))
             {
-                return "";
+                return string.Empty;
             }
 
             startTime = startTime.ToUniversalTime();
@@ -1445,7 +1445,7 @@ namespace Microsoft.PowerShell.Commands
                 DateTime endTime = new DateTime();
                 if (!StringToDateTime(hash[hashkey_endtime_lc].ToString(), ref endTime))
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 endTime = endTime.ToUniversalTime();
@@ -1477,7 +1477,7 @@ namespace Microsoft.PowerShell.Commands
             DateTime endTime = new DateTime();
             if (!StringToDateTime(value.ToString(), ref endTime))
             {
-                return "";
+                return string.Empty;
             }
 
             endTime = endTime.ToUniversalTime();
@@ -1489,7 +1489,7 @@ namespace Microsoft.PowerShell.Commands
                 DateTime startTime = new DateTime();
                 if (!StringToDateTime(hash[hashkey_starttime_lc].ToString(), ref startTime))
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 startTime = startTime.ToUniversalTime();
@@ -1709,27 +1709,27 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PSNotSupportedException notSupported)
             {
-                WriteError(new ErrorRecord(notSupported, "", ErrorCategory.ObjectNotFound, path));
+                WriteError(new ErrorRecord(notSupported, string.Empty, ErrorCategory.ObjectNotFound, path));
                 return retColl;
             }
             catch (System.Management.Automation.DriveNotFoundException driveNotFound)
             {
-                WriteError(new ErrorRecord(driveNotFound, "", ErrorCategory.ObjectNotFound, path));
+                WriteError(new ErrorRecord(driveNotFound, string.Empty, ErrorCategory.ObjectNotFound, path));
                 return retColl;
             }
             catch (ProviderNotFoundException providerNotFound)
             {
-                WriteError(new ErrorRecord(providerNotFound, "", ErrorCategory.ObjectNotFound, path));
+                WriteError(new ErrorRecord(providerNotFound, string.Empty, ErrorCategory.ObjectNotFound, path));
                 return retColl;
             }
             catch (ItemNotFoundException pathNotFound)
             {
-                WriteError(new ErrorRecord(pathNotFound, "", ErrorCategory.ObjectNotFound, path));
+                WriteError(new ErrorRecord(pathNotFound, string.Empty, ErrorCategory.ObjectNotFound, path));
                 return retColl;
             }
             catch (Exception exc)
             {
-                WriteError(new ErrorRecord(exc, "", ErrorCategory.ObjectNotFound, path));
+                WriteError(new ErrorRecord(exc, string.Empty, ErrorCategory.ObjectNotFound, path));
                 return retColl;
             }
 
@@ -1859,7 +1859,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (providers.Count == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             StringBuilder predicate = new StringBuilder("System/Provider[");
@@ -1887,7 +1887,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_providersByLogMap.Count == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             StringBuilder predicate = new StringBuilder("System/Provider[");

@@ -1294,7 +1294,7 @@ namespace Microsoft.PowerShell.Commands
                 // Since GET is the default; POST only occurs when -Method POST is used.
                 if (Method == WebRequestMethod.Post && IsRedirectToGet(response.StatusCode))
                 {
-                    // See https://msdn.microsoft.com/en-us/library/system.net.httpstatuscode(v=vs.110).aspx
+                    // See https://msdn.microsoft.com/library/system.net.httpstatuscode(v=vs.110).aspx
                     Method = WebRequestMethod.Get;
                 }
 
@@ -1435,13 +1435,13 @@ namespace Microsoft.PowerShell.Commands
                                         (int)response.StatusCode, response.ReasonPhrase);
                                     HttpResponseException httpEx = new HttpResponseException(message, response);
                                     ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                                    string detailMsg = "";
+                                    string detailMsg = string.Empty;
                                     StreamReader reader = null;
                                     try
                                     {
                                         reader = new StreamReader(StreamHelper.GetResponseStream(response));
                                         // remove HTML tags making it easier to read
-                                        detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>","");
+                                        detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
                                     }
                                     catch (Exception)
                                     {

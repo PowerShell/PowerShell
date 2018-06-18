@@ -1026,10 +1026,10 @@ namespace System.Management.Automation.Internal.Host
             }
 
             // default choices
-            string defaultPrompt = "";
+            string defaultPrompt = string.Empty;
             if (defaultChoiceKeys.Count > 0)
             {
-                string prepend = "";
+                string prepend = string.Empty;
                 Text.StringBuilder defaultChoicesBuilder = new Text.StringBuilder();
                 foreach (int defaultChoice in defaultChoiceKeys.Keys)
                 {
@@ -1096,7 +1096,7 @@ namespace System.Management.Automation.Internal.Host
                     choicesSelected++;
                 }
                 // reset messageToBeDisplayed
-                messageToBeDisplayed = "";
+                messageToBeDisplayed = string.Empty;
             } while (true);
 
             return result;

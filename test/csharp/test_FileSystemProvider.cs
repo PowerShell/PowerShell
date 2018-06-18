@@ -25,7 +25,7 @@ namespace PSTests.Parallel
         private string testContent;
         public FileSystemProviderTests()
         {
-            testPath = Path.Combine(Path.GetTempPath(),"test");
+            testPath = Path.GetTempFileName();
             testContent = "test content!";
             if(File.Exists(testPath)) File.Delete(testPath);
             File.AppendAllText(testPath,testContent);
@@ -61,11 +61,11 @@ namespace PSTests.Parallel
         {
             if(!Platform.IsWindows)
             {
-                Assert.False(InternalSymbolicLinkLinkCodeMethods.CreateJunction("",""));
+                Assert.False(InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty));
             }
             else
             {
-                Assert.Throws<System.ArgumentNullException>(delegate { InternalSymbolicLinkLinkCodeMethods.CreateJunction("",""); });
+                Assert.Throws<System.ArgumentNullException>(delegate { InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty); });
             }
         }
 
@@ -138,9 +138,9 @@ namespace PSTests.Parallel
             PSObject psobject1=PSObject.AsPSObject(fileSystemObject1);
             foreach(PSPropertyInfo property in psobject1.Properties)
             {
-                if(property.Name == "Name")
+                if(property.Name == "FullName")
                 {
-                    Assert.Equal("test", property.Value);
+                    Assert.Equal(testPath, property.Value);
                 }
             }
         }
