@@ -25,7 +25,10 @@ param (
 
     [Parameter(Mandatory,ParameterSetName='packageSigned')]
     [ValidatePattern("-signed.zip$")]
-    [string]$BuildZip
+    [string]$BuildZip,
+
+    [Parameter(Mandatory,ParameterSetName='ComponentRegistration')]
+    [switch] $ComponentRegistration
 )
 
 $releaseTagParam = @{}
@@ -92,24 +95,46 @@ try{
     }
 
     $pspackageParams = @{'Type'='msi'; 'WindowsRuntime'=$Runtime}
-    if(!$Symbols.IsPresent -and $Runtime -notmatch "arm")
+    if(!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch "arm")
     {
         Write-Verbose "Starting powershell packaging(msi)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
-    $pspackageParams['Type']='zip'
-    $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
-    Write-Verbose "Starting powershell packaging(zip)..." -verbose
-    Start-PSPackage @pspackageParams @releaseTagParam
+    if(!$ComponentRegistration.IsPresent)
+    {
+        $pspackageParams['Type']='zip'
+        $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
+        Write-Verbose "Starting powershell packaging(zip)..." -verbose
+        Start-PSPackage @pspackageParams @releaseTagParam
 
-    Write-Verbose "Exporting packages ..." -verbose
+        Write-Verbose "Exporting packages ..." -verbose
 
-    Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb | ForEach-Object {
-        $file = $_.FullName
-        Write-Verbose "Copying $file to $destination" -verbose
-        Copy-Item -Path $file -Destination "$destination\" -Force
+        Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb | ForEach-Object {
+            $file = $_.FullName
+            Write-Verbose "Copying $file to $destination" -verbose
+            Copy-Item -Path $file -Destination "$destination\" -Force
+        }
     }
+    else {
+        Write-Verbose "Exporting project.assets files ..." -verbose
+
+        $projectAssetsCounter = 1
+        $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
+        $projectAssetsZip = Join-Path -Path $destination -ChildPath 'projectAssetssymbols.zip'
+        Get-ChildItem $location\project.assets.json -Recurse | ForEach-Object {
+            $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $projectAssetsCounter
+            New-Item -Path $itemDestination -ItemType Directory -Force
+            $file = $_.FullName
+            Write-Verbose "Copying $file to $itemDestination" -verbose
+            Copy-Item -Path $file -Destination "$itemDestination\" -Force
+            $projectAssetsCounter++
+        }
+
+        Compress-Archive -Path $projectAssetsFolder -DestinationPath $projectAssetsZip
+        Remove-Item -Path $projectAssetsFolder -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
 }
 finally
 {

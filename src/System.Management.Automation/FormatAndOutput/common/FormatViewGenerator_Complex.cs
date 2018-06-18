@@ -279,7 +279,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         // on with formatting
                         if (val == null)
                         {
-                            val = "";
+                            val = string.Empty;
                         }
                         FieldFormattingDirective fieldFormattingDirective = null;
                         StringFormatError formatErrorObject = null;
@@ -550,7 +550,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                         else
                         {
-                            val = "";
+                            val = string.Empty;
                         }
                     }
                     else

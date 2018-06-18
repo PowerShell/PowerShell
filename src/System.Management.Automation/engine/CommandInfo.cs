@@ -648,7 +648,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The prefix that was used when importing this command
         /// </summary>
-        internal string Prefix { get; set; } = "";
+        internal string Prefix { get; set; } = string.Empty;
 
         /// <summary>
         /// Create a copy of commandInfo for GetCommandCommand so that we can generate parameter

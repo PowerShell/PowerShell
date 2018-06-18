@@ -1541,7 +1541,7 @@ namespace System.Management.Automation
         internal void CloseAllStreams()
         {
             // The Complete() method includes raising public notification events that third parties can
-            // handle and potentially throw exceptions on the notification thread.  We don't want to 
+            // handle and potentially throw exceptions on the notification thread.  We don't want to
             // propagate those exceptions because it prevents this thread from completing its processing.
             if (_resultsOwner) { try { _results.Complete(); } catch (Exception e) { TraceException(e); } }
             if (_outputOwner) { try { _output.Complete(); } catch (Exception e) { TraceException(e); } }
@@ -2852,7 +2852,7 @@ namespace System.Management.Automation
             get
             {
                 //ISSUE implement this.
-                return "";
+                return string.Empty;
             }
         }
 

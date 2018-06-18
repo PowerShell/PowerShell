@@ -108,7 +108,7 @@ namespace System.Management.Automation
 
                     if ((funcdesc.wFuncFlags & 0x1) == 0x1)
                     {
-                        // http://msdn.microsoft.com/en-us/library/ee488948.aspx
+                        // http://msdn.microsoft.com/library/ee488948.aspx
                         // FUNCFLAGS -- FUNCFLAG_FRESTRICTED = 0x1:
                         //     Indicates that the function should not be accessible from macro languages.
                         //     This flag is intended for system-level functions or functions that type browsers should not display.

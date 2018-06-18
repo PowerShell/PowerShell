@@ -170,5 +170,5 @@ Now you know the basics of the PowerShell debugging from PowerShell command-line
 
 More Reading
 =====
-- [about_Debuggers](https://technet.microsoft.com/en-us/library/hh847790.aspx)
+- [about_Debuggers](https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_debuggers?view=powershell-6)
 - [PowerShell Debugging](https://blogs.technet.microsoft.com/heyscriptingguy/tag/debugging/)

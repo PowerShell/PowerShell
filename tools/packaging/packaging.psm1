@@ -151,6 +151,9 @@ function Start-PSPackage {
 
         $Source = Split-Path -Path $Script:Options.Output -Parent
 
+        # Copy the ThirdPartyNotices.txt so it's part of the package
+        Copy-Item "$PSScriptRoot/../../ThirdPartyNotices.txt" -Destination $Source -Force
+
         # If building a symbols package, we add a zip of the parent to publish
         if ($IncludeSymbols.IsPresent)
         {
@@ -449,7 +452,7 @@ function New-PSSignedBuildZip
     # Replace unsigned binaries with signed
     $signedFilesFilter = Join-Path -Path $signedFilesPath -ChildPath '*'
     Get-ChildItem -path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
-        $relativePath = $_.Replace($signedFilesPath,'')
+        $relativePath = $_.ToLowerInvariant().Replace($signedFilesPath.ToLowerInvariant(),'')
         $destination = Join-Path -Path $buildPath -ChildPath $relativePath
         Write-Log "replacing $destination with $_"
         Copy-Item -Path $_ -Destination $destination -force
@@ -652,15 +655,17 @@ function New-UnixPackage {
 
         if($pscmdlet.ShouldProcess("Create package file system"))
         {
+            # refers to executable, does not vary by channel
             New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" >$null
 
             # Generate After Install and After Remove scripts
-            $AfterScriptInfo = New-AfterScripts
+            $AfterScriptInfo = New-AfterScripts -Link $Link
 
             # there is a weird bug in fpm
             # if the target of the powershell symlink exists, `fpm` aborts
             # with a `utime` error on macOS.
             # so we move it to make symlink broken
+            # refers to executable, does not vary by channel
             $symlink_dest = "$Destination/pwsh"
             $hack_dest = "./_fpm_symlink_hack_powershell"
             if ($Environment.IsMacOS) {
@@ -671,14 +676,15 @@ function New-UnixPackage {
             }
 
             # Generate gzip of man file
-            $ManGzipInfo = New-ManGzip
+            $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview
 
             # Change permissions for packaging
             Start-NativeExecution {
                 find $Staging -type d | xargs chmod 755
                 find $Staging -type f | xargs chmod 644
                 chmod 644 $ManGzipInfo.GzipFile
-                chmod 755 "$Staging/pwsh" # only the executable should be executable
+                # refers to executable, does not vary by channel
+                chmod 755 "$Staging/pwsh" #only the executable file should be granted the execution permission
             }
         }
 
@@ -798,7 +804,9 @@ function New-MacOsDistributionPackage
 
     # Add the OS information to the macOS package file name.
     $packageExt = [System.IO.Path]::GetExtension($FpmPackage.Name)
-    $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($FpmPackage.Name)
+
+    # get the package name from fpm without the extension, but replace powershell-preview at the beginning of the name with powershell.
+    $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($FpmPackage.Name) -replace '^powershell\-preview' , 'powershell'
 
     $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
     $newPackagePath = Join-Path $FpmPackage.DirectoryName $newPackageName
@@ -1055,6 +1063,12 @@ function Test-Dependencies
 
 function New-AfterScripts
 {
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $Link
+    )
+
     if ($Environment.IsRedHatFamily) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
@@ -1065,14 +1079,14 @@ function New-AfterScripts
 
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.RedHatAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.RedHatAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+        $packagingStrings.RedHatAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.RedHatAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
     elseif ($Environment.IsUbuntu -or $Environment.IsDebian -or $Environment.IsSUSEFamily) {
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.UbuntuAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.UbuntuAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+        $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
 
     return [PSCustomObject] @{
@@ -1083,16 +1097,33 @@ function New-AfterScripts
 
 function New-ManGzip
 {
+    param(
+        [switch]
+        $IsPreview
+    )
+
     # run ronn to convert man page to roff
     $RonnFile = Join-Path $PSScriptRoot "/../../assets/pwsh.1.ronn"
+    if($IsPreview.IsPresent)
+    {
+        $newRonnFile = $RonnFile -replace 'pwsh', 'pwsh-preview'
+        Copy-Item -Path $RonnFile -Destination $newRonnFile -force
+        $RonnFile = $newRonnFile
+    }
+
     $RoffFile = $RonnFile -replace "\.ronn$"
 
     # Run ronn on assets file
-    Start-NativeExecution { ronn --roff $RonnFile }
+    Start-NativeExecution { ronn --roff $RonnFile } -VerboseOutputOnError
+
+    if($IsPreview.IsPresent)
+    {
+        Remove-item $RonnFile
+    }
 
     # gzip in assets directory
     $GzipFile = "$RoffFile.gz"
-    Start-NativeExecution { gzip -f $RoffFile }
+    Start-NativeExecution { gzip -f $RoffFile } -VerboseOutputOnError
 
     $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
 

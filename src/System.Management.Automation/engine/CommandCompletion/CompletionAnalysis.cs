@@ -513,7 +513,7 @@ namespace System.Management.Automation
                         // Handle operator completion: 55 -<tab> || "string" -<tab> || (Get-Something) -<tab>
                         if (CompleteOperator(tokenAtCursor, lastAst))
                         {
-                            result = CompletionCompleters.CompleteOperator("");
+                            result = CompletionCompleters.CompleteOperator(string.Empty);
                             break;
                         }
 
@@ -1394,7 +1394,7 @@ namespace System.Management.Automation
             {
                 if (strConst.Value.Equals("$", StringComparison.Ordinal))
                 {
-                    completionContext.WordToComplete = "";
+                    completionContext.WordToComplete = string.Empty;
                     return CompletionCompleters.CompleteVariable(completionContext);
                 }
                 else

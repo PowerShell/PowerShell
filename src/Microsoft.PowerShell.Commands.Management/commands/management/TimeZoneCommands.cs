@@ -626,7 +626,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Definition of SE_TIME_ZONE_NAME constant from Win32 API
             /// </summary>
-            public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; //http://msdn.microsoft.com/en-us/library/bb530716(VS.85).aspx
+            public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; //http://msdn.microsoft.com/library/bb530716(VS.85).aspx
 
             /// <summary>
             /// PInvoke GetCurrentProcess API

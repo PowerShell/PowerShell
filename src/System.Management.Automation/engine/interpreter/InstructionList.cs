@@ -166,8 +166,8 @@ namespace System.Management.Automation.Interpreter
                 internal string GetName()
                 {
                     return _index +
-                        (_continuationsDepth == 0 ? "" : " C(" + _continuationsDepth + ")") +
-                        (_stackDepth == 0 ? "" : " S(" + _stackDepth + ")");
+                        (_continuationsDepth == 0 ? string.Empty : " C(" + _continuationsDepth + ")") +
+                        (_stackDepth == 0 ? string.Empty : " S(" + _stackDepth + ")");
                 }
 
                 internal string GetValue()

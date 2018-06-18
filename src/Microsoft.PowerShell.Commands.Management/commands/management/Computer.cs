@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
 #region "Parameters and PrivateData"
 
         private const string DefaultParameterSet = "DefaultSet";
-        private const int forcedReboot = 6; // see https://msdn.microsoft.com/en-us/library/aa394058(v=vs.85).aspx
+        private const int forcedReboot = 6; // see https://msdn.microsoft.com/library/aa394058(v=vs.85).aspx
 
         /// <summary>
         /// The authentication options for CIM_WSMan connection
@@ -348,11 +348,11 @@ $result
         private readonly ManualResetEventSlim _waitHandler = new ManualResetEventSlim(false);
         private readonly Dictionary<string, ComputerInfo> _computerInfos = new Dictionary<string, ComputerInfo>(StringComparer.OrdinalIgnoreCase);
 
-        // CLR 4.0 Port note - use https://msdn.microsoft.com/en-us/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
+        // CLR 4.0 Port note - use https://msdn.microsoft.com/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
         private readonly string _shortLocalMachineName = Dns.GetHostName();
 
         // And for this, use PsUtils.GetHostname()
-        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync("").Result.HostName;
+        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync(string.Empty).Result.HostName;
 
         private int _percent;
         private string _status;
@@ -1106,7 +1106,7 @@ $result
 #region Private Members
 
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
-        private const int forcedShutdown = 5; // See https://msdn.microsoft.com/en-us/library/aa394058(v=vs.85).aspx
+        private const int forcedShutdown = 5; // See https://msdn.microsoft.com/library/aa394058(v=vs.85).aspx
 
 #endregion
 
@@ -1269,7 +1269,7 @@ $result
         private string _newNameForLocalHost = null;
 
         private readonly string _shortLocalMachineName = Dns.GetHostName();
-        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync("").Result.HostName;
+        private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync(string.Empty).Result.HostName;
 
 #endregion
 

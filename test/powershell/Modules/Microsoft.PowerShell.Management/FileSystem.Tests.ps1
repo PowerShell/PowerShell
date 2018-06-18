@@ -1396,3 +1396,21 @@ Describe "Remove-Item UnAuthorized Access" -Tags "CI", "RequireAdminOnWindows" {
         Get-Content $errorFile | Should -BeExactly 'RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand'
     }
 }
+
+Describe "Verify sub-directory creation under root" -Tag 'CI','RequireSudoOnUnix' {
+    BeforeAll {
+        $dirPath = "\TestDir-$((New-Guid).Guid)"
+    }
+
+    AfterAll {
+        if(Test-Path $dirPath)
+        {
+            Remove-Item -Path $dirPath -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Can create a sub directory under root path" {
+        New-Item -Path $dirPath -ItemType Directory -Force > $null
+        $dirPath | Should -Exist
+    }
+}

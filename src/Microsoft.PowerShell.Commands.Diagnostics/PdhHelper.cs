@@ -474,7 +474,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             Debug.Assert(strSize >= 2);
             int offset = 0;
-            string allSubstringsWithNulls = "";
+            string allSubstringsWithNulls = string.Empty;
             while (offset <= ((strSize * sizeof(char)) - 4))
             {
                 Int32 next4 = Marshal.ReadInt32(strNative, offset);
@@ -580,7 +580,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return ConnectToDataSource(blgFileNames[0]);
             }
 
-            string doubleNullTerminated = "";
+            string doubleNullTerminated = string.Empty;
             foreach (string fileName in blgFileNames)
             {
                 doubleNullTerminated += fileName + '\0';
@@ -826,7 +826,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         private bool IsPathValid(ref PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath)
         {
             bool ret = false;
-            outPath = "";
+            outPath = string.Empty;
             IntPtr pPathBufferSize = new IntPtr(0);
 
             uint res = PdhMakeCounterPath(ref pathElts, IntPtr.Zero, ref pPathBufferSize, 0);
@@ -880,7 +880,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         private uint MakePath(PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath, bool bWildcardInstances)
         {
-            outPath = "";
+            outPath = string.Empty;
             IntPtr pPathBufferSize = new IntPtr(0);
 
             if (bWildcardInstances)
@@ -984,7 +984,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         public uint TranslateLocalCounterPath(string englishPath, out string localizedPath)
         {
             uint res = 0;
-            localizedPath = "";
+            localizedPath = string.Empty;
             PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
             res = ParsePath(englishPath, ref pathElts);
             if (res != 0)
@@ -1077,7 +1077,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             int strSize = 256;
             IntPtr localizedPathPtr = Marshal.AllocHGlobal(strSize * sizeof(char));
-            locName = "";
+            locName = string.Empty;
             uint res = 0;
             try
             {

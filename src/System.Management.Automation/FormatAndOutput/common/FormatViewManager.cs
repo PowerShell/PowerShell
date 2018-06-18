@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            return "";
+            return string.Empty;
         }
 
         internal void Initialize(TerminatingErrorContext errorContext,

@@ -2421,7 +2421,7 @@ namespace System.Management.Automation.Language
 
             if (!ScanAfterHereStringHeader("@'"))
             {
-                return NewStringLiteralToken("", TokenKind.HereStringLiteral, TokenFlags.TokenInError);
+                return NewStringLiteralToken(string.Empty, TokenKind.HereStringLiteral, TokenFlags.TokenInError);
             }
 
             TokenFlags flags = TokenFlags.None;
@@ -2489,7 +2489,7 @@ namespace System.Management.Automation.Language
 
             if (!ScanAfterHereStringHeader("@\""))
             {
-                return NewStringExpandableToken("", "", TokenKind.HereStringExpandable, null, TokenFlags.TokenInError);
+                return NewStringExpandableToken(string.Empty, string.Empty, TokenKind.HereStringExpandable, null, TokenFlags.TokenInError);
             }
 
             TokenFlags flags = TokenFlags.None;

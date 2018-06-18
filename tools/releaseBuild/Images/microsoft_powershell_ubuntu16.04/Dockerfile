@@ -30,5 +30,7 @@ RUN apt-get update \
 
 COPY PowerShellPackage.ps1 /
 
+ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+
 # Use PowerShell as the default shell
 ENTRYPOINT [ "pwsh" ]

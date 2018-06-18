@@ -345,7 +345,7 @@ function GetMultipartBody {
 <#
     Defines the list of redirect codes to test as well as the
     expected Method when the redirection is handled.
-    See https://msdn.microsoft.com/en-us/library/windows/apps/system.net.httpstatuscode(v=vs.105).aspx
+    See https://docs.microsoft.com/previous-versions/windows/apps/f92ssyy1(v=vs.105)
     for additonal details.
 #>
 $redirectTests = @(

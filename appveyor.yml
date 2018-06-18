@@ -5,13 +5,9 @@ environment:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   matrix:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    Purpose: BuildingAndPackaging
+    Purpose: UnelevatedPesterTests
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    Purpose: BuildingAndTesting
-
-# Stop all jobs in the matrix if any one them fail
-matrix:
-  fast_finish: true
+    Purpose: ElevatedPesterTests_xUnit_Packaging
 
 # cache version - netcoreapp.2.1-sdk.2.1.300
 cache:
@@ -26,14 +22,14 @@ install:
   - ps: Invoke-AppveyorInstall
 
 build_script:
-  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppveyorBuild }
+  - ps: Invoke-AppveyorBuild
 
 test_script:
-  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppveyorTest }
+  - ps: Invoke-AppveyorTest -Purpose $env:Purpose
 
 after_test:
-  - ps: if ($env:Purpose -eq 'BuildingAndTesting'){ Invoke-AppVeyorAfterTest }
+  - ps: Invoke-AppVeyorAfterTest
 
-# Run the finish command and delete files which should not be in the cache
+# Packaging
 on_finish:
-  - ps: if ($env:Purpose -eq 'BuildingAndPackaging'){ Invoke-AppveyorFinish }
+  - ps: if ($env:Purpose -eq 'ElevatedPesterTests_xUnit_Packaging'){ Invoke-AppveyorFinish }

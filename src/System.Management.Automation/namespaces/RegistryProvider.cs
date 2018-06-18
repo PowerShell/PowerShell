@@ -3218,7 +3218,7 @@ namespace Microsoft.PowerShell.Commands
                 case RegistryValueKind.ExpandString:
                 case RegistryValueKind.String:
                     {
-                        defaultValue = "";
+                        defaultValue = string.Empty;
                     }
                     break;
                 case RegistryValueKind.MultiString:
@@ -3678,7 +3678,7 @@ namespace Microsoft.PowerShell.Commands
                             foundSubkey = true;
 
                             remainingPath = remainingPath.Equals(normalizedSubkey, StringComparison.OrdinalIgnoreCase)
-                                                ? ""
+                                                ? string.Empty
                                                 : remainingPath.Substring((normalizedSubkey + StringLiterals.DefaultPathSeparator).Length);
 
                             break;
@@ -3941,7 +3941,7 @@ namespace Microsoft.PowerShell.Commands
                             value,
                             typeof(string),
                             CultureInfo.CurrentCulture)
-                        : "";
+                        : string.Empty;
                     break;
 
                 case RegistryValueKind.MultiString:
@@ -3978,7 +3978,7 @@ namespace Microsoft.PowerShell.Commands
                             value,
                             typeof(string),
                             CultureInfo.CurrentCulture)
-                        : "";
+                        : string.Empty;
                     break;
 
                     // If kind is Unknown then just leave the value as-is.

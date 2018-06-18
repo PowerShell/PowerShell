@@ -304,7 +304,7 @@ namespace System.Management.Automation
         internal string GetProxyParameterData()
         {
             Text.StringBuilder result = new System.Text.StringBuilder();
-            string prefix = "";
+            string prefix = string.Empty;
 
             if (_isMandatory)
             {
@@ -716,7 +716,7 @@ namespace System.Management.Automation
             }
 
             var wildcardPattern = WildcardPattern.Get(
-                "*" + (psTypeName.Name ?? ""),
+                "*" + (psTypeName.Name ?? string.Empty),
                 WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
             if (wildcardPattern.IsMatch(this.ParameterType.FullName))
             {
@@ -788,7 +788,7 @@ namespace System.Management.Automation
                     string paramSetData = parameterSet.GetProxyParameterData();
                     if (!string.IsNullOrEmpty(paramSetData) || !parameterSetName.Equals(ParameterAttribute.AllParameterSets))
                     {
-                        string separator = "";
+                        string separator = string.Empty;
                         result.Append(prefix);
                         result.Append("[Parameter(");
                         if (!parameterSetName.Equals(ParameterAttribute.AllParameterSets))
@@ -812,7 +812,7 @@ namespace System.Management.Automation
             if ((_aliases != null) && (_aliases.Count > 0))
             {
                 Text.StringBuilder aliasesData = new System.Text.StringBuilder();
-                string comma = ""; // comma is not need for the first element
+                string comma = string.Empty; // comma is not need for the first element
 
                 foreach (string alias in _aliases)
                 {
@@ -942,7 +942,7 @@ namespace System.Management.Automation
             {
                 /* TODO: Validate Pattern dont support Options in ScriptCmdletText.
                 StringBuilder regexOps = new System.Text.StringBuilder();
-                string or = "";
+                string or = string.Empty;
                 string[] regexOptionEnumValues = Enum.GetNames(typeof(System.Text.RegularExpressions.RegexOptions));
 
                 foreach(string regexOption in regexOptionEnumValues)
@@ -996,7 +996,7 @@ namespace System.Management.Automation
             if (setAttrib != null)
             {
                 Text.StringBuilder values = new System.Text.StringBuilder();
-                string comma = "";
+                string comma = string.Empty;
                 foreach (string validValue in setAttrib.ValidValues)
                 {
                     values.AppendFormat(

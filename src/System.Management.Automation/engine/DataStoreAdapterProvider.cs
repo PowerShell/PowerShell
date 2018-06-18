@@ -29,7 +29,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the help file path for the provider.
         /// </summary>
-        public string HelpFile { get; } = "";
+        public string HelpFile { get; } = string.Empty;
 
         /// <summary>
         /// The instance of session state the provider belongs to.
@@ -418,8 +418,8 @@ namespace System.Management.Automation
                 new PSDriveInfo(
                     this.FullName,
                     this,
-                    "",
-                    "",
+                    string.Empty,
+                    string.Empty,
                     null);
 
             _hiddenDrive.Hidden = true;

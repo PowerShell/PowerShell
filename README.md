@@ -29,7 +29,8 @@ You can download and install a PowerShell package for any of the following platf
 | -------------------------------------------| ------------------------| ----------------------| ------------------------------|
 | [Windows (x64)][corefx-win]                | [.msi][rl-windows-64]   | [.msi][pv-windows-64] | [Instructions][in-windows]    |
 | [Windows (x86)][corefx-win]                | [.msi][rl-windows-86]   | [.msi][pv-windows-86] | [Instructions][in-windows]    |
-| [Ubuntu 17.04][corefx-linux]               | [.deb][rl-ubuntu17]     | [.deb][pv-ubuntu17]   | [Instructions][in-ubuntu17]   |
+| [Ubuntu 18.04][corefx-linux]               |                         | [.deb][pv-ubuntu18]   | [Instructions][in-ubuntu18]   |
+| [Ubuntu 17.10][corefx-linux]               |                         | [.deb][pv-ubuntu17]   | [Instructions][in-ubuntu17]   |
 | [Ubuntu 16.04][corefx-linux]               | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]   | [Instructions][in-ubuntu16]   |
 | [Ubuntu 14.04][corefx-linux]               | [.deb][rl-ubuntu14]     | [.deb][pv-ubuntu14]   | [Instructions][in-ubuntu14]   |
 | [Debian 8.7+][corefx-linux]                | [.deb][rl-debian8]      | [.deb][pv-debian8]    | [Instructions][in-deb8]       |
@@ -62,7 +63,6 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 
 [rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.2/PowerShell-6.0.2-win-x64.msi
 [rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.2/PowerShell-6.0.2-win-x86.msi
-[rl-ubuntu17]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.2/powershell_6.0.2-1.ubuntu.17.04_amd64.deb
 [rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.2/powershell_6.0.2-1.ubuntu.16.04_amd64.deb
 [rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.2/powershell_6.0.2-1.ubuntu.14.04_amd64.deb
 [rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.2/powershell_6.0.2-1.debian.8_amd64.deb
@@ -78,27 +78,29 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.2/powershell-6.0.2-linux-x64.tar.gz
 [rl-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.2/powershell-6.0.2-linux-arm32.tar.gz
 
-[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/PowerShell-6.1.0-preview.2-win-x64.msi
-[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/PowerShell-6.1.0-preview.2-win-x86.msi
-[pv-ubuntu17]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell_6.1.0-preview.2-1.ubuntu.17.04_amd64.deb
-[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell_6.1.0-preview.2-1.ubuntu.16.04_amd64.deb
-[pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell_6.1.0-preview.2-1.ubuntu.14.04_amd64.deb
-[pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell_6.1.0-preview.2-1.debian.8_amd64.deb
-[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell_6.1.0-preview.2-1.debian.9_amd64.deb
-[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell-6.1.0-preview.2-1.rhel.7.x86_64.rpm
-[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell-6.1.0-preview.2-osx.10.12-x64.pkg
-[pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/PowerShell-6.1.0-preview.2-win-arm32.zip
-[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/PowerShell-6.1.0-preview.2-win-arm64.zip
-[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/PowerShell-6.1.0-preview.2-win-x86.zip
-[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/PowerShell-6.1.0-preview.2-win-x64.zip
-[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell-6.1.0-preview.2-osx-x64.tar.gz
-[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell-6.1.0-preview.2-linux-x64.tar.gz
-[pv-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.2/powershell-6.1.0-preview.2-linux-arm32.tar.gz
+[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/PowerShell-6.1.0-preview.3-win-x64.msi
+[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/PowerShell-6.1.0-preview.3-win-x86.msi
+[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-preview_6.1.0-preview.3-1.ubuntu.18.04_amd64.deb
+[pv-ubuntu17]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-preview_6.1.0-preview.3-1.ubuntu.17.10_amd64.deb
+[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-preview_6.1.0-preview.3-1.ubuntu.16.04_amd64.deb
+[pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-preview_6.1.0-preview.3-1.ubuntu.14.04_amd64.deb
+[pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-preview_6.1.0-preview.3-1.debian.8_amd64.deb
+[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-preview_6.1.0-preview.3-1.debian.9_amd64.deb
+[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-preview-6.1.0-preview.3-1.rhel.7.x86_64.rpm
+[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-osx-x64.pkg
+[pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/PowerShell-6.1.0-preview.3-win-arm32.zip
+[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/PowerShell-6.1.0-preview.3-win-arm64.zip
+[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/PowerShell-6.1.0-preview.3-win-x86.zip
+[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/PowerShell-6.1.0-preview.3-win-x64.zip
+[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-osx-x64.tar.gz
+[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-linux-x64.tar.gz
+[pv-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-linux-arm32.tar.gz
 
 [in-windows]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
 [in-ubuntu14]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1404
 [in-ubuntu16]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1604
-[in-ubuntu17]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1704
+[in-ubuntu17]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1710
+[in-ubuntu18]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1804
 [in-deb8]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#debian-8
 [in-deb9]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#debian-9
 [in-centos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#centos-7
@@ -232,9 +234,9 @@ License: By requesting and using the Container OS Image for Windows containers, 
 
 ### Telemetry
 
-By default, PowerShell collects the OS description and the version of PowerShell (equivalent to `$PSVersionTable.OS` and `$PSVersionTable.GitCommitId`) using [Application Insights](https://azure.microsoft.com/en-us/services/application-insights/).
+By default, PowerShell collects the OS description and the version of PowerShell (equivalent to `$PSVersionTable.OS` and `$PSVersionTable.GitCommitId`) using [Application Insights](https://azure.microsoft.com/services/application-insights/).
 To opt-out of sending telemetry, create an environment variable called `POWERSHELL_TELEMETRY_OPTOUT` set to a value of `1` before starting PowerShell from the installed location.
-The telemetry we collect fall under the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement/).
+The telemetry we collect fall under the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement/).
 
 ## Governance
 

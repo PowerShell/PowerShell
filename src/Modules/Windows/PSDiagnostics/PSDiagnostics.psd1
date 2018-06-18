@@ -3,11 +3,9 @@
     Author="PowerShell"
     CompanyName="Microsoft Corporation"
     Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
-    ModuleVersion="1.0.0.0"
-    PowerShellVersion="2.0"
-    CLRVersion="2.0.50727"
+    ModuleVersion="6.1.0.0"
+    CompatiblePSEditions = @("Core")
+    PowerShellVersion="6.1"
     ModuleToProcess="PSDiagnostics.psm1"
-    AliasesToExport = @()
-    CmdletsToExport = @()
     FunctionsToExport="Disable-PSTrace","Disable-PSWSManCombinedTrace","Disable-WSManTrace","Enable-PSTrace","Enable-PSWSManCombinedTrace","Enable-WSManTrace","Get-LogProperties","Set-LogProperties","Start-Trace","Stop-Trace"
 }

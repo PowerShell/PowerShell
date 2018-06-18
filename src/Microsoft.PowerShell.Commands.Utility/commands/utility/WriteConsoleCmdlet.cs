@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            string result = ProcessObject(Object) ?? "";
+            string result = ProcessObject(Object) ?? string.Empty;
 
             HostInformationMessage informationMessage = new HostInformationMessage();
             informationMessage.Message = result;
@@ -137,7 +137,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             this.WriteInformation(informationMessage, new string[] { "PSHOST" });
-            this.Host.UI.TranscribeResult(result);
         }
 
         private Boolean _notAppendNewline = false;

@@ -551,7 +551,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_measureCharacters || _measureWords || _measureLines)
             {
-                string strValue = (objValue == null) ? "" : objValue.ToString();
+                string strValue = (objValue == null) ? string.Empty : objValue.ToString();
                 AnalyzeString(strValue, stat);
             }
 

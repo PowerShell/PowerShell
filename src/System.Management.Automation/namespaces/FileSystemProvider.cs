@@ -114,12 +114,12 @@ namespace Microsoft.PowerShell.Commands
         {
             isContainer = false;
 
-            if (Utils.NativeFileExists(path))
+            if (Utils.FileExists(path))
             {
                 return new FileInfo(path);
             }
 
-            if (Utils.NativeDirectoryExists(path))
+            if (Utils.DirectoryExists(path))
             {
                 isContainer = true;
                 return new DirectoryInfo(path);
@@ -257,9 +257,9 @@ namespace Microsoft.PowerShell.Commands
                 XmlDocument document = new XmlDocument();
                 CultureInfo currentUICulture = CultureInfo.CurrentUICulture;
                 string fullHelpPath = Path.Combine(
-                    string.IsNullOrEmpty(this.ProviderInfo.ApplicationBase) ? "" : this.ProviderInfo.ApplicationBase,
+                    string.IsNullOrEmpty(this.ProviderInfo.ApplicationBase) ? string.Empty : this.ProviderInfo.ApplicationBase,
                     currentUICulture.ToString(),
-                    string.IsNullOrEmpty(this.ProviderInfo.HelpFile) ? "" : this.ProviderInfo.HelpFile);
+                    string.IsNullOrEmpty(this.ProviderInfo.HelpFile) ? string.Empty : this.ProviderInfo.HelpFile);
 
                 XmlReaderSettings settings = new XmlReaderSettings();
                 settings.XmlResolver = null;
@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell.Commands
                 // Since the drive is fixed, ensure the root is valid.
                 try
                 {
-                    validDrive = Utils.NativeDirectoryExists(drive.Root);
+                    validDrive = Utils.DirectoryExists(drive.Root);
                 }
                 catch (IOException)
                 {
@@ -796,7 +796,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // "The Windows API has many functions that also have Unicode versions to permit
                         // an extended-length path for a maximum total path length of 32,767 characters"
-                        // See http://msdn.microsoft.com/en-us/library/aa365247.aspx#maxpath
+                        // See http://msdn.microsoft.com/library/aa365247.aspx#maxpath
                         string errorMsg = StringUtil.Format(FileSystemProviderStrings.SubstitutePathTooLong, driveName);
                         throw new InvalidOperationException(errorMsg);
                     }
@@ -1500,17 +1500,7 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            // Get the directory object
-            bool isDirectory;
-            Exception accessException;
-            bool exists = Utils.NativeItemExists(path, out isDirectory, out accessException);
-
-            if (accessException != null)
-            {
-                throw accessException;
-            }
-
-            if (exists)
+            if (Utils.ItemExists(path, out bool isDirectory))
             {
                 if (isDirectory)
                 {
@@ -2172,7 +2162,7 @@ namespace Microsoft.PowerShell.Commands
                     // non-existing targets on either Windows or Linux.
                     try
                     {
-                        exists = CheckItemExists(strTargetPath, out isDirectory);
+                        exists = Utils.ItemExists(strTargetPath, out isDirectory);
                         if (itemType == ItemType.SymbolicLink)
                             exists = true; // pretend the target exists if we're making a symbolic link
                     }
@@ -2205,7 +2195,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        symLinkExists = CheckItemExists(path, out isSymLinkDirectory);
+                        symLinkExists = Utils.ItemExists(path, out isSymLinkDirectory);
                     }
                     catch (Exception e)
                     {
@@ -2334,7 +2324,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        exists = CheckItemExists(strTargetPath, out isDirectory);
+                        exists = Utils.ItemExists(strTargetPath, out isDirectory);
                     }
                     catch (Exception e)
                     {
@@ -2362,7 +2352,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        pathExists = CheckItemExists(path, out isPathDirectory);
+                        pathExists = Utils.ItemExists(path, out isPathDirectory);
                     }
                     catch (Exception e)
                     {
@@ -2482,26 +2472,6 @@ namespace Microsoft.PowerShell.Commands
             return junctionCreated;
         }
 
-        /// <summary>
-        /// Checks if the item exists and throws exception on access.
-        /// </summary>
-        /// <param name="strTargetPath"></param>
-        /// <param name="isDirectory"></param>
-        /// <returns></returns>
-        private static bool CheckItemExists(string strTargetPath, out bool isDirectory)
-        {
-            Exception accessException;
-
-            bool exists = Utils.NativeItemExists(strTargetPath, out isDirectory, out accessException);
-
-            if (accessException != null)
-            {
-                throw accessException;
-            }
-
-            return exists;
-        }
-
         private enum ItemType
         {
             Unknown,
@@ -2599,10 +2569,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ShouldProcess(resource, action))
                 {
-                    // Use the parent directory to create the sub-directory
-
-                    DirectoryInfo parentDirectory = new DirectoryInfo(parentPath);
-                    DirectoryInfo result = parentDirectory.CreateSubdirectory(childName);
+                    var result = Directory.CreateDirectory(Path.Combine(parentPath, childName));
 
                     if (streamOutput)
                     {
@@ -3226,19 +3193,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                bool notUsed;
-                Exception accessException;
-
-                // First see if the file exists
-                if (Utils.NativeItemExists(path, out notUsed, out accessException))
-                {
-                    result = true;
-                }
-
-                if (accessException != null)
-                {
-                    throw accessException;
-                }
+                result = Utils.ItemExists(path, out bool _);
 
                 FileSystemItemProviderDynamicParameters itemExistsDynamicParameters =
                     DynamicParameters as FileSystemItemProviderDynamicParameters;
@@ -3543,7 +3498,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (op["Items"] != null)
                     {
-                        bool destinationPathIsFile = Utils.NativeFileExists(destinationPath);
+                        bool destinationPathIsFile = Utils.FileExists(destinationPath);
 
                         PSObject obj = (PSObject)op["Items"];
                         ArrayList itemsList = (ArrayList)obj.BaseObject;
@@ -3917,7 +3872,7 @@ namespace Microsoft.PowerShell.Commands
                 CreateDirectory(destination, false);
 
                 // If failed to create directory
-                if (!Utils.NativeDirectoryExists(destination))
+                if (!Utils.DirectoryExists(destination))
                 {
                     return;
                 }
@@ -4258,7 +4213,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // To accomodate empty files
-                    String content = "";
+                    String content = string.Empty;
                     if (op["b64Fragment"] != null)
                     {
                         content = (String)op["b64Fragment"];
@@ -4990,7 +4945,7 @@ namespace Microsoft.PowerShell.Commands
                             // may contain additional globbing patterns such as '[ab]'
                             // which Directory.EnumerateFiles() processes, giving undesireable
                             // results in this context.
-                            if (!Utils.NativeItemExists(result))
+                            if (!Utils.ItemExists(result))
                             {
                                 String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                                 Exception e = new IOException(error);
@@ -5132,7 +5087,7 @@ namespace Microsoft.PowerShell.Commands
             if (secondColon > 0)
             {
                 string newPath = path.Substring(0, secondColon);
-                alternateDataStream = path.Replace(newPath, "");
+                alternateDataStream = path.Replace(newPath, string.Empty);
                 path = newPath;
             }
 #endif
@@ -5283,8 +5238,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    Stack<string> tokenizedPathStack = TokenizePathToStack(path, "");
-                    Stack<string> normalizedPath = NormalizeThePath("", tokenizedPathStack);
+                    Stack<string> tokenizedPathStack = TokenizePathToStack(path, string.Empty);
+                    Stack<string> normalizedPath = NormalizeThePath(string.Empty, tokenizedPathStack);
                     return CreateNormalizedRelativePathFromStack(normalizedPath);
                 }
                 catch (UnauthorizedAccessException)
@@ -5437,7 +5392,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            currentPath = "";
+                            currentPath = string.Empty;
                         }
 
                         s_tracer.WriteLine("normalizedPathStack.Pop() : {0}", poppedName);
@@ -5624,7 +5579,7 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            return Utils.NativeDirectoryExists(path);
+            return Utils.DirectoryExists(path);
         }
 
         #region MoveItem
@@ -6040,16 +5995,8 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 FileSystemInfo fileSystemObject = null;// Get the directory object
-                bool isDirectory;
-                Exception accessException;
-                bool exists = Utils.NativeItemExists(path, out isDirectory, out accessException);
 
-                if (accessException != null)
-                {
-                    throw accessException;
-                }
-
-                if (exists)
+                if (Utils.ItemExists(path, out bool isDirectory))
                 {
                     if (isDirectory)
                     {
@@ -6208,16 +6155,7 @@ namespace Microsoft.PowerShell.Commands
             // Create a PSObject with either a DirectoryInfo or FileInfo object
             // at its core.
 
-            bool isDirectory;
-            Exception accessException;
-            bool exists = Utils.NativeItemExists(path, out isDirectory, out accessException);
-
-            if (accessException != null)
-            {
-                throw accessException;
-            }
-
-            if (exists)
+            if (Utils.ItemExists(path, out bool isDirectory))
             {
                 if (isDirectory)
                 {
@@ -6912,7 +6850,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // For filesystem once content is cleared
-                WriteItemObject("", path, false);
+                WriteItemObject(string.Empty, path, false);
             }
             catch (ArgumentException argException)
             {
@@ -6939,7 +6877,7 @@ namespace Microsoft.PowerShell.Commands
                         fileStream.Dispose();
 
                         //For filesystem once content is cleared
-                        WriteItemObject("", path, false);
+                        WriteItemObject(string.Empty, path, false);
                     }
                     catch (UnauthorizedAccessException failure)
                     {
@@ -8470,13 +8408,13 @@ namespace System.Management.Automation.Internal
                     string dataStream = ":$DATA";
                     if (!String.Equals(findStreamData.Name, dataStream, StringComparison.OrdinalIgnoreCase))
                     {
-                        findStreamData.Name = findStreamData.Name.Replace(dataStream, "");
+                        findStreamData.Name = findStreamData.Name.Replace(dataStream, string.Empty);
                     }
 
                     AlternateStreamData data = new AlternateStreamData();
                     data.Stream = findStreamData.Name;
                     data.Length = findStreamData.Length;
-                    data.FileName = path.Replace(data.Stream, "");
+                    data.FileName = path.Replace(data.Stream, string.Empty);
                     data.FileName = data.FileName.Trim(Utils.Separators.Colon);
 
                     alternateStreams.Add(data);

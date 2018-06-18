@@ -5,7 +5,7 @@ If you are working on Linux and macOS, you cannot use the PowerShell ISE because
 In this case, you can choose your favorite editor to write PowerShell scripts.
 Here we choose Visual Studio Code as a PowerShell editor.
 
-You can use Visual Studio Code on Windows with PowerShell version 5 by using Windows 10 or by installing [Windows Management Framework 5.0 RTM](https://www.microsoft.com/en-us/download/details.aspx?id=50395) for down-level Windows OSs (e.g. Windows 8.1, etc.).
+You can use Visual Studio Code on Windows with PowerShell version 5 by using Windows 10 or by installing [Windows Management Framework 5.1 RTM](https://www.microsoft.com/download/details.aspx?id=54616) for down-level Windows OSs (e.g. Windows 8.1, etc.).
 
 Before starting it, please make sure PowerShell exists on your system.
 By following the [Installing PowerShell](./README.md#installing-powershell) instructions you can install PowerShell and launch a PowerShell session.

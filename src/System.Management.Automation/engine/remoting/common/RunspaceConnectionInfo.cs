@@ -2182,7 +2182,7 @@ namespace System.Management.Automation.Runspaces
 
             string filename = startInfo.FileName;
             string[] argv = ParseArgv(startInfo);
-            string[] envp = new string[0];
+            string[] envp = CopyEnvVariables(startInfo);
             string cwd = !string.IsNullOrWhiteSpace(startInfo.WorkingDirectory) ? startInfo.WorkingDirectory : null;
 
             // Invoke the shim fork/execve routine.  It will create pipes for all requested
@@ -2237,6 +2237,20 @@ namespace System.Management.Automation.Runspaces
             return new FileStream(
                 new SafeFileHandle((IntPtr)fd, ownsHandle: true),
                 access, StreamBufferSize, isAsync: false);
+        }
+
+        /// <summary>Copies environment variables from ProcessStartInfo </summary>
+        /// <param name="psi">ProcessStartInfo</param>
+        /// <returns>String array of environment key/value pairs</returns>
+        private static string[] CopyEnvVariables(ProcessStartInfo psi)
+        {
+            var envp = new string[psi.Environment.Count];
+            int index = 0;
+            foreach (var pair in psi.Environment)
+            {
+                envp[index++] = pair.Key + "=" + pair.Value;
+            }
+            return envp;
         }
 
         /// <summary>Converts the filename and arguments information from a ProcessStartInfo into an argv array.</summary>

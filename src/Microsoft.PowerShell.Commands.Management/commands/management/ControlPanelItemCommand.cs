@@ -253,7 +253,7 @@ $result
             {
                 Dbg.Assert(installation != null, "the CurrentVersion subkey should exist");
 
-                string installationType = (string)installation.GetValue("InstallationType", "");
+                string installationType = (string)installation.GetValue("InstallationType", string.Empty);
 
                 if (installationType.Equals("Server Core"))
                 {
@@ -429,7 +429,7 @@ $result
                     string errMsg = withCategoryFilter
                                         ? ControlPanelResources.NoControlPanelItemFoundWithNullCanonicalNameWithCategory
                                         : ControlPanelResources.NoControlPanelItemFoundWithNullCanonicalName;
-                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "",
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), string.Empty,
                                                         ErrorCategory.InvalidArgument, CanonicalNames);
                     WriteError(error);
                 }

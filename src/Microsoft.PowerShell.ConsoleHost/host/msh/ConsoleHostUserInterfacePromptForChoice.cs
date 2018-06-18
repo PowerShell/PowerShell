@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell
                     WriteChoicePrompt(hotkeysAndPlainLabels, defaultChoiceKeys, false);
 
                     ReadLineResult rlResult;
-                    string response = ReadLine(false, "", out rlResult, true, true);
+                    string response = ReadChoiceResponse(out rlResult);
 
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell
                     WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(choiceMsg));
 
                     ReadLineResult rlResult;
-                    string response = ReadLine(false, "", out rlResult, true, true);
+                    string response = ReadChoiceResponse(out rlResult);
 
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {
@@ -353,10 +353,10 @@ namespace Microsoft.PowerShell
                 WriteLineToConsole();
             }
 
-            string defaultPrompt = "";
+            string defaultPrompt = string.Empty;
             if (defaultChoiceKeys.Count > 0)
             {
-                string prepend = "";
+                string prepend = string.Empty;
                 StringBuilder defaultChoicesBuilder = new StringBuilder();
                 foreach (int defaultChoice in defaultChoiceKeys.Keys)
                 {
@@ -410,6 +410,19 @@ namespace Microsoft.PowerShell
             }
 
             WriteToConsole(fg, bg, trimEnd ? text.TrimEnd(null) : text);
+        }
+
+        private string ReadChoiceResponse(out ReadLineResult result)
+        {
+            result = ReadLineResult.endedOnEnter;
+            return InternalTestHooks.ForcePromptForChoiceDefaultOption
+                   ? string.Empty
+                   : ReadLine(
+                       endOnTab: false,
+                       initialContent: string.Empty,
+                       result: out result,
+                       calledFromPipeline: true,
+                       transcribeResult: true);
         }
 
         private void ShowChoiceHelp(Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)
@@ -473,4 +486,3 @@ namespace Microsoft.PowerShell
         }
     }
 }   // namespace
-
