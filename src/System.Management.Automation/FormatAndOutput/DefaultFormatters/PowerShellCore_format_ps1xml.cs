@@ -340,18 +340,6 @@ namespace System.Management.Automation.Runspaces
                     .EndRowDefinition()
                 .EndTable());
 
-            yield return new FormatViewDefinition("time",
-                TableControl.Create()
-                    .AddHeader(Alignment.Right, width: 4)
-                    .AddHeader(Alignment.Right, width: 13)
-                    .AddHeader()
-                    .StartRowDefinition()
-                        .AddPropertyColumn("Id")
-                        .AddPropertyColumn("Duration")
-                        .AddPropertyColumn("CommandLine")
-                    .EndRowDefinition()
-                    .EndTable());
-
             yield return new FormatViewDefinition("history",
                 WideControl.Create()
                     .AddPropertyEntry("CommandLine")
