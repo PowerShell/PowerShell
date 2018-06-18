@@ -477,7 +477,7 @@ namespace System.Management.Automation.Internal
 
 #endregion execution policy
 
-        private static bool _SaferIdentifyLevelApiSupported = true;
+        private static bool _saferIdentifyLevelApiSupported = true;
 
         /// <summary>
         /// Get the pass / fail result of calling the SAFER API
@@ -491,7 +491,7 @@ namespace System.Management.Automation.Internal
         {
             SaferPolicy status = SaferPolicy.Allowed;
 
-            if (!_SaferIdentifyLevelApiSupported)
+            if (!_saferIdentifyLevelApiSupported)
             {
                 return status;
             }
@@ -565,7 +565,7 @@ namespace System.Management.Automation.Internal
                 int lastError = Marshal.GetLastWin32Error();
                 if (lastError == NativeConstants.FUNCTION_NOT_SUPPORTED)
                 {
-                    _SaferIdentifyLevelApiSupported = false;
+                    _saferIdentifyLevelApiSupported = false;
                 }
                 else
                 {
