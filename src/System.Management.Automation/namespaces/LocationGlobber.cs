@@ -501,20 +501,6 @@ namespace System.Management.Automation
 
             Collection<string> stringResult = new Collection<string>();
 
-            // if the directory exists, just return it
-            try
-            {
-                if (Utils.DirectoryExists(userPath))
-                {
-                    result.Add(new PathInfo(drive, provider, userPath, _sessionState));
-                    return result;
-                }
-            }
-            catch
-            {
-                // in cases of Access Denied or other errors, fallback to previous behavior and let provider handle it
-            }
-
             if (!context.SuppressWildcardExpansion)
             {
                 // See if the provider will expand the wildcard
