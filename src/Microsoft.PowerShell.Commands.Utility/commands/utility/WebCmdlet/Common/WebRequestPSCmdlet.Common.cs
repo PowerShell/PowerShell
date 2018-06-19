@@ -1399,7 +1399,7 @@ namespace Microsoft.PowerShell.Commands
 
                 totalRequests--;
 
-            } while (totalRequests > 0);
+            } while (totalRequests > 0 && !response.IsSuccessStatusCode);
 
             return response;
         }
