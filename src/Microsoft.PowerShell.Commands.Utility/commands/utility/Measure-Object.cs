@@ -82,8 +82,7 @@ namespace Microsoft.PowerShell.Commands
     /// Class output by Measure-Object.
     /// </summary>
     /// <remarks>
-    /// This class is created for fixing "Measure-Object -MAX -MIN should work with ANYTHING that supports CompareTo"
-    /// bug (Win8:343911).
+    /// This class is created to make 'Measure-Object -MAX -MIN' work with ANYTHING that supports 'CompareTo'.
     /// GenericMeasureInfo class is shipped with PowerShell V2. Fixing this bug requires, changing the type of
     /// Maximum and Minimum properties which would be a breaking change. Hence created a new class to not
     /// have an appcompat issues with PS V2.
