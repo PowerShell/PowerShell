@@ -1504,8 +1504,6 @@ namespace System.Management.Automation.Internal
         internal static bool StopwatchIsNotHighResolution;
         internal static bool DisableGACLoading;
 
-        internal static int FailWebRequestCount;
-
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
         {

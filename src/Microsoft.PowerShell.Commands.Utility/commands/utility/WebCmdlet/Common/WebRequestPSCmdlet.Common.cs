@@ -230,18 +230,18 @@ namespace Microsoft.PowerShell.Commands
         private int _maximumRedirection = -1;
 
         /// <summary>
-        /// gets or sets the RetryCount property
+        /// Gets or Sets the RetryCount property, which determines the number of retries of a failed web request.
         /// </summary>
         [Parameter]
         [ValidateRange(0, Int32.MaxValue)]
         public virtual int RetryCount { get; set; } = 0;
 
         /// <summary>
-        /// gets or sets the RetryIntervalSec property
+        /// Gets or Sets the RetryIntervalSec property, which determines the number seconds between retries.
         /// </summary>
         [Parameter]
         [ValidateRange(1, Int32.MaxValue)]
-        public virtual int RetryIntervalSec { get; set; } = 10;
+        public virtual int RetryIntervalSec { get; set; } = 60;
 
         #endregion
 
@@ -645,6 +645,14 @@ namespace Microsoft.PowerShell.Commands
                     WebSession.Headers[key] = Headers[key].ToString();
                 }
             }
+
+            if(RetryCount > 0)
+            {
+                WebSession.RetryCount = RetryCount;
+
+                // only set retry interval if retry count is set.
+                WebSession.RetryIntervalInSeconds = RetryIntervalSec;
+            }
         }
 
         #endregion Virtual Methods
@@ -677,7 +685,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Helper Properties
 
         #region Helper Methods
-
         private Uri PrepareUri(Uri uri)
         {
             uri = CheckProtocol(uri);
@@ -1300,7 +1307,7 @@ namespace Microsoft.PowerShell.Commands
             if (client == null) { throw new ArgumentNullException("client"); }
             if (request == null) { throw new ArgumentNullException("request"); }
 
-            int retriesLeft = RetryCount;
+            int retriesLeft = WebSession.RetryCount;
             HttpRequestMessage req = request;
             HttpResponseMessage response = null;
 
@@ -1376,25 +1383,21 @@ namespace Microsoft.PowerShell.Commands
 
                 _resumeSuccess = response.StatusCode == HttpStatusCode.PartialContent;
 
-                bool causeFailureForTesting = (System.Management.Automation.Internal.InternalTestHooks.FailWebRequestCount > 0);
-                if((retriesLeft > 0 && CanRetry(response.StatusCode)) || causeFailureForTesting)
+                if(retriesLeft > 0 && CanRetry(response.StatusCode))
                 {
                     retriesLeft--;
                     string retryMessage = string.Format(CultureInfo.CurrentCulture,
                                             WebCmdletStrings.RetryVerboseMsg,
                                             RetryIntervalSec,
-                                            response.StatusCode
-                                            );
+                                            response.StatusCode);
 
                     WriteVerbose(retryMessage);
-                    Task.Delay(RetryIntervalSec * 1000).GetAwaiter().GetResult();
-
+                    Task.Delay(WebSession.RetryIntervalInSeconds * 1000).GetAwaiter().GetResult();
+                    req.Dispose();
                     req = GetRequest(Uri);
-
                     continue;
                 }
-
-            } while (retriesLeft > 0);
+            } while (retriesLeft > 0 && !response.IsSuccessStatusCode);
 
             return response;
         }
