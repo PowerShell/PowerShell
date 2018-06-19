@@ -17,8 +17,8 @@ namespace mvc.Controllers
 {
     public class RetryController : Controller
     {
-        // Dictionary for sessionId as key and failureCode and currentFailCount as the value.
-        private static Dictionary<string, Tuple<int, int>> retryInfo;
+        // Dictionary for sessionId as key and failureCode, failureCount and currentFailCount as the value.
+        private static Dictionary<string, Tuple<int, int, int>> retryInfo;
 
         public JsonResult Retry(string sessionId, int failureCode, int failureCount)
         {
@@ -26,15 +26,15 @@ namespace mvc.Controllers
 
             if(retryInfo == null)
             {
-                retryInfo = new Dictionary<string, Tuple<int, int>>();
+                retryInfo = new Dictionary<string, Tuple<int, int, int>>();
             }
 
-            if(retryInfo.TryGetValue(sessionId, out Tuple<int, int> retry))
+            if(retryInfo.TryGetValue(sessionId, out Tuple<int, int, int> retry))
             {
-                if(retry.Item2 > 0)
+                if(retry.Item3 > 0)
                 {
                     responseCode = retry.Item1;
-                    retryInfo[sessionId] = Tuple.Create(retry.Item1, retry.Item2 - 1);
+                    retryInfo[sessionId] = Tuple.Create(retry.Item1, retry.Item2, retry.Item3 - 1);
                 }
                 else
                 {
@@ -43,7 +43,8 @@ namespace mvc.Controllers
             }
             else
             {
-                var newRetryInfoItem = Tuple.Create(failureCode, failureCount);
+                //initialize the currentFailCount as failureCount - 1 to account for the first fail response.
+                var newRetryInfoItem = Tuple.Create(failureCode, failureCount, failureCount - 1);
                 retryInfo.Add(sessionId, newRetryInfoItem);
                 responseCode = failureCode;
             }
@@ -57,6 +58,12 @@ namespace mvc.Controllers
             }
             else
             {
+                if(retry != null)
+                {
+                    var resp = new Hashtable {{"totalRetries", retry.Item2}};
+                    return Json(resp);
+                }
+
                 return Json("200: Status OK");
             }
         }
