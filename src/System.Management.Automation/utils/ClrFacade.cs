@@ -138,7 +138,6 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(Path.IsPathRooted(filePath), "Caller makes sure the path is rooted.");
             Diagnostics.Assert(Utils.FileExists(filePath), "Caller makes sure the file exists.");
-            string sysRoot = System.Environment.GetEnvironmentVariable("SystemRoot");
             return MapSecurityZone(filePath);
         }
 
@@ -395,14 +394,6 @@ namespace System.Management.Automation
             /// </summary>
             [DllImport(PinvokeDllNames.GetOEMCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
             internal static extern uint GetOEMCP();
-
-            /// <summary>
-            /// Pinvoke for GetACP to get the Windows operating system code page.
-            /// </summary>
-            [DllImport(PinvokeDllNames.GetACPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
-            internal static extern uint GetACP();
-
-            public const int S_OK = 0x00000000;
         }
     }
 }
