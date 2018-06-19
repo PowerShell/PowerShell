@@ -1290,11 +1290,11 @@ namespace Microsoft.PowerShell.Commands
             );
         }
 
-        static bool CanRetry(HttpStatusCode code)
+        bool ShouldRetry(HttpStatusCode code)
         {
             int intCode = (int) code;
 
-            if ((intCode == 304) || (intCode >= 400 && intCode <= 599))
+            if (((intCode == 304) || (intCode >= 400 && intCode <= 599)) && WebSession.RetryCount > 0)
             {
                 return true;
             }
@@ -1307,7 +1307,8 @@ namespace Microsoft.PowerShell.Commands
             if (client == null) { throw new ArgumentNullException("client"); }
             if (request == null) { throw new ArgumentNullException("request"); }
 
-            int retriesLeft = WebSession.RetryCount;
+            // Add 1 to account for the first request.
+            int totalRequests = WebSession.RetryCount + 1;
             HttpRequestMessage req = request;
             HttpResponseMessage response = null;
 
@@ -1383,9 +1384,8 @@ namespace Microsoft.PowerShell.Commands
 
                 _resumeSuccess = response.StatusCode == HttpStatusCode.PartialContent;
 
-                if(retriesLeft > 0 && CanRetry(response.StatusCode))
+                if(ShouldRetry(response.StatusCode))
                 {
-                    retriesLeft--;
                     string retryMessage = string.Format(CultureInfo.CurrentCulture,
                                             WebCmdletStrings.RetryVerboseMsg,
                                             RetryIntervalSec,
@@ -1395,9 +1395,11 @@ namespace Microsoft.PowerShell.Commands
                     Task.Delay(WebSession.RetryIntervalInSeconds * 1000).GetAwaiter().GetResult();
                     req.Dispose();
                     req = GetRequest(Uri);
-                    continue;
                 }
-            } while (retriesLeft > 0 && !response.IsSuccessStatusCode);
+
+                totalRequests--;
+
+            } while (totalRequests > 0);
 
             return response;
         }
