@@ -418,7 +418,7 @@ Describe "Type accelerators" -Tags "CI" {
             $TypeAcceleratorsType::Get[$Accelerator] | Should -Be ($Type)
         }
 
-        It 'Should have a type accelerator for non-dotnet-core type: <Accelerator>' -Skip:$IsCoreCLR -TestCases $extraFullPSAcceleratorTestCases {
+        It 'Should have a type accelerator for non-dotnet-core type: <Accelerator>' -Skip:(!$IsWindows) -TestCases $extraFullPSAcceleratorTestCases {
             param($Accelerator, $Type)
             $TypeAcceleratorsType::Get[$Accelerator] | Should -Be ($Type)
         }
