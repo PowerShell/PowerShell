@@ -739,28 +739,36 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RelationLink["self"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=1&type=${type}"
     }
 
-    It "Invoke-WebRequest can retry the specified number of times" {
-        try {
-            ## Setup test hook to force 2 retries.
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("FailWebRequestCount", 2)
+    #region Retry tests
 
-            $outputFilePath = Join-Path $TestDrive "verboseoutput.txt"
+    It "Invoke-WebRequest can retry - <Name>" -TestCases @(
+        @{Name = "specified number of times - error 304"; failureCount = 2; failureCode = 304; retryCount = 2; expectedFailureCount = 2}
+        @{Name = "specified number of times - error 400"; failureCount = 3; failureCode = 400; retryCount = 3; expectedFailureCount = 3}
+        @{Name = "specified number of times - error 599"; failureCount = 1; failureCode = 599; retryCount = 2; expectedFailureCount = 1}
+        @{Name = "specified number of times - error 404"; failureCount = 2; failureCode = 404; retryCount = 2; expectedFailureCount = 2}
+        @{Name = "when retry count is higher than failure count"; failureCount = 2; failureCode = 404; retryCount = 4}
+    ) {
+        param($failureCount, $retryCount, $failureCode)
 
-            $uri = Get-WebListenerUrl -Test 'Get'
-            $command = "Invoke-WebRequest -Uri '$uri' -Verbose -RetryCount 2 -RetryIntervalSec 1 4>$outputFilePath"
-            $result = ExecuteWebCommand -command $command
+        $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = $failureCode; failureCount = $failureCount }
+        $command = "Invoke-WebRequest -Uri '$uri' -RetryCount $retryCount -RetryIntervalSec 1"
+        $result = ExecuteWebCommand -command $command
 
-            ## The webrequest call succeeds after 2 retries.
-            $result.output.StatusCode | Should Be "200"
-
-            # Expect 2 verbose messages as we are retrying twice.
-            (Select-String -Path $outputFilePath -Pattern 'Retrying after interval').Count | Should Be 2
-        }
-        finally {
-            ## Reset test hook.
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("FailWebRequestCount", 0)
-        }
+        $result.output.StatusCode | Should Be "200"
+        $jsonResult = $result.output.Content | ConvertFrom-Json
+        $jsonResult.failureResponsesSent | Should Be $failureCount
     }
+
+    It "Invoke-WebRequest should fail when failureCount is greater than retryCount" {
+
+        $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = 400; failureCount = 4 }
+        $command = "Invoke-WebRequest -Uri '$uri' -RetryCount 1 -RetryIntervalSec 1"
+        $result = ExecuteWebCommand -command $command
+        $jsonError = $result.error | ConvertFrom-Json
+        $jsonError.error | Should Be 'Error: HTTP - 400 occurred.'
+    }
+
+    #endregion
 
     #region Redirect tests
 

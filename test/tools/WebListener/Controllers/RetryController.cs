@@ -17,13 +17,11 @@ namespace mvc.Controllers
 {
     public class RetryController : Controller
     {
-        // Dictionary for sessionId as key and failureCode, failureCount and currentFailCount as the value.
+        // Dictionary for sessionId as key and failureCode, failureCount and failureResponsesSent as the value.
         private static Dictionary<string, Tuple<int, int, int>> retryInfo;
 
         public JsonResult Retry(string sessionId, int failureCode, int failureCount)
         {
-            int responseCode = 200;
-
             if(retryInfo == null)
             {
                 retryInfo = new Dictionary<string, Tuple<int, int, int>>();
@@ -31,40 +29,29 @@ namespace mvc.Controllers
 
             if(retryInfo.TryGetValue(sessionId, out Tuple<int, int, int> retry))
             {
-                if(retry.Item3 > 0)
+                // if failureResponsesSent is less than failureCount
+                if(retry.Item3 < retry.Item2)
                 {
-                    responseCode = retry.Item1;
-                    retryInfo[sessionId] = Tuple.Create(retry.Item1, retry.Item2, retry.Item3 - 1);
+                    Response.StatusCode = retry.Item1;
+                    retryInfo[sessionId] = Tuple.Create(retry.Item1, retry.Item2, retry.Item3 + 1);
+                    Hashtable error = new Hashtable {{"error", $"Error: HTTP - {retry.Item1} occurred."}};
+                    return Json(error);
                 }
                 else
                 {
                     retryInfo.Remove(sessionId);
-                }
-            }
-            else
-            {
-                //initialize the currentFailCount as failureCount - 1 to account for the first fail response.
-                var newRetryInfoItem = Tuple.Create(failureCode, failureCount, failureCount - 1);
-                retryInfo.Add(sessionId, newRetryInfoItem);
-                responseCode = failureCode;
-            }
-
-            Response.StatusCode = responseCode;
-
-            if(Response.StatusCode != 200)
-            {
-                Hashtable error = new Hashtable {{"error", $"Error: HTTP - {failureCode} occurred."}};
-                return Json(error);
-            }
-            else
-            {
-                if(retry != null)
-                {
-                    var resp = new Hashtable {{"totalRetries", retry.Item2}};
+                    var resp = new Hashtable {{"failureResponsesSent", retry.Item3}};
                     return Json(resp);
                 }
-
-                return Json("200: Status OK");
+            }
+            else
+            {
+                //initialize the failureResponsesSent as 1.
+                var newRetryInfoItem = Tuple.Create(failureCode, failureCount, 1);
+                retryInfo.Add(sessionId, newRetryInfoItem);
+                Response.StatusCode = failureCode;
+                Hashtable error = new Hashtable {{"error", $"Error: HTTP - {failureCode} occurred."}};
+                return Json(error);
             }
         }
 
