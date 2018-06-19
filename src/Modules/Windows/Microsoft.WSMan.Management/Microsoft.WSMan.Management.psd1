@@ -6,7 +6,9 @@ Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="6.1.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion="6.1"
+FunctionsToExport = @()
 CmdletsToExport="Disable-WSManCredSSP", "Enable-WSManCredSSP", "Get-WSManCredSSP", "Set-WSManQuickConfig", "Test-WSMan", "Invoke-WSManAction", "Connect-WSMan", "Disconnect-WSMan", "Get-WSManInstance", "Set-WSManInstance", "Remove-WSManInstance", "New-WSManInstance", "New-WSManSessionOption"
+AliasesToExport = @()
 NestedModules="Microsoft.WSMan.Management.dll"
 FormatsToProcess="WSMan.format.ps1xml"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855961'

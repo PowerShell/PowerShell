@@ -8,6 +8,7 @@ CompatiblePSEditions = @("Core")
 PowerShellVersion="6.1"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855958'
+FunctionsToExport = @()
 AliasesToExport = @("gin", "gtz", "stz")
 CmdletsToExport=@("Add-Content",
     "Clear-Content",
