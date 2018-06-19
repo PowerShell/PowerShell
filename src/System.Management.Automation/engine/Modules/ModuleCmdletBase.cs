@@ -2027,12 +2027,75 @@ namespace Microsoft.PowerShell.Commands
                 Array.Clear(tmpNestedModules, 0, tmpNestedModules.Length);
             }
 
-            // Set the private data member for the module if the manifest contains
-            // this member
-            object privateData = null;
-            if (data.Contains("PrivateData"))
+            // Set the private data member for the module if the manifest contains this member
+            object privateData = data["PrivateData"];
+
+            // Validate the 'ExperimentalFeatures' member of the manifest
+            List<ExperimentalFeature> expFeatureList = null;
+            if (privateData is Hashtable hashData && hashData["PSData"] is Hashtable psData)
             {
-                privateData = data["PrivateData"];
+                if (!GetScalarFromData(psData, moduleManifestPath, "ExperimentalFeatures", manifestProcessingFlags, out Hashtable[] features))
+                {
+                    containedErrors = true;
+                    if (bailOnFirstError) return null;
+                }
+
+                if (features != null && features.Length > 0)
+                {
+                    bool nameMissingOrEmpty = false;
+                    var invalidNames = new List<string>();
+                    string moduleName = ModuleIntrinsics.GetModuleName(moduleManifestPath);
+                    expFeatureList = new List<ExperimentalFeature>(features.Length);
+
+                    foreach (var feature in features)
+                    {
+                        string featureName = feature["Name"] as string;
+                        if (String.IsNullOrEmpty(featureName))
+                        {
+                            nameMissingOrEmpty = true;
+                            continue;
+                        }
+
+                        if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
+                        {
+                            string featureDescription = feature["Description"] as string;
+                            expFeatureList.Add(new ExperimentalFeature(featureName, featureDescription, moduleName,
+                                                                    ExperimentalFeature.HasEnabled(featureName)));
+                        }
+                        else
+                        {
+                            invalidNames.Add(featureName);
+                        }
+                    }
+
+                    if (nameMissingOrEmpty)
+                    {
+                        if (writingErrors)
+                        {
+                            WriteError(new ErrorRecord(new ArgumentException(Modules.ExperimentalFeatureNameMissingOrEmpty),
+                                                    "Modules_ExperimentalFeatureNameMissingOrEmpty",
+                                                    ErrorCategory.InvalidData, null));
+                        }
+
+                        containedErrors = true;
+                        if (bailOnFirstError) { return null; }
+                    }
+
+                    if (invalidNames.Count > 0)
+                    {
+                        if (writingErrors)
+                        {
+                            string invalidNameStr = String.Join(',', invalidNames);
+                            string errorMsg = StringUtil.Format(Modules.InvalidExperimentalFeatureName, invalidNameStr);
+                            WriteError(new ErrorRecord(new ArgumentException(errorMsg),
+                                                    "Modules_InvalidExperimentalFeatureName",
+                                                    ErrorCategory.InvalidData, null));
+                        }
+
+                        containedErrors = true;
+                        if (bailOnFirstError) { return null; }
+                    }
+                }
             }
 
             // Process all of the exports...
@@ -2413,6 +2476,12 @@ namespace Microsoft.PowerShell.Commands
             manifestInfo.PowerShellVersion = powerShellVersion;
             manifestInfo.ProcessorArchitecture = requiredProcessorArchitecture;
             manifestInfo.Prefix = resolvedCommandPrefix;
+
+            if (expFeatureList != null)
+            {
+                manifestInfo.ExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(expFeatureList);
+            }
+
             if (assemblyList != null)
             {
                 foreach (var a in assemblyList)
@@ -3009,6 +3078,7 @@ namespace Microsoft.PowerShell.Commands
                 newManifestInfo.LicenseUri = manifestInfo.LicenseUri;
                 newManifestInfo.IconUri = manifestInfo.IconUri;
                 newManifestInfo.RepositorySourceLocation = manifestInfo.RepositorySourceLocation;
+                newManifestInfo.ExperimentalFeatures = manifestInfo.ExperimentalFeatures;
 
                 // If we are in module discovery, then fix the path.
                 if (ss == null)
