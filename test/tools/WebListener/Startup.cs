@@ -82,7 +82,7 @@ namespace mvc
                 routes.MapRoute(
                     name: "retry",
                     template: "Retry/{sessionId?}/{failureCode?}/{failureCount?}",
-                    defaults: new {controller = "Retry", action = "Retry"});
+                    defaults: new { controller = "Retry", action = "Retry" });
             });
         }
     }

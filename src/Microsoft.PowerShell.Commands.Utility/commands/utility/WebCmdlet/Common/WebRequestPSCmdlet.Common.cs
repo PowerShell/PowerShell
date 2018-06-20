@@ -1290,9 +1290,9 @@ namespace Microsoft.PowerShell.Commands
             );
         }
 
-        bool ShouldRetry(HttpStatusCode code)
+        private bool ShouldRetry(HttpStatusCode code)
         {
-            int intCode = (int) code;
+            int intCode = (int)code;
 
             if (((intCode == 304) || (intCode >= 400 && intCode <= 599)) && WebSession.RetryCount > 0)
             {
@@ -1369,9 +1369,12 @@ namespace Microsoft.PowerShell.Commands
                         FillRequestStream(requestWithoutRange);
                         long requestContentLength = 0;
                         if (requestWithoutRange.Content != null)
+                        {
                             requestContentLength = requestWithoutRange.Content.Headers.ContentLength.Value;
+                        }
 
-                        string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
+                        string reqVerboseMsg = String.Format(
+                            CultureInfo.CurrentCulture,
                             WebCmdletStrings.WebMethodInvocationVerboseMsg,
                             requestWithoutRange.Method,
                             requestWithoutRange.RequestUri,
@@ -1384,12 +1387,13 @@ namespace Microsoft.PowerShell.Commands
 
                 _resumeSuccess = response.StatusCode == HttpStatusCode.PartialContent;
 
-                if(ShouldRetry(response.StatusCode))
+                if (ShouldRetry(response.StatusCode))
                 {
-                    string retryMessage = string.Format(CultureInfo.CurrentCulture,
-                                            WebCmdletStrings.RetryVerboseMsg,
-                                            RetryIntervalSec,
-                                            response.StatusCode);
+                    string retryMessage = string.Format(
+                        CultureInfo.CurrentCulture,
+                        WebCmdletStrings.RetryVerboseMsg,
+                        RetryIntervalSec,
+                        response.StatusCode);
 
                     WriteVerbose(retryMessage);
                     Task.Delay(WebSession.RetryIntervalInSeconds * 1000).GetAwaiter().GetResult();
@@ -1398,8 +1402,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 totalRequests--;
-
-            } while (totalRequests > 0 && !response.IsSuccessStatusCode);
+            }
+            while (totalRequests > 0 && !response.IsSuccessStatusCode);
 
             return response;
         }

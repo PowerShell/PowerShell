@@ -65,12 +65,12 @@ namespace Microsoft.PowerShell.Commands
         public int MaximumRedirection { get; set; }
 
         /// <summary>
-        /// Gets or Sets the count of retries for request failures
+        /// Gets or sets the count of retries for request failures.
         /// </summary>
         public int RetryCount { get; set; }
 
         /// <summary>
-        /// Gets or Sets the interval in seconds between retries.
+        /// Gets or sets the interval in seconds between retries.
         /// </summary>
         public int RetryIntervalInSeconds { get; set; }
 
