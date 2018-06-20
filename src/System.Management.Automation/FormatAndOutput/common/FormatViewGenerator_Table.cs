@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // tableBody to use for this instance of the ViewGenerator;
         private TableControlBody _tableBody;
 
-        internal override void Initialize(TerminatingErrorContext terminatingErrorContext, MshExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
+        internal override void Initialize(TerminatingErrorContext terminatingErrorContext, PSPropertyExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
         {
             base.Initialize(terminatingErrorContext, mshExpressionFactory, db, view, formatParameters);
             if ((null != this.dataBaseInfo) && (null != this.dataBaseInfo.view))
@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        internal override void Initialize(TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory,
+        internal override void Initialize(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                                         PSObject so, TypeInfoDataBase db,
             FormattingCommandLineParameters parameters)
         {
@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (PSObjectHelper.ShouldShowComputerNameProperty(so))
                 {
                     activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null,
-                        new MshExpression(RemotingConstants.ComputerNameNoteProperty)));
+                        new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
                 }
                 return;
             }
@@ -293,9 +293,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private static int ComputeDefaultAlignment(PSObject so, MshExpression ex)
+        private static int ComputeDefaultAlignment(PSObject so, PSPropertyExpression ex)
         {
-            List<MshExpressionResult> rList = ex.GetValues(so);
+            List<PSPropertyExpressionResult> rList = ex.GetValues(so);
 
             if ((rList.Count == 0) || (rList[0].Exception != null))
                 return TextAlignment.Left;

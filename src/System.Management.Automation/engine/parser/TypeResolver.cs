@@ -857,6 +857,7 @@ namespace System.Management.Automation
             // Add additional utility types that are useful as type accelerators, but aren't
             // fundamentally "core language", or may be unsafe to expose to untrusted input.
             builtinTypeAccelerators.Add("scriptblock", typeof(ScriptBlock));
+            builtinTypeAccelerators.Add("pspropertyexpression", typeof(PSPropertyExpression));
             builtinTypeAccelerators.Add("psvariable", typeof(PSVariable));
             builtinTypeAccelerators.Add("type", typeof(Type));
             builtinTypeAccelerators.Add("psmoduleinfo", typeof(PSModuleInfo));

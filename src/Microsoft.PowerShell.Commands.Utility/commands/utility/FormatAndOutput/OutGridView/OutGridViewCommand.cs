@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         private const string DataNotQualifiedForGridView = "DataNotQualifiedForGridView";
         private const string RemotingNotSupported = "RemotingNotSupported";
         private TypeInfoDataBase _typeInfoDataBase;
-        private MshExpressionFactory _expressionFactory;
+        private PSPropertyExpressionFactory _expressionFactory;
         private OutWindowProxy _windowProxy;
         private GridHeader _gridHeader;
 
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // Set up the ExpressionFactory
-            _expressionFactory = new MshExpressionFactory();
+            _expressionFactory = new PSPropertyExpressionFactory();
 
             // If the value of the Title parameter is valid, use it as a window's title.
             if (this.Title != null)
