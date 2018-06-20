@@ -227,8 +227,8 @@
             <Shortcut Id="PowerShell_ProgramsMenuShortcut" 
                       Name="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
                       Description="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
-                      Target="[$(var.ProductDirectoryName)]pwsh.exe" 
-                      WorkingDirectory="$(var.ProductDirectoryName)"
+                      Target="[$(var.ProductDirectoryName)]pwsh.exe"
+                      Arguments="-WorkingDirectory ~"
                       Icon = "PowerShellExe.ico" />
             <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
             <!-- HKMU is HKLM when installing perMachine and HKCU when installing perUser-->
