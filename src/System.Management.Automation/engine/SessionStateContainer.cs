@@ -3774,7 +3774,8 @@ namespace System.Management.Automation
                 {
                     PSTraceSource.NewArgumentNullException("paths");
                 }
-                else if (path.EndsWith((":" + Path.DirectorySeparatorChar), StringComparison.Ordinal) || path.EndsWith((":" + Path.AltDirectorySeparatorChar), StringComparison.Ordinal))
+                else if (path.EndsWith((":" + Path.DirectorySeparatorChar), StringComparison.Ordinal) ||
+                         path.EndsWith((":" + Path.AltDirectorySeparatorChar), StringComparison.Ordinal))
                 {
                     // path is Windows root
                     resolvePath = path;
