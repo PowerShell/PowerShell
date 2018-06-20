@@ -28,8 +28,8 @@ The `WebListener.dll` takes 6 arguments:
 Import-Module .\build.psm1
 Publish-PSTestTools
 $Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084 -Tls11Port 8085 -TlsPort 8086
-```
 
+```
 ## Tests
 
 ### / or /Home/
@@ -681,4 +681,21 @@ Server: Kestrel
 X-WebListener-Has-Range: false
 Content-Length: 20
 Content-Type: application/octet-stream
+```
+
+### /Retry/{sessionId}/{failureCode}/{failureCount}
+
+This endpoint causes the failure specified by `failureCode` for `failureCount` number of times.
+After that a status 200 is returned with body containing the number of times the failure was caused.
+
+```powershell
+$response = Invoke-WebRequest -Uri 'http://127.0.0.1:8083/Retry?failureCode=599&failureCount=2&sessionid=100&' -RetryCount 2 -RetryIntervalSec 1
+```
+
+Response Body:
+
+```json
+{
+  "failureResponsesSent":2
+}
 ```
