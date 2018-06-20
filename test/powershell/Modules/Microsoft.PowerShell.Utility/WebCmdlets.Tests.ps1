@@ -754,9 +754,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $command = "Invoke-WebRequest -Uri '$uri' -RetryCount $retryCount -RetryIntervalSec 1"
         $result = ExecuteWebCommand -command $command
 
-        $result.output.StatusCode | Should Be "200"
+        $result.output.StatusCode | Should -Be "200"
         $jsonResult = $result.output.Content | ConvertFrom-Json
-        $jsonResult.failureResponsesSent | Should Be $failureCount
+        $jsonResult.failureResponsesSent | Should -Be $failureCount
     }
 
     It "Invoke-WebRequest should fail when failureCount is greater than retryCount" {
@@ -765,7 +765,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $command = "Invoke-WebRequest -Uri '$uri' -RetryCount 1 -RetryIntervalSec 1"
         $result = ExecuteWebCommand -command $command
         $jsonError = $result.error | ConvertFrom-Json
-        $jsonError.error | Should Be 'Error: HTTP - 400 occurred.'
+        $jsonError.error | Should -BeExactly 'Error: HTTP - 400 occurred.'
     }
 
     #endregion
