@@ -230,14 +230,14 @@ namespace Microsoft.PowerShell.Commands
         private int _maximumRedirection = -1;
 
         /// <summary>
-        /// Gets or Sets the RetryCount property, which determines the number of retries of a failed web request.
+        /// Gets or sets the RetryCount property, which determines the number of retries of a failed web request.
         /// </summary>
         [Parameter]
         [ValidateRange(0, Int32.MaxValue)]
         public virtual int RetryCount { get; set; } = 0;
 
         /// <summary>
-        /// Gets or Sets the RetryIntervalSec property, which determines the number seconds between retries.
+        /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
         /// </summary>
         [Parameter]
         [ValidateRange(1, Int32.MaxValue)]
@@ -646,7 +646,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if(RetryCount > 0)
+            if (RetryCount > 0)
             {
                 WebSession.RetryCount = RetryCount;
 

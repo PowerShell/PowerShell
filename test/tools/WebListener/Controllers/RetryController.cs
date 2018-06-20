@@ -34,13 +34,13 @@ namespace mvc.Controllers
                 {
                     Response.StatusCode = retry.Item1;
                     retryInfo[sessionId] = Tuple.Create(retry.Item1, retry.Item2, retry.Item3 + 1);
-                    Hashtable error = new Hashtable {{"error", $"Error: HTTP - {retry.Item1} occurred."}};
+                    Hashtable error = new Hashtable { { "error", $"Error: HTTP - {retry.Item1} occurred." } };
                     return Json(error);
                 }
                 else
                 {
                     retryInfo.Remove(sessionId);
-                    var resp = new Hashtable {{"failureResponsesSent", retry.Item3}};
+                    var resp = new Hashtable { { "failureResponsesSent", retry.Item3 } };
                     return Json(resp);
                 }
             }
@@ -50,7 +50,7 @@ namespace mvc.Controllers
                 var newRetryInfoItem = Tuple.Create(failureCode, failureCount, 1);
                 retryInfo.Add(sessionId, newRetryInfoItem);
                 Response.StatusCode = failureCode;
-                Hashtable error = new Hashtable {{ "error", $"Error: HTTP - {failureCode} occurred." }};
+                Hashtable error = new Hashtable { { "error", $"Error: HTTP - {failureCode} occurred." } };
                 return Json(error);
             }
         }
