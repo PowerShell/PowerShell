@@ -320,14 +320,11 @@ namespace Microsoft.PowerShell.Commands
 
             int result = p; 
 
-            unchecked
+            foreach (object property in new object[] { obj.Name, obj.Guid, obj.RequiredVersion, obj.Version, obj.MaximumVersion })
             {
-                foreach (object property in new object[] { obj.Name, obj.Guid, obj.RequiredVersion, obj.Version, obj.MaximumVersion })
+                if (property != null)
                 {
-                    if (property != null)
-                    {
-                        result = q * result + property.GetHashCode();
-                    }
+                    result = unchecked(q * result + property.GetHashCode());
                 }
             }
 
