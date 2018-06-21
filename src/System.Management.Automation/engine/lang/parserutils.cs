@@ -908,7 +908,7 @@ namespace System.Management.Automation
                     pattern = rList[0];
                     if (rList.Count > 1)
                     {
-                        substitute = rList[1];
+                        substitute = PSObject.Base(rList[1]);
                     }
                 }
             }
@@ -972,6 +972,9 @@ namespace System.Management.Automation
         {
             switch (substitute)
             {
+                case string replacementString:
+                    return regex.Replace(input, replacementString);
+
                 case ScriptBlock sb:
                     MatchEvaluator me = match => {
                         var result = sb.DoInvokeReturnAsIs(
