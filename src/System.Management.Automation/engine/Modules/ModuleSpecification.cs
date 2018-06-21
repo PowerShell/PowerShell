@@ -186,36 +186,39 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         public override string ToString()
         {
-            string moduleSpecString = string.Empty;
             if (Guid == null && Version == null && RequiredVersion == null && MaximumVersion == null)
             {
-                moduleSpecString = Name;
+                return Name;
+            }
+
+            var moduleSpecBuilder = new StringBuilder();
+
+            moduleSpecBuilder.Append("@{ ModuleName = '").Append(Name).Append("'");
+
+            if (Guid != null)
+            {
+                moduleSpecBuilder.Append("; Guid = '{").Append(Guid).Append("}' ");
+            }
+
+            if (RequiredVersion != null)
+            {
+                moduleSpecBuilder.Append("; RequiredVersion = '").Append(RequiredVersion).Append("'");
             }
             else
             {
-                moduleSpecString = "@{ ModuleName = '" + Name + "'";
-                if (Guid != null)
+                if (Version != null)
                 {
-                    moduleSpecString += "; Guid = '{" + Guid + "}' ";
+                    moduleSpecBuilder.Append("; ModuleVersion = '").Append(Version).Append("'");
                 }
-                if (RequiredVersion != null)
+                if (MaximumVersion != null)
                 {
-                    moduleSpecString += "; RequiredVersion = '" + RequiredVersion + "'";
+                    moduleSpecBuilder.Append("; MaximumVersion = '").Append(MaximumVersion).Append("'");
                 }
-                else
-                {
-                    if (Version != null)
-                    {
-                        moduleSpecString += "; ModuleVersion = '" + Version + "'";
-                    }
-                    if (MaximumVersion != null)
-                    {
-                        moduleSpecString += "; MaximumVersion = '" + MaximumVersion + "'";
-                    }
-                }
-                moduleSpecString += " }";
             }
-            return moduleSpecString;
+
+            moduleSpecBuilder.Append(" }");
+
+            return moduleSpecBuilder.ToString();
         }
 
         /// <summary>
