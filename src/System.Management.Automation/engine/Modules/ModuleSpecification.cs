@@ -91,31 +91,35 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (DictionaryEntry entry in hashtable)
                 {
-                    if (entry.Key.ToString().Equals("ModuleName", StringComparison.OrdinalIgnoreCase))
+                    string field = entry.Key.ToString();
+
+                    if (field.Equals("ModuleName", StringComparison.OrdinalIgnoreCase))
                     {
                         moduleSpecification.Name = LanguagePrimitives.ConvertTo<string>(entry.Value);
                     }
-                    else if (entry.Key.ToString().Equals("ModuleVersion", StringComparison.OrdinalIgnoreCase))
+                    else if (field.Equals("ModuleVersion", StringComparison.OrdinalIgnoreCase))
                     {
                         moduleSpecification.Version = LanguagePrimitives.ConvertTo<Version>(entry.Value);
                     }
-                    else if (entry.Key.ToString().Equals("RequiredVersion", StringComparison.OrdinalIgnoreCase))
+                    else if (field.Equals("RequiredVersion", StringComparison.OrdinalIgnoreCase))
                     {
                         moduleSpecification.RequiredVersion = LanguagePrimitives.ConvertTo<Version>(entry.Value);
                     }
-                    else if (entry.Key.ToString().Equals("MaximumVersion", StringComparison.OrdinalIgnoreCase))
+                    else if (field.Equals("MaximumVersion", StringComparison.OrdinalIgnoreCase))
                     {
                         moduleSpecification.MaximumVersion = LanguagePrimitives.ConvertTo<String>(entry.Value);
                         ModuleCmdletBase.GetMaximumVersion(moduleSpecification.MaximumVersion);
                     }
-                    else if (entry.Key.ToString().Equals("GUID", StringComparison.OrdinalIgnoreCase))
+                    else if (field.Equals("GUID", StringComparison.OrdinalIgnoreCase))
                     {
                         moduleSpecification.Guid = LanguagePrimitives.ConvertTo<Guid?>(entry.Value);
                     }
                     else
                     {
                         if (badKeys.Length > 0)
+                        {
                             badKeys.Append(", ");
+                        }
                         badKeys.Append("'");
                         badKeys.Append(entry.Key.ToString());
                         badKeys.Append("'");
