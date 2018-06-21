@@ -1,28 +1,28 @@
-function PermuteOnProperty
+function PermuteHashtableOnProperty
 {
-    param([hashtable[]]$Object, [string]$Key, [object]$Value)
+    param([hashtable[]]$Hashtable, [string]$Key, [object]$Value)
 
-    foreach ($obj in $Object)
+    foreach ($ht in $Hashtable)
     {
-        $obj.Clone()
+        $ht.Clone()
     }
 
-    foreach ($obj in $Object)
+    foreach ($ht in $Hashtable)
     {
-        $o2 = $obj.Clone()
-        $o2.$Key = $Value
-        $o2
+        $ht2 = $ht.Clone()
+        $ht2.$Key = $Value
+        $ht2
     }
 }
 
-function PermuteObject
+function PermuteHashtable
 {
-    param([hashtable]$InitialObject, [hashtable]$KeyValues)
+    param([hashtable]$InitialTable, [hashtable]$KeyValues)
 
-    $l = $InitialObject
+    $l = $InitialTable
     foreach ($key in $KeyValues.Keys)
     {
-        $l = PermuteOnProperty -Object $l -Key $key -Value $KeyValues[$key]
+        $l = PermuteOnProperty -Hashtable $l -Key $key -Value $KeyValues[$key]
     }
 
     $l
@@ -55,7 +55,7 @@ Describe "Valid ModuleSpecification objects" {
     BeforeAll {
         $testCases = [System.Collections.Generic.List[hashtable]]::new()
 
-        foreach ($case in (PermuteObject -InitialObject $modSpecRequired -KeyValues $requiredOptionalConstraints))
+        foreach ($case in (PermuteHashtable -InitialObject $modSpecRequired -KeyValues $requiredOptionalConstraints))
         {
             $testCases.Add(@{
                 ModuleSpecification = $case
@@ -63,7 +63,7 @@ Describe "Valid ModuleSpecification objects" {
             })
         }
 
-        foreach ($case in (PermuteObject -InitialObject $modSpecRange -KeyValues $rangeOptionalConstraints))
+        foreach ($case in (PermuteHashtable -InitialObject $modSpecRange -KeyValues $rangeOptionalConstraints))
         {
             $testCases.Add(@{
                 ModuleSpecification = $case
