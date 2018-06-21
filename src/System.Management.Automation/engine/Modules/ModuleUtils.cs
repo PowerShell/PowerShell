@@ -11,10 +11,26 @@ namespace System.Management.Automation.Internal
 {
     internal static class ModuleUtils
     {
+        // Default option for local file system enumeration:
+        //  - Ignore files/directories when access is denied;
+        //  - Search top directory only.
+        private readonly static System.IO.EnumerationOptions s_defaultEnumerationOptions =
+                                        new System.IO.EnumerationOptions() { AttributesToSkip = 0 };
+
+        // Default option for UNC path enumeration. Same as above plus a large buffer size.
+        // For network shares, a large buffer may result in better performance as more results can be batched over the wire.
+        // The buffer size 16K is recommended in the comment of the 'BufferSize' property:
+        //    "A "large" buffer, for example, would be 16K. Typical is 4K."
+        private readonly static System.IO.EnumerationOptions s_uncPathEnumerationOptions =
+                                        new System.IO.EnumerationOptions() { AttributesToSkip = 0, BufferSize = 16384 };
+
+        /// <summary>
+        /// Check if a directory could be a module folder.
+        /// </summary>
         internal static bool IsPossibleModuleDirectory(string dir)
         {
             // We shouldn't be searching in hidden directories.
-            var attributes = File.GetAttributes(dir);
+            FileAttributes attributes = File.GetAttributes(dir);
             if (0 != (attributes & FileAttributes.Hidden))
             {
                 return false;
@@ -27,7 +43,6 @@ namespace System.Management.Automation.Internal
                 return false;
             }
 
-#if !CORECLR
             dir = Path.GetFileName(dir);
             // Use some simple pattern matching to avoid the call into GetCultureInfo when we know it will fail (and throw).
             if ((dir.Length == 2 && char.IsLetter(dir[0]) && char.IsLetter(dir[1]))
@@ -43,32 +58,29 @@ namespace System.Management.Automation.Internal
                 }
                 catch { }
             }
-#endif
 
             return true;
         }
 
         /// <summary>
-        /// Get a list of all module files
-        /// which can be imported just by specifying a non rooted file name of the module
-        /// (Import-Module foo\bar.psm1;  but not Import-Module .\foo\bar.psm1)
+        /// Get all module files by searching the given directory recursively.
+        /// All sub-directories that could be a module folder will be searched.
         /// </summary>
-        /// <remarks>When obtaining all module files we return all possible
-        /// combinations for a given file. For example, for foo we return both
-        /// foo.psd1 and foo.psm1 if found. Get-Module will create the module
-        /// info only for the first one</remarks>
         internal static IEnumerable<string> GetAllAvailableModuleFiles(string topDirectoryToCheck)
         {
+            if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
+
+            var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
             Queue<string> directoriesToCheck = new Queue<string>();
             directoriesToCheck.Enqueue(topDirectoryToCheck);
 
             while (directoriesToCheck.Count > 0)
             {
-                var directoryToCheck = directoriesToCheck.Dequeue();
+                string directoryToCheck = directoriesToCheck.Dequeue();
                 try
                 {
-                    var subDirectories = Directory.GetDirectories(directoryToCheck, "*", SearchOption.TopDirectoryOnly);
-                    foreach (var toAdd in subDirectories)
+                    string[] subDirectories = Directory.GetDirectories(directoryToCheck, "*", options);
+                    foreach (string toAdd in subDirectories)
                     {
                         if (IsPossibleModuleDirectory(toAdd))
                         {
@@ -79,7 +91,7 @@ namespace System.Management.Automation.Internal
                 catch (IOException) { }
                 catch (UnauthorizedAccessException) { }
 
-                var files = Directory.GetFiles(directoryToCheck, "*", SearchOption.TopDirectoryOnly);
+                string[] files = Directory.GetFiles(directoryToCheck, "*", options);
                 foreach (string moduleFile in files)
                 {
                     foreach (string ext in ModuleIntrinsics.PSModuleExtensions)
@@ -94,7 +106,7 @@ namespace System.Management.Automation.Internal
             }
         }
 
-        internal static IEnumerable<string> GetDefaultAvailableModuleFiles(bool force, bool isForAutoDiscovery, ExecutionContext context)
+        internal static IEnumerable<string> GetDefaultAvailableModuleFiles(bool isForAutoDiscovery, ExecutionContext context)
         {
             HashSet<string> uniqueModuleFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -146,59 +158,74 @@ namespace System.Management.Automation.Internal
             }
         }
 
-        internal static List<string> GetModuleVersionsFromAbsolutePath(string directory)
+        /// <summary>
+        /// Get a list of module files from the given directory without recursively searching all sub-directories.
+        /// This method assumes the given directory is a module folder or a version sub-directory of a module folder.
+        /// </summary>
+        internal static List<string> GetModuleFilesFromAbsolutePath(string directory)
         {
             List<string> result = new List<string>();
             string fileName = Path.GetFileName(directory);
-            Version moduleVersion;
-            // if the user give the module path including version, we should be able to find the module as well
-            if (Version.TryParse(fileName, out moduleVersion) && Directory.Exists(Directory.GetParent(directory).ToString()))
-            {
-                fileName = Directory.GetParent(directory).Name;
-            }
-            foreach (var version in GetModuleVersionSubfolders(directory))
-            {
-                var qualifiedPathWithVersion = Path.Combine(directory, Path.Combine(version.ToString(), fileName));
-                string manifestPath = qualifiedPathWithVersion + StringLiterals.PowerShellDataFileExtension;
-                if (File.Exists(manifestPath))
-                {
-                    bool isValidModuleVersion = version.Equals(ModuleIntrinsics.GetManifestModuleVersion(manifestPath));
 
-                    if (isValidModuleVersion)
+            // If the given directory doesn't exist or it's the root folder, then return an empty list.
+            if (!Directory.Exists(directory) || string.IsNullOrEmpty(fileName)) { return result; }
+
+            // If the user give the module path including version, the module name could be the parent folder name.
+            if (Version.TryParse(fileName, out Version ver))
+            {
+                string parentDirPath = Path.GetDirectoryName(directory);
+                string parentDirName = Path.GetFileName(parentDirPath);
+
+                // If the parent directory is NOT a root folder, then it could be the module folder.
+                if (!string.IsNullOrEmpty(parentDirName))
+                {
+                    string manifestPath = Path.Combine(directory, parentDirName);
+                    manifestPath += StringLiterals.PowerShellDataFileExtension;
+                    if (File.Exists(manifestPath) && ver.Equals(ModuleIntrinsics.GetManifestModuleVersion(manifestPath)))
                     {
                         result.Add(manifestPath);
+                        return result;
                     }
+                }
+            }
+
+            // If we reach here, then use the given directory as the module folder.
+            foreach (Version version in GetModuleVersionSubfolders(directory))
+            {
+                string manifestPath = Path.Combine(directory, version.ToString(), fileName);
+                manifestPath += StringLiterals.PowerShellDataFileExtension;
+                if (File.Exists(manifestPath) && version.Equals(ModuleIntrinsics.GetManifestModuleVersion(manifestPath)))
+                {
+                    result.Add(manifestPath);
                 }
             }
 
             foreach (string ext in ModuleIntrinsics.PSModuleExtensions)
             {
                 string moduleFile = Path.Combine(directory, fileName) + ext;
-
-                if (!Utils.FileExists(moduleFile))
+                if (File.Exists(moduleFile))
                 {
-                    continue;
+                    result.Add(moduleFile);
+
+                    // when finding the default modules we stop when the first
+                    // match is hit - searching in order .psd1, .psm1, .dll,
+                    // if a file is found but is not readable then it is an error.
+                    break;
                 }
-
-                result.Add(moduleFile);
-
-                // when finding the default modules we stop when the first
-                // match is hit - searching in order .psd1, .psm1, .dll
-                // if a file is found but is not readable then it is an
-                // error
-                break;
             }
 
             return result;
         }
 
         /// <summary>
-        /// Get a list of the available module files
-        /// which can be imported just by specifying a non rooted directory name of the module
-        /// (Import-Module foo\bar;  but not Import-Module .\foo\bar or Import-Module .\foo\bar.psm1)
+        /// Get a list of the available module files from the given directory.
+        /// Search all module folders under the specified directory, but do not search sub-directories under a module folder.
         /// </summary>
         internal static IEnumerable<string> GetDefaultAvailableModuleFiles(string topDirectoryToCheck)
         {
+            if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
+
+            var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
             List<Version> versionDirectories = new List<Version>();
             LinkedList<string> directoriesToCheck = new LinkedList<string>();
             directoriesToCheck.AddLast(topDirectoryToCheck);
@@ -207,11 +234,11 @@ namespace System.Management.Automation.Internal
             {
                 versionDirectories.Clear();
                 string[] subdirectories;
-                var directoryToCheck = directoriesToCheck.First.Value;
+                string directoryToCheck = directoriesToCheck.First.Value;
                 directoriesToCheck.RemoveFirst();
                 try
                 {
-                    subdirectories = Directory.GetDirectories(directoryToCheck, "*", SearchOption.TopDirectoryOnly);
+                    subdirectories = Directory.GetDirectories(directoryToCheck, "*", options);
                     ProcessPossibleVersionSubdirectories(subdirectories, versionDirectories);
                 }
                 catch (IOException) { subdirectories = Utils.EmptyArray<string>(); }
@@ -219,10 +246,10 @@ namespace System.Management.Automation.Internal
 
                 bool isModuleDirectory = false;
                 string proposedModuleName = Path.GetFileName(directoryToCheck);
-                foreach (var version in versionDirectories)
+                foreach (Version version in versionDirectories)
                 {
-                    var qualifiedPathWithVersion = Path.Combine(directoryToCheck, Path.Combine(version.ToString(), proposedModuleName));
-                    string manifestPath = qualifiedPathWithVersion + StringLiterals.PowerShellDataFileExtension;
+                    string manifestPath = Path.Combine(directoryToCheck, version.ToString(), proposedModuleName);
+                    manifestPath += StringLiterals.PowerShellDataFileExtension;
                     if (File.Exists(manifestPath))
                     {
                         isModuleDirectory = true;
@@ -230,22 +257,23 @@ namespace System.Management.Automation.Internal
                     }
                 }
 
-                foreach (string ext in ModuleIntrinsics.PSModuleExtensions)
+                if (!isModuleDirectory)
                 {
-                    string moduleFile = Path.Combine(directoryToCheck, proposedModuleName) + ext;
-                    if (!File.Exists(moduleFile))
+                    foreach (string ext in ModuleIntrinsics.PSModuleExtensions)
                     {
-                        continue;
+                        string moduleFile = Path.Combine(directoryToCheck, proposedModuleName) + ext;
+                        if (File.Exists(moduleFile))
+                        {
+                            isModuleDirectory = true;
+                            yield return moduleFile;
+
+                            // when finding the default modules we stop when the first
+                            // match is hit - searching in order .psd1, .psm1, .dll
+                            // if a file is found but is not readable then it is an
+                            // error
+                            break;
+                        }
                     }
-
-                    isModuleDirectory = true;
-                    yield return moduleFile;
-
-                    // when finding the default modules we stop when the first
-                    // match is hit - searching in order .psd1, .psm1, .dll
-                    // if a file is found but is not readable then it is an
-                    // error
-                    break;
                 }
 
                 if (!isModuleDirectory)
@@ -280,7 +308,8 @@ namespace System.Management.Automation.Internal
 
             if (!string.IsNullOrWhiteSpace(moduleBase) && Directory.Exists(moduleBase))
             {
-                var subdirectories = Directory.GetDirectories(moduleBase);
+                var options = Utils.PathIsUnc(moduleBase) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
+                string[] subdirectories = Directory.GetDirectories(moduleBase, "*", options);
                 ProcessPossibleVersionSubdirectories(subdirectories, versionFolders);
             }
 
@@ -289,11 +318,10 @@ namespace System.Management.Automation.Internal
 
         private static void ProcessPossibleVersionSubdirectories(string[] subdirectories, List<Version> versionFolders)
         {
-            foreach (var subdir in subdirectories)
+            foreach (string subdir in subdirectories)
             {
-                var subdirName = Path.GetFileName(subdir);
-                Version version;
-                if (Version.TryParse(subdirName, out version))
+                string subdirName = Path.GetFileName(subdir);
+                if (Version.TryParse(subdirName, out Version version))
                 {
                     versionFolders.Add(version);
                 }
@@ -307,7 +335,7 @@ namespace System.Management.Automation.Internal
         internal static bool IsModuleInVersionSubdirectory(string modulePath, out Version version)
         {
             version = null;
-            var folderName = Path.GetDirectoryName(modulePath);
+            string folderName = Path.GetDirectoryName(modulePath);
             if (folderName != null)
             {
                 folderName = Path.GetFileName(folderName);
@@ -339,7 +367,7 @@ namespace System.Management.Automation.Internal
                     )
                 )
             {
-                foreach (string modulePath in GetDefaultAvailableModuleFiles(true, false, context))
+                foreach (string modulePath in GetDefaultAvailableModuleFiles(isForAutoDiscovery: false, context))
                 {
                     // Skip modules that have already been loaded so that we don't expose private commands.
                     string moduleName = Path.GetFileNameWithoutExtension(modulePath);
