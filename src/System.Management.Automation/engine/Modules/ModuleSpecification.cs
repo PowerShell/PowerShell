@@ -309,6 +309,11 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         public int GetHashCode(ModuleSpecification obj)
         {
+            if (obj == null)
+            {
+                return 0;
+            }
+
             // Two ordinary prime numbers for hashing
             int p = 23;
             int q = 59;
