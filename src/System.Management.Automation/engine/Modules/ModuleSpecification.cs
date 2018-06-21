@@ -277,61 +277,17 @@ namespace Microsoft.PowerShell.Commands
     {
         public bool Equals(ModuleSpecification x, ModuleSpecification y)
         {
-            bool result = false;
-
-            if (x == null && y == null)
+            if (x == y)
             {
-                result = true;
-            }
-            else if (x != null && y != null)
-            {
-                if (x.Name != null && y.Name != null)
-                {
-                    result = x.Name.Equals(y.Name, StringComparison.OrdinalIgnoreCase);
-                }
-                else
-                {
-                    result = true;
-                }
-                if (result)
-                {
-                    if (x.Guid.HasValue && y.Guid.HasValue)
-                    {
-                        result = x.Guid.Equals(y.Guid);
-                    }
-                }
-                if (result)
-                {
-                    if (x.Version != null && y.Version != null)
-                    {
-                        result = x.Version.Equals(y.Version);
-                    }
-                    else if (x.Version != null || y.Version != null)
-                    {
-                        result = false;
-                    }
-
-                    if (x.MaximumVersion != null && y.MaximumVersion != null)
-                    {
-                        result = x.MaximumVersion.Equals(y.MaximumVersion);
-                    }
-                    else if (x.MaximumVersion != null || y.MaximumVersion != null)
-                    {
-                        result = false;
-                    }
-
-                    if (result && x.RequiredVersion != null && y.RequiredVersion != null)
-                    {
-                        result = x.RequiredVersion.Equals(y.RequiredVersion);
-                    }
-                    else if (result && (x.RequiredVersion != null || y.RequiredVersion != null))
-                    {
-                        result = false;
-                    }
-                }
+                return true;
             }
 
-            return result;
+            return x != null && y != null
+                && String.Equals(x.Name, y.Name, StringComparison.OrdinalIgnoreCase)
+                && Guid.Equals(x.Guid, y.Guid)
+                && Version.Equals(x.RequiredVersion, y.RequiredVersion)
+                && Version.Equals(x.Version, y.Version)
+                && String.Equals(x.MaximumVersion, y.MaximumVersion);
         }
 
         public int GetHashCode(ModuleSpecification obj)
