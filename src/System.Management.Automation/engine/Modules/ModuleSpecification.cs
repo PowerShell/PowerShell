@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(moduleName))
             {
-                throw new ArgumentNullException("moduleName");
+                throw new ArgumentNullException(nameof(moduleName));
             }
             this.Name = moduleName;
             // Alias name of miniumVersion
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (moduleSpecification == null)
             {
-                throw new ArgumentNullException("moduleSpecification");
+                throw new ArgumentNullException(nameof(moduleSpecification));
             }
 
             var exception = ModuleSpecificationInitHelper(this, moduleSpecification);
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (moduleInfo == null)
             {
-                throw new ArgumentNullException("moduleInfo");
+                throw new ArgumentNullException(nameof(moduleInfo));
             }
 
             this.Name = moduleInfo.Name;
