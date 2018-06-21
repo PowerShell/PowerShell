@@ -519,7 +519,10 @@ namespace System.Management.Automation
                                        invocationInfo: null,
                                        propagateAllExceptionsToTop: true,
                                        args: args);
-            Diagnostics.Assert(result.Count == 1, "Code generation ensures we return the correct type");
+            if (result.Count == 0)
+            {
+                return default(T);
+            }
             return (T)result[0];
         }
 
