@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (var version in ModuleUtils.GetModuleVersionSubfolders(moduleBase))
             {
                 // Skip the version folder if it is not equal to the required version or does not satisfy the minimum/maximum version criteria
-                if (ModuleIntrinsics.IsVersionMatchingConstraints(version, BaseRequiredVersion, BaseMinimumVersion, BaseMaximumVersion))
+                if (!ModuleIntrinsics.IsVersionMatchingConstraints(version, BaseRequiredVersion, BaseMinimumVersion, BaseMaximumVersion))
                 {
                     continue;
                 }
@@ -1668,7 +1668,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (bailOnFirstError) return null;
                 }
-                else if (ModuleIntrinsics.AreModuleFieldsMatchingConstraints(
+                else if (!ModuleIntrinsics.AreModuleFieldsMatchingConstraints(
                     moduleGuid: manifestGuid,
                     moduleVersion: moduleVersion,
                     requiredGuid: requiredModuleGuid,
