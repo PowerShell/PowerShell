@@ -59,9 +59,6 @@ src/System.Management.Automation/engine/parser     @daxian-dbw @BrucePay
 # Area: Providers
 src/System.Management.Automation/namespaces        @BrucePay @anmenaga
 
-# Area: PSReadLine
-src/Microsoft.PowerShell.PSReadLine                @charub
-
 # Area: Remoting
 src/System.Management.Automation/engine/remoting   @dantraMSFT @mirichmo @PaulHigin
 
