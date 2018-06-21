@@ -717,4 +717,47 @@ abc bcd
             $output = $obj | Format-Table | Out-String
             $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
+
+        It "Should render header correctly where header is shorter than column width with justification: <variation>" -TestCases @(
+            @{ variation = "left/right"; obj = [PSCustomObject]@{a="abc";b=123}; expectedTable = @"
+
+a     b
+-     -
+abc 123
+
+
+
+"@ },
+            @{ variation = "left/left"; obj = [PSCustomObject]@{a="abc";b="abc"}; expectedTable = @"
+
+a   b
+-   -
+abc abc
+
+
+
+"@ },
+            @{ variation = "right/left"; obj = [PSCustomObject]@{a=123;b="abc"}; expectedTable = @"
+
+  a b
+  - -
+123 abc
+
+
+
+"@ },
+            @{ variation = "right/right"; obj = [PSCustomObject]@{a=123;b=123}; expectedTable = @"
+
+  a   b
+  -   -
+123 123
+
+
+
+"@ }
+        ) {
+            param($obj, $expectedTable)
+            $output = $obj | Format-Table | Out-String
+            $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
+        }
     }
