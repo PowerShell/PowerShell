@@ -314,9 +314,11 @@ namespace Microsoft.PowerShell.Commands
                 return 0;
             }
 
-            // Two ordinary prime numbers for hashing
+            // Initial prime value
             int p = 23;
-            int q = 59;
+
+            // Use 31 for multiplication. See https://computinglife.wordpress.com/2008/11/20/why-do-hash-functions-use-prime-numbers/
+            int q = 31;
 
             int result = p; 
 
