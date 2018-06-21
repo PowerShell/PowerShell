@@ -304,15 +304,25 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="obj">The module specification for the object.</param>
         /// <returns>A hashcode that is always the same for any module specification with the same properties.</returns>
+        /// <remarks>
+        /// The algorithm in this method is adapted from a StackOverflow answer from Jon Skeet: https://stackoverflow.com/a/263416/9944203
+        /// </remarks>
         public int GetHashCode(ModuleSpecification obj)
         {
-            int result = 0;
+            // Two ordinary prime numbers for hashing
+            int p = 23;
+            int q = 59;
 
-            foreach (object property in new object[] { obj.Name, obj.Guid, obj.RequiredVersion, obj.Version, obj.MaximumVersion })
+            int result = p; 
+
+            unchecked
             {
-                if (property != null)
+                foreach (object property in new object[] { obj.Name, obj.Guid, obj.RequiredVersion, obj.Version, obj.MaximumVersion })
                 {
-                    result ^= property.GetHashCode();
+                    if (property != null)
+                    {
+                        result = q * result + property.GetHashCode();
+                    }
                 }
             }
 
