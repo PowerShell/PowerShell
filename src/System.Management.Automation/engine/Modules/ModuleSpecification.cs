@@ -273,8 +273,17 @@ namespace Microsoft.PowerShell.Commands
         public Version RequiredVersion { get; internal set; }
     }
 
+    /// <summary>
+    /// Compares two ModuleSpecification objects for equality.
+    /// </summary>
     internal class ModuleSpecificationComparer : IEqualityComparer<ModuleSpecification>
     {
+        /// <summary>
+        /// Check if two module specifications are property-wise equal.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>True if the specifications are equal, false otherwise.</returns>
         public bool Equals(ModuleSpecification x, ModuleSpecification y)
         {
             if (x == y)
@@ -290,31 +299,20 @@ namespace Microsoft.PowerShell.Commands
                 && String.Equals(x.MaximumVersion, y.MaximumVersion);
         }
 
+        /// <summary>
+        /// Get a property-based hashcode for a ModuleSpecification object.
+        /// </summary>
+        /// <param name="obj">The module specification for the object.</param>
+        /// <returns>A hashcode that is always the same for any module specification with the same properties.</returns>
         public int GetHashCode(ModuleSpecification obj)
         {
             int result = 0;
 
-            if (obj != null)
+            foreach (object property in new object[] { obj.Name, obj.Guid, obj.RequiredVersion, obj.Version, obj.MaximumVersion })
             {
-                if (obj.Name != null)
+                if (property != null)
                 {
-                    result = result ^ obj.Name.GetHashCode();
-                }
-                if (obj.Guid.HasValue)
-                {
-                    result = result ^ obj.Guid.GetHashCode();
-                }
-                if (obj.Version != null)
-                {
-                    result = result ^ obj.Version.GetHashCode();
-                }
-                if (obj.MaximumVersion != null)
-                {
-                    result = result ^ obj.MaximumVersion.GetHashCode();
-                }
-                if (obj.RequiredVersion != null)
-                {
-                    result = result ^ obj.RequiredVersion.GetHashCode();
+                    result ^= property.GetHashCode();
                 }
             }
 
