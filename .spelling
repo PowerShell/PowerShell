@@ -1060,8 +1060,11 @@ v6.0.
 #region test/tools/WebListener/README.md Overrides
  - test/tools/WebListener/README.md
 Auth
+failureCode
+failureCount
 NoResume
 NTLM
 NumberBytes
 ResponseHeaders
+sessionId
 #endregion
