@@ -109,20 +109,36 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="isContainer">
         /// return true if path points to a directory else returns false.
         /// </param>
-        /// <returns></returns>
+        /// <returns>FileInfo or DirectoryInfo object.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// path is null
+        /// </exception>
+        /// <exception cref="System.IO.IOException">
+        /// I/O error occurs
+        /// </exception>
+        /// <exception cref="System.UnauthorizedAccessException">
+        /// an I/O error or a specific type of security error
+        /// </exception>
         private static FileSystemInfo GetFileSystemInfo(string path, ref bool isContainer)
         {
-            isContainer = false;
+            // We use 'FileInfo.Attributes' (not 'FileInfo.Exist')
+            // because we want to get exceptions
+            // like UnauthorizedAccessException or IOException.
+            FileSystemInfo fsinfo = new FileInfo(path);
+            var attr = fsinfo.Attributes;
+            var exists = (int)attr != -1;
+            isContainer = exists && attr.HasFlag(FileAttributes.Directory);
 
-            if (Utils.FileExists(path))
+            if (exists)
             {
-                return new FileInfo(path);
-            }
-
-            if (Utils.DirectoryExists(path))
-            {
-                isContainer = true;
-                return new DirectoryInfo(path);
+                if (isContainer)
+                {
+                    return new DirectoryInfo(path);
+                }
+                else
+                {
+                    return fsinfo;
+                }
             }
 
             return null;
@@ -445,18 +461,7 @@ namespace Microsoft.PowerShell.Commands
             if (driveIsFixed)
             {
                 // Since the drive is fixed, ensure the root is valid.
-                try
-                {
-                    validDrive = Utils.DirectoryExists(drive.Root);
-                }
-                catch (IOException)
-                {
-                    // Ignore, the network path may not be found.
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    // Ignore, we may be running in an AppContainer
-                }
+                validDrive = Directory.Exists(drive.Root);
             }
 
             if (validDrive)
@@ -1500,7 +1505,15 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            if (Utils.ItemExists(path, out bool isDirectory))
+            // We use 'FileInfo.Attributes' (not 'FileInfo.Exist')
+            // because we want to get exceptions
+            // like UnauthorizedAccessException or IOException.
+            var fileInfo = new FileInfo(path);
+            var attr = fileInfo.Attributes;
+            var exists = (int)attr != -1;
+            var isDirectory = exists && attr.HasFlag(FileAttributes.Directory);
+
+            if (exists)
             {
                 if (isDirectory)
                 {
@@ -1521,9 +1534,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // Maybe the path is a file name so try a FileInfo instead
-                    FileInfo fileInfo = new FileInfo(path);
-
                     FlagsExpression<FileAttributes> evaluator = null;
                     FlagsExpression<FileAttributes> switchEvaluator = null;
                     GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
@@ -2147,7 +2157,6 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ShouldProcess(resource, action))
                 {
-                    bool isDirectory = false;
                     string strTargetPath = value.ToString();
 
                     if (String.IsNullOrEmpty(strTargetPath))
@@ -2156,15 +2165,24 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool exists = false;
+                    bool isDirectory = false;
 
                     // It is legal to create symbolic links to non-existing targets on
                     // both Windows and Linux. It is not legal to create hard links to
                     // non-existing targets on either Windows or Linux.
                     try
                     {
-                        exists = Utils.ItemExists(strTargetPath, out isDirectory);
                         if (itemType == ItemType.SymbolicLink)
-                            exists = true; // pretend the target exists if we're making a symbolic link
+                        {
+                            // pretend the target exists if we're making a symbolic link
+                            exists = true;
+                        }
+                        else
+                        {
+                            var attrs = (new FileInfo(strTargetPath)).Attributes;
+                            exists = (int)attrs != -1;
+                            isDirectory = exists && attrs.HasFlag(FileAttributes.Directory);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -2195,7 +2213,9 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        symLinkExists = Utils.ItemExists(path, out isSymLinkDirectory);
+                        var attrs = (new FileInfo(path)).Attributes;
+                        symLinkExists = (int)attrs != -1;
+                        isSymLinkDirectory = symLinkExists && attrs.HasFlag(FileAttributes.Directory);
                     }
                     catch (Exception e)
                     {
@@ -2324,7 +2344,9 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        exists = Utils.ItemExists(strTargetPath, out isDirectory);
+                        var attrs = (new FileInfo(strTargetPath)).Attributes;
+                        exists = (int)attrs != -1;
+                        isDirectory = exists && attrs.HasFlag(FileAttributes.Directory);
                     }
                     catch (Exception e)
                     {
@@ -2347,20 +2369,20 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool isPathDirectory = false;
-
                     bool pathExists = false;
+                    DirectoryInfo pathDirInfo = new DirectoryInfo(path);
 
                     try
                     {
-                        pathExists = Utils.ItemExists(path, out isPathDirectory);
+                        var attrs = pathDirInfo.Attributes;
+                        pathExists = (int)attrs != -1;
+                        isPathDirectory = pathExists && attrs.HasFlag(FileAttributes.Directory);
                     }
                     catch (Exception e)
                     {
                         WriteError(new ErrorRecord(e, "AccessException", ErrorCategory.PermissionDenied, strTargetPath));
                         return;
                     }
-
-                    DirectoryInfo pathDirInfo = new DirectoryInfo(path);
 
                     if (pathExists)
                     {
@@ -2874,41 +2896,20 @@ namespace Microsoft.PowerShell.Commands
                 continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
-            if ((directory.Attributes & FileAttributes.ReparsePoint) != 0)
+            if (directory.Attributes.HasFlag(FileAttributes.ReparsePoint))
             {
-                bool success = InternalSymbolicLinkLinkCodeMethods.DeleteJunction(directory.FullName);
-
-                if (!success)
-                {
-                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
-                    Exception e = new IOException(error);
-                    WriteError(new ErrorRecord(e, "DeleteJunctionFailed", ErrorCategory.WriteError, directory));
-                    return;
-                }
-
                 try
                 {
-                    if (!Utils.ItemExists(directory.FullName, out bool _))
-                    {
-                        // Directory does not exist
-                        return;
-                    }
+                    directory.Delete();
                 }
-                catch (Exception accessException)
+                catch (Exception exc)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(accessException, "RemoveFileSystemItemUnAuthorizedAccess", ErrorCategory.PermissionDenied, directory);
-
-                    ErrorDetails errorDetails =
-                    new ErrorDetails(this, "FileSystemProviderStrings",
-                        "CannotRemoveItem",
-                        directory.FullName,
-                        accessException.Message);
-
-                    errorRecord.ErrorDetails = errorDetails;
-
-                    WriteError(errorRecord);
-                    return;
+                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
+                    Exception exception = new IOException(error, exc);
+                    WriteError(new ErrorRecord(exception, "DeleteJunctionFailed", ErrorCategory.WriteError, directory));
                 }
+
+                return;
             }
 
             if (continueRemoval)
@@ -3212,9 +3213,12 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
+            var fsinfo = new FileInfo(path);
+
             try
             {
-                result = Utils.ItemExists(path, out bool _);
+                // We don't use File.Exists() because we want to get exceptions.
+                result = (int)fsinfo.Attributes != -1;
 
                 FileSystemItemProviderDynamicParameters itemExistsDynamicParameters =
                     DynamicParameters as FileSystemItemProviderDynamicParameters;
@@ -3222,7 +3226,7 @@ namespace Microsoft.PowerShell.Commands
                 // If the items see if we need to check the age of the file...
                 if (result && itemExistsDynamicParameters != null)
                 {
-                    DateTime lastWriteTime = File.GetLastWriteTime(path);
+                    DateTime lastWriteTime = fsinfo.LastWriteTime;
 
                     if (itemExistsDynamicParameters.OlderThan.HasValue)
                     {
@@ -3519,8 +3523,6 @@ namespace Microsoft.PowerShell.Commands
 
                     if (op["Items"] != null)
                     {
-                        bool destinationPathIsFile = Utils.FileExists(destinationPath);
-
                         PSObject obj = (PSObject)op["Items"];
                         ArrayList itemsList = (ArrayList)obj.BaseObject;
                         foreach (PSObject item in itemsList)
@@ -3532,7 +3534,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (isContainer)
                             {
-                                if (destinationPathIsFile)
+                                if (File.Exists(destinationPath))
                                 {
                                     Exception e = new IOException(String.Format(
                                         CultureInfo.InvariantCulture,
@@ -3893,7 +3895,7 @@ namespace Microsoft.PowerShell.Commands
                 CreateDirectory(destination, false);
 
                 // If failed to create directory
-                if (!Utils.DirectoryExists(destination))
+                if (!Directory.Exists(destination))
                 {
                     return;
                 }
@@ -4962,11 +4964,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
 #if UNIX
-                            // We don't use the Directory class for Unix because the path
-                            // may contain additional globbing patterns such as '[ab]'
-                            // which Directory.EnumerateFiles() processes, giving undesireable
-                            // results in this context.
-                            if (!Utils.ItemExists(result))
+                            if (!Directory.Exists(result))
                             {
                                 String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
                                 Exception e = new IOException(error);
@@ -5428,13 +5426,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     currentPath = MakePath(currentPath, childName);
 
-                    Boolean isContainer = false;
-                    FileSystemInfo fsinfo = GetFileSystemInfo(currentPath, ref isContainer);
+                    var fsinfo = new FileInfo(currentPath);
 
                     // Clean up the child name to proper casing and short-path
                     // expansion if required. Also verify that .NET hasn't over-normalized
                     // the path
-                    if (fsinfo != null)
+                    if ((int)fsinfo.Attributes != -1)
                     {
                         // This might happen if you've passed a child name of two or more dots,
                         // which the .NET APIs treat as the parent directory
@@ -5452,8 +5449,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // We couldn't find the item
-                        if ((!isContainer) &&
-                           (tokenizedPathStack.Count == 0))
+                        if (tokenizedPathStack.Count == 0)
                         {
                             throw PSTraceSource.NewArgumentException("path", FileSystemProviderStrings.ItemDoesNotExist, currentPath);
                         }
@@ -5600,7 +5596,7 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            return Utils.DirectoryExists(path);
+            return Directory.Exists(path);
         }
 
         #region MoveItem
@@ -6015,20 +6011,8 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                FileSystemInfo fileSystemObject = null;// Get the directory object
-
-                if (Utils.ItemExists(path, out bool isDirectory))
-                {
-                    if (isDirectory)
-                    {
-                        fileSystemObject = new DirectoryInfo(path);
-                    }
-                    else
-                    {
-                        // Maybe the path is a file name so try a FileInfo instead
-                        fileSystemObject = new FileInfo(path);
-                    }
-                }
+                bool isDirectory = false;
+                var fileSystemObject = GetFileSystemInfo(path, ref isDirectory);
 
                 if (fileSystemObject == null)
                 {
@@ -6173,11 +6157,18 @@ namespace Microsoft.PowerShell.Commands
             PSObject fileSystemInfoShell = null;
             bool isContainer = false;
 
-            // Create a PSObject with either a DirectoryInfo or FileInfo object
-            // at its core.
+            // We use 'FileInfo.Attributes' (not 'FileInfo.Exist')
+            // because we want to get exceptions
+            // like UnauthorizedAccessException or IOException.
+            var fileInfo = new FileInfo(path);
+            var attr = fileInfo.Attributes;
+            var exists = (int)attr != -1;
+            var isDirectory = exists && attr.HasFlag(FileAttributes.Directory);
 
-            if (Utils.ItemExists(path, out bool isDirectory))
+            if (exists)
             {
+                // Create a PSObject with either a DirectoryInfo or FileInfo object
+                // at its core.
                 if (isDirectory)
                 {
                     isContainer = true;
@@ -6186,7 +6177,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // Maybe the path is a file name so try a FileInfo instead
-                    fileSystemInfoShell = PSObject.AsPSObject(new FileInfo(path));
+                    fileSystemInfoShell = PSObject.AsPSObject(fileInfo);
                 }
             }
 

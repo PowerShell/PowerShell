@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
                             }
-                            else if (Utils.DirectoryExists(qualifiedPath))
+                            else if (Directory.Exists(qualifiedPath))
                             {
                                 // if it points to a directory, add the basename back onto the path...
                                 qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
@@ -924,10 +924,9 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string resolvedModulePath in modulePathCollection)
                     {
                         string moduleName = Path.GetFileName(resolvedModulePath);
-                        bool isDirectory = Utils.DirectoryExists(resolvedModulePath);
 
                         // If the given path is a valid module file, we will load the specific file
-                        if (!isDirectory && ModuleIntrinsics.IsPowerShellModuleExtension(Path.GetExtension(moduleName)))
+                        if (!Directory.Exists(resolvedModulePath) && ModuleIntrinsics.IsPowerShellModuleExtension(Path.GetExtension(moduleName)))
                         {
                             PSModuleInfo module = CreateModuleInfoForGetModule(resolvedModulePath, refresh);
                             if (module != null)
@@ -1624,7 +1623,7 @@ namespace Microsoft.PowerShell.Commands
                         return loadedModule;
                     }
                     // remove the module if force is specified  (and if module is already loaded)
-                    else if (Utils.FileExists(rootedPath))
+                    else if (File.Exists(rootedPath))
                     {
                         RemoveModule(loadedModule);
                     }
@@ -4278,7 +4277,7 @@ namespace Microsoft.PowerShell.Commands
                             // which we can't really do b/c the file doesn't exist.
                             fixedFileName = psHome + "\\" + Path.GetFileName(s);
                         }
-                        else if (verifyFilesExist && !Utils.FileExists(fixedFileName))
+                        else if (verifyFilesExist && !File.Exists(fixedFileName))
                         {
                             string message = StringUtil.Format(SessionStateStrings.PathNotFound, fixedFileName);
                             throw new FileNotFoundException(message, fixedFileName);
@@ -5002,7 +5001,7 @@ namespace Microsoft.PowerShell.Commands
                     else // reimport the module + return alreadyLoadedModule (alreadyLoadedModule = no need to proceed with regular import)
                     {
                         // If the module has already been loaded, then while loading it the second time, we should load it with the DefaultCommandPrefix specified in the module manifest. (If there is no Prefix from command line)
-                        if (string.IsNullOrEmpty(prefix) && Utils.FileExists(alreadyLoadedModule.Path))
+                        if (string.IsNullOrEmpty(prefix) && File.Exists(alreadyLoadedModule.Path))
                         {
                             string defaultPrefix = GetDefaultPrefix(alreadyLoadedModule);
                             if (!string.IsNullOrEmpty(defaultPrefix))
@@ -5178,7 +5177,7 @@ namespace Microsoft.PowerShell.Commands
                     found = true;
                     return module;
                 }
-                else if (Utils.FileExists(fileName))
+                else if (File.Exists(fileName))
                 {
                     moduleFileFound = true;
                     // Win8: 325243 - Added the version check so that we do not unload modules with the same name but different version
@@ -5328,7 +5327,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Assert(fileName != null, "Filename argument to LoadModule() shouldn't be null");
 
-            if (!Utils.FileExists(fileName))
+            if (!File.Exists(fileName))
             {
                 found = false;
                 moduleFileFound = false;
