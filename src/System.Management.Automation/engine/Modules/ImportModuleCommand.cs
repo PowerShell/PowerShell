@@ -576,13 +576,8 @@ namespace Microsoft.PowerShell.Commands
                     PSModuleInfo module;
                     if (!BaseForce && Context.Modules.ModuleTable.TryGetValue(rootedPath, out module))
                     {
-                        if (RequiredVersion == null
-                            || module.Version.Equals(RequiredVersion)
-                            || (BaseMinimumVersion == null && BaseMaximumVersion == null)
-                            || module.ModuleType != ModuleType.Manifest
-                            || (BaseMinimumVersion == null && BaseMaximumVersion != null && module.Version <= BaseMaximumVersion)
-                            || (BaseMinimumVersion != null && BaseMaximumVersion == null && module.Version >= BaseMinimumVersion)
-                            || (BaseMinimumVersion != null && BaseMaximumVersion != null && module.Version >= BaseMinimumVersion && module.Version <= BaseMaximumVersion))
+                        if (module.ModuleType != ModuleType.Manifest
+                            || ModuleIntrinsics.IsVersionMatchingConstraints(module.Version, RequiredVersion, BaseMinimumVersion, BaseMaximumVersion))
                         {
                             alreadyLoaded = true;
                             AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, module);
