@@ -30,7 +30,10 @@ namespace System.Management.Automation
 
         #region member
 
-        internal override bool SiteBinderCanOptimize { get { return false; } }
+        internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn)
+        {
+            return false;
+        }
 
         /// <summary>
         /// Returns null if memberName is not a member in the adapter or

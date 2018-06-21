@@ -1,9 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell.Commands;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+#if !UNIX
+using System.DirectoryServices;
+#endif
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Language;
@@ -18,12 +23,6 @@ using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Microsoft.Management.Infrastructure;
-using Microsoft.PowerShell.Commands;
-#if !CORECLR
-// System.DirectoryServices are not in CoreCLR
-using System.DirectoryServices;
-#endif
 
 namespace System.Management.Automation.Language
 {
@@ -793,8 +792,7 @@ namespace System.Management.Automation
                     { typeof(CimSession),                                  new[] { "CimSession" } },
                     { typeof(MailAddress),                                 new[] { "mailaddress" } },
                     { typeof(SemanticVersion),                             new[] { "semver" } },
-#if !CORECLR
-                    // Following types not in CoreCLR
+#if !UNIX
                     { typeof(DirectoryEntry),                              new[] { "adsi" } },
                     { typeof(DirectorySearcher),                           new[] { "adsisearcher" } },
                     { typeof(ManagementClass),                             new[] { "wmiclass" } },

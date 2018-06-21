@@ -23,9 +23,9 @@ using System.Runtime.Serialization;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Management.Infrastructure;
-
-#if !CORECLR
+#if !UNIX
 using System.DirectoryServices;
+using System.Management;
 #endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -379,8 +379,7 @@ namespace System.Management.Automation
             new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
                                     PSObject.dotNetInstanceAdapter);
-
-#if !CORECLR // WMIv1/ADSI Adapters Not Supported in PowerShell Core
+#if !UNIX
         private static readonly AdapterSet managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), dotNetInstanceAdapter);
         private static readonly AdapterSet managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), dotNetInstanceAdapter);
         private static readonly AdapterSet directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), dotNetInstanceAdapter);
@@ -410,8 +409,7 @@ namespace System.Management.Automation
             if (obj is PSMemberSet) { return PSObject.s_mshMemberSetAdapter; }
             if (obj is PSObject) { return PSObject.s_mshObjectAdapter; }
             if (obj is CimInstance) { return PSObject.s_cimInstanceAdapter; }
-
-#if !CORECLR // WMIv1/ADSI Adapters Not Supported in PowerShell Core
+#if !UNIX
             if (obj is ManagementClass) { return PSObject.managementClassAdapter; }
             if (obj is ManagementBaseObject) { return PSObject.managementObjectAdapter; }
             if (obj is DirectoryEntry) { return PSObject.directoryEntryAdapter; }
