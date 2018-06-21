@@ -2346,12 +2346,11 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool isPathDirectory = false;
-
-                    bool pathExists = false;
+                    FileSystemInfo pathDirInfo;
 
                     try
                     {
-                        pathExists = Utils.ItemExists(path, out isPathDirectory);
+                        pathDirInfo = GetFileSystemInfo(path, out isPathDirectory);
                     }
                     catch (Exception e)
                     {
@@ -2359,7 +2358,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    DirectoryInfo pathDirInfo = new DirectoryInfo(path);
+                    bool pathExists = pathDirInfo != null;
 
                     if (pathExists)
                     {
@@ -2372,7 +2371,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         //Junctions cannot have files
-                        if (DirectoryInfoHasChildItems(pathDirInfo))
+                        if (DirectoryInfoHasChildItems((DirectoryInfo)pathDirInfo))
                         {
                             string message = StringUtil.Format(FileSystemProviderStrings.DirectoryNotEmpty, path);
                             WriteError(new ErrorRecord(new IOException(message), "DirectoryNotEmpty", ErrorCategory.WriteError, path));
@@ -2402,6 +2401,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         CreateDirectory(path, false);
+                        pathDirInfo = new DirectoryInfo(path);
                     }
 
                     try
