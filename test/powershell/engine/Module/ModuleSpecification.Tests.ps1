@@ -53,7 +53,7 @@ $modSpecRange = @{
 
 $rangeOptionalConstraints = @{ MaximumVersion = "3.2.0"; Guid = $guid }
 
-Describe "ModuleSpecification objects and logic" {
+Describe "ModuleSpecification objects and logic" -Tag "CI" {
 
     BeforeAll {
         $testCases = [System.Collections.Generic.List[hashtable]]::new()
