@@ -30,6 +30,11 @@ namespace System.Management.Automation
         [TraceSource("Modules", "Module loading and analysis")]
         internal static PSTraceSource Tracer = PSTraceSource.GetTracer("Modules", "Module loading and analysis");
 
+        // The %WINDIR%\System32\WindowsPowerShell\v1.0\Modules module path,
+        // to load forward compatible Windows PowerShell modules from
+        private static readonly string s_windowsPowerShellPSHomeModulePath =
+            Path.Combine(System.Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "Modules");
+
         internal ModuleIntrinsics(ExecutionContext context)
         {
             _context = context;
@@ -600,6 +605,23 @@ namespace System.Management.Automation
 #endif
         }
 
+#if !UNIX
+        /// <summary>
+        /// Get the path to the Windows PowerShell module directory under the
+        /// System32 directory on Windows (the Windows PowerShell $PSHOME).
+        /// </summary>
+        /// <returns>The path of the Windows PowerShell system module directory.</returns>
+        internal static string GetWindowsPowerShellPSHomeModulePath()
+        {
+            if (!String.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellPSHomeLocation))
+            {
+                return InternalTestHooks.TestWindowsPowerShellPSHomeLocation;
+            }
+
+            return s_windowsPowerShellPSHomeModulePath;
+        }
+#endif
+
         /// <summary>
         /// Combine the PS system-wide module path and the DSC module path
         /// to get the system module paths.
@@ -984,6 +1006,13 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(newModulePathString))
             {
+// If on Windows, we want to add the System32
+// Windows PowerShell module directory
+// so that Windows modules are discovered
+#if !UNIX
+                newModulePathString += Path.PathSeparator + GetWindowsPowerShellPSHomeModulePath();
+#endif
+
                 // Set the environment variable...
                 Environment.SetEnvironmentVariable(Constants.PSModulePathEnvVar, newModulePathString);
             }

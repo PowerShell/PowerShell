@@ -1192,11 +1192,24 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Left, width: 10)
                     .AddHeader(Alignment.Left, width: 10)
                     .AddHeader(Alignment.Left, width: 35)
+                    .AddHeader(Alignment.Left, width: 9, label: "PSEdition")
                     .AddHeader(Alignment.Left, label: "ExportedCommands")
                     .StartRowDefinition()
                         .AddPropertyColumn("ModuleType")
                         .AddPropertyColumn("Version")
                         .AddPropertyColumn("Name")
+                        .AddScriptBlockColumn(@"
+                            $result = [System.Collections.ArrayList]::new()
+                            $editions = $_.CompatiblePSEditions
+                            if (-not $editions)
+                            {
+                                $editions = @('Desktop')
+                            }
+                            foreach ($edition in $editions)
+                            {
+                                $result += $edition.Substring(0,4)
+                            }
+                            ($result | Sort-Object) -join ','")
                         .AddScriptBlockColumn("$_.ExportedCommands.Keys")
                     .EndRowDefinition()
                 .EndTable());

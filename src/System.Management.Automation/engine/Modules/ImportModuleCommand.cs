@@ -208,6 +208,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Skips the check on CompatiblePSEditions for modules loaded from the System32 module path.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter SkipEditionCheck
+        {
+            get { return (SwitchParameter)BaseSkipEditionCheck; }
+            set { BaseSkipEditionCheck = value; }
+        }
+
+        /// <summary>
         /// This parameter causes the session state instance to be written...
         /// </summary>
         [Parameter]

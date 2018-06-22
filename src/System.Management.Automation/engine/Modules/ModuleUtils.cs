@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -11,6 +13,11 @@ namespace System.Management.Automation.Internal
 {
     internal static class ModuleUtils
     {
+        // Cache for modules on the System32 module path, which are assumed to not be deleted or have their editions change.
+        // Null entries denote incompatible modules.
+        private static readonly ConcurrentDictionary<string, PSModuleInfo> s_incompatibleEditionSystem32Modules =
+            new ConcurrentDictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
+
         internal static bool IsPossibleModuleDirectory(string dir)
         {
             // We shouldn't be searching in hidden directories.
@@ -339,11 +346,11 @@ namespace System.Management.Automation.Internal
                     )
                 )
             {
-                foreach (string modulePath in GetDefaultAvailableModuleFiles(true, false, context))
+                foreach (string modulePath in GetDefaultAvailableModuleFiles(force: true, isForAutoDiscovery: false, context))
                 {
                     // Skip modules that have already been loaded so that we don't expose private commands.
                     string moduleName = Path.GetFileNameWithoutExtension(modulePath);
-                    var modules = context.Modules.GetExactMatchModules(moduleName, all: false, exactMatch: true);
+                    List<PSModuleInfo> modules = context.Modules.GetExactMatchModules(moduleName, all: false, exactMatch: true);
                     PSModuleInfo tempModuleInfo = null;
 
                     if (modules.Count != 0)
@@ -359,10 +366,10 @@ namespace System.Management.Automation.Internal
                         if (modules.Count == 1)
                         {
                             PSModuleInfo psModule = modules[0];
-                            tempModuleInfo = new PSModuleInfo(psModule.Name, psModule.Path, null, null);
+                            tempModuleInfo = new PSModuleInfo(psModule.Name, psModule.Path, context: null, sessionState: null);
                             tempModuleInfo.SetModuleBase(psModule.ModuleBase);
 
-                            foreach (var entry in psModule.ExportedCommands)
+                            foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
                                 if (commandPattern.IsMatch(entry.Value.Name))
                                 {
@@ -370,7 +377,7 @@ namespace System.Management.Automation.Internal
                                     switch (entry.Value.CommandType)
                                     {
                                         case CommandTypes.Alias:
-                                            current = new AliasInfo(entry.Value.Name, null, context);
+                                            current = new AliasInfo(entry.Value.Name, definition: null, context);
                                             break;
                                         case CommandTypes.Function:
                                             current = new FunctionInfo(entry.Value.Name, ScriptBlock.EmptyScriptBlock, context);
@@ -382,7 +389,7 @@ namespace System.Management.Automation.Internal
                                             current = new ConfigurationInfo(entry.Value.Name, ScriptBlock.EmptyScriptBlock, context);
                                             break;
                                         case CommandTypes.Cmdlet:
-                                            current = new CmdletInfo(entry.Value.Name, null, null, null, context);
+                                            current = new CmdletInfo(entry.Value.Name, implementingType: null, helpFile: null, PSSnapin: null, context);
                                             break;
                                         default:
                                             Dbg.Assert(false, "cannot be hit");
@@ -399,11 +406,52 @@ namespace System.Management.Automation.Internal
                     }
 
                     string moduleShortName = System.IO.Path.GetFileNameWithoutExtension(modulePath);
-                    var exportedCommands = AnalysisCache.GetExportedCommands(modulePath, false, context);
+
+// System32 module CompatiblePSEditions checks:
+// incompatible modules should not appear as completions
+#if !UNIX
+                    // If the module is on the System32 path where CompatiblePSEditions are checked,
+                    // we are forced to use Get-Module to discover the compatibility of the module
+                    string psCompatibleEditionsCheckedPath = ModuleIntrinsics.GetWindowsPowerShellPSHomeModulePath();
+                    if (modulePath.StartsWith(psCompatibleEditionsCheckedPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Do our best not to call Get-Module by using a cache
+                        if (s_incompatibleEditionSystem32Modules.ContainsKey(modulePath))
+                        {
+                            // We have already identified the module as incompatible
+                            continue;
+                        }
+                        else
+                        {
+                            using (PowerShell pwsh = PowerShell.Create())
+                            {
+                                PSModuleInfo module = pwsh.AddCommand("Get-Module")
+                                    .AddParameter("ListAvailable")
+                                    .AddParameter("SkipEditionCheck")
+                                    .AddArgument(modulePath)
+                                    .Invoke<PSModuleInfo>()
+                                    .FirstOrDefault();
+
+                                if (module == null)
+                                {
+                                    continue;
+                                }
+
+                                if (!Utils.IsPSEditionSupported(module.CompatiblePSEditions))
+                                {
+                                    s_incompatibleEditionSystem32Modules[modulePath] = module;
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+#endif
+
+                    IDictionary<string, CommandTypes> exportedCommands = AnalysisCache.GetExportedCommands(modulePath, testOnly: false, context);
 
                     if (exportedCommands == null) { continue; }
 
-                    tempModuleInfo = new PSModuleInfo(moduleShortName, modulePath, null, null);
+                    tempModuleInfo = new PSModuleInfo(moduleShortName, modulePath, sessionState: null, context: null);
                     if (InitialSessionState.IsEngineModule(moduleShortName))
                     {
                         tempModuleInfo.SetModuleBase(Utils.DefaultPowerShellAppBase);
@@ -416,10 +464,10 @@ namespace System.Management.Automation.Internal
                         tempModuleInfo.SetGuid(ModuleIntrinsics.GetManifestGuid(modulePath));
                     }
 
-                    foreach (var pair in exportedCommands)
+                    foreach (KeyValuePair<string, CommandTypes> pair in exportedCommands)
                     {
-                        var commandName = pair.Key;
-                        var commandTypes = pair.Value;
+                        string commandName = pair.Key;
+                        CommandTypes commandTypes = pair.Value;
 
                         if (commandPattern.IsMatch(commandName))
                         {

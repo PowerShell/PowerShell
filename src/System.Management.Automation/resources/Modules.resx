@@ -606,4 +606,7 @@
   <data name="PrerequisiteForDesktopEditionOnly" xml:space="preserve">
     <value>This prerequisite is valid for the PowerShell Desktop edition only.</value>
   </data>
+  <data name="PSEditionNotSupported" xml:space="preserve">
+    <value>Module '{0}' does not support current PowerShell edition '{1}'. Its supported editions are '{2}'. Use 'Import-Module -SkipEditionCheck' to ignore the compatibility of this module.</value>
+  </data>
 </root>

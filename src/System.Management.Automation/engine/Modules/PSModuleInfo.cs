@@ -841,6 +841,18 @@ namespace System.Management.Automation
             _compatiblePSEditions.Add(psEdition);
         }
 
+        internal void AddToCompatiblePSEditions(IEnumerable<string> psEditions)
+        {
+            _compatiblePSEditions.AddRange(psEditions);
+        }
+
+        /// <summary>
+        /// Indicates whether this module has been loaded from a path where its compatibility should be checked.
+        /// If true, this module's CompatiblePSEditions should be checked against the current PowerShell Edition
+        /// before it is shown by cmdlets like Get-Module -ListAvailable.
+        /// </summary>
+        internal bool IsLoadedFromCompatibilityCheckedPath { get; set; } = false;
+
         /// <summary>
         /// ModuleList
         /// </summary>
@@ -1595,4 +1607,4 @@ namespace System.Management.Automation
             }
         }
     }
-} // System.Management.Automation
+}

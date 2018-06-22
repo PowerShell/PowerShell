@@ -105,6 +105,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal bool BaseGlobal { get; set; }
 
+        /// <summary>
+        /// If set, CompatiblePSEditions checking will be disabled for modules on the System32 path.
+        /// </summary>
+        internal bool BaseSkipEditionCheck { get; set; }
+
         internal SessionState TargetSessionState
         {
             get
@@ -254,6 +259,16 @@ namespace Microsoft.PowerShell.Commands
             "ModuleName",
             "GUID",
             "ModuleVersion"
+        };
+
+        /// <summary>
+        /// When module manifests lack a CompatiblePSEditions field,
+        /// they will be treated as if they have this value.
+        /// The PSModuleInfo will still reflect the lack of value.
+        /// </summary>
+        internal static IReadOnlyList<string> DefaultCompatiblePSEditions { get; } = new string[]
+        {
+            "Desktop"
         };
 
         private Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
@@ -2361,6 +2376,51 @@ namespace Microsoft.PowerShell.Commands
                 if (bailOnFirstError) return null;
             }
 
+            // On Windows, we want to include any modules under %WINDIR%\System32\WindowsPowerShell\v1.0\Modules
+            // that have declared compatibility with PS Core (or if the check is skipped)
+            IEnumerable<string> inferredCompatiblePSEditions = compatiblePSEditions ?? DefaultCompatiblePSEditions;
+            if (!IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions, out bool isOnSystem32ModulePath))
+            {
+                containedErrors = true;
+
+                if (writingErrors)
+                {
+                    message = StringUtil.Format(
+                        Modules.PSEditionNotSupported,
+                        moduleManifestPath,
+                        PSVersionInfo.PSEdition,
+                        String.Join(',', inferredCompatiblePSEditions));
+
+                    InvalidOperationException ioe = new InvalidOperationException(message);
+
+                    ErrorRecord er = new ErrorRecord(
+                        ioe,
+                        nameof(Modules) + "_" + nameof(Modules.PSEditionNotSupported),
+                        ErrorCategory.ResourceUnavailable,
+                        moduleManifestPath);
+
+                    WriteError(er);
+                }
+
+                if (bailOnFirstError)
+                {
+                    // If we're trying to load the module, return null so that caches
+                    // are not polluted
+                    if ((manifestProcessingFlags & ManifestProcessingFlags.LoadElements) != 0)
+                    {
+                        return null;
+                    }
+
+                    // If we return null with Get-Module, a fake module info will be created. Since
+                    // we want to suppress output of the module, we need to do that here.
+                    return new PSModuleInfo(moduleManifestPath, context: null, sessionState: null)
+                    {
+                        HadErrorsLoading = true,
+                        IsLoadedFromCompatibilityCheckedPath = isOnSystem32ModulePath
+                    };
+                }
+            }
+
             // Process format.ps1xml / types.ps1.xml / RequiredAssemblies
             // as late as possible, but before ModuleToProcess, ScriptToProcess, NestedModules
             if (importingModule)
@@ -2482,13 +2542,18 @@ namespace Microsoft.PowerShell.Commands
                     manifestInfo.AddToModuleList(m);
                 }
             }
+
             if (compatiblePSEditions != null)
             {
-                foreach (var psEdition in compatiblePSEditions)
-                {
-                    manifestInfo.AddToCompatiblePSEditions(psEdition);
-                }
+                manifestInfo.AddToCompatiblePSEditions(compatiblePSEditions);
             }
+
+// Modules loaded from the System32 module path may
+// not have the CompatiblePSEditions fields ignored
+#if !UNIX
+            manifestInfo.IsLoadedFromCompatibilityCheckedPath = isOnSystem32ModulePath;
+#endif
+
             if (scriptsToProcess != null)
             {
                 foreach (var s in scriptsToProcess)
@@ -3052,6 +3117,12 @@ namespace Microsoft.PowerShell.Commands
                 newManifestInfo.IconUri = manifestInfo.IconUri;
                 newManifestInfo.RepositorySourceLocation = manifestInfo.RepositorySourceLocation;
 
+// On Windows, we need to copy over the field indicating
+// whether the module was imported from the System32 module path
+#if !UNIX
+                newManifestInfo.IsLoadedFromCompatibilityCheckedPath = manifestInfo.IsLoadedFromCompatibilityCheckedPath;
+#endif
+
                 // If we are in module discovery, then fix the path.
                 if (ss == null)
                 {
@@ -3129,10 +3200,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (compatiblePSEditions != null)
                     {
-                        foreach (var psEdition in compatiblePSEditions)
-                        {
-                            newManifestInfo.AddToCompatiblePSEditions(psEdition);
-                        }
+                        newManifestInfo.AddToCompatiblePSEditions(compatiblePSEditions);
                     }
                 }
 
@@ -3362,6 +3430,39 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return manifestInfo;
+        }
+
+        /// <summary>
+        /// Check if the CompatiblePSEditions field of a given module
+        /// declares compatibility with the running PowerShell edition.
+        /// </summary>
+        /// <param name="moduleManifestPath">The path to the module manifest being checked.</param>
+        /// <param name="compatiblePSEditions">The value of the CompatiblePSEditions field of the module manifest.</param>
+        /// <param name="isOnSystem32ModulePath">
+        /// True if the module is being loaded from the Windows PowerShell $PSHOME module path (under %WINDIR%\System32), false otherwise.
+        /// </param>
+        /// <returns>True if the module is compatible with the running PowerShell edition, false otherwise.</returns>
+        private bool IsPSEditionCompatible(
+            string moduleManifestPath,
+            IEnumerable<string> compatiblePSEditions,
+            out bool isOnSystem32ModulePath)
+        {
+            isOnSystem32ModulePath = false;
+
+#if UNIX
+            return true;
+#else
+
+            string windowsPSModulePath = ModuleIntrinsics.GetWindowsPowerShellPSHomeModulePath();
+            if (!moduleManifestPath.StartsWith(windowsPSModulePath, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            isOnSystem32ModulePath = true;
+
+            return BaseSkipEditionCheck || Utils.IsPSEditionSupported(compatiblePSEditions);
+#endif
         }
 
         private static void PropagateExportedTypesFromNestedModulesToRootModuleScope(ImportModuleOptions options, PSModuleInfo manifestInfo)
