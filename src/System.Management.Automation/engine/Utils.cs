@@ -1484,7 +1484,9 @@ namespace System.Management.Automation.Internal
             this.AddFirst(item);
 
             if(this.Count > _capacity)
+            {
                 this.RemoveLast();
+            }
         }
 
         /// <summary>

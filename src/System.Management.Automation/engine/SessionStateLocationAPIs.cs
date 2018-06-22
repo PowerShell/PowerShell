@@ -235,16 +235,13 @@ namespace System.Management.Automation
             bool pushNextLocation = true;
             if (originalPath.Equals("-", StringComparison.OrdinalIgnoreCase))
             {
-                if (_workingLocationHistoryStack.Count > 0)
-                {
-                    var previousLocation =  _workingLocationHistoryStack.Pop();
-                    path = previousLocation.Path;
-                    pushNextLocation = false;
-                }
-                else
+                if (_workingLocationHistoryStack.Count <= 0)
                 {
                     throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
                 }
+                var previousLocation =  _workingLocationHistoryStack.Pop();
+                path = previousLocation.Path;
+                pushNextLocation = false;
             }
 
             if (pushNextLocation)
