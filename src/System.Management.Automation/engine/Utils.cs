@@ -1496,7 +1496,14 @@ namespace System.Management.Automation.Internal
         internal T Pop()
         {
             var item = this.First.Value;
-            this.RemoveFirst();
+            try
+            {
+                this.RemoveFirst();
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException(SessionStateStrings.BoundedStackIsEmpty);
+            }
             return item;
         }
     }
