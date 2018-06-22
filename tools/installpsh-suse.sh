@@ -89,12 +89,15 @@ fi
 ## Check requirements and prerequisites
 
 #Check for sudo if not root
+if [[ "${CI}" == "true" ]]; then
+    echo "Running on CI (as determined by env var CI set to true), skipping SUDO check."
+    set -- "$@" '-skip-sudo-check'
+fi
+
 SUDO=''
 if (( $EUID != 0 )); then
     #Check that sudo is available
-    if [[ "${CI}" == "true" ]]; then
-      echo "Running on CI (as determined by env var CI set to true), skipping SUDO check and relying on CI user permissions."
-    elif [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
+    if [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
         SUDO='sudo'
     else
         echo "ERROR: You must either be root or be able to use sudo" >&2
