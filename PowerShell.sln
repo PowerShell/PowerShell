@@ -22,8 +22,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Management.Infras
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerShell.Commands.Diagnostics", "src\Microsoft.PowerShell.Commands.Diagnostics\Microsoft.PowerShell.Commands.Diagnostics.csproj", "{439A24FC-8E0A-48B6-8227-44C297311F49}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerShell.PSReadLine", "src\Microsoft.PowerShell.PSReadLine\Microsoft.PowerShell.PSReadLine.csproj", "{07BFD271-8992-4F34-9091-6CFC3E224A24}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.WSMan.Management", "src\Microsoft.WSMan.Management\Microsoft.WSMan.Management.csproj", "{8F63D134-E413-4181-936D-D82F3F5F1D85}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerShell.Security", "src\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.csproj", "{C4F81816-C87A-4ABF-8A37-24AC16A0A6CF}"
