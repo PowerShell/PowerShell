@@ -29,11 +29,6 @@ using DWORD = System.UInt32;
 
 namespace Microsoft.PowerShell.Commands
 {
-    // 2004/12/17-JonN ProcessNameGlobAttribute was deeply wrong.
-    // For example, if you pass in a single Process, it will match
-    // all processes with the same name.
-    // I have removed the globbing code.
-
     #region ProcessBaseCommand
     /// <summary>
     /// This class implements the base for process commands
@@ -461,7 +456,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Has the list of process names on which to this command will work
         /// </summary>
-        // [ProcessNameGlobAttribute]
         [Parameter(Position = 0, ParameterSetName = NameParameterSet, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = NameWithUserNameParameterSet, ValueFromPipelineByPropertyName = true)]
         [Alias("ProcessName")]
@@ -1062,7 +1056,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Has the list of process names on which to this command will work
         /// </summary>
-        // [ProcessNameGlobAttribute]
         [Parameter(
             ParameterSetName = "Name",
             Mandatory = true,
@@ -1618,7 +1611,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 1)]
         [Alias("Args")]
-        [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ArgumentList { get; set; }
 
