@@ -2159,9 +2159,13 @@ namespace Microsoft.PowerShell.Commands
                     // non-existing targets on either Windows or Linux.
                     try
                     {
-                        exists = Utils.ItemExists(strTargetPath, out isDirectory);
+                        exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
+
+                        // Pretend the target exists if we're making a symbolic link.
                         if (itemType == ItemType.SymbolicLink)
-                            exists = true; // pretend the target exists if we're making a symbolic link
+                        {
+                            exists = true;
+                        }
                     }
                     catch (Exception e)
                     {
