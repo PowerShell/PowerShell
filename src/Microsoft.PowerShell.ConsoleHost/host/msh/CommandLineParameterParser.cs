@@ -396,13 +396,13 @@ namespace Microsoft.PowerShell
         private void ShowHelp()
         {
             Dbg.Assert(_helpText != null, "_helpText should not be null");
-            _hostUI.WriteLine("");
+            _hostUI.WriteLine(string.Empty);
             _hostUI.Write(_helpText);
             if (_showExtendedHelp)
             {
                 _hostUI.Write(ManagedEntranceStrings.ExtendedHelp);
             }
-            _hostUI.WriteLine("");
+            _hostUI.WriteLine(string.Empty);
         }
 
         private void DisplayBanner()

@@ -241,7 +241,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $ser = [PSSerializer]::Serialize($semver)
             $des = [PSSerializer]::Deserialize($ser)
 
-            $des | Should -BeOfType System.Management.Automation.SemanticVersion
+            $des | Should -BeOfType System.Object
             $des.ToString() | Should -Be $expectedResult
         }
     }

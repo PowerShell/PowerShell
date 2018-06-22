@@ -898,8 +898,8 @@ end
 
         internal string GetDecl()
         {
-            string result = "";
-            string separator = "";
+            string result = string.Empty;
+            string separator = string.Empty;
             if (_wrappedAnyCmdlet)
             {
                 StringBuilder decl = new StringBuilder("[CmdletBinding(");
@@ -997,7 +997,7 @@ end
 
                 return parameters.ToString();
             }
-            return "";
+            return string.Empty;
         }
 
         internal string GetBeginBlock()
@@ -1016,7 +1016,7 @@ end
             // be subject to the runspace restrictions
             if (_wrappedCommandType == CommandTypes.Function)
             {
-                commandOrigin = "";
+                commandOrigin = string.Empty;
             }
 
             if (_wrappedAnyCmdlet)

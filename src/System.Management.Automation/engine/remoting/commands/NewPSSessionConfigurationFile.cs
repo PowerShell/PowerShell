@@ -15,6 +15,7 @@ using System.Globalization;
 
 namespace Microsoft.PowerShell.Commands
 {
+#if !UNIX
     /// <summary>
     /// New-PSSessionConfigurationFile command implementation
     ///
@@ -1064,6 +1065,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
     }
+#endif
 
     /// <summary>
     /// New-PSRoleCapabilityFile command implementation
@@ -1842,7 +1844,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (var key in keys)
             {
                 sb.Append(writer.NewLine);
-                sb.AppendFormat("{0," + (4 * (indent + 1)) + "}", "");
+                sb.AppendFormat("{0," + (4 * (indent + 1)) + "}", string.Empty);
                 sb.Append(QuoteName(key));
                 sb.Append(" = ");
                 if ((table[key] as ScriptBlock) != null)

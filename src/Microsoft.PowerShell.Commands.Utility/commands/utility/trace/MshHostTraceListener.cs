@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         /// Default constructor used if no.
         /// </summary>
         internal PSHostTraceListener(PSCmdlet cmdlet)
-            : base("")
+            : base(string.Empty)
         {
             if (cmdlet == null)
             {

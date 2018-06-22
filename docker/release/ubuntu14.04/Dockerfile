@@ -44,7 +44,8 @@ RUN apt-get update \
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 
 # Register the Microsoft Ubuntu 14.04 repository
-RUN curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | tee /etc/apt/sources.list.d/microsoft.list
+RUN set -o pipefail \
+    && curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | tee /etc/apt/sources.list.d/microsoft.list
 
 # Install powershell from Microsoft Repo
 RUN apt-get update \

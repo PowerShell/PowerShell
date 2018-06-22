@@ -2820,17 +2820,17 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     if (dscProperty.Key)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : "");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}key", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
                     if (dscProperty.Mandatory)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : "");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}required", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
                     if (dscProperty.NotConfigurable)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : "");
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}read", needComma ? ", " : string.Empty);
                         needComma = true;
                     }
                     continue;
@@ -2841,13 +2841,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     bool valueMapComma = false;
                     StringBuilder sbValues = new StringBuilder(", Values{");
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : "");
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                     needComma = true;
 
                     foreach (var value in validateSet.ValidValues)
                     {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : "", value);
-                        sbValues.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : "", value);
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
+                        sbValues.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", valueMapComma ? ", " : string.Empty, value);
                         valueMapComma = true;
                     }
                     sb.Append("}");
@@ -2865,25 +2865,25 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (enumNames != null)
             {
-                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : "");
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}ValueMap{{", needComma ? ", " : string.Empty);
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : "", name);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
                     needComma = true;
                 }
                 sb.Append("}, Values{");
                 needComma = false;
                 foreach (var name in enumNames)
                 {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : "", name);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "{0}\"{1}\"", needComma ? ", " : string.Empty, name);
                     needComma = true;
                 }
                 sb.Append("}");
             }
             else if (embeddedInstanceType != null)
             {
-                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : "", embeddedInstanceType);
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0}EmbeddedInstance(\"{1}\")", needComma ? ", " : string.Empty, embeddedInstanceType);
             }
             sb.Append("]");
             return sb.ToString();

@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the text of the matching line.
         /// </summary>
         /// <value>The text of the matching line.</value>
-        public string Line { get; set; } = "";
+        public string Line { get; set; } = string.Empty;
 
         /// <summary>
         /// Returns the base name of the file containing the matching line.
@@ -970,7 +970,7 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                _inputObject = LanguagePrimitives.IsNull(value) ? PSObject.AsPSObject("") : value;
+                _inputObject = LanguagePrimitives.IsNull(value) ? PSObject.AsPSObject(string.Empty) : value;
             }
         }
         private PSObject _inputObject = AutomationNull.Value;

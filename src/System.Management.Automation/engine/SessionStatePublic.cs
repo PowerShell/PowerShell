@@ -222,7 +222,7 @@ namespace System.Management.Automation
                     {
                         exception =
                             new SessionStateException(
-                                "",
+                                string.Empty,
                                 SessionStateCategory.Command,
                                 "CommandIsPrivate",
                                 SessionStateStrings.CommandIsPrivate,

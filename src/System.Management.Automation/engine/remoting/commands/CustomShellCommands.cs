@@ -1133,7 +1133,7 @@ else
                 }
             }
 
-            string securityParameters = "";
+            string securityParameters = string.Empty;
             if (!string.IsNullOrEmpty(sddl))
             {
                 securityParameters = string.Format(CultureInfo.InvariantCulture,
@@ -1499,46 +1499,6 @@ else
         }
 
         /// <summary>
-        /// Checks if the specified version of PowerShell is installed
-        /// </summary>
-        /// <param name="version"></param>
-        internal static void CheckIfPowerShellVersionIsInstalled(Version version)
-        {
-            // Check if PowerShell 2.0 is installed
-            if (version != null && version.Major == 2)
-            {
-#if CORECLR
-                // PowerShell 2.0 is not available for CoreCLR
-                throw new ArgumentException(
-                    PSRemotingErrorInvariants.FormatResourceString(
-                        RemotingErrorIdStrings.PowerShellNotInstalled,
-                        version, "PSVersion"));
-#else
-                // Because of app-compat issues, in Win8, we will have PS 2.0 installed by default but not .NET 2.0
-                // In such a case, it is not enough if we check just PowerShell registry keys. We also need to check if .NET 2.0 is installed.
-                try
-                {
-                    RegistryKey engineKey = PSSnapInReader.GetPSEngineKey(PSVersionInfo.RegistryVersion1Key);
-                    // Also check for .NET 2.0 installation
-                    if (!PsUtils.FrameworkRegistryInstallation.IsFrameworkInstalled(2, 0, 0))
-                    {
-                        throw new ArgumentException(
-                            PSRemotingErrorInvariants.FormatResourceString(
-                                RemotingErrorIdStrings.NetFrameWorkV2NotInstalled));
-                    }
-                }
-                catch (PSArgumentException)
-                {
-                    throw new ArgumentException(
-                        PSRemotingErrorInvariants.FormatResourceString(
-                            RemotingErrorIdStrings.PowerShellNotInstalled,
-                            version, "PSVersion"));
-                }
-#endif
-            }
-        }
-
-        /// <summary>
         /// Takes array of group name string objects and returns a semicolon delimited string.
         /// </summary>
         /// <param name="groups"></param>
@@ -1685,7 +1645,7 @@ else
             //    O:NSG:BAD:P
             // epilogue string contains the ending (and optional) SACL components
             //    S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)
-            // (https://msdn.microsoft.com/en-us/library/windows/desktop/aa379570(v=vs.85).aspx)
+            // (https://msdn.microsoft.com/library/windows/desktop/aa379570(v=vs.85).aspx)
             string prologue;
             string epilogue;
             Collection<string> aces = ParseDACLACEs(sddl, out prologue, out epilogue);
@@ -1701,12 +1661,12 @@ else
             // We only manipulate ACEs that we create and we currently do not use the optional resource field,
             // so we always expect a beginning ACE with exactly 6 fields.
             // ace_type;ace_flags;rights;object_guid;inherit_object_guid;account_sid;(resource_attribute)
-            // (https://msdn.microsoft.com/en-us/library/windows/desktop/aa374928(v=vs.85).aspx)
+            // (https://msdn.microsoft.com/library/windows/desktop/aa374928(v=vs.85).aspx)
             //
             // Converted (Conditional) ACE has exactly 7 required fields.  In addition the ACE type
             // is prepended with 'X' character.
             // AceType;AceFlags;Rights;ObjectGuid;InheritObjectGuid;AccountSid;(ConditionalExpression)
-            // (https://msdn.microsoft.com/en-us/library/windows/desktop/dd981030(v=vs.85).aspx)
+            // (https://msdn.microsoft.com/library/windows/desktop/dd981030(v=vs.85).aspx)
             //
             // e.g.
             // Beginning ACE: (A;;GA;;;BA)
@@ -1755,7 +1715,7 @@ else
             //
             // The format of the sddl is expected to be:
             // owner (O:), primary group (G:), DACL (D:), and SACL (S:).
-            // (https://msdn.microsoft.com/en-us/library/windows/desktop/aa379570(v=vs.85).aspx)
+            // (https://msdn.microsoft.com/library/windows/desktop/aa379570(v=vs.85).aspx)
             // e.g.
             // O:NSG:BAD:P(A;;GA;;;BA)(XA;;GA;;;RM)(XA;;GA;;;IU)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)
             // prologue  = "O:NSG:BAD:P"
@@ -1827,7 +1787,7 @@ else
         // User ACE:        (XA;;GA;;;S-1-5-21-2127438184-1604012920-1882527527;ConditionalPart)
         // ConditionalPart:   ((Member_of {SID(2FA_GROUP_1)} || Member_of {SID(2FA_GROUP_2)}) && (Member_of {SID(TRUSTEDHOSTS_1)} || Member_of {TRUSTEDHOSTS_2}))
         //         where:   2FA_GROUP_1, 2FA_GROUP_2, TRUSTEDHOSTS_1, TRUSTEDHOSTS_2 are resolved SIDs of the group names.
-        // (https://msdn.microsoft.com/en-us/library/windows/desktop/dd981030(v=vs.85).aspx)
+        // (https://msdn.microsoft.com/library/windows/desktop/dd981030(v=vs.85).aspx)
         internal static string CreateConditionalACEFromConfig(
             Hashtable configTable)
         {
@@ -2016,24 +1976,6 @@ else
         internal static string GetRemoteSddl()
         {
             return (Environment.OSVersion.Version >= new Version(6, 2)) ? remoteSDDL_Win8 : remoteSDDL;
-        }
-
-        internal static void CheckPSVersion(Version version)
-        {
-            // PSVersion value can only be 2.0, 3.0, 4.0, 5.0, or 5.1
-            if (version != null)
-            {
-                // PSVersion value can only be 2.0, 3.0, 4.0, 5.0, or 5.1
-                if (!((version.Major >= 2) && (version.Major <= 4) && (version.Minor == 0)) &&
-                     !((version.Major == 5) && (version.Minor <= 1))
-                   )
-                {
-                    throw new ArgumentException(
-                       PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.PSVersionParameterOutOfRange,
-                           version, "PSVersion")
-                   );
-                }
-            }
         }
 
         #endregion
@@ -2356,10 +2298,10 @@ else
             get { return psVersion; }
             set
             {
-                CheckPSVersion(value);
+                RemotingCommandUtil.CheckPSVersion(value);
 
                 // Check if specified version of PowerShell is installed
-                PSSessionConfigurationCommandUtilities.CheckIfPowerShellVersionIsInstalled(value);
+                RemotingCommandUtil.CheckIfPowerShellVersionIsInstalled(value);
 
                 psVersion = value;
                 isPSVersionSpecified = true;
@@ -5244,7 +5186,7 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
         SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144298")]
     public sealed class DisablePSRemotingCommand : PSCmdlet
     {
-        # region Private Data
+        #region Private Data
 
         // To Escape { -- {{
         // To Escape } -- }}

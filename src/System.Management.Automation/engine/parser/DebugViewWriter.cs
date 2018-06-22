@@ -1001,7 +1001,7 @@ namespace System.Management.Automation.Language {
             Dedent();
             Out(Flow.NewLine, "}");
             if (node.BreakLabel != null) {
-                Out("", Flow.NewLine);
+                Out(string.Empty, Flow.NewLine);
                 DumpLabel(node.BreakLabel);
             }
             return node;
@@ -1040,7 +1040,7 @@ namespace System.Management.Automation.Language {
         protected override CatchBlock VisitCatchBlock(CatchBlock node) {
             Out(Flow.NewLine, "} .Catch (" + node.Test.ToString());
             if (node.Variable != null) {
-                Out(Flow.Space, "");
+                Out(Flow.Space, string.Empty);
                 VisitParameter(node.Variable);
             }
             if (node.Filter != null) {

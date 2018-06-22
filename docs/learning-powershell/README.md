@@ -29,9 +29,9 @@ At the end of this exercise, you should be able to launch the PowerShell session
 
 - Alternatively you can get the PowerShell by [building it](../../README.md#building-powershell)
 
-[inst-linux]: ../installation/linux.md
-[inst-win]: ../installation/windows.md
-[inst-macos]: ../installation/macos.md
+[inst-linux]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6
+[inst-win]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
+[inst-macos]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6
 
 Getting Started with PowerShell
 ----
@@ -112,7 +112,7 @@ Recommended Training and Reading
 - [Learn PowerShell Video Library][powershell.com-learn-powershell] from PowerShell.com
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
-- [PowerShell TechNet Resources](https://technet.microsoft.com/en-us/scriptcenter/dd742419.aspx) from ScriptCenter
+- [PowerShell Documentation](https://docs.microsoft.com/powershell)
 
 
 Commercial Resources
@@ -128,7 +128,7 @@ Commercial Resources
 
 [getstarted-with-powershell]: https://channel9.msdn.com/Series/GetStartedPowerShell3
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/
-[basic-cookbooks]: https://msdn.microsoft.com/en-us/powershell/scripting/getting-started/basic-cookbooks
+[Using Windows PowerShell for Administration]: https://docs.microsoft.com/powershell/scripting/getting-started/fundamental/using-windows-powershell-for-administration?view=powershell-6
 [ebook-from-powershell.com]: http://powershell.com/cs/blogs/ebookv2/default.aspx
 [channel9-learn-powershell]: https://channel9.msdn.com/Search?term=powershell#ch9Search
 [powershell.com-learn-powershell]: http://powershell.com/cs/media/14/default.aspx

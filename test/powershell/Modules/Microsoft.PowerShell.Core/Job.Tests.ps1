@@ -60,6 +60,9 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         }
         It "Stop-Job will stop a job" {
             Stop-Job -Id $j.Id
+            $out = Receive-Job $j -ErrorVariable err
+            $out | Should -BeNullOrEmpty
+            $err | Should -BeNullOrEmpty
             $j.State | Should -BeExactly "Stopped"
         }
         It "Remove-Job will not remove a running job" {

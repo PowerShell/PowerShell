@@ -53,7 +53,7 @@ namespace System.Management.Automation.Interpreter
 
         public override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
         {
-            return ToString() + (_offset != Unknown ? " -> " + (instructionIndex + _offset) : "");
+            return ToString() + (_offset != Unknown ? " -> " + (instructionIndex + _offset) : string.Empty);
         }
 
         public override string ToString()
@@ -216,7 +216,7 @@ namespace System.Management.Automation.Interpreter
         {
             Debug.Assert(_labelIndex != UnknownInstrIndex);
             int targetIndex = labelIndexer(_labelIndex);
-            return ToString() + (targetIndex != BranchLabel.UnknownIndex ? " -> " + targetIndex : "");
+            return ToString() + (targetIndex != BranchLabel.UnknownIndex ? " -> " + targetIndex : string.Empty);
         }
 
         public override string ToString()

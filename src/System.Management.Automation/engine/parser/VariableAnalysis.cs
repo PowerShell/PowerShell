@@ -1172,7 +1172,7 @@ namespace System.Management.Automation.Language
                 _currentBlock.FlowsTo(breakBlock);
             }
 
-            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? "", breakBlock, continueBlock));
+            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? string.Empty, breakBlock, continueBlock));
             _currentBlock.FlowsTo(bodyBlock);
             _currentBlock = bodyBlock;
             generateLoopBody();
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation.Language
             var breakBlock = new Block();
             var gotoRepeatTargetBlock = new Block();
 
-            _loopTargets.Add(new LoopGotoTargets(loopStatement.Label ?? "", breakBlock, continueBlock));
+            _loopTargets.Add(new LoopGotoTargets(loopStatement.Label ?? string.Empty, breakBlock, continueBlock));
 
             _currentBlock.FlowsTo(bodyBlock);
             _currentBlock = bodyBlock;

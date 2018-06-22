@@ -188,4 +188,7 @@ The current session does not support debugging; execution will continue.
   <data name="SlowProfileLoadingMessage" xml:space="preserve">
     <value>Loading personal and system profiles took {0}ms.</value>
   </data>
+  <data name="RunAsAdministrator" xml:space="preserve">
+    <value>Run as Administrator</value>
+  </data>
 </root>

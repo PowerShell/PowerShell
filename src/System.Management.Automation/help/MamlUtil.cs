@@ -130,7 +130,7 @@ namespace System.Management.Automation
             for (int index = 0; index < maml2items.Count; index++)
             {
                 PSObject m2paramObj = PSObject.AsPSObject(maml2items[index]);
-                string param2Name = "";
+                string param2Name = string.Empty;
                 PSPropertyInfo m2propertyInfo = m2paramObj.Properties["Name"];
 
                 if (null != m2propertyInfo)
@@ -144,7 +144,7 @@ namespace System.Management.Automation
                 bool isParamFoundInMaml1 = false;
                 foreach (PSObject m1ParamObj in maml1items)
                 {
-                    string param1Name = "";
+                    string param1Name = string.Empty;
                     PSPropertyInfo m1PropertyInfo = m1ParamObj.Properties["Name"];
 
                     if (null != m1PropertyInfo)

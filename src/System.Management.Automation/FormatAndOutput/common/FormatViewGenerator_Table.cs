@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        ci.label = "";
+                        ci.label = string.Empty;
                     }
                 }
 

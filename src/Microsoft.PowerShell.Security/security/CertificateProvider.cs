@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell.Commands
                     AddItemToCache(StoreLocation.LocalMachine.ToString(),
                                    machine);
 
-                    AddItemToCache("", s_storeLocations);
+                    AddItemToCache(string.Empty, s_storeLocations);
                 }
             }
         } // constructor
@@ -2088,7 +2088,7 @@ namespace Microsoft.PowerShell.Commands
                         //
                         // items at paths of depth 3 are certificates.
                         //
-                        string storePath = GetParentPath(path, "");
+                        string storePath = GetParentPath(path, string.Empty);
                         string[] storePathElements = GetPathElements(storePath);
 
                         //

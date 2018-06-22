@@ -73,13 +73,13 @@ src/libpsl-native                                  @dantraMSFT
 
 # Areas: Build
 # Must be last
-*.config   @daxian-dbw @TravisEz13 @adityapatwardhan
-*.props    @daxian-dbw @TravisEz13 @adityapatwardhan
-*.yml      @daxian-dbw @TravisEz13 @adityapatwardhan
-*.csproj   @daxian-dbw @TravisEz13 @adityapatwardhan
-build.*    @daxian-dbw @TravisEz13 @adityapatwardhan
-tools/     @daxian-dbw @TravisEz13 @adityapatwardhan
-docker/    @daxian-dbw @TravisEz13 @adityapatwardhan
+*.config   @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga
+*.props    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga
+*.yml      @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga
+*.csproj   @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga
+build.*    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga
+tools/     @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga
+docker/    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga
 
 # Area: Compliance
 tools/terms    @TravisEz13

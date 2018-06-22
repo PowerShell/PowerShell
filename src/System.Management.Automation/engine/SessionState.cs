@@ -365,7 +365,7 @@ namespace System.Management.Automation
             // $PSHOME
             // This depends on the shellId. If we cannot read the application base
             // registry key, set the variable to empty string
-            string applicationBase = "";
+            string applicationBase = string.Empty;
             try
             {
                 applicationBase = Utils.GetApplicationBase(shellId);

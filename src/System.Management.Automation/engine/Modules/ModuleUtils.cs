@@ -175,7 +175,7 @@ namespace System.Management.Automation.Internal
             {
                 string moduleFile = Path.Combine(directory, fileName) + ext;
 
-                if (!Utils.NativeFileExists(moduleFile))
+                if (!Utils.FileExists(moduleFile))
                 {
                     continue;
                 }
@@ -233,7 +233,7 @@ namespace System.Management.Automation.Internal
                 foreach (string ext in ModuleIntrinsics.PSModuleExtensions)
                 {
                     string moduleFile = Path.Combine(directoryToCheck, proposedModuleName) + ext;
-                    if (!Utils.NativeFileExists(moduleFile))
+                    if (!File.Exists(moduleFile))
                     {
                         continue;
                     }
