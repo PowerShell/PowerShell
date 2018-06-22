@@ -235,11 +235,11 @@ namespace System.Management.Automation
             bool pushNextLocation = true;
             if (originalPath.Equals("-", StringComparison.OrdinalIgnoreCase))
             {
-                if (_workingLocationHistoryStack.Count <= 0)
+                if (_SetLocationHistory.Count <= 0)
                 {
                     throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
                 }
-                var previousLocation =  _workingLocationHistoryStack.Pop();
+                var previousLocation =  _SetLocationHistory.Pop();
                 path = previousLocation.Path;
                 pushNextLocation = false;
             }
@@ -247,7 +247,7 @@ namespace System.Management.Automation
             if (pushNextLocation)
             {
                 var newPushPathInfo = GetNewPushPathInfo();
-                _workingLocationHistoryStack.Push(newPushPathInfo);
+                _SetLocationHistory.Push(newPushPathInfo);
             }
 
             PSDriveInfo previousWorkingDrive = CurrentDrive;
@@ -805,7 +805,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A bounded stack for the location history of Set-Location
         /// </summary>
-        private BoundedStack<PathInfo> _workingLocationHistoryStack;
+        private BoundedStack<PathInfo> _SetLocationHistory;
 
         /// <summary>
         /// A stack of the most recently pushed locations
