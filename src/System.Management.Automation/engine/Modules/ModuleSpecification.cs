@@ -322,12 +322,29 @@ namespace Microsoft.PowerShell.Commands
 
             int result = p; 
 
-            foreach (object property in new object[] { obj.Name, obj.Guid, obj.RequiredVersion, obj.Version, obj.MaximumVersion })
+            if (obj.Name != null)
             {
-                if (property != null)
-                {
-                    result = unchecked(q * result + property.GetHashCode());
-                }
+                result = unchecked(q * result + obj.Name.GetHashCode());
+            }
+
+            if (obj.Guid != null)
+            {
+                result = unchecked(q * result + obj.Guid.GetHashCode());
+            }
+
+            if (obj.RequiredVersion != null)
+            {
+                result = unchecked(q * result + obj.RequiredVersion.GetHashCode());
+            }
+
+            if (obj.Version != null)
+            {
+                result = unchecked(q * result + obj.Version.GetHashCode());
+            }
+
+            if (obj.MaximumVersion != null)
+            {
+                result = unchecked(q * result + obj.MaximumVersion.GetHashCode());
             }
 
             return result;
