@@ -2196,7 +2196,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        symLinkExists = Utils.ItemExists(path, out isSymLinkDirectory);
+                        symLinkExists = GetFileSystemInfo(path, out isSymLinkDirectory) != null;
                     }
                     catch (Exception e)
                     {
