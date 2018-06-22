@@ -6130,27 +6130,21 @@ namespace Microsoft.PowerShell.Commands
 
             PSObject results = new PSObject();
             PSObject fileSystemInfoShell = null;
-            bool isContainer = false;
 
-            // Create a PSObject with either a DirectoryInfo or FileInfo object
-            // at its core.
+            var fsinfo = GetFileSystemInfo(path, out bool isDirectory);
 
-            if (Utils.ItemExists(path, out bool isDirectory))
+            // Create a PSObject with either a DirectoryInfo or FileInfo object at its core.
+            if (fsinfo != null)
             {
                 if (isDirectory)
                 {
-                    isContainer = true;
-                    fileSystemInfoShell = PSObject.AsPSObject(new DirectoryInfo(path));
+                    fileSystemInfoShell = PSObject.AsPSObject((DirectoryInfo)fsinfo);
                 }
                 else
                 {
-                    // Maybe the path is a file name so try a FileInfo instead
-                    fileSystemInfoShell = PSObject.AsPSObject(new FileInfo(path));
+                    fileSystemInfoShell = PSObject.AsPSObject((FileInfo)fsinfo);
                 }
-            }
 
-            if (fileSystemInfoShell != null)
-            {
                 bool propertySet = false;
 
                 foreach (PSMemberInfo property in propertyToSet.Properties)
@@ -6160,7 +6154,7 @@ namespace Microsoft.PowerShell.Commands
                     // Get the confirmation text
                     string action = null;
 
-                    if (isContainer)
+                    if (isDirectory)
                     {
                         action = FileSystemProviderStrings.SetPropertyActionDirectory;
                     }
