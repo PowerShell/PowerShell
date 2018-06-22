@@ -1499,11 +1499,12 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
-            if (Utils.ItemExists(path, out bool isDirectory))
+            var fsinfo = GetFileSystemInfo(path, out bool isDirectory);
+
+            if (fsinfo != null)
             {
                 if (isDirectory)
                 {
-                    DirectoryInfo directory = new DirectoryInfo(path);
                     InodeTracker tracker = null;
 
                     if (recurse)
@@ -1511,18 +1512,15 @@ namespace Microsoft.PowerShell.Commands
                         GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
                         if (fspDynamicParam != null && fspDynamicParam.FollowSymlink)
                         {
-                            tracker = new InodeTracker(directory.FullName);
+                            tracker = new InodeTracker(((DirectoryInfo)fsinfo).FullName);
                         }
                     }
 
                     // Enumerate the directory
-                    Dir(directory, recurse, depth, nameOnly, returnContainers, tracker);
+                    Dir((DirectoryInfo)fsinfo, recurse, depth, nameOnly, returnContainers, tracker);
                 }
                 else
                 {
-                    // Maybe the path is a file name so try a FileInfo instead
-                    FileInfo fileInfo = new FileInfo(path);
-
                     FlagsExpression<FileAttributes> evaluator = null;
                     FlagsExpression<FileAttributes> switchEvaluator = null;
                     GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
@@ -1539,16 +1537,16 @@ namespace Microsoft.PowerShell.Commands
 
                     if (evaluator != null)
                     {
-                        attributeFilter = evaluator.Evaluate(fileInfo.Attributes);  // expressions
+                        attributeFilter = evaluator.Evaluate(fsinfo.Attributes);  // expressions
                         filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
                     }
                     if (switchEvaluator != null)
                     {
-                        switchAttributeFilter = switchEvaluator.Evaluate(fileInfo.Attributes);  // switch parameters
+                        switchAttributeFilter = switchEvaluator.Evaluate(fsinfo.Attributes);  // switch parameters
                         switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
                     }
 
-                    bool hidden = (fileInfo.Attributes & FileAttributes.Hidden) != 0;
+                    bool hidden = (fsinfo.Attributes & FileAttributes.Hidden) != 0;
 
                     // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
                     // default hidden attribute filter.
@@ -1558,12 +1556,12 @@ namespace Microsoft.PowerShell.Commands
                         if (nameOnly)
                         {
                             WriteItemObject(
-                                fileInfo.Name,
-                                fileInfo.FullName,
+                                ((FileInfo)fsinfo).Name,
+                                ((FileInfo)fsinfo).FullName,
                                 false);
                         }
                         else
-                            WriteItemObject(fileInfo, path, false);
+                            WriteItemObject((FileInfo)fsinfo, path, false);
                     }
                 }
             }
