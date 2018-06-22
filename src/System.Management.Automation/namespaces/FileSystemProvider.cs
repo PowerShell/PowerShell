@@ -2325,7 +2325,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        exists = Utils.ItemExists(strTargetPath, out isDirectory);
+                        exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
                     }
                     catch (Exception e)
                     {
