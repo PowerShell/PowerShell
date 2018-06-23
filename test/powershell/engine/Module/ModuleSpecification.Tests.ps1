@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+using namespace Microsoft.PowerShell.Commands
+
 # Take a hashtable and return two copies,
 # one with the key/value pair, the other without
 function PermuteHashtableOnProperty
@@ -104,14 +106,14 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
         }
 
         It "Can be created from a name" {
-            $ms = [Microsoft.PowerShell.Commands.ModuleSpecification]::new("NamedModule")
+            $ms = [ModuleSpecification]::new("NamedModule")
             $ms | Should -Not -BeNull
             $ms.Name | Should -BeExactly "NamedModule"
         }
 
         It "Can be created from Hashtable with keys: <Keys>" -TestCases $testCases {
             param([hashtable]$ModuleSpecification, [string]$Keys)
-            $ms = [Microsoft.PowerShell.Commands.ModuleSpecification]::new($ModuleSpecification)
+            $ms = [ModuleSpecification]::new($ModuleSpecification)
 
             $ms.Name | Should -BeExactly $ModuleSpecification.ModuleName
 
@@ -139,10 +141,10 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
         It "Can be reconstructed from self.ToString() with keys: <Keys>" -TestCases $testCases {
             param([hashtable]$ModuleSpecification, [string]$Keys)
 
-            $ms = [Microsoft.PowerShell.Commands.ModuleSpecification]::new($ModuleSpecification)
+            $ms = [ModuleSpecification]::new($ModuleSpecification)
 
-            [Microsoft.PowerShell.Commands.ModuleSpecification]$clone = $null
-            [Microsoft.PowerShell.Commands.ModuleSpecification]::TryParse(($ms.ToString()), [ref]$clone) | Should -BeTrue
+            [ModuleSpecification]$clone = $null
+            [ModuleSpecification]::TryParse(($ms.ToString()), [ref]$clone) | Should -BeTrue
 
             $clone.Name | Should -Be $ModuleSpecification.ModuleName
 
@@ -171,7 +173,7 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
     Context "ModuleSpecification comparison" {
 
         BeforeAll {
-            $modSpecAsm = [Microsoft.PowerShell.Commands.ModuleSpecification].Assembly
+            $modSpecAsm = [ModuleSpecification].Assembly
             $modSpecComparerType = $modSpecAsm.GetType("Microsoft.PowerShell.Commands.ModuleSpecificationComparer")
             $comparer = [System.Activator]::CreateInstance($modSpecComparerType)
         }
@@ -179,8 +181,8 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
         It "Module specifications with same fields <Keys> are equal" -TestCases $testCases {
             param([hashtable]$ModuleSpecification, [string]$Keys)
 
-            $ms = [Microsoft.PowerShell.Commands.ModuleSpecification]::new($ModuleSpecification)
-            $ms2 = [Microsoft.PowerShell.Commands.ModuleSpecification]::new($ModuleSpecification)
+            $ms = [ModuleSpecification]::new($ModuleSpecification)
+            $ms2 = [ModuleSpecification]::new($ModuleSpecification)
 
             $comparer.Equals($ms, $ms2) | Should -BeTrue
         }
@@ -188,16 +190,16 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
         It "Module specifications with same fields <Keys> have the same hash code" -TestCases $testCases {
             param([hashtable]$ModuleSpecification, [string]$Keys)
 
-            $ms = [Microsoft.PowerShell.Commands.ModuleSpecification]::new($ModuleSpecification)
-            $ms2 = [Microsoft.PowerShell.Commands.ModuleSpecification]::new($ModuleSpecification)
+            $ms = [ModuleSpecification]::new($ModuleSpecification)
+            $ms2 = [ModuleSpecification]::new($ModuleSpecification)
 
             $comparer.GetHashCode($ms) | Should -Be $comparer.GetHashCode($ms2)
         }
 
         It "Module specifications with different <TestName> fields are not equal" -TestCases $differentFieldCases {
             param($TestName, $ModSpec1, $ModSpec2)
-            $ms1 = [Microsoft.PowerShell.Commands.ModuleSpecification]::new($ModSpec1)
-            $ms2 = [Microsoft.PowerShell.Commands.ModuleSpecification]::new($ModSpec2)
+            $ms1 = [ModuleSpecification]::new($ModSpec1)
+            $ms2 = [ModuleSpecification]::new($ModSpec2)
 
             $comparer.Equals($ms1, $ms2) | Should -BeFalse
         }
@@ -207,7 +209,7 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
         }
 
         It "Compares a null module specification with another as unequal" {
-            $ms = [Microsoft.PowerShell.Commands.ModuleSpecification]::new(@{
+            $ms = [ModuleSpecification]::new(@{
                 MOduleName = "NonNullModule"
                 Guid = [guid]::NewGuid()
                 RequiredVersion = "3.2.1"
@@ -244,13 +246,13 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
         }
 
         It "Cannot create from a null argument" {
-            { [Microsoft.PowerShell.Commands.ModuleSpecification]::new($null) } | Should -Throw
+            { [ModuleSpecification]::new($null) } | Should -Throw
         }
 
         It "Cannot create from invalid module hashtables: <TestName>" -TestCases $testCases {
             param([string]$TestName, [hashtable]$ModuleSpecification)
 
-            { [Microsoft.PowerShell.Commands.ModuleSpecification]::new($ModuleSpecification) } | Should -Throw
+            { [ModuleSpecification]::new($ModuleSpecification) } | Should -Throw
         }
     }
 }
