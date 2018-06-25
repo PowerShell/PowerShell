@@ -6,7 +6,7 @@ Describe "Error position Tests" -Tags "CI" {
         $testFile = Join-Path $TestDrive "SwitchError1.ps1"
         Set-Content -Path $testFile -Encoding Ascii -Value @'
 $test = 1
-switch ($nullVar[0]) {
+switch ($null[0]) {
     "a" {};
 }
 '@
@@ -15,7 +15,7 @@ switch ($nullVar[0]) {
         $errorRecord.ScriptStackTrace | Should -Match "SwitchError1.ps1: line 2"
     }
 
-    It "swtich condition MoveNext failure should report correct error position" {
+    It "switch condition MoveNext failure should report correct error position" {
         $code = @'
 using System;
 using System.Collections.Generic;
