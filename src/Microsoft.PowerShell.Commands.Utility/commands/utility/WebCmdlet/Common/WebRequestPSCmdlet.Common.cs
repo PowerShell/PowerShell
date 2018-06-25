@@ -230,18 +230,18 @@ namespace Microsoft.PowerShell.Commands
         private int _maximumRedirection = -1;
 
         /// <summary>
-        /// Gets or sets the RetryCount property, which determines the number of retries of a failed web request.
+        /// Gets or sets the MaximumRetryCount property, which determines the number of retries of a failed web request.
         /// </summary>
         [Parameter]
         [ValidateRange(0, Int32.MaxValue)]
-        public virtual int RetryCount { get; set; } = 0;
+        public virtual int MaximumRetryCount { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
         /// </summary>
         [Parameter]
         [ValidateRange(1, Int32.MaxValue)]
-        public virtual int RetryIntervalSec { get; set; } = 60;
+        public virtual int RetryIntervalSec { get; set; } = 5;
 
         #endregion
 
@@ -646,9 +646,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (RetryCount > 0)
+            if (MaximumRetryCount > 0)
             {
-                WebSession.RetryCount = RetryCount;
+                WebSession.MaximumRetryCount = MaximumRetryCount;
 
                 // only set retry interval if retry count is set.
                 WebSession.RetryIntervalInSeconds = RetryIntervalSec;
@@ -1294,7 +1294,7 @@ namespace Microsoft.PowerShell.Commands
         {
             int intCode = (int)code;
 
-            if (((intCode == 304) || (intCode >= 400 && intCode <= 599)) && WebSession.RetryCount > 0)
+            if (((intCode == 304) || (intCode >= 400 && intCode <= 599)) && WebSession.MaximumRetryCount > 0)
             {
                 return true;
             }
@@ -1308,7 +1308,7 @@ namespace Microsoft.PowerShell.Commands
             if (request == null) { throw new ArgumentNullException("request"); }
 
             // Add 1 to account for the first request.
-            int totalRequests = WebSession.RetryCount + 1;
+            int totalRequests = WebSession.MaximumRetryCount + 1;
             HttpRequestMessage req = request;
             HttpResponseMessage response = null;
 
@@ -1387,7 +1387,8 @@ namespace Microsoft.PowerShell.Commands
 
                 _resumeSuccess = response.StatusCode == HttpStatusCode.PartialContent;
 
-                if (ShouldRetry(response.StatusCode))
+                // When MaximumRetryCount is not specified, the totalRequests == 1.
+                if (totalRequests > 1 && ShouldRetry(response.StatusCode))
                 {
                     string retryMessage = string.Format(
                         CultureInfo.CurrentCulture,
@@ -1396,9 +1397,15 @@ namespace Microsoft.PowerShell.Commands
                         response.StatusCode);
 
                     WriteVerbose(retryMessage);
-                    Task.Delay(WebSession.RetryIntervalInSeconds * 1000).GetAwaiter().GetResult();
+
+                    _cancelToken = new CancellationTokenSource();
+                    Task.Delay(WebSession.RetryIntervalInSeconds * 1000, _cancelToken.Token).GetAwaiter().GetResult();
+                    _cancelToken.Cancel();
+                    _cancelToken = null;
+
                     req.Dispose();
-                    req = GetRequest(Uri);
+                    req = GetRequest(currentUri);
+                    FillRequestStream(req);
                 }
 
                 totalRequests--;

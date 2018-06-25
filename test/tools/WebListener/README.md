@@ -689,7 +689,7 @@ This endpoint causes the failure specified by `failureCode` for `failureCount` n
 After that a status 200 is returned with body containing the number of times the failure was caused.
 
 ```powershell
-$response = Invoke-WebRequest -Uri 'http://127.0.0.1:8083/Retry?failureCode=599&failureCount=2&sessionid=100&' -RetryCount 2 -RetryIntervalSec 1
+$response = Invoke-WebRequest -Uri 'http://127.0.0.1:8083/Retry?failureCode=599&failureCount=2&sessionid=100&' -MaximumRetryCount 2 -RetryIntervalSec 1
 ```
 
 Response Body:

@@ -751,7 +751,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         param($failureCount, $retryCount, $failureCode)
 
         $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = $failureCode; failureCount = $failureCount }
-        $command = "Invoke-WebRequest -Uri '$uri' -RetryCount $retryCount -RetryIntervalSec 1"
+        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount $retryCount -RetryIntervalSec 1"
         $result = ExecuteWebCommand -command $command
 
         $result.output.StatusCode | Should -Be "200"
@@ -759,10 +759,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonResult.failureResponsesSent | Should -Be $failureCount
     }
 
-    It "Invoke-WebRequest should fail when failureCount is greater than retryCount" {
+    It "Invoke-WebRequest should fail when failureCount is greater than MaximumRetryCount" {
 
         $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = 400; failureCount = 4 }
-        $command = "Invoke-WebRequest -Uri '$uri' -RetryCount 1 -RetryIntervalSec 1"
+        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount 1 -RetryIntervalSec 1"
         $result = ExecuteWebCommand -command $command
         $jsonError = $result.error | ConvertFrom-Json
         $jsonError.error | Should -BeExactly 'Error: HTTP - 400 occurred.'

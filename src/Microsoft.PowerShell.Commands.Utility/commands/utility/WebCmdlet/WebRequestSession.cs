@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the count of retries for request failures.
         /// </summary>
-        public int RetryCount { get; set; }
+        public int MaximumRetryCount { get; set; }
 
         /// <summary>
         /// Gets or sets the interval in seconds between retries.
