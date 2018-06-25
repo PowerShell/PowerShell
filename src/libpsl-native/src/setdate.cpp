@@ -41,7 +41,7 @@ int32_t SetDate(struct private_tm* time)
 
 static int32_t GetTimeVal(struct private_tm& time, struct timeval& tv)
 {
-    struct tm nativeTime = 0;
+    struct tm nativeTime = {0};
     nativeTime.tm_hour  = static_cast<int>(time.Hour);
     nativeTime.tm_isdst = static_cast<int>(time.IsDst);
     nativeTime.tm_mday  = static_cast<int>(time.DayOfMonth);
