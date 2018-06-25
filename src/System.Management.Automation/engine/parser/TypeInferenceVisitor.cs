@@ -400,8 +400,8 @@ namespace System.Management.Automation
             type = null;
             if (value != null)
             {
-                if (value is IList list
-                    && list.Count > 0)
+                var list = value as IList;
+                if (list != null && list.Count > 0)
                 {
                     value = list[0];
                 }
