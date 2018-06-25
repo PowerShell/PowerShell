@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 # this script needs to be run from within Alpine with dotnet 2.1 SDK installed, example:
 # docker run -it -v ~/repos/PowerShell:/PowerShell microsoft/dotnet:2.1-sdk-alpine
 
@@ -47,10 +49,10 @@ esac
 # remove v from release tag (v3.5 => 3.5)
 if [ "${releaseTag:0:1}" = "v" ]; then
   releaseTag=${releaseTag:1}
-  tarName=$destination/powershell-$releaseTag-alpine.3-$arch.tar.gz
+  tarName=$destination/powershell-$releaseTag-linux-musl-$arch.tar.gz
   dotnetArguments=/p:ReleaseTag=$releaseTag;
 else
-  tarName=$destination/powershell-alpine.3-$arch.tar.gz
+  tarName=$destination/powershell-linux-musl-$arch.tar.gz
 fi
 
 # Build libpsl-native
@@ -89,12 +91,14 @@ dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs powershe
 
 # build PowerShell
 cd ../powershell-unix
-dotnet publish --configuration Release --runtime alpine-x64 $dotnetArguments
+dotnet publish --configuration Release --runtime linux-musl-x64 $dotnetArguments
 
 # add libpsl-native to build
-mv libpsl-native.so bin/Release/netcoreapp2.1/alpine-x64/publish
+mv libpsl-native.so bin/Release/netcoreapp2.1/linux-musl-x64/publish
 
 # tar build for output
-cd bin/Release/netcoreapp2.1/alpine-x64/publish
+cd bin/Release/netcoreapp2.1/linux-musl-x64/publish
 
 tar -czvf $tarName .
+
+echo "Created $tarName"
