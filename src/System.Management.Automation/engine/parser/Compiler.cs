@@ -4189,10 +4189,7 @@ namespace System.Management.Automation.Language
             // $foreach/$switch = GetEnumerator $enumerable
             var enumerable = NewTemp(typeof(object), "enumerable");
             temps.Add(enumerable);
-            if (generatingForeach)
-            {
-                exprs.Add(UpdatePosition(stmt.Condition));
-            }
+            exprs.Add(UpdatePosition(stmt.Condition));
             exprs.Add(
                 Expression.Assign(enumerable,
                                   GetRangeEnumerator(stmt.Condition.GetPureExpression())
