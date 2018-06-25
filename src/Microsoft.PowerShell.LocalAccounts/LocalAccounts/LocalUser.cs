@@ -135,10 +135,6 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public LocalUser Clone()
         {
-            if (this == null)
-            {
-                throw new NullReferenceException();
-            }
             return new LocalUser(this);
         }
         #endregion Public Methods
