@@ -352,6 +352,24 @@ Describe "Type inference Tests" -tags "CI" {
         }
     }
 
+    It "Infers typeof Select-Object when Member is ExpandProperty" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Select-Object -ExpandProperty Directory }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.IO.DirectoryInfo"
+    }
+
+    It "Infers typeof Select-Object when No projection is done" {
+        $res = [AstTypeInference]::InferTypeOf( { "Hello" | Select-Object -First 1}.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.String"
+    }
+
+    It "Don't Infer typeof Select-Object when projection is done" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Select-Object -Property Name}.Ast)
+        $res.Count | Should -Be 0
+    }
+
+
     It "Infers type from OutputTypeAttribute" {
         $res = [AstTypeInference]::InferTypeOf( { Get-Process -Id 2345 }.Ast)
         $gpsOutput = [Microsoft.PowerShell.Commands.GetProcessCommand].GetCustomAttributes([System.Management.Automation.OutputTypeAttribute], $false).Type
