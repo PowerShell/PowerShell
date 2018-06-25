@@ -786,9 +786,8 @@ namespace System.Management.Automation
                 yield break;
             }
 
-            AstParameterArgumentPair pathArgument;
             string pathParameterName = "Path";
-            if (!pseudoBinding.BoundArguments.TryGetValue(pathParameterName, out pathArgument))
+            if (!pseudoBinding.BoundArguments.TryGetValue(pathParameterName, out var pathArgument))
             {
                 pathParameterName = "LiteralPath";
                 pseudoBinding.BoundArguments.TryGetValue(pathParameterName, out pathArgument);
@@ -799,9 +798,9 @@ namespace System.Management.Automation
             // If you specified - Path, the list of OutputType can be refined, but we have to make a copy of the CmdletInfo object this way to get that refinement.
             var commandInfo = pseudoBinding.CommandInfo;
             var pathArgumentPair = pathArgument as AstPair;
-            if (pathArgumentPair?.Argument is StringConstantExpressionAst)
+            if (pathArgumentPair?.Argument is StringConstantExpressionAst ast)
             {
-                var pathValue = ((StringConstantExpressionAst)pathArgumentPair.Argument).Value;
+                var pathValue = ast.Value;
                 try
                 {
                     commandInfo = commandInfo.CreateGetCommandCopy(new object[] { "-" + pathParameterName, pathValue });
@@ -809,8 +808,7 @@ namespace System.Management.Automation
                 catch (InvalidOperationException) { }
             }
 
-            var cmdletInfo = commandInfo as CmdletInfo;
-            if (cmdletInfo != null)
+            if (commandInfo is CmdletInfo cmdletInfo)
             {
                 // Special cases
                 var inferTypesFromObjectCmdlets = InferTypesFromObjectCmdlets(commandAst, cmdletInfo, pseudoBinding).ToArray();
@@ -890,6 +888,14 @@ namespace System.Management.Automation
                     yield return foreachType;
                 }
             }
+
+            if (cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.SelectObjectCommand"))
+            {
+                foreach (var foreachType in InferTypesFromSelectCommand(pseudoBinding, commandAst))
+                {
+                    yield return foreachType;
+                }
+            }
         }
 
         private static IEnumerable<PSTypeName> InferTypesFromCimCommand(PseudoBindingInfo pseudoBinding)
@@ -914,8 +920,7 @@ namespace System.Management.Automation
 
         private IEnumerable<PSTypeName> InferTypesFromForeachCommand(PseudoBindingInfo pseudoBinding, CommandAst commandAst)
         {
-            AstParameterArgumentPair argument;
-            if (pseudoBinding.BoundArguments.TryGetValue("MemberName", out argument))
+            if (pseudoBinding.BoundArguments.TryGetValue("MemberName", out AstParameterArgumentPair argument))
             {
                 var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
                 if (previousPipelineElement == null)
@@ -965,8 +970,58 @@ namespace System.Management.Automation
 
         private IEnumerable<PSTypeName> InferTypesFromWhereAndSortCommand(CommandAst commandAst)
         {
-            var parentPipeline = commandAst.Parent as PipelineAst;
-            if (parentPipeline != null)
+            if (commandAst.Parent is PipelineAst parentPipeline)
+            {
+                int i;
+                for (i = 0; i < parentPipeline.PipelineElements.Count; i++)
+                {
+                    if (parentPipeline.PipelineElements[i] == commandAst)
+                        break;
+                }
+                if (i > 0)
+                {
+                    foreach (var typename in InferTypes(parentPipeline.PipelineElements[i - 1]))
+                    {
+                        yield return typename;
+                    }
+                }
+            }
+        }
+
+        private IEnumerable<PSTypeName> InferTypesFromSelectCommand(PseudoBindingInfo pseudoBinding, CommandAst commandAst)
+        {
+            if (pseudoBinding.BoundArguments.TryGetValue("Property", out var _)
+               || pseudoBinding.BoundArguments.TryGetValue("ExcludeProperty", out var _))
+            {
+                yield break;
+            }
+
+            var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
+            if (previousPipelineElement == null)
+            {
+                yield break;
+            }
+
+            if (pseudoBinding.BoundArguments.TryGetValue("ExpandProperty", out var expandedPropertyArgument))
+            {
+                foreach (var t in InferTypes(previousPipelineElement))
+                {
+                    var memberName = (((AstPair)expandedPropertyArgument).Argument as StringConstantExpressionAst)?.Value;
+
+                    if (memberName != null)
+                    {
+                        var  members              = _context.GetMembersByInferredType(t, false, null);
+                        bool maybeWantDefaultCtor = false;
+                        foreach (var type in GetTypesOfMembers(t, memberName, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst: false))
+                        {
+                            yield return type;
+                        }
+                    }
+                }
+                yield break;
+            }
+
+            if (commandAst.Parent is PipelineAst parentPipeline)
             {
                 int i;
                 for (i = 0; i < parentPipeline.PipelineElements.Count; i++)
@@ -986,12 +1041,10 @@ namespace System.Management.Automation
 
         private static PSTypeName InferTypesFromNewObjectCommand(PseudoBindingInfo pseudoBinding)
         {
-            AstParameterArgumentPair typeArgument;
-            if (pseudoBinding.BoundArguments.TryGetValue("TypeName", out typeArgument))
+            if (pseudoBinding.BoundArguments.TryGetValue("TypeName", out var typeArgument))
             {
                 var typeArgumentPair = typeArgument as AstPair;
-                var stringConstantExpr = typeArgumentPair?.Argument as StringConstantExpressionAst;
-                if (stringConstantExpr != null)
+                if (typeArgumentPair?.Argument is StringConstantExpressionAst stringConstantExpr)
                 {
                      return new PSTypeName(stringConstantExpr.Value);
                 }
