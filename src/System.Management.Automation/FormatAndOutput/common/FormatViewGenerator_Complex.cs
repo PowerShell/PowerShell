@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     match = new TypeMatch(_expressionFactory, _db, typesWithoutPrefix);
                     foreach (ComplexControlEntryDefinition x in complexBody.optionalEntryList)

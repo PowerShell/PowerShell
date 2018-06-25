@@ -724,7 +724,7 @@ namespace System.Management.Automation
 
                 throw commandException;
             }
-            if (null != initError)
+            if (initError != null)
             {
                 // Log a command health event
                 MshLog.LogCommandHealthEvent(

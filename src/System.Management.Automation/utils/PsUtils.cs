@@ -545,7 +545,7 @@ namespace System.Management.Automation
         {
             // NTRAID#Windows Out Of Band Releases-926471-2005/12/27-JonN
             // shell crashes if you pass an empty script block to a native command
-            if (null == input)
+            if (input == null)
             {
                 throw PSTraceSource.NewArgumentNullException("input");
             }

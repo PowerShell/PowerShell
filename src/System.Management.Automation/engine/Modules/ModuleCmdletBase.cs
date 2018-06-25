@@ -3894,7 +3894,7 @@ namespace Microsoft.PowerShell.Commands
             string extension,
             out PSModuleInfo nestedModuleInfoIfAvailable)
         {
-            Dbg.Assert(null != nestedModuleSpec, "nestedModuleSpec cannot be null.");
+            Dbg.Assert(nestedModuleSpec != null, "nestedModuleSpec cannot be null.");
             nestedModuleInfoIfAvailable = null;
             if ((nestedModuleSpec.Guid != null) || (nestedModuleSpec.Version != null) || (nestedModuleSpec.RequiredVersion != null) || (nestedModuleSpec.MaximumVersion != null))
             {

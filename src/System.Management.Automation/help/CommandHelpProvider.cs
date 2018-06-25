@@ -222,7 +222,7 @@ namespace System.Management.Automation
             {
                 result = GetFromCommandCache(cmdletInfo.ModuleName, cmdletInfo.Name, cmdletInfo.HelpCategory);
 
-                if (null == result)
+                if (result == null)
                 {
                     // Try load the help file specified by CmdletInfo.HelpFile property
                     helpFile = FindHelpFile(cmdletInfo);
@@ -248,7 +248,7 @@ namespace System.Management.Automation
             }
 
             // For scripts, try to retrieve the help from the file specified by .ExternalHelp directive
-            if (null == result && isScriptCommand)
+            if (result == null && isScriptCommand)
             {
                 ScriptBlock sb = null;
                 try
@@ -309,7 +309,7 @@ namespace System.Management.Automation
             // in the appropriate UI culture subfolder of ModuleBase, and retrieve help
             // If still not able to get help, try search for a file called <NestedModuleName>-Help.xml
             // under the ModuleBase and the NestedModule's directory, and retrieve help
-            if (null == result && !InternalTestHooks.BypassOnlineHelpRetrieval)
+            if (result == null && !InternalTestHooks.BypassOnlineHelpRetrieval)
             {
                 // Get the name and ModuleBase directory of the command's module
                 // and the nested module that implements the command
@@ -329,7 +329,7 @@ namespace System.Management.Automation
                     result = GetHelpInfoFromHelpFile(commandInfo, helpFileToFind, searchPaths, reportErrors, out helpFile);
                 }
 
-                if (null == result && !String.IsNullOrEmpty(nestedModulePath))
+                if (result == null && !String.IsNullOrEmpty(nestedModulePath))
                 {
                     // Search for <NestedModuleName>-Help.xml under both ModuleBase and NestedModule's directory
                     searchPaths.Add(Path.GetDirectoryName(nestedModulePath));
@@ -339,7 +339,7 @@ namespace System.Management.Automation
             }
 
             // Set the HelpFile property to the file that contains the help content
-            if (null != result && !String.IsNullOrEmpty(helpFile))
+            if (result != null && !String.IsNullOrEmpty(helpFile))
             {
                 if (isCmdlet)
                 {
@@ -352,7 +352,7 @@ namespace System.Management.Automation
             }
 
             // If the above fails to get help, construct an HelpInfo object using the syntax and definition of the command
-            if (null == result)
+            if (result == null)
             {
                 if (commandInfo.CommandType == CommandTypes.ExternalScript ||
                     commandInfo.CommandType == CommandTypes.Script)
@@ -372,7 +372,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (null != result)
+            if (result != null)
             {
                 if (isScriptCommand && result.GetUriForOnlineHelp() == null)
                 {
@@ -788,7 +788,7 @@ namespace System.Management.Automation
             HelpInfo result = GetCache(key);
 
             // Win8: Win8:477680: When Function/Workflow Use External Help, Category Property is "Cmdlet"
-            if ((null != result) && (result.HelpCategory != helpCategory))
+            if ((result != null) && (result.HelpCategory != helpCategory))
             {
                 MamlCommandHelpInfo original = (MamlCommandHelpInfo)result;
                 result = original.Copy(helpCategory);
@@ -805,15 +805,15 @@ namespace System.Management.Automation
         /// <returns>HelpInfo object.</returns>
         private HelpInfo GetFromCommandCache(string helpFileIdentifier, CommandInfo commandInfo)
         {
-            Debug.Assert(null != commandInfo, "commandInfo cannot be null");
+            Debug.Assert(commandInfo != null, "commandInfo cannot be null");
             HelpInfo result = GetFromCommandCache(helpFileIdentifier, commandInfo.Name, commandInfo.HelpCategory);
-            if (null == result)
+            if (result == null)
             {
                 // check if the command is prefixed and try retrieving help by removing the prefix
                 if ((commandInfo.Module != null) && (!string.IsNullOrEmpty(commandInfo.Prefix)))
                 {
                     MamlCommandHelpInfo newMamlHelpInfo = GetFromCommandCacheByRemovingPrefix(helpFileIdentifier, commandInfo);
-                    if (null != newMamlHelpInfo)
+                    if (newMamlHelpInfo != null)
                     {
                         // caching the changed help content under the prefixed name for faster
                         // retrieval later.
@@ -835,7 +835,7 @@ namespace System.Management.Automation
         /// </returns>
         private HelpInfo GetFromCommandCacheOrCmdletInfo(CmdletInfo cmdletInfo)
         {
-            Debug.Assert(null != cmdletInfo, "cmdletInfo cannot be null");
+            Debug.Assert(cmdletInfo != null, "cmdletInfo cannot be null");
             HelpInfo result = GetFromCommandCache(cmdletInfo.ModuleName, cmdletInfo.Name, cmdletInfo.HelpCategory);
             if (result == null)
             {
@@ -844,7 +844,7 @@ namespace System.Management.Automation
                 {
                     MamlCommandHelpInfo newMamlHelpInfo = GetFromCommandCacheByRemovingPrefix(cmdletInfo.ModuleName, cmdletInfo);
 
-                    if (null != newMamlHelpInfo)
+                    if (newMamlHelpInfo != null)
                     {
                         // Noun exists only for cmdlets...since prefix will change the Noun, updating
                         // the help content accordingly
@@ -886,14 +886,14 @@ namespace System.Management.Automation
         /// </returns>
         private MamlCommandHelpInfo GetFromCommandCacheByRemovingPrefix(string helpIdentifier, CommandInfo cmdInfo)
         {
-            Dbg.Assert(null != cmdInfo, "cmdInfo cannot be null");
+            Dbg.Assert(cmdInfo != null, "cmdInfo cannot be null");
 
             MamlCommandHelpInfo result = null;
             MamlCommandHelpInfo originalHelpInfo = GetFromCommandCache(helpIdentifier,
                         Microsoft.PowerShell.Commands.ModuleCmdletBase.RemovePrefixFromCommandName(cmdInfo.Name, cmdInfo.Prefix),
                         cmdInfo.HelpCategory) as MamlCommandHelpInfo;
 
-            if (null != originalHelpInfo)
+            if (originalHelpInfo != null)
             {
                 result = originalHelpInfo.Copy();
                 // command's name can be changed using -Prefix while importing module.To give better user experience for

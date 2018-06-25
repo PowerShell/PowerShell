@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     EnumerableExpansion result = GetEnumerableExpansionFromType(expressionFactory, db, typesWithoutPrefix);
                     return result;
@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     FormatShape result = GetShapeFromType(expressionFactory, db, typesWithoutPrefix);
                     return result;
@@ -382,10 +382,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we were unable to find a best match so far..try
             // to get rid of Deserialization prefix and see if a
             // match can be found.
-            if (null == result)
+            if (result == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     result = GetOutOfBandView(expressionFactory, db, typesWithoutPrefix);
                 }
@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ActiveTracer.WriteLine(
                         "NOT MATCH {0}  NAME: {1}",
-                        ControlBase.GetControlShapeName(vd.mainControl), (null != vd ? vd.name : string.Empty));
+                        ControlBase.GetControlShapeName(vd.mainControl), (vd != null ? vd.name : string.Empty));
                     continue;
                 }
                 if (IsOutOfBandView(vd))
@@ -454,10 +454,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we were unable to find a best match so far..try
             // to get rid of Deserialization prefix and see if a
             // match can be found.
-            if (null == result)
+            if (result == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     result = GetView(expressionFactory, db, mainControlType, typesWithoutPrefix, viewName);
                 }
@@ -544,10 +544,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we were unable to find a best match so far..try
             // to get rid of Deserialization prefix and see if a
             // match can be found.
-            if (null == result)
+            if (result == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     result = GetDefaultView(expressionFactory, db, typesWithoutPrefix);
                 }

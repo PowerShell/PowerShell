@@ -1195,8 +1195,8 @@ namespace System.Management.Automation
                 // Since we are not streaming, just add the object to the accumulatedErrorObjects
                 _accumulatedErrorObjects.Add(errorRecord);
 
-                if (null != errorRecord.ErrorDetails
-                    && null != errorRecord.ErrorDetails.TextLookupError)
+                if (errorRecord.ErrorDetails != null
+                    && errorRecord.ErrorDetails.TextLookupError != null)
                 {
                     Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
                     errorRecord.ErrorDetails.TextLookupError = null;

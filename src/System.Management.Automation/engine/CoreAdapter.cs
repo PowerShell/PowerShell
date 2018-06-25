@@ -1396,7 +1396,7 @@ namespace System.Management.Automation
                                 }
                             }
 
-                            if (null != candidate)
+                            if (candidate != null)
                             {
                                 candidate.expandedParameters = ExpandParameters(arguments.Length, parameters, elementType);
                             }
@@ -4238,7 +4238,7 @@ namespace System.Management.Automation
         protected override T GetMember<T>(object obj, string memberName)
         {
             PSProperty property = base.GetDotNetProperty<PSProperty>(obj, memberName);
-            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && (null != property))
+            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && (property != null))
             {
                 return property as T;
             }

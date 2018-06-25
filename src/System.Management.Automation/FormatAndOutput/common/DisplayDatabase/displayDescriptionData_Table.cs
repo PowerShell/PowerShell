@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 autosize = this.autosize,
                 header = this.header.Copy()
             };
-            if (null != defaultDefinition)
+            if (defaultDefinition != null)
             {
                 result.defaultDefinition = this.defaultDefinition.Copy();
             }

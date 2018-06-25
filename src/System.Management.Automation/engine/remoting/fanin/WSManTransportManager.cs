@@ -567,7 +567,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSRemotingTransportException(
                     StringUtil.Format(RemotingErrorIdStrings.WSManInitFailed, WSManAPIData.ErrorCode));
             }
-            Dbg.Assert(null != connectionInfo, "connectionInfo cannot be null");
+            Dbg.Assert(connectionInfo != null, "connectionInfo cannot be null");
 
             CryptoHelper = cryptoHelper;
             dataToBeSent.Fragmentor = base.Fragmentor;
@@ -911,12 +911,12 @@ namespace System.Management.Automation.Remoting.Client
             ReceivedDataCollection.PrepareForStreamConnect();
             // additional content with connect shell call. Negotiation and connect related messages
             // should be included in payload
-            if (null == _openContent)
+            if (_openContent == null)
             {
                 DataPriorityType additionalDataType;
                 byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
 
-                if (null != additionalData)
+                if (additionalData != null)
                 {
                     // WSMan expects the data to be in XML format (which is text + xml tags)
                     // so convert byte[] into base64 encoded format
@@ -1065,7 +1065,7 @@ namespace System.Management.Automation.Remoting.Client
 
             // additional content with create shell call. Piggy back first fragment from
             // the dataToBeSent buffer.
-            if (null == _openContent)
+            if (_openContent == null)
             {
                 DataPriorityType additionalDataType;
                 byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 #endregion
 
-                if (null != additionalData)
+                if (additionalData != null)
                 {
                     // WSMan expects the data to be in XML format (which is text + xml tags)
                     // so convert byte[] into base64 encoded format
@@ -1333,10 +1333,10 @@ namespace System.Management.Automation.Remoting.Client
         internal override BaseClientCommandTransportManager CreateClientCommandTransportManager(RunspaceConnectionInfo connectionInfo,
                     ClientRemotePowerShell cmd, bool noInput)
         {
-            Dbg.Assert(null != cmd, "Cmd cannot be null");
+            Dbg.Assert(cmd != null, "Cmd cannot be null");
 
             WSManConnectionInfo wsmanConnectionInfo = connectionInfo as WSManConnectionInfo;
-            Dbg.Assert(null != wsmanConnectionInfo, "ConnectionInfo must be WSManConnectionInfo");
+            Dbg.Assert(wsmanConnectionInfo != null, "ConnectionInfo must be WSManConnectionInfo");
 
             WSManClientCommandTransportManager result = new
                 WSManClientCommandTransportManager(wsmanConnectionInfo, _wsManShellOperationHandle, cmd, noInput, this);
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         private void Initialize(Uri connectionUri, WSManConnectionInfo connectionInfo)
         {
-            Dbg.Assert(null != connectionInfo, "connectionInfo cannot be null.");
+            Dbg.Assert(connectionInfo != null, "connectionInfo cannot be null.");
 
             ConnectionInfo = connectionInfo;
 
@@ -1415,7 +1415,7 @@ namespace System.Management.Automation.Remoting.Client
                 // use credential based authentication
                 string userName = null;
                 System.Security.SecureString password = null;
-                if ((null != connectionInfo.Credential) && (!string.IsNullOrEmpty(connectionInfo.Credential.UserName)))
+                if ((connectionInfo.Credential != null) && (!string.IsNullOrEmpty(connectionInfo.Credential.UserName)))
                 {
                     userName = connectionInfo.Credential.UserName;
                     password = connectionInfo.Credential.Password;
@@ -1470,23 +1470,23 @@ namespace System.Management.Automation.Remoting.Client
             {
                 result = WSManNativeApi.WSManCreateSession(WSManAPIData.WSManAPIHandle, connectionStr, 0,
                      authCredentials.GetMarshalledObject(),
-                     (null == proxyInfo) ? IntPtr.Zero : (IntPtr)proxyInfo,
+                     (proxyInfo == null) ? IntPtr.Zero : (IntPtr)proxyInfo,
                      ref _wsManSessionHandle);
             }
             finally
             {
                 // release resources
-                if (null != proxyAuthCredentials)
+                if (proxyAuthCredentials != null)
                 {
                     proxyAuthCredentials.Dispose();
                 }
 
-                if (null != proxyInfo)
+                if (proxyInfo != null)
                 {
                     proxyInfo.Dispose();
                 }
 
-                if (null != authCredentials)
+                if (authCredentials != null)
                 {
                     authCredentials.Dispose();
                 }
@@ -1662,7 +1662,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (shouldClearSend)
             {
-                if (null != _sendToRemoteCompleted)
+                if (_sendToRemoteCompleted != null)
                 {
                     _sendToRemoteCompleted.Dispose();
                     _sendToRemoteCompleted = null;
@@ -1686,7 +1686,7 @@ namespace System.Management.Automation.Remoting.Client
                         _wsManReceiveOperationHandle = IntPtr.Zero;
                     }
 
-                    if (null != _receivedFromRemote)
+                    if (_receivedFromRemote != null)
                     {
                         _receivedFromRemote.Dispose();
                         _receivedFromRemote = null;
@@ -1900,7 +1900,7 @@ namespace System.Management.Automation.Remoting.Client
             // openContent is used by redirection ie., while redirecting to
             // a new machine.. this is not needed anymore as the connection
             // is successfully established.
-            if (null != sessionTM._openContent)
+            if (sessionTM._openContent != null)
             {
                 sessionTM._openContent.Dispose();
                 sessionTM._openContent = null;
@@ -2008,7 +2008,7 @@ namespace System.Management.Automation.Remoting.Client
             //LOG ETW EVENTS
 
             // Dispose the OnDisconnect callback as it is not needed anymore
-            if (null != sessionTM._disconnectSessionCompleted)
+            if (sessionTM._disconnectSessionCompleted != null)
             {
                 sessionTM._disconnectSessionCompleted.Dispose();
                 sessionTM._disconnectSessionCompleted = null;
@@ -2076,7 +2076,7 @@ namespace System.Management.Automation.Remoting.Client
             //Add ETW events
 
             // Dispose the OnCreate callback as it is not needed anymore
-            if (null != sessionTM._reconnectSessionCompleted)
+            if (sessionTM._reconnectSessionCompleted != null)
             {
                 sessionTM._reconnectSessionCompleted.Dispose();
                 sessionTM._reconnectSessionCompleted = null;
@@ -2207,7 +2207,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             //dispose openContent
-            if (null != sessionTM._openContent)
+            if (sessionTM._openContent != null)
             {
                 sessionTM._openContent.Dispose();
                 sessionTM._openContent = null;
@@ -2380,7 +2380,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             WSManNativeApi.WSManReceiveDataResult dataReceived = WSManNativeApi.WSManReceiveDataResult.UnMarshal(data);
-            if (null != dataReceived.data)
+            if (dataReceived.data != null)
             {
                 tracer.WriteLine("Session Received Data : {0}", dataReceived.data.Length);
                 PSEtwLog.LogAnalyticInformational(
@@ -2403,7 +2403,7 @@ namespace System.Management.Automation.Remoting.Client
             // This will either return data or register callback but doesn't do both.
             byte[] data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback,
                 out priorityType);
-            if (null != data)
+            if (data != null)
             {
                 SendData(data, priorityType);
             }
@@ -2411,7 +2411,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnDataAvailableCallback(byte[] data, DataPriorityType priorityType)
         {
-            Dbg.Assert(null != data, "data cannot be null in the data available callback");
+            Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
             tracer.WriteLine("Received data to be sent from the callback.");
             SendData(data, priorityType);
@@ -2485,7 +2485,7 @@ namespace System.Management.Automation.Remoting.Client
             // openContent is used by redirection ie., while redirecting to
             // a new machine and hence this is cleared only when the session
             // is disposing.
-            if (isDisposing && (null != _openContent))
+            if (isDisposing && (_openContent != null))
             {
                 _openContent.Dispose();
                 _openContent = null;
@@ -2523,7 +2523,7 @@ namespace System.Management.Automation.Remoting.Client
             // remove session context from session handles dictionary
             RemoveSessionTransportManager(_sessionContextID);
 
-            if (null != _closeSessionCompleted)
+            if (_closeSessionCompleted != null)
             {
                 _closeSessionCompleted.Dispose();
                 _closeSessionCompleted = null;
@@ -2532,7 +2532,7 @@ namespace System.Management.Automation.Remoting.Client
             // Dispose the create session completed callback here, since it is
             // used for periodic robust connection retry/auto-disconnect
             // notifications while the shell is active.
-            if (null != _createSessionCallback)
+            if (_createSessionCallback != null)
             {
                 _createSessionCallbackGCHandle.Free();
                 _createSessionCallback.Dispose();
@@ -2540,7 +2540,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // Dispose the OnConnect callback if one present
-            if (null != _connectSessionCallback)
+            if (_connectSessionCallback != null)
             {
                 _connectSessionCallback.Dispose();
                 _connectSessionCallback = null;
@@ -2867,7 +2867,7 @@ namespace System.Management.Automation.Remoting.Client
             base(shell, sessnTM.CryptoHelper, sessnTM)
         {
             Dbg.Assert(IntPtr.Zero != wsManShellOperationHandle, "Shell operation handle cannot be IntPtr.Zero.");
-            Dbg.Assert(null != connectionInfo, "connectionInfo cannot be null");
+            Dbg.Assert(connectionInfo != null, "connectionInfo cannot be null");
 
             _wsManShellOperationHandle = wsManShellOperationHandle;
 
@@ -2964,7 +2964,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CreateAsync()
         {
             byte[] cmdPart1 = serializedPipeline.ReadOrRegisterCallback(null);
-            if (null != cmdPart1)
+            if (cmdPart1 != null)
             {
                 #region SHIM: Redirection code for command code send.
 
@@ -3192,7 +3192,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </param>
         internal override void ProcessPrivateData(object privateData)
         {
-            Dbg.Assert(null != privateData, "privateData cannot be null.");
+            Dbg.Assert(privateData != null, "privateData cannot be null.");
 
             // For this version...only a boolean can be used for privateData.
             bool shouldRaiseSignalCompleted = (bool)privateData;
@@ -3214,7 +3214,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (shouldClearSend)
             {
-                if (null != _sendToRemoteCompleted)
+                if (_sendToRemoteCompleted != null)
                 {
                     _sendToRemoteCompleted.Dispose();
                     _sendToRemoteCompleted = null;
@@ -3238,7 +3238,7 @@ namespace System.Management.Automation.Remoting.Client
                         _wsManReceiveOperationHandle = IntPtr.Zero;
                     }
 
-                    if (null != _receivedFromRemote)
+                    if (_receivedFromRemote != null)
                     {
                         _receivedFromRemote.Dispose();
                         _receivedFromRemote = null;
@@ -3303,7 +3303,7 @@ namespace System.Management.Automation.Remoting.Client
                 cmdTM.RunspacePoolInstanceId.ToString(), cmdTM.powershellInstanceId.ToString());
 
             // dispose the cmdCompleted callback as it is not needed any more
-            if (null != cmdTM._createCmdCompleted)
+            if (cmdTM._createCmdCompleted != null)
             {
                 cmdTM._createCmdCompletedGCHandle.Free();
                 cmdTM._createCmdCompleted.Dispose();
@@ -3400,7 +3400,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // dispose the cmdCompleted callback as it is not needed any more
-            if (null != cmdTM._connectCmdCompleted)
+            if (cmdTM._connectCmdCompleted != null)
             {
                 cmdTM._connectCmdCompleted.Dispose();
                 cmdTM._connectCmdCompleted = null;
@@ -3655,7 +3655,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             WSManNativeApi.WSManReceiveDataResult dataReceived = WSManNativeApi.WSManReceiveDataResult.UnMarshal(data);
-            if (null != dataReceived.data)
+            if (dataReceived.data != null)
             {
                 tracer.WriteLine("Cmd Received Data : {0}", dataReceived.data.Length);
                 PSEtwLog.LogAnalyticInformational(
@@ -3772,7 +3772,7 @@ namespace System.Management.Automation.Remoting.Client
                 cmdTM._cmdSignalOperationHandle = IntPtr.Zero;
             }
 
-            if (null != cmdTM._signalCmdCompleted)
+            if (cmdTM._signalCmdCompleted != null)
             {
                 cmdTM._signalCmdCompleted.Dispose();
                 cmdTM._signalCmdCompleted = null;
@@ -3844,7 +3844,7 @@ namespace System.Management.Automation.Remoting.Client
                 data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback, out priorityType);
             }
 
-            if (null != data)
+            if (data != null)
             {
                 _isSendingInput = true;
                 SendData(data, priorityType);
@@ -3858,7 +3858,7 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnDataAvailableCallback(byte[] data, DataPriorityType priorityType)
         {
-            Dbg.Assert(null != data, "data cannot be null in the data available callback");
+            Dbg.Assert(data != null, "data cannot be null in the data available callback");
 
             tracer.WriteLine("Received data from dataToBeSent store.");
             Dbg.Assert(_chunkToSend == null, "data callback received while a chunk is pending to be sent");
@@ -3969,19 +3969,19 @@ namespace System.Management.Automation.Remoting.Client
             RemoveCmdTransportManager(_cmdContextId);
 
             // unregister event handlers
-            if (null != _sessnTm)
+            if (_sessnTm != null)
             {
                 _sessnTm.RobustConnectionsInitiated -= HandleRobustConnectionsInitiated;
                 _sessnTm.RobustConnectionsCompleted -= HandleRobusConnectionsCompleted;
             }
 
-            if (null != _closeCmdCompleted)
+            if (_closeCmdCompleted != null)
             {
                 _closeCmdCompleted.Dispose();
                 _closeCmdCompleted = null;
             }
 
-            if (null != _reconnectCmdCompleted)
+            if (_reconnectCmdCompleted != null)
             {
                 _reconnectCmdCompleted.Dispose();
                 _reconnectCmdCompleted = null;

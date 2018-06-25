@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="activeAssociationList"></param>
         internal static void HandleComputerNameProperties(PSObject so, List<MshResolvedExpressionParameterAssociation> activeAssociationList)
         {
-            if (null != so.Properties[RemotingConstants.ShowComputerNameNoteProperty])
+            if (so.Properties[RemotingConstants.ShowComputerNameNoteProperty] != null)
             {
                 // always remove PSShowComputerName for the display. This is an internal property
                 // that should never be visible to the user.
@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // otherwise the PSComputerName property does not belong to a remote object:
                 // Ex: icm $s { gps } | select pscomputername --> In this case we want to show
                 // PSComputerName
-                if ((null != so.Properties[RemotingConstants.ComputerNameNoteProperty]) &&
+                if ((so.Properties[RemotingConstants.ComputerNameNoteProperty] != null) &&
                     (!PSObjectHelper.ShouldShowComputerNameProperty(so)))
                 {
                     foreach (MshResolvedExpressionParameterAssociation cpProp in activeAssociationList)

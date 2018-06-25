@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public long RawContentLength
         {
-            get { return (null == RawContentStream ? -1 : RawContentStream.Length); }
+            get { return (RawContentStream == null ? -1 : RawContentStream.Length); }
         }
 
         /// <summary>
@@ -179,12 +179,12 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetResponse(HttpResponseMessage response, Stream contentStream)
         {
-            if (null == response) { throw new ArgumentNullException("response"); }
+            if (response == null) { throw new ArgumentNullException("response"); }
 
             BaseResponse = response;
 
             MemoryStream ms = contentStream as MemoryStream;
-            if (null != ms)
+            if (ms != null)
             {
                 _rawContentStream = ms;
             }

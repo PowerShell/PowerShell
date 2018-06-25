@@ -1769,7 +1769,7 @@ namespace System.Management.Automation
             try
             {
                 string message;
-                if (null == args || 0 == args.Length)
+                if (args == null || 0 == args.Length)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;
@@ -1868,7 +1868,7 @@ namespace System.Management.Automation
             Exception innerException)
         {
             string message;
-            if (null == innerException)
+            if (innerException == null)
             {
                 // there is no reason this string lookup should fail
                 message = StringUtil.Format(ParserStrings.BackupParserMessage, errorId);
@@ -1928,7 +1928,7 @@ namespace System.Management.Automation
             if (context.PSDebugTraceLevel > level)
             {
                 string message;
-                if (null == args || 0 == args.Length)
+                if (args == null || 0 == args.Length)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;

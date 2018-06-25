@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell
 
             Dictionary<int, bool> defaultChoiceKeys = new Dictionary<int, bool>();
 
-            if (null != defaultChoices)
+            if (defaultChoices != null)
             {
                 foreach (int defaultChoice in defaultChoices)
                 {

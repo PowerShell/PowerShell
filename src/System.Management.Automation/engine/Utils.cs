@@ -737,7 +737,7 @@ namespace System.Management.Automation
                     finally
                     {
                         context.AutoLoadingModuleInProgress.Remove(module);
-                        if (null != ps)
+                        if (ps != null)
                         {
                             ps.Dispose();
                         }
@@ -801,7 +801,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (null != ps)
+                if (ps != null)
                 {
                     ps.Dispose();
                 }
@@ -862,7 +862,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (null != ps)
+                if (ps != null)
                 {
                     ps.Dispose();
                 }

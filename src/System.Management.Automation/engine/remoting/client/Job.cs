@@ -684,7 +684,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Results");
                 }
@@ -1073,7 +1073,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Output");
                 }
@@ -1107,7 +1107,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Error");
                 }
@@ -1141,7 +1141,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Progress");
                 }
@@ -1172,7 +1172,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Verbose");
                 }
@@ -1206,7 +1206,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Debug");
                 }
@@ -1239,7 +1239,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Warning");
                 }
@@ -1273,7 +1273,7 @@ namespace System.Management.Automation
             }
             set
             {
-                if (null == value)
+                if (value == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("Information");
                 }
@@ -1614,7 +1614,7 @@ namespace System.Management.Automation
                     // release the WaitHandle
                     lock (syncObject)
                     {
-                        if (null != _finished)
+                        if (_finished != null)
                         {
                             _finished.Dispose();
                             _finished = null;
@@ -2262,7 +2262,7 @@ namespace System.Management.Automation
                 foreach (Job job in this.ChildJobs)
                 {
                     PSRemotingChildJob rJob = job as PSRemotingChildJob;
-                    if (null != rJob)
+                    if (rJob != null)
                     {
                         rJob.HideComputerName = value;
                     }
@@ -2729,7 +2729,7 @@ namespace System.Management.Automation
             _throttleManager = throttleManager;
 
             RemoteRunspace remoteRS = Runspace as RemoteRunspace;
-            if ((null != remoteRS) && (remoteRS.RunspaceStateInfo.State == RunspaceState.BeforeOpen))
+            if ((remoteRS != null) && (remoteRS.RunspaceStateInfo.State == RunspaceState.BeforeOpen))
             {
                 remoteRS.URIRedirectionReported += HandleURIDirectionReported;
             }
@@ -2905,7 +2905,7 @@ namespace System.Management.Automation
                 foreach (Job job in this.ChildJobs)
                 {
                     PSRemotingChildJob rJob = job as PSRemotingChildJob;
-                    if (null != rJob)
+                    if (rJob != null)
                     {
                         rJob.HideComputerName = value;
                     }
@@ -3108,7 +3108,7 @@ namespace System.Management.Automation
         /// <param name="e"></param>
         protected virtual void HandlePipelineStateChanged(object sender, PipelineStateEventArgs e)
         {
-            if ((null != Runspace) && (e.PipelineStateInfo.State != PipelineState.Running))
+            if ((Runspace != null) && (e.PipelineStateInfo.State != PipelineState.Running))
             {
                 // since we got state changed event..we dont need to listen on
                 // URI redirections anymore
@@ -4057,7 +4057,7 @@ namespace System.Management.Automation
                 ExecutionCmdletHelper helper = operation as ExecutionCmdletHelper;
 
                 RemoteRunspace remoteRS = helper.Pipeline.Runspace as RemoteRunspace;
-                if (null != remoteRS)
+                if (remoteRS != null)
                 {
                     remoteRS.StateChanged += HandleRunspaceStateChanged;
 
@@ -4105,7 +4105,7 @@ namespace System.Management.Automation
             {
                 // cleanup remote runspace related handlers
                 RemoteRunspace remoteRS = helper.PipelineRunspace as RemoteRunspace;
-                if (null != remoteRS)
+                if (remoteRS != null)
                 {
                     remoteRS.StateChanged -= HandleRunspaceStateChanged;
                     remoteRS.URIRedirectionReported -= HandleURIDirectionReported;
@@ -4283,7 +4283,7 @@ namespace System.Management.Automation
             RemoteRunspace remoteRS = sender as RemoteRunspace;
             // remote runspace must be connected (or connection failed)
             // we dont need URI redirection any more..so clear it
-            if (null != remoteRS)
+            if (remoteRS != null)
             {
                 if (e.RunspaceStateInfo.State != RunspaceState.Opening)
                 {

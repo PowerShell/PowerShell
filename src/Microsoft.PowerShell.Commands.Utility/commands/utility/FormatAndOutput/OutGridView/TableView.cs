@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
             if (matchingRowDefinition == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     match = new TypeMatch(_expressionFactory, _typeInfoDatabase, typesWithoutPrefix);
 

@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             bool isUnique = true;
-            if (null == _lastObject)
+            if (_lastObject == null)
             {
                 // always write first object, but return nothing
                 // on "MSH> get-unique"
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
             else if (AsString)
             {
                 string inputString = InputObject.ToString();
-                if (null == _lastObjectAsString)
+                if (_lastObjectAsString == null)
                 {
                     _lastObjectAsString = _lastObject.ToString();
                 }
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else // compare as objects
             {
-                if (null == _comparer)
+                if (_comparer == null)
                 {
                     _comparer = new ObjectCommandComparer(
                         true, // ascending (doesn't matter)

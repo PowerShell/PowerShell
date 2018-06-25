@@ -1379,7 +1379,7 @@ else
             // confirm is always true to start with
             confirm = false;
             MshCommandRuntime cmdRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
-            if (null != cmdRuntime)
+            if (cmdRuntime != null)
             {
                 whatIf = cmdRuntime.WhatIf;
                 // take the value of confirm only if it is explicitly set by the user
@@ -2230,7 +2230,7 @@ else
                     CommonSecurityDescriptor c = new CommonSecurityDescriptor(false, false, value);
                     // this will never be the case..as constructor either constructs or throws.
                     // this is used here to avoid FxCop violation.
-                    if (null == c)
+                    if (c == null)
                     {
                         throw new NotSupportedException();
                     }
@@ -2882,7 +2882,7 @@ $args[0] | ForEach-Object {{
 
             string csNotFoundMessageFormat = RemotingErrorIdStrings.CustomShellNotFound;
             object arguments = "*";
-            if (null != Name)
+            if (Name != null)
             {
                 arguments = Name;
             }
@@ -4349,7 +4349,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
                     CommonSecurityDescriptor c = new CommonSecurityDescriptor(false, false, value);
                     // this will never be the case..as constructor either constructs or throws.
                     // this is used here to avoid FxCop violation.
-                    if (null == c)
+                    if (c == null)
                     {
                         throw new NotSupportedException();
                     }

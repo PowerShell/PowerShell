@@ -1729,7 +1729,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string name in Name)
                 {
                     PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
-                    if (null != foundModule)
+                    if (foundModule != null)
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
@@ -1757,7 +1757,7 @@ namespace Microsoft.PowerShell.Commands
                     BaseGuid = modulespec.Guid;
 
                     PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, modulespec.Name);
-                    if (null != foundModule)
+                    if (foundModule != null)
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
                     }

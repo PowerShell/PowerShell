@@ -1574,7 +1574,7 @@ namespace System.Management.Automation
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (null != wsmanConnectionInfo)
+            if (wsmanConnectionInfo != null)
             {
                 // change the runspace's uri to the new URI.
                 wsmanConnectionInfo.ConnectionUri = eventArgs.Data;

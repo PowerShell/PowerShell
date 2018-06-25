@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandModuleInfo(PSModuleInfo other)
         {
-            if (null == other)
+            if (other == null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandModuleInfo(PSObject other)
         {
-            if (null == other)
+            if (other == null)
             {
                 throw new ArgumentNullException("other");
             }

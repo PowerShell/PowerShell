@@ -170,7 +170,7 @@ namespace System.Management.Automation
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             // the above comment copied from RemotePipelineBase which
             // originally copied it from PipelineBase
-            if (null == pipeline)
+            if (pipeline == null)
             {
                 throw PSTraceSource.NewArgumentNullException("pipeline");
             }

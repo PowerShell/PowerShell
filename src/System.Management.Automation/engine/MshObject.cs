@@ -171,7 +171,7 @@ namespace System.Management.Automation
         private static PSMemberInfoInternalCollection<T> DotNetGetMembersDelegate<T>(PSObject msjObj) where T : PSMemberInfo
         {
             // Don't lookup dotnet members if the object doesn't insist.
-            if (null != msjObj.InternalBaseDotNetAdapter)
+            if (msjObj.InternalBaseDotNetAdapter != null)
             {
                 PSMemberInfoInternalCollection<T> retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
                 PSObject.memberResolution.WriteLine("DotNet members: {0}.", retValue.VisibleCount);
@@ -184,7 +184,7 @@ namespace System.Management.Automation
         private static T DotNetGetMemberDelegate<T>(PSObject msjObj, string name) where T : PSMemberInfo
         {
             // Don't lookup dotnet member if the object doesn't insist.
-            if (null != msjObj.InternalBaseDotNetAdapter)
+            if (msjObj.InternalBaseDotNetAdapter != null)
             {
                 T retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
                 PSObject.memberResolution.WriteLine("DotNet member: {0}.", retValue == null ? "not found" : retValue.Name);
@@ -629,11 +629,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _adapterSet)
+                if (_adapterSet == null)
                 {
                     lock (_lockObject)
                     {
-                        if (null == _adapterSet)
+                        if (_adapterSet == null)
                         {
                             _adapterSet = GetMappedAdapter(_immediateBaseObject, GetTypeTable());
                         }
@@ -1849,7 +1849,7 @@ namespace System.Management.Automation
             int result = 0;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (null != typeTable)
+            if (typeTable != null)
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
@@ -1886,7 +1886,7 @@ namespace System.Management.Automation
             SerializationMethod result = TypeTable.defaultSerializationMethod;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (null != typeTable)
+            if (typeTable != null)
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
@@ -1925,7 +1925,7 @@ namespace System.Management.Automation
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(
                     this, typeTable, TypeTable.PSStandardMembers);
-                if (null != standardMemberSet)
+                if (standardMemberSet != null)
                 {
                     standardMemberSet.ReplicateInstance(this);
                     PSMemberInfoIntegratingCollection<PSMemberInfo> members =
@@ -1951,7 +1951,7 @@ namespace System.Management.Automation
         internal Type GetTargetTypeForDeserialization(TypeTable backupTypeTable)
         {
             PSMemberInfo targetType = this.GetPSStandardMember(backupTypeTable, TypeTable.TargetTypeForDeserialization);
-            if (null != targetType)
+            if (targetType != null)
             {
                 return (targetType.Value as Type);
             }
@@ -1973,7 +1973,7 @@ namespace System.Management.Automation
         internal Collection<string> GetSpecificPropertiesToSerialize(TypeTable backupTypeTable)
         {
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (null != typeTable)
+            if (typeTable != null)
             {
                 Collection<string> tmp = typeTable.GetSpecificProperties(this.InternalTypeNames);
                 return tmp;
