@@ -26,7 +26,7 @@
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.5.1" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.5.1" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.5.1" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.5.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.5.1" />
     <PackageReference Include="System.ServiceModel.Security" Version="4.5.1" />
     <PackageReference Include="System.Private.ServiceModel" Version="4.5.1" />
     <!-- the source could not be found for the following package(s) -->
