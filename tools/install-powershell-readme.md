@@ -19,6 +19,13 @@
 * native package manager available
 * `curl` (auto-installed if missing)
 
+## Parameters
+
+* -includeide - installs vscode and vscode powershell extension (only relevant to machines with desktop environment)
+* -interactivetesting - do a quick launch test of vscode - only relevant when used with -includeide
+* -skip-sudo-check - use sudo without verifying it's availability (hard to accurately do on some distros)
+* -allowprerelease - includes prereleases of powershell core when selection allows this.  Repository based installs take the latest on the repo url regardless of this switch.
+
 ## Usage
 
 ### Direct from Github
@@ -53,12 +60,6 @@ bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/
 
 ```bash
 bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) -includeide -interactivetesting
-```
-
-### Install AppImage
-
-```bash
-bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) -appimage
 ```
 
 ### Installation To do list

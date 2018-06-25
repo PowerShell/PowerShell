@@ -19,7 +19,7 @@
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
 
-VERSION="1.1.2"
+VERSION="1.2.0"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=suse
@@ -88,19 +88,20 @@ fi
 
 ## Check requirements and prerequisites
 
-#Only do SUDO if we are not root
-SUDO=''
-if (( $EUID != 0 )); then
-    SUDO='sudo'
+#Check for sudo if not root
+if [[ "${CI}" == "true" ]]; then
+    echo "Running on CI (as determined by env var CI set to true), skipping SUDO check."
+    set -- "$@" '-skip-sudo-check'
 fi
 
-#Check that sudo is available
-if [[ "$SUDO" == "sudo" && ! ("'$*'" =~ skip-sudo-check) ]]; then
-
-    $SUDO -v
-    if [ $? -ne 0 ]; then
-      echo "ERROR: You must either be root or be able to use sudo" >&2
-      exit 5
+SUDO=''
+if (( $EUID != 0 )); then
+    #Check that sudo is available
+    if [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
+        SUDO='sudo'
+    else
+        echo "ERROR: You must either be root or be able to use sudo" >&2
+        #exit 5
     fi
 fi
 
@@ -137,8 +138,17 @@ $SUDO zypper --non-interactive install \
 
 echo
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
-release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
 
+echo "ATTENTION: As of version 1.2.0 this script no longer uses pre-releases unless the '-allowprereleases' switch is used"
+
+if [[ "'$*'" =~ allowprerelease ]] ; then
+    echo
+    echo "-allowprerelease was used, prereleases will be included in the retrieval of the latest version"
+    release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+else
+    echo "Finding the latest release production release"
+    release=$(curl https://api.github.com/repos/PowerShell/PowerShell/releases | grep -Po '"tag_name":(\d*?,|.*?[^\\]",)' | grep -Po '\d+.\d+.\d+[\da-z.-]*' | grep -v '[a-z]' | sort | tail -n1)
+if
 #REPO BASED (Not ready yet)
 #echo "*** Setting up PowerShell Core repo..."
 #echo "*** Current version on git is: $release, repo version may differ slightly..."
@@ -208,13 +218,11 @@ if [[ "'$*'" =~ includeide ]] ; then
     echo
     echo "*** Installing VS Code PowerShell Extension"
     code --install-extension ms-vscode.PowerShell
-fi
-
-
-if [[ "'$*'" =~ -interactivetesting ]] ; then
-    echo "*** Loading test code in VS Code"
-    curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
-    code ./testpowershell.ps1        
+    if [[ "'$*'" =~ -interactivetesting ]] ; then
+        echo "*** Loading test code in VS Code"
+        curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
+        code ./testpowershell.ps1
+    fi
 fi
 
 if [[ "$repobased" == true ]] ; then

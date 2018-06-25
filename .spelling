@@ -1066,3 +1066,8 @@ NTLM
 NumberBytes
 ResponseHeaders
 #endregion
+includeide
+interactivetesting
+allowprerelease
+prereleases
+url
