@@ -211,8 +211,16 @@ namespace System.Management.Automation
             }
             else
             {
-                elementTypes = typename.Type.GetInterfaces().Where(
-                    t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+                var elementList = new List<Type>();
+                foreach (var t in typename.Type.GetInterfaces())
+                {
+                    if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    {
+                        elementList.Add(t);
+                    }
+                }
+
+                elementTypes = elementList;
             }
             foreach (var type in elementTypes.Prepend(typename.Type))
             {
@@ -226,7 +234,19 @@ namespace System.Management.Automation
                 var members = isStatic
                     ? PSObject.dotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type)
                     : PSObject.dotNetInstanceAdapter.GetPropertiesAndMethods(type, false);
-                results.AddRange(filterToCall != null ? members.Where(filterToCall) : members);
+                if (filterToCall != null)
+                {
+                    foreach(var member in members) {
+                        if (filterToCall(member)) {
+                            results.Add(member);
+                        }
+                    }
+                }
+                else
+                {
+                    results.AddRange(members);
+                }
+
             }
         }
 
@@ -315,7 +335,16 @@ namespace System.Management.Automation
                     .AddParameter("Namespace", cimNamespace)
                     .AddParameter("Class", className);
                 var classes = powerShellExecutionHelper.ExecuteCurrentPowerShell(out _);
-                foreach (var cimClass in classes.Select(PSObject.Base).OfType<CimClass>())
+                var cimClasses = new List<CimClass>();
+                foreach (var c in classes)
+                {
+                    if (PSObject.Base(c) is CimClass cc)
+                    {
+                        cimClasses.Add(cc);
+                    }
+                }
+
+                foreach (var cimClass in cimClasses)
                 {
                     if (filterToCall == null)
                     {
@@ -397,7 +426,7 @@ namespace System.Management.Automation
                 case PSMemberInfo psMemberInfo:
                     return psMemberInfo.IsHidden;
                 case MemberInfo memberInfo:
-                    return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
+                    return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Length != 0;
                 case PropertyMemberAst propertyMember:
                     return propertyMember.IsHidden;
                 case FunctionMemberAst functionMember:
@@ -545,12 +574,34 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitErrorStatement(ErrorStatementAst errorStatementAst)
         {
-            return errorStatementAst.Conditions.Concat(errorStatementAst.Bodies).Concat(errorStatementAst.NestedAst).SelectMany(InferTypes);
+            var inferredTypes = new List<PSTypeName>();
+            foreach (var ast in errorStatementAst.Conditions)
+            {
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            foreach (var ast in errorStatementAst.Bodies)
+            {
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            foreach (var ast in errorStatementAst.NestedAst)
+            {
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            return inferredTypes;
         }
 
         object ICustomAstVisitor.VisitErrorExpression(ErrorExpressionAst errorExpressionAst)
         {
-            return errorExpressionAst.NestedAst.SelectMany(InferTypes);
+            var inferredTypes = new List<PSTypeName>();
+            foreach (var ast in errorExpressionAst.NestedAst)
+            {
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            return inferredTypes;
         }
 
         object ICustomAstVisitor.VisitScriptBlock(ScriptBlockAst scriptBlockAst)
@@ -586,7 +637,14 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitNamedBlock(NamedBlockAst namedBlockAst)
         {
-            return namedBlockAst.Statements.SelectMany(InferTypes);
+            var inferredTypes = new List<PSTypeName>();
+            for (var index = 0; index < namedBlockAst.Statements.Count; index++)
+            {
+                var ast = namedBlockAst.Statements[index];
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            return inferredTypes;
         }
 
         object ICustomAstVisitor.VisitTypeConstraint(TypeConstraintAst typeConstraintAst)
@@ -608,24 +666,39 @@ namespace System.Management.Automation
         {
             var res = new List<PSTypeName>();
             var attributes = parameterAst.Attributes;
-            var typeConstraint = attributes.OfType<TypeConstraintAst>().FirstOrDefault();
-            if (typeConstraint != null)
+            bool typeConstraintAdded = false;
+            foreach (var attrib in attributes)
             {
-                res.Add(new PSTypeName(typeConstraint.TypeName));
-            }
-            foreach (var attributeAst in attributes.OfType<AttributeAst>())
-            {
-                PSTypeNameAttribute attribute = null;
-                try
+                switch (attrib)
                 {
-                    attribute = attributeAst.GetAttribute() as PSTypeNameAttribute;
-                }
-                catch (RuntimeException) { }
-                if (attribute != null)
-                {
-                    res.Add(new PSTypeName(attribute.PSTypeName));
+                    case TypeConstraintAst typeConstraint:
+                    {
+                        if (!typeConstraintAdded)
+                        {
+                        res.Add(new PSTypeName(typeConstraint.TypeName));
+                        typeConstraintAdded = true;
+                        }
+                        break;
+                    }
+                    case AttributeAst attributeAst:
+                    {
+                        PSTypeNameAttribute attribute = null;
+                        try
+                        {
+                            attribute = attributeAst.GetAttribute() as PSTypeNameAttribute;
+                        }
+                        catch (RuntimeException) { }
+
+                        if (attribute != null)
+                        {
+                            res.Add(new PSTypeName(attribute.PSTypeName));
+                        }
+
+                        break;
+                    }
                 }
             }
+
             return res;
         }
 
@@ -636,20 +709,30 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
-            return statementBlockAst.Statements.SelectMany(InferTypes);
+            var inferredTypes = new List<PSTypeName>();
+            foreach (var ast in statementBlockAst.Statements)
+            {
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            return inferredTypes;
         }
 
         object ICustomAstVisitor.VisitIfStatement(IfStatementAst ifStmtAst)
         {
             var res = new List<PSTypeName>();
 
-            res.AddRange(ifStmtAst.Clauses.SelectMany(clause => InferTypes(clause.Item2)));
+            foreach (var clause in ifStmtAst.Clauses)
+            {
+                res.AddRange(InferTypes(clause.Item2));
+            }
 
             var elseClause = ifStmtAst.ElseClause;
             if (elseClause != null)
             {
                 res.AddRange(InferTypes(elseClause));
             }
+
             return res;
         }
 
@@ -664,7 +747,10 @@ namespace System.Management.Automation
             var clauses = switchStatementAst.Clauses;
             var defaultStatement = switchStatementAst.Default;
 
-            res.AddRange(clauses.SelectMany(clause => InferTypes(clause.Item2)));
+            foreach (var clause in clauses)
+            {
+                res.AddRange(InferTypes(clause.Item2));
+            }
 
             if (defaultStatement != null)
             {
@@ -755,7 +841,8 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitPipeline(PipelineAst pipelineAst)
         {
-            return pipelineAst.PipelineElements.Last().Accept(this);
+            var pipelineAstPipelineElements = pipelineAst.PipelineElements;
+            return pipelineAstPipelineElements[pipelineAstPipelineElements.Count - 1].Accept(this);
         }
 
         object ICustomAstVisitor.VisitCommand(CommandAst commandAst)
@@ -1105,19 +1192,20 @@ namespace System.Management.Automation
                         maybeWantDefaultCtor = false;
                         if (isInvokeMemberExpressionAst)
                         {
-                            var res = (from method in methodCacheEntry.methodInformationStructures
-                                select method.method as MethodInfo into methodInfo
-                                where methodInfo != null && !methodInfo.ReturnType.ContainsGenericParameters
-                                select new PSTypeName(methodInfo.ReturnType));
-                            result.AddRange(res);
+                            foreach (var method in methodCacheEntry.methodInformationStructures)
+                            {
+                                if (method.method is MethodInfo methodInfo && !methodInfo.ReturnType.ContainsGenericParameters)
+                                {
+                                    result.Add(new PSTypeName(methodInfo.ReturnType));
+                                }
+                            }
+
                             return true;
                         }
-                        else
-                        {
-                            // Accessing a method as a property, we'd return a wrapper over the method.
-                            result.Add(new PSTypeName(typeof(PSMethod)));
-                            return true;
-                        }
+
+                        // Accessing a method as a property, we'd return a wrapper over the method.
+                        result.Add(new PSTypeName(typeof(PSMethod)));
+                        return true;
                     }
                     return false;
                 }
@@ -1209,7 +1297,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                result.AddRange(InferTypes(scriptBlock.Ast).ToArray());
+                                result.AddRange(InferTypes(scriptBlock.Ast));
                                 return true;
                             }
                         }
@@ -1335,13 +1423,13 @@ namespace System.Management.Automation
                                 if (typeof(IEnumerable).IsAssignableFrom(result.Type))
                                 {
                                     // We can't deduce much from IEnumerable, but we can if it's generic.
-                                    var enumerableInterfaces = result.Type.GetInterfaces().Where(
-                                        t =>
-                                            t.IsGenericType &&
-                                            t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-                                    foreach (var i in enumerableInterfaces)
+                                    var enumerableInterfaces = result.Type.GetInterfaces();
+                                    foreach (var t in enumerableInterfaces)
                                     {
-                                        inferredTypes.Add(new PSTypeName(i.GetGenericArguments()[0]));
+                                        if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                                        {
+                                            inferredTypes.Add(new PSTypeName(t.GetGenericArguments()[0]));
+                                        }
                                     }
                                     continue;
                                 }
@@ -1405,14 +1493,17 @@ namespace System.Management.Automation
                        && ast.Extent.EndOffset < startOffset,
                 searchNestedScriptBlocks: true);
 
-            var parameterAst = targetAsts.OfType<ParameterAst>().FirstOrDefault();
-            if (parameterAst != null)
+            foreach (var ast in targetAsts)
             {
-                var parameterTypes = InferTypes(parameterAst).ToArray();
-                if (parameterTypes.Length > 0)
+                if (ast is ParameterAst parameterAst)
                 {
-                    inferredTypes.AddRange(parameterTypes);
-                    return;
+                    var currentCount = inferredTypes.Count;
+                    inferredTypes.AddRange(InferTypes(parameterAst));
+
+                    if (inferredTypes.Count != currentCount)
+                    {
+                        return;
+                    }
                 }
             }
 
@@ -1588,16 +1679,19 @@ namespace System.Management.Automation
 
         public static IEnumerable<MethodInfo> GetGetterProperty(this Type type, string propertyName)
         {
-            return type.GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(
-                m =>
+            var res = new List<MethodInfo>();
+            foreach (var m in type.GetMethods(BindingFlags.Public | BindingFlags.Instance))
+            {
+                var name = m.Name;
+                if (name.Length == propertyName.Length + 4
+                    && name.StartsWith("get_")
+                    && propertyName.IndexOf(name, 4, StringComparison.Ordinal) == 4)
                 {
-                    var name = m.Name;
-
-                    // Equals without string allocation
-                    return name.Length == propertyName.Length + 4 &&
-                           name.StartsWith("get_") && propertyName.IndexOf(name, 4, StringComparison.Ordinal) == 4;
+                    res.Add(m);
                 }
-            );
+            }
+            return res;
+
         }
 
         public static bool AstAssignsToSameVariable(this VariableExpressionAst variableAst, Ast ast)
