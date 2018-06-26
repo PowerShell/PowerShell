@@ -2059,8 +2059,8 @@ namespace Microsoft.PowerShell.Commands
                         if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
                         {
                             string featureDescription = feature["Description"] as string;
-                            expFeatureList.Add(new ExperimentalFeature(featureName, featureDescription, moduleName,
-                                                                    ExperimentalFeature.HasEnabled(featureName)));
+                            expFeatureList.Add(new ExperimentalFeature(featureName, featureDescription, moduleManifestPath,
+                                                                       ExperimentalFeature.HasEnabled(featureName)));
                         }
                         else
                         {

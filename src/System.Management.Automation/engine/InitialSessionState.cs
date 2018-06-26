@@ -5277,6 +5277,7 @@ end
                 {"Export-ModuleMember",               new SessionStateCmdletEntry("Export-ModuleMember", typeof(ExportModuleMemberCommand), helpFile) },
                 {"ForEach-Object",                    new SessionStateCmdletEntry("ForEach-Object", typeof(ForEachObjectCommand), helpFile) },
                 {"Get-Command",                       new SessionStateCmdletEntry("Get-Command", typeof(GetCommandCommand), helpFile) },
+                {"Get-ExperimentalFeature",           new SessionStateCmdletEntry("Get-ExperimentalFeature", typeof(GetExperimentalFeatureCommand), helpFile) },
                 {"Get-Help",                          new SessionStateCmdletEntry("Get-Help", typeof(GetHelpCommand), helpFile) },
                 {"Get-History",                       new SessionStateCmdletEntry("Get-History", typeof(GetHistoryCommand), helpFile) },
                 {"Get-Job",                           new SessionStateCmdletEntry("Get-Job", typeof(GetJobCommand), helpFile) },

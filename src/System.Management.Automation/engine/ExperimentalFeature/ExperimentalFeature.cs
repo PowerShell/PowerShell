@@ -286,7 +286,7 @@ namespace System.Management.Automation
         /// <summary>
         /// An instance that represents the none-value.
         /// </summary>
-        internal readonly static ExperimentalAttribute None = new ExperimentalAttribute();
+        internal static readonly ExperimentalAttribute None = new ExperimentalAttribute();
 
         internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;
