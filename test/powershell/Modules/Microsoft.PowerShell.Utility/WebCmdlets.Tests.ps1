@@ -739,50 +739,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RelationLink["self"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=1&type=${type}"
     }
 
-    #region Retry tests
-
-    It "Invoke-WebRequest can retry - <Name>" -TestCases @(
-        @{Name = "specified number of times - error 304"; failureCount = 2; failureCode = 304; retryCount = 2; expectedFailureCount = 2}
-        @{Name = "specified number of times - error 400"; failureCount = 3; failureCode = 400; retryCount = 3; expectedFailureCount = 3}
-        @{Name = "specified number of times - error 599"; failureCount = 1; failureCode = 599; retryCount = 2; expectedFailureCount = 1}
-        @{Name = "specified number of times - error 404"; failureCount = 2; failureCode = 404; retryCount = 2; expectedFailureCount = 2}
-        @{Name = "when retry count is higher than failure count"; failureCount = 2; failureCode = 404; retryCount = 4}
-    ) {
-        param($failureCount, $retryCount, $failureCode)
-
-        $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = $failureCode; failureCount = $failureCount }
-        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount $retryCount -RetryIntervalSec 1"
-        $result = ExecuteWebCommand -command $command
-
-        $result.output.StatusCode | Should -Be "200"
-        $jsonResult = $result.output.Content | ConvertFrom-Json
-        $jsonResult.failureResponsesSent | Should -Be $failureCount
-    }
-
-    It "Invoke-WebRequest should fail when failureCount is greater than MaximumRetryCount" {
-
-        $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = 400; failureCount = 4 }
-        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount 1 -RetryIntervalSec 1"
-        $result = ExecuteWebCommand -command $command
-        $jsonError = $result.error | ConvertFrom-Json
-        $jsonError.error | Should -BeExactly 'Error: HTTP - 400 occurred.'
-    }
-
-    It "Invoke-WebRequest can retry with POST" {
-
-        $uri = Get-WebListenerUrl -Test 'Retry'
-        $sessionId = (New-Guid).Guid
-        $body = @{ sessionid = $sessionId; failureCode = 404; failureCount = 1 }
-        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount 2 -RetryIntervalSec 1 -Method POST -Body `$body"
-        $result = ExecuteWebCommand -command $command
-
-        $result.output.StatusCode | Should -Be "200"
-        $jsonResult = $result.output.Content | ConvertFrom-Json
-        $jsonResult.SessionId | Should -BeExactly $sessionId
-    }
-
-    #endregion
-
     #region Redirect tests
 
     It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
@@ -3119,5 +3075,73 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
         $result = irm $uri
         $result.Hello | Should -Be "world"
+    }
+}
+
+Describe "Retry tests" -Tags 'Feature' {
+    BeforeAll {
+        $WebListener = Start-WebListener
+    }
+
+    Context "Invoke-WebRequest retry tests" {
+
+        It "<Command> can retry - <Name>" -TestCases @(
+            @{Command = "Invoke-WebRequest"; Name = "specified number of times - error 304"; failureCount = 2; failureCode = 304; retryCount = 2}
+            @{Command = "Invoke-WebRequest"; Name = "specified number of times - error 400"; failureCount = 3; failureCode = 400; retryCount = 3}
+            @{Command = "Invoke-WebRequest"; Name = "specified number of times - error 599"; failureCount = 1; failureCode = 599; retryCount = 2}
+            @{Command = "Invoke-WebRequest"; Name = "specified number of times - error 404"; failureCount = 2; failureCode = 404; retryCount = 2}
+            @{Command = "Invoke-WebRequest"; Name = "when retry count is higher than failure count"; failureCount = 2; failureCode = 404; retryCount = 4}
+            @{Command = "Invoke-RestMethod"; Name = "specified number of times - error 304"; failureCount = 2; failureCode = 304; retryCount = 2}
+        ) {
+            param($failureCount, $retryCount, $failureCode, $command)
+
+            $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = $failureCode; failureCount = $failureCount }
+            $commandStr = "$Command -Uri '$uri' -MaximumRetryCount $retryCount -RetryIntervalSec 1"
+            $result = ExecuteWebCommand -command $commandStr
+
+            if($command -eq 'Invoke-RestMethod')
+            {
+                $result.output.failureResponsesSent | Should -Be $failureCount
+            }
+            else
+            {
+                $result.output.StatusCode | Should -Be "200"
+                $jsonResult = $result.output.Content | ConvertFrom-Json
+                $jsonResult.failureResponsesSent | Should -Be $failureCount
+            }
+        }
+
+        It "Invoke-WebRequest should fail when failureCount is greater than MaximumRetryCount" {
+
+            $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = 400; failureCount = 4 }
+            $command = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount 1 -RetryIntervalSec 1"
+            $result = ExecuteWebCommand -command $command
+            $jsonError = $result.error | ConvertFrom-Json
+            $jsonError.error | Should -BeExactly 'Error: HTTP - 400 occurred.'
+        }
+
+        It "<Command> can retry with POST" -TestCases @(
+            @{Command = "Invoke-WebRequest"}
+            @{Command = "Invoke-RestMethod"}
+        ){
+            param($command)
+
+            $uri = Get-WebListenerUrl -Test 'Retry'
+            $sessionId = (New-Guid).Guid
+            $body = @{ sessionid = $sessionId; failureCode = 404; failureCount = 1 }
+            $commandStr = "$command -Uri '$uri' -MaximumRetryCount 2 -RetryIntervalSec 1 -Method POST -Body `$body"
+            $result = ExecuteWebCommand -command $commandStr
+
+            if($command -eq 'Invoke-WebRequest')
+            {
+                $result.output.StatusCode | Should -Be "200"
+                $jsonResult = $result.output.Content | ConvertFrom-Json
+                $jsonResult.SessionId | Should -BeExactly $sessionId
+            }
+            else
+            {
+                $result.output.failureResponsesSent | Should -Be 1
+            }
+        }
     }
 }
