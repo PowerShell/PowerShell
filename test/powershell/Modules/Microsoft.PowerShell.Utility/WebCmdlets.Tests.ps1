@@ -742,17 +742,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     #region Retry tests
 
     It "Invoke-WebRequest can retry - <Name>" -TestCases @(
-        @{Name = "specified number of times - error 304"; failureCount = 2; failureCode = 304; retryCount = 2; expectedFailureCount = 2; method = 'Get'}
-        @{Name = "specified number of times - error 400"; failureCount = 3; failureCode = 400; retryCount = 3; expectedFailureCount = 3; method = 'Get'}
-        @{Name = "specified number of times - error 599"; failureCount = 1; failureCode = 599; retryCount = 2; expectedFailureCount = 1; method = 'Get'}
-        @{Name = "specified number of times - error 404"; failureCount = 2; failureCode = 404; retryCount = 2; expectedFailureCount = 2; method = 'Get'}
-        @{Name = "specified number of times - error 404 with POST"; failureCount = 2; failureCode = 404; retryCount = 2; expectedFailureCount = 2; method = 'Post'}
-        @{Name = "when retry count is higher than failure count"; failureCount = 2; failureCode = 404; retryCount = 4; method = 'Post'}
+        @{Name = "specified number of times - error 304"; failureCount = 2; failureCode = 304; retryCount = 2; expectedFailureCount = 2}
+        @{Name = "specified number of times - error 400"; failureCount = 3; failureCode = 400; retryCount = 3; expectedFailureCount = 3}
+        @{Name = "specified number of times - error 599"; failureCount = 1; failureCode = 599; retryCount = 2; expectedFailureCount = 1}
+        @{Name = "specified number of times - error 404"; failureCount = 2; failureCode = 404; retryCount = 2; expectedFailureCount = 2}
+        @{Name = "when retry count is higher than failure count"; failureCount = 2; failureCode = 404; retryCount = 4}
     ) {
-        param($failureCount, $retryCount, $failureCode, $method)
+        param($failureCount, $retryCount, $failureCode)
 
         $uri = Get-WebListenerUrl -Test 'Retry' -Query @{ sessionid = (New-Guid).Guid; failureCode = $failureCode; failureCount = $failureCount }
-        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount $retryCount -RetryIntervalSec 1 -Method $method"
+        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount $retryCount -RetryIntervalSec 1"
         $result = ExecuteWebCommand -command $command
 
         $result.output.StatusCode | Should -Be "200"
@@ -767,6 +766,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
         $jsonError = $result.error | ConvertFrom-Json
         $jsonError.error | Should -BeExactly 'Error: HTTP - 400 occurred.'
+    }
+
+    It "Invoke-WebRequest can retry with POST" {
+
+        $uri = Get-WebListenerUrl -Test 'Retry'
+        $sessionId = (New-Guid).Guid
+        $body = @{ sessionid = $sessionId; failureCode = 404; failureCount = 1 }
+        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRetryCount 2 -RetryIntervalSec 1 -Method POST -Body `$body"
+        $result = ExecuteWebCommand -command $command
+
+        $result.output.StatusCode | Should -Be "200"
+        $jsonResult = $result.output.Content | ConvertFrom-Json
+        $jsonResult.SessionId | Should -BeExactly $sessionId
     }
 
     #endregion

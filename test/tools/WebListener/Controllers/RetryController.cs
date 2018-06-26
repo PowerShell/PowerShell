@@ -40,7 +40,9 @@ namespace mvc.Controllers
                 else
                 {
                     retryInfo.Remove(sessionId);
-                    var resp = new Hashtable { { "failureResponsesSent", retry.Item3 } };
+
+                    // echo back sessionId for POST test.
+                    var resp = new Hashtable { { "failureResponsesSent", retry.Item3 }, { "sessionId", sessionId } };
                     return Json(resp);
                 }
             }
