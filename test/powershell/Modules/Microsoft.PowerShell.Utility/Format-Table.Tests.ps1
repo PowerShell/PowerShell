@@ -717,4 +717,19 @@ abc bcd
             $output = $obj | Format-Table | Out-String
             $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
+
+        It "Should not return null when the Console width is equal to 0" {
+            [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $true)
+            try
+            {
+                # Fill the console window with the string, so that it reaches its max width.
+                # Check if the max width is equal to default value (120), to test test hook set.
+                $testObject = @{ test = '1' * 200}
+                Format-Table -inputobject $testObject | Out-String -str | ForEach-Object {$_.length} | Sort-Object | Select-Object -Last 1 | Should -Be 120
+                Format-Table -inputobject $testObject | Should -Not -BeNullOrEmpty
+            }
+            finally {
+                [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $false)
+            }
+        }
     }
