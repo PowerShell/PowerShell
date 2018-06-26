@@ -772,10 +772,16 @@ namespace System.Management.Automation
             {
                 return basePrompt;
             }
-            else
+            else if (runspace.ConnectionInfo is SSHConnectionInfo)
             {
-                return string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", runspace.ConnectionInfo.ComputerName, basePrompt);
+                SSHConnectionInfo sshConnectionInfo = runspace.ConnectionInfo as SSHConnectionInfo;
+                if (!string.IsNullOrEmpty(sshConnectionInfo.UserName) &&
+                    !System.Environment.UserName.Equals(sshConnectionInfo.UserName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return string.Format(CultureInfo.InvariantCulture, "[{0}@{1}]: {2}", sshConnectionInfo.UserName, sshConnectionInfo.ComputerName, basePrompt);
+                }
             }
+            return string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", runspace.ConnectionInfo.ComputerName, basePrompt);
         }
 
         internal static bool IsProcessInteractive(InvocationInfo invocationInfo)
