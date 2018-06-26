@@ -64,6 +64,6 @@ Describe "Unblock-File" -Tags "CI" {
         $TestFileCreated = Get-ChildItem $TestFile
         $TestFileCreated.IsReadOnly | Should -BeTrue
 
-        { Unblock-File -LiteralPath $TestFile -ErrorAction Stop } | Should -Throw -ErrorId "UnauthorizedAccessException,Microsoft.PowerShell.Commands.UnblockFileCommand"
+        { Unblock-File -LiteralPath $TestFile -ErrorAction Stop } | Should -Throw -ErrorId "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.UnblockFileCommand"
     }
 }
