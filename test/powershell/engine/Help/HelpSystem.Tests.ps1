@@ -309,6 +309,10 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
         )
         $command.Invoke() | Should -Be $result
     }
+
+    It "Get-Help should not fail searching for class help" {
+        Get-Help -Category Class | Should -BeNullOrEmpty
+    }
 }
 
 Describe "Get-Help should find pattern alias" -Tags "CI" {

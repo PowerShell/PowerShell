@@ -297,7 +297,7 @@ namespace System.Management.Automation
             foreach (var member in statement.Members)
             {
                 PropertyMemberAst propAst = member as PropertyMemberAst;
-                if (propAst != null)
+                if (propAst != null && (propAst.PropertyAttributes & PropertyAttributes.Hidden) != PropertyAttributes.Hidden)
                 {
                     Dbg.Assert(propAst.Name != null, "PropName cannot be null");
                     Dbg.Assert(propAst.PropertyType != null, "PropertyType cannot be null");
