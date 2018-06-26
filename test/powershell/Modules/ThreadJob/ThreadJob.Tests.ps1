@@ -176,6 +176,30 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         $job.JobStateInfo.Reason.Message | Should Be "MyError!"
     }
 
+    It 'ThreadJob and Error stream output' {
+
+        $job = Start-ThreadJob -ScriptBlock { Write-Error "ErrorOut" } | Wait-Job
+        $job.Error | Should Be "ErrorOut"
+    }
+
+    It 'ThreadJob and Warning stream output' {
+
+        $job = Start-ThreadJob -ScriptBlock { Write-Warning "WarningOut" } | Wait-Job
+        $job.Warning | Should Be "WarningOut"
+    }
+
+    It 'ThreadJob and Verbose stream output' {
+      
+        $job = Start-ThreadJob -ScriptBlock { $VerbosePreference = 'Continue'; Write-Verbose "VerboseOut" } | Wait-Job
+        $job.Verbose | Should Match "VerboseOut"
+    }
+
+    It 'ThreadJob and Verbose stream output' {
+      
+        $job = Start-ThreadJob -ScriptBlock { $DebugPreference = 'Continue'; Write-Debug "DebugOut" } | Wait-Job
+        $job.Debug | Should Be "DebugOut"
+    }
+
     It 'ThreadJob ThrottleLimit and Queue' {
 
         try
@@ -278,7 +302,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     }
 }
 
-Describe 'Job2 Tests' -Tags 'CI' {
+Describe 'Job2 class API tests' -Tags 'CI' {
 
     AfterEach {
 
