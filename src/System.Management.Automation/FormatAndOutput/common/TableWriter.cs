@@ -294,14 +294,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             System.Span<int> lastColWithContent = screenRows <= OutCommandInner.StackAllocThreshold ? stackalloc int[screenRows] : new int[screenRows];
             for (int row = 0; row < screenRows; row++)
             {
-                for (int col = scArray.Length - 1; col > 0; col--)
+                for (int col = 0; col < scArray.Length; col++)
                 {
-                    int colWidth = _si.columnInfo[validColumnArray[col]].width;
-                    int headerLength = values[col].Length;
-                    if (headerLength / colWidth >= row && headerLength % colWidth > 0)
+                    if (scArray[col].Count > row)
                     {
                         lastColWithContent[row] = col;
-                        break;
                     }
                 }
             }

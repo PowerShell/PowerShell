@@ -760,4 +760,44 @@ abc abc
             $output = $obj | Format-Table | Out-String
             $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
+
+        It "Should render rows correctly when wrapped: <variation>" -TestCases @(
+            @{ variation = "right"; obj = [pscustomobject] @{A=1;B=2;Name="This`nIs some random`nmultiline content"}; expectedTable = @"
+
+A B Name
+- - ----
+1 2 This
+    Is some random
+    multiline content
+
+
+
+"@ },
+            @{ variation = "left"; obj = [pscustomobject] @{Name="This`nIs some random`nmultiline content";A=1;B=2}; expectedTable = @"
+
+Name                                  A B
+----                                  - -
+This                                  1 2
+Is some random
+multiline content
+
+
+
+"@ },
+            @{ variation = "middle"; obj = [pscustomobject] @{A=1;Name="This`nIs some random`nmultiline content";B=2}; expectedTable = @"
+
+A Name                                  B
+- ----                                  -
+1 This                                  2
+  Is some random
+  multiline content
+
+
+
+"@ }
+        ) {
+            param($obj, $expectedTable)
+            $output = $obj | Format-Table -Wrap | Out-String
+            $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
+        }
     }
