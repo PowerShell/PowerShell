@@ -56,8 +56,8 @@ Describe "Set-Location" -Tags "CI" {
     It "Should not use filesystem root folder if not in filesystem provider" -Skip:(!$IsWindows) {
         # find filesystem root folder that doesn't exist in HKCU:
         $foundFolder = $false
-        foreach ($folder in (Get-ChildItem "${env:SystemDrive}\" -Directory)) {
-            if (!(Test-Path "HKCU:\$($folder.Name)")) {
+        foreach ($folder in Get-ChildItem "${env:SystemDrive}\" -Directory) {
+            if (-Not (Test-Path "HKCU:\$($folder.Name)")) {
                 $testFolder = $folder.Name
                 $foundFolder = $true
                 break
