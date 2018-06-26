@@ -93,4 +93,38 @@ Describe "Set-Location" -Tags "CI" {
             Remove-PSDrive -Name 'Z'
         }
     }
+
+    Context 'Set-Location with last location history' {
+
+        It 'Should go to last location when specifying minus as a path' {
+            $initialLocation = Get-Location
+            Set-Location ([System.IO.Path]::GetTempPath())
+            Set-Location -
+            (Get-Location).Path | Should -Be ($initialLocation).Path
+        }
+
+        It 'Should go back to previous locations when specifying minus twice' {
+            $initialLocation = (Get-Location).Path
+            Set-Location ([System.IO.Path]::GetTempPath())
+            $firstLocationChange = (Get-Location).Path
+            Set-Location ([System.Environment]::GetFolderPath("user"))
+            Set-Location -
+            (Get-Location).Path | Should -Be $firstLocationChange
+            Set-Location -
+            (Get-Location).Path | Should -Be $initialLocation
+        }
+
+        It 'Location History is limited' {
+            $initialLocation = (Get-Location).Path
+            $maximumLocationHistory = 20
+            foreach ($i in 1..$maximumLocationHistory) {
+                Set-Location ([System.IO.Path]::GetTempPath())
+            }
+            foreach ($i in 1..$maximumLocationHistory) {
+                Set-Location -
+            }
+            (Get-Location).Path | Should Be $initialLocation
+            { Set-Location - } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
+        }
+    }
 }
