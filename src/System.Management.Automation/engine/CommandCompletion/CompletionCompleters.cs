@@ -3172,6 +3172,11 @@ namespace System.Management.Automation
                         completionText = quote + completionText + quote;
                     }
 
+                    if (string.IsNullOrEmpty(listItemText))
+                    {
+                        continue;
+                    }
+
                     result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                 }
 
