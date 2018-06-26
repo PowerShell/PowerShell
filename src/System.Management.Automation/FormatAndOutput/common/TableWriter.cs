@@ -371,7 +371,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             StringCollection sc = StringManipulationHelper.GenerateLines(dc, val,
                                         _si.columnInfo[k].width, _si.columnInfo[k].width);
-            if (addPadding)
+            if (addPadding || alignment == TextAlignment.Right)
             {
                 // if length is shorter, do some padding
                 for (int col = 0; col < sc.Count; col++)
