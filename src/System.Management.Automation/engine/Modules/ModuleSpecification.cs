@@ -304,9 +304,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="obj">The module specification for the object.</param>
         /// <returns>A hashcode that is always the same for any module specification with the same properties.</returns>
-        /// <remarks>
-        /// The algorithm in this method is adapted from a StackOverflow answer from Jon Skeet: https://stackoverflow.com/a/263416/9944203
-        /// </remarks>
         public int GetHashCode(ModuleSpecification obj)
         {
             if (obj == null)
@@ -314,40 +311,7 @@ namespace Microsoft.PowerShell.Commands
                 return 0;
             }
 
-            // Initial prime value
-            int p = 23;
-
-            // Use 31 for multiplication. See https://computinglife.wordpress.com/2008/11/20/why-do-hash-functions-use-prime-numbers/
-            int q = 31;
-
-            int result = p; 
-
-            if (obj.Name != null)
-            {
-                result = unchecked(q * result + obj.Name.GetHashCode());
-            }
-
-            if (obj.Guid != null)
-            {
-                result = unchecked(q * result + obj.Guid.GetHashCode());
-            }
-
-            if (obj.RequiredVersion != null)
-            {
-                result = unchecked(q * result + obj.RequiredVersion.GetHashCode());
-            }
-
-            if (obj.Version != null)
-            {
-                result = unchecked(q * result + obj.Version.GetHashCode());
-            }
-
-            if (obj.MaximumVersion != null)
-            {
-                result = unchecked(q * result + obj.MaximumVersion.GetHashCode());
-            }
-
-            return result;
+            return HashCode.Combine(obj.Name, obj.Guid, obj.RequiredVersion, obj.Version, obj.MaximumVersion);
         }
     }
 
