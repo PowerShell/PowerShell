@@ -16,8 +16,8 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Keeps the property value of inputObject. Because the value of a non-existing property is null,
-    ///  isExistingProperty is needed to distinguish whether a property exists and its value is null or
-    ///  the property does not exist at all.
+    /// isExistingProperty is needed to distinguish whether a property exists and its value is null or
+    /// the property does not exist at all.
     /// </summary>
     internal class ObjectCommandPropertyValue
     {
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    ///
+    /// ObjectCommandComparer class.
     /// </summary>
     internal class ObjectCommandComparer : IComparer
     {
@@ -175,17 +175,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Main method that will compare first and second by
-        /// their keys considering case and order
+        /// Main method that will compare first and second by their keys considering case and order.
         /// </summary>
         /// <param name="first">
-        /// first object to extract value
+        /// First object to extract value.
         /// </param>
         /// <param name="second">
-        /// second object to extract value
+        /// Fecond object to extract value.
         /// </param>
         /// <returns>
-        /// 0 if they are the same, less than 0 if first is smaller, more than 0 if first is greater
+        /// 0 if they are the same, less than 0 if first is smaller, more than 0 if first is greater.
         ///</returns>
         public int Compare(object first, object second)
         {
@@ -232,7 +231,5 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _caseSensitive = false;
     }
-
     #endregion
 }
-

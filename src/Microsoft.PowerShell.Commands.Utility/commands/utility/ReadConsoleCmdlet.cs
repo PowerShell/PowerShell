@@ -86,10 +86,7 @@ namespace Microsoft.PowerShell.Commands
         #region Cmdlet Overrides
 
         /// <summary>
-        ///
-        /// Write the prompt, then collect a line of input from the host, then
-        /// output it to the output stream.
-        ///
+        /// Write the prompt, then collect a line of input from the host, then output it to the output stream.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -172,5 +169,4 @@ namespace Microsoft.PowerShell.Commands
         private object _prompt = null;
         private Boolean _safe = false;
     }
-}   // namespace Microsoft.PowerShell.Commands
-
+}
