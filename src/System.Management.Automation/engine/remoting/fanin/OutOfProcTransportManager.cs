@@ -190,6 +190,8 @@ namespace System.Management.Automation.Remoting
                         break;
                     case XmlNodeType.EndElement:
                         break;
+                    case XmlNodeType.Text:
+                        throw new PSRemotingTransportException(data);
                     default:
                         throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownNodeType, RemotingErrorIdStrings.IPCUnknownNodeType,
                             reader.NodeType.ToString(),
