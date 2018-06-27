@@ -25,6 +25,8 @@ gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=suse
 repobased=false
 gitscriptname="installpsh-suse.psh"
+powershellpackageid=powershell
+pwshlink=/usr/bin/pwsh
 
 echo
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
@@ -139,16 +141,22 @@ $SUDO zypper --non-interactive install \
 echo
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
 
-echo "ATTENTION: As of version 1.2.0 this script no longer uses pre-releases unless the '-allowprereleases' switch is used"
+echo "ATTENTION: As of version 1.2.0 this script no longer uses pre-releases unless the '-preview' switch is used"
 
-if [[ "'$*'" =~ allowprerelease ]] ; then
+if [[ "'$*'" =~ preview ]] ; then
     echo
-    echo "-allowprerelease was used, prereleases will be included in the retrieval of the latest version"
+    echo "-preview was used, the latest preview release will be installed (side-by-side with your production release)"
     release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+    pwshlink=/usr/bin/pwsh-preview
 else
-    echo "Finding the latest release production release"
+    echo "Finding the latest production release"
     release=$(curl https://api.github.com/repos/PowerShell/PowerShell/releases | grep -Po '"tag_name":(\d*?,|.*?[^\\]",)' | grep -Po '\d+.\d+.\d+[\da-z.-]*' | grep -v '[a-z]' | sort | tail -n1)
 if
+#DIRECT DOWNLOAD
+package=powershell-${release}-linux-x64.tar.gz
+downloadurl=https://github.com/PowerShell/PowerShell/releases/download/v$release/$package
+
+
 #REPO BASED (Not ready yet)
 #echo "*** Setting up PowerShell Core repo..."
 #echo "*** Current version on git is: $release, repo version may differ slightly..."
@@ -160,11 +168,6 @@ if
 #$SUDO zypper refresh
 ## Install PowerShell
 #$SUDO zypper --non-interactive install powershell
-
-#DIRECT DOWNLOAD
-pwshlink=/usr/bin/pwsh
-package=powershell-${release}-linux-x64.tar.gz
-downloadurl=https://github.com/PowerShell/PowerShell/releases/download/v$release/$package
 
 echo "Destination file: $package"
 echo "Source URL: $downloadurl"
