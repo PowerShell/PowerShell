@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// This cmdlet takes a Runspace object and checks to see if it is debuggable (i.e, if
-    /// it is running a script or is currently stopped in the debugger.  If it
+    /// it is running a script or is currently stopped in the debugger.  If it.
     /// is debuggable then it breaks into the Runspace debugger in step mode.
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]

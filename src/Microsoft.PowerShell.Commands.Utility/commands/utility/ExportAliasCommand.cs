@@ -11,23 +11,23 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The formats that export-alias supports
+    /// The formats that export-alias supports.
     /// </summary>
     public enum ExportAliasFormat
     {
         /// <summary>
-        /// Aliases will be exported to a CSV file
+        /// Aliases will be exported to a CSV file.
         /// </summary>
         Csv,
 
         /// <summary>
-        /// Aliases will be exported as an MSH script
+        /// Aliases will be exported as an MSH script.
         /// </summary>
         Script
     }
 
     /// <summary>
-    /// The implementation of the "export-alias" cmdlet
+    /// The implementation of the "export-alias" cmdlet.
     /// </summary>
     ///
     [Cmdlet(VerbsData.Export, "Alias", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113296")]
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// The Name parameter for the command
+        /// The Name parameter for the command.
         /// </summary>
         ///
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true)]
@@ -85,8 +85,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _names = new string[] { "*" };
 
         /// <summary>
-        /// If set to true, the alias that is set is passed to the
-        /// pipeline.
+        /// If set to true, the alias that is set is passed to the pipeline.
         /// </summary>
         ///
         [Parameter]
@@ -164,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _noclobber;
 
         /// <summary>
-        /// The description that gets added to the file as a comment
+        /// The description that gets added to the file as a comment.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -254,7 +253,7 @@ namespace Microsoft.PowerShell.Commands
         } // ProcessRecord
 
         /// <summary>
-        /// Writes the aliases to the file
+        /// Writes the aliases to the file.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -304,7 +303,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Holds all the matching aliases for writing to the file
+        /// Holds all the matching aliases for writing to the file.
         /// </summary>
         private Collection<AliasInfo> _matchingAliases = new Collection<AliasInfo>();
 
@@ -367,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Open the file to which aliases should be exported
+        /// Open the file to which aliases should be exported.
         /// </summary>
         /// <param name="readOnlyFileInfo">
         /// If not null, this is the file whose read-only attribute
@@ -413,6 +412,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Command code
-    } // class ExportAliasCommand
-}//Microsoft.PowerShell.Commands
-
+    }
+}
