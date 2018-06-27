@@ -12,12 +12,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// helper class to do wildcard matching on PSPropertyExpressions
+    /// Helper class to do wildcard matching on PSPropertyExpressions.
     /// </summary>
     internal sealed class PSPropertyExpressionFilter
     {
         /// <summary>
-        /// construct the class, using an array of patterns
+        /// Construct the class, using an array of patterns.
         /// </summary>
         /// <param name="wildcardPatternsStrings">array of pattern strings to use</param>
         internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// try to match the expression against the array of wildcard patterns.
-        /// the first match shortcircuits the search
+        /// the first match shortcircuits the search.
         /// </summary>
         /// <param name="expression">PSPropertyExpression to test against</param>
         /// <returns>true if there is a match, else false</returns>
@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _firstOrLastSpecified;
 
         /// <summary>
-        /// Skips the specified number of items from top when used with First,from end when used with Last
+        /// Skips the specified number of items from top when used with First,from end when used with Last.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -162,14 +162,14 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// With this switch present, the cmdlet won't "short-circuit"
-        /// (i.e. won't stop upstream cmdlets after it knows that no further objects will be emitted downstream)
+        /// (i.e. won't stop upstream cmdlets after it knows that no further objects will be emitted downstream).
         /// </summary>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [Parameter(ParameterSetName = "IndexParameter")]
         public SwitchParameter Wait { get; set; }
 
         /// <summary>
-        /// Used to display the object at specified index
+        /// Used to display the object at specified index.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "IndexParameter")]
@@ -281,12 +281,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// list of processed parameters obtained from the Expression array
+        /// List of processed parameters obtained from the Expression array.
         /// </summary>
         private List<MshParameter> _propertyMshParameterList;
 
         /// <summary>
-        /// singleton list of process parameters obtained from ExpandProperty
+        /// Singleton list of process parameters obtained from ExpandProperty.
         /// </summary>
         private List<MshParameter> _expandMshParameterList;
 
@@ -749,7 +749,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Used only internally for select-object
+    /// Used only internally for select-object.
     /// </summary>
     [SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable", Justification = "This exception is internal and never thrown by any public API")]
     [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception is internal and never thrown by any public API")]
@@ -764,4 +764,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
