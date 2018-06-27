@@ -696,6 +696,7 @@ Response Body:
 
 ```json
 {
-  "failureResponsesSent":2
+  "failureResponsesSent":2,
+  "sessionId":100
 }
 ```
