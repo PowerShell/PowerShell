@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// WebCmdletElementCollection for elements in html web responses
+    /// WebCmdletElementCollection for elements in html web responses.
     /// </summary>
     public class WebCmdletElementCollection : ReadOnlyCollection<PSObject>
     {
@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Finds the element with name or id
+        /// Finds the element with name or id.
         /// </summary>
         /// <param name="nameOrId"></param>
         /// <returns></returns>
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Finds the element by id
+        /// Finds the element by id.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Finds the element by name
+        /// Finds the element by name.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
