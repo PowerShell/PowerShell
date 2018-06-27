@@ -376,7 +376,8 @@ namespace System.Management.Automation
             type = null;
             if (value != null)
             {
-                if (value is IList list && list.Count > 0)
+                if (value is IList list
+                    && list.Count > 0)
                 {
                     value = list[0];
                 }
@@ -439,7 +440,8 @@ namespace System.Management.Automation
         private static bool IsConstructor(object member)
         {
             var psMethod = member as PSMethod;
-            return psMethod?.adapterData is DotNetAdapter.MethodCacheEntry methodCacheEntry && methodCacheEntry.methodInformationStructures[0].method.IsConstructor;
+            var methodCacheEntry = psMethod?.adapterData as DotNetAdapter.MethodCacheEntry;
+            return methodCacheEntry != null && methodCacheEntry.methodInformationStructures[0].method.IsConstructor;
         }
     }
 
@@ -928,6 +930,7 @@ namespace System.Management.Automation
         private List<PSTypeName> InferTypesFromObjectCmdlets(CommandAst commandAst, CmdletInfo cmdletInfo, PseudoBindingInfo pseudoBinding)
         {
             var inferredTypes = new List<PSTypeName>(16);
+
             if (cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.NewObjectCommand"))
             {
                 // new - object - yields an instance of whatever -Type is bound to
@@ -941,19 +944,19 @@ namespace System.Management.Automation
                 cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand") ||
                 cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.Management.Infrastructure.CimCmdlets.NewCimInstanceCommand"))
             {
-                // Get-CimInstance/New-CimInstance - yields a CimInstance with ETS type based on its arguments for -Namespace and -ClassName parameters
+                // Get-CimInstance/New-CimInstance - adds a CimInstance with ETS type based on its arguments for -Namespace and -ClassName parameters
                 InferTypesFromCimCommand(pseudoBinding, inferredTypes);
             }
             else if (cmdletInfo.ImplementingType == typeof(WhereObjectCommand) ||
                 cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.SortObjectCommand"))
             {
-                // where-object - yields whatever we saw before where-object in the pipeline.
+                // where-object - adds whatever we saw before where-object in the pipeline.
                 // same for sort-object
                 InferTypesFromWhereAndSortCommand(commandAst, inferredTypes);
             }
             else if (cmdletInfo.ImplementingType == typeof(ForEachObjectCommand))
             {
-                // foreach-object - yields the type of it's script block parameters
+                // foreach-object - adds the type of it's script block parameters
                 InferTypesFromForeachCommand(pseudoBinding, commandAst, inferredTypes);
             }
             else if (cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.SelectObjectCommand"))
