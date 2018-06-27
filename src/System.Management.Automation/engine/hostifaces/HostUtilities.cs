@@ -772,10 +772,11 @@ namespace System.Management.Automation
             {
                 return basePrompt;
             }
-            else if (runspace.ConnectionInfo is SSHConnectionInfo)
+            else
             {
                 SSHConnectionInfo sshConnectionInfo = runspace.ConnectionInfo as SSHConnectionInfo;
-                if (!string.IsNullOrEmpty(sshConnectionInfo.UserName) &&
+                if (sshConnectionInfo != null &&
+                    !string.IsNullOrEmpty(sshConnectionInfo.UserName) &&
                     !System.Environment.UserName.Equals(sshConnectionInfo.UserName, StringComparison.OrdinalIgnoreCase))
                 {
                     return string.Format(CultureInfo.InvariantCulture, "[{0}@{1}]: {2}", sshConnectionInfo.UserName, sshConnectionInfo.ComputerName, basePrompt);
