@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     ///
-    /// Writes the PSHost object to the success stream
+    /// Writes the PSHost object to the success stream.
     ///
     /// </summary>
 
@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         ///
-        /// See base class
+        /// See base class.
         ///
         /// </summary>
         protected override void BeginProcessing()
@@ -29,4 +29,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

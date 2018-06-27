@@ -9,7 +9,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements Get-Uptime
+    /// This class implements Get-Uptime.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Uptime", DefaultParameterSetName = TimespanParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?linkid=834862")]
     [OutputType(typeof(TimeSpan), ParameterSetName = new string[] { TimespanParameterSet })]
@@ -17,16 +17,16 @@ namespace Microsoft.PowerShell.Commands
     public class GetUptimeCommand : PSCmdlet
     {
         /// <summary>
-        /// Since parameter
-        /// The system startup time
+        /// Since parameter.
+        /// The system startup time.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = SinceParameterSet)]
         public SwitchParameter Since { get; set; } = new SwitchParameter();
 
         /// <summary>
-        /// ProcessRecord() override
-        /// This is the main entry point for the cmdlet
+        /// ProcessRecord() override.
+        /// This is the main entry point for the cmdlet.
         /// </summary>
         protected override void ProcessRecord()
         {
