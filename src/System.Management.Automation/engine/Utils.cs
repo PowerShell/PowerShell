@@ -1476,10 +1476,10 @@ namespace System.Management.Automation.Internal
              _boundedUndoStack.Push(item);
         }
 
-        internal T Undo()
+        internal T Undo(T currentItem)
         {
             var item = _boundedUndoStack.Pop();
-            _boundedRedoStack.Push(item);
+            _boundedRedoStack.Push(currentItem);
             return item;
         }
         

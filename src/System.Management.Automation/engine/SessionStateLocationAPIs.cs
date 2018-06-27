@@ -239,7 +239,7 @@ namespace System.Management.Automation
                 {
                     throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
                 }
-                var previousLocation =  _SetLocationHistory.Undo();
+                var previousLocation =  _SetLocationHistory.Undo(this.CurrentLocation);
                 path = previousLocation.Path;
                 pushNextLocation = false;
             }
