@@ -1726,7 +1726,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     Context "Invoke-WebRequest retry tests" {
 
-        It "<Command> can retry - <Name>" -TestCases @(
+        It "Invoke-WebRequest can retry - <Name>" -TestCases @(
             @{Name = "specified number of times - error 304"; failureCount = 2; failureCode = 304; retryCount = 2}
             @{Name = "specified number of times - error 400"; failureCount = 3; failureCode = 400; retryCount = 3}
             @{Name = "specified number of times - error 599"; failureCount = 1; failureCode = 599; retryCount = 2}
@@ -1753,7 +1753,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $jsonError.error | Should -BeExactly 'Error: HTTP - 400 occurred.'
         }
 
-        It "<Command> can retry with POST" {
+        It "Invoke-WebRequest can retry with POST" {
 
             $uri = Get-WebListenerUrl -Test 'Retry'
             $sessionId = (New-Guid).Guid
