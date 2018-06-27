@@ -25,7 +25,7 @@ using System.Linq;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The valid values for the -Authentication parameter for Invoke-RestMethod and Invoke-WebRequest
+    /// The valid values for the -Authentication parameter for Invoke-RestMethod and Invoke-WebRequest.
     /// </summary>
     public enum WebAuthenticationType
     {
@@ -35,17 +35,17 @@ namespace Microsoft.PowerShell.Commands
         None,
 
         /// <summary>
-        /// RFC-7617 Basic Authentication. Requires -Credential
+        /// RFC-7617 Basic Authentication. Requires -Credential.
         /// </summary>
         Basic,
 
         /// <summary>
-        /// RFC-6750 OAuth 2.0 Bearer Authentication. Requires -Token
+        /// RFC-6750 OAuth 2.0 Bearer Authentication. Requires -Token.
         /// </summary>
         Bearer,
 
         /// <summary>
-        /// RFC-6750 OAuth 2.0 Bearer Authentication. Requires -Token
+        /// RFC-6750 OAuth 2.0 Bearer Authentication. Requires -Token.
         /// </summary>
         OAuth,
     }
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
     // WebSslProtocol is used because not all SslProtocols are supported by HttpClientHandler.
     // Also SslProtocols.Default is not the "default" for HttpClientHandler as SslProtocols.Ssl3 is not supported.
     /// <summary>
-    /// The valid values for the -SslProtocol parameter for Invoke-RestMethod and Invoke-WebRequest
+    /// The valid values for the -SslProtocol parameter for Invoke-RestMethod and Invoke-WebRequest.
     /// </summary>
     [Flags]
     public enum WebSslProtocol
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
         Tls11 = SslProtocols.Tls11,
 
         /// <summary>
-        /// Specifies the TLS 1.2 security protocol. The TLS protocol is defined in IETF RFC 5246
+        /// Specifies the TLS 1.2 security protocol. The TLS protocol is defined in IETF RFC 5246.
         /// </summary>
         Tls12 = SslProtocols.Tls12
     }
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter UseBasicParsing { get; set; } = true;
 
         /// <summary>
-        /// gets or sets the Uri property
+        /// Gets or sets the Uri property.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
@@ -105,13 +105,13 @@ namespace Microsoft.PowerShell.Commands
 
         #region Session
         /// <summary>
-        /// gets or sets the Session property
+        /// Gets or sets the Session property.
         /// </summary>
         [Parameter]
         public virtual WebRequestSession WebSession { get; set; }
 
         /// <summary>
-        /// gets or sets the SessionVariable property
+        /// Gets or sets the SessionVariable property.
         /// </summary>
         [Parameter]
         [Alias("SV")]
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
         #region Authorization and Credentials
 
         /// <summary>
-        /// Gets or sets the AllowUnencryptedAuthentication property
+        /// Gets or sets the AllowUnencryptedAuthentication property.
         /// </summary>
         [Parameter]
         public virtual SwitchParameter AllowUnencryptedAuthentication { get; set; }
@@ -131,47 +131,47 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the Authentication property used to determin the Authentication method for the web session.
         /// Authentication does not work with UseDefaultCredentials.
         /// Authentication over unencrypted sessions requires AllowUnencryptedAuthentication.
-        /// Basic: Requires Credential
-        /// OAuth/Bearer: Requires Token
+        /// Basic: Requires Credential.
+        /// OAuth/Bearer: Requires Token.
         /// </summary>
         [Parameter]
         public virtual WebAuthenticationType Authentication { get; set; } = WebAuthenticationType.None;
 
         /// <summary>
-        /// gets or sets the Credential property
+        /// Gets or sets the Credential property.
         /// </summary>
         [Parameter]
         [Credential]
         public virtual PSCredential Credential { get; set; }
 
         /// <summary>
-        /// gets or sets the UseDefaultCredentials property
+        /// Gets or sets the UseDefaultCredentials property.
         /// </summary>
         [Parameter]
         public virtual SwitchParameter UseDefaultCredentials { get; set; }
 
         /// <summary>
-        /// gets or sets the CertificateThumbprint property
+        /// Gets or sets the CertificateThumbprint property.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
         public virtual string CertificateThumbprint { get; set; }
 
         /// <summary>
-        /// gets or sets the Certificate property
+        /// Gets or sets the Certificate property.
         /// </summary>
         [Parameter]
         [ValidateNotNull]
         public virtual X509Certificate Certificate { get; set; }
 
         /// <summary>
-        /// gets or sets the SkipCertificateCheck property
+        /// Gets or sets the SkipCertificateCheck property.
         /// </summary>
         [Parameter]
         public virtual SwitchParameter SkipCertificateCheck { get; set; }
 
         /// <summary>
-        /// Gets or sets the TLS/SSL protocol used by the Web Cmdlet
+        /// Gets or sets the TLS/SSL protocol used by the Web Cmdlet.
         /// </summary>
         [Parameter]
         public virtual WebSslProtocol SslProtocol { get; set; } = WebSslProtocol.Default;
@@ -187,26 +187,26 @@ namespace Microsoft.PowerShell.Commands
         #region Headers
 
         /// <summary>
-        /// gets or sets the UserAgent property
+        /// Gets or sets the UserAgent property.
         /// </summary>
         [Parameter]
         public virtual string UserAgent { get; set; }
 
         /// <summary>
-        /// gets or sets the DisableKeepAlive property
+        /// Gets or sets the DisableKeepAlive property.
         /// </summary>
         [Parameter]
         public virtual SwitchParameter DisableKeepAlive { get; set; }
 
         /// <summary>
-        /// gets or sets the TimeOut property
+        /// Gets or sets the TimeOut property.
         /// </summary>
         [Parameter]
         [ValidateRange(0, Int32.MaxValue)]
         public virtual int TimeoutSec { get; set; }
 
         /// <summary>
-        /// gets or sets the Headers property
+        /// Gets or sets the Headers property.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Parameter]
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
         #region Redirect
 
         /// <summary>
-        /// gets or sets the RedirectMax property
+        /// Gets or sets the RedirectMax property.
         /// </summary>
         [Parameter]
         [ValidateRange(0, Int32.MaxValue)]
@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
         #region Method
 
         /// <summary>
-        /// gets or sets the Method property
+        /// Gets or sets the Method property.
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "StandardMethodNoProxy")]
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
         private WebRequestMethod _method = WebRequestMethod.Default;
 
         /// <summary>
-        /// gets or sets the CustomMethod property
+        /// Gets or sets the CustomMethod property.
         /// </summary>
         [Parameter(Mandatory=true,ParameterSetName = "CustomMethod")]
         [Parameter(Mandatory=true,ParameterSetName = "CustomMethodNoProxy")]
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
         #region NoProxy
 
         /// <summary>
-        /// gets or sets the NoProxy property
+        /// Gets or sets the NoProxy property.
         /// </summary>
         [Parameter(Mandatory=true,ParameterSetName = "CustomMethodNoProxy")]
         [Parameter(Mandatory=true,ParameterSetName = "StandardMethodNoProxy")]
@@ -274,14 +274,14 @@ namespace Microsoft.PowerShell.Commands
         #region Proxy
 
         /// <summary>
-        /// gets or sets the Proxy property
+        /// Gets or sets the Proxy property.
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "CustomMethod")]
         public virtual Uri Proxy { get; set; }
 
         /// <summary>
-        /// gets or sets the ProxyCredential property
+        /// Gets or sets the ProxyCredential property.
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "CustomMethod")]
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual PSCredential ProxyCredential { get; set; }
 
         /// <summary>
-        /// gets or sets the ProxyUseDefaultCredentials property
+        /// Gets or sets the ProxyUseDefaultCredentials property.
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "CustomMethod")]
@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
         #region Input
 
         /// <summary>
-        /// gets or sets the Body property
+        /// Gets or sets the Body property.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public virtual object Body { get; set; }
@@ -314,27 +314,26 @@ namespace Microsoft.PowerShell.Commands
         public virtual IDictionary Form {get; set;}
 
         /// <summary>
-        /// gets or sets the ContentType property
+        /// Gets or sets the ContentType property.
         /// </summary>
         [Parameter]
         public virtual string ContentType { get; set; }
 
         /// <summary>
-        /// gets or sets the TransferEncoding property
+        /// Gets or sets the TransferEncoding property.
         /// </summary>
         [Parameter]
         [ValidateSet("chunked", "compress", "deflate", "gzip", "identity", IgnoreCase = true)]
         public virtual string TransferEncoding { get; set; }
 
         /// <summary>
-        /// gets or sets the InFile property
+        /// Gets or sets the InFile property.
         /// </summary>
         [Parameter]
         public virtual string InFile { get; set; }
 
         /// <summary>
-        /// keep the original file path after the resolved provider path is
-        /// assigned to InFile
+        /// Geep the original file path after the resolved provider path is assigned to InFile.
         /// </summary>
         private string _originalFilePath;
 
@@ -343,13 +342,13 @@ namespace Microsoft.PowerShell.Commands
         #region Output
 
         /// <summary>
-        /// gets or sets the OutFile property
+        /// Gets or sets the OutFile property.
         /// </summary>
         [Parameter]
         public virtual string OutFile { get; set; }
 
         /// <summary>
-        /// gets or sets the PassThrough property
+        /// Gets or sets the PassThrough property.
         /// </summary>
         [Parameter]
         public virtual SwitchParameter PassThru { get; set; }
@@ -796,12 +795,12 @@ namespace Microsoft.PowerShell.Commands
     // TODO: Merge Partials
 
     /// <summary>
-    /// Exception class for webcmdlets to enable returning HTTP error response
+    /// Exception class for webcmdlets to enable returning HTTP error response.
     /// </summary>
     public sealed class HttpResponseException : HttpRequestException
     {
         /// <summary>
-        /// Constructor for HttpResponseException
+        /// Constructor for HttpResponseException.
         /// </summary>
         /// <param name="message">Message for the exception</param>
         /// <param name="response">Response from the HTTP server</param>
@@ -811,7 +810,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// HTTP error response
+        /// HTTP error response.
         /// </summary>
         public HttpResponseMessage Response { get; private set; }
     }
@@ -823,7 +822,7 @@ namespace Microsoft.PowerShell.Commands
     {
 
         /// <summary>
-        /// gets or sets the PreserveAuthorizationOnRedirect property
+        /// Gets or sets the PreserveAuthorizationOnRedirect property.
         /// </summary>
         /// <remarks>
         /// This property overrides compatibility with web requests on Windows.
@@ -838,7 +837,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter PreserveAuthorizationOnRedirect { get; set; }
 
         /// <summary>
-        /// gets or sets the SkipHeaderValidation property
+        /// Gets or sets the SkipHeaderValidation property.
         /// </summary>
         /// <remarks>
         /// This property adds headers to the request's header collection without validation.
@@ -849,7 +848,7 @@ namespace Microsoft.PowerShell.Commands
         #region Abstract Methods
 
         /// <summary>
-        /// Read the supplied WebResponse object and push the
+        /// Read the supplied WebResponse object and push the.
         /// resulting output into the pipeline.
         /// </summary>
         /// <param name="response">Instance of a WebResponse object to be processed</param>
@@ -858,27 +857,27 @@ namespace Microsoft.PowerShell.Commands
         #endregion Abstract Methods
 
         /// <summary>
-        /// Cancellation token source
+        /// Cancellation token source.
         /// </summary>
         private CancellationTokenSource _cancelToken = null;
 
         /// <summary>
-        /// Parse Rel Links
+        /// Parse Rel Links.
         /// </summary>
         internal bool _parseRelLink = false;
 
         /// <summary>
-        /// Automatically follow Rel Links
+        /// Automatically follow Rel Links.
         /// </summary>
         internal bool _followRelLink = false;
 
         /// <summary>
-        /// Automatically follow Rel Links
+        /// Automatically follow Rel Links.
         /// </summary>
         internal Dictionary<string, string> _relationLink = null;
 
         /// <summary>
-        /// Maximum number of Rel Links to follow
+        /// Maximum number of Rel Links to follow.
         /// </summary>
         internal int _maximumFollowRelLink = Int32.MaxValue;
 
@@ -1521,7 +1520,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Implementing ^C, after start the BeginGetResponse
+        /// Implementing ^C, after start the BeginGetResponse.
         /// </summary>
         protected override void StopProcessing()
         {
@@ -1847,7 +1846,6 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
-
         #endregion Helper Methods
     }
 }
