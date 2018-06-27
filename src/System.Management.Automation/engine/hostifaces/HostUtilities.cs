@@ -781,6 +781,7 @@ namespace System.Management.Automation
                     return string.Format(CultureInfo.InvariantCulture, "[{0}@{1}]: {2}", sshConnectionInfo.UserName, sshConnectionInfo.ComputerName, basePrompt);
                 }
             }
+
             return string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", runspace.ConnectionInfo.ComputerName, basePrompt);
         }
 
