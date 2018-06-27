@@ -1460,8 +1460,45 @@ namespace System.Management.Automation.Internal
         }
     }
 
+    internal class HistoryStack<T>
+    {
+        private BoundedStack<T> _boundedUndoStack;
+        private BoundedStack<T> _boundedRedoStack;
+
+        internal HistoryStack(int capacity)
+        {
+            _boundedUndoStack = new BoundedStack<T>(capacity);
+            _boundedRedoStack = new BoundedStack<T>(capacity);
+        }
+
+        internal void Push(T item)
+        {
+             _boundedUndoStack.Push(item);
+        }
+
+        internal T Undo()
+        {
+            var item = _boundedUndoStack.Pop();
+            _boundedRedoStack.Push(item);
+            return item;
+        }
+        
+        internal T Redo()
+        {
+            return _boundedRedoStack.Pop();
+        }
+
+        internal int Count
+        {
+            get
+            {
+                return _boundedUndoStack.Count;
+            }
+        }
+    }
+
     /// <summary>
-    /// An bounded stack based on a linked list.
+    /// A bounded stack based on a linked list.
     /// </summary>
     internal class BoundedStack<T> : LinkedList<T>
     {

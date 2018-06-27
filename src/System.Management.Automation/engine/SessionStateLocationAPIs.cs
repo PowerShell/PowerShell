@@ -239,7 +239,17 @@ namespace System.Management.Automation
                 {
                     throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
                 }
-                var previousLocation =  _SetLocationHistory.Pop();
+                var previousLocation =  _SetLocationHistory.Undo();
+                path = previousLocation.Path;
+                pushNextLocation = false;
+            }
+            if (originalPath.Equals("+", StringComparison.OrdinalIgnoreCase))
+            {
+                if (_SetLocationHistory.Count <= 0)
+                {
+                    throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
+                }
+                var previousLocation =  _SetLocationHistory.Redo();
                 path = previousLocation.Path;
                 pushNextLocation = false;
             }
@@ -805,7 +815,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A bounded stack for the location history of Set-Location
         /// </summary>
-        private BoundedStack<PathInfo> _SetLocationHistory;
+        private HistoryStack<PathInfo> _SetLocationHistory;
 
         /// <summary>
         /// A stack of the most recently pushed locations
