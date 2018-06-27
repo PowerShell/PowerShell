@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         bool _isLiteralPath;
 
         /// <summary>
-        /// Path specified, using globbing to resolve
+        /// Path specified, using globbing to resolve.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
         [ValidateNotNullOrEmpty]
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Specifies a path to one or more locations, without globbing
+        /// Specifies a path to one or more locations, without globbing.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByLiteralPath", ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -39,8 +39,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// For each path, resolve it, parse it and write all hashtables
-        /// to the output stream
+        /// For each path, resolve it, parse it and write all hashtables to the output stream.
         /// </summary>
         protected override void ProcessRecord()
         {

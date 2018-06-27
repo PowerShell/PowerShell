@@ -12,7 +12,7 @@ using System.Security;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The implementation of the "import-alias" cmdlet
+    /// The implementation of the "import-alias" cmdlet.
     /// </summary>
     ///
     [Cmdlet(VerbsData.Import, "Alias", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113339")]
@@ -28,14 +28,14 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// The path from which to import the aliases
+        /// The path from which to import the aliases.
         /// </summary>
         ///
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
         public string Path { get; set; }
 
         /// <summary>
-        /// The literal path from which to import the aliases
+        /// The literal path from which to import the aliases.
         /// </summary>
         ///
         [Parameter(Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = LiteralPathParameterSetName)]
@@ -62,8 +62,7 @@ namespace Microsoft.PowerShell.Commands
         public string Scope { get; set; }
 
         /// <summary>
-        /// If set to true, the alias that is set is passed to the
-        /// pipeline.
+        /// If set to true, the alias that is set is passed to the pipeline.
         /// </summary>
         ///
         [Parameter]
@@ -480,6 +479,5 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
         #endregion Command code
-    } // class ImportAliasCommand
-}//Microsoft.PowerShell.Commands
-
+    }
+}
