@@ -32,7 +32,7 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
         New-PSSession -Uri $uri -Credential $credential -Authentication Basic -ErrorVariable err
         $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
         $err.FullyQualifiedErrorId | Should -Be '1,PSSessionOpenFailed'
-        $err.Exception.HResult | Should -Be -2146233087
+        $err.Exception.HResult | Should -Be 0x80131501
     }
 }
 
