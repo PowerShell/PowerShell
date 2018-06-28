@@ -144,7 +144,7 @@ Describe "Set-Location" -Tags "CI" {
             foreach ($i in 1..($maximumLocationHistory)) {
                 Set-Location +
             }
-            (Get-Location).Path | Should -Be $tempPath # Question: Is this really the expected behaviour? This is at the moment because 'cd +' also pushed the stack
+            (Get-Location).Path | Should -Be $tempPath
             { Set-Location + } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
         }
     }
