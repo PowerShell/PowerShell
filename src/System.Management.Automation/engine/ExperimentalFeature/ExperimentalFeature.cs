@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Tracing;
 using System.Runtime.CompilerServices;
 
 namespace System.Management.Automation
@@ -42,7 +43,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Indicate whether the feature is enabled.
         /// </summary>
-        public bool IsEnabled { get; private set; }
+        public bool Enabled { get; private set; }
 
         /// <summary>
         /// Constructor for ExperimentalFeature.
@@ -52,7 +53,7 @@ namespace System.Management.Automation
             Name = name;
             Description = description;
             Source = source;
-            IsEnabled = isEnabled;
+            Enabled = isEnabled;
         }
 
         #endregion
@@ -85,7 +86,7 @@ namespace System.Management.Automation
                 new ExperimentalFeature(name: "PSFileSystemProviderV2",
                                         description: "Replace the old FileSystemProvider with cleaner design and faster code",
                                         source: EngineSource,
-                                        isEnabled: false))
+                                        isEnabled: false)),
                 */
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
@@ -102,39 +103,64 @@ namespace System.Management.Automation
             //      instead, it will be done when the type is used for the first time, which is always earlier than
             //      any experimental features take effect.
             string[] enabledFeatures = Utils.EmptyArray<string>();
-            try { enabledFeatures = PowerShellConfig.Instance.GetExperimentalFeatures(); }
-            catch (Exception ex) when (LogException(ex, "Placeholder")) { }
+            try { enabledFeatures = PowerShellConfig.Instance.GetExperimentalFeatures(); } catch (Exception e) when (LogException(e)) { }
 
             EnabledExperimentalFeatureNames = ProcessEnabledFeatures(enabledFeatures);
         }
 
         /// <summary>
-        /// Check if the specified experimental feature has been enabled.
+        /// Process the array of enabled feature names retrieved from configuration.
+        /// Ignore invalid feature names and unavailable engine feature names, and
+        /// return an ImmutableHashSet of the valid enabled feature names.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool HasEnabled(string featureName)
+        private static ImmutableHashSet<string> ProcessEnabledFeatures(string[] enabledFeatures)
         {
-            return EnabledExperimentalFeatureNames.Contains(featureName);
+            if (enabledFeatures.Length == 0) { return ImmutableHashSet.Create<string>(); }
+
+            var list = new List<string>(enabledFeatures.Length);
+            foreach (string name in enabledFeatures)
+            {
+                if (IsModuleFeatureName(name))
+                {
+                    list.Add(name);
+                }
+                else if (IsEngineFeatureName(name))
+                {
+                    if (EngineExperimentalFeatureMap.TryGetValue(name, out ExperimentalFeature feature))
+                    {
+                        feature.Enabled = true;
+                        list.Add(name);
+                    }
+                    else
+                    {
+                        string message = StringUtil.Format(Logging.EngineExperimentalFeatureNotFound, name);
+                        LogError(PSEventId.ExperimentalFeature_InvalidName, name, message);
+                    }
+                }
+                else
+                {
+                    string message = StringUtil.Format(Logging.InvalidExperimentalFeatureName, name);
+                    LogError(PSEventId.ExperimentalFeature_InvalidName, name, message);
+                }
+            }
+            return ImmutableHashSet.CreateRange(StringComparer.OrdinalIgnoreCase, list);
         }
 
         /// <summary>
-        /// Determine the action to take for the specified experiment name and action.
+        /// Log the exception without rewinding the stack.
         /// </summary>
-        internal static ExperimentAction GetActionToTake(string experimentName, ExperimentAction experimentAction)
+        private static bool LogException(Exception e)
         {
-            if (experimentName == null || experimentAction == ExperimentAction.None)
-            {
-                // If either the experiment name or action is not defined, then return 'Show' by default.
-                // This could happen to 'ParameterAttribute' when no experimental related field is declared.
-                return ExperimentAction.Show;
-            }
+            LogError(PSEventId.ExperimentalFeature_ReadConfig_Error, e.GetType().FullName, e.Message, e.StackTrace);
+            return false;
+        }
 
-            ExperimentAction action = experimentAction;
-            if (!HasEnabled(experimentName))
-            {
-                action = (action == ExperimentAction.Hide) ? ExperimentAction.Show : ExperimentAction.Hide;
-            }
-            return action;
+        /// <summary>
+        /// Log an error message.
+        /// </summary>
+        private static void LogError(PSEventId eventId, params object[] args)
+        {
+            PSEtwLog.LogOperationalError(eventId, PSOpcode.Constructor, PSTask.ExperimentalFeature, PSKeyword.UseAlwaysOperational, args);
         }
 
         /// <summary>
@@ -167,56 +193,32 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Log the exception without rewinding the stack.
+        /// Determine the action to take for the specified experiment name and action.
         /// </summary>
-        private static bool LogException(Exception ex, string errorTemplate)
+        internal static ExperimentAction GetActionToTake(string experimentName, ExperimentAction experimentAction)
         {
-            // TODO: Logging
-            return false;
-        }
-
-        /// <summary>
-        /// Log an error message.
-        /// </summary>
-        private static void LogError(string message)
-        {
-            // TODO: Logging
-        }
-
-        /// <summary>
-        /// Process the array of enabled feature names retrieved from configuration.
-        /// Ignore invalid feature names and unavailable engine feature names, and
-        /// return an ImmutableHashSet of the valid enabled feature names.
-        /// </summary>
-        private static ImmutableHashSet<string> ProcessEnabledFeatures(string[] enabledFeatures)
-        {
-            if (enabledFeatures.Length == 0) { return ImmutableHashSet.Create<string>(); }
-
-            var list = new List<string>(enabledFeatures.Length);
-            foreach (string name in enabledFeatures)
+            if (experimentName == null || experimentAction == ExperimentAction.None)
             {
-                if (IsModuleFeatureName(name))
-                {
-                    list.Add(name);
-                }
-                else if (IsEngineFeatureName(name))
-                {
-                    if (EngineExperimentalFeatureMap.TryGetValue(name, out ExperimentalFeature feature))
-                    {
-                        feature.IsEnabled = true;
-                        list.Add(name);
-                    }
-                    else
-                    {
-                        LogError("No such engine feature registered. Ignore it.");
-                    }
-                }
-                else
-                {
-                    LogError("Invalid experimental feature name. Ignore it");
-                }
+                // If either the experiment name or action is not defined, then return 'Show' by default.
+                // This could happen to 'ParameterAttribute' when no experimental related field is declared.
+                return ExperimentAction.Show;
             }
-            return ImmutableHashSet.CreateRange(StringComparer.OrdinalIgnoreCase, list);
+
+            ExperimentAction action = experimentAction;
+            if (!HasEnabled(experimentName))
+            {
+                action = (action == ExperimentAction.Hide) ? ExperimentAction.Show : ExperimentAction.Hide;
+            }
+            return action;
+        }
+
+        /// <summary>
+        /// Check if the specified experimental feature has been enabled.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool HasEnabled(string featureName)
+        {
+            return EnabledExperimentalFeatureNames.Contains(featureName);
         }
 
         #endregion

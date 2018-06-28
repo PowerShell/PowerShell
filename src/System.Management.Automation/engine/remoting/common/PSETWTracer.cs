@@ -159,6 +159,10 @@ namespace System.Management.Automation.Internal
         Settings = 0x1F04,
         Engine_Trace = 0x1F06,
 
+        // Experimental Features
+        ExperimentalFeature_InvalidName = 0x3001,
+        ExperimentalFeature_ReadConfig_Error = 0x3002,
+
         // Scheduled Jobs
         ScheduledJob_Start = 0xD001,
         ScheduledJob_Complete = 0xD002,
@@ -232,6 +236,7 @@ namespace System.Management.Automation.Internal
         ProviderStart = 0x68,
         ProviderStop = 0x69,
         ExecutePipeline = 0x6A,
+        ExperimentalFeature = 0x6B,
         ScheduledJob = 0x6E,
         NamedPipe = 0x6F,
         ISEOperation = 0x78

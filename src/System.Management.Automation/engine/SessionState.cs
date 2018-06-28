@@ -363,12 +363,17 @@ namespace System.Management.Automation
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSHOME
-            // This depends on the shellId. If we cannot read the application base
-            // registry key, set the variable to empty string
             string applicationBase = Utils.DefaultPowerShellAppBase;
             v = new PSVariable(SpecialVariables.PSHome, applicationBase,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PSHOMEDescription);
+            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+
+            // $EnabledExperimentalFeatures
+            v = new PSVariable(SpecialVariables.EnabledExperimentalFeatures,
+                               ExperimentalFeature.EnabledExperimentalFeatureNames,
+                               ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
+                               RunspaceInit.EnabledExperimentalFeatures);
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
         }
 
