@@ -1520,11 +1520,15 @@ else
             // TODO: This should be PSVersionInfo.PSVersionName once we get
             // closer to release. Right now it doesn't support alpha versions.
             string version = PSVersionInfo.GitCommitId;
+
+            // We want the resulting endpoint name to be: PowerShell.6
+            // However, the GitCommitId has a `v` like `v6.1.0`, so we need to remove
+            // the `v`
             if (version.StartsWith("v"))
             {
                 version = version.Substring(1, version.Length - 1);
             }
-            
+
             return System.String.Concat("PowerShell.", version);
         }
 
@@ -4895,6 +4899,8 @@ param(
             if ($dotPos -ne -1) {{
                 $powershellVersionMajor = $powershellVersionMajor.Substring(0, $dotPos)
             }}
+            # If we are running a Preview version, we don't want to clobber the generic PowerShell.6 endpoint
+            # but instead creating a PowerShell.6-Preview endpoint
             if ($PSVersionTable.PSVersion.ToString().Contains(""preview""))
             {{
                 $powershellVersionMajor += ""-Preview""
