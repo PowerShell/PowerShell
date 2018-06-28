@@ -327,7 +327,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
 '@
         $modulesFolder = Join-Path $TestDrive "Modules"
         $modulePath = Join-Path $modulesFolder "TestModule"
-        New-Item -ItemType Directory -Path $modulePath -Force
+        New-Item -ItemType Directory -Path $modulePath -Force > $null
         Set-Content -Path (Join-Path $modulePath "TestModule.psm1") -Value $testModule
         $env:PSModulePath += [System.IO.Path]::PathSeparator + $modulesFolder
 
