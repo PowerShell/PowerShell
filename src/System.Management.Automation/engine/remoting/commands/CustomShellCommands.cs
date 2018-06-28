@@ -1526,7 +1526,7 @@ else
             // the `v`
             if (version.StartsWith("v"))
             {
-                version = version.Substring(1, version.Length - 1);
+                version = version.Substring(1);
             }
 
             return System.String.Concat("PowerShell.", version);
