@@ -452,16 +452,6 @@ namespace System.Management.Automation
                         throw new PipelineStoppedException();
                     }
 
-                    if (!Platform.IsWindows && startInfo.UseShellExecute)
-                    {
-                        // UseShellExecute is not properly supported on Unix. It runs the file with '/bin/sh'.
-                        // Before the behavior is improved (tracked by dotnet/corefx#19956), we use xdg-open/open as the default programs
-                        string executable = Platform.IsLinux ? "xdg-open" : /* macOS */ "open";
-                        startInfo.Arguments = "\"" + startInfo.FileName + "\" " + startInfo.Arguments;
-                        startInfo.FileName = executable;
-                        startInfo.UseShellExecute = false;
-                    }
-
                     try
                     {
                         _nativeProcess = new Process() { StartInfo = startInfo };

@@ -1306,44 +1306,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 var invokeProcess = new System.Diagnostics.Process();
                 invokeProcess.StartInfo.FileName = path;
-#if UNIX
-                bool invokeDefaultProgram = false;
-                if (Directory.Exists(path))
-                {
-                    // Path points to a directory. We have to use xdg-open/open on Linux/macOS.
-                    invokeDefaultProgram = true;
-                }
-                else
-                {
-                    try
-                    {
-                        // Try Process.Start first. This works for executables on Win/Unix platforms
-                        invokeProcess.Start();
-                    }
-                    catch (Win32Exception ex) when (ex.NativeErrorCode == 13)
-                    {
-                        // Error code 13 -- Permission denied
-                        // The file is possibly not an executable. We try xdg-open/open on Linux/macOS.
-                        invokeDefaultProgram = true;
-                    }
-                }
 
-                if (invokeDefaultProgram)
-                {
-                    const string quoteFormat = "\"{0}\"";
-                    invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* macOS */ "open";
-                    if (NativeCommandParameterBinder.NeedQuotes(path))
-                    {
-                        path = string.Format(CultureInfo.InvariantCulture, quoteFormat, path);
-                    }
-                    invokeProcess.StartInfo.Arguments = path;
-                    invokeProcess.Start();
-                }
-#else
                 // Use ShellExecute when it's not a headless SKU
-                invokeProcess.StartInfo.UseShellExecute = Platform.IsWindowsDesktop;
+                invokeProcess.StartInfo.UseShellExecute = !Platform.IsIoT && !Platform.IsNanoServer;
                 invokeProcess.Start();
-#endif
             }
         } // InvokeDefaultAction
 

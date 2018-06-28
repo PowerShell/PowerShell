@@ -1731,10 +1731,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Verb
         /// </summary>
-        /// <remarks>
-        /// The 'Verb' parameter is not supported in OneCore PowerShell
-        /// because 'UseShellExecute' is not supported in CoreCLR.
-        /// </remarks>
         [Parameter(ParameterSetName = "UseShellExecute")]
         [ValidateNotNullOrEmpty]
         public string Verb { get; set; }
@@ -1820,8 +1816,7 @@ namespace Microsoft.PowerShell.Commands
 
             //create an instance of the ProcessStartInfo Class
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            //use ShellExecute by default if we are running on full windows SKUs
-            startInfo.UseShellExecute = Platform.IsWindowsDesktop;
+            startInfo.UseShellExecute = !Platform.IsIoT && !Platform.IsNanoServer && ArgumentList == null;
 
             //Path = Mandatory parameter -> Will not be empty.
             try
@@ -2107,24 +2102,6 @@ namespace Microsoft.PowerShell.Commands
 
         private Process Start(ProcessStartInfo startInfo)
         {
-#if UNIX
-            Process process = new Process() { StartInfo = startInfo };
-            SetupInputOutputRedirection(process);
-            process.Start();
-            if (process.StartInfo.RedirectStandardOutput)
-            {
-                process.BeginOutputReadLine();
-            }
-            if (process.StartInfo.RedirectStandardError)
-            {
-                process.BeginErrorReadLine();
-            }
-            if (process.StartInfo.RedirectStandardInput)
-            {
-                WriteToStandardInput(process);
-            }
-            return process;
-#else
             Process process = null;
             if (startInfo.UseShellExecute)
             {
@@ -2132,10 +2109,27 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
+#if UNIX
+                process = new Process() { StartInfo = startInfo };
+                SetupInputOutputRedirection(process);
+                process.Start();
+                if (process.StartInfo.RedirectStandardOutput)
+                {
+                    process.BeginOutputReadLine();
+                }
+                if (process.StartInfo.RedirectStandardError)
+                {
+                    process.BeginErrorReadLine();
+                }
+                if (process.StartInfo.RedirectStandardInput)
+                {
+                    WriteToStandardInput(process);
+                }
+#else
                 process = StartWithCreateProcess(startInfo);
+#endif
             }
             return process;
-#endif
         }
 
 #if UNIX
@@ -2499,6 +2493,7 @@ namespace Microsoft.PowerShell.Commands
                 lpProcessInformation.Dispose();
             }
         }
+#endif
 
         /// <summary>
         /// This method will be used only on Windows full desktop.
@@ -2518,7 +2513,6 @@ namespace Microsoft.PowerShell.Commands
             }
             return result;
         }
-#endif
         #endregion
     }
 
