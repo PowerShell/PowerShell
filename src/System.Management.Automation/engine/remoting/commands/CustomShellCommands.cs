@@ -1519,7 +1519,12 @@ else
             // PowerShell Core uses a versioned directory to hold the plugin
             // TODO: This should be PSVersionInfo.PSVersionName once we get
             // closer to release. Right now it doesn't support alpha versions.
-            return System.String.Concat("PowerShell.", PSVersionInfo.GitCommitId);
+            string version = PSVersionInfo.GitCommitId;
+            if (version.StartsWith("v"))
+            {
+                version = version.Substring(1, version.Length - 1);
+            }
+            return System.String.Concat("PowerShell.", version);
         }
 
         /// <summary>
@@ -4888,6 +4893,10 @@ param(
             $dotPos = $powershellVersionMajor.IndexOf(""."")
             if ($dotPos -ne -1) {{
                 $powershellVersionMajor = $powershellVersionMajor.Substring(0, $dotPos)
+            }}
+            if ($PSVersionTable.PSVersion.ToString().Contains(""preview""))
+            {{
+                $powershellVersionMajor += ""-Preview""
             }}
             Register-EndpointIfNotPresent -Name (""PowerShell."" + $powershellVersionMajor) $Force $queryForRegisterDefault $captionForRegisterDefault
 
