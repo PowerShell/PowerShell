@@ -104,6 +104,16 @@ Describe "Set-Location" -Tags "CI" {
             (Get-Location).Path | Should -Be ($initialLocation).Path
         }
 
+        It 'Should go to last location and back when specifying minus as a path and then plus' {
+            $initialLocation = Get-Location
+            Set-Location ([System.IO.Path]::GetTempPath())
+            $tempPath = (Get-Location).Path
+            Set-Location -
+            (Get-Location).Path | Should -Be ($initialLocation).Path
+            Set-Location +
+            (Get-Location).Path | Should -Be $tempPath
+        }
+
         It 'Should go back to previous locations when specifying minus twice' {
             $initialLocation = (Get-Location).Path
             Set-Location ([System.IO.Path]::GetTempPath())
@@ -121,10 +131,17 @@ Describe "Set-Location" -Tags "CI" {
             foreach ($i in 1..$maximumLocationHistory) {
                 Set-Location ([System.IO.Path]::GetTempPath())
             }
+            # Go back up to the maximum
             foreach ($i in 1..$maximumLocationHistory) {
                 Set-Location -
             }
             (Get-Location).Path | Should Be $initialLocation
+            { Set-Location - } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
+            # Go forwards up to the maximum
+            foreach ($i in 1..$maximumLocationHistory) {
+                Set-Location +
+            }
+            (Get-Location).Path | Should -Be $initialLocation
             { Set-Location - } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
         }
     }
