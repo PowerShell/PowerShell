@@ -230,9 +230,9 @@ namespace System.Management.Automation
             string driveName = null;
             ProviderInfo provider = null;
             string providerId = null;
+            bool pushNextLocation = true;
 
             // Replace path with last working directory when '-' was passed.
-            bool pushNextLocation = true;
             if (originalPath.Equals("-", StringComparison.OrdinalIgnoreCase))
             {
                 if (_SetLocationHistory.UndoCount <= 0)
@@ -243,13 +243,15 @@ namespace System.Management.Automation
                 path = previousLocation.Path;
                 pushNextLocation = false;
             }
+
+            // Replace path with last working directory from redo stack and push to the undo stack when '+' was passed.
             if (originalPath.Equals("+", StringComparison.OrdinalIgnoreCase))
             {
                 if (_SetLocationHistory.RedoCount <= 0)
                 {
                     throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryRedoStackIsEmpty);
                 }
-                var previousLocation =  _SetLocationHistory.Redo();
+                var previousLocation = _SetLocationHistory.Redo();
                 _SetLocationHistory.Push(this.CurrentLocation);
                 path = previousLocation.Path;
                 pushNextLocation = false;
