@@ -2019,9 +2019,6 @@ function Find-Dotnet() {
 
     if (-not (precheck 'dotnet' "Still could not find 'dotnet', restoring PATH.")) {
         $env:PATH = $originalPath
-    } else {
-        $dotnetInfo = (dotnet --info)
-        Write-Log "dotnet --info: `n$dotnetInfo"
     }
 }
 
