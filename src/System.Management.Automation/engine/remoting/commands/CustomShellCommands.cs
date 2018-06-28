@@ -1529,7 +1529,13 @@ else
                 version = version.Substring(1);
             }
 
-            return System.String.Concat("PowerShell.", version);
+            string shellName = System.String.Concat("PowerShell.", version);
+            if (version.Contains("preview"))
+            {
+                shellName += "-Preview";
+            }
+
+            return shellName;
         }
 
         /// <summary>

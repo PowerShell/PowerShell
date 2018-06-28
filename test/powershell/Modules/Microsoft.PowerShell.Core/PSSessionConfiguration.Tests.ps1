@@ -104,13 +104,13 @@ try
                     # Create new Config File
                     function CreateTestConfigFile {
 
-                        $TestConfigFileLoc = join-path $TestDrive "Remoting"
+                        $TestConfigFileLoc = Join-Path $TestDrive "Remoting"
                         if(-not (Test-path $TestConfigFileLoc))
                         {
                             $null = New-Item -Path $TestConfigFileLoc -ItemType Directory -Force -ErrorAction Stop
                         }
 
-                        $TestConfigFile = join-path $TestConfigFileLoc "TestConfigFile.pssc"
+                        $TestConfigFile = Join-Path $TestConfigFileLoc "TestConfigFile.pssc"
                         $null = New-PSSessionConfigurationFile -Path $TestConfigFile -SessionType Default
 
                         return $TestConfigFile
@@ -366,7 +366,7 @@ try
 `$script:testvariable = "testValue"
 "@
 
-                        $TestScript = join-path $script:TestDir "StartupTestScript.ps1"
+                        $TestScript = Join-Path $script:TestDir "StartupTestScript.ps1"
                         $null = Set-Content -path $TestScript -Value $ScriptContent
 
                         return $TestScript
@@ -375,7 +375,7 @@ try
                     # Create new Config File
                     function CreateTestConfigFile {
 
-                        $TestConfigFile = join-path $script:TestDir "TestConfigFile.pssc"
+                        $TestConfigFile = Join-Path $script:TestDir "TestConfigFile.pssc"
                         $null = New-PSSessionConfigurationFile -Path $TestConfigFile -SessionType Default
                         return $TestConfigFile
                     }
@@ -394,7 +394,7 @@ Export-ModuleMember IsTestModuleImported
                             $null = New-Item -Path $TestModuleFileLoc -ItemType Directory -Force -ErrorAction Stop
                         }
 
-                        $TestModuleFile = join-path $TestModuleFileLoc "TestModule.psm1"
+                        $TestModuleFile = Join-Path $TestModuleFileLoc "TestModule.psm1"
                         $null = Set-Content -path $TestModuleFile -Value $ScriptContent
 
                         return $TestModuleFile
@@ -424,16 +424,21 @@ namespace PowershellTestConfigNamespace
     }
 }
 "@
-                        $script:SourceFile = join-path $script:TestAssemblyDir "PowershellTestConfig.cs"
+                        $script:SourceFile = Join-Path $script:TestAssemblyDir "PowershellTestConfig.cs"
                         $PscConfigDef | out-file $script:SourceFile -Encoding ascii -Force
-                        $TestAssemblyName = "TestAssembly" + (New-Guid) + ".dll"
-                        $TestAssemblyPath = join-path $script:TestAssemblyDir $TestAssemblyName
+                        $TestAssemblyName = "TestAssembly.dll"
+                        $TestAssemblyPath = Join-Path $script:TestAssemblyDir $TestAssemblyName
                         Add-Type -path $script:SourceFile -OutputAssembly $TestAssemblyPath
                         return $TestAssemblyName
                     }
 
-                    $script:TestDir = join-path $TestDrive "Remoting"
-                    $script:TestAssemblyDir = [System.IO.Path]::GetTempPath()
+                    $script:TestDir = Join-Path $TestDrive "Remoting"
+                    if(-not (Test-Path $script:TestDir))
+                    {
+                        $null = New-Item -path $script:TestDir -ItemType Directory
+                    }
+
+                    $script:TestAssemblyDir = Join-Path $TestDrive "AssemblyDir"
                     if(-not (Test-Path $script:TestAssemblyDir))
                     {
                         $null = New-Item -path $script:TestAssemblyDir -ItemType Directory
@@ -608,11 +613,11 @@ namespace PowershellTestConfigNamespace
 
         It "Validate New-PSSessionConfigurationFile can successfully create a valid PSSessionConfigurationFile" {
 
-            $configFilePath = join-path $TestDrive "SamplePSSessionConfigurationFile.pssc"
+            $configFilePath = Join-Path $TestDrive "SamplePSSessionConfigurationFile.pssc"
             try
             {
                 New-PSSessionConfigurationFile $configFilePath
-                $result = get-content $configFilePath | Out-String
+                $result = Get-Content $configFilePath | Out-String
             }
             finally
             {
@@ -740,7 +745,7 @@ namespace PowershellTestConfigNamespace
 
         It "Validate FullyQualifiedErrorId from Test-PSSessionConfigurationFile when an invalid pssc file is provided as input and -Verbose parameter is specified" {
 
-            $configFilePath = join-path $TestDrive "SamplePSSessionConfigurationFile.pssc"
+            $configFilePath = Join-Path $TestDrive "SamplePSSessionConfigurationFile.pssc"
             "InvalidData" | Out-File $configFilePath
 
             Test-PSSessionConfigurationFile $configFilePath -Verbose -ErrorAction Stop | Should -BeFalse
@@ -749,7 +754,7 @@ namespace PowershellTestConfigNamespace
         It "Test case verifies that the generated config file passes validation" {
 
             # Path the config file
-            $configFilePath = join-path $TestDrive "SamplePSSessionConfigurationFile.pssc"
+            $configFilePath = Join-Path $TestDrive "SamplePSSessionConfigurationFile.pssc"
 
             $updatedFunctionDefn = @()
             foreach($currentDefination in $parmMap.FunctionDefinitions)
@@ -834,7 +839,7 @@ namespace PowershellTestConfigNamespace
         }
 
         It "Enable-PSSession Cmdlet creates a PSSession configuration with a name tied to PowerShell version." {
-            $endpointName = ("PowerShell." + $PSVersionTable.GitCommitId.ToString()).Replace("PowerShell.v","PowerShell.")
+            $endpointName = "PowerShell." + $PSVersionTable.GitCommitId.ToString().Substring(1) # Remove the v from the beginning
             $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
             $matchedEndpoint | Should -Not -BeNullOrEmpty
         }
