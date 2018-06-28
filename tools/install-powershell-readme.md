@@ -24,7 +24,7 @@
 * -includeide - installs vscode and vscode powershell extension (only relevant to machines with desktop environment)
 * -interactivetesting - do a quick launch test of vscode - only relevant when used with -includeide
 * -skip-sudo-check - use sudo without verifying it's availability (hard to accurately do on some distros)
-* -allowprerelease - includes prereleases of powershell core when selection allows this.  Repository based installs take the latest on the repo url regardless of this switch.
+* -preview - installs preview of powershell core side-by-side with any existing production releases.
 
 ## Usage
 

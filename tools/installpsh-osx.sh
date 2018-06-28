@@ -24,6 +24,7 @@ gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=osx
 repobased=true
 gitscriptname="installpsh-osx.sh"
+powershellpackageid=powershell
 
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Current PowerShell Core Version: $currentpshversion"
@@ -88,9 +89,10 @@ fi
 
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
 
-if [[ "'$*'" =~ allowprerelease ]] ; then
+if [[ "'$*'" =~ preview ]] ; then
     echo
-    echo "-allowprerelease was used, but since $DistroBasedOn uses repositories - selection of releases will depend on the repository contents."
+    echo "-preview was used, the latest preview release will be installed (side-by-side with your production release)"
+    powershellpackageid=powershell-preview
 fi
 
 if ! hash brew 2>/dev/null; then
@@ -136,7 +138,7 @@ fi
 
 if ! hash pwsh 2>/dev/null; then
     echo "Installing PowerShell..."
-    if ! brew cask install powershell; then
+    if ! brew cask install ${powershellpackageid}; then
         echo "ERROR: PowerShell failed to install! Cannot install powershell..." >&2
     fi
 else

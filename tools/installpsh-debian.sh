@@ -24,6 +24,7 @@ gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=debian
 repobased=true
 gitscriptname="installpsh-debian.psh"
+powershellpackageid=powershell
 
 echo ;
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
@@ -122,9 +123,10 @@ if ! hash curl 2>/dev/null; then
     $SUDO apt-get install -y curl
 fi
 
-if [[ "'$*'" =~ allowprerelease ]] ; then
+if [[ "'$*'" =~ preview ]] ; then
     echo
-    echo "-allowprerelease was used, but since $DistroBasedOn uses repositories - selection of releases will depend on the repository contents."
+    echo "-preview was used, the latest preview release will be installed (side-by-side with your production release)"
+    powershellpackageid=powershell-preview
 fi
 
 release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
@@ -170,7 +172,7 @@ esac
 # Update apt-get
 $SUDO apt-get update
 # Install PowerShell
-$SUDO apt-get install -y powershell
+$SUDO apt-get install -y ${powershellpackageid}
 
 pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
 Run `"pwsh`" to start a PowerShell session."'
