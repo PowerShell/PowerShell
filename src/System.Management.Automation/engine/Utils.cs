@@ -1488,6 +1488,11 @@ namespace System.Management.Automation.Internal
             return _boundedRedoStack.Pop();
         }
 
+        internal void InvalidateRedoStack()
+        {
+            _boundedRedoStack.Clear();
+        }
+
         internal int UndoCount
         {
             get

@@ -104,7 +104,7 @@ Describe "Set-Location" -Tags "CI" {
             (Get-Location).Path | Should -Be ($initialLocation).Path
         }
 
-        It 'Should go to last location and back when specifying minus as a path and then plus' {
+        It 'Should go to last location back, forth and back again when specifying minus, plus and minus as a path' {
             $initialLocation = Get-Location
             Set-Location ([System.IO.Path]::GetTempPath())
             $tempPath = (Get-Location).Path
@@ -112,6 +112,8 @@ Describe "Set-Location" -Tags "CI" {
             (Get-Location).Path | Should -Be ($initialLocation).Path
             Set-Location +
             (Get-Location).Path | Should -Be $tempPath
+            Set-Location -
+            (Get-Location).Path | Should -Be ($initialLocation).Path
         }
 
         It 'Should go back to previous locations when specifying minus twice' {
@@ -131,6 +133,7 @@ Describe "Set-Location" -Tags "CI" {
             foreach ($i in 1..$maximumLocationHistory) {
                 Set-Location ([System.IO.Path]::GetTempPath())
             }
+            $tempPath = (Get-Location).Path
             # Go back up to the maximum
             foreach ($i in 1..$maximumLocationHistory) {
                 Set-Location -
@@ -138,11 +141,11 @@ Describe "Set-Location" -Tags "CI" {
             (Get-Location).Path | Should Be $initialLocation
             { Set-Location - } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
             # Go forwards up to the maximum
-            foreach ($i in 1..$maximumLocationHistory) {
+            foreach ($i in 1..($maximumLocationHistory)) {
                 Set-Location +
             }
-            (Get-Location).Path | Should -Be $initialLocation
-            { Set-Location - } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
+            (Get-Location).Path | Should -Be $tempPath # Question: Is this really the expected behaviour? This is at the moment because 'cd +' also pushed the stack
+            { Set-Location + } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
         }
     }
 }

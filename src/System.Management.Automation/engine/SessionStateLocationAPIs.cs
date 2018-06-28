@@ -250,6 +250,7 @@ namespace System.Management.Automation
                     throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryRedoStackIsEmpty);
                 }
                 var previousLocation =  _SetLocationHistory.Redo();
+                _SetLocationHistory.Push(this.CurrentLocation);
                 path = previousLocation.Path;
                 pushNextLocation = false;
             }
@@ -258,6 +259,10 @@ namespace System.Management.Automation
             {
                 var newPushPathInfo = GetNewPushPathInfo();
                 _SetLocationHistory.Push(newPushPathInfo);
+                if (_SetLocationHistory.RedoCount >= 0)
+                {
+                    _SetLocationHistory.InvalidateRedoStack();
+                }
             }
 
             PSDriveInfo previousWorkingDrive = CurrentDrive;
