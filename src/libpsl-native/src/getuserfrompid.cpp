@@ -15,6 +15,13 @@
 #include <sys/sysctl.h>
 #endif
 
+#if __FreeBSD__
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <sys/user.h>
+#include <libutil.h>
+#endif
+
 char* GetUserFromPid(pid_t pid)
 {
 
@@ -28,14 +35,14 @@ char* GetUserFromPid(pid_t pid)
 
     return GetFileOwner(path.c_str());
 
-#elif defined(__APPLE__) && defined(__MACH__)
+#elif (defined(__APPLE__) && defined(__MACH__))
 
     // Get effective owner of pid from sysctl
     struct kinfo_proc oldp;
     size_t oldlenp = sizeof(oldp);
     int name[] = {CTL_KERN, KERN_PROC, KERN_PROC_PID, pid};
     u_int namelen = sizeof(name)/sizeof(int);
-
+    
     // Read-only query
     int ret = sysctl(name, namelen, &oldp, &oldlenp, NULL, 0);
     if (ret != 0 || oldlenp == 0)
@@ -44,6 +51,23 @@ char* GetUserFromPid(pid_t pid)
     }
 
     return GetPwUid(oldp.kp_eproc.e_ucred.cr_uid);
+
+#elif defined(__FreeBSD__)
+
+    // Get effective owner of pid from sysctl
+    struct kinfo_proc oldp;
+    size_t oldlenp = sizeof(oldp);
+    int name[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, pid };
+    u_int namelen = sizeof(name)/sizeof(int);
+
+    int ret = sysctl(name, namelen, &oldp, &oldlenp, NULL, 0);
+    if (ret != 0 || oldlenp == 0)
+    {
+        return NULL;
+    }
+
+    // TODO: Real of effective user ID?
+    return GetPwUid(oldp.ki_uid);
 
 #else
 
