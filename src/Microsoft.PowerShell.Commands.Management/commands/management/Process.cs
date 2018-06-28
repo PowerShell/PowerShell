@@ -1731,6 +1731,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Verb
         /// </summary>
+        /// <remarks>
+        /// The 'Verb' parameter is only supported on Windows Desktop
+        /// </remarks>
         [Parameter(ParameterSetName = "UseShellExecute")]
         [ValidateNotNullOrEmpty]
         public string Verb { get; set; }
@@ -1816,7 +1819,8 @@ namespace Microsoft.PowerShell.Commands
 
             //create an instance of the ProcessStartInfo Class
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.UseShellExecute = !Platform.IsIoT && !Platform.IsNanoServer && ArgumentList == null;
+            //use ShellExecute by default if we are running on full windows SKUs
+            startInfo.UseShellExecute = Platform.IsWindowsDesktop;
 
             //Path = Mandatory parameter -> Will not be empty.
             try
@@ -1830,6 +1834,14 @@ namespace Microsoft.PowerShell.Commands
             catch (CommandNotFoundException)
             {
                 startInfo.FileName = FilePath;
+#if UNIX
+                //Arguments are passed incorrectly to the executable used for ShellExecute and not to filename https://github.com/dotnet/corefx/issues/30718
+                //so don't use ShellExecute if arguments are specified
+
+                //Linux relies on `xdg-open` and macOS relies on `open` which behave differently than Windows ShellExecute when running console commands
+                //as a new console will be opened.  So to avoid that, we only use ShellExecute on non-Windows if the filename is not an actual command (like a URI)
+                startInfo.UseShellExecute = (ArgumentList == null);
+#endif
             }
             //Arguments
             if (ArgumentList != null)

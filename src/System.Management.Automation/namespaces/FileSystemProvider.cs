@@ -1306,10 +1306,38 @@ namespace Microsoft.PowerShell.Commands
             {
                 var invokeProcess = new System.Diagnostics.Process();
                 invokeProcess.StartInfo.FileName = path;
+#if UNIX
+                bool useShellExecute = false;
+                if (Directory.Exists(path))
+                {
+                    // Path points to a directory. We have to use xdg-open/open on Linux/macOS.
+                    useShellExecute = true;
+                }
+                else
+                {
+                    try
+                    {
+                        // Try Process.Start first. This works for executables on Win/Unix platforms
+                        invokeProcess.Start();
+                    }
+                    catch (Win32Exception ex) when (ex.NativeErrorCode == 13)
+                    {
+                        // Error code 13 -- Permission denied
+                        // The file is possibly not an executable. We try xdg-open/open on Linux/macOS.
+                        useShellExecute = true;
+                    }
+                }
 
+                if (useShellExecute)
+                {
+                    invokeProcess.StartInfo.UseShellExecute = true;
+                    invokeProcess.Start();
+                }
+#else
                 // Use ShellExecute when it's not a headless SKU
-                invokeProcess.StartInfo.UseShellExecute = !Platform.IsIoT && !Platform.IsNanoServer;
+                invokeProcess.StartInfo.UseShellExecute = Platform.IsWindowsDesktop;
                 invokeProcess.Start();
+#endif
             }
         } // InvokeDefaultAction
 
