@@ -31,5 +31,8 @@ bool IsFile(const char* path)
     assert(path);
 
     struct stat buf;
-    return lstat(path, &buf) == 0;
+    lstat(path, &buf);
+
+    return S_ISDIR(buf.st_mode) == 0;
+    // return lstat(path, &buf) == 0;
 }
