@@ -31,8 +31,11 @@ bool IsFile(const char* path)
     assert(path);
 
     struct stat buf;
-    lstat(path, &buf);
+    if (lstat(path, &buf) == -1)
+    {
+        // TODO: throw error on path doesn't exist?
+        return false;
+    }
 
     return S_ISDIR(buf.st_mode) == 0;
-    // return lstat(path, &buf) == 0;
 }
