@@ -25,6 +25,7 @@ gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=redhat
 repobased=true
 gitscriptname="installpsh-redhat.psh"
+powershellpackageid=powershell
 
 echo
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
@@ -107,9 +108,10 @@ if (( $EUID != 0 )); then
     fi
 fi
 
-if [[ "'$*'" =~ allowprerelease ]] ; then
+if [[ "'$*'" =~ preview ]] ; then
     echo
-    echo "-allowprerelease was used, but since $DistroBasedOn uses repositories - selection of releases will depend on the repository contents."
+    echo "-preview was used, the latest preview release will be installed (side-by-side with your production release)"
+    powershellpackageid=powershell-preview
 fi
 
 release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`echo
@@ -124,7 +126,7 @@ echo "*** Current version on git is: $release, repo version may differ slightly.
 
 echo "*** Setting up PowerShell Core repo..."
 $SUDO curl https://packages.microsoft.com/config/rhel/7/prod.repo > /etc/yum.repos.d/microsoft.repo
-$SUDO yum install -y powershell
+$SUDO yum install -y ${powershellpackageid}
 
 pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
 Run `"pwsh`" to start a PowerShell session."'

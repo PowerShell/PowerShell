@@ -155,8 +155,8 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
     $ItArgs['Name'] = "Can send mail message from user to self using pipeline " + $ItArgs['Name']
 
     It @ItArgs {
-        $body = "Greetings from me."
-        $subject = "Test message"
+        $body = "Greetings from me again."
+        $subject = "Second test message"
         $object = [PSCustomObject]@{"To" = $address; "From" = $address; "Subject" = $subject; "Body" = $body; $SmtpServer = '127.0.0.1'}
         $object | Send-MailMessage
         Test-Path -Path $mailBox | Should -BeTrue
