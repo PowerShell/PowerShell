@@ -648,11 +648,6 @@ Fix steps:
     if ($PSModuleRestore) {
         Restore-PSModuleToBuild -PublishPath $publishPath
     }
-
-    # Restore the Pester module
-    if ($CI) {
-        Restore-PSPester -Destination (Join-Path $publishPath "Modules")
-    }
 }
 
 function Restore-PSPackage
@@ -1002,23 +997,9 @@ function Start-PSPester {
     )
 
     $getModuleResults = Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue
-    if (-not $getModuleResults)
+    if (-not ($getModuleResults | Where-Object { $_.Version -ge "4.2" } ))
     {
-        Write-Warning @"
-Pester module not found.
-Restore the module to '$Pester' by running:
-    Restore-PSPester
-"@
-        return;
-    }
-
-    if (-not ($getModuleResults | Where-Object { $_.Version -ge "4.2" } )) {
-        Write-Warning @"
-No Pester module of version 4.2 and higher.
-Restore the required module version to '$Pester' by running:
-    Restore-PSPester
-"@
-        return;
+          Restore-PSPester
     }
 
     if ($IncludeFailingTest.IsPresent)
