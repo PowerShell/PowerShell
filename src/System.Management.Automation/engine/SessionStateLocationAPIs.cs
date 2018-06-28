@@ -235,9 +235,9 @@ namespace System.Management.Automation
             bool pushNextLocation = true;
             if (originalPath.Equals("-", StringComparison.OrdinalIgnoreCase))
             {
-                if (_SetLocationHistory.Count <= 0)
+                if (_SetLocationHistory.UndoCount <= 0)
                 {
-                    throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
+                    throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryUndoStackIsEmpty);
                 }
                 var previousLocation =  _SetLocationHistory.Undo(this.CurrentLocation);
                 path = previousLocation.Path;
@@ -245,9 +245,9 @@ namespace System.Management.Automation
             }
             if (originalPath.Equals("+", StringComparison.OrdinalIgnoreCase))
             {
-                if (_SetLocationHistory.Count <= 0)
+                if (_SetLocationHistory.RedoCount <= 0)
                 {
-                    throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
+                    throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryRedoStackIsEmpty);
                 }
                 var previousLocation =  _SetLocationHistory.Redo();
                 path = previousLocation.Path;

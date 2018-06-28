@@ -1488,11 +1488,19 @@ namespace System.Management.Automation.Internal
             return _boundedRedoStack.Pop();
         }
 
-        internal int Count
+        internal int UndoCount
         {
             get
             {
                 return _boundedUndoStack.Count;
+            }
+        }
+
+        internal int RedoCount
+        {
+            get
+            {
+                return _boundedRedoStack.Count;
             }
         }
     }
@@ -1533,6 +1541,10 @@ namespace System.Management.Automation.Internal
         /// <returns></returns>
         internal T Pop()
         {
+            if (this.First == null)
+            {
+                throw new InvalidOperationException(SessionStateStrings.BoundedStackIsEmpty);
+            }
             var item = this.First.Value;
             try
             {
