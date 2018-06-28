@@ -1524,6 +1524,7 @@ else
             {
                 version = version.Substring(1, version.Length - 1);
             }
+            
             return System.String.Concat("PowerShell.", version);
         }
 

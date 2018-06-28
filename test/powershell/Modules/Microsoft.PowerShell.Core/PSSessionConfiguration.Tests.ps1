@@ -17,7 +17,7 @@ try
     #
     if ($IsNotSkipped)
     {
-        $endpointName = "PowerShell.$($psversiontable.GitCommitId)"
+        $endpointName = "PowerShell.$($psversiontable.GitCommitId)".Replace("PowerShell.v","PowerShell.")
 
         $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
 
@@ -426,18 +426,13 @@ namespace PowershellTestConfigNamespace
 "@
                         $script:SourceFile = join-path $script:TestAssemblyDir "PowershellTestConfig.cs"
                         $PscConfigDef | out-file $script:SourceFile -Encoding ascii -Force
-                        $TestAssemblyName = "TestAssembly.dll"
+                        $TestAssemblyName = "TestAssembly" + (New-Guid) + ".dll"
                         $TestAssemblyPath = join-path $script:TestAssemblyDir $TestAssemblyName
                         Add-Type -path $script:SourceFile -OutputAssembly $TestAssemblyPath
                         return $TestAssemblyName
                     }
 
                     $script:TestDir = join-path $TestDrive "Remoting"
-                    if(-not (Test-Path $script:TestDir))
-                    {
-                        $null = New-Item -path $script:TestDir -ItemType Directory
-                    }
-
                     $script:TestAssemblyDir = [System.IO.Path]::GetTempPath()
                     if(-not (Test-Path $script:TestAssemblyDir))
                     {
@@ -448,14 +443,6 @@ namespace PowershellTestConfigNamespace
                     $LocalStartupScriptPath = CreateStartupScript
                     $LocalTestModulePath = CreateTestModule
                     $LocalTestAssemblyName = CreateTestAssembly
-                    $LocalTestDir = $script:TestDir
-                }
-            }
-
-            AfterAll {
-                if ($IsNotSkipped)
-                {
-                    Remove-Item $LocalTestDir -Recurse -Force -ErrorAction SilentlyContinue
                 }
             }
 
@@ -847,7 +834,7 @@ namespace PowershellTestConfigNamespace
         }
 
         It "Enable-PSSession Cmdlet creates a PSSession configuration with a name tied to PowerShell version." {
-            $endpointName = "PowerShell." + $PSVersionTable.GitCommitId
+            $endpointName = ("PowerShell." + $PSVersionTable.GitCommitId.ToString()).Replace("PowerShell.v","PowerShell.")
             $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
             $matchedEndpoint | Should -Not -BeNullOrEmpty
         }
@@ -855,6 +842,10 @@ namespace PowershellTestConfigNamespace
         It "Enable-PSSession Cmdlet creates a default PSSession configuration untied to a specific PowerShell version." {
             $dotPos = $PSVersionTable.PSVersion.ToString().IndexOf(".")
             $endpointName = "PowerShell." + $PSVersionTable.PSVersion.ToString().Substring(0, $dotPos)
+            if ($PSVersionTable.GitCommitId.Contains("preview"))
+            {
+                $endpointName += "-Preview"
+            }
             $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
             $matchedEndpoint | Should -Not -BeNullOrEmpty
         }
