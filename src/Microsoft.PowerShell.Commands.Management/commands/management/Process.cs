@@ -1732,7 +1732,7 @@ namespace Microsoft.PowerShell.Commands
         /// Verb
         /// </summary>
         /// <remarks>
-        /// The 'Verb' parameter is only supported on Windows Desktop
+        /// The 'Verb' parameter is only supported on Windows Desktop.
         /// </remarks>
         [Parameter(ParameterSetName = "UseShellExecute")]
         [ValidateNotNullOrEmpty]

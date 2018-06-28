@@ -52,6 +52,36 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
         }
     }
 
+    It "Should invoke an executable file without error" {
+        # In case there is a couple of ping executables, we take the first one.
+        $ping = (Get-Command "ping" -CommandType Application | Select-Object -First 1).Source
+        $redirectFile = Join-Path -Path $TestDrive -ChildPath "redirect2.txt"
+
+        if ($IsWindows) {
+            if ([System.Management.Automation.Platform]::IsNanoServer -or [System.Management.Automation.Platform]::IsIoT) {
+                ## On headless SKUs, we use `UseShellExecute = false`
+                ## 'ping.exe' on Windows writes out usage to stdout.
+                & $powershell -noprofile -c "Invoke-Item '$ping'" > $redirectFile
+                Get-Content $redirectFile -Raw | Should -Match "usage: ping"
+            } else {
+                ## On full desktop, we use `UseShellExecute = true` to align with Windows PowerShell
+                $notepad = Get-Command "notepad.exe" -CommandType Application | ForEach-Object Source
+                $notepadProcessName = "notepad"
+                Get-Process -Name $notepadProcessName | Stop-Process -Force
+                Invoke-Item -Path $notepad
+                $notepadProcess = Get-Process -Name $notepadProcessName
+                # we need BeIn because multiple notepad processes could be running
+                $notepadProcess.Name | Should -BeIn $notepadProcessName
+                Stop-Process -InputObject $notepadProcess
+            }
+        } else {
+            ## On Unix, we use `UseShellExecute = false`
+            ## 'ping' on Unix write out usage to stderr
+            & $powershell -noprofile -c "Invoke-Item '$ping'" 2> $redirectFile
+            Get-Content $redirectFile -Raw | Should -Match "usage: ping"
+        }
+    }
+
     Context "Invoke a folder" {
         BeforeAll {
             $supportedEnvironment = $true
@@ -188,27 +218,5 @@ Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {
     It "Should start a file without error on Windows full SKUs" -Skip:(-not $isFullWin) {
         Start-Process $testfilepath -Wait
         Test-Path $renamedtestfilepath | Should -BeTrue
-    }
-
-    It "Should invoke an executable file without error" -Skip:(!$IsWindows) {
-        # In case there is a couple of ping executables, we take the first one.
-        $ping = (Get-Command "ping" -CommandType Application | Select-Object -First 1).Source
-        $redirectFile = Join-Path -Path $TestDrive -ChildPath "redirect2.txt"
-
-        if ([System.Management.Automation.Platform]::IsNanoServer -or [System.Management.Automation.Platform]::IsIoT) {
-            ## On headless SKUs, we use `UseShellExecute = false`
-            ## 'ping.exe' on Windows writes out usage to stdout.
-            & $powershell -noprofile -c "Invoke-Item '$ping'" > $redirectFile
-            Get-Content $redirectFile -Raw | Should -Match "usage: ping"
-        } else {
-            $notepad = Get-Command "notepad.exe" -CommandType Application | ForEach-Object Source
-            $notepadProcessName = "notepad"
-            Get-Process -Name $notepadProcessName | Stop-Process -Force
-            Invoke-Item -Path $notepad
-            $notepadProcess = Get-Process -Name $notepadProcessName
-            # we need BeIn because multiple notepad processes could be running
-            $notepadProcess.Name | Should -BeIn $notepadProcessName
-            Stop-Process -InputObject $notepadProcess
-        }
     }
 }
