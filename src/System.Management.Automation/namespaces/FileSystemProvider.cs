@@ -2880,11 +2880,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     directory.Delete();
                 }
-                catch (Exception exc)
+                catch (Exception e)
                 {
                     string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
-                    Exception exception = new IOException(error, exc);
-                    WriteError(new ErrorRecord(exception, "DeleteJunctionFailed", ErrorCategory.WriteError, directory));
+                    Exception exception = new IOException(error, e);
+                    WriteError(new ErrorRecord(exception, "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
                 }
 
                 return;
