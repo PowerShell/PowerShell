@@ -57,12 +57,12 @@ namespace Microsoft.PowerShell.Commands
         #region Properties
 
         /// <summary>
-        /// Gets or sets the Content property.
+        /// Gets the Content property.
         /// </summary>
         public new string Content { get; private set; }
 
         /// <summary>
-        /// Gets or sets the Encoding that was used to decode the Content.
+        /// Gets the Encoding that was used to decode the Content.
         /// </summary>
         /// <value>
         /// The Encoding used to decode the Content; otherwise, a null reference if the content is not text.

@@ -21,6 +21,7 @@ namespace Microsoft.PowerShell.Commands
         /// Finds the element with name or id.
         /// </summary>
         /// <param name="nameOrId"></param>
+        /// <returns>Found element as PSObject.</returns>
         public PSObject Find(string nameOrId)
         {
             // try Id first
@@ -33,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// Finds the element by id.
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>Found element as PSObject.</returns>
         public PSObject FindById(string id)
         {
             return Find(id, true);
@@ -43,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// Finds the element by name.
         /// </summary>
         /// <param name="name"></param>
-        /// <returns></returns>
+        /// <returns>Found element as PSObject.</returns>
         public PSObject FindByName(string name)
         {
             return Find(name, false);
