@@ -869,19 +869,19 @@ namespace Microsoft.PowerShell.Commands
                         moduleNames.Add(n);
                     }
                 }
-                modulesToReturn.AddRange(GetModuleForRootedPaths(modulePaths.ToArray(), all, refresh));
+                modulesToReturn.AddRange(GetModuleForRootedPaths(modulePaths, all, refresh));
             }
 
             // If no names were passed to this function, then this API will return list of all available modules
             if (names == null || moduleNames.Count > 0)
             {
-                modulesToReturn.AddRange(GetModuleForNames(moduleNames.ToArray(), all, refresh));
+                modulesToReturn.AddRange(GetModuleForNames(moduleNames, all, refresh));
             }
 
             return modulesToReturn;
         }
 
-        private IEnumerable<PSModuleInfo> GetModuleForRootedPaths(string[] modulePaths, bool all, bool refresh)
+        private IEnumerable<PSModuleInfo> GetModuleForRootedPaths(List<string> modulePaths, bool all, bool refresh)
         {
             // This is to filter out duplicate modules
             var modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -980,7 +980,7 @@ namespace Microsoft.PowerShell.Commands
             return er;
         }
 
-        private IEnumerable<PSModuleInfo> GetModuleForNames(string[] names, bool all, bool refresh)
+        private IEnumerable<PSModuleInfo> GetModuleForNames(List<string> names, bool all, bool refresh)
         {
             IEnumerable<PSModuleInfo> allModules = null;
             HashSet<string> modulePathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -1023,11 +1023,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get modules based on the given names and module files.
         /// </summary>
-        private IEnumerable<PSModuleInfo> GetModulesFromOneModulePath(string[] names, string modulePath, bool all, bool refresh)
+        private IEnumerable<PSModuleInfo> GetModulesFromOneModulePath(List<string> names, string modulePath, bool all, bool refresh)
         {
             const WildcardOptions options = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
             IEnumerable<WildcardPattern> namePatterns = null;
-            if (names != null && names.Length > 0)
+            if (names != null && names.Count > 0)
             {
                 namePatterns = SessionStateUtilities.CreateWildcardsFromStrings(names, options);
             }
