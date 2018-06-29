@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Internal
-    }//ProcessBaseCommand
+    } // ProcessBaseCommand
     #endregion ProcessBaseCommand
 
     #region GetProcessCommand
@@ -520,7 +520,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _includeUserName = false;
 
         ///<summary>
-        ///To display the modules of a process
+        /// To display the modules of a process
         ///</summary>
 
         [Parameter(ParameterSetName = NameParameterSet)]
@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Module { get; set; }
 
         ///<summary>
-        ///To display the fileversioninfo of the main module of a process
+        /// To display the fileversioninfo of the main module of a process
         ///</summary>
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
@@ -573,7 +573,7 @@ namespace Microsoft.PowerShell.Commands
                         ProcessModuleCollection modules = process.Modules;
                         foreach (ProcessModule pmodule in modules)
                         {
-                            //assigning to tempmodule to rethrow for exceptions on 64 bit machines
+                            // assigning to tempmodule to rethrow for exceptions on 64 bit machines
                             tempmodule = pmodule;
                             WriteObject(pmodule.FileVersionInfo, true);
                         }
@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (Module.IsPresent)
                 {
-                    //if only modules are to be displayed
+                    // if only modules are to be displayed
                     try
                     {
                         WriteObject(process.Modules, true);
@@ -641,7 +641,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (FileVersionInfo.IsPresent)
                 {
-                    //if fileversion of each process is to be displayed
+                    // if fileversion of each process is to be displayed
                     try
                     {
                         ProcessModule mainModule = PsUtils.GetMainModule(process);
@@ -684,7 +684,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteObject(IncludeUserName.IsPresent ? AddUserNameToProcess(process) : (object)process);
                 }
-            }//for loop
+            } // for loop
         } // ProcessRecord
 
         #endregion Overrides
@@ -818,7 +818,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Privates
-    }//GetProcessCommand
+    } // GetProcessCommand
     #endregion GetProcessCommand
 
     #region WaitProcessCommand
@@ -902,7 +902,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region IDisposable
         /// <summary>
-        ///  Dispose method of IDisposable interface.
+        /// Dispose method of IDisposable interface.
         /// </summary>
         public void Dispose()
         {
@@ -938,7 +938,7 @@ namespace Microsoft.PowerShell.Commands
 
         private List<Process> _processList = new List<Process>();
 
-        //Wait handle which is used by thread to sleep.
+        // Wait handle which is used by thread to sleep.
         private ManualResetEvent _waitHandle;
         private int _numberOfProcessesToWaitFor;
 
@@ -1035,7 +1035,7 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Overrides
 
-    }//WaitProcessCommand
+    } // WaitProcessCommand
     #endregion WaitProcessCommand
 
     #region StopProcessCommand
@@ -1127,8 +1127,6 @@ namespace Microsoft.PowerShell.Commands
             set { _passThru = value; }
         }
 
-        //Addition by v-ramch Mar 18 2008
-        //Added force parameter
         /// <summary>
         /// Specifies whether to force a process to kill
         /// even if it has dependent services.
@@ -1196,7 +1194,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    //check if the process is current process and kill it at last
+                    // check if the process is current process and kill it at last
                     if (Process.GetCurrentProcess().Id == SafeGetProcessId(process))
                     {
                         _shouldKillCurrentProcess = true;
@@ -1219,7 +1217,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    //if the process is svchost stop all the dependent services before killing process
+                    // if the process is svchost stop all the dependent services before killing process
                     if (string.Equals(SafeGetProcessName(process), "SVCHOST", StringComparison.CurrentCultureIgnoreCase))
                     {
                         StopDependentService(process);
@@ -1270,7 +1268,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 StopProcess(Process.GetCurrentProcess());
             }
-        }//EndProcessing
+        } // EndProcessing
 
         #endregion Overrides
 
@@ -1319,13 +1317,13 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IdentityNotMappedException)
             {
-                //Catching IdentityMappedException
-                //Need not throw error.
+                // Catching IdentityMappedException
+                // Need not throw error.
             }
             catch (ArgumentException)
             {
-                //Catching ArgumentException. In Win2k3 Token is zero
-                //Need not throw error.
+                // Catching ArgumentException. In Win2k3 Token is zero
+                // Need not throw error.
             }
             finally
             {
@@ -1413,7 +1411,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Private
-    }//StopProcessCommand
+    } // StopProcessCommand
     #endregion StopProcessCommand
 
     #region DebugProcessCommand
@@ -1756,7 +1754,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _windowstyleSpecified = false;
 
         /// <summary>
-        ///  wait for th eprocess to terminate
+        /// Wait for the process to terminate
         /// </summary>
         [Parameter]
         public SwitchParameter Wait { get; set; }
@@ -1817,12 +1815,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            //create an instance of the ProcessStartInfo Class
+            // create an instance of the ProcessStartInfo Class
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            //use ShellExecute by default if we are running on full windows SKUs
+            // use ShellExecute by default if we are running on full windows SKUs
             startInfo.UseShellExecute = Platform.IsWindowsDesktop;
 
-            //Path = Mandatory parameter -> Will not be empty.
+            // Path = Mandatory parameter -> Will not be empty.
             try
             {
                 CommandInfo cmdinfo = CommandDiscovery.LookupCommandInfo(
@@ -1835,15 +1833,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 startInfo.FileName = FilePath;
 #if UNIX
-                //Arguments are passed incorrectly to the executable used for ShellExecute and not to filename https://github.com/dotnet/corefx/issues/30718
-                //so don't use ShellExecute if arguments are specified
+                // Arguments are passed incorrectly to the executable used for ShellExecute and not to filename https://github.com/dotnet/corefx/issues/30718
+                // so don't use ShellExecute if arguments are specified
 
-                //Linux relies on `xdg-open` and macOS relies on `open` which behave differently than Windows ShellExecute when running console commands
-                //as a new console will be opened.  So to avoid that, we only use ShellExecute on non-Windows if the filename is not an actual command (like a URI)
+                // Linux relies on `xdg-open` and macOS relies on `open` which behave differently than Windows ShellExecute when running console commands
+                // as a new console will be opened.  So to avoid that, we only use ShellExecute on non-Windows if the filename is not an actual command (like a URI)
                 startInfo.UseShellExecute = (ArgumentList == null);
 #endif
             }
-            //Arguments
             if (ArgumentList != null)
             {
                 StringBuilder sb = new StringBuilder();
@@ -1855,10 +1852,9 @@ namespace Microsoft.PowerShell.Commands
                 startInfo.Arguments = sb.ToString(); ;
             }
 
-            //WorkingDirectory
             if (WorkingDirectory != null)
             {
-                //WorkingDirectory -> Not Exist -> Throw Error
+                // WorkingDirectory -> Not Exist -> Throw Error
                 WorkingDirectory = ResolveFilePath(WorkingDirectory);
                 if (!Directory.Exists(WorkingDirectory))
                 {
@@ -1871,7 +1867,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                //Working Directory not specified -> Assign Current Path.
+                // Working Directory not specified -> Assign Current Path.
                 startInfo.WorkingDirectory = ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path);
             }
 
@@ -1882,7 +1878,6 @@ namespace Microsoft.PowerShell.Commands
                     startInfo.UseShellExecute = false;
                 }
 
-                //UseNewEnvironment
                 if (_UseNewEnvironment)
                 {
                     startInfo.EnvironmentVariables.Clear();
@@ -1890,21 +1885,17 @@ namespace Microsoft.PowerShell.Commands
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
                 }
 
-                //WindowStyle
                 startInfo.WindowStyle = _windowstyle;
 
-                //NewWindow
                 if (_nonewwindow)
                 {
                     startInfo.CreateNoWindow = _nonewwindow;
                 }
 #if !UNIX
-                //LoadUserProfile.
                 startInfo.LoadUserProfile = _loaduserprofile;
 #endif
                 if (_credential != null)
                 {
-                    //Gets NetworkCredentials
                     NetworkCredential nwcredential = _credential.GetNetworkCredential();
                     startInfo.UserName = nwcredential.UserName;
                     if (String.IsNullOrEmpty(nwcredential.Domain))
@@ -1918,7 +1909,7 @@ namespace Microsoft.PowerShell.Commands
                     startInfo.Password = _credential.Password;
                 }
 
-                //RedirectionInput File Check -> Not Exist -> Throw Error
+                // RedirectionInput File Check -> Not Exist -> Throw Error
                 if (_redirectstandardinput != null)
                 {
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
@@ -1931,7 +1922,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                //RedirectionInput == RedirectionOutput -> Throw Error
+                // RedirectionInput == RedirectionOutput -> Throw Error
                 if (_redirectstandardinput != null && _redirectstandardoutput != null)
                 {
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
@@ -1945,7 +1936,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                //RedirectionInput == RedirectionError -> Throw Error
+                // RedirectionInput == RedirectionError -> Throw Error
                 if (_redirectstandardinput != null && _redirectstandarderror != null)
                 {
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
@@ -1959,7 +1950,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                //RedirectionOutput == RedirectionError -> Throw Error
+                // RedirectionOutput == RedirectionError -> Throw Error
                 if (_redirectstandardoutput != null && _redirectstandarderror != null)
                 {
                     _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
@@ -1975,19 +1966,15 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ParameterSetName.Equals("UseShellExecute"))
             {
-                //Verb
                 if (Verb != null) { startInfo.Verb = Verb; }
-                //WindowStyle
                 startInfo.WindowStyle = _windowstyle;
             }
 
             string targetMessage = StringUtil.Format(ProcessResources.StartProcessTarget, startInfo.FileName, startInfo.Arguments.Trim());
             if (!ShouldProcess(targetMessage)) { return; }
 
-            //Starts the Process
             Process process = Start(startInfo);
 
-            //Wait and Passthru Implementation.
             if (PassThru.IsPresent)
             {
                 if (process != null)
@@ -2330,12 +2317,12 @@ namespace Microsoft.PowerShell.Commands
             GCHandle pinnedEnvironmentBlock = new GCHandle();
             string message = String.Empty;
 
-            //building the cmdline with the file name given and it's arguments
+            // building the cmdline with the file name given and it's arguments
             StringBuilder cmdLine = BuildCommandLine(startinfo.FileName, startinfo.Arguments);
 
             try
             {
-                //RedirectionStandardInput
+                // RedirectionStandardInput
                 if (_redirectstandardinput != null)
                 {
                     startinfo.RedirectStandardInput = true;
@@ -2346,7 +2333,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lpStartupInfo.hStdInput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-10), false);
                 }
-                //RedirectionStandardOutput
+                // RedirectionStandardOutput
                 if (_redirectstandardoutput != null)
                 {
                     startinfo.RedirectStandardOutput = true;
@@ -2357,7 +2344,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lpStartupInfo.hStdOutput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-11), false);
                 }
-                //RedirectionStandardError
+                // RedirectionStandardError
                 if (_redirectstandarderror != null)
                 {
                     startinfo.RedirectStandardError = true;
@@ -2368,40 +2355,40 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lpStartupInfo.hStdError = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-12), false);
                 }
-                //STARTF_USESTDHANDLES
+                // STARTF_USESTDHANDLES
                 lpStartupInfo.dwFlags = 0x100;
 
                 int creationFlags = 0;
 
                 if (startinfo.CreateNoWindow)
                 {
-                    //No new window: Inherit the parent process's console window
+                    // No new window: Inherit the parent process's console window
                     creationFlags = 0x00000000;
                 }
                 else
                 {
-                    //CREATE_NEW_CONSOLE
+                    // CREATE_NEW_CONSOLE
                     creationFlags |= 0x00000010;
-                    //STARTF_USESHOWWINDOW
+                    // STARTF_USESHOWWINDOW
                     lpStartupInfo.dwFlags |= 0x00000001;
 
                     // On headless SKUs like NanoServer and IoT, window style can only be the default value 'Normal'.
                     switch (startinfo.WindowStyle)
                     {
                         case ProcessWindowStyle.Normal:
-                            //SW_SHOWNORMAL
+                            // SW_SHOWNORMAL
                             lpStartupInfo.wShowWindow = 1;
                             break;
                         case ProcessWindowStyle.Minimized:
-                            //SW_SHOWMINIMIZED
+                            // SW_SHOWMINIMIZED
                             lpStartupInfo.wShowWindow = 2;
                             break;
                         case ProcessWindowStyle.Maximized:
-                            //SW_SHOWMAXIMIZED
+                            // SW_SHOWMAXIMIZED
                             lpStartupInfo.wShowWindow = 3;
                             break;
                         case ProcessWindowStyle.Hidden:
-                            //SW_HIDE
+                            // SW_HIDE
                             lpStartupInfo.wShowWindow = 0;
                             break;
                     }
@@ -2471,7 +2458,7 @@ namespace Microsoft.PowerShell.Commands
                             Marshal.ZeroFreeCoTaskMemUnicode(password);
                         }
                     }
-                }//end of if
+                } // end of if
 
                 ProcessNativeMethods.SECURITY_ATTRIBUTES lpProcessAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
                 ProcessNativeMethods.SECURITY_ATTRIBUTES lpThreadAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
@@ -2643,7 +2630,6 @@ namespace Microsoft.PowerShell.Commands
         internal static UInt32 OPEN_EXISTING = 3;
 
         // Methods
-        //    static NativeMethods();
 
         [DllImport(PinvokeDllNames.GetStdHandleDllName, CharSet = CharSet.Ansi, SetLastError = true)]
         public static extern IntPtr GetStdHandle(int whichHandle);
@@ -2946,5 +2932,5 @@ namespace Microsoft.PowerShell.Commands
     } // class ProcessCommandException
 
     #endregion ProcessCommandException
-}//Microsoft.PowerShell.Commands
+} // Microsoft.PowerShell.Commands
 
