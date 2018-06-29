@@ -1550,6 +1550,7 @@ namespace System.Management.Automation.Internal
             {
                 throw new InvalidOperationException(SessionStateStrings.BoundedStackIsEmpty);
             }
+            
             var item = this.First.Value;
             try
             {

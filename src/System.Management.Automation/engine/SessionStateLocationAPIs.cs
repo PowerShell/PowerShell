@@ -230,41 +230,36 @@ namespace System.Management.Automation
             string driveName = null;
             ProviderInfo provider = null;
             string providerId = null;
-            bool pushNextLocation = true;
 
-            // Replace path with last working directory when '-' was passed.
-            if (originalPath.Equals("-", StringComparison.OrdinalIgnoreCase))
+            switch (originalPath)
             {
-                if (_SetLocationHistory.UndoCount <= 0)
-                {
-                    throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryUndoStackIsEmpty);
-                }
-                var previousLocation =  _SetLocationHistory.Undo(this.CurrentLocation);
-                path = previousLocation.Path;
-                pushNextLocation = false;
-            }
+                case var originalPathSwitch when originalPathSwitch.Equals("-", StringComparison.OrdinalIgnoreCase):
+                    if (_SetLocationHistory.UndoCount <= 0)
+                    {
+                        throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryUndoStackIsEmpty);
+                    }
+                    var previousLocation = _SetLocationHistory.Undo(this.CurrentLocation);
+                    path = previousLocation.Path;
+                    break;
+                case var originalPathSwitch when originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
+                    if (_SetLocationHistory.RedoCount <= 0)
+                    {
+                        throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryRedoStackIsEmpty);
+                    }
+                    previousLocation = _SetLocationHistory.Redo();
+                    _SetLocationHistory.Push(this.CurrentLocation);
+                    path = previousLocation.Path;
+                    break;
+                default:
+                    var newPushPathInfo = GetNewPushPathInfo();
+                    _SetLocationHistory.Push(newPushPathInfo);
 
-            // Replace path with last working directory from redo stack and push to the undo stack when '+' was passed.
-            if (originalPath.Equals("+", StringComparison.OrdinalIgnoreCase))
-            {
-                if (_SetLocationHistory.RedoCount <= 0)
-                {
-                    throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryRedoStackIsEmpty);
-                }
-                var previousLocation = _SetLocationHistory.Redo();
-                _SetLocationHistory.Push(this.CurrentLocation);
-                path = previousLocation.Path;
-                pushNextLocation = false;
-            }
+                    if (_SetLocationHistory.RedoCount >= 0)
+                    {
+                        _SetLocationHistory.InvalidateRedoStack();
+                    }
 
-            if (pushNextLocation)
-            {
-                var newPushPathInfo = GetNewPushPathInfo();
-                _SetLocationHistory.Push(newPushPathInfo);
-                if (_SetLocationHistory.RedoCount >= 0)
-                {
-                    _SetLocationHistory.InvalidateRedoStack();
-                }
+                    break;
             }
 
             PSDriveInfo previousWorkingDrive = CurrentDrive;
