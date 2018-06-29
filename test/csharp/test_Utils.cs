@@ -42,5 +42,23 @@ namespace PSTests.Parallel
             Assert.Equal(0, historyStack.UndoCount);
             Assert.Equal(0, historyStack.RedoCount);
         }
+
+        [Fact]
+        public static void TestBoundedStack()
+        {
+            uint capacity = 20;
+            var boundedStack = new BoundedStack<string>(capacity);
+            Assert.Throws<InvalidOperationException>(() => boundedStack.Pop());
+
+            for (int i = 0; i < capacity; i++)
+            {
+                boundedStack.Push("item");
+            }
+            for (int i = 0; i < capacity; i++)
+            {
+                boundedStack.Pop();
+            }
+            Assert.Throws<InvalidOperationException>(() => boundedStack.Pop());
+        }
     }
 }
