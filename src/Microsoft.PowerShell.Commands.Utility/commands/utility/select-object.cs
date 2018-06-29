@@ -35,8 +35,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// try to match the expression against the array of wildcard patterns.
-        /// the first match shortcircuits the search.
+        /// Try to match the expression against the array of wildcard patterns.
+        /// The first match shortcircuits the search.
         /// </summary>
         /// <param name="expression">PSPropertyExpression to test against</param>
         /// <returns>true if there is a match, else false</returns>
@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _firstOrLastSpecified;
 
         /// <summary>
-        /// Skips the specified number of items from top when used with First,from end when used with Last.
+        /// Skips the specified number of items from top when used with First, from end when used with Last.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]

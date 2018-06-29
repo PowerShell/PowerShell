@@ -1280,7 +1280,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Takes out the content from the database and writes them out.
+        /// Takes out the content from the database and writes it out.
         /// </summary>
         protected override void ProcessRecord()
         {

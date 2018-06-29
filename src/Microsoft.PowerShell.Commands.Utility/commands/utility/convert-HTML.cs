@@ -15,9 +15,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
     /// Class comment.
-    ///
     /// </summary>
 
     [Cmdlet(VerbsData.ConvertTo, "Html", DefaultParameterSetName = "Page",
@@ -144,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This specifies a full or partial URI
         /// for the CSS information.
-        /// The html should reference the css file specified.
+        /// The HTML should reference the CSS file specified.
         /// </summary>
         [Parameter(ParameterSetName = "Page")]
         [Alias("cu", "uri")]
@@ -285,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _transitional = false;
 
         /// <summary>
-        /// definitions for hash table keys.
+        /// Definitions for hash table keys.
         /// </summary>
         internal static class ConvertHTMLParameterDefinitionKeys
         {
@@ -372,7 +370,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// calls ToString. If an exception occurs, eats it and return string.Empty.
+        /// Calls ToString. If an exception occurs, eats it and return string.Empty.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>

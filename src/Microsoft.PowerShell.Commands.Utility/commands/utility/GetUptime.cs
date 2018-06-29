@@ -17,7 +17,6 @@ namespace Microsoft.PowerShell.Commands
     public class GetUptimeCommand : PSCmdlet
     {
         /// <summary>
-        /// Since parameter.
         /// The system startup time.
         /// </summary>
         /// <value></value>
@@ -25,7 +24,6 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Since { get; set; } = new SwitchParameter();
 
         /// <summary>
-        /// ProcessRecord() override.
         /// This is the main entry point for the cmdlet.
         /// </summary>
         protected override void ProcessRecord()

@@ -31,7 +31,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The flags to be set on the TraceSource.
         /// </summary>
-        /// <value></value>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = "optionsSet")]
         public PSTraceSourceOptions Option
         {
@@ -40,12 +39,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 base.OptionsInternal = value;
             }
-        } // Flags
+        }
 
         /// <summary>
         /// The parameter which determines the options for output from the trace listeners.
         /// </summary>
-        ///
         [Parameter(ParameterSetName = "optionsSet")]
         public TraceOptions ListenerOption
         {

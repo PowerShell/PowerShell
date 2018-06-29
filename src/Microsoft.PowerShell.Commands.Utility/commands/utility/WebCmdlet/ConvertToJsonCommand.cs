@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// The ConvertTo-Json command.
-    /// This command convert an object to a Json string representation.
+    /// This command converts an object to a Json string representation.
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217032", RemotingCapability = RemotingCapability.None)]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]

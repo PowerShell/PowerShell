@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// One time initialization: acquire a screen host interface by creating one on top of a memory buffer.
+        /// One-time initialization: acquire a screen host interface by creating one on top of a memory buffer.
         /// </summary>
         private LineOutput InstantiateLineOutputInterface()
         {
@@ -58,4 +58,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

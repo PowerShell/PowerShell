@@ -21,7 +21,6 @@ namespace Microsoft.PowerShell.Commands
         /// Finds the element with name or id.
         /// </summary>
         /// <param name="nameOrId"></param>
-        /// <returns></returns>
         public PSObject Find(string nameOrId)
         {
             // try Id first

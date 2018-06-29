@@ -542,7 +542,7 @@ namespace Microsoft.PowerShell.Commands
     /// Provides an adapter API for random numbers that may be either cryptographically random, or
     /// generated with the regular pseudo-random number generator. Re-implementations of
     /// methods using the NextBytes() primitive based on the CLR implementation:
-    ///     http://referencesource.microsoft.com/#mscorlib/system/random.cs .
+    ///     http://referencesource.microsoft.com/#mscorlib/system/random.cs
     /// </summary>
     internal class PolymorphicRandomNumberGenerator
     {

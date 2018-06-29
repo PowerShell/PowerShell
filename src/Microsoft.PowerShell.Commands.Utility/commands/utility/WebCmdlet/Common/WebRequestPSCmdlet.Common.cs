@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual string InFile { get; set; }
 
         /// <summary>
-        /// Geep the original file path after the resolved provider path is assigned to InFile.
+        /// Keep the original file path after the resolved provider path is assigned to InFile.
         /// </summary>
         private string _originalFilePath;
 
@@ -848,8 +848,7 @@ namespace Microsoft.PowerShell.Commands
         #region Abstract Methods
 
         /// <summary>
-        /// Read the supplied WebResponse object and push the.
-        /// resulting output into the pipeline.
+        /// Read the supplied WebResponse object and push the resulting output into the pipeline.
         /// </summary>
         /// <param name="response">Instance of a WebResponse object to be processed</param>
         internal abstract void ProcessResponse(HttpResponseMessage response);

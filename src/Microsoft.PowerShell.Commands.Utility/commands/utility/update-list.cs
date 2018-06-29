@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// The following is the definition of the input parameter "Add".
-        /// Objects to be add to the list.
+        /// Objects to add to the list.
         /// </summary>
         [Parameter(ParameterSetName = "AddRemoveSet")]
         [ValidateNotNullOrEmpty()]

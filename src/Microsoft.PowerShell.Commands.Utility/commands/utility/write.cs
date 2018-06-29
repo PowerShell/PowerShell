@@ -220,8 +220,8 @@ namespace Microsoft.PowerShell.Commands
         public Exception Exception { get; set; } = null;
 
         /// <summary>
-        /// If Exception is specified, this is ErrorRecord.ErrorDetails.Message.
-        /// Otherwise, the Exception is System.Exception, and this is Exception.Message.
+        /// If Exception is specified, this is ErrorRecord.ErrorDetails.Message;
+        /// otherwise, the Exception is System.Exception, and this is Exception.Message.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "NoException", Mandatory = true, ValueFromPipeline = true)]
         [Parameter(ParameterSetName = "WithException")]
@@ -231,8 +231,8 @@ namespace Microsoft.PowerShell.Commands
         public string Message { get; set; } = null;
 
         /// <summary>
-        /// If Exception is specified, this is ErrorRecord.ErrorDetails.Message.
-        /// Otherwise, the Exception is System.Exception, and this is Exception.Message.
+        /// If Exception is specified, this is ErrorRecord.ErrorDetails.Message;
+        /// otherwise, the Exception is System.Exception, and this is Exception.Message.
         /// </summary>
         [Parameter(ParameterSetName = "ErrorRecord", Mandatory = true)]
         public ErrorRecord ErrorRecord { get; set; } = null;

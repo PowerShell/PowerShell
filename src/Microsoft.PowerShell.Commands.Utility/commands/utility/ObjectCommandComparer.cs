@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
         /// First object to extract value.
         /// </param>
         /// <param name="second">
-        /// Fecond object to extract value.
+        /// Second object to extract value.
         /// </param>
         /// <returns>
         /// 0 if they are the same, less than 0 if first is smaller, more than 0 if first is greater.

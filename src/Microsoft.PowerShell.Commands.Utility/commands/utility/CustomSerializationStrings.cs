@@ -4,7 +4,7 @@
 namespace System.Management.Automation
 {
     /// <summary>
-    /// This class contains strings required for serialization for Convertto-XML.
+    /// This class contains strings required for serialization for ConvertTo-XML.
     /// </summary>
     internal static class CustomSerializationStrings
     {

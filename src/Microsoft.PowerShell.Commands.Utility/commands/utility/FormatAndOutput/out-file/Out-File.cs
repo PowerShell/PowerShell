@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// One time initialization: acquire a screen host interface
+        /// One-time initialization: acquire a screen host interface
         /// by creating one on top of a file.
         /// NOTICE: we assume that at this time the file name is
         /// available in the CRO. JonN recommends: file name has to be

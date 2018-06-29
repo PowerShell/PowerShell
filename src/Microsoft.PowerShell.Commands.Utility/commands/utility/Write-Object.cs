@@ -7,8 +7,7 @@ namespace Microsoft.PowerShell.Commands
 {
     #region WriteOutputCommand
     /// <summary>
-    /// This class implements Write-output command.
-    ///
+    /// This class implements Write-Output command.
     /// </summary>
     [Cmdlet(VerbsCommunications.Write, "Output", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113427", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteOutputCommand : PSCmdlet
@@ -16,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
         private PSObject[] _inputObjects = null;
 
         /// <summary>
-        /// Holds the list of objects to be Written.
+        /// Holds the list of objects to be written.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromRemainingArguments = true)]
         [AllowNull]

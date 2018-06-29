@@ -389,7 +389,7 @@ namespace Microsoft.PowerShell.Commands
         /// Close the stream.
         /// </summary>
         /// <remarks>
-        /// Causes subsequent calls to IsOpen to return false and calls to.
+        /// Causes subsequent calls to IsOpen to return false and calls to
         /// a write operation to throw an ObjectDisposedException.
         /// All calls to Close() after the first call are silently ignored.
         /// </remarks>

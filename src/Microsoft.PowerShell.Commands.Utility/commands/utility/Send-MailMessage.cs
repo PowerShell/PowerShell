@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the name of the Host used to send the email. This host name will be assigned
-        /// to the Powershell variable PSEmailServer,if this host can not reached an appropriate error.
+        /// to the Powershell variable PSEmailServer, if this host can not reached an appropriate error.
         /// message will be displayed.
         /// </summary>
         [Parameter(Position = 3)]
