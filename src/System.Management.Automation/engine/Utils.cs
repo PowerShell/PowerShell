@@ -1465,7 +1465,7 @@ namespace System.Management.Automation.Internal
         private BoundedStack<T> _boundedUndoStack;
         private BoundedStack<T> _boundedRedoStack;
 
-        internal HistoryStack(int capacity)
+        internal HistoryStack(uint capacity)
         {
             _boundedUndoStack = new BoundedStack<T>(capacity);
             _boundedRedoStack = new BoundedStack<T>(capacity);
@@ -1515,13 +1515,13 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal class BoundedStack<T> : LinkedList<T>
     {
-        private readonly int _capacity;
+        private readonly uint _capacity;
 
         /// <summary>
         /// Lazy initialisation, i.e. it sets only its limit but does not allocate the memory for the given capacity.
         /// </summary>
         /// <param name="capacity"></param>
-        internal BoundedStack(int capacity)
+        internal BoundedStack(uint capacity)
         {
             _capacity = capacity;
         }

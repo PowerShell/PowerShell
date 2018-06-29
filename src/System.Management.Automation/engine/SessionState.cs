@@ -68,7 +68,7 @@ namespace System.Management.Automation
             _workingLocationStack = new Dictionary<String, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
 
             // Conservative choice to limit the Set-Location history in order to limit memory impact in case of a regression.
-            const int locationHistoryLimit = 20;
+            const uint locationHistoryLimit = 20;
             _SetLocationHistory = new HistoryStack<PathInfo>(locationHistoryLimit);
 
             GlobalScope = new SessionStateScope(null);
