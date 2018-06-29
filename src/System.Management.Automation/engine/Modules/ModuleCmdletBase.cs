@@ -2635,8 +2635,8 @@ namespace Microsoft.PowerShell.Commands
                 bool needToAnalyzeScriptModules = usedWildcard;
 
                 // We can skip further analysis if 'FunctionsToExport', 'CmdletsToExport' and 'AliasesToExport'
-                // are all declared and no wildcard character is used for them. But if any of them are missing,
-                // we possibly need further analysis depending on the nested/root module types.
+                // are all declared and no wildcard character is used for them. But if any of 'FunctionsToExport',
+                // 'CmdletsToExport' or 'AliasesToExport' were not given, we must check to see if more analysis is needed.
                 if (!needToAnalyzeScriptModules && (!sawExportedCmdlets || !sawExportedFunctions || !sawExportedAliases))
                 {
                     foreach (var nestedModule in nestedModules)
