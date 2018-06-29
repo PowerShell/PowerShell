@@ -29,18 +29,21 @@ namespace PSTests.Parallel
             Assert.Equal(2, historyStack.UndoCount);
             Assert.Equal(0, historyStack.RedoCount);
 
-            historyStack.Undo("second item");
-            historyStack.Undo("first item");
+            Assert.Equal("second item", historyStack.Undo("second item"));
+            Assert.Equal("first item", historyStack.Undo("first item"));
             Assert.Equal(0, historyStack.UndoCount);
             Assert.Equal(2, historyStack.RedoCount);
 
-            historyStack.Redo();
+            Assert.Equal("first item", historyStack.Redo());
             Assert.Equal(0, historyStack.UndoCount);
             Assert.Equal(1, historyStack.RedoCount);
 
             historyStack.InvalidateRedoStack();
             Assert.Equal(0, historyStack.UndoCount);
             Assert.Equal(0, historyStack.RedoCount);
+
+            Assert.Throws<InvalidOperationException>(() => historyStack.Undo("foo"));
+            Assert.Throws<InvalidOperationException>(() => historyStack.Redo());
         }
 
         [Fact]
@@ -52,11 +55,12 @@ namespace PSTests.Parallel
 
             for (int i = 0; i < capacity; i++)
             {
-                boundedStack.Push("item");
+                boundedStack.Push($"{i}");
             }
             for (int i = 0; i < capacity; i++)
             {
-                boundedStack.Pop();
+                var poppedItem = boundedStack.Pop();
+                Assert.Equal($"{20 - 1 - i}", poppedItem);
             }
             Assert.Throws<InvalidOperationException>(() => boundedStack.Pop());
         }
