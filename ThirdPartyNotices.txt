@@ -40,7 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 ----------------------------------------------
-Hashtables from ConvertFrom-json
+Hashtables from ConvertFrom-Json
 ----------------------------------------------
 
 http://stackoverflow.com/questions/22002748/hashtables-from-convertfrom-json-have-different-type-from-powershells-built-in-h
