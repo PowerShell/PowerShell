@@ -36,5 +36,4 @@ We cannot do this for you in the build module due to #[847][].
 
 Start a PowerShell session by running `pwsh`, and then use `Start-PSBuild` from the module.
 
-After building, PowerShell will be at `./src/powershell-unix/bin/Linux/netcoreapp2.0/osx-x64/publish/powershell`.
-Note that configuration is still `Linux`.
+After building, PowerShell will be at `./src/powershell-unix/bin/Debug/netcoreapp2.1/osx-x64/publish/pwsh`.
