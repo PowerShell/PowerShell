@@ -645,6 +645,78 @@ try
         }
     }
 
+    Describe "ThreadJob Constrained Language Tests" -Tags 'Feature','RequireAdminOnWindows' {
+
+        BeforeAll {
+
+            $sb = { $ExecutionContext.SessionState.LanguageMode }
+        }
+
+        It "ThreadJob script must run in ConstrainedLanguage mode with system lock down" {
+
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+
+                $results = Start-ThreadJob -ScriptBlock { $ExecutionContext.SessionState.LanguageMode } | Wait-Job | Receive-Job
+                $results | Should BeExactly "ConstrainedLanguage"
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+        }
+
+        It "ThreadJob script block using variable must run in ConstrainedLanguage mode with system lock down" {
+
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+
+                $results = Start-ThreadJob -ScriptBlock { & $using:sb } | Wait-Job | Receive-Job
+                $results | Should BeExactly "ConstrainedLanguage"
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+        }
+
+        It "ThreadJob script block argument variable must run in ConstrainedLanguage mode with system lock down" {
+
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+
+                $results = Start-ThreadJob -ScriptBlock { param ($sb) & $sb } -ArgumentList $sb | Wait-Job | Receive-Job
+                $results | Should BeExactly "ConstrainedLanguage"
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+        }
+
+        It "ThreadJob script block piped variable must run in ConstrainedLanguage mode with system lock down" {
+
+            try
+            {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+
+                $results = $sb | Start-ThreadJob -ScriptBlock { $input | foreach { & $_ } } | Wait-Job | Receive-Job
+                $results | Should BeExactly "ConstrainedLanguage"
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+        }
+    }
+
     # End Describe blocks
 }
 finally

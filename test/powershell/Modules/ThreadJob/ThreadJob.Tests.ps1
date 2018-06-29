@@ -42,7 +42,6 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     }
 
     AfterEach {
-
         Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
     }
 
@@ -50,31 +49,31 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     
         $job = Start-ThreadJob -ScriptBlock { "Hello" }
         $results = $job | Receive-Job -Wait
-        $results | Should be "Hello"
+        $results | Should -Be "Hello"
     }
 
     It 'ThreadJob with ScriptBlock and Initialization script' {
 
         $job = Start-ThreadJob -ScriptBlock { "Goodbye" } -InitializationScript { "Hello" }
         $results = $job | Receive-Job -Wait
-        $results[0] | Should be "Hello"
-        $results[1] | Should be "Goodbye"
+        $results[0] | Should -Be "Hello"
+        $results[1] | Should -Be "Goodbye"
     }
 
     It 'ThreadJob with ScriptBlock and Argument list' {
 
         $job = Start-ThreadJob -ScriptBlock { param ($arg1, $arg2) $arg1; $arg2 } -ArgumentList @("Hello","Goodbye")
         $results = $job | Receive-Job -Wait
-        $results[0] | Should be "Hello"
-        $results[1] | Should be "Goodbye"
+        $results[0] | Should -Be "Hello"
+        $results[1] | Should -Be "Goodbye"
     }
 
     It 'ThreadJob with ScriptBlock and piped input' {
 
         $job = "Hello","Goodbye" | Start-ThreadJob -ScriptBlock { $input | foreach { $_ } }
         $results = $job | Receive-Job -Wait
-        $results[0] | Should be "Hello"
-        $results[1] | Should be "Goodbye"
+        $results[0] | Should -Be "Hello"
+        $results[1] | Should -Be "Goodbye"
     }
 
     It 'ThreadJob with ScriptBlock and Using variables' {
@@ -94,12 +93,12 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         }
 
         $results = $job | Receive-Job -Wait
-        $results[0] | Should Be $Var1
-        $results[1] | Should Be $Var2
-        $results[2] | Should Be $Var3
-        $results[3] | Should Be 2
-        $results[4] | Should Be $Var4
-        $results[5] | Should Be $global:GVar1
+        $results[0] | Should -Be $Var1
+        $results[1] | Should -Be $Var2
+        $results[2] | Should -Be $Var3
+        $results[3] | Should -Be 2
+        $results[4] | Should -Be $Var4
+        $results[5] | Should -Be $global:GVar1
     }
 
     It 'ThreadJob with ScriptBlock and Using variables and argument list' {
@@ -113,39 +112,39 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         } -ArgumentList "There"
 
         $results = $job | Receive-Job -Wait
-        $results | Should Be "Hello There 52"
+        $results | Should -Be "Hello There 52"
     }
 
     It 'ThreadJob with ScriptFile' {
 
         $job = Start-ThreadJob -FilePath $scriptFilePath1
         $results = $job | Receive-Job -Wait
-        $results.Count | Should be 10
-        $results[9] | Should be "Hello 9"
+        $results.Count | Should -Be 10
+        $results[9] | Should -Be "Hello 9"
     }
 
     It 'ThreadJob with ScriptFile and Initialization script' {
 
         $job = Start-ThreadJob -FilePath $scriptFilePath1 -Initialization { "Goodbye" }
         $results = $job | Receive-Job -Wait
-        $results.Count | Should be 11
-        $results[0] | Should be "Goodbye"
+        $results.Count | Should -Be 11
+        $results[0] | Should -Be "Goodbye"
     }
 
     It 'ThreadJob with ScriptFile and Argument list' {
 
         $job = Start-ThreadJob -FilePath $scriptFilePath2 -ArgumentList @("Hello","Goodbye")
         $results = $job | Receive-Job -Wait
-        $results[0] | Should be "Hello"
-        $results[1] | Should be "Goodbye"
+        $results[0] | Should -Be "Hello"
+        $results[1] | Should -Be "Goodbye"
     }
 
     It 'ThreadJob with ScriptFile and piped input' {
 
         $job = "Hello","Goodbye" | Start-ThreadJob -FilePath $scriptFilePath3
         $results = $job | Receive-Job -Wait
-        $results[0] | Should be "Hello"
-        $results[1] | Should be "Goodbye"
+        $results[0] | Should -Be "Hello"
+        $results[1] | Should -Be "Goodbye"
     }
 
     It 'ThreadJob with ScriptFile and Using variables' {
@@ -155,9 +154,9 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
         $job = Start-ThreadJob -FilePath $scriptFilePath4
         $results = $job | Receive-Job -Wait
-        $results[0] | Should be $Var1
-        $results[1] | Should be 3
-        $results[2] | Should be $Array1
+        $results[0] | Should -Be $Var1
+        $results[1] | Should -Be 3
+        $results[2] | Should -Be $Array1
     }
 
     It 'ThreadJob with ScriptFile and Using variables with argument list' {
@@ -166,26 +165,26 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         $Var2 = 60
         $job = Start-ThreadJob -FilePath $scriptFilePath5 -ArgumentList "Hello"
         $results = $job | Receive-Job -Wait
-        $results | Should Be "Hello There 60"
+        $results | Should -Be "Hello There 60"
     }
 
     It 'ThreadJob with terminating error' {
 
         $job = Start-ThreadJob -ScriptBlock { throw "MyError!" }
         $job | Wait-Job
-        $job.JobStateInfo.Reason.Message | Should Be "MyError!"
+        $job.JobStateInfo.Reason.Message | Should -Be "MyError!"
     }
 
     It 'ThreadJob and Error stream output' {
 
         $job = Start-ThreadJob -ScriptBlock { Write-Error "ErrorOut" } | Wait-Job
-        $job.Error | Should Be "ErrorOut"
+        $job.Error | Should -Be "ErrorOut"
     }
 
     It 'ThreadJob and Warning stream output' {
 
         $job = Start-ThreadJob -ScriptBlock { Write-Warning "WarningOut" } | Wait-Job
-        $job.Warning | Should Be "WarningOut"
+        $job.Warning | Should -Be "WarningOut"
     }
 
     It 'ThreadJob and Verbose stream output' {
@@ -197,7 +196,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     It 'ThreadJob and Verbose stream output' {
       
         $job = Start-ThreadJob -ScriptBlock { $DebugPreference = 'Continue'; Write-Debug "DebugOut" } | Wait-Job
-        $job.Debug | Should Be "DebugOut"
+        $job.Debug | Should -Be "DebugOut"
     }
 
     It 'ThreadJob ThrottleLimit and Queue' {
@@ -217,8 +216,8 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             $numRunningThreadJobs = (Get-Job | where { ($_.PSJobTypeName -eq "ThreadJob") -and ($_.State -eq "Running") }).Count
             $numQueuedThreadJobs = (Get-Job | where { ($_.PSJobTypeName -eq "ThreadJob") -and ($_.State -eq "NotStarted") }).Count
 
-            $numRunningThreadJobs | Should be 2
-            $numQueuedThreadJobs | Should be 2
+            $numRunningThreadJobs | Should -Be 2
+            $numQueuedThreadJobs | Should -Be 2
         }
         finally
         {
@@ -226,7 +225,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         }
 
         $numThreadJobs = (Get-Job | where PSJobTypeName -eq "ThreadJob").Count
-        $numThreadJobs | Should be 0
+        $numThreadJobs | Should -Be 0
     }
 
     It 'ThreadJob Runspaces should be cleaned up at completion' {
@@ -247,7 +246,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             # Allow for clean to happen
             Start-Sleep -Seconds 1
 
-            (Get-Runspace).Count | Should Be $rsStartCount
+            (Get-Runspace).Count | Should -Be $rsStartCount
         }
         finally
         {
@@ -270,13 +269,13 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             # Allow jobs to start
             Start-Sleep -Seconds 1
 
-            (Get-Runspace).Count | Should Be ($rsStartCount + 4)
+            (Get-Runspace).Count | Should -Be ($rsStartCount + 4)
 
             # Stop two jobs
             $job1 | Remove-Job -Force
             $job3 | Remove-Job -Force
 
-            (Get-Runspace).Count | Should Be ($rsStartCount + 2)
+            (Get-Runspace).Count | Should -Be ($rsStartCount + 2)
 
         }
         finally
@@ -284,7 +283,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
         }
 
-        (Get-Runspace).Count | Should Be $rsStartCount
+        (Get-Runspace).Count | Should -Be $rsStartCount
     }
 
     It 'ThreadJob jobs should work with Receive-Job -AutoRemoveJob' {
@@ -298,14 +297,19 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
         $null = $job1,$job2,$job3,$job4 | Receive-Job -Wait -AutoRemoveJob
 
-        (Get-Job | where PSJobTypeName -eq "ThreadJob").Count | Should Be 0
+        (Get-Job | where PSJobTypeName -eq "ThreadJob").Count | Should -Be 0
+    }
+
+    It 'ThreadJob jobs should run in FullLanguage mode by default' {
+
+        $result = Start-ThreadJob -ScriptBlock { $ExecutionContext.SessionState.LanguageMode } | Wait-Job | Receive-Job
+        $result | Should -Be "FullLanguage"
     }
 }
 
 Describe 'Job2 class API tests' -Tags 'CI' {
 
     AfterEach {
-
         Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
     }
 
@@ -313,7 +317,7 @@ Describe 'Job2 class API tests' -Tags 'CI' {
 
         $job = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 } -ThrottleLimit 5
         $job.StopJob($true, "No Reason")
-        $job.JobStateInfo.State | Should Be "Stopped"
+        $job.JobStateInfo.State | Should -Be "Stopped"
     }
 
     It 'Verifies StopJobAsync API' {
@@ -321,7 +325,7 @@ Describe 'Job2 class API tests' -Tags 'CI' {
         $job = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 } -ThrottleLimit 5
         $job.StopJobAsync($true, "No Reason")
         Wait-Job $job
-        $job.JobStateInfo.State | Should Be "Stopped"
+        $job.JobStateInfo.State | Should -Be "Stopped"
     }
 
     It 'Verifies StartJobAsync API' {
@@ -329,11 +333,11 @@ Describe 'Job2 class API tests' -Tags 'CI' {
         $jobRunning = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 } -ThrottleLimit 1
         $jobNotRunning = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
 
-        $jobNotRunning.JobStateInfo.State | Should Be "NotStarted"
+        $jobNotRunning.JobStateInfo.State | Should -Be "NotStarted"
 
         # StartJobAsync starts jobs synchronously for ThreadJob jobs
         $jobNotRunning.StartJobAsync()
-        $jobNotRunning.JobStateInfo.State | Should Be "Running"
+        $jobNotRunning.JobStateInfo.State | Should -Be "Running"
     }
 
     It 'Verifies JobSourceAdapter Get-Jobs' {
@@ -341,29 +345,29 @@ Describe 'Job2 class API tests' -Tags 'CI' {
         $job = Start-ThreadJob -ScriptBlock { "Hello" } | Wait-Job
 
         $getJob = Get-Job -InstanceId $job.InstanceId 2>$null
-        $getJob | Should Be $job
+        $getJob | Should -Be $job
 
         $getJob = Get-Job -Name $job.Name 2>$null
-        $getJob | Should Be $job
+        $getJob | Should -Be $job
 
         $getJob = Get-Job -Command ' "hello" ' 2>$null
-        $getJob | Should Be $job
+        $getJob | Should -Be $job
 
         $getJob = Get-Job -State $job.JobStateInfo.State 2>$null
-        $getJob | Should Be $job
+        $getJob | Should -Be $job
 
         $getJob = Get-Job -Id $job.Id 2>$null
-        $getJob | Should Be $job
+        $getJob | Should -Be $job
 
         # Get-Job -Filter is not supported
         $result = Get-Job -Filter @{Id = ($job.Id)} 3>$null
-        $result | Should Be $null
+        $result | Should -Be $null
     }
 
     It 'Verifies terminating job error' {
 
         $job = Start-ThreadJob -ScriptBlock { throw "My Job Error!" } | Wait-Job
         $results = $job | Receive-Job 2>&1
-        $results.ToString() | Should Be "My Job Error!"
+        $results.ToString() | Should -Be "My Job Error!"
     }
 }
