@@ -976,11 +976,12 @@ function Publish-PSTestTools {
 function Start-PSPester {
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
+        [Parameter(Position=0)]
+        [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
         [string[]]$ExcludeTag = 'Slow',
         [string[]]$Tag = @("CI","Feature"),
-        [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
         [string]$binDir = (Split-Path (Get-PSOptions -DefaultToNew).Output),
         [string]$powershell = (Join-Path $binDir 'pwsh'),
