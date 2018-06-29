@@ -1473,7 +1473,7 @@ namespace System.Management.Automation.Internal
 
         internal void Push(T item)
         {
-             _boundedUndoStack.Push(item);
+            _boundedUndoStack.Push(item);
         }
 
         internal T Undo(T currentItem)
@@ -1482,7 +1482,7 @@ namespace System.Management.Automation.Internal
             _boundedRedoStack.Push(currentItem);
             return item;
         }
-        
+
         internal T Redo()
         {
             return _boundedRedoStack.Pop();
@@ -1534,7 +1534,7 @@ namespace System.Management.Automation.Internal
         {
             this.AddFirst(item);
 
-            if(this.Count > _capacity)
+            if (this.Count > _capacity)
             {
                 this.RemoveLast();
             }
@@ -1550,7 +1550,7 @@ namespace System.Management.Automation.Internal
             {
                 throw new InvalidOperationException(SessionStateStrings.BoundedStackIsEmpty);
             }
-            
+
             var item = this.First.Value;
             try
             {

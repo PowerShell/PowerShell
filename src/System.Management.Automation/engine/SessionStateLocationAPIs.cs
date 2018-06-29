@@ -863,7 +863,7 @@ namespace System.Management.Automation
 
         private PathInfo GetNewPushPathInfo()
         {
-             // Create a new instance of the directory/drive pair
+            // Create a new instance of the directory/drive pair
             ProviderInfo provider = CurrentDrive.Provider;
             string mshQualifiedPath =
                 LocationGlobber.GetMshQualifiedPath(CurrentDrive.CurrentLocation, CurrentDrive);
