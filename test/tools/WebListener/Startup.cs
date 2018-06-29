@@ -79,6 +79,10 @@ namespace mvc
                     template: "Delete",
                     defaults: new {controller = "Get", action = "Index"},
                     constraints: new RouteValueDictionary(new { httpMethod = new HttpMethodRouteConstraint("DELETE") }));
+                routes.MapRoute(
+                    name: "retry",
+                    template: "Retry/{sessionId?}/{failureCode?}/{failureCount?}",
+                    defaults: new { controller = "Retry", action = "Retry" });
             });
         }
     }

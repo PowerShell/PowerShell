@@ -162,6 +162,7 @@ function Get-WebListenerUrl {
             'Response',
             'ResponseHeaders',
             'Resume',
+            'Retry',
             '/'
         )]
         [String]$Test,
