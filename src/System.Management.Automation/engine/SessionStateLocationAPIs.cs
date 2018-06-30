@@ -238,14 +238,14 @@ namespace System.Management.Automation
                     {
                         throw new InvalidOperationException(SessionStateStrings.LocationUndoStackIsEmpty);
                     }
-                    path = (_SetLocationHistory.Undo(this.CurrentLocation)).Path;
+                    path = _SetLocationHistory.Undo(this.CurrentLocation).Path;
                     break;
                 case var originalPathSwitch when originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
                     if (_SetLocationHistory.RedoCount <= 0)
                     {
                         throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
                     }
-                    path = (_SetLocationHistory.Redo(this.CurrentLocation)).Path;
+                    path = _SetLocationHistory.Redo(this.CurrentLocation).Path;
                     break;
                 default:
                     var newPushPathInfo = GetNewPushPathInfo();
