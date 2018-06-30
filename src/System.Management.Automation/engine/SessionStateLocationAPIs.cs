@@ -238,27 +238,18 @@ namespace System.Management.Automation
                     {
                         throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryUndoStackIsEmpty);
                     }
-                    var previousLocation = _SetLocationHistory.Undo(this.CurrentLocation);
-                    path = previousLocation.Path;
+                    path = (_SetLocationHistory.Undo(this.CurrentLocation)).Path;
                     break;
                 case var originalPathSwitch when originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
                     if (_SetLocationHistory.RedoCount <= 0)
                     {
                         throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryRedoStackIsEmpty);
                     }
-                    previousLocation = _SetLocationHistory.Redo();
-                    _SetLocationHistory.Push(this.CurrentLocation);
-                    path = previousLocation.Path;
+                    path = (_SetLocationHistory.Redo(this.CurrentLocation)).Path;
                     break;
                 default:
                     var newPushPathInfo = GetNewPushPathInfo();
                     _SetLocationHistory.Push(newPushPathInfo);
-
-                    if (_SetLocationHistory.RedoCount >= 0)
-                    {
-                        _SetLocationHistory.InvalidateRedoStack();
-                    }
-
                     break;
             }
 

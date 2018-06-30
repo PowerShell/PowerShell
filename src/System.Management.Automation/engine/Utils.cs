@@ -1474,40 +1474,29 @@ namespace System.Management.Automation.Internal
         internal void Push(T item)
         {
             _boundedUndoStack.Push(item);
+            if (RedoCount >= 0)
+            {
+                _boundedRedoStack.Clear();
+            }
         }
 
         internal T Undo(T currentItem)
         {
-            var item = _boundedUndoStack.Pop();
+            var previousItem = _boundedUndoStack.Pop();
             _boundedRedoStack.Push(currentItem);
-            return item;
+            return previousItem;
         }
 
-        internal T Redo()
+        internal T Redo(T currentItem)
         {
-            return _boundedRedoStack.Pop();
+            var nextItem = _boundedRedoStack.Pop();
+            _boundedUndoStack.Push(currentItem);
+            return nextItem;
         }
 
-        internal void InvalidateRedoStack()
-        {
-            _boundedRedoStack.Clear();
-        }
+        internal int UndoCount => _boundedUndoStack.Count;
 
-        internal int UndoCount
-        {
-            get
-            {
-                return _boundedUndoStack.Count;
-            }
-        }
-
-        internal int RedoCount
-        {
-            get
-            {
-                return _boundedRedoStack.Count;
-            }
-        }
+        internal int RedoCount => _boundedRedoStack.Count;
     }
 
     /// <summary>

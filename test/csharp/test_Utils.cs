@@ -34,16 +34,21 @@ namespace PSTests.Parallel
             Assert.Equal(0, historyStack.UndoCount);
             Assert.Equal(2, historyStack.RedoCount);
 
-            Assert.Equal("first item", historyStack.Redo());
-            Assert.Equal(0, historyStack.UndoCount);
+            Assert.Equal("first item", historyStack.Redo("first item"));
+            Assert.Equal(1, historyStack.UndoCount);
             Assert.Equal(1, historyStack.RedoCount);
 
-            historyStack.InvalidateRedoStack();
-            Assert.Equal(0, historyStack.UndoCount);
+            // Pushing a new item should invalidate the RedoCount
+            historyStack.Push("third item");
+            Assert.Equal(2, historyStack.UndoCount);
             Assert.Equal(0, historyStack.RedoCount);
 
+            // Check for the correct exception when the Redo/Undo stack is empty.
+            Assert.Throws<InvalidOperationException>(() => historyStack.Redo("bar"));
+            historyStack.Undo("third item");
+            historyStack.Undo("first item");
+            Assert.Equal(0, historyStack.UndoCount);
             Assert.Throws<InvalidOperationException>(() => historyStack.Undo("foo"));
-            Assert.Throws<InvalidOperationException>(() => historyStack.Redo());
         }
 
         [Fact]
@@ -63,7 +68,7 @@ namespace PSTests.Parallel
                 var poppedItem = boundedStack.Pop();
                 Assert.Equal($"{20 - 1 - i}", poppedItem);
             }
-            
+
             Assert.Throws<InvalidOperationException>(() => boundedStack.Pop());
         }
     }
