@@ -806,7 +806,7 @@ namespace System.Management.Automation
         #region push-Pop current working directory
 
         /// <summary>
-        /// A bounded stack for the location history of Set-Location
+        /// Location history for Set-Location that supports Undo/Redo using bounded stacks.
         /// </summary>
         private HistoryStack<PathInfo> _SetLocationHistory;
 
