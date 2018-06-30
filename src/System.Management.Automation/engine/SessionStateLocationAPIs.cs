@@ -236,14 +236,14 @@ namespace System.Management.Automation
                 case var originalPathSwitch when originalPathSwitch.Equals("-", StringComparison.OrdinalIgnoreCase):
                     if (_SetLocationHistory.UndoCount <= 0)
                     {
-                        throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryUndoStackIsEmpty);
+                        throw new InvalidOperationException(SessionStateStrings.LocationUndoStackIsEmpty);
                     }
                     path = (_SetLocationHistory.Undo(this.CurrentLocation)).Path;
                     break;
                 case var originalPathSwitch when originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
                     if (_SetLocationHistory.RedoCount <= 0)
                     {
-                        throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryRedoStackIsEmpty);
+                        throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
                     }
                     path = (_SetLocationHistory.Redo(this.CurrentLocation)).Path;
                     break;

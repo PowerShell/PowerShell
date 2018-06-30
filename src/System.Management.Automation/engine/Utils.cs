@@ -1460,6 +1460,9 @@ namespace System.Management.Automation.Internal
         }
     }
 
+    /// <summary>
+    /// Provides undo/redo functionality by using 2 instances of <seealso cref="BoundedStack{T}"/>.
+    /// </summary>
     internal class HistoryStack<T>
     {
         private BoundedStack<T> _boundedUndoStack;
