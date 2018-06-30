@@ -170,7 +170,8 @@ function Test-Win10SDK {
     #
     # A slightly more robust check is for the mc.exe binary within that directory.
     # It is only present if the SDK is installed.
-    return (Test-Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64\mc.exe")
+    return (Test-Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64\mc.exe") -or
+           (Test-Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin\10.0.*.0\x64\mc.exe")
 }
 
 function Start-BuildNativeWindowsBinaries {
