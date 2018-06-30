@@ -136,8 +136,8 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         internal static RemoteDataObject<T> CreateFrom(Stream serializedDataStream, Fragmentor defragmentor)
         {
-            Dbg.Assert(null != serializedDataStream, "cannot construct a RemoteDataObject from null data");
-            Dbg.Assert(null != defragmentor, "defragmentor cannot be null.");
+            Dbg.Assert(serializedDataStream != null, "cannot construct a RemoteDataObject from null data");
+            Dbg.Assert(defragmentor != null, "defragmentor cannot be null.");
 
             if ((serializedDataStream.Length - serializedDataStream.Position) < headerLength)
             {
@@ -177,11 +177,11 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal virtual void Serialize(Stream streamToWriteTo, Fragmentor fragmentor)
         {
-            Dbg.Assert(null != streamToWriteTo, "Stream to write to cannot be null.");
-            Dbg.Assert(null != fragmentor, "Fragmentor cannot be null.");
+            Dbg.Assert(streamToWriteTo != null, "Stream to write to cannot be null.");
+            Dbg.Assert(fragmentor != null, "Fragmentor cannot be null.");
             SerializeHeader(streamToWriteTo);
 
-            if (null != Data)
+            if (Data != null)
             {
                 fragmentor.SerializeToBytes(Data, streamToWriteTo);
             }
@@ -199,7 +199,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private void SerializeHeader(Stream streamToWriteTo)
         {
-            Dbg.Assert(null != streamToWriteTo, "stream to write to cannot be null");
+            Dbg.Assert(streamToWriteTo != null, "stream to write to cannot be null");
 
             // Serialize destination
             SerializeUInt((uint)Destination, streamToWriteTo);
@@ -215,7 +215,7 @@ namespace System.Management.Automation.Remoting
 
         private void SerializeUInt(uint data, Stream streamToWriteTo)
         {
-            Dbg.Assert(null != streamToWriteTo, "stream to write to cannot be null");
+            Dbg.Assert(streamToWriteTo != null, "stream to write to cannot be null");
 
             byte[] result = new byte[4]; // size of int
 
@@ -243,7 +243,7 @@ namespace System.Management.Automation.Remoting
 
         private void SerializeGuid(Guid guid, Stream streamToWriteTo)
         {
-            Dbg.Assert(null != streamToWriteTo, "stream to write to cannot be null");
+            Dbg.Assert(streamToWriteTo != null, "stream to write to cannot be null");
 
             byte[] guidArray = guid.ToByteArray();
 

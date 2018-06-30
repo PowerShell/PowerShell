@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(errorMessage,
                 serviceName,
                 displayName,
-                (null == innerException) ? String.Empty : innerException.Message);
+                (innerException == null) ? String.Empty : innerException.Message);
 
             var exception = new ServiceCommandException(message, innerException);
             exception.ServiceName = serviceName;
@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (null == _allServices)
+                if (_allServices == null)
                 {
                     _allServices = ServiceController.GetServices();
                 }
@@ -339,7 +339,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<ServiceController> matchingServices = new List<ServiceController>();
 
-            if (null == serviceNames)
+            if (serviceNames == null)
             {
                 foreach (ServiceController service in AllServices)
                 {
@@ -399,7 +399,7 @@ namespace Microsoft.PowerShell.Commands
         private List<ServiceController> MatchingServicesByDisplayName()
         {
             List<ServiceController> matchingServices = new List<ServiceController>();
-            if (null == DisplayName)
+            if (DisplayName == null)
             {
                 Diagnostics.Assert(false, "null DisplayName");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands
         private List<ServiceController> MatchingServicesByInput()
         {
             List<ServiceController> matchingServices = new List<ServiceController>();
-            if (null == InputObject)
+            if (InputObject == null)
             {
                 Diagnostics.Assert(false, "null InputObject");
                 throw PSTraceSource.NewInvalidOperationException();
@@ -466,9 +466,9 @@ namespace Microsoft.PowerShell.Commands
             ServiceController service,
             bool checkDuplicates)
         {
-            if (null != include && !Matches(service, include))
+            if (include != null && !Matches(service, include))
                 return;
-            if (null != exclude && Matches(service, exclude))
+            if (exclude != null && Matches(service, exclude))
                 return;
             if (checkDuplicates)
             {
@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private bool Matches(ServiceController service, string[] matchList)
         {
-            if (null == matchList)
+            if (matchList == null)
                 throw PSTraceSource.NewArgumentNullException("matchList");
             string serviceID = (selectionMode == SelectionMode.DisplayName)
                                 ? service.DisplayName
@@ -846,13 +846,13 @@ namespace Microsoft.PowerShell.Commands
             catch (InvalidOperationException e)
             {
                 Win32Exception eInner = e.InnerException as Win32Exception;
-                if (null == eInner
+                if (eInner == null
                     || NativeMethods.ERROR_SERVICE_ALREADY_RUNNING != eInner.NativeErrorCode)
                 {
                     exception = e;
                 }
             }
-            if (null != exception)
+            if (exception != null)
             {
                 // This service refused to accept the start command,
                 // so write a non-terminating error.
@@ -962,13 +962,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 Win32Exception eInner =
                     e.InnerException as Win32Exception;
-                if (null == eInner
+                if (eInner == null
                     || NativeMethods.ERROR_SERVICE_NOT_ACTIVE != eInner.NativeErrorCode)
                 {
                     exception = e;
                 }
             }
-            if (null != exception)
+            if (exception != null)
             {
                 // This service refused to accept the stop command,
                 // so write a non-terminating error.
@@ -1067,14 +1067,14 @@ namespace Microsoft.PowerShell.Commands
             catch (InvalidOperationException e)
             {
                 Win32Exception eInner = e.InnerException as Win32Exception;
-                if (null != eInner
+                if (eInner != null
                     && NativeMethods.ERROR_SERVICE_NOT_ACTIVE == eInner.NativeErrorCode)
                 {
                     serviceNotRunning = true;
                 }
                 exception = e;
             }
-            if (null != exception)
+            if (exception != null)
             {
                 // This service refused to accept the pause command,
                 // so write a non-terminating error.
@@ -1145,14 +1145,14 @@ namespace Microsoft.PowerShell.Commands
             catch (InvalidOperationException e)
             {
                 Win32Exception eInner = e.InnerException as Win32Exception;
-                if (null != eInner
+                if (eInner != null
                     && NativeMethods.ERROR_SERVICE_NOT_ACTIVE == eInner.NativeErrorCode)
                 {
                     serviceNotRunning = true;
                 }
                 exception = e;
             }
-            if (null != exception)
+            if (exception != null)
             {
                 // This service refused to accept the continue command,
                 // so write a non-terminating error.
@@ -1666,7 +1666,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     // Modify startup type or display name or credential
                     if (!String.IsNullOrEmpty(DisplayName)
-                        || ServiceStartupType.InvalidValue != StartupType || null != Credential)
+                        || ServiceStartupType.InvalidValue != StartupType || Credential != null)
                     {
                         DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                         if (!NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))
@@ -1679,7 +1679,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         string username = null;
-                        if (null != Credential)
+                        if (Credential != null)
                         {
                             username = Credential.UserName;
                             password = Marshal.SecureStringToCoTaskMemUnicode(Credential.Password);
@@ -2024,7 +2024,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 // set up the double-null-terminated lpDependencies parameter
                 IntPtr lpDependencies = IntPtr.Zero;
-                if (null != DependsOn)
+                if (DependsOn != null)
                 {
                     int numchars = 1; // final null
                     foreach (string dependedOn in DependsOn)
@@ -2052,7 +2052,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // set up the Credential parameter
                 string username = null;
-                if (null != Credential)
+                if (Credential != null)
                 {
                     username = Credential.UserName;
                     password = Marshal.SecureStringToCoTaskMemUnicode(Credential.Password);

@@ -194,7 +194,7 @@ namespace System.Management.Automation.Remoting
         internal ClientRemoteSessionImpl(RemoteRunspacePoolInternal rsPool,
                                        URIDirectionReported uriRedirectionHandler)
         {
-            Dbg.Assert(null != rsPool, "RunspacePool cannot be null");
+            Dbg.Assert(rsPool != null, "RunspacePool cannot be null");
             base.RemoteRunspacePoolInternal = rsPool;
             Context.RemoteAddress = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<Uri>(rsPool.ConnectionInfo,
                 "ConnectionUri", null);

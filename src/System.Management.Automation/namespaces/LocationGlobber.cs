@@ -507,20 +507,6 @@ namespace System.Management.Automation
 
             Collection<string> stringResult = new Collection<string>();
 
-            // if the directory exists, just return it
-            try
-            {
-                if (Utils.NativeDirectoryExists(userPath))
-                {
-                    result.Add(new PathInfo(drive, provider, userPath, _sessionState));
-                    return result;
-                }
-            }
-            catch
-            {
-                // in cases of Access Denied or other errors, fallback to previous behavior and let provider handle it
-            }
-
             if (!context.SuppressWildcardExpansion)
             {
                 // See if the provider will expand the wildcard
@@ -2019,9 +2005,6 @@ namespace System.Management.Automation
             // Check to see if the path is relative or absolute
             bool isPathForCurrentDrive = false;
 
-            // Check to see if the path is to the root of a drive
-            bool isPathForRootOfDrive = false;
-
             if (IsAbsolutePath(path, out driveName))
             {
                 Dbg.Diagnostics.Assert(
@@ -2089,12 +2072,6 @@ namespace System.Management.Automation
                         // this is the default behavior for all windows drives, and all non-filesystem
                         // drives on non-windows
                         path = path.Substring(driveName.Length + 1);
-
-                        if (String.IsNullOrEmpty(path))
-                        {
-                            // path was to the root of a drive such as 'c:'
-                            isPathForRootOfDrive = true;
-                        }
                     }
                 }
             }
@@ -2128,12 +2105,6 @@ namespace System.Management.Automation
 
                 string relativePath = String.Empty;
 
-                if (isPathForRootOfDrive)
-                {
-                    relativePath = context.Drive.Root;
-                }
-                else
-                {
                     relativePath =
                         GenerateRelativePath(
                             workingDriveForPath,
@@ -2141,8 +2112,7 @@ namespace System.Management.Automation
                             escapeCurrentLocation,
                             providerInstance,
                             context);
-                }
-                
+
                 return relativePath;
             }
             catch (PSNotSupportedException)
@@ -2151,7 +2121,7 @@ namespace System.Management.Automation
                 // always be empty
 
                 providerInstance = null;
-                return "";
+                return string.Empty;
             }
         } // GetDriveRootRelativePathFromPSPath
 
@@ -2161,7 +2131,7 @@ namespace System.Management.Automation
             CmdletProviderContext context
             )
         {
-            string childPath = "";
+            string childPath = string.Empty;
 
             CmdletProvider providerInstance =
                 _sessionState.Internal.GetContainerProviderInstance(drive.Provider);
@@ -2479,7 +2449,7 @@ namespace System.Management.Automation
                         driveRootRelativeWorkingPath = normalizedRelativePath;
                 }
                 else
-                    driveRootRelativeWorkingPath = "";
+                    driveRootRelativeWorkingPath = string.Empty;
             }
 
             s_tracer.WriteLine(

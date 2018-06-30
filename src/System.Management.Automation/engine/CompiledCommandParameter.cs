@@ -437,7 +437,7 @@ namespace System.Management.Automation
             ref string[] aliases)
         {
             // NTRAID#Windows Out Of Band Releases-926374-2005/12/22-JonN
-            if (null == attribute)
+            if (attribute == null)
                 return;
 
             CompiledAttributes.Add(attribute);

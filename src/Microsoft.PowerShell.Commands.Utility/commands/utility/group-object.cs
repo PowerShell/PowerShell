@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 if (_grp.Values.Count == 1)
                                 {
-                                    _table.Add(_grp.Values[0], _grp.Group);
+                                    _table.Add(PSObject.Base(_grp.Values[0]), _grp.Group);
                                 }
                                 else
                                 {

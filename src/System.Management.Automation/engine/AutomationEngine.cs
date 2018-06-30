@@ -55,7 +55,7 @@ namespace System.Management.Automation
             var ast = Parser.ScanString(s);
 
             // ExpandString is assumed to invoke code, so passing 'IsTrustedInput'
-            return Compiler.GetExpressionValue(ast, true, Context, Context.EngineSessionState) as string ?? "";
+            return Compiler.GetExpressionValue(ast, true, Context, Context.EngineSessionState) as string ?? string.Empty;
         }
 
         /// <summary>

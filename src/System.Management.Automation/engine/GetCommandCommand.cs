@@ -468,7 +468,7 @@ namespace Microsoft.PowerShell.Commands
             OutputResultsHelper(_accumulatedResults);
 
             object pssenderInfo = Context.GetVariableValue(SpecialVariables.PSSenderInfoVarPath);
-            if ((null != pssenderInfo) && (pssenderInfo is System.Management.Automation.Remoting.PSSenderInfo))
+            if ((pssenderInfo != null) && (pssenderInfo is System.Management.Automation.Remoting.PSSenderInfo))
             {
                 // Win8: 593295. Exchange has around 1000 cmdlets. During Import-PSSession,
                 // Get-Command  | select-object ..,HelpURI,... is run. HelpURI is a script property

@@ -8,7 +8,7 @@ If it is a bug report:
 You can install the latest version from https://github.com/PowerShell/PowerShell/releases
 - Search the existing issues.
 - Refer to the [FAQ](https://github.com/PowerShell/PowerShell/blob/master/docs/FAQ.md).
-- Refer to the [known issues](https://github.com/PowerShell/PowerShell/blob/master/docs/KNOWNISSUES.md).
+- Refer to the [known issues](https://docs.microsoft.com/powershell/scripting/whats-new/known-issues-ps6?view=powershell-6).
 - Fill out the following repro template:
 
 If it's not a bug, please remove the template and elaborate the issue in your own words.

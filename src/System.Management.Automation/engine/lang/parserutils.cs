@@ -104,7 +104,7 @@ namespace System.Management.Automation
     {
         internal LoopFlowException(string label)
         {
-            this.Label = label ?? "";
+            this.Label = label ?? string.Empty;
         }
 
         internal LoopFlowException(SerializationInfo info, StreamingContext context)
@@ -680,7 +680,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                split.Add("");
+                                split.Add(string.Empty);
                             }
                             break;
                         }
@@ -690,7 +690,7 @@ namespace System.Management.Automation
                         // it.
                         if (strIndex == (item.Length - 1))
                         {
-                            split.Add("");
+                            split.Add(string.Empty);
                         }
                     }
                     else
@@ -764,7 +764,7 @@ namespace System.Management.Automation
         /// <returns>The result of the operator</returns>
         internal static object UnaryJoinOperator(ExecutionContext context, IScriptExtent errorPosition, object lval)
         {
-            return JoinOperator(context, errorPosition, lval, "");
+            return JoinOperator(context, errorPosition, lval, string.Empty);
         }
 
         /// <summary>
@@ -889,8 +889,8 @@ namespace System.Management.Automation
         /// <returns>The result of the operator</returns>
         internal static object ReplaceOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, bool ignoreCase)
         {
-            object pattern = "";
-            object substitute = "";
+            object pattern = string.Empty;
+            object substitute = string.Empty;
 
             rval = PSObject.Base(rval);
             IList rList = rval as IList;
@@ -908,7 +908,7 @@ namespace System.Management.Automation
                     pattern = rList[0];
                     if (rList.Count > 1)
                     {
-                        substitute = rList[1];
+                        substitute = PSObject.Base(rList[1]);
                     }
                 }
             }
@@ -972,6 +972,9 @@ namespace System.Management.Automation
         {
             switch (substitute)
             {
+                case string replacementString:
+                    return regex.Replace(input, replacementString);
+
                 case ScriptBlock sb:
                     MatchEvaluator me = match => {
                         var result = sb.DoInvokeReturnAsIs(
@@ -1769,7 +1772,7 @@ namespace System.Management.Automation
             try
             {
                 string message;
-                if (null == args || 0 == args.Length)
+                if (args == null || 0 == args.Length)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;
@@ -1868,7 +1871,7 @@ namespace System.Management.Automation
             Exception innerException)
         {
             string message;
-            if (null == innerException)
+            if (innerException == null)
             {
                 // there is no reason this string lookup should fail
                 message = StringUtil.Format(ParserStrings.BackupParserMessage, errorId);
@@ -1928,7 +1931,7 @@ namespace System.Management.Automation
             if (context.PSDebugTraceLevel > level)
             {
                 string message;
-                if (null == args || 0 == args.Length)
+                if (args == null || 0 == args.Length)
                 {
                     // Don't format in case the string contains literal curly braces
                     message = resourceString;

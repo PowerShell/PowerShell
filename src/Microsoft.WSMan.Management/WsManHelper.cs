@@ -190,7 +190,7 @@ namespace Microsoft.WSMan.Management
             string template = resourceManager.GetString(resourceName);
 
             string result = null;
-            if (null != template)
+            if (template != null)
             {
                 result = String.Format(CultureInfo.CurrentCulture,
                     template, args);
@@ -473,7 +473,7 @@ namespace Microsoft.WSMan.Management
                                     newnode.Value = "true";
                                     node.Attributes.Append(newnode);
                                     //(newnode.Attributes.Item(0).FirstChild   );
-                                    node.Value = "";
+                                    node.Value = string.Empty;
                                 }
                                 else
                                 {
@@ -1106,7 +1106,7 @@ namespace Microsoft.WSMan.Management
             {
                 LoadResourceData();
             }
-            string value = "";
+            string value = string.Empty;
             if (ResourceValueCache.ContainsKey(Key.Trim()))
             {
                 ResourceValueCache.TryGetValue(Key.Trim(), out value);

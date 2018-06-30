@@ -7,4 +7,6 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
 RUN apk update \
     && apk add cmake clang build-base git bash
 
+ENV DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+
 COPY build-and-run-pwsh.sh /

@@ -477,6 +477,8 @@ namespace System.Management.Automation.Internal
 
 #endregion execution policy
 
+        private static bool _saferIdentifyLevelApiSupported = true;
+
         /// <summary>
         /// Get the pass / fail result of calling the SAFER API
         /// </summary>
@@ -488,6 +490,11 @@ namespace System.Management.Automation.Internal
         internal static SaferPolicy GetSaferPolicy(string path, SafeHandle handle)
         {
             SaferPolicy status = SaferPolicy.Allowed;
+
+            if (!_saferIdentifyLevelApiSupported)
+            {
+                return status;
+            }
 
             SAFER_CODE_PROPERTIES codeProperties = new SAFER_CODE_PROPERTIES();
             IntPtr hAuthzLevel;
@@ -555,7 +562,15 @@ namespace System.Management.Automation.Internal
             }
             else
             {
-                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+                int lastError = Marshal.GetLastWin32Error();
+                if (lastError == NativeConstants.FUNCTION_NOT_SUPPORTED)
+                {
+                    _saferIdentifyLevelApiSupported = false;
+                }
+                else
+                {
+                    throw new System.ComponentModel.Win32Exception(lastError);
+                }
             }
 
             return status;
@@ -822,14 +837,14 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                string filterString = "";
+                string filterString = string.Empty;
 
                 if (_dnsName != null)
                 {
                     filterString = AppendFilter(filterString, "dns", _dnsName);
                 }
 
-                string ekuT = "";
+                string ekuT = string.Empty;
                 if (_eku != null)
                 {
                     for (int i = 0; i < _eku.Length; i++)
@@ -1076,7 +1091,7 @@ namespace System.Management.Automation
             int startContent = startIndex + beginMarker.Length;
             int endContent = endIndex - endMarker.Length;
             string encodedContent = actualContent.Substring(startContent, endContent - startContent);
-            encodedContent = System.Text.RegularExpressions.Regex.Replace(encodedContent, "\\s", "");
+            encodedContent = System.Text.RegularExpressions.Regex.Replace(encodedContent, "\\s", string.Empty);
             messageBytes = Convert.FromBase64String(encodedContent);
 
             return messageBytes;

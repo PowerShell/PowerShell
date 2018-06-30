@@ -24,6 +24,7 @@ gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=osx
 repobased=true
 gitscriptname="installpsh-osx.sh"
+powershellpackageid=powershell
 
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Current PowerShell Core Version: $currentpshversion"
@@ -86,32 +87,13 @@ fi
 
 ## Check requirements and prerequisites
 
-#Only do SUDO if we are not root
-SUDO=''
-if (( $EUID != 0 )); then
-    SUDO='sudo'
-fi
-
-#Check that sudo is available
-#if [[ "$SUDO" -eq "sudo" ]]; then
-#    $SUDO -v
-#    if [ $? -ne 0 ]; then
-#      echo "ERROR: You must either be root or be able to use sudo" >&2
-#      exit 5
-#    fi
-#fi
-
-#END Collect any variation details if required for this distro
-
-#If there are known incompatible versions of this distro, put the test, message and script exit here:
-
-#END Verify The Installer Choice
-
-##END Check requirements and prerequisites
-
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
 
-#release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
+if [[ "'$*'" =~ preview ]] ; then
+    echo
+    echo "-preview was used, the latest preview release will be installed (side-by-side with your production release)"
+    powershellpackageid=powershell-preview
+fi
 
 if ! hash brew 2>/dev/null; then
     echo "Homebrew is not found, installing..."
@@ -156,7 +138,7 @@ fi
 
 if ! hash pwsh 2>/dev/null; then
     echo "Installing PowerShell..."
-    if ! brew cask install powershell; then
+    if ! brew cask install ${powershellpackageid}; then
         echo "ERROR: PowerShell failed to install! Cannot install powershell..." >&2
     fi
 else
@@ -176,7 +158,13 @@ if [[ "'$*'" =~ includeide ]] ; then
 
     echo "*** Installing VS Code PowerShell Extension"
     code --install-extension ms-vscode.PowerShell
+    if [[ "'$*'" =~ -interactivetesting ]] ; then
+        echo "*** Loading test code in VS Code"
+        curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
+        code ./testpowershell.ps1
+    fi
 fi
+
 
 pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
 Run `"pwsh`" to start a PowerShell session."'
@@ -186,12 +174,6 @@ success=$?
 if [[ "$success" != 0 ]]; then
     echo "ERROR: PowerShell failed to install!" >&2
     exit "$success"
-fi
-
-if [[ "'$*'" =~ -interactivetesting ]] ; then
-    echo "*** Loading test code in VS Code"
-    $SUDO curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
-    code ./testpowershell.ps1        
 fi
 
 if [[ "$repobased" == true ]] ; then

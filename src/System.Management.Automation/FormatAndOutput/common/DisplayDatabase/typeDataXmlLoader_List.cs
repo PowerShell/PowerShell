@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // add condition
                 lvid.conditionToken = condition;
 
-                // add either the text token or the MshExpression with optional format string
+                // add either the text token or the PSPropertyExpression with optional format string
                 if (match.TextToken != null)
                 {
                     lvid.formatTokenList.Add(match.TextToken);

@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.Commands
                         if (!helpModules.ContainsKey(keyTuple))
                         {
                             List<PSModuleInfo> availableModules = Utils.GetModules(name.Key, context);
-                            if (null != availableModules)
+                            if (availableModules != null)
                             {
                                 foreach (PSModuleInfo module in availableModules)
                                 {

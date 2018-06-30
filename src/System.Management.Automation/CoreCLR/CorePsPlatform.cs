@@ -206,7 +206,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static void RemoveTemporaryDirectory()
         {
-            if (null == _tempDirectory)
+            if (_tempDirectory == null)
             {
                 return;
             }
@@ -227,7 +227,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetTemporaryDirectory()
         {
-            if (null != _tempDirectory)
+            if (_tempDirectory != null)
             {
                 return _tempDirectory;
             }
@@ -267,7 +267,7 @@ namespace System.Management.Automation
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
             string envHome = System.Environment.GetEnvironmentVariable(CommonEnvVariableNames.Home);
-            if (null == envHome)
+            if (envHome == null)
             {
                 envHome = GetTemporaryDirectory();
             }
@@ -419,14 +419,14 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>
         /// The path to the specified system special folder, if that folder physically exists on your computer.
-        /// Otherwise, an empty string ("").
+        /// Otherwise, an empty string (string.Empty).
         /// </returns>
         private static string InternalGetFolderPath(System.Environment.SpecialFolder folder)
         {
             string folderPath = null;
 #if UNIX
             string envHome = System.Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
-            if (null == envHome)
+            if (envHome == null)
             {
                 envHome = Platform.GetTemporaryDirectory();
             }
@@ -545,36 +545,10 @@ namespace System.Management.Automation
             return Unix.NativeMethods.SetDate(&tm) == 0;
         }
 
-        internal static string NonWindowsGetDomainName()
-        {
-            string name = Unix.NativeMethods.GetFullyQualifiedName();
-            if (!string.IsNullOrEmpty(name))
-            {
-                // name is hostname.domainname, so extract domainname
-                int index = name.IndexOf('.');
-                if (index >= 0)
-                {
-                    return name.Substring(index + 1);
-                }
-            }
-            // if the domain name could not be found, do not throw, just return empty
-            return string.Empty;
-        }
-
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
             return Unix.NativeMethods.GetFullyQualifiedName() ?? string.Empty;
-        }
-
-        internal static bool NonWindowsIsFile(string path)
-        {
-            return Unix.NativeMethods.IsFile(path);
-        }
-
-        internal static bool NonWindowsIsDirectory(string path)
-        {
-            return Unix.NativeMethods.IsDirectory(path);
         }
 
         internal static bool NonWindowsIsSameFileSystemItem(string pathOne, string pathTwo)
@@ -788,14 +762,6 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
                 internal static extern string GetUserFromPid(int pid);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsFile([MarshalAs(UnmanagedType.LPStr)]string filePath);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool IsDirectory([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.I1)]

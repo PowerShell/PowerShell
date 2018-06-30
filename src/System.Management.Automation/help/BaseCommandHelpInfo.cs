@@ -53,18 +53,18 @@ namespace System.Management.Automation
                 PSObject commandDetails = this.Details;
                 if (commandDetails == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 if (commandDetails.Properties["Name"] == null ||
                     commandDetails.Properties["Name"].Value == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 string name = commandDetails.Properties["Name"].Value.ToString();
                 if (name == null)
-                    return "";
+                    return string.Empty;
 
                 return name.Trim();
             }
@@ -81,13 +81,13 @@ namespace System.Management.Automation
                 PSObject commandDetails = this.Details;
                 if (commandDetails == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 if (commandDetails.Properties["Description"] == null ||
                     commandDetails.Properties["Description"].Value == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 object[] synopsisItems = (object[])LanguagePrimitives.ConvertTo(
@@ -96,7 +96,7 @@ namespace System.Management.Automation
                     CultureInfo.InvariantCulture);
                 if (synopsisItems == null || synopsisItems.Length == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 PSObject firstSynopsisItem = synopsisItems[0] == null ? null : PSObject.AsPSObject(synopsisItems[0]);
@@ -104,13 +104,13 @@ namespace System.Management.Automation
                     firstSynopsisItem.Properties["Text"] == null ||
                     firstSynopsisItem.Properties["Text"].Value == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 string synopsis = firstSynopsisItem.Properties["Text"].Value.ToString();
                 if (synopsis == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 return synopsis.Trim();
@@ -204,7 +204,7 @@ namespace System.Management.Automation
             if (this.FullHelp.Properties["ModuleName"] != null)
             {
                 PSNoteProperty moduleNameNP = this.FullHelp.Properties["ModuleName"] as PSNoteProperty;
-                if (null != moduleNameNP)
+                if (moduleNameNP != null)
                 {
                     LanguagePrimitives.TryConvertTo<string>(moduleNameNP.Value, CultureInfo.InvariantCulture,
                                                             out moduleName);
@@ -219,7 +219,7 @@ namespace System.Management.Automation
             }
 
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
-            if (null == context)
+            if (context == null)
             {
                 return null;
             }
@@ -306,7 +306,7 @@ namespace System.Management.Automation
 
                 PSObject navigationLink = PSObject.AsPSObject(navigationLinkAsObject);
                 PSNoteProperty uriNP = navigationLink.Properties["uri"] as PSNoteProperty;
-                if (null != uriNP)
+                if (uriNP != null)
                 {
                     string uriString = string.Empty;
                     LanguagePrimitives.TryConvertTo<string>(uriNP.Value, CultureInfo.InvariantCulture, out uriString);
@@ -351,17 +351,17 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            Dbg.Assert(null != pattern, "pattern cannot be null");
+            Dbg.Assert(pattern != null, "pattern cannot be null");
 
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (null == synopsis)
+            if (synopsis == null)
             {
                 synopsis = string.Empty;
             }
 
-            if (null == detailedDescription)
+            if (detailedDescription == null)
             {
                 detailedDescription = string.Empty;
             }
@@ -434,12 +434,12 @@ namespace System.Management.Automation
             get
             {
                 if (this.FullHelp == null)
-                    return "";
+                    return string.Empty;
 
                 if (this.FullHelp.Properties["Description"] == null ||
                     this.FullHelp.Properties["Description"].Value == null)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 object[] descriptionItems = (object[])LanguagePrimitives.ConvertTo(
@@ -448,7 +448,7 @@ namespace System.Management.Automation
                     CultureInfo.InvariantCulture);
                 if (descriptionItems == null || descriptionItems.Length == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
 
                 // I think every cmdlet description should atleast have 400 characters...
@@ -464,9 +464,9 @@ namespace System.Management.Automation
                     }
 
                     PSObject descriptionObject = PSObject.AsPSObject(descriptionItem);
-                    if ((null == descriptionObject) ||
-                        (null == descriptionObject.Properties["Text"]) ||
-                        (null == descriptionObject.Properties["Text"].Value))
+                    if ((descriptionObject == null) ||
+                        (descriptionObject.Properties["Text"] == null) ||
+                        (descriptionObject.Properties["Text"].Value == null))
                     {
                         continue;
                     }

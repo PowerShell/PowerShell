@@ -4,51 +4,71 @@
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
-namespace Microsoft.PowerShell.Commands.Internal.Format
+namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// class to hold results
-    /// NOTE: we should make it an PSObject eventually
+    /// class that represents the results from evaluating a PSPropertyExpression against an object.
     /// </summary>
-    internal class MshExpressionResult
+    public class PSPropertyExpressionResult
     {
-        internal MshExpressionResult(object res, MshExpression re, Exception e)
+
+        /// <summary>
+        /// Create a property expression result containing the original object, matching property expression
+        /// and any exception generated during the match process.
+        /// </summary>
+        public PSPropertyExpressionResult(object res, PSPropertyExpression re, Exception e)
         {
             Result = res;
             ResolvedExpression = re;
             Exception = e;
         }
 
-        internal object Result { get; } = null;
+        /// <summary>
+        /// The value of the object property matched by this property expression.
+        /// </summary>
+        public object Result { get; } = null;
 
-        internal MshExpression ResolvedExpression { get; } = null;
+        /// <summary>
+        /// The original property expression fully resolved.
+        /// </summary>
+        public PSPropertyExpression ResolvedExpression { get; } = null;
 
-        internal Exception Exception { get; } = null;
+        /// <summary>
+        /// Any exception thrown while evaluating the expression.
+        /// </summary>
+        public Exception Exception { get; } = null;
     }
 
-    internal class MshExpression
+    /// <summary>
+    /// PSPropertyExpression class. This class is used to get the names and/or values of properties
+    /// on an object. A property expression can be constructed using either a wildcard expression string
+    /// or a scriptblock to use to get the property value.
+    /// </summary>
+    public class PSPropertyExpression
     {
         /// <summary>
         /// constructor
         /// </summary>
         /// <param name="s">expression</param>
         /// <exception cref="ArgumentNullException"></exception>
-        internal MshExpression(string s)
+        public PSPropertyExpression(string s)
             : this(s, false)
         {
         }
 
         /// <summary>
-        /// constructor
+        /// Create a property expression with a wildcard pattern.
         /// </summary>
-        /// <param name="s">expression</param>
+        /// <param name="s">Property name pattern to match.</param>
         /// <param name="isResolved"><c>true</c> if no further attempts should be made to resolve wildcards</param>
         /// <exception cref="ArgumentNullException"></exception>
-        internal MshExpression(string s, bool isResolved)
+        public PSPropertyExpression(string s, bool isResolved)
         {
             if (string.IsNullOrEmpty(s))
             {
@@ -59,11 +79,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// constructor
+        /// Create a property expression with a ScriptBlock
         /// </summary>
-        /// <param name="scriptBlock"></param>
+        /// <param name="scriptBlock">ScriptBlock to evaluate when retrieving the property value from an object.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        internal MshExpression(ScriptBlock scriptBlock)
+        public PSPropertyExpression(ScriptBlock scriptBlock)
         {
             if (scriptBlock == null)
             {
@@ -72,8 +92,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             Script = scriptBlock;
         }
 
+        /// <summary>
+        /// The ScriptBlock for this expression to use when matching.
+        /// </summary>
         public ScriptBlock Script { get; } = null;
 
+        /// <summary>
+        /// ToString() implementation for the property expression.
+        /// </summary>
         public override string ToString()
         {
             if (Script != null)
@@ -82,12 +108,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return _stringValue;
         }
 
-        internal List<MshExpression> ResolveNames(PSObject target)
+        /// <summary>
+        /// Resolve the names matched by this the expression.
+        /// </summary>
+        /// <param name="target">The object to apply the expression against.</param>
+        public List<PSPropertyExpression> ResolveNames(PSObject target)
         {
             return ResolveNames(target, true);
         }
 
-        internal bool HasWildCardCharacters
+        /// <summary>
+        /// Indicates if the pattern has wildcard characters in it. If the supplied pattern was
+        /// a scriptblock, this will be false.
+        /// </summary>
+        public bool HasWildCardCharacters
         {
             get
             {
@@ -97,9 +131,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        internal List<MshExpression> ResolveNames(PSObject target, bool expand)
+        /// <summary>
+        /// Resolve the names matched by this the expression.
+        /// </summary>
+        /// <param name="target">The object to apply the expression against.</param>
+        /// <param name="expand">If the matched properties are property sets, expand them.</param>
+        public List<PSPropertyExpression> ResolveNames(PSObject target, bool expand)
         {
-            List<MshExpression> retVal = new List<MshExpression>();
+            List<PSPropertyExpression> retVal = new List<PSPropertyExpression>();
 
             if (_isResolved)
             {
@@ -110,12 +149,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (Script != null)
             {
                 // script block, just add it to the list and be done
-                MshExpression ex = new MshExpression(Script);
+                PSPropertyExpression ex = new PSPropertyExpression(Script);
 
                 ex._isResolved = true;
                 retVal.Add(ex);
                 return retVal;
             }
+
+            // If the object passed in is a hashtable, then turn it into a PSCustomObject so
+            // that property expressions can work on it.
+            target = IfHashtableWrapAsPSCustomObject(target);
 
             // we have a string value
             IEnumerable<PSMemberInfo> members = null;
@@ -123,13 +166,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // get the members first: this will expand the globbing on each parameter
                 members = target.Members.Match(_stringValue,
-                                            PSMemberTypes.Properties | PSMemberTypes.PropertySet);
+                                            PSMemberTypes.Properties | PSMemberTypes.PropertySet | PSMemberTypes.Dynamic);
             }
             else
             {
                 // we have no globbing: try an exact match, because this is quicker.
                 PSMemberInfo x = target.Members[_stringValue];
 
+                if ((x == null) && (target.BaseObject is System.Dynamic.IDynamicMetaObjectProvider))
+                {
+                    // We could check if GetDynamicMemberNames includes the name...  but
+                    // GetDynamicMemberNames is only a hint, not a contract, so we'd want
+                    // to attempt the binding whether it's in there or not.
+                    x = new PSDynamicMember(_stringValue);
+                }
                 List<PSMemberInfo> temp = new List<PSMemberInfo>();
                 if (x != null)
                 {
@@ -165,10 +215,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             }
                         }
                     }
-                    continue;
                 }
                 // it can be a property
-                if (member is PSPropertyInfo)
+                else if (member is PSPropertyInfo)
+                {
+                    temporaryMemberList.Add(member);
+                }
+                // it can be a dynamic member
+                else if (member is PSDynamicMember)
                 {
                     temporaryMemberList.Add(member);
                 }
@@ -182,7 +236,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (!hash.ContainsKey(m.Name))
                 {
-                    MshExpression ex = new MshExpression(m.Name);
+                    PSPropertyExpression ex = new PSPropertyExpression(m.Name);
 
                     ex._isResolved = true;
                     retVal.Add(ex);
@@ -193,30 +247,44 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return retVal;
         }
 
-        internal List<MshExpressionResult> GetValues(PSObject target)
+        /// <summary>
+        /// Gets the values of the object properties matched by this expression.
+        /// </summary>
+        /// <param name="target">The object to match against.</param>
+        public List<PSPropertyExpressionResult> GetValues(PSObject target)
         {
             return GetValues(target, true, true);
         }
 
-        internal List<MshExpressionResult> GetValues(PSObject target, bool expand, bool eatExceptions)
+        /// <summary>
+        /// Gets the values of the object properties matched by this expression.
+        /// </summary>
+        /// <param name="target">The object to match against.</param>
+        /// <param name="expand">If the matched properties are parameter sets, expand them.</param>
+        /// <param name="eatExceptions">If true, any exceptions that occur during the match process are ignored.</param>
+        public List<PSPropertyExpressionResult> GetValues(PSObject target, bool expand, bool eatExceptions)
         {
-            List<MshExpressionResult> retVal = new List<MshExpressionResult>();
+            List<PSPropertyExpressionResult> retVal = new List<PSPropertyExpressionResult>();
+
+            // If the object passed in is a hashtable, then turn it into a PSCustomObject so
+            // that property expressions can work on it.
+            target = IfHashtableWrapAsPSCustomObject(target);
 
             // process the script case
             if (Script != null)
             {
-                MshExpression scriptExpression = new MshExpression(Script);
-                MshExpressionResult r = scriptExpression.GetValue(target, eatExceptions);
+                PSPropertyExpression scriptExpression = new PSPropertyExpression(Script);
+                PSPropertyExpressionResult r = scriptExpression.GetValue(target, eatExceptions);
                 retVal.Add(r);
                 return retVal;
             }
 
             // process the expression
-            List<MshExpression> resolvedExpressionList = this.ResolveNames(target, expand);
+            List<PSPropertyExpression> resolvedExpressionList = this.ResolveNames(target, expand);
 
-            foreach (MshExpression re in resolvedExpressionList)
+            foreach (PSPropertyExpression re in resolvedExpressionList)
             {
-                MshExpressionResult r = re.GetValue(target, eatExceptions);
+                PSPropertyExpressionResult r = re.GetValue(target, eatExceptions);
                 retVal.Add(r);
             }
 
@@ -225,11 +293,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #region Private Members
 
-        private MshExpressionResult GetValue(PSObject target, bool eatExceptions)
+        private CallSite<Func<CallSite, object, object>> _getValueDynamicSite;
+
+        private PSPropertyExpressionResult GetValue(PSObject target, bool eatExceptions)
         {
             try
             {
-                object result;
+                object result = null;
 
                 if (Script != null)
                 {
@@ -243,27 +313,42 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    PSMemberInfo member = target.Properties[_stringValue];
-                    if (member == null)
+                    if (_getValueDynamicSite == null)
                     {
-                        return new MshExpressionResult(null, this, null);
+                        _getValueDynamicSite =
+                            CallSite<Func<CallSite, object, object>>.Create(
+                                    PSGetMemberBinder.Get(
+                                        _stringValue,
+                                        classScope: (Type) null,
+                                        @static: false));
                     }
-                    result = member.Value;
+                    result = _getValueDynamicSite.Target.Invoke(_getValueDynamicSite, target);
                 }
 
-                return new MshExpressionResult(result, this, null);
+                return new PSPropertyExpressionResult(result, this, null);
             }
             catch (RuntimeException e)
             {
                 if (eatExceptions)
                 {
-                    return new MshExpressionResult(null, this, e);
+                    return new PSPropertyExpressionResult(null, this, e);
                 }
                 else
                 {
                     throw;
                 }
             }
+        }
+        
+        private PSObject IfHashtableWrapAsPSCustomObject(PSObject target)
+        {
+            // If the object passed in is a hashtable, then turn it into a PSCustomObject so
+            // that property expressions can work on it.
+            if (PSObject.Base(target) is Hashtable targetAsHash)
+            {
+                target = (PSObject)(LanguagePrimitives.ConvertPSObjectToType(targetAsHash, typeof(PSObject), false, null, true));
+            }
+            return target;
         }
 
         // private members

@@ -68,7 +68,7 @@ namespace System.Management.Automation.ComInterop
                     //
                     // But: Arguments are stored in pDispParams->rgvarg in reverse order, so the first
                     // parameter is the one with the highest index in the array
-                    // http://msdn.microsoft.com/en-us/library/aa912367.aspx
+                    // http://msdn.microsoft.com/library/aa912367.aspx
                     argErr = ((uint)args.Length) - argErr - 2;
 
                     // One or more of the arguments could not be coerced.

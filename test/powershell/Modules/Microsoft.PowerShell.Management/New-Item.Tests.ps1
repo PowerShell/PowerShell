@@ -12,6 +12,16 @@ function Clean-State
         Remove-Item $FullyQualifiedFile -Force
     }
 
+    if ($FullyQualifiedFileInFolder -and (Test-Path $FullyQualifiedFileInFolder))
+    {
+        Remove-Item $FullyQualifiedFileInFolder -Force
+    }
+
+    if ($FullyQualifiedSubFolder -and (Test-Path $FullyQualifiedSubFolder))
+    {
+        Remove-Item $FullyQualifiedSubFolder -Force
+    }
+
     if (Test-Path $FullyQualifiedFolder)
     {
         Remove-Item $FullyQualifiedFolder -Force
@@ -19,15 +29,18 @@ function Clean-State
 }
 
 Describe "New-Item" -Tags "CI" {
-    $tmpDirectory         = $TestDrive
-    $testfile             = "testfile.txt"
-    $testfileSp           = "``[test``]file.txt"
-    $testfolder           = "newDirectory"
-    $testlink             = "testlink"
-    $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
-    $FullyQualifiedFileSp = Join-Path -Path $tmpDirectory -ChildPath $testfileSp
-    $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
-    $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
+    $tmpDirectory               = $TestDrive
+    $testfile                   = "testfile.txt"
+    $testfileSp                 = "``[test``]file.txt"
+    $testfolder                 = "newDirectory"
+    $testsubfolder              = "newSubDirectory"
+    $testlink                   = "testlink"
+    $FullyQualifiedFile         = Join-Path -Path $tmpDirectory -ChildPath $testfile
+    $FullyQualifiedFileSp       = Join-Path -Path $tmpDirectory -ChildPath $testfileSp
+    $FullyQualifiedFolder       = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+    $FullyQualifiedLink         = Join-Path -Path $tmpDirectory -ChildPath $testlink
+    $FullyQualifiedSubFolder    = Join-Path -Path $FullyQualifiedFolder -ChildPath $testsubfolder
+    $FullyQualifiedFileInFolder = Join-Path -Path $FullyQualifiedFolder -ChildPath $testfile
 
     BeforeEach {
         Clean-State
@@ -152,6 +165,30 @@ Describe "New-Item" -Tags "CI" {
             Pop-Location
         }
     }
+
+    It "Should create a file in the current directory when using Drive: notation" {
+        try {
+            New-Item -Name $testfolder -Path "TestDrive:\" -ItemType directory > $null
+            Push-Location -Path "TestDrive:\$testfolder"
+            New-Item -Name $testfile -Path "TestDrive:" -ItemType file > $null
+            $FullyQualifiedFileInFolder | Should -Exist
+        }
+        finally {
+            Pop-Location
+        }
+    }
+
+    It "Should create a folder in the current directory when using Drive: notation" {
+        try {
+            New-Item -Name $testfolder -Path "TestDrive:\" -ItemType directory > $null
+            Push-Location -Path "TestDrive:\$testfolder"
+            New-Item -Name $testsubfolder -Path "TestDrive:" -ItemType file > $null
+            $FullyQualifiedSubFolder | Should -Exist
+        }
+        finally {
+            Pop-Location
+        }
+    }
 }
 
 # More precisely these tests require SeCreateSymbolicLinkPrivilege.
@@ -235,16 +272,26 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
         $fileInfo.Attributes -band $DirLinkMask | Should -BeExactly $SymLinkMask
     }
 
-    It "Should error correctly when failing to create a symbolic link" -Skip:($IsWindows -or $IsElevated) {
-        Write-Host "Iselevated: $IsElevated"
-        # This test expects that /sbin exists but is not writable by the user
-        { New-Item -ItemType SymbolicLink -Path "/sbin/powershell-test" -Target $FullyQualifiedFolder -ErrorAction Stop } |
-		Should -Throw -ErrorId "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"
-    }
-
     It "New-Item -ItemType SymbolicLink should understand directory path ending with slash" {
         $folderName = [System.IO.Path]::GetRandomFileName()
         $symbolicLinkPath = New-Item -ItemType SymbolicLink -Path "$tmpDirectory/$folderName/" -Value "/bar/"
         $symbolicLinkPath | Should -Not -BeNullOrEmpty
+    }
+}
+
+Describe "New-Item with links fails for non elevated user." -Tags "CI" {
+    BeforeAll {
+        $tmpDirectory         = $TestDrive
+        $testfile             = "testfile.txt"
+        $testfolder           = "newDirectory"
+        $testlink             = "testlink"
+        $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
+        $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
+    }
+
+    It "Should error correctly when failing to create a symbolic link" {
+        # This test expects that /sbin exists but is not writable by the user
+        { New-Item -ItemType SymbolicLink -Path "/sbin/powershell-test" -Target $FullyQualifiedFolder -ErrorAction Stop } |
+        Should -Throw -ErrorId "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"
     }
 }

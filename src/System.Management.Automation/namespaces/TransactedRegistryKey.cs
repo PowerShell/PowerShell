@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                                       System.Transactions.Transaction transaction, SafeTransactionHandle txHandle)
         {
             _hkey = hkey;
-            _keyName = "";
+            _keyName = string.Empty;
             if (systemkey)
             {
                 _state |= STATE_SYSTEMKEY;
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
             // We want to take our own clone so we can dispose it when we want and
             // aren't susceptible to the caller disposing it.
-            if (null != transaction)
+            if (transaction != null)
             {
                 _myTransaction = transaction.Clone();
                 _myTransactionHandle = txHandle;
@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             // If myTransaction is not null and is not the same as Transaction.Current
             // this is an invalid operation. The transaction within which the RegistryKey object was created
             // needs to be the same as the transaction being used now.
-            if (null != _myTransaction)
+            if (_myTransaction != null)
             {
                 if (!_myTransaction.Equals(Transaction.Current))
                 {
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 }
             }
 
-            if (null != _myTransaction)
+            if (_myTransaction != null)
             {
                 // Dispose the transaction because we cloned it.
                 try
@@ -2042,7 +2042,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private void VerifyTransaction()
         {
             // Require a transaction. This will throw for "Base" keys because they aren't associated with a transaction.
-            if (null == _myTransaction)
+            if (_myTransaction == null)
             {
                 throw new InvalidOperationException(RegistryProviderStrings.InvalidOperation_NotAssociatedWithTransaction);
             }

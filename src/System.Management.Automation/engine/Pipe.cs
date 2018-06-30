@@ -431,7 +431,7 @@ namespace System.Management.Automation.Internal
             {
                 _resultList.Add(obj);
             }
-            else if (null != _externalWriter)
+            else if (_externalWriter != null)
             {
                 _externalWriter.Write(obj);
             }
@@ -440,7 +440,7 @@ namespace System.Management.Automation.Internal
                 ObjectQueue.Enqueue(obj);
 
                 // This is the "streamlet" recursive call
-                if (null != _downstreamCmdlet && ObjectQueue.Count > OutBufferCount)
+                if (_downstreamCmdlet != null && ObjectQueue.Count > OutBufferCount)
                 {
                     _downstreamCmdlet.DoExecute();
                 }
@@ -502,7 +502,7 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            if (null != _externalWriter)
+            if (_externalWriter != null)
                 return;
 
             // If there are objects waiting for the downstream command
@@ -539,7 +539,7 @@ namespace System.Management.Automation.Internal
 
                 return ParserOps.Current(null, _enumeratorToProcess);
             }
-            else if (null != ExternalReader)
+            else if (ExternalReader != null)
             {
                 try
                 {

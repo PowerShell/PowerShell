@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     internal sealed class ComplexViewGenerator : ViewGenerator
     {
-        internal override void Initialize(TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory,
+        internal override void Initialize(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
             PSObject so, TypeInfoDataBase db, FormattingCommandLineParameters parameters)
         {
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal ComplexControlGenerator(TypeInfoDataBase dataBase,
                                             DatabaseLoadingInfo loadingInfo,
-                                            MshExpressionFactory expressionFactory,
+                                            PSPropertyExpressionFactory expressionFactory,
                                             List<ControlDefinition> controlDefinitionList,
                                             FormatErrorManager resultErrorManager,
                                             int enumerationLimit,
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     match = new TypeMatch(_expressionFactory, _db, typesWithoutPrefix);
                     foreach (ComplexControlEntryDefinition x in complexBody.optionalEntryList)
@@ -259,14 +259,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        MshExpression ex = _expressionFactory.CreateFromExpressionToken(cpt.expression, _loadingInfo);
-                        List<MshExpressionResult> resultList = ex.GetValues(so);
+                        PSPropertyExpression ex = _expressionFactory.CreateFromExpressionToken(cpt.expression, _loadingInfo);
+                        List<PSPropertyExpressionResult> resultList = ex.GetValues(so);
                         if (resultList.Count > 0)
                         {
                             val = resultList[0].Result;
                             if (resultList[0].Exception != null)
                             {
-                                _errorManager.LogMshExpressionFailedResult(resultList[0], so);
+                                _errorManager.LogPSPropertyExpressionFailedResult(resultList[0], so);
                             }
                         }
                     }
@@ -279,7 +279,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         // on with formatting
                         if (val == null)
                         {
-                            val = "";
+                            val = string.Empty;
                         }
                         FieldFormattingDirective fieldFormattingDirective = null;
                         StringFormatError formatErrorObject = null;
@@ -361,20 +361,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (conditionToken == null)
                 return true;
 
-            MshExpression ex = _expressionFactory.CreateFromExpressionToken(conditionToken, _loadingInfo);
-            MshExpressionResult expressionResult;
+            PSPropertyExpression ex = _expressionFactory.CreateFromExpressionToken(conditionToken, _loadingInfo);
+            PSPropertyExpressionResult expressionResult;
             bool retVal = DisplayCondition.Evaluate(so, ex, out expressionResult);
 
             if (expressionResult != null && expressionResult.Exception != null)
             {
-                _errorManager.LogMshExpressionFailedResult(expressionResult, so);
+                _errorManager.LogPSPropertyExpressionFailedResult(expressionResult, so);
             }
             return retVal;
         }
 
         private TypeInfoDataBase _db;
         private DatabaseLoadingInfo _loadingInfo;
-        private MshExpressionFactory _expressionFactory;
+        private PSPropertyExpressionFactory _expressionFactory;
         private List<ControlDefinition> _controlDefinitionList;
         private FormatErrorManager _errorManager;
         private TerminatingErrorContext _errorContext;
@@ -409,7 +409,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed class ComplexViewObjectBrowser
     {
-        internal ComplexViewObjectBrowser(FormatErrorManager resultErrorManager, MshExpressionFactory mshExpressionFactory, int enumerationLimit)
+        internal ComplexViewObjectBrowser(FormatErrorManager resultErrorManager, PSPropertyExpressionFactory mshExpressionFactory, int enumerationLimit)
         {
             _errorManager = resultErrorManager;
             _expressionFactory = mshExpressionFactory;
@@ -536,21 +536,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 formatValueList.Add(ftf);
 
                 // compute the value of the entry
-                List<MshExpressionResult> resList = a.ResolvedExpression.GetValues(so);
+                List<PSPropertyExpressionResult> resList = a.ResolvedExpression.GetValues(so);
                 object val = null;
                 if (resList.Count >= 1)
                 {
-                    MshExpressionResult result = resList[0];
+                    PSPropertyExpressionResult result = resList[0];
                     if (result.Exception != null)
                     {
-                        _errorManager.LogMshExpressionFailedResult(result, so);
+                        _errorManager.LogPSPropertyExpressionFailedResult(result, so);
                         if (_errorManager.DisplayErrorStrings)
                         {
                             val = _errorManager.ErrorString;
                         }
                         else
                         {
-                            val = "";
+                            val = string.Empty;
                         }
                     }
                     else
@@ -760,7 +760,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private FormatErrorManager _errorManager;
 
-        private MshExpressionFactory _expressionFactory;
+        private PSPropertyExpressionFactory _expressionFactory;
 
         private int _enumerationLimit;
     }

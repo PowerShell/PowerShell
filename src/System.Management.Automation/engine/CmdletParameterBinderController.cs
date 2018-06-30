@@ -909,7 +909,7 @@ namespace System.Management.Automation
                     else
                     {
                         string argument = StringLiterals.DollarNull;
-                        if (null != parameter.ArgumentValue)
+                        if (parameter.ArgumentValue != null)
                         {
                             try
                             {
@@ -4464,7 +4464,7 @@ namespace System.Management.Automation
         public DefaultParameterDictionary(IDictionary dictionary)
             : this()
         {
-            if (null == dictionary)
+            if (dictionary == null)
             {
                 throw PSTraceSource.NewArgumentNullException("dictionary");
             }

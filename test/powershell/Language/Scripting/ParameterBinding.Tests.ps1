@@ -252,7 +252,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        { get-foo -a '' } | ShouldBeErrorID 'ParameterArgumentValidationErrorEmptyStringNotAllowed,get-foo'
+        { get-foo -a '' } | Should -Throw -ErrorId 'ParameterArgumentValidationErrorEmptyStringNotAllowed,get-foo'
     }
 
     It 'Empty string is allowed when AllowEmptyString Attribute is set' {

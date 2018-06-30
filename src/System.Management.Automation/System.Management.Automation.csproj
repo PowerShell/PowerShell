@@ -9,14 +9,17 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.5.0-rc1-26423-06" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.5.0-rc1-26423-06" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.5.0-rc1-26423-06" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.0-rc1-26423-06" />
-    <PackageReference Include="System.Security.Permissions" Version="4.5.0-rc1-26423-06" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0-rc1-26423-06" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.5.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
+    <PackageReference Include="System.DirectoryServices" Version="4.5.0" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.5.0" />
+    <PackageReference Include="System.Management" Version="4.5.0" />
+    <PackageReference Include="System.Security.AccessControl" Version="4.5.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.0" />
+    <PackageReference Include="System.Security.Permissions" Version="4.5.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha*" />
     <PackageReference Include="PowerShell.Core.Instrumentation" Version="6.0.0-beta*" />
@@ -88,8 +91,6 @@
     <Compile Remove="engine\ComInterop\VariantArgBuilder.cs" />
     <Compile Remove="engine\ComInterop\VariantArray.cs" />
     <Compile Remove="engine\ComInterop\VariantBuilder.cs" />
-    <Compile Remove="engine\ExtraAdapter.cs" />
-    <Compile Remove="engine\ManagementObjectAdapter.cs" />
     <Compile Remove="engine\PSMI\PSNegotiationData.cs" />
     <Compile Remove="engine\PSMI\PSPowerShellPipeline.cs" />
     <Compile Remove="engine\PSMI\Serialization\InternalMISerializer.cs" />
@@ -126,6 +127,18 @@
 
     <EmbeddedResource Remove="resources\CoreMshSnapinResources.resx" />
     <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
+    <Compile Remove="engine\ExtraAdapter.cs" />
+    <Compile Remove="engine\ManagementObjectAdapter.cs" />
+    <Compile Remove="engine\remoting\commands\ReceivePSSession.cs" />
+    <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
+    <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
+    <Compile Remove="engine\remoting\commands\EnterPSHostProcessCommand.cs" />
+    <Compile Remove="engine\remoting\commands\NewPSSessionOptionCommand.cs" />
+    <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
+    <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
   </ItemGroup>
 
 </Project>

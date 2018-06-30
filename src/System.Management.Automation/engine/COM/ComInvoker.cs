@@ -18,7 +18,7 @@ namespace System.Management.Automation
         // LCID for en-US culture
         private const int LCID_DEFAULT = 0x0409;
         // The dispatch identifier for a parameter that receives the value of an assignment in a PROPERTYPUT.
-        // See https://msdn.microsoft.com/en-us/library/windows/desktop/ms221242(v=vs.85).aspx for details.
+        // See https://msdn.microsoft.com/library/windows/desktop/ms221242(v=vs.85).aspx for details.
         private const int DISPID_PROPERTYPUT = -3;
         // Alias of GUID_NULL. It's a GUID set to all zero
         private static readonly Guid s_IID_NULL = new Guid();
@@ -216,7 +216,7 @@ namespace System.Management.Automation
                 catch (Exception innerException)
                 {
                     // When 'IDispatch.Invoke' returns error code, CLR will raise exception based on internal HR-to-Exception mapping.
-                    // Description of the return code can be found at https://msdn.microsoft.com/en-us/library/windows/desktop/ms221479(v=vs.85).aspx
+                    // Description of the return code can be found at https://msdn.microsoft.com/library/windows/desktop/ms221479(v=vs.85).aspx
                     // According to CoreCLR team (yzha), the exception needs to be wrapped as an inner exception of TargetInvocationException.
 
                     string exceptionMsg = null;

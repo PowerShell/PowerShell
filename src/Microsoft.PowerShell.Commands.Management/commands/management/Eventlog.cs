@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell.Commands
                         + ": " + e.Message);
                     throw;
                 }
-                if ((null != entry) &&
+                if ((entry != null) &&
                 ((lastindex == Int32.MinValue
                   || lastindex - entry.Index == 1)))
                 {
@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.Commands
             }
             if (!matchesfound && _isThrowError)
             {
-                Exception Ex = new ArgumentException(StringUtil.Format(EventlogResources.NoEntriesFound, log.Log, ""));
+                Exception Ex = new ArgumentException(StringUtil.Format(EventlogResources.NoEntriesFound, log.Log, string.Empty));
                 WriteError(new ErrorRecord(Ex, "GetEventLogNoEntriesFound", ErrorCategory.ObjectNotFound, null));
             }
         }
@@ -1372,7 +1372,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                                 else
                                 {
-                                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.SourceDoesNotExist, "", computer, src)), null, ErrorCategory.InvalidOperation, null);
+                                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.SourceDoesNotExist, string.Empty, computer, src)), null, ErrorCategory.InvalidOperation, null);
                                     WriteError(er);
                                     continue;
                                 }

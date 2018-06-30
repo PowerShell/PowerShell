@@ -426,6 +426,17 @@ Dockerfile
 VisualStudio
 readonly
 PowerShell.6
+preview.3
+Auth
+mcbobke
+wesholton84
+Patochun
+Jumplist
+bjh7242
+beta2
+PSGallery
+adelton
+qmfrederik
 #endregion
 
 #region CODE_OF_CONDUCT.md Overrides
@@ -501,20 +512,6 @@ NanoServer-Insider
 nanoserver-insider-powershell
 #endregion
 
-#region docs/BREAKINGCHANGES.md Overrides
-- docs/BREAKINGCHANGES.md
-7-bit
-CoreFX
-honored
-non-Windows
-psd1
-runbooks
-runspace
-v1
-v2
-WMI-based
-#endregion
-
 #region docs/building/internals.md Overrides
  - docs/building/internals.md
 Catalog
@@ -528,6 +525,7 @@ src
 v141
 x64_arm
 x64_arm64
+msbuild
 #endregion
 
 #region docs/building/macos.md Overrides
@@ -645,53 +643,6 @@ post-6
 preview1-002106-00
 sample-dotnet1
 sample-dotnet2
-#endregion
-
-#region docs/installation/linux.md Overrides
- - docs/installation/linux.md
-compat-openssl10
-dockerfile
-libc6
-libcurl
-libcurl3
-libgcc1
-libgssapi-krb5-2
-libicu
-libicu52
-libicu55
-libicu57
-liblttng-ust0
-libssl1.0.0
-libssl1.0.2
-libstdc
-libunwind
-libunwind8
-libuuid1
-openssl-libs
-OpenSUSE
-zlib1g
-zypper
-#endregion
-
-#region docs/installation/windows.md Overrides
- - docs/installation/windows.md
-Install-PowerShellRemoting
-pwrshplugin.dll
-System32
-Win8
-windir
-#endregion
-
-#region docs/KNOWNISSUES.md Overrides
- - docs/KNOWNISSUES.md
-cp
-globbing
-New-PSSession
-pipelining
-psl-omi-provider
-Register-WmiEvent
-System.Management.Automation.SemanticVersion
-System.Timers.Timer
 #endregion
 
 #region docs/learning-powershell/create-powershell-scripts.md Overrides
@@ -1110,8 +1061,16 @@ v6.0.
 #region test/tools/WebListener/README.md Overrides
  - test/tools/WebListener/README.md
 Auth
+failureCode
+failureCount
 NoResume
 NTLM
 NumberBytes
 ResponseHeaders
+sessionId
 #endregion
+includeide
+interactivetesting
+allowprerelease
+prereleases
+url

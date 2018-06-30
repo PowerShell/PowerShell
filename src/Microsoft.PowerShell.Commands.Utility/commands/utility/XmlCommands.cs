@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
-            if (null != _serializer)
+            if (_serializer != null)
             {
                 _serializer.Serialize(InputObject);
                 _xw.Flush();
@@ -442,10 +442,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 CreateMemoryStream();
 
-                if (null != _serializer)
+                if (_serializer != null)
                     _serializer.SerializeAsStream(InputObject);
 
-                if (null != _serializer)
+                if (_serializer != null)
                 {
                     _serializer.DoneAsStream();
                     _serializer = null;
@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (null != _serializer)
+                if (_serializer != null)
                     _serializer.Serialize(InputObject);
             }
         }
@@ -471,7 +471,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (null != _serializer)
+            if (_serializer != null)
             {
                 _serializer.Done();
                 _serializer = null;

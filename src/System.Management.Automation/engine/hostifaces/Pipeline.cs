@@ -308,7 +308,7 @@ namespace System.Management.Automation.Runspaces
             }
             // This constructor is used only internally.
             // Caller should make sure the input is valid
-            Dbg.Assert(null != command, "Command cannot be null");
+            Dbg.Assert(command != null, "Command cannot be null");
             InstanceId = runspace.GeneratePipelineId();
             Commands = command;
 

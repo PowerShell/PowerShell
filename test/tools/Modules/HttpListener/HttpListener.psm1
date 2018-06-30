@@ -135,7 +135,7 @@ Function Start-HTTPListener {
                             $statusCode = $queryItems["statuscode"]
                             $contentType = $queryItems["contenttype"]
                             $output = $queryItems["output"]
-                            
+
                             # Pass a JSON collection to the 'headers' field
                             # /PowerShell?test=response&headers={"Pragma":"no-cache","X-Fake-Header":["testvalue01","testvalue02"]}
                             # In PowerShell:
@@ -173,7 +173,7 @@ Function Start-HTTPListener {
 
                             Example: test=redirectex&type=Moved&multiredirect=true
 
-                            See also https://msdn.microsoft.com/en-us/library/system.net.httpstatuscode(v=vs.110).aspx
+                            See also https://docs.microsoft.com/dotnet/api/system.net.httpstatuscode?view=netcore-2.1
                         #>
                         "redirect"
                         {

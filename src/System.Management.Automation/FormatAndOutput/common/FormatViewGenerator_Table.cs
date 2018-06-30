@@ -14,22 +14,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // tableBody to use for this instance of the ViewGenerator;
         private TableControlBody _tableBody;
 
-        internal override void Initialize(TerminatingErrorContext terminatingErrorContext, MshExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
+        internal override void Initialize(TerminatingErrorContext terminatingErrorContext, PSPropertyExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
         {
             base.Initialize(terminatingErrorContext, mshExpressionFactory, db, view, formatParameters);
-            if ((null != this.dataBaseInfo) && (null != this.dataBaseInfo.view))
+            if ((this.dataBaseInfo != null) && (this.dataBaseInfo.view != null))
             {
                 _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
             }
         }
 
-        internal override void Initialize(TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory,
+        internal override void Initialize(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                                         PSObject so, TypeInfoDataBase db,
             FormattingCommandLineParameters parameters)
         {
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
 
-            if ((null != this.dataBaseInfo) && (null != this.dataBaseInfo.view))
+            if ((this.dataBaseInfo != null) && (this.dataBaseInfo.view != null))
             {
                 _tableBody = (TableControlBody)this.dataBaseInfo.view.mainControl;
             }
@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (PSObjectHelper.ShouldShowComputerNameProperty(so))
                 {
                     activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null,
-                        new MshExpression(RemotingConstants.ComputerNameNoteProperty)));
+                        new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
                 }
                 return;
             }
@@ -82,10 +82,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="so"></param>
         internal override void PrepareForRemoteObjects(PSObject so)
         {
-            Diagnostics.Assert(null != so, "so cannot be null");
+            Diagnostics.Assert(so != null, "so cannot be null");
 
             // make sure computername property exists.
-            Diagnostics.Assert(null != so.Properties[RemotingConstants.ComputerNameNoteProperty],
+            Diagnostics.Assert(so.Properties[RemotingConstants.ComputerNameNoteProperty] != null,
                 "PrepareForRemoteObjects cannot be called when the object does not contain ComputerName property.");
 
             if ((dataBaseInfo != null) && (dataBaseInfo.view != null) && (dataBaseInfo.view.mainControl != null))
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        ci.label = "";
+                        ci.label = string.Empty;
                     }
                 }
 
@@ -293,9 +293,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private static int ComputeDefaultAlignment(PSObject so, MshExpression ex)
+        private static int ComputeDefaultAlignment(PSObject so, PSPropertyExpression ex)
         {
-            List<MshExpressionResult> rList = ex.GetValues(so);
+            List<PSPropertyExpressionResult> rList = ex.GetValues(so);
 
             if ((rList.Count == 0) || (rList[0].Exception != null))
                 return TextAlignment.Left;
@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (matchingRowDefinition == null)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typesWithoutPrefix);
 

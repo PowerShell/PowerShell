@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal abstract class ViewGenerator
     {
         internal virtual void Initialize(TerminatingErrorContext terminatingErrorContext,
-                                        MshExpressionFactory mshExpressionFactory,
+                                        PSPropertyExpressionFactory mshExpressionFactory,
                                         TypeInfoDataBase db,
                                         ViewDefinition view,
                                         FormattingCommandLineParameters formatParameters)
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         internal virtual void Initialize(TerminatingErrorContext terminatingErrorContext,
-                                            MshExpressionFactory mshExpressionFactory,
+                                            PSPropertyExpressionFactory mshExpressionFactory,
                                             PSObject so,
                                             TypeInfoDataBase db,
                                             FormattingCommandLineParameters formatParameters)
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (parameters != null && parameters.groupByParameter != null)
             {
                 // get the expression to use
-                MshExpression groupingKeyExpression = parameters.groupByParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
+                PSPropertyExpression groupingKeyExpression = parameters.groupByParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
 
                 // set the label
                 string label = null;
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return;
                 }
 
-                MshExpression ex = this.expressionFactory.CreateFromExpressionToken(gb.startGroup.expression, this.dataBaseInfo.view.loadingInfo);
+                PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(gb.startGroup.expression, this.dataBaseInfo.view.loadingInfo);
 
                 _groupingManager = new GroupingInfoManager();
                 _groupingManager.Initialize(ex, null);
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (false == result)
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     result = IsObjectApplicable(typesWithoutPrefix);
                 }
@@ -323,22 +323,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected FormattingCommandLineParameters parameters;
 
-        protected MshExpressionFactory expressionFactory;
+        protected PSPropertyExpressionFactory expressionFactory;
 
         protected DataBaseInfo dataBaseInfo = new DataBaseInfo();
 
         protected List<MshResolvedExpressionParameterAssociation> activeAssociationList = null;
         protected FormattingCommandLineParameters inputParameters = null;
 
-        protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, MshExpression ex,
+        protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,
                     FieldFormattingDirective directive)
         {
-            MshExpressionResult resolvedExpression;
+            PSPropertyExpressionResult resolvedExpression;
             return GetExpressionDisplayValue(so, enumerationLimit, ex, directive, out resolvedExpression);
         }
 
-        protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, MshExpression ex,
-                    FieldFormattingDirective directive, out MshExpressionResult expressionResult)
+        protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,
+                    FieldFormattingDirective directive, out PSPropertyExpressionResult expressionResult)
         {
             StringFormatError formatErrorObject = null;
             if (_errorManager.DisplayFormatErrorString)
@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we obtained a result, check if there is an error
                 if (expressionResult.Exception != null)
                 {
-                    _errorManager.LogMshExpressionFailedResult(expressionResult, so);
+                    _errorManager.LogPSPropertyExpressionFailedResult(expressionResult, so);
                     if (_errorManager.DisplayErrorStrings)
                     {
                         retVal = _errorManager.ErrorString;
@@ -381,13 +381,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (conditionToken == null)
                 return true;
 
-            MshExpression ex = this.expressionFactory.CreateFromExpressionToken(conditionToken, this.dataBaseInfo.view.loadingInfo);
-            MshExpressionResult expressionResult;
+            PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(conditionToken, this.dataBaseInfo.view.loadingInfo);
+            PSPropertyExpressionResult expressionResult;
             bool retVal = DisplayCondition.Evaluate(so, ex, out expressionResult);
 
             if (expressionResult != null && expressionResult.Exception != null)
             {
-                _errorManager.LogMshExpressionFailedResult(expressionResult, so);
+                _errorManager.LogPSPropertyExpressionFailedResult(expressionResult, so);
             }
             return retVal;
         }
@@ -403,11 +403,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected FormatPropertyField GenerateFormatPropertyField(List<FormatToken> formatTokenList, PSObject so, int enumerationLimit)
         {
-            MshExpressionResult result;
+            PSPropertyExpressionResult result;
             return GenerateFormatPropertyField(formatTokenList, so, enumerationLimit, out result);
         }
 
-        protected FormatPropertyField GenerateFormatPropertyField(List<FormatToken> formatTokenList, PSObject so, int enumerationLimit, out MshExpressionResult result)
+        protected FormatPropertyField GenerateFormatPropertyField(List<FormatToken> formatTokenList, PSObject so, int enumerationLimit, out PSPropertyExpressionResult result)
         {
             result = null;
             FormatPropertyField fpf = new FormatPropertyField();
@@ -417,7 +417,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 FieldPropertyToken fpt = token as FieldPropertyToken;
                 if (fpt != null)
                 {
-                    MshExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
+                    PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
                     fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, ex, fpt.fieldFormattingDirective, out result);
                 }
                 else
@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else
             {
-                fpf.propertyValue = "";
+                fpf.propertyValue = string.Empty;
             }
             return fpf;
         }

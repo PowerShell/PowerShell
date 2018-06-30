@@ -42,7 +42,7 @@ namespace System.Management.Automation.Runspaces
         private RemotingErrorRecord(ErrorRecord errorRecord, OriginInfo originInfo, Exception replaceParentContainsErrorRecordException) :
             base(errorRecord, replaceParentContainsErrorRecordException)
         {
-            if (null != errorRecord)
+            if (errorRecord != null)
             {
                 base.SetInvocationInfo(errorRecord.InvocationInfo);
             }

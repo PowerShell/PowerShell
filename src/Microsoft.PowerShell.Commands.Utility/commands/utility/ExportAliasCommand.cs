@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
                     writer = OpenFile(out readOnlyFileInfo);
                 }
 
-                if (null != writer)
+                if (writer != null)
                     WriteHeader(writer);
 
                 // Now write out the aliases
@@ -284,7 +284,7 @@ namespace Microsoft.PowerShell.Commands
                         line = GetAliasLine(alias, "set-alias -Name:\"{0}\" -Value:\"{1}\" -Description:\"{2}\" -Option:\"{3}\"");
                     }
 
-                    if (null != writer)
+                    if (writer != null)
                         writer.WriteLine(line);
 
                     if (PassThru)
@@ -295,10 +295,10 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (null != writer)
+                if (writer != null)
                     writer.Dispose();
                 // reset the read-only attribute
-                if (null != readOnlyFileInfo)
+                if (readOnlyFileInfo != null)
                     readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
             }
         }

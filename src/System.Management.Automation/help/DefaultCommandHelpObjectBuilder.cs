@@ -419,13 +419,13 @@ namespace System.Management.Automation.Help
 
             if (attribs.Count == 0)
             {
-                obj.Properties.Add(new PSNoteProperty("required", ""));
-                obj.Properties.Add(new PSNoteProperty("pipelineInput", ""));
-                obj.Properties.Add(new PSNoteProperty("isDynamic", ""));
-                obj.Properties.Add(new PSNoteProperty("parameterSetName", ""));
-                obj.Properties.Add(new PSNoteProperty("description", ""));
-                obj.Properties.Add(new PSNoteProperty("position", ""));
-                obj.Properties.Add(new PSNoteProperty("aliases", ""));
+                obj.Properties.Add(new PSNoteProperty("required", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("pipelineInput", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("isDynamic", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("parameterSetName", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("description", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("position", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("aliases", string.Empty));
             }
             else
             {

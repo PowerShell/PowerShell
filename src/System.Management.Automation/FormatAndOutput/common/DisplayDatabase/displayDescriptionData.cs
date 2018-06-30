@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// string to display in the formatted display (e.g. cell in a table)
-        /// when the evaluation of an MshExpression fails
+        /// when the evaluation of a PSPropertyExpression fails
         /// </summary>
         internal string errorStringInFormattedOutput = "#ERR";
 
@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return FormatShape.Complex.ToString();
             }
-            return "";
+            return string.Empty;
         }
 
         /// <summary>

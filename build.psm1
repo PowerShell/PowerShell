@@ -379,6 +379,24 @@ function Start-BuildNativeUnixBinaries {
     }
 }
 
+<#
+    .Synopsis
+        Tests if a version is preview
+    .EXAMPLE
+        Test-IsPreview -version '6.1.0-sometthing' # returns true
+        Test-IsPreview -version '6.1.0' # returns false
+#>
+function Test-IsPreview
+{
+    param(
+        [parameter(Mandatory)]
+        [string]
+        $Version
+    )
+
+    return $Version -like '*-*'
+}
+
 function Start-PSBuild {
     [CmdletBinding()]
     param(
@@ -401,13 +419,14 @@ function Start-PSBuild {
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         # If this parameter is not provided it will get determined automatically.
-        [ValidateSet("win7-x64",
-                     "win7-x86",
-                     "osx-x64",
+        [ValidateSet("linux-arm",
+                     "linux-musl-x64",
                      "linux-x64",
-                     "linux-arm",
+                     "osx-x64",
                      "win-arm",
-                     "win-arm64")]
+                     "win-arm64",
+                     "win7-x64",
+                     "win7-x86")]
         [string]$Runtime,
 
         [ValidateSet('Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
@@ -612,7 +631,13 @@ Fix steps:
             $pwshPath = Join-Path $Options.Output "pwsh.exe"
         }
 
-        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
+        if (Test-IsPreview $ReleaseVersion) {
+            $iconPath = "$PSScriptRoot\assets\Powershell_av_colors.ico"
+        } else {
+            $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
+        }
+
+        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon $iconPath `
             --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
             --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
             --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
@@ -713,13 +738,14 @@ function New-PSOptions {
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
-                     "win7-x86",
-                     "win7-x64",
-                     "osx-x64",
-                     "linux-x64",
                      "linux-arm",
+                     "linux-musl-x64",
+                     "linux-x64",
+                     "osx-x64",
                      "win-arm",
-                     "win-arm64")]
+                     "win-arm64",
+                     "win7-x64",
+                     "win7-x86")]
         [string]$Runtime,
 
         [switch]$CrossGen,
@@ -1671,7 +1697,7 @@ function Start-PSBootstrap {
                     if($Environment.IsMacOS) {
                         $gemsudo = $sudo
                     }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.9.3"))
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.10.0"))
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3"))
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
@@ -2094,7 +2120,7 @@ function script:Start-NativeExecution
     try {
         if($VerboseOutputOnError.IsPresent)
         {
-            $output = & $sb
+            $output = & $sb 2>&1
         }
         else
         {
@@ -2136,13 +2162,14 @@ function Start-CrossGen {
         $PublishPath,
 
         [Parameter(Mandatory=$true)]
-        [ValidateSet("win7-x86",
-                     "win7-x64",
-                     "osx-x64",
+        [ValidateSet("linux-arm",
+                     "linux-musl-x64",
                      "linux-x64",
-                     "linux-arm",
+                     "osx-x64",
                      "win-arm",
-                     "win-arm64")]
+                     "win-arm64",
+                     "win7-x64",
+                     "win7-x86")]
         [string]
         $Runtime
     )
@@ -2203,10 +2230,8 @@ function Start-CrossGen {
         }
     } elseif ($Runtime -eq "linux-arm") {
         throw "crossgen is not available for 'linux-arm'"
-    } elseif ($Environment.IsLinux) {
-        "linux-x64"
-    } elseif ($Environment.IsMacOS) {
-        "osx-x64"
+    } else {
+        $Runtime
     }
 
     if (-not $crossGenRuntime) {
@@ -2282,7 +2307,6 @@ function Start-CrossGen {
         "Microsoft.PowerShell.Security.dll",
         "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.PowerShell.ConsoleHost.dll",
-        "Microsoft.PowerShell.PSReadLine.dll",
         "System.Management.Automation.dll"
     )
 

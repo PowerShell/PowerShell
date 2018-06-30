@@ -1396,7 +1396,7 @@ namespace System.Management.Automation
                                 }
                             }
 
-                            if (null != candidate)
+                            if (candidate != null)
                             {
                                 candidate.expandedParameters = ExpandParameters(arguments.Length, parameters, elementType);
                             }
@@ -3522,12 +3522,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns null if memberName is not a member in the adapter or
-        /// the corresponding PSMemberInfo
+        /// Get the .NET member based on the given member name.
         /// </summary>
+        /// <remark>
+        /// Dynamic members of an object that implements IDynamicMetaObjectProvider are not included because
+        ///   1. Dynamic members cannot be invoked via reflection;
+        ///   2. Access to dynamic members is handled by the DLR for free.
+        /// </remark>
         /// <param name="obj">object to retrieve the PSMemberInfo from</param>
         /// <param name="memberName">name of the member to be retrieved</param>
-        /// <returns>The PSMemberInfo corresponding to memberName from obj</returns>
+        /// <returns>
+        /// The PSMemberInfo corresponding to memberName from obj,
+        /// or null if the given member name is not a member in the adapter.
+        /// </returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
             T returnValue = GetDotNetProperty<T>(obj, memberName);
@@ -3545,6 +3552,10 @@ namespace System.Management.Automation
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
+        /// <remark>
+        /// Dynamic members of an object that implements IDynamicMetaObjectProvider are included because
+        /// we want to view the dynamic members via 'Get-Member' and be able to auto-complete those members.
+        /// </remark>
         /// <param name="obj">object to get all the member information from</param>
         /// <returns>all members in obj</returns>
         protected override PSMemberInfoInternalCollection<T> GetMembers<T>(object obj)
@@ -4227,7 +4238,7 @@ namespace System.Management.Automation
         protected override T GetMember<T>(object obj, string memberName)
         {
             PSProperty property = base.GetDotNetProperty<PSProperty>(obj, memberName);
-            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && (null != property))
+            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && (property != null))
             {
                 return property as T;
             }

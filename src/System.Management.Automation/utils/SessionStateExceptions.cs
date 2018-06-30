@@ -73,7 +73,7 @@ namespace System.Management.Automation
             _providerInfo = provider;
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && icer.ErrorRecord != null)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, innerException);
             }
@@ -103,7 +103,7 @@ namespace System.Management.Automation
             : base(RuntimeException.RetrieveMessage(errorRecord),
                     RuntimeException.RetrieveException(errorRecord))
         {
-            if (null == errorRecord)
+            if (errorRecord == null)
             {
                 throw new ArgumentNullException("errorRecord");
             }
@@ -226,7 +226,7 @@ namespace System.Management.Automation
             }
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && icer.ErrorRecord != null)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, errorRecordException);
             }
@@ -256,7 +256,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -279,11 +279,11 @@ namespace System.Management.Automation
             string path,
             Exception innerException)
         {
-            if (null == innerException)
+            if (innerException == null)
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs innerException");
-                return "";
+                return string.Empty;
             }
             if (String.IsNullOrEmpty(errorId))
             {
@@ -291,7 +291,7 @@ namespace System.Management.Automation
                 "ProviderInvocationException.RetrieveMessage needs errorId");
                 return RuntimeException.RetrieveMessage(innerException);
             }
-            if (null == provider)
+            if (provider == null)
             {
                 Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs provider");
@@ -517,7 +517,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -559,7 +559,7 @@ namespace System.Management.Automation
             params object[] messageArgs)
         {
             object[] a;
-            if (null != messageArgs && 0 < messageArgs.Length)
+            if (messageArgs != null && 0 < messageArgs.Length)
             {
                 a = new object[messageArgs.Length + 1];
                 a[0] = itemName;

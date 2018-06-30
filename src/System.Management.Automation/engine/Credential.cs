@@ -405,7 +405,7 @@ namespace System.Management.Automation
             else
             {
                 user = input;
-                domain = "";
+                domain = string.Empty;
             }
         }
     }

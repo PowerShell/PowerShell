@@ -702,7 +702,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        protected MshExpressionFactory expressionFactory;
+        protected PSPropertyExpressionFactory expressionFactory;
 
         protected DisplayResourceManagerCache displayResourceManagerCache;
 

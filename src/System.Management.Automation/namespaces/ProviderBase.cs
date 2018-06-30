@@ -1577,13 +1577,13 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (null == errorRecord)
+                if (errorRecord == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("errorRecord");
                 }
 
-                if (null != errorRecord.ErrorDetails
-                    && null != errorRecord.ErrorDetails.TextLookupError)
+                if (errorRecord.ErrorDetails != null
+                    && errorRecord.ErrorDetails.TextLookupError != null)
                 {
                     Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
                     errorRecord.ErrorDetails.TextLookupError = null;
@@ -2113,8 +2113,8 @@ namespace System.Management.Automation.Provider
                     throw PSTraceSource.NewArgumentNullException("errorRecord");
                 }
 
-                if (null != errorRecord.ErrorDetails
-                    && null != errorRecord.ErrorDetails.TextLookupError)
+                if (errorRecord.ErrorDetails != null
+                    && errorRecord.ErrorDetails.TextLookupError != null)
                 {
                     MshLog.LogProviderHealthEvent(
                         this.Context.ExecutionContext,

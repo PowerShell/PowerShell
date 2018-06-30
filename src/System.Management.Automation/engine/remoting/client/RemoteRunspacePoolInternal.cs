@@ -585,7 +585,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // if closeAsyncResult is null, BeginClose is not called. That means
                     // we are getting close event from server, in this case release the
                     // local resources
-                    if (null == _closeAsyncResult)
+                    if (_closeAsyncResult == null)
                     {
                         // Close the local resources.
                         DataStructureHandler.CloseRunspacePoolAsync();
@@ -1066,14 +1066,14 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="asyncResult">IAsyncResult object.</param>
         public override void EndDisconnect(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((null == rsAsyncResult) ||
+            if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -1176,14 +1176,14 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="asyncResult">IAsyncResult object.</param>
         public override void EndConnect(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((null == rsAsyncResult) ||
+            if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -1507,7 +1507,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (timeString != null)
             {
-                string timeoutString = timeString.Replace("PT", "").Replace("S", "");
+                string timeoutString = timeString.Replace("PT", string.Empty).Replace("S", string.Empty);
                 try
                 {
                     // Convert time from seconds to milliseconds.
@@ -1767,7 +1767,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
             WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (null != wsmanConnectionInfo)
+            if (wsmanConnectionInfo != null)
             {
                 wsmanConnectionInfo.ConnectionUri = eventArgs.Data;
                 URIRedirectionReported.SafeInvoke(this, eventArgs);

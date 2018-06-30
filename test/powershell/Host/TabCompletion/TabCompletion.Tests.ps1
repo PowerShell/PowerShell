@@ -115,6 +115,14 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].ToolTip -match '^\d+ -' | Should -BeTrue
     }
 
+    It 'Should complete "Get-Process" with process names' {
+        $cmd = "Get-Process "
+        $res = TabExpansion2 -inputScript $cmd  -cursorColumn $cmd.Length
+        # Can't compare to number of processes since macOS has a large number of processes
+        # that have empty Name which should be skipped
+        $res.CompletionMatches.Count | Should -BeGreaterThan 0
+    }
+
     It 'Should complete keyword' -skip {
         $res = TabExpansion2 -inputScript 'using nam' -cursorColumn 'using nam'.Length
         $res.CompletionMatches[0].CompletionText | Should -Be 'namespace'

@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell
         {
             Utils.CheckSecureStringArg(input, "input");
 
-            string output = "";
+            string output = string.Empty;
             byte[] data = null;
             byte[] protectedData = null;
 

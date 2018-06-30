@@ -1045,25 +1045,25 @@ namespace System.Management.Automation.Language
             /*                  Shl */ "-shl",
             /*                  Shr */ "-shr",
             /*                Colon */ ":",
-            /*    Reserved slot 2   */ "",
-            /*    Reserved slot 3   */ "",
-            /*    Reserved slot 4   */ "",
-            /*    Reserved slot 5   */ "",
-            /*    Reserved slot 6   */ "",
-            /*    Reserved slot 7   */ "",
-            /*    Reserved slot 8   */ "",
-            /*    Reserved slot 9   */ "",
-            /*    Reserved slot 10  */ "",
-            /*    Reserved slot 11  */ "",
-            /*    Reserved slot 12  */ "",
-            /*    Reserved slot 13  */ "",
-            /*    Reserved slot 14  */ "",
-            /*    Reserved slot 15  */ "",
-            /*    Reserved slot 16  */ "",
-            /*    Reserved slot 17  */ "",
-            /*    Reserved slot 18  */ "",
-            /*    Reserved slot 19  */ "",
-            /*    Reserved slot 20  */ "",
+            /*    Reserved slot 2   */ string.Empty,
+            /*    Reserved slot 3   */ string.Empty,
+            /*    Reserved slot 4   */ string.Empty,
+            /*    Reserved slot 5   */ string.Empty,
+            /*    Reserved slot 6   */ string.Empty,
+            /*    Reserved slot 7   */ string.Empty,
+            /*    Reserved slot 8   */ string.Empty,
+            /*    Reserved slot 9   */ string.Empty,
+            /*    Reserved slot 10  */ string.Empty,
+            /*    Reserved slot 11  */ string.Empty,
+            /*    Reserved slot 12  */ string.Empty,
+            /*    Reserved slot 13  */ string.Empty,
+            /*    Reserved slot 14  */ string.Empty,
+            /*    Reserved slot 15  */ string.Empty,
+            /*    Reserved slot 16  */ string.Empty,
+            /*    Reserved slot 17  */ string.Empty,
+            /*    Reserved slot 18  */ string.Empty,
+            /*    Reserved slot 19  */ string.Empty,
+            /*    Reserved slot 20  */ string.Empty,
 
             #endregion Text for operators
 
@@ -1298,7 +1298,7 @@ namespace System.Management.Automation.Language
         internal override string ToDebugString(int indent)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <-{2}{3}>", StringUtil.Padding(indent), Kind, _parameterName, _usedColon ? ":" : "");
+                "{0}{1}: <-{2}{3}>", StringUtil.Padding(indent), Kind, _parameterName, _usedColon ? ":" : string.Empty);
         }
     }
 

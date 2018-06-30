@@ -24,68 +24,115 @@ namespace System.Management.Automation.Security
     // Safer native constants
     internal partial class NativeConstants
     {
+        /// <Summary>
         /// SAFER_TOKEN_NULL_IF_EQUAL -> 0x00000001
+        /// </Summary>
         public const int SAFER_TOKEN_NULL_IF_EQUAL = 1;
 
+        /// <Summary>
         /// SAFER_TOKEN_COMPARE_ONLY -> 0x00000002
+        /// </Summary>
         public const int SAFER_TOKEN_COMPARE_ONLY = 2;
 
+        /// <Summary>
         /// SAFER_TOKEN_MAKE_INERT -> 0x00000004
+        /// </Summary>
         public const int SAFER_TOKEN_MAKE_INERT = 4;
 
+        /// <Summary>
         /// SAFER_CRITERIA_IMAGEPATH -> 0x00001
+        /// </Summary>
         public const int SAFER_CRITERIA_IMAGEPATH = 1;
 
+        /// <Summary>
         /// SAFER_CRITERIA_NOSIGNEDHASH -> 0x00002
+        /// </Summary>
         public const int SAFER_CRITERIA_NOSIGNEDHASH = 2;
 
+        /// <Summary>
         /// SAFER_CRITERIA_IMAGEHASH -> 0x00004
+        /// </Summary>
         public const int SAFER_CRITERIA_IMAGEHASH = 4;
 
+        /// <Summary>
         /// SAFER_CRITERIA_AUTHENTICODE -> 0x00008
+        /// </Summary>
         public const int SAFER_CRITERIA_AUTHENTICODE = 8;
 
+        /// <Summary>
         /// SAFER_CRITERIA_URLZONE -> 0x00010
+        /// </Summary>
         public const int SAFER_CRITERIA_URLZONE = 16;
 
+        /// <Summary>
         /// SAFER_CRITERIA_IMAGEPATH_NT -> 0x01000
+        /// </Summary>
         public const int SAFER_CRITERIA_IMAGEPATH_NT = 4096;
 
+        /// <Summary>
         /// WTD_UI_NONE -> 0x00002
+        /// </Summary>
         public const int WTD_UI_NONE = 2;
 
+        /// <Summary>
         /// S_OK -> ((HRESULT)0L)
+        /// </Summary>
         public const int S_OK = 0;
 
+        /// <Summary>
         /// S_FALSE -> ((HRESULT)1L)
+        /// </Summary>
         public const int S_FALSE = 1;
 
+        /// <Summary>
         /// ERROR_MORE_DATA -> 234L
+        /// </Summary>
         public const int ERROR_MORE_DATA = 234;
 
+        /// <Summary>
         /// ERROR_ACCESS_DISABLED_BY_POLICY -> 1260L
+        /// </Summary>
         public const int ERROR_ACCESS_DISABLED_BY_POLICY = 1260;
 
+        /// <Summary>
         /// ERROR_ACCESS_DISABLED_NO_SAFER_UI_BY_POLICY -> 786L
+        /// </Summary>
         public const int ERROR_ACCESS_DISABLED_NO_SAFER_UI_BY_POLICY = 786;
 
+        /// <Summary>
         /// SAFER_MAX_HASH_SIZE -> 64
+        /// </Summary>
         public const int SAFER_MAX_HASH_SIZE = 64;
 
+        /// <Summary>
         /// SRP_POLICY_SCRIPT -> L"SCRIPT"
+        /// </Summary>
         public const string SRP_POLICY_SCRIPT = "SCRIPT";
 
+        /// <Summary>
         /// SIGNATURE_DISPLAYNAME_LENGTH -> MAX_PATH
+        /// </Summary>
         internal const int SIGNATURE_DISPLAYNAME_LENGTH = NativeConstants.MAX_PATH;
 
+        /// <Summary>
         /// SIGNATURE_PUBLISHER_LENGTH -> 128
+        /// </Summary>
         internal const int SIGNATURE_PUBLISHER_LENGTH = 128;
 
+        /// <Summary>
         /// SIGNATURE_HASH_LENGTH -> 64
+        /// </Summary>
         internal const int SIGNATURE_HASH_LENGTH = 64;
 
+        /// <Summary>
         /// MAX_PATH -> 260
+        /// </Summary>
         internal const int MAX_PATH = 260;
+
+        /// <Summary>
+        /// This function is not supported on this system
+        /// </Summary>
+        internal const int FUNCTION_NOT_SUPPORTED = 120;
     }
 
     /// <summary>
@@ -719,7 +766,7 @@ namespace System.Management.Automation.Security
             si.dwAdditionalCertChoice = GetCertChoiceFromSigningOption(option);
 
             CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO siex =
-                InitSignInfoExtendedStruct("", "", hashAlgorithm);
+                InitSignInfoExtendedStruct(string.Empty, string.Empty, hashAlgorithm);
             IntPtr pSiexBuffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(siex));
             Marshal.StructureToPtr(siex, pSiexBuffer, false);
             si.pSignExtInfo = pSiexBuffer;

@@ -345,7 +345,7 @@ namespace System.Management.Automation.Remoting.Client
                 _cred = new WSManUserNameCredentialStruct();
                 _cred.authenticationMechanism = authMechanism;
                 _cred.userName = name;
-                if (null != pwd)
+                if (pwd != null)
                 {
                     _cred.password = Marshal.SecureStringToCoTaskMemUnicode(pwd);
                 }
@@ -651,7 +651,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="data"></param>
             internal WSManData_ManToUn(byte[] data)
             {
-                Dbg.Assert(null != data, "Data cannot be null");
+                Dbg.Assert(data != null, "Data cannot be null");
 
                 _internalData = new WSManDataStruct();
                 _internalData.binaryOrTextData = new WSManBinaryOrTextDataStruct();
@@ -674,7 +674,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="data"></param>
             internal WSManData_ManToUn(string data)
             {
-                Dbg.Assert(null != data, "Data cannot be null");
+                Dbg.Assert(data != null, "Data cannot be null");
 
                 _internalData = new WSManDataStruct();
                 _internalData.binaryOrTextData = new WSManBinaryOrTextDataStruct();
@@ -752,7 +752,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <returns></returns>
             public static implicit operator IntPtr(WSManData_ManToUn data)
             {
-                if (null != data)
+                if (data != null)
                 {
                     return data._marshalledObject;
                 }
@@ -1098,7 +1098,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <param name="options"></param>
             internal WSManOptionSet(WSManOption[] options)
             {
-                Dbg.Assert(null != options, "options cannot be null");
+                Dbg.Assert(options != null, "options cannot be null");
 
                 int sizeOfOption = Marshal.SizeOf<WSManOption>();
                 _optionSet = new WSManOptionSetStruct();
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation.Remoting.Client
                 internalInfo.proxyAuthCredentialsStruct = new WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct();
                 internalInfo.proxyAuthCredentialsStruct.authenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
 
-                if (null != authCredentials)
+                if (authCredentials != null)
                 {
                     internalInfo.proxyAuthCredentialsStruct = authCredentials.CredentialStruct;
                 }
@@ -2421,7 +2421,7 @@ namespace System.Management.Automation.Remoting.Client
             // The error code taken from winerror.h used for getting buffer length.
             const int ERROR_INSUFFICIENT_BUFFER = 122;
 
-            string returnval = "";
+            string returnval = string.Empty;
             int bufferSize = 0;
             // calculate buffer size required
             if (ERROR_INSUFFICIENT_BUFFER != WSManGetSessionOptionAsString(wsManAPIHandle,
@@ -2774,7 +2774,7 @@ namespace System.Management.Automation.Remoting.Client
             // get language code.
             string langCode = CultureInfo.CurrentUICulture.Name;
 
-            string returnval = "";
+            string returnval = string.Empty;
             int bufferSize = 0;
             // calculate buffer size required
             if (ERROR_INSUFFICIENT_BUFFER != WSManGetErrorMessage(wsManAPIHandle,

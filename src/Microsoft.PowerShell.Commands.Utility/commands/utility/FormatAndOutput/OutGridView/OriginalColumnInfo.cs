@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
                 // The live object has the liveObjectPropertyName property.
                 Object liveObjectValue = propertyInfo.Value;
                 ICollection collectionValue = liveObjectValue as ICollection;
-                if (null != collectionValue)
+                if (collectionValue != null)
                 {
                     liveObjectValue = _parentCmdlet.ConvertToString(PSObjectHelper.AsPSObject(propertyInfo.Value));
                 }

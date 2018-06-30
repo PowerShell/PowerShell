@@ -9,7 +9,7 @@
         Many of the tests below looking-up timezones by Name do not support localization.
         That is, the current tests use us english versions of StandardName and DaylightName for tests.
 
-        ref: https://msdn.microsoft.com/en-us/library/windows/desktop/ms725481.aspx
+        ref: https://msdn.microsoft.com/library/windows/desktop/ms725481.aspx
            [snippet] Both StandardName and DaylightName are localized according to the current user default UI language.
 #>
 

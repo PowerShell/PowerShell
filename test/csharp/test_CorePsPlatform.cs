@@ -87,29 +87,6 @@ namespace PSTests.Parallel
         }
 
         [Fact]
-        public static void TestGetDomainName()
-        {
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = @"/usr/bin/env",
-                Arguments = "dnsdomainname",
-                RedirectStandardOutput = true,
-                UseShellExecute = false
-            };
-            using (Process process = Process.Start(startInfo))
-            {
-                 // Get output of call to hostname without trailing newline
-                string domainName = process.StandardOutput.ReadToEnd().Trim();
-                process.WaitForExit();
-
-                // The process should return an exit code of 0 on success
-                Assert.Equal(0, process.ExitCode);
-                // It should be the same as what our platform code returns
-                Assert.Equal(domainName, Platform.NonWindowsGetDomainName());
-            }
-        }
-
-        [Fact]
         public static void TestIsExecutable()
         {
             Assert.True(Platform.NonWindowsIsExecutable("/bin/ls"));

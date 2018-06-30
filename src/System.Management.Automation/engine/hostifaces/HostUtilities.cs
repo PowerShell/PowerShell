@@ -186,7 +186,7 @@ namespace System.Management.Automation
                 basePath = GetAllUsersFolderPath(shellId);
                 if (string.IsNullOrEmpty(basePath))
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
 

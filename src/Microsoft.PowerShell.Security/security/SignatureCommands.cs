@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
                 _timestampServer = value;
             }
         }
-        private string _timestampServer = "";
+        private string _timestampServer = string.Empty;
 
         /// <summary>
         /// Gets or sets the hash algorithm used for signing.
@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.Commands
             finally
             {
                 // reset the read-only attribute
-                if (null != readOnlyFileInfo)
+                if (readOnlyFileInfo != null)
                 {
                     readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
                 }

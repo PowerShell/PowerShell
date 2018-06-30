@@ -115,12 +115,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// if not found, it uses some heuristics to get a "close" match
         /// </summary>
         /// <param name="target">shell object to process</param>
-        /// <param name="expressionFactory">expression factory to create MshExpression</param>
-        /// <returns>resolved MshExpression; null if no match was found</returns>
-        internal static MshExpression GetDisplayNameExpression(PSObject target, MshExpressionFactory expressionFactory)
+        /// <param name="expressionFactory">expression factory to create PSPropertyExpression</param>
+        /// <returns>resolved PSPropertyExpression; null if no match was found</returns>
+        internal static PSPropertyExpression GetDisplayNameExpression(PSObject target, PSPropertyExpressionFactory expressionFactory)
         {
             // first try to get the expression from the object (types.ps1xml data)
-            MshExpression expressionFromObject = GetDefaultNameExpression(target);
+            PSPropertyExpression expressionFromObject = GetDefaultNameExpression(target);
             if (expressionFromObject != null)
             {
                 return expressionFromObject;
@@ -135,8 +135,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // go over the patterns, looking for the first match
             foreach (string pattern in knownPatterns)
             {
-                MshExpression ex = new MshExpression(pattern);
-                List<MshExpression> exprList = ex.ResolveNames(target);
+                PSPropertyExpression ex = new PSPropertyExpression(pattern);
+                List<PSPropertyExpression> exprList = ex.ResolveNames(target);
 
                 while ((exprList.Count > 0) && (
                     exprList[0].ToString().Equals(RemotingConstants.ComputerNameNoteProperty, StringComparison.OrdinalIgnoreCase) ||
@@ -162,17 +162,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// it gets the display name value
         /// </summary>
         /// <param name="target">shell object to process</param>
-        /// <param name="expressionFactory">expression factory to create MshExpression</param>
-        /// <returns>MshExpressionResult if successful; null otherwise</returns>
-        internal static MshExpressionResult GetDisplayName(PSObject target, MshExpressionFactory expressionFactory)
+        /// <param name="expressionFactory">expression factory to create PSPropertyExpression</param>
+        /// <returns>PSPropertyExpressionResult if successful; null otherwise</returns>
+        internal static PSPropertyExpressionResult GetDisplayName(PSObject target, PSPropertyExpressionFactory expressionFactory)
         {
             // get the expression to evaluate
-            MshExpression ex = GetDisplayNameExpression(target, expressionFactory);
+            PSPropertyExpression ex = GetDisplayNameExpression(target, expressionFactory);
             if (ex == null)
                 return null;
 
             // evaluate the expression
-            List<MshExpressionResult> resList = ex.GetValues(target);
+            List<PSPropertyExpressionResult> resList = ex.GetValues(target);
 
             if (resList.Count == 0 || resList[0].Exception != null)
             {
@@ -203,9 +203,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return LanguagePrimitives.GetEnumerable(obj);
         }
 
-        private static string GetSmartToStringDisplayName(object x, MshExpressionFactory expressionFactory)
+        private static string GetSmartToStringDisplayName(object x, PSPropertyExpressionFactory expressionFactory)
         {
-            MshExpressionResult r = PSObjectHelper.GetDisplayName(PSObjectHelper.AsPSObject(x), expressionFactory);
+            PSPropertyExpressionResult r = PSObjectHelper.GetDisplayName(PSObjectHelper.AsPSObject(x), expressionFactory);
             if ((r != null) && (r.Exception == null))
             {
                 return PSObjectHelper.AsPSObject(r.Result).ToString();
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private static string GetObjectName(object x, MshExpressionFactory expressionFactory)
+        private static string GetObjectName(object x, PSPropertyExpressionFactory expressionFactory)
         {
             string objName;
 
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    MshExpressionResult r = PSObjectHelper.GetDisplayName(PSObjectHelper.AsPSObject(x), expressionFactory);
+                    PSPropertyExpressionResult r = PSObjectHelper.GetDisplayName(PSObjectHelper.AsPSObject(x), expressionFactory);
                     if ((r != null) && (r.Exception == null))
                     {
                         objName = PSObjectHelper.AsPSObject(r.Result).ToString(); ;
@@ -273,14 +273,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// It takes into account enumerations (use display name)
         /// </summary>
         /// <param name="so">shell object to process</param>
-        /// <param name="expressionFactory">expression factory to create MshExpression</param>
+        /// <param name="expressionFactory">expression factory to create PSPropertyExpression</param>
         /// <param name="enumerationLimit">limit on IEnumerable enumeration</param>
         /// <param name="formatErrorObject">stores errors during string conversion</param>
         /// <returns>string representation</returns>
-        internal static string SmartToString(PSObject so, MshExpressionFactory expressionFactory, int enumerationLimit, StringFormatError formatErrorObject)
+        internal static string SmartToString(PSObject so, PSPropertyExpressionFactory expressionFactory, int enumerationLimit, StringFormatError formatErrorObject)
         {
             if (so == null)
-                return "";
+                return string.Empty;
 
             try
             {
@@ -367,11 +367,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formatErrorObject.sourceObject = so;
                     formatErrorObject.exception = e;
                 }
-                return "";
+                return string.Empty;
             }
         }
 
-        private static readonly PSObject s_emptyPSObject = new PSObject("");
+        private static readonly PSObject s_emptyPSObject = new PSObject(string.Empty);
 
         internal static PSObject AsPSObject(object obj)
         {
@@ -385,10 +385,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="val">object to format</param>
         /// <param name="enumerationLimit">limit on IEnumerable enumeration</param>
         /// <param name="formatErrorObject">formatting error object, if present</param>
-        /// <param name="expressionFactory">expression factory to create MshExpression</param>
+        /// <param name="expressionFactory">expression factory to create PSPropertyExpression</param>
         /// <returns>string representation</returns>
         internal static string FormatField(FieldFormattingDirective directive, object val, int enumerationLimit,
-            StringFormatError formatErrorObject, MshExpressionFactory expressionFactory)
+            StringFormatError formatErrorObject, PSPropertyExpressionFactory expressionFactory)
         {
             PSObject so = PSObjectHelper.AsPSObject(val);
             if (directive != null && !string.IsNullOrEmpty(directive.formatString))
@@ -420,7 +420,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         formatErrorObject.sourceObject = so;
                         formatErrorObject.exception = e;
                         formatErrorObject.formatString = directive.formatString;
-                        return "";
+                        return string.Empty;
                     }
                 }
             }
@@ -432,10 +432,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static PSMemberSet MaskDeserializedAndGetStandardMembers(PSObject so)
         {
-            Diagnostics.Assert(null != so, "Shell Object to process cannot be null");
+            Diagnostics.Assert(so != null, "Shell Object to process cannot be null");
             var typeNames = so.InternalTypeNames;
             Collection<string> typeNamesWithoutDeserializedPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-            if (null == typeNamesWithoutDeserializedPrefix)
+            if (typeNamesWithoutDeserializedPrefix == null)
             {
                 return null;
             }
@@ -451,26 +451,26 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return members[TypeTable.PSStandardMembers] as PSMemberSet;
         }
 
-        private static List<MshExpression> GetDefaultPropertySet(PSMemberSet standardMembersSet)
+        private static List<PSPropertyExpression> GetDefaultPropertySet(PSMemberSet standardMembersSet)
         {
-            if (null != standardMembersSet)
+            if (standardMembersSet != null)
             {
                 PSPropertySet defaultDisplayPropertySet = standardMembersSet.Members[TypeTable.DefaultDisplayPropertySet] as PSPropertySet;
-                if (null != defaultDisplayPropertySet)
+                if (defaultDisplayPropertySet != null)
                 {
-                    List<MshExpression> retVal = new List<MshExpression>();
+                    List<PSPropertyExpression> retVal = new List<PSPropertyExpression>();
                     foreach (string prop in defaultDisplayPropertySet.ReferencedPropertyNames)
                     {
                         if (!string.IsNullOrEmpty(prop))
                         {
-                            retVal.Add(new MshExpression(prop));
+                            retVal.Add(new PSPropertyExpression(prop));
                         }
                     }
                     return retVal;
                 }
             }
 
-            return new List<MshExpression>();
+            return new List<PSPropertyExpression>();
         }
 
         /// <summary>
@@ -478,9 +478,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="so">shell object to process</param>
         /// <returns>resolved expression; empty list if not found</returns>
-        internal static List<MshExpression> GetDefaultPropertySet(PSObject so)
+        internal static List<PSPropertyExpression> GetDefaultPropertySet(PSObject so)
         {
-            List<MshExpression> retVal = GetDefaultPropertySet(so.PSStandardMembers);
+            List<PSPropertyExpression> retVal = GetDefaultPropertySet(so.PSStandardMembers);
             if (retVal.Count == 0)
             {
                 retVal = GetDefaultPropertySet(MaskDeserializedAndGetStandardMembers(so));
@@ -489,12 +489,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return retVal;
         }
 
-        private static MshExpression GetDefaultNameExpression(PSMemberSet standardMembersSet)
+        private static PSPropertyExpression GetDefaultNameExpression(PSMemberSet standardMembersSet)
         {
-            if (null != standardMembersSet)
+            if (standardMembersSet != null)
             {
                 PSNoteProperty defaultDisplayProperty = standardMembersSet.Members[TypeTable.DefaultDisplayProperty] as PSNoteProperty;
-                if (null != defaultDisplayProperty)
+                if (defaultDisplayProperty != null)
                 {
                     string expressionString = defaultDisplayProperty.Value.ToString();
                     if (string.IsNullOrEmpty(expressionString))
@@ -504,7 +504,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        return new MshExpression(expressionString);
+                        return new PSPropertyExpression(expressionString);
                     }
                 }
             }
@@ -512,46 +512,46 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return null;
         }
 
-        private static MshExpression GetDefaultNameExpression(PSObject so)
+        private static PSPropertyExpression GetDefaultNameExpression(PSObject so)
         {
-            MshExpression retVal = GetDefaultNameExpression(so.PSStandardMembers) ??
+            PSPropertyExpression retVal = GetDefaultNameExpression(so.PSStandardMembers) ??
                                    GetDefaultNameExpression(MaskDeserializedAndGetStandardMembers(so));
 
             return retVal;
         }
 
         /// <summary>
-        /// helper to retrieve the value of an MshExpression and to format it
+        /// helper to retrieve the value of an PSPropertyExpression and to format it
         /// </summary>
         /// <param name="so">shell object to process</param>
         /// <param name="enumerationLimit">limit on IEnumerable enumeration</param>
         /// <param name="ex">expression to use for retrieval</param>
         /// <param name="directive">format directive to use for formatting</param>
         /// <param name="formatErrorObject"></param>
-        /// <param name="expressionFactory">expression factory to create MshExpression</param>
+        /// <param name="expressionFactory">expression factory to create PSPropertyExpression</param>
         /// <param name="result"> not null if an error condition arose</param>
         /// <returns>formatted string</returns>
         internal static string GetExpressionDisplayValue(
             PSObject so,
             int enumerationLimit,
-            MshExpression ex,
+            PSPropertyExpression ex,
             FieldFormattingDirective directive,
             StringFormatError formatErrorObject,
-            MshExpressionFactory expressionFactory,
-            out MshExpressionResult result)
+            PSPropertyExpressionFactory expressionFactory,
+            out PSPropertyExpressionResult result)
         {
             result = null;
-            List<MshExpressionResult> resList = ex.GetValues(so);
+            List<PSPropertyExpressionResult> resList = ex.GetValues(so);
 
             if (resList.Count == 0)
             {
-                return "";
+                return string.Empty;
             }
 
             result = resList[0];
             if (result.Exception != null)
             {
-                return "";
+                return string.Empty;
             }
             return PSObjectHelper.FormatField(directive, result.Result, enumerationLimit, formatErrorObject, expressionFactory);
         }
@@ -564,7 +564,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static bool ShouldShowComputerNameProperty(PSObject so)
         {
             bool result = false;
-            if (null != so)
+            if (so != null)
             {
                 try
                 {
@@ -573,7 +573,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     // if computer name property exists then this must be a remote object. see
                     // if it can be displayed.
-                    if ((null != computerNameProperty) && (null != showComputerNameProperty))
+                    if ((computerNameProperty != null) && (showComputerNameProperty != null))
                     {
                         LanguagePrimitives.TryConvertTo<bool>(showComputerNameProperty.Value, out result);
                     }
@@ -599,9 +599,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal object sourceObject;
     }
 
-    internal sealed class MshExpressionError : FormattingError
+    internal sealed class PSPropertyExpressionError : FormattingError
     {
-        internal MshExpressionResult result;
+        internal PSPropertyExpressionResult result;
     }
 
     internal sealed class StringFormatError : FormattingError
@@ -613,9 +613,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal delegate ScriptBlock CreateScriptBlockFromString(string scriptBlockString);
 
     /// <summary>
-    /// helper class to create MshExpression's from format.ps1xml data structures
+    /// helper class to create PSPropertyExpression's from format.ps1xml data structures
     /// </summary>
-    internal sealed class MshExpressionFactory
+    internal sealed class PSPropertyExpressionFactory
     {
         /// <exception cref="ParseException"></exception>
         internal void VerifyScriptBlockText(string scriptText)
@@ -629,7 +629,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="et">expression token to use</param>
         /// <returns>constructed expression</returns>
         /// <exception cref="ParseException"></exception>
-        internal MshExpression CreateFromExpressionToken(ExpressionToken et)
+        internal PSPropertyExpression CreateFromExpressionToken(ExpressionToken et)
         {
             return CreateFromExpressionToken(et, null);
         }
@@ -641,14 +641,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="loadingInfo">The context from which the file was loaded</param>
         /// <returns>constructed expression</returns>
         /// <exception cref="ParseException"></exception>
-        internal MshExpression CreateFromExpressionToken(ExpressionToken et, DatabaseLoadingInfo loadingInfo)
+        internal PSPropertyExpression CreateFromExpressionToken(ExpressionToken et, DatabaseLoadingInfo loadingInfo)
         {
             if (et.isScriptBlock)
             {
                 // we cache script blocks from expression tokens
                 if (_expressionCache != null)
                 {
-                    MshExpression value;
+                    PSPropertyExpression value;
                     if (_expressionCache.TryGetValue(et, out value))
                     {
                         // got a hit on the cache, just return
@@ -657,7 +657,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    _expressionCache = new Dictionary<ExpressionToken, MshExpression>();
+                    _expressionCache = new Dictionary<ExpressionToken, PSPropertyExpression>();
                 }
 
                 bool isFullyTrusted = false;
@@ -677,7 +677,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     sb.LanguageMode = PSLanguageMode.FullLanguage;
                 }
 
-                MshExpression ex = new MshExpression(sb);
+                PSPropertyExpression ex = new PSPropertyExpression(sb);
 
                 _expressionCache.Add(et, ex);
 
@@ -685,10 +685,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // we do not cache if it is just a property name
-            return new MshExpression(et.expressionValue);
+            return new PSPropertyExpression(et.expressionValue);
         }
 
-        private Dictionary<ExpressionToken, MshExpression> _expressionCache;
+        private Dictionary<ExpressionToken, PSPropertyExpression> _expressionCache;
     }
 }
 

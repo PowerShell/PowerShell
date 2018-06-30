@@ -65,6 +65,16 @@ namespace Microsoft.PowerShell.Commands
         public int MaximumRedirection { get; set; }
 
         /// <summary>
+        /// Gets or sets the count of retries for request failures.
+        /// </summary>
+        public int MaximumRetryCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the interval in seconds between retries.
+        /// </summary>
+        public int RetryIntervalInSeconds { get; set; }
+
+        /// <summary>
         /// Construct a new instance of a WebRequestSession object.
         /// </summary>
         public WebRequestSession()
@@ -94,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="certificate">The certificate to be added.</param>
         internal void AddCertificate(X509Certificate certificate)
         {
-            if (null == Certificates)
+            if (Certificates == null)
             {
                 Certificates = new X509CertificateCollection();
             }

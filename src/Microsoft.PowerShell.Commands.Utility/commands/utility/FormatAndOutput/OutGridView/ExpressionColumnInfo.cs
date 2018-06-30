@@ -10,9 +10,9 @@ namespace Microsoft.PowerShell.Commands
 
     internal class ExpressionColumnInfo : ColumnInfo
     {
-        private MshExpression _expression;
+        private PSPropertyExpression _expression;
 
-        internal ExpressionColumnInfo(string staleObjectPropertyName, string displayName, MshExpression expression)
+        internal ExpressionColumnInfo(string staleObjectPropertyName, string displayName, PSPropertyExpression expression)
             : base(staleObjectPropertyName, displayName)
         {
             _expression = expression;
@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal override Object GetValue(PSObject liveObject)
         {
-            List<MshExpressionResult> resList = _expression.GetValues(liveObject);
+            List<PSPropertyExpressionResult> resList = _expression.GetValues(liveObject);
 
             if (resList.Count == 0)
             {
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Only first element is used.
-            MshExpressionResult result = resList[0];
+            PSPropertyExpressionResult result = resList[0];
             if (result.Exception != null)
             {
                 return null;

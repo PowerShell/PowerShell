@@ -742,7 +742,7 @@ namespace System.Management.Automation
 
             object old = this.DollarErrorVariable;
             ArrayList arraylist = old as ArrayList;
-            if (null == arraylist)
+            if (arraylist == null)
             {
                 Diagnostics.Assert(false, "$error should be a global constant ArrayList");
                 return;
@@ -1257,7 +1257,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // If the assembly is loaded, we ignore error as it may come from the filepath loading.        
+            // If the assembly is loaded, we ignore error as it may come from the filepath loading.
             if (loadedAssembly != null)
             {
                 error = null;
@@ -1284,9 +1284,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (null == host) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (null == ui) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(
                         StringUtil.Format(resourceString, arguments));
                 }
@@ -1314,9 +1314,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (null == host) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (null == ui) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(error);
                 }
             }
@@ -1349,9 +1349,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (null == host) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (null == ui) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(e.Message);
                 }
             }
@@ -1377,9 +1377,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (null == host) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (null == ui) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(errorRecord.ToString());
                 }
             }

@@ -135,7 +135,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -171,7 +171,7 @@ namespace System.Management.Automation
             )
         {
             object[] a;
-            if (null != messageArgs && 0 < messageArgs.Length)
+            if (messageArgs != null && 0 < messageArgs.Length)
             {
                 a = new object[messageArgs.Length + 1];
                 a[0] = commandName;
@@ -257,7 +257,7 @@ namespace System.Management.Automation
             : base(BuildMessage(commandName, requiresPSVersion.ToString(), currentPSVersion, false))
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(commandName), "commandName is null or empty when constructing ScriptRequiresException");
-            Diagnostics.Assert(null != requiresPSVersion, "requiresPSVersion is null or empty when constructing ScriptRequiresException");
+            Diagnostics.Assert(requiresPSVersion != null, "requiresPSVersion is null or empty when constructing ScriptRequiresException");
             Diagnostics.Assert(!string.IsNullOrEmpty(errorId), "errorId is null or empty when constructing ScriptRequiresException");
             _commandName = commandName;
             _requiresPSVersion = requiresPSVersion;

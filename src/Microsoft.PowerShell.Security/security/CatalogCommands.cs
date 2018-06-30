@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (PathInfo tempPath in SessionState.Path.GetResolvedPSPathFromPSPath(p))
                     {
-                        if (ShouldProcess("Including path " + tempPath.ProviderPath, "", ""))
+                        if (ShouldProcess("Including path " + tempPath.ProviderPath, string.Empty, string.Empty))
                         {
                             paths.Add(tempPath.ProviderPath);
                         }

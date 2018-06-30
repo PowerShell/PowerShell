@@ -405,7 +405,7 @@ OPTIONS="-o Debug::NoLocking=1
 -o APT::Install-Suggests=0
 "
 
-cp ../powershell_*ubuntu.14.04_amd64.deb .
+cp ../powershell*ubuntu.14.04_amd64.deb .
 
 # Add local repository so that we can install deb files
 # that were downloaded outside of a repository

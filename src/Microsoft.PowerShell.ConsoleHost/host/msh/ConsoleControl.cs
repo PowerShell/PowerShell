@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell
 
             /// <summary>
             /// A set of bit flags that specify various aspects of mouse motion and button clicks.
-            /// See (http://msdn.microsoft.com/en-us/library/ms646273(VS.85).aspx)
+            /// See (http://msdn.microsoft.com/library/ms646273(VS.85).aspx)
             /// </summary>
             internal DWORD Flags;
 

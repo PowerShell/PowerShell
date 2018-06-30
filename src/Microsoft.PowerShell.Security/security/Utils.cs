@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell
 
             hostUI.Write(prompt);
             ss = hostUI.ReadLineAsSecureString();
-            hostUI.WriteLine("");
+            hostUI.WriteLine(string.Empty);
 
             return ss;
         }
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell
                                                          string path)
         {
             string resolvedProviderPath = cmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path);
-            if (Utils.NativeFileExists(resolvedProviderPath))
+            if (Utils.FileExists(resolvedProviderPath))
             {
                 return resolvedProviderPath;
             }

@@ -213,6 +213,97 @@ Describe "Members of System.Type" -Tags "CI" {
     }
 }
 
+Describe "Hash expression with if statement as value" -Tags "CI" {
+    BeforeAll {
+        # With no extra new lines after if-statement
+        $hash1 = @{
+            a = if (1) {'a'}
+            b = 'b'
+            c = if (0) {2} elseif (1) {'c'}
+            d = 'd'
+            e = if (0) {2} elseif (0) {2} else {'e'}
+            f = 'f'
+            g = if (0) {2} else {'g'}
+            h = 'h'
+        }
+
+        # With extra new lines after if-statement
+        $hash2 = @{
+            a = if (1) {'a'}
+
+            b = 'b'
+            c = if (0) {2} elseif (1) {'c'}
+
+            d = 'd'
+            e = if (0) {2} elseif (0) {2} else {'e'}
+
+            f = 'f'
+            g = if (0) {2} else {'g'}
+
+            h = 'h'
+        }
+
+        # With expanded if-statement
+        $hash3 = @{
+            a = if (1)
+                {
+                    'a'
+                }
+            b = 'b'
+            c = if (0)
+                {
+                    2
+                }
+                elseif (1)
+                {
+                    'c'
+                }
+            d = 'd'
+            e = if (0)
+                {
+                    2
+                }
+                elseif (0)
+                {
+                    2
+                }
+                else
+                {
+                    'e'
+                }
+            f = 'f'
+            g = if (0)
+                {
+                    2
+                }
+                else
+                {
+                    'g'
+                }
+            h = 'h'
+        }
+
+        $testCases = @(
+            @{ name = "No extra new lines"; hash = $hash1 }
+            @{ name = "With extra new lines"; hash = $hash2 }
+            @{ name = "With expanded if-statement"; hash = $hash3 }
+        )
+    }
+
+    It "Key-value pairs after an if-statement-value in a HashExpression should continue to be parsed - <name>" -TestCases $testCases {
+        param($hash)
+
+        $hash['a'] | Should -BeExactly 'a'
+        $hash['b'] | Should -BeExactly 'b'
+        $hash['c'] | Should -BeExactly 'c'
+        $hash['d'] | Should -BeExactly 'd'
+        $hash['e'] | Should -BeExactly 'e'
+        $hash['f'] | Should -BeExactly 'f'
+        $hash['g'] | Should -BeExactly 'g'
+        $hash['h'] | Should -BeExactly 'h'
+    }
+}
+
 Describe "WildcardPattern" -Tags "CI" {
     It "Unescaping escaped string '<inputStr>' should get the original" -TestCases @(
         @{inputStr = '*This'}

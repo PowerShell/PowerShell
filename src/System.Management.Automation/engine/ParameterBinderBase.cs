@@ -255,7 +255,7 @@ namespace System.Management.Automation
                 PSInvalidCastException e = new PSInvalidCastException(ErrorCategory.InvalidArgument.ToString(),
                         null,
                         ParameterBinderStrings.MismatchedPSTypeName,
-                        (null != _invocationInfo) && (null != _invocationInfo.MyCommand) ? _invocationInfo.MyCommand.Name : string.Empty,
+                        (_invocationInfo != null) && (_invocationInfo.MyCommand != null) ? _invocationInfo.MyCommand.Name : string.Empty,
                         parameterMetadata.Name,
                         parameterMetadata.Type,
                         parameterValue.GetType(),
@@ -648,7 +648,7 @@ namespace System.Management.Automation
                             if (values != null)
                             {
                                 var sb = new Text.StringBuilder(256);
-                                var sep = "";
+                                var sep = string.Empty;
                                 foreach (var value in values)
                                 {
                                     sb.Append(sep);
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation
                                         ParameterBinderStrings.CannotConvertArgument,
                                         "CannotConvertArgument",
                                         boType,
-                                        "");
+                                        string.Empty);
 
                                 throw pbe;
                             }
@@ -1388,7 +1388,7 @@ namespace System.Management.Automation
                         null,
                         ParameterBinderStrings.ParameterArgumentValidationErrorNullNotAllowed,
                         "ParameterArgumentValidationErrorNullNotAllowed",
-                        "");
+                        string.Empty);
 
                 throw exception;
             }
@@ -1497,7 +1497,7 @@ namespace System.Management.Automation
                 bindingTracer.WriteLine(
                     "Binding collection parameter {0}: argument type [{1}], parameter type [{2}], collection type {3}, element type [{4}], {5}",
                     parameterName,
-                    (null == currentValue) ? "null" : currentValue.GetType().Name,
+                    (currentValue == null) ? "null" : currentValue.GetType().Name,
                     toType,
                     collectionTypeInformation.ParameterCollectionType,
                     collectionTypeInformation.ElementType,
@@ -1598,7 +1598,7 @@ namespace System.Management.Automation
                             // extract the ICollection<T>::Add(T) method
                             const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
                             Type elementType = collectionTypeInformation.ElementType;
-                            Diagnostics.Assert(null != elementType, "null ElementType");
+                            Diagnostics.Assert(elementType != null, "null ElementType");
                             Exception getMethodError = null;
                             try
                             {
@@ -1615,7 +1615,7 @@ namespace System.Management.Automation
                                     "ArgumentException matching Add(T) for type {0}: {1}", toType.FullName, e.Message);
                                 getMethodError = e;
                             }
-                            if (null == addMethod)
+                            if (addMethod == null)
                             {
                                 ParameterBindingException bindingException =
                                     new ParameterBindingException(
@@ -1628,7 +1628,7 @@ namespace System.Management.Automation
                                         currentValue.GetType(),
                                         ParameterBinderStrings.CannotExtractAddMethod,
                                         "CannotExtractAddMethod",
-                                        (getMethodError == null) ? "" : getMethodError.Message);
+                                        (getMethodError == null) ? string.Empty : getMethodError.Message);
                                 throw bindingException;
                             }
                         }
@@ -1727,7 +1727,7 @@ namespace System.Management.Automation
                         {
                             bindingTracer.WriteLine(
                                 "COERCE collection element from type {0} to type {1}",
-                                (null == valueElement) ? "null" : valueElement.GetType().Name,
+                                (valueElement == null) ? "null" : valueElement.GetType().Name,
                                 collectionElementType);
 
                             // Coerce the element to the appropriate type.
@@ -1742,7 +1742,7 @@ namespace System.Management.Automation
                                         null,
                                         valueElement);
                         }
-                        else if (null != collectionElementType && null != currentValueElement)
+                        else if (collectionElementType != null && currentValueElement != null)
                         {
                             Type currentValueElementType = currentValueElement.GetType();
                             Type desiredElementType = collectionElementType;
@@ -1752,7 +1752,7 @@ namespace System.Management.Automation
                             {
                                 bindingTracer.WriteLine(
                                     "COERCION REQUIRED: Did not attempt to coerce collection element from type {0} to type {1}",
-                                    (null == valueElement) ? "null" : valueElement.GetType().Name,
+                                    (valueElement == null) ? "null" : valueElement.GetType().Name,
                                     collectionElementType);
 
                                 coercionRequired = true;
@@ -1769,7 +1769,7 @@ namespace System.Management.Automation
                             {
                                 bindingTracer.WriteLine(
                                     "Adding element of type {0} to array position {1}",
-                                    (null == currentValueElement) ? "null" : currentValueElement.GetType().Name,
+                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name,
                                     arrayIndex);
                                 resultAsIList[arrayIndex++] = currentValueElement;
                             }
@@ -1777,14 +1777,14 @@ namespace System.Management.Automation
                             {
                                 bindingTracer.WriteLine(
                                     "Adding element of type {0} via IList.Add",
-                                    (null == currentValueElement) ? "null" : currentValueElement.GetType().Name);
+                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name);
                                 resultAsIList.Add(currentValueElement);
                             }
                             else
                             {
                                 bindingTracer.WriteLine(
                                     "Adding element of type {0} via ICollection<T>::Add()",
-                                    (null == currentValueElement) ? "null" : currentValueElement.GetType().Name);
+                                    (currentValueElement == null) ? "null" : currentValueElement.GetType().Name);
                                 addMethod.Invoke(resultCollection, new object[1] { currentValueElement });
                             }
                         }
@@ -1793,7 +1793,7 @@ namespace System.Management.Automation
                             // The inner exception to TargetInvocationException
                             // (if present) has a better Message
                             if (error is TargetInvocationException &&
-                                null != error.InnerException)
+                                error.InnerException != null)
                             {
                                 error = error.InnerException;
                             }
@@ -1866,7 +1866,7 @@ namespace System.Management.Automation
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} to array position {1}",
-                                (null == currentValue) ? "null" : currentValue.GetType().Name,
+                                (currentValue == null) ? "null" : currentValue.GetType().Name,
                                 0);
                             resultAsIList[0] = currentValue;
                         }
@@ -1874,14 +1874,14 @@ namespace System.Management.Automation
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} via IList.Add",
-                                (null == currentValue) ? "null" : currentValue.GetType().Name);
+                                (currentValue == null) ? "null" : currentValue.GetType().Name);
                             resultAsIList.Add(currentValue);
                         }
                         else
                         {
                             bindingTracer.WriteLine(
                                 "Adding scalar element of type {0} via ICollection<T>::Add()",
-                                (null == currentValue) ? "null" : currentValue.GetType().Name);
+                                (currentValue == null) ? "null" : currentValue.GetType().Name);
                             addMethod.Invoke(resultCollection, new object[1] { currentValue });
                         }
                     }
@@ -1890,7 +1890,7 @@ namespace System.Management.Automation
                         // The inner exception to TargetInvocationException
                         // (if present) has a better Message
                         if (error is TargetInvocationException &&
-                            null != error.InnerException)
+                            error.InnerException != null)
                         {
                             error = error.InnerException;
                         }

@@ -21,13 +21,15 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
     # Branch is named release-<semver>
     if($Branch -match '^.*(release-)')
     {
-        $releaseTag = $branchOnly -replace '^.*(release-)'
+        Write-verbose "release branch:" -verbose
+        $releaseTag = $Branch -replace '^.*(release-)'
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
     }
     else
     {
+        Write-verbose "non-release branch" -verbose
         # Branch is named <previewname>
         # Get version from metadata and append -<previewname>
         $metaDataJsonPath = Join-Path $PSScriptRoot -ChildPath '..\metadata.json'

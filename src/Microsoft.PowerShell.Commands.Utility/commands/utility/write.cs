@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "NoException")]
         [Parameter(ParameterSetName = "WithException")]
-        public string ErrorId { get; set; } = "";
+        public string ErrorId { get; set; } = string.Empty;
 
         /// <summary>
         /// ErrorRecord.TargetObject
@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands
         /// ErrorRecord.ErrorDetails.RecommendedAction
         /// </summary>
         [Parameter]
-        public string RecommendedAction { get; set; } = "";
+        public string RecommendedAction { get; set; } = string.Empty;
 
         /* 2005/01/25 removing throw-error
         /// <summary>
@@ -283,28 +283,28 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("Activity")]
-        public string CategoryActivity { get; set; } = "";
+        public string CategoryActivity { get; set; } = string.Empty;
 
         /// <summary>
         /// ErrorRecord.CategoryInfo.Reason
         /// </summary>
         [Parameter]
         [Alias("Reason")]
-        public string CategoryReason { get; set; } = "";
+        public string CategoryReason { get; set; } = string.Empty;
 
         /// <summary>
         /// ErrorRecord.CategoryInfo.TargetName
         /// </summary>
         [Parameter]
         [Alias("TargetName")]
-        public string CategoryTargetName { get; set; } = "";
+        public string CategoryTargetName { get; set; } = string.Empty;
 
         /// <summary>
         /// ErrorRecord.CategoryInfo.TargetType
         /// </summary>
         [Parameter]
         [Alias("TargetType")]
-        public string CategoryTargetType { get; set; } = "";
+        public string CategoryTargetType { get; set; } = string.Empty;
 
         /// <summary>
         /// Write an error to the output pipe, or throw a terminating error.
@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             ErrorRecord errorRecord = this.ErrorRecord;
-            if (null != errorRecord)
+            if (errorRecord != null)
             {
                 // copy constructor
                 errorRecord = new ErrorRecord(errorRecord, null);
@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Exception e = this.Exception;
                 string msg = Message;
-                if (null == e)
+                if (e == null)
                 {
                     e = new WriteErrorException(msg);
                 }
@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.Commands
                     TargetObject
                     );
 
-                if ((null != this.Exception && !String.IsNullOrEmpty(msg)))
+                if (this.Exception != null && !String.IsNullOrEmpty(msg))
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(msg);
                 }
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
             string recact = RecommendedAction;
             if (!String.IsNullOrEmpty(recact))
             {
-                if (null == errorRecord.ErrorDetails)
+                if (errorRecord.ErrorDetails == null)
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(errorRecord.ToString());
                 }
@@ -374,7 +374,7 @@ namespace Microsoft.PowerShell.Commands
             // 2005/07/14-913791 "write-error output is confusing and misleading"
             // set InvocationInfo to the script not the command
             InvocationInfo myInvocation = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-            if (null != myInvocation)
+            if (myInvocation != null)
             {
                 errorRecord.SetInvocationInfo(myInvocation);
                 errorRecord.PreserveInvocationInfoOnce = true;
