@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureSum;
 
         /// <summary>
-        /// Set to true is all the statitics is to be returned
+        /// Set to true is all the statitics is to be returned.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = GenericParameterSet)]
@@ -321,11 +321,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _allStats;
             }
+
             set
             {
                 _allStats = value;
             }
         }
+        
         private bool _allStats;
 
         /// <summary>
@@ -480,7 +482,8 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if( _allStats ){
+            if (_allStats)
+            {
                 _measureSum = _measureStandardDeviation = _measureAverage = _measureMax = _measureMin = true;
             }
 
