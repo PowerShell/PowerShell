@@ -311,6 +311,24 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureSum;
 
         /// <summary>
+        /// Set to true is all the statitics is to be returned
+        /// </summary>
+        /// <value></value>
+        [Parameter(ParameterSetName = GenericParameterSet)]
+        public SwitchParameter AllStats
+        {
+            get
+            {
+                return _allStats;
+            }
+            set
+            {
+                _allStats = value;
+            }
+        }
+        private bool _allStats;
+
+        /// <summary>
         /// Set to true is Average is to be returned
         /// </summary>
         /// <value></value>
@@ -460,6 +478,10 @@ namespace Microsoft.PowerShell.Commands
             if (InputObject == null || InputObject == AutomationNull.Value)
             {
                 return;
+            }
+
+            if( _allStats ){
+                _measureSum = _measureStandardDeviation = _measureAverage = _measureMax = _measureMin = true;
             }
 
             _totalRecordCount++;

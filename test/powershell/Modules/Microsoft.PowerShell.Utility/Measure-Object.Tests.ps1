@@ -174,6 +174,18 @@ Describe "Measure-Object" -Tags "CI" {
 
             $actual.Maximum | Should -Be $expected
         }
+
+        It "Should be able to return all the statitics for given values" {
+            $testNumbers = 1,1,2,4,5,6
+            $actual      = $testNumbers | Measure-Object -AllStats
+
+            $actual.Average | Should -Not -BeNullOrEmpty
+            $actual.Count | Should -Not -BeNullOrEmpty
+            $actual.Sum | Should -Not -BeNullOrEmpty
+            $actual.Maximum | Should -Not -BeNullOrEmpty
+            $actual.Average | Should -Not -BeNullOrEmpty
+            $actual.StandardDeviation | Should -Not -BeNullOrEmpty
+        }
     }
 
     Context "String tests" {
