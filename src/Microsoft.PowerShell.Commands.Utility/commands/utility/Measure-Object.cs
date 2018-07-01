@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureSum;
 
         /// <summary>
-        /// Set to true is all the statitics is to be returned.
+        /// Sets all generic parameters to true and returns all the statitics.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = GenericParameterSet)]
