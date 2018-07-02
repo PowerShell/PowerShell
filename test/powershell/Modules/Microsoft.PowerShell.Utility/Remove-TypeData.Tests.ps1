@@ -1,4 +1,6 @@
-﻿Describe "Remove-TypeData DRT Unit Tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Remove-TypeData DRT Unit Tests" -Tags "CI" {
     BeforeAll {
         $XMLFile1 = Join-Path $TestDrive -ChildPath "testFile1.ps1xml"
         $XMLFile2 = Join-Path $TestDrive -ChildPath "testFile2.ps1xml"
@@ -48,10 +50,10 @@
     It "Remove With Pipe line Input Pass Type Shortcut String" {
         $null = $ps.AddScript("Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value TestNote -TypeName int").Invoke()
         $ps.Commands.Clear()
-        $ps.AddScript("(Get-TypeData System.Int32).TypeName").Invoke() | Should Be System.Int32
+        $ps.AddScript("(Get-TypeData System.Int32).TypeName").Invoke() | Should -Be System.Int32
         $ps.Commands.Clear()
         $null = $ps.AddScript("'int' | Remove-TypeData").Invoke()
-        $ps.HadErrors | Should be $false
+        $ps.HadErrors | Should -BeFalse
     }
 
     It "Remove Type File In Initial Session State" {
@@ -63,21 +65,21 @@
         $null = $ps.AddScript('$a = 1..3').Invoke()
         $ps.Commands.Clear()
         # test
-        $ps.AddScript('$a.Yada').Invoke() | Should be 3
+        $ps.AddScript('$a.Yada').Invoke() | Should -Be 3
         $ps.Commands.Clear()
-        $ps.AddScript('$a.Yoda').Invoke() | Should Be 3
+        $ps.AddScript('$a.Yoda').Invoke() | Should -Be 3
         $ps.Commands.Clear()
         $null = $ps.AddScript("Remove-TypeData -Path $XMLFile1").Invoke()
         $ps.Commands.Clear()
-        $ps.AddScript('$a.Yada').Invoke() | Should BeNullOrEmpty
+        $ps.AddScript('$a.Yada').Invoke() | Should -BeNullOrEmpty
         $ps.Commands.Clear()
-        $ps.AddScript('$a.Yoda').Invoke() | Should Be 3
+        $ps.AddScript('$a.Yoda').Invoke() | Should -Be 3
         $ps.Commands.Clear()
     }
 
     It "Remove Type File In Initial Session State File Not In Cache" {
         $null = $ps.AddScript("Remove-TypeData -Path fakefile").Invoke()
-        $ps.HadErrors | Should be $true
-        $ps.Streams.Error[0].FullyQualifiedErrorID | Should Be "TypePathException,Microsoft.PowerShell.Commands.RemoveTypeDataCommand"
+        $ps.HadErrors | Should -BeTrue
+        $ps.Streams.Error[0].FullyQualifiedErrorID | Should -BeExactly "TypePathException,Microsoft.PowerShell.Commands.RemoveTypeDataCommand"
     }
 }

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Collections.Generic;
@@ -148,7 +147,7 @@ namespace System.Management.Automation.Runspaces
                 allErrors.Append('\n');
             }
 
-            string message = "";
+            string message = string.Empty;
             if (category == RunspaceConfigurationCategory.Types)
             {
                 message =
@@ -182,7 +181,7 @@ namespace System.Management.Automation.Runspaces
                 allErrors.Append('\n');
             }
 
-            string message = "";
+            string message = string.Empty;
             if (category == RunspaceConfigurationCategory.Types)
             {
                 message =
@@ -198,6 +197,4 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-
-
 

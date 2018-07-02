@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
@@ -148,7 +147,6 @@ namespace System.Management.Automation
             _description = description;
         }
 
-
         /// <summary>
         /// Constructs a variable with the given name, value, options, and attributes
         /// </summary>
@@ -248,13 +246,12 @@ namespace System.Management.Automation
         }
         private string _description = String.Empty;
 
-
         internal void DebuggerCheckVariableRead()
         {
             var context = SessionState != null
                               ? SessionState.ExecutionContext
                               : LocalPipeline.GetExecutionContextFromTLS();
-            if (null != context && context._debuggingMode > 0)
+            if (context != null && context._debuggingMode > 0)
             {
                 context.Debugger.CheckVariableRead(Name);
             }
@@ -265,7 +262,7 @@ namespace System.Management.Automation
             var context = SessionState != null
                               ? SessionState.ExecutionContext
                               : LocalPipeline.GetExecutionContextFromTLS();
-            if (null != context && context._debuggingMode > 0)
+            if (context != null && context._debuggingMode > 0)
             {
                 context.Debugger.CheckVariableWrite(Name);
             }
@@ -419,7 +416,6 @@ namespace System.Management.Automation
             get { return _attributes ?? (_attributes = new PSVariableAttributeCollection(this)); }
         }
         private PSVariableAttributeCollection _attributes;
-
 
         /// <summary>
         /// Checks if the given value meets the validation attribute constraints on the PSVariable.
@@ -733,7 +729,6 @@ namespace System.Management.Automation
             // The variable assignment binder copies mutable values and returns other values as is.
             return _copyMutableValueSite.Target.Invoke(_copyMutableValueSite, o);
         }
-
 
         internal void WrapValue()
         {

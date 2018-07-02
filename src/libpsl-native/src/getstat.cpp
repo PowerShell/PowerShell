@@ -1,5 +1,6 @@
-//! @file getstat.cpp
-//! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief returns the stat of a file
 
 #include "getstat.h"
@@ -33,6 +34,10 @@
 //! @retval -1 if failed
 //!
 
+// DO NOT use in managed code
+// use externally defined structs in managed code has proven to be buggy
+// (memory corruption issues due to layout difference between platforms)
+// see https://github.com/dotnet/corefx/issues/29700#issuecomment-389313075
 int32_t GetStat(const char* path, struct stat* buf)
 {
     assert(path);

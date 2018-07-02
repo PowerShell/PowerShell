@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -98,13 +97,13 @@ namespace System.Management.Automation
             // the immediate parent class, the next is its parent, and so on; the last element
             // is the base class.
             PropertyData derivationData = managementObj.SystemProperties["__Derivation"];
-            if (null != derivationData)
+            if (derivationData != null)
             {
                 Dbg.Assert(derivationData.IsArray, "__Derivation must be a string array as per MSDN documentation");
 
                 // give the typenames based on NameSpace + __Derivation
                 string[] typeHierarchy = PropertySetAndMethodArgumentConvertTo(derivationData.Value, typeof(string[]), CultureInfo.InvariantCulture) as string[];
-                if (null != typeHierarchy)
+                if (typeHierarchy != null)
                 {
                     foreach (string t in typeHierarchy)
                     {
@@ -219,7 +218,6 @@ namespace System.Management.Automation
             AddAllMethods<T>(wmiObject, returnValue);
             return returnValue;
         }
-
 
         /// <summary>
         /// Called after a non null return from GetMember to try to call
@@ -486,9 +484,9 @@ namespace System.Management.Automation
         /// <exception cref="ManagementException"></exception>
         private static void PopulateMethodTable(ManagementClass mgmtClass, CacheTable methodTable, bool staticBinding)
         {
-            Dbg.Assert(null != mgmtClass, "ManagementClass cannot be null in this method");
+            Dbg.Assert(mgmtClass != null, "ManagementClass cannot be null in this method");
             MethodDataCollection mgmtMethods = mgmtClass.Methods;
-            if (null != mgmtMethods)
+            if (mgmtMethods != null)
             {
                 ManagementPath classPath = mgmtClass.ClassPath;
                 // new operation will never fail
@@ -521,13 +519,13 @@ namespace System.Management.Automation
             ManagementClass mgmtClass = mgmtBaseObject as ManagementClass;
 
             // try to use the actual object sent to this method..otherwise construct one
-            if (null == mgmtClass)
+            if (mgmtClass == null)
             {
                 mgmtClass = new ManagementClass(mgmtBaseObject.ClassPath);
 
                 // inherit ManagementObject properties
                 ManagementObject mgmtObject = mgmtBaseObject as ManagementObject;
-                if (null != mgmtObject)
+                if (mgmtObject != null)
                 {
                     mgmtClass.Scope = mgmtObject.Scope;
                     mgmtClass.Options = mgmtObject.Options;
@@ -562,7 +560,7 @@ namespace System.Management.Automation
             {
                 string cimType = (string)pData.Qualifiers["cimtype"].Value;
                 result = string.Format(CultureInfo.InvariantCulture, "{0}#{1}",
-                    typeof(ManagementObject).FullName, cimType.Replace("object:", ""));
+                    typeof(ManagementObject).FullName, cimType.Replace("object:", string.Empty));
             }
             catch (ManagementException)
             {
@@ -703,7 +701,6 @@ namespace System.Management.Automation
 
             Diagnostics.Assert(parameterList.Length == verifiedArguments.Length,
                 "The number of parameters and arguments should match");
-
 
             // we should not cache inParameters as we are updating
             // inParameters object with argument values..Caching will
@@ -889,7 +886,6 @@ namespace System.Management.Automation
         protected abstract object InvokeManagementMethod(ManagementObject wmiObject,
             string methodName, ManagementBaseObject inParams);
 
-
         /// <summary>
         /// Get a method object given method name
         /// </summary>
@@ -903,7 +899,6 @@ namespace System.Management.Automation
         protected abstract T GetManagementObjectMethod<T>(ManagementBaseObject wmiObject,
             string methodName) where T : PSMemberInfo;
 
-
         /// <summary>
         /// Returns null if propertyName is not a property in the adapter or
         /// the corresponding PSProperty with its adapterData set to information
@@ -914,7 +909,6 @@ namespace System.Management.Automation
         /// <returns>The PSProperty corresponding to propertyName from obj</returns>
         protected abstract PSProperty DoGetProperty(ManagementBaseObject wmiObject,
             string propertyName);
-
 
         #endregion
 
@@ -1109,7 +1103,6 @@ namespace System.Management.Automation
                                     string.Empty);
                 // ignore the exception.
             }
-
 
             return null;
         }

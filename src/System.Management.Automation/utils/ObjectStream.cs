@@ -1,7 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation.Internal
 {
@@ -1335,7 +1333,7 @@ namespace System.Management.Automation.Internal
             {
                 enumerable = LanguagePrimitives.GetEnumerable(obj);
             }
-            if (null == enumerable)
+            if (enumerable == null)
                 a.Add(obj);
             else
             {
@@ -1563,7 +1561,7 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PSDataCollectionStream(Guid psInstanceId, PSDataCollection<T> storeToUse)
         {
-            if (null == storeToUse)
+            if (storeToUse == null)
             {
                 throw PSTraceSource.NewArgumentNullException("storeToUse");
             }
@@ -1663,11 +1661,11 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (null == _objectReader)
+                if (_objectReader == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == _objectReader)
+                        if (_objectReader == null)
                         {
                             _objectReader = new PSDataCollectionReader<T, object>(this);
                         }
@@ -1688,11 +1686,11 @@ namespace System.Management.Automation.Internal
         /// the object that this stream writes belongs to</remarks>
         internal PipelineReader<object> GetObjectReaderForPipeline(String computerName, Guid runspaceId)
         {
-            if (null == _objectReaderForPipeline)
+            if (_objectReaderForPipeline == null)
             {
                 lock (_syncObject)
                 {
-                    if (null == _objectReaderForPipeline)
+                    if (_objectReaderForPipeline == null)
                     {
                         _objectReaderForPipeline =
                             new PSDataCollectionPipelineReader<T, object>(this, computerName, runspaceId);
@@ -1710,11 +1708,11 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (null == _psobjectReader)
+                if (_psobjectReader == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == _psobjectReader)
+                        if (_psobjectReader == null)
                         {
                             _psobjectReader = new PSDataCollectionReader<T, PSObject>(this);
                         }
@@ -1735,11 +1733,11 @@ namespace System.Management.Automation.Internal
         /// the object that this stream writes belongs to</remarks>
         internal PipelineReader<PSObject> GetPSObjectReaderForPipeline(String computerName, Guid runspaceId)
         {
-            if (null == _psobjectReaderForPipeline)
+            if (_psobjectReaderForPipeline == null)
             {
                 lock (_syncObject)
                 {
-                    if (null == _psobjectReaderForPipeline)
+                    if (_psobjectReaderForPipeline == null)
                     {
                         _psobjectReaderForPipeline =
                             new PSDataCollectionPipelineReader<T, PSObject>(this, computerName, runspaceId);
@@ -1761,11 +1759,11 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (null == _writer)
+                if (_writer == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == _writer)
+                        if (_writer == null)
                         {
                             _writer = new PSDataCollectionWriter<T>(this) as PipelineWriter;
                         }
@@ -1824,7 +1822,7 @@ namespace System.Management.Automation.Internal
             {
                 enumerable = LanguagePrimitives.GetEnumerable(obj);
             }
-            if (null == enumerable)
+            if (enumerable == null)
             {
                 objectsToAdd.Add((T)LanguagePrimitives.ConvertTo(obj,
                     typeof(T), Globalization.CultureInfo.InvariantCulture));

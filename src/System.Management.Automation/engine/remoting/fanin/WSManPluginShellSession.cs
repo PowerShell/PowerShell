@@ -1,8 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 // ----------------------------------------------------------------------
-//
-//  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//
 //  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.
 // ----------------------------------------------------------------------
@@ -146,7 +144,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if (null == inboundData)
+            if (inboundData == null)
             {
                 // no data is supplied..just ignore.
                 WSManPluginInstance.ReportOperationComplete(
@@ -204,7 +202,7 @@ namespace System.Management.Automation.Remoting
                 return false;
             }
 
-            if ((null == streamSet) ||
+            if ((streamSet == null) ||
                 (1 != streamSet.streamIDsCount))
             {
                 // only "stdout" is the supported output stream.
@@ -275,7 +273,7 @@ namespace System.Management.Automation.Remoting
                             shutDownContext,
                             -1, // INFINITE
                             true); // TODO: Do I need to worry not being able to set missing WT_TRANSFER_IMPERSONATION?
-                        if (null == this.registeredShutDownWaitHandle)
+                        if (this.registeredShutDownWaitHandle == null)
                         {
                             isRegisterWaitForSingleObjectFailed = true;
                             registeredShutdownNotification = 0;
@@ -316,7 +314,7 @@ namespace System.Management.Automation.Remoting
         internal void HandleTransportError(Object sender, TransportErrorOccuredEventArgs eventArgs)
         {
             Exception reasonForClose = null;
-            if (null != eventArgs)
+            if (eventArgs != null)
             {
                 reasonForClose = eventArgs.Exception;
             }
@@ -336,7 +334,7 @@ namespace System.Management.Automation.Remoting
             if (Interlocked.Exchange(ref registeredShutdownNotification, 0) == 1)
             {
                 // release the shutdown notification handle.
-                if (null != registeredShutDownWaitHandle)
+                if (registeredShutDownWaitHandle != null)
                 {
                     registeredShutDownWaitHandle.Unregister(null);
                     registeredShutDownWaitHandle = null;
@@ -346,7 +344,7 @@ namespace System.Management.Automation.Remoting
             // Delete the context only if isShuttingDown != true. isShuttingDown will
             // be true only when the method is called from RegisterWaitForSingleObject
             // handler..in which case the context will be freed from the callback.
-            if (null != shutDownContext)
+            if (shutDownContext != null)
             {
                 shutDownContext = null;
             }
@@ -375,7 +373,7 @@ namespace System.Management.Automation.Remoting
         {
             lock (_syncObject)
             {
-                if (null != sendRequestDetails)
+                if (sendRequestDetails != null)
                 {
                     // report and clear the send request details
                     WSManPluginInstance.ReportWSManOperationComplete(sendRequestDetails, lastErrorReported);
@@ -444,7 +442,7 @@ namespace System.Management.Automation.Remoting
             int flags, // in
             WSManNativeApi.WSManData_UnToMan inboundConnectInformation) // in optional
         {
-            if (null == inboundConnectInformation)
+            if (inboundConnectInformation == null)
             {
                 WSManPluginInstance.ReportOperationComplete(
                     requestDetails,
@@ -566,7 +564,7 @@ namespace System.Management.Automation.Remoting
             WSManPluginOperationShutdownContext context)
         {
             WSManPluginCommandSession mgdCmdSession = GetCommandSession(context.commandContext);
-            if (null == mgdCmdSession)
+            if (mgdCmdSession == null)
             {
                 // this should never be the case. this will protect the service.
                 return;
@@ -665,7 +663,7 @@ namespace System.Management.Automation.Remoting
             RemoteSessionStateMachineEventArgs eventArgs)
         {
             Exception reasonForClose = null;
-            if (null != eventArgs)
+            if (eventArgs != null)
             {
                 reasonForClose = eventArgs.Reason;
             }

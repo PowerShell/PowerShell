@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Diagnostics;
@@ -213,49 +212,6 @@ namespace System.Management.Automation
             this.Debugger = debugger;
             this.IsAsync = isAsync;
         }
-    }
-
-    #endregion
-
-    #region DebugSource
-
-    /// <summary>
-    /// Contains debugger script and script file information.
-    /// </summary>
-    public sealed class DebugSource
-    {
-        /// <summary>
-        /// Full script.
-        /// </summary>
-        public string Script { get; private set; }
-
-        /// <summary>
-        /// Script file for script or null.
-        /// </summary>
-        public string ScriptFile { get; private set; }
-
-        /// <summary>
-        /// Xaml definition for Workflow script or null.
-        /// </summary>
-        public string XamlDefinition { get; private set; }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="script">Script text</param>
-        /// <param name="scriptFile">Script file</param>
-        /// <param name="xamlDefinition">Xaml definition</param>
-        public DebugSource(
-            string script,
-            string scriptFile,
-            string xamlDefinition)
-        {
-            Script = script;
-            ScriptFile = scriptFile;
-            XamlDefinition = xamlDefinition;
-        }
-
-        private DebugSource() { }
     }
 
     #endregion
@@ -623,7 +579,7 @@ namespace System.Management.Automation
         public abstract DebuggerStopEventArgs GetDebuggerStopArgs();
 
         /// <summary>
-        /// Sets the parent debugger and breakpoints.
+        /// Sets the parent debugger, breakpoints and other debugging context information.
         /// </summary>
         /// <param name="parent">Parent debugger</param>
         /// <param name="breakPoints">List of breakpoints</param>
@@ -636,27 +592,6 @@ namespace System.Management.Automation
             DebuggerResumeAction? startAction,
             PSHost host,
             PathInfo path)
-        {
-            throw new PSNotImplementedException();
-        }
-
-        /// <summary>
-        /// Sets the parent debugger, breakpoints, function source and other
-        /// debugging context information.
-        /// </summary>
-        /// <param name="parent">Parent debugger</param>
-        /// <param name="breakPoints">List of breakpoints</param>
-        /// <param name="startAction">Debugger mode</param>
-        /// <param name="host">PowerShell host</param>
-        /// <param name="path">Current path</param>
-        /// <param name="functionSourceMap">Function to source map</param>
-        public virtual void SetParent(
-            Debugger parent,
-            IEnumerable<Breakpoint> breakPoints,
-            DebuggerResumeAction? startAction,
-            PSHost host,
-            PathInfo path,
-            Dictionary<string, DebugSource> functionSourceMap)
         {
             throw new PSNotImplementedException();
         }
@@ -2971,8 +2906,7 @@ namespace System.Management.Automation
                     _idToBreakpoint.Values.ToArray<Breakpoint>(),
                     startAction,
                     _context.EngineHostInterface.ExternalHost,
-                    _context.SessionState.Path.CurrentLocation,
-                    GetFunctionToSourceMap());
+                    _context.SessionState.Path.CurrentLocation);
             }
             else
             {
@@ -3021,57 +2955,6 @@ namespace System.Management.Automation
                 }
                 catch (PSNotImplementedException) { }
             }
-        }
-
-        private Dictionary<string, DebugSource> GetFunctionToSourceMap()
-        {
-            Dictionary<string, DebugSource> fnToSource = new Dictionary<string, DebugSource>();
-
-            // Get workflow function source information for workflow debugger.
-            Collection<PSObject> items = _context.SessionState.InvokeProvider.Item.Get("function:\\*");
-            foreach (var item in items)
-            {
-                var funcItem = item.BaseObject as WorkflowInfo;
-                if ((funcItem != null) &&
-                    (!string.IsNullOrEmpty(funcItem.Name)))
-                {
-                    if ((funcItem.Module != null) && (funcItem.Module.Path != null))
-                    {
-                        string scriptFile = funcItem.Module.Path;
-                        string scriptSource = GetFunctionSource(scriptFile);
-                        if (scriptSource != null)
-                        {
-                            fnToSource.Add(
-                                funcItem.Name,
-                                new DebugSource(
-                                    scriptSource,
-                                    scriptFile,
-                                    funcItem.XamlDefinition));
-                        }
-                    }
-                }
-            }
-
-            return fnToSource;
-        }
-
-        private string GetFunctionSource(
-            string scriptFile)
-        {
-            if (System.IO.File.Exists(scriptFile))
-            {
-                try
-                {
-                    return System.IO.File.ReadAllText(scriptFile);
-                }
-                catch (ArgumentException) { }
-                catch (System.IO.IOException) { }
-                catch (UnauthorizedAccessException) { }
-                catch (NotSupportedException) { }
-                catch (System.Security.SecurityException) { }
-            }
-
-            return null;
         }
 
         private void RemoveFromRunningJobList(Job job)
@@ -4033,7 +3916,7 @@ namespace System.Management.Automation
             ActionPreference pref = ActionPreference.Continue;
 
             string message;
-            if (null == args || 0 == args.Length)
+            if (args == null || args.Length == 0)
             {
                 // Don't format in case the string contains literal curly braces
                 message = resourceString;
@@ -5073,28 +4956,28 @@ namespace System.Management.Automation
         /// </summary>
         private void DisplayHelp(PSHost host, IList<PSObject> output)
         {
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.StepHelp, StepShortcut, StepCommand), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.StepOverHelp, StepOverShortcut, StepOverCommand), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.StepOutHelp, StepOutShortcut, StepOutCommand), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.ContinueHelp, ContinueShortcut, ContinueCommand), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.StopHelp, StopShortcut, StopCommand), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.DetachHelp, DetachShortcut, DetachCommand), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.GetStackTraceHelp, GetStackTraceShortcut), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.ListHelp, ListShortcut, ListCommand), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.AdditionalListHelp1), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.AdditionalListHelp2), host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.AdditionalListHelp3), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.EnterHelp, StepCommand, StepOverCommand, ListCommand), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.HelpCommandHelp, HelpShortcut, HelpCommand), host, output);
             WriteLine("\n", host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.PromptHelp), host, output);
-            WriteLine("", host, output);
+            WriteLine(string.Empty, host, output);
         }
 
         /// <summary>

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 # There is an automatic 'using namespace system' which is
 # tested by this test, so don't uncomment the following:
@@ -40,22 +42,22 @@ class C2
 
 Describe "Using Namespace" -Tags "CI" {
     It "Type literals w/ using namespace" {
-        [Thread].FullName | Should Be System.Threading.Thread
-        [Int32].FullName | Should Be System.Int32
+        [Thread].FullName | Should -Be System.Threading.Thread
+        [Int32].FullName | Should -Be System.Int32
         #[ElapsedEventHandler].FullName | Should Be System.Timers.ElapsedEventHandler
 
-        [C1].GetProperty("Thread").PropertyType.FullName | Should Be System.Threading.Thread
-        [C1].GetProperty("Int").PropertyType.FullName | Should Be System.Int32
+        [C1].GetProperty("Thread").PropertyType.FullName | Should -Be System.Threading.Thread
+        [C1].GetProperty("Int").PropertyType.FullName | Should -Be System.Int32
         # [C1].GetProperty("EventHandler").PropertyType.FullName | Should Be System.Timers.ElapsedEventHandler
     }
 
     It "Covert string to Type w/ using namespace" {
-        ("Thread" -as [Type]).FullName | Should Be System.Threading.Thread
-        ("Int32" -as [Type]).FullName | Should Be System.Int32
+        ("Thread" -as [Type]).FullName | Should -Be System.Threading.Thread
+        ("Int32" -as [Type]).FullName | Should -Be System.Int32
         # ("ElapsedEventHandler" -as [Type]).FullName | Should Be System.Timers.ElapsedEventHandler
 
-        New-Object Int32 | Should Be 0
-        New-Object CompilerGeneratedAttribute | Should Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
+        New-Object Int32 | Should -Be 0
+        New-Object CompilerGeneratedAttribute | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
     }
 
     It "Attributes w/ using namespace" -pending {
@@ -73,34 +75,34 @@ Describe "Using Namespace" -Tags "CI" {
             "OK"
         }
 
-        foo | Should Be OK
+        foo | Should -Be OK
         $cmdInfo = gcm foo
-        $cmdInfo.ScriptBlock.Attributes[0] | Should Be System.Diagnostics.DebuggerStepThroughAttribute
-        $cmdInfo.Parameters['a'].Attributes[1] | Should Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
-        $cmdInfo.Parameters['b'].Attributes[1] | Should Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
+        $cmdInfo.ScriptBlock.Attributes[0] | Should -Be System.Diagnostics.DebuggerStepThroughAttribute
+        $cmdInfo.Parameters['a'].Attributes[1] | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
+        $cmdInfo.Parameters['b'].Attributes[1] | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
 
-        [C1].GetProperty("Thread").GetCustomAttributesData()[0].AttributeType.FullName | Should Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
-        [C1].GetProperty("Int").GetCustomAttributesData()[0].AttributeType.FullName | Should Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
+        [C1].GetProperty("Thread").GetCustomAttributesData()[0].AttributeType.FullName | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
+        [C1].GetProperty("Int").GetCustomAttributesData()[0].AttributeType.FullName | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
         # [C1].GetProperty("EventHandler").GetCustomAttributesData()[0].AttributeType.FullName | Should Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
 
-        [C2].GetProperty("Thread").GetCustomAttributesData()[0].AttributeType.FullName | Should Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
-        [C2].GetProperty("Int").GetCustomAttributesData()[0].AttributeType.FullName | Should Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
+        [C2].GetProperty("Thread").GetCustomAttributesData()[0].AttributeType.FullName | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
+        [C2].GetProperty("Int").GetCustomAttributesData()[0].AttributeType.FullName | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
         # [C2].GetProperty("EventHandler").GetCustomAttributesData()[0].AttributeType.FullName | Should Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
 
-        [C1].GetCustomAttributesData()[0].AttributeType.FullName | Should Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
-        [C2].GetCustomAttributesData()[0].AttributeType.FullName | Should Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
+        [C1].GetCustomAttributesData()[0].AttributeType.FullName | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
+        [C2].GetCustomAttributesData()[0].AttributeType.FullName | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
 
-        [E1].GetCustomAttributesData()[0].AttributeType.FullName | Should Be System.FlagsAttribute
+        [E1].GetCustomAttributesData()[0].AttributeType.FullName | Should -Be System.FlagsAttribute
     }
 
     It "Ambiguous type reference" {
-        { [ThreadState] } | ShouldBeErrorId AmbiguousTypeReference
+        { [ThreadState] } | Should -Throw -ErrorId AmbiguousTypeReference
     }
 
     It "Parameters" {
         function foo([Thread]$t = $null) { 42 }
 
-        foo | Should Be 42
+        foo | Should -Be 42
 
         $mod = New-Module -Name UsingNamespaceModule -ScriptBlock {
             function Set-Thread([Thread]$t = $null)
@@ -109,14 +111,14 @@ Describe "Using Namespace" -Tags "CI" {
             }
         }
         Import-Module $mod
-        Set-Thread | Should Be 44
+        Set-Thread | Should -Be 44
         Remove-Module $mod
     }
 
     It "Generics" {
         function foo([List[string]]$l)
         {
-            $l | Should Be "a string"
+            $l | Should -Be "a string"
         }
 
         $l = [List[string]]::new()

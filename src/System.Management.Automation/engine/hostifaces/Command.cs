@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -479,7 +478,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (scriptBlock.UsesCmdletBinding)
                 {
-                    FunctionInfo functionInfo = new FunctionInfo("", scriptBlock, executionContext);
+                    FunctionInfo functionInfo = new FunctionInfo(string.Empty, scriptBlock, executionContext);
                     commandProcessorBase = new CommandProcessor(functionInfo, executionContext,
                                                                 _useLocalScope ?? false, fromScriptFile: false, sessionState: executionContext.EngineSessionState);
                 }
@@ -557,7 +556,6 @@ namespace System.Management.Automation.Runspaces
         #endregion Private fields
 
         #region Serialization / deserialization for remoting
-
 
         /// <summary>
         /// Creates a Command object from a PSObject property bag.
@@ -642,7 +640,6 @@ namespace System.Management.Automation.Runspaces
 
             commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MergeUnclaimedPreviousCommandResults, this.MergeUnclaimedPreviousCommandResults));
 
-
             if (psRPVersion != null &&
                 psRPVersion >= RemotingConstants.ProtocolVersionWin10RTM)
             {
@@ -712,7 +709,6 @@ namespace System.Management.Automation.Runspaces
 
             return commandAsPSObject;
         }
-
 
         #endregion
 

@@ -1,11 +1,14 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 param(
     [Parameter(Mandatory)]
     [string] $Path,
     [string[]] $AuthenticodeDualFiles,
-    [string[]] $AuthenticodeFiles
+    [string[]] $AuthenticodeFiles,
+    [string[]] $NuPkgFiles
 )
 
-if ((!$AuthenticodeDualFiles -or $AuthenticodeDualFiles.Count -eq 0) -and (!$AuthenticodeFiles -or $AuthenticodeFiles.Count -eq 0))
+if ((!$AuthenticodeDualFiles -or $AuthenticodeDualFiles.Count -eq 0) -and (!$AuthenticodeFiles -or $AuthenticodeFiles.Count -eq 0) -and (!$NuPkgFiles -or $NuPkgFiles.Count -eq 0))
 {
     throw "At least one file must be specified"
 }
@@ -42,11 +45,11 @@ function New-FileElement
     if(Test-Path -Path $file)
     {
         $name = Split-Path -Leaf -Path $File
-        $null = $fileElement = $XmlDoc.CreateElement("file")
+        $fileElement = $XmlDoc.CreateElement("file")
         New-Attribute -Name 'src' -value $file -Element $fileElement
         New-Attribute -Name 'signType' -value $SignType -Element $fileElement
         New-Attribute -Name 'dest' -value "__OUTPATHROOT__\$name" -Element $fileElement
-        $null = $job.AppendChild($fileElement)   
+        $null = $job.AppendChild($fileElement)
     }
     else
     {
@@ -65,6 +68,11 @@ foreach($file in $AuthenticodeDualFiles)
 foreach($file in $AuthenticodeFiles)
 {
     New-FileElement -File $file -SignType 'Authenticode' -XmlDoc $signingXml -Job $job
+}
+
+foreach($file in $NuPkgFiles)
+{
+    New-FileElement -File $file -SignType 'NuGet' -XmlDoc $signingXml -Job $job
 }
 
 $signingXml.Save($path)

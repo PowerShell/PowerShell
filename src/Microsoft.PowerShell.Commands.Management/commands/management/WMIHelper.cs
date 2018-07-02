@@ -1,6 +1,5 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Globalization;
@@ -673,11 +672,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = true;
 
-                // CLR 4.0 Port note - use https://msdn.microsoft.com/en-us/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
+                // CLR 4.0 Port note - use https://msdn.microsoft.com/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
                 string localName = System.Net.Dns.GetHostName();
 
                 // And for this, use PsUtils.GetHostname()
-                string localFullName = System.Net.Dns.GetHostEntry("").HostName;
+                string localFullName = System.Net.Dns.GetHostEntry(string.Empty).HostName;
                 if (computer.Equals(".") || computer.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
                     computer.Equals(localName, StringComparison.OrdinalIgnoreCase) ||
                     computer.Equals(localFullName, StringComparison.OrdinalIgnoreCase))
@@ -1017,7 +1016,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion Helper Classes
-
 
     /// <summary>
     /// A class to set WMI connection options
@@ -1708,8 +1706,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
-
         private ThrottleManager _throttleManager = new ThrottleManager();
 
         private object _syncObject = new object();           // sync object
@@ -1782,7 +1778,6 @@ namespace Microsoft.PowerShell.Commands
         private int _sinkCompleted;
         private bool _bJobFailed;
         private bool _bAtLeastOneObject;
-
 
         private ArrayList _wmiSinkArray;
         /// <summary>
@@ -1883,7 +1878,6 @@ namespace Microsoft.PowerShell.Commands
         /// Message indicating status of the job
         /// </summary>
         public override string StatusMessage { get; } = "test";
-
 
         /// <summary>
         /// Indicates if there is more data available in

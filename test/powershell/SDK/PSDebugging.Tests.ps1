@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 using namespace System.Diagnostics
 using namespace System.Management.Automation.Internal
 
@@ -25,14 +27,13 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         return $process
     }
 
-
     function EnsureChildHasExited([Process]$process, [int]$WaitTimeInMS = 15000)
     {
         $process.WaitForExit($WaitTimeInMS)
 
         if (!$process.HasExited)
         {
-            $process.HasExited | Should Be $true
+            $process.HasExited | Should -BeTrue
             $process.Kill()
         }
     }
@@ -53,7 +54,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process.StandardInput.Close()
 
         EnsureChildHasExited $process
-        $process.ExitCode | Should Be 0
+        $process.ExitCode | Should -Be 0
     }
 
     It "Should be able to continue into debugging" {
@@ -70,7 +71,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process.StandardInput.Close()
 
         EnsureChildHasExited $process
-        $process.ExitCode | Should Be 0
+        $process.ExitCode | Should -Be 0
     }
 
     It -Pending "Should be able to list help for debugging" {
@@ -92,9 +93,8 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process.StandardInput.Close()
 
         EnsureChildHasExited $process
-        $line | Should Be  "For instructions about how to customize your debugger prompt, type `"help about_prompt`"."
+        $line | Should -BeExactly  "For instructions about how to customize your debugger prompt, type `"help about_prompt`"."
     }
-
 
     It "Should be able to step over debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
@@ -109,9 +109,8 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process.StandardInput.Close()
 
         EnsureChildHasExited $process
-        $process.ExitCode | Should Be 0
+        $process.ExitCode | Should -Be 0
     }
-
 
     It "Should be able to step out of debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
@@ -124,7 +123,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process.StandardInput.Close()
 
         EnsureChildHasExited $process
-        $process.ExitCode | Should Be 0
+        $process.ExitCode | Should -Be 0
     }
 
     It "Should be able to quit debugging" {
@@ -138,7 +137,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process.StandardInput.Close()
 
         EnsureChildHasExited $process
-        $process.ExitCode | Should Be 0
+        $process.ExitCode | Should -Be 0
     }
 
     It -Pending "Should be able to list source code in debugging" {
@@ -157,12 +156,11 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process.StandardInput.Write("`n")
         $process.StandardInput.Write("`n")
 
-        $line | Should Be "    1:* `$function:foo = { 'bar' }"
+        $line | Should -BeExactly "    1:* `$function:foo = { 'bar' }"
         $process.StandardInput.Close()
         EnsureChildHasExited $process
 
     }
-
 
     It -Pending "Should be able to get the call stack in debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
@@ -176,12 +174,11 @@ Describe "PowerShell Command Debugging" -tags "CI" {
             $line = $process.StandardOutput.ReadLine()
         }
 
-        $line | Should Be "foo           {}        <No file>"
+        $line | Should -BeExactly "foo           {}        <No file>"
         $process.StandardInput.Close()
         EnsureChildHasExited $process
 
     }
-
 
 }
 
@@ -203,26 +200,21 @@ Describe "Runspace Debugging API tests" -tag CI {
         }
 
         It "PSStandaloneMonitorRunspaceInfo should throw when called with a null argument to the constructor" {
-            try {
-                [PSStandaloneMonitorRunspaceInfo]::new($null)
-                throw "Execution should have thrown"
-            }
-            Catch {
-                $_.FullyQualifiedErrorId | should be PSArgumentNullException
-            }
+            { [PSStandaloneMonitorRunspaceInfo]::new($null) } |
+                Should -Throw -ErrorId 'PSArgumentNullException'
         }
 
         it "PSStandaloneMonitorRunspaceInfo properties should have proper values" {
-            $monitorInfo.Runspace.InstanceId | Should be $InstanceId
-            $monitorInfo.RunspaceType | Should be "StandAlone"
-            $monitorInfo.NestedDebugger | Should BeNullOrEmpty
+            $monitorInfo.Runspace.InstanceId | Should -Be $InstanceId
+            $monitorInfo.RunspaceType | Should -BeExactly "Standalone"
+            $monitorInfo.NestedDebugger | Should -BeNullOrEmpty
         }
 
         It "Embedded runspace properties should have proper values" {
-            $embeddedRunspaceInfo.Runspace.InstanceId | should be $InstanceId
-            $embeddedRunspaceInfo.ParentDebuggerId | should be $parentDebuggerId
-            $embeddedRunspaceInfo.Command.InstanceId | should be $ps.InstanceId
-            $embeddedRunspaceInfo.NestedDebugger | Should BeNullOrEmpty
+            $embeddedRunspaceInfo.Runspace.InstanceId | Should -Be $InstanceId
+            $embeddedRunspaceInfo.ParentDebuggerId | Should -Be $parentDebuggerId
+            $embeddedRunspaceInfo.Command.InstanceId | Should -Be $ps.InstanceId
+            $embeddedRunspaceInfo.NestedDebugger | Should -BeNullOrEmpty
         }
     }
     Context "Test Monitor RunspaceInfo API tests" {
@@ -237,45 +229,23 @@ Describe "Runspace Debugging API tests" -tag CI {
         }
 
         It "DebuggerUtils StartMonitoringRunspace requires non-null debugger" {
-            try {
-                [DebuggerUtils]::StartMonitoringRunspace($null,$runspaceInfo)
-                throw "Execution should have thrown"
-            }
-            catch {
-                $_.fullyqualifiederrorid | should be PSArgumentNullException
-            }
+            { [DebuggerUtils]::StartMonitoringRunspace($null,$runspaceInfo) } |
+                Should -Throw -ErrorId 'PSArgumentNullException'
         }
         It "DebuggerUtils StartMonitoringRunspace requires non-null runspaceInfo" {
-            try {
-                [DebuggerUtils]::StartMonitoringRunspace($runspace.Debugger,$null)
-                throw "Execution should have thrown"
-            }
-            catch {
-                $_.fullyqualifiederrorid | should be PSArgumentNullException
-            }
+            { [DebuggerUtils]::StartMonitoringRunspace($runspace.Debugger,$null) } |
+                Should -Throw -ErrorId 'PSArgumentNullException'
         }
 
         It "DebuggerUtils EndMonitoringRunspace requires non-null debugger" {
-            try {
-                [DebuggerUtils]::EndMonitoringRunspace($null,$runspaceInfo)
-                throw "Execution should have thrown"
-            }
-            catch {
-                $_.fullyqualifiederrorid | should be PSArgumentNullException
-            }
+            { [DebuggerUtils]::EndMonitoringRunspace($null,$runspaceInfo) } |
+                Should -Throw -ErrorId 'PSArgumentNullException'
         }
         It "DebuggerUtils EndMonitoringRunspace requires non-null runspaceInfo" {
-            try {
-                [DebuggerUtils]::EndMonitoringRunspace($runspace.Debugger,$null)
-                throw "Execution should have thrown"
-            }
-            catch {
-                $_.fullyqualifiederrorid | should be PSArgumentNullException
-            }
+            { [DebuggerUtils]::EndMonitoringRunspace($runspace.Debugger,$null) } |
+                Should -Throw -ErrorId 'PSArgumentNullException'
         }
 
     }
 }
-
-
 

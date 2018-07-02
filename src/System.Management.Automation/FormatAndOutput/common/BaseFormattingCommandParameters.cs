@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -174,7 +173,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ScriptBlock sb = val as ScriptBlock;
             if (sb != null)
             {
-                MshExpression ex = new MshExpression(sb);
+                PSPropertyExpression ex = new PSPropertyExpression(sb);
                 return ex;
             }
 
@@ -185,7 +184,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ProcessEmptyStringError(originalParameterWasHashTable, invocationContext);
                 }
-                MshExpression ex = new MshExpression(s);
+                PSPropertyExpression ex = new PSPropertyExpression(s);
                 if (_noGlobbing)
                 {
                     if (ex.HasWildCardCharacters)
@@ -403,7 +402,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-
     /// <summary>
     /// definitions for hash table keys
     /// </summary>
@@ -426,7 +424,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // specific to format-custom (no format string for it, just the name)
         internal const string DepthEntryKey = "depth";
     }
-
 
     internal class FormatGroupByParameterDefinition : CommandParameterDefinition
     {

@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -546,7 +545,7 @@ namespace System.Management.Automation
                 // raise the events outside of the lock.
                 if (raiseEvents)
                 {
-                    if (null != _readWaitHandle)
+                    if (_readWaitHandle != null)
                     {
                         // unblock any readers waiting on the handle
                         _readWaitHandle.Set();
@@ -555,7 +554,7 @@ namespace System.Management.Automation
                     // A temporary variable is used as the Completed may
                     // reach null (because of -='s) after the null check
                     EventHandler tempCompleted = Completed;
-                    if (null != tempCompleted)
+                    if (tempCompleted != null)
                     {
                         tempCompleted(this, EventArgs.Empty);
                     }
@@ -1165,7 +1164,7 @@ namespace System.Management.Automation
         /// <param name="readCount">maximum number of elements to read</param>
         internal Collection<T> ReadAndRemove(int readCount)
         {
-            Dbg.Assert(null != _data, "Collection cannot be null");
+            Dbg.Assert(_data != null, "Collection cannot be null");
 
             Dbg.Assert(readCount >= 0, "ReadCount cannot be negative");
 
@@ -1190,7 +1189,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (null != _readWaitHandle)
+                if (_readWaitHandle != null)
                 {
                     if (_data.Count > 0 || !_isOpen)
                     {
@@ -1309,11 +1308,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _readWaitHandle)
+                if (_readWaitHandle == null)
                 {
                     lock (SyncObject)
                     {
-                        if (null == _readWaitHandle)
+                        if (_readWaitHandle == null)
                         {
                             // Create the handle signaled if there are objects in the buffer
                             // or the buffer has been closed.
@@ -1342,7 +1341,7 @@ namespace System.Management.Automation
             bool raiseDataAdded = false;
             lock (SyncObject)
             {
-                if (null != _readWaitHandle)
+                if (_readWaitHandle != null)
                 {
                     // TODO: Should ObjectDisposedException be caught.
 
@@ -1393,7 +1392,7 @@ namespace System.Management.Automation
             // A temporary variable is used as the DataAdding may
             // reach null (because of -='s) after the null check
             EventHandler<DataAddingEventArgs> tempDataAdding = DataAdding;
-            if (null != tempDataAdding)
+            if (tempDataAdding != null)
             {
                 tempDataAdding(this, new DataAddingEventArgs(psInstanceId, itemAdded));
             }
@@ -1404,7 +1403,7 @@ namespace System.Management.Automation
             // A temporary variable is used as the DataAdded may
             // reach null (because of -='s) after the null check
             EventHandler<DataAddedEventArgs> tempDataAdded = DataAdded;
-            if (null != tempDataAdded)
+            if (tempDataAdded != null)
             {
                 tempDataAdded(this, new DataAddedEventArgs(psInstanceId, index));
             }
@@ -1499,7 +1498,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void InternalAddRange(Guid psInstanceId, ICollection collection)
         {
-            if (null == collection)
+            if (collection == null)
             {
                 throw PSTraceSource.NewArgumentNullException("collection");
             }
@@ -1558,7 +1557,7 @@ namespace System.Management.Automation
                 if (_refCount != 0 && (!_blockingEnumerator || _refCount != 1)) return;
 
                 // release threads blocked on waithandle
-                if (null != _readWaitHandle)
+                if (_readWaitHandle != null)
                 {
                     _readWaitHandle.Set();
                 }
@@ -1613,9 +1612,9 @@ namespace System.Management.Automation
         /// </exception>
         private static void VerifyValueType(object value)
         {
-            if (null == value)
+            if (value == null)
             {
-                if (typeof(T).GetTypeInfo().IsValueType)
+                if (typeof(T).IsValueType)
                 {
                     throw PSTraceSource.NewArgumentNullException("value", PSDataBufferStrings.ValueNullReference);
                 }
@@ -1845,7 +1844,7 @@ namespace System.Management.Automation
         /// </param>
         internal PSDataCollectionEnumerator(PSDataCollection<W> collection, bool neverBlock)
         {
-            Dbg.Assert(null != collection,
+            Dbg.Assert(collection != null,
                 "Collection cannot be null");
             Dbg.Assert(!collection.ReleaseOnEnumeration || !collection.IsEnumerated,
                 "shouldn't enumerate more than once if ReleaseOnEnumeration is true");
@@ -2081,7 +2080,7 @@ namespace System.Management.Automation
         /// <param name="item"></param>
         internal void AddProgress(ProgressRecord item)
         {
-            if (null != progress)
+            if (progress != null)
             {
                 progress.InternalAdd(_psInstanceId, item);
             }
@@ -2094,7 +2093,7 @@ namespace System.Management.Automation
         /// <param name="item"></param>
         internal void AddVerbose(VerboseRecord item)
         {
-            if (null != verbose)
+            if (verbose != null)
             {
                 verbose.InternalAdd(_psInstanceId, item);
             }
@@ -2107,7 +2106,7 @@ namespace System.Management.Automation
         /// <param name="item"></param>
         internal void AddDebug(DebugRecord item)
         {
-            if (null != debug)
+            if (debug != null)
             {
                 debug.InternalAdd(_psInstanceId, item);
             }
@@ -2120,7 +2119,7 @@ namespace System.Management.Automation
         /// <param name="item"></param>
         internal void AddWarning(WarningRecord item)
         {
-            if (null != Warning)
+            if (Warning != null)
             {
                 Warning.InternalAdd(_psInstanceId, item);
             }
@@ -2133,7 +2132,7 @@ namespace System.Management.Automation
         /// <param name="item"></param>
         internal void AddInformation(InformationRecord item)
         {
-            if (null != Information)
+            if (Information != null)
             {
                 Information.InternalAdd(_psInstanceId, item);
             }

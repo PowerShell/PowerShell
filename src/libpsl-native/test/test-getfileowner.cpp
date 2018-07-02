@@ -1,5 +1,6 @@
-//! @file test-getfileowner.cpp
-//! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Tests GetFileOwner
 
 #include <gtest/gtest.h>

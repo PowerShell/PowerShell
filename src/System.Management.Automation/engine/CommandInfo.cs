@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +9,6 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using Microsoft.PowerShell.Commands;
-
 
 namespace System.Management.Automation
 {
@@ -76,7 +74,6 @@ namespace System.Management.Automation
         /// A workflow
         /// </summary>
         Workflow = 0x0080,
-
 
         /// <summary>
         /// A Configuration
@@ -280,10 +277,6 @@ namespace System.Management.Automation
             CommandType = newType;
         }
 
-        internal const int HasWorkflowKeyWord = 0x0008;
-        internal const int IsCimCommand = 0x0010;
-        internal const int IsFile = 0x0020;
-
         /// <summary>
         /// A string representing the definition of the command.
         /// </summary>
@@ -293,7 +286,6 @@ namespace System.Management.Automation
         /// information for the command type.
         /// </remarks>
         public abstract string Definition { get; }
-
 
         /// <summary>
         /// This is required for renaming aliases, functions, and filters
@@ -656,8 +648,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The prefix that was used when importing this command
         /// </summary>
-        internal string Prefix { get; set; } = "";
-
+        internal string Prefix { get; set; } = string.Empty;
 
         /// <summary>
         /// Create a copy of commandInfo for GetCommandCommand so that we can generate parameter

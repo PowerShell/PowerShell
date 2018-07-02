@@ -1,11 +1,7 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using Dbg = System.Management.Automation.Diagnostics;
-
-
 
 namespace System.Management.Automation.Host
 {
@@ -23,7 +19,7 @@ namespace System.Management.Automation.Host
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell compatibility with Windows PowerShell
 
         private readonly string label = null;
-        private string helpMessage = "";
+        private string helpMessage = string.Empty;
 
         #endregion
 
@@ -132,8 +128,6 @@ namespace System.Management.Automation.Host
             }
         }
 
-
-
         /// <summary>
         ///
         /// Gets and sets the help message for this field.
@@ -173,6 +167,4 @@ namespace System.Management.Automation.Host
         }
     }
 }
-
-
 

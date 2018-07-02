@@ -1,6 +1,6 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #pragma warning disable 1634, 1691
 
 using System.Diagnostics;
@@ -101,7 +101,6 @@ namespace System.Management.Automation
             return ms;
         }
     }
-
 
     /// <summary>
     /// An output object from the child process.
@@ -767,7 +766,6 @@ namespace System.Management.Automation
             }
         }
 
-
         #region Process cleanup with Child Process cleanup
 
         /// <summary>
@@ -1223,7 +1221,6 @@ namespace System.Management.Automation
                 }
             }
 
-
             // See if the error output stream has been redirected, either through an explicit 2> foo.txt or
             // my merging error into output through 2>&1.
             if (CommandRuntime.ErrorMergeTo != MshCommandRuntime.MergeDataStream.Output)
@@ -1281,7 +1278,7 @@ namespace System.Management.Automation
 
             if (_runStandAlone)
             {
-                if (null == s_supportScreenScrape)
+                if (s_supportScreenScrape == null)
                 {
                     try
                     {
@@ -1933,7 +1930,6 @@ namespace System.Management.Automation
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool AllocConsole();
 
-
         /// <summary>
         /// Called to save the foreground window before allocating a hidden console window
         /// </summary>
@@ -2102,7 +2098,6 @@ namespace System.Management.Automation
             _serializedRemoteException = serializedRemoteException;
             _serializedRemoteInvocationInfo = serializedRemoteInvocationInfo;
         }
-
 
         #region ISerializable Members
 

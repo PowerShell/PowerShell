@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -44,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The list of properties to display
-        /// These take the form of an MshExpression
+        /// These take the form of a PSPropertyExpression
         /// </summary>
         /// <value></value>
         [Parameter(Position = 0)]
@@ -343,9 +342,9 @@ namespace Microsoft.PowerShell.Commands
                 string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
                 string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
                 string width = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
-                MshExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
-                List<MshExpression> resolvedNames = ex.ResolveNames(_inputObject);
-                foreach (MshExpression resolvedName in resolvedNames)
+                PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                List<PSPropertyExpression> resolvedNames = ex.ResolveNames(_inputObject);
+                foreach (PSPropertyExpression resolvedName in resolvedNames)
                 {
                     Hashtable ht = CreateAuxPropertyHT(label, alignment, width);
                     ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.ToString());
@@ -385,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (obj == null)
             {
-                return "";
+                return string.Empty;
             }
             try
             {
@@ -395,9 +394,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 // eats exception if safe
             }
-            return "";
+            return string.Empty;
         }
-
 
         /// <summary>
         ///
@@ -418,7 +416,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebUtility.HtmlEncode(_title);
             }
-
 
             // This first line ensures w3c validation will succeed. However we are not specifying
             // an encoding in the HTML because we don't know where the text will be written and
@@ -570,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                MshExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
+                PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 Listtag.Append(ex.ToString());
             }
         }
@@ -580,11 +577,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WritePropertyValue(StringBuilder Listtag, MshParameter p)
         {
-            MshExpression exValue = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
+            PSPropertyExpression exValue = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
 
             // get the value of the property
-            List<MshExpressionResult> resultList = exValue.GetValues(_inputObject);
-            foreach (MshExpressionResult result in resultList)
+            List<PSPropertyExpressionResult> resultList = exValue.GetValues(_inputObject);
+            foreach (PSPropertyExpressionResult result in resultList)
             {
                 // create comma sep list for multiple results
                 if (result.Result != null)

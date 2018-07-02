@@ -1,7 +1,5 @@
-
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
@@ -142,16 +140,6 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                     .EndEntry()
                 .EndControl();
 
-            var CommonWorkflowParametersControl = CustomControl.Create()
-                    .StartEntry()
-                        .AddScriptBlockExpressionBinding(StringUtil.Format(@"$wfp = $_.psobject.Properties['WorkflowCommonParameters']
-if ($null -ne $wfp -and $wfp.Value)
-{{
-    '[{0}] '
-}}", HelpDisplayStrings.CommonWorkflowParameters))
-                    .EndEntry()
-                .EndControl();
-
             var RelatedLinksHelpInfoControl = CustomControl.Create()
                     .StartEntry()
                         .StartFrame(leftIndent: 4)
@@ -272,7 +260,6 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                         .AddPropertyExpressionBinding(@"name")
                         .AddText(" ")
                         .AddPropertyExpressionBinding(@"Parameter", enumerateCollection: true, customControl: MamlParameterControl)
-                        .AddCustomControlExpressionBinding(CommonWorkflowParametersControl)
                         .AddText("[" + HelpDisplayStrings.CommonParameters + "]")
                         .AddNewline(2)
                     .EndEntry()
@@ -415,7 +402,6 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                 MamlPossibleValueControl,
                 MamlTrueFalseShortControl,
                 MamlIndentedSyntaxControl,
-                CommonWorkflowParametersControl,
                 MamlSyntaxControl,
                 MamlTypeWithDescriptionControl,
                 RelatedLinksHelpInfoControl,
@@ -580,7 +566,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                         .AddText(HelpDisplayStrings.RelatedLinks)
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
-                            .AddPropertyExpressionBinding(@"relatedLinks", customControl: sharedControls[20])
+                            .AddPropertyExpressionBinding(@"relatedLinks", customControl: sharedControls[19])
                         .EndFrame()
                         .AddNewline()
                         .AddText(HelpDisplayStrings.RemarksSection)
@@ -599,7 +585,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                             .AddScriptBlockExpressionBinding(@"""get-help "" + $_.Details.Name + "" -full""")
                             .AddText(@""".")
                             .AddNewline()
-                            .AddCustomControlExpressionBinding(sharedControls[19])
+                            .AddCustomControlExpressionBinding(sharedControls[18])
                         .EndFrame()
                     .EndEntry()
                 .EndControl());
@@ -636,7 +622,6 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
                             .AddPropertyExpressionBinding(@"Parameters", customControl: control9)
-                            .AddCustomControlExpressionBinding(sharedControls[16])
                             .AddText(HelpDisplayStrings.CommonParameters)
                             .AddNewline()
                             .StartFrame(leftIndent: 4)
@@ -666,7 +651,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                             .AddScriptBlockExpressionBinding(@"""get-help "" + $_.Details.Name + "" -full""")
                             .AddText(@""".")
                             .AddNewline()
-                            .AddCustomControlExpressionBinding(sharedControls[19])
+                            .AddCustomControlExpressionBinding(sharedControls[18])
                         .EndFrame()
                     .EndEntry()
                 .EndControl());
@@ -713,7 +698,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                         .AddText(HelpDisplayStrings.NonHyphenTerminatingErrors)
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
-                            .AddPropertyExpressionBinding(@"nonTerminatingError", enumerateCollection: true, customControl: sharedControls[21])
+                            .AddPropertyExpressionBinding(@"nonTerminatingError", enumerateCollection: true, customControl: sharedControls[20])
                         .EndFrame()
                     .EndEntry()
                 .EndControl();
@@ -723,20 +708,20 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                         .AddText(HelpDisplayStrings.TerminatingErrors)
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
-                            .AddPropertyExpressionBinding(@"terminatingError", enumerateCollection: true, customControl: sharedControls[21])
+                            .AddPropertyExpressionBinding(@"terminatingError", enumerateCollection: true, customControl: sharedControls[20])
                         .EndFrame()
                     .EndEntry()
                 .EndControl();
 
             var control12 = CustomControl.Create()
                     .StartEntry()
-                        .AddPropertyExpressionBinding(@"ReturnValue", enumerateCollection: true, customControl: sharedControls[18])
+                        .AddPropertyExpressionBinding(@"ReturnValue", enumerateCollection: true, customControl: sharedControls[17])
                     .EndEntry()
                 .EndControl();
 
             var control11 = CustomControl.Create()
                     .StartEntry()
-                        .AddPropertyExpressionBinding(@"InputType", enumerateCollection: true, customControl: sharedControls[18])
+                        .AddPropertyExpressionBinding(@"InputType", enumerateCollection: true, customControl: sharedControls[17])
                     .EndEntry()
                 .EndControl();
 
@@ -749,7 +734,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                         .AddText(HelpDisplayStrings.Parameters)
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
-                            .AddPropertyExpressionBinding(@"Parameters", customControl: sharedControls[23])
+                            .AddPropertyExpressionBinding(@"Parameters", customControl: sharedControls[22])
                         .EndFrame()
                         .AddText(HelpDisplayStrings.InputType)
                         .AddNewline()
@@ -780,7 +765,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                         .AddText(HelpDisplayStrings.RelatedLinks)
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
-                            .AddPropertyExpressionBinding(@"relatedLinks", customControl: sharedControls[20])
+                            .AddPropertyExpressionBinding(@"relatedLinks", customControl: sharedControls[19])
                         .EndFrame()
                     .EndEntry()
                 .EndControl());
@@ -948,7 +933,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                         .AddText(HelpDisplayStrings.RelatedLinks)
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
-                            .AddPropertyExpressionBinding(@"relatedLinks", customControl: sharedControls[20])
+                            .AddPropertyExpressionBinding(@"relatedLinks", customControl: sharedControls[19])
                         .EndFrame()
                     .EndEntry()
                 .EndControl());
@@ -1087,7 +1072,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                 CustomControl.Create()
                     .StartEntry()
                         .StartFrame(leftIndent: 4)
-                            .AddCustomControlExpressionBinding(sharedControls[23])
+                            .AddCustomControlExpressionBinding(sharedControls[22])
                         .EndFrame()
                     .EndEntry()
                 .EndControl());
@@ -1098,7 +1083,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
             yield return new FormatViewDefinition("MamlCommandParameterView",
                 CustomControl.Create()
                     .StartEntry()
-                        .AddScriptBlockExpressionBinding(@"$_", customControl: sharedControls[22])
+                        .AddScriptBlockExpressionBinding(@"$_", customControl: sharedControls[21])
                     .EndEntry()
                 .EndControl());
         }
@@ -1108,7 +1093,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
             yield return new FormatViewDefinition("MamlCommandSyntax",
                 CustomControl.Create()
                     .StartEntry()
-                        .AddScriptBlockExpressionBinding(@"$_", customControl: sharedControls[17])
+                        .AddScriptBlockExpressionBinding(@"$_", customControl: sharedControls[16])
                     .EndEntry()
                 .EndControl());
         }
@@ -1128,7 +1113,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
             yield return new FormatViewDefinition("MamlInputTypes",
                 CustomControl.Create()
                     .StartEntry()
-                        .AddPropertyExpressionBinding(@"InputType", enumerateCollection: true, customControl: sharedControls[18])
+                        .AddPropertyExpressionBinding(@"InputType", enumerateCollection: true, customControl: sharedControls[17])
                     .EndEntry()
                 .EndControl());
         }
@@ -1138,7 +1123,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
             yield return new FormatViewDefinition("MamlNonTerminatingErrors",
                 CustomControl.Create()
                     .StartEntry()
-                        .AddPropertyExpressionBinding(@"nonTerminatingError", enumerateCollection: true, customControl: sharedControls[21])
+                        .AddPropertyExpressionBinding(@"nonTerminatingError", enumerateCollection: true, customControl: sharedControls[20])
                     .EndEntry()
                 .EndControl());
         }
@@ -1148,7 +1133,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
             yield return new FormatViewDefinition("MamlTerminatingErrors",
                 CustomControl.Create()
                     .StartEntry()
-                        .AddPropertyExpressionBinding(@"terminatingError", enumerateCollection: true, customControl: sharedControls[21])
+                        .AddPropertyExpressionBinding(@"terminatingError", enumerateCollection: true, customControl: sharedControls[20])
                     .EndEntry()
                 .EndControl());
         }
@@ -1158,7 +1143,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
             yield return new FormatViewDefinition("MamlRelatedLinks",
                 CustomControl.Create()
                     .StartEntry()
-                        .AddScriptBlockExpressionBinding(@"$_", customControl: sharedControls[20])
+                        .AddScriptBlockExpressionBinding(@"$_", customControl: sharedControls[19])
                     .EndEntry()
                 .EndControl());
         }
@@ -1168,7 +1153,7 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
             yield return new FormatViewDefinition("MamlReturnTypes",
                 CustomControl.Create()
                     .StartEntry()
-                        .AddPropertyExpressionBinding(@"ReturnValue", enumerateCollection: true, customControl: sharedControls[18])
+                        .AddPropertyExpressionBinding(@"ReturnValue", enumerateCollection: true, customControl: sharedControls[17])
                     .EndEntry()
                 .EndControl());
         }

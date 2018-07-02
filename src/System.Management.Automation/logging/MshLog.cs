@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -134,54 +133,23 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static Collection<LogProvider> CreateLogProvider(string shellId)
         {
-#if V2
-            try
-            {
-                Assembly crimsonAssembly = Assembly.Load(_crimsonLogProviderAssemblyName);
-
-                if (crimsonAssembly != null)
-                {
-                    LogProvider logProvider = (LogProvider)crimsonAssembly.CreateInstance(_crimsonLogProviderTypeName,
-                                                                            false, // don't ignore case
-                        BindingFlags.CreateInstance,
-                                                                            null, // use default binder
-                        null,
-                                                                            null, // use current culture
-                        null // no special activation attributes
-                        );
-
-                    System.Diagnostics.Debug.Assert(logProvider != null);
-                    return logProvider;
-                }
-            }
-            catch (FileNotFoundException e)
-            {
-                _trace.TraceException(e);
-            }
-            catch (BadImageFormatException e)
-            {
-                _trace.TraceException(e);
-            }
-            catch (SecurityException e)
-            {
-                _trace.TraceException(e);
-            }
-            catch (TargetInvocationException e)
-            {
-                _trace.TraceException(e);
-            }
-#endif
             Collection<LogProvider> providers = new Collection<LogProvider>();
             // Porting note: Linux does not support ETW
-#if !UNIX
+
             try
             {
 #if !CORECLR    //TODO:CORECLR EventLogLogProvider not handled yet
                 LogProvider eventLogLogProvider = new EventLogLogProvider(shellId);
                 providers.Add(eventLogLogProvider);
 #endif
+
+#if UNIX
+                LogProvider sysLogProvider = new PSSysLogProvider();
+                providers.Add(sysLogProvider);
+#else
                 LogProvider etwLogProvider = new PSEtwLogProvider();
                 providers.Add(etwLogProvider);
+#endif
 
                 return providers;
             }
@@ -198,7 +166,7 @@ namespace System.Management.Automation
                 // when running as non-admin user. In that case, we will default
                 // to dummy log.
             }
-#endif
+
             providers.Add(new DummyLogProvider());
             return providers;
         }
@@ -254,7 +222,7 @@ namespace System.Management.Automation
 
             InvocationInfo invocationInfo = null;
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && icer.ErrorRecord != null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {
@@ -457,7 +425,7 @@ namespace System.Management.Automation
 
             InvocationInfo invocationInfo = null;
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && icer.ErrorRecord != null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {
@@ -649,7 +617,7 @@ namespace System.Management.Automation
 
             InvocationInfo invocationInfo = null;
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && icer.ErrorRecord != null)
                 invocationInfo = icer.ErrorRecord.InvocationInfo;
             foreach (LogProvider provider in GetLogProvider(executionContext))
             {

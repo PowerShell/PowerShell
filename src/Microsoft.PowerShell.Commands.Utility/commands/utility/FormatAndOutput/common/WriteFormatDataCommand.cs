@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -58,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         /// Literal path of the XML file
         /// </summary>
         [Parameter(ParameterSetName = "ByLiteralPath", Mandatory = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public String LiteralPath
         {
             get

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -479,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // if the module in the moduleTable is an assembly module without path, the moduleName is the key.
                     string moduleName = "dynamic_code_module_" + suppliedAssembly;
-                    if (pair.Value.Path == "")
+                    if (pair.Value.Path == string.Empty)
                     {
                         if (pair.Key.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
                         {
@@ -532,11 +531,6 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                if (name.Equals("PSWorkflow", StringComparison.OrdinalIgnoreCase) && Utils.IsRunningFromSysWOW64())
-                {
-                    throw new NotSupportedException(AutomationExceptions.WorkflowDoesNotSupportWOW64);
-                }
-
                 bool found = false;
                 PSModuleInfo foundModule = null;
 
@@ -635,6 +629,12 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else if (Directory.Exists(rootedPath))
                         {
+                            // If the path ends with a directory separator, remove it
+                            if (rootedPath.EndsWith(Path.DirectorySeparatorChar))
+                            {
+                                rootedPath = Path.GetDirectoryName(rootedPath);
+                            }
+
                             // Load the latest valid version if it is a multi-version module directory
                             foundModule = LoadUsingMultiVersionModuleBase(rootedPath,
                                                                             ManifestProcessingFlags.LoadElements |
@@ -1219,7 +1219,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            if (manifestEntries.Any(s => FixupFileName("", s, ".ps1xml").EndsWith(cimModuleFile.FileName, StringComparison.OrdinalIgnoreCase)))
+            if (manifestEntries.Any(s => FixupFileName(string.Empty, s, ".ps1xml").EndsWith(cimModuleFile.FileName, StringComparison.OrdinalIgnoreCase)))
             {
                 return true;
             }
@@ -1729,7 +1729,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string name in Name)
                 {
                     PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
-                    if (null != foundModule)
+                    if (foundModule != null)
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
@@ -1757,7 +1757,7 @@ namespace Microsoft.PowerShell.Commands
                     BaseGuid = modulespec.Guid;
 
                     PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, modulespec.Name);
-                    if (null != foundModule)
+                    if (foundModule != null)
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
                     }

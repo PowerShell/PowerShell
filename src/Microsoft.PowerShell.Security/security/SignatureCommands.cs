@@ -1,7 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -379,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
                 _timestampServer = value;
             }
         }
-        private string _timestampServer = "";
+        private string _timestampServer = string.Empty;
 
         /// <summary>
         /// Gets or sets the hash algorithm used for signing.
@@ -564,7 +562,7 @@ namespace Microsoft.PowerShell.Commands
             finally
             {
                 // reset the read-only attribute
-                if (null != readOnlyFileInfo)
+                if (readOnlyFileInfo != null)
                 {
                     readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
                 }

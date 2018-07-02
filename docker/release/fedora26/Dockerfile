@@ -1,8 +1,9 @@
 # Docker image file that describes an fedora 25 image with PowerShell installed from Microsoft YUM Repo
+ARG FromTag=26
 
-FROM fedora:26
+FROM fedora:${FromTag}
 
-ARG POWERSHELL_VERSION=6.0.0-rc
+ARG POWERSHELL_VERSION=6.0.2
 ARG IMAGE_NAME=microsoft/powershell:fedora26
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -26,6 +27,7 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
 RUN dnf install -y \
         curl \
         glibc-locale-source \
+    && dnf upgrade-minimal -y --security \
     && dnf clean all
 
 # Setup the locale
@@ -34,10 +36,12 @@ ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
 # Download and configure Microsoft Repository config file
-RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.repos.d/microsoft.repo
+RUN set -o pipefail \
+    && curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.repos.d/microsoft.repo
 
 # Install latest powershell from Microsoft YUM Repo
-RUN dnf install -y powershell
+RUN dnf install -y powershell-${POWERSHELL_VERSION} \
+    && dnf clean all
 
 # Use array to avoid Docker prepending /bin/sh -c
 CMD [ "pwsh" ]

@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Runtime.Serialization;
 using System.Management.Automation.Internal;
@@ -254,7 +253,6 @@ namespace System.Management.Automation.Remoting
         IPCExceptionLaunchingProcess = 2107,
     }
 
-
     /// <summary>
     /// This static class defines the resource base name used by remoting errors.
     /// It also provides a convenience method to get the localized strings.
@@ -368,7 +366,6 @@ namespace System.Management.Automation.Remoting
         {
         }
 
-
         #endregion Constructors
 
         /// <summary>
@@ -380,7 +377,6 @@ namespace System.Management.Automation.Remoting
             SetErrorId(typeof(PSRemotingDataStructureException).FullName);
         }
     }
-
 
     /// <summary>
     /// This exception is used by remoting code to indicate an error condition in network operations.
@@ -413,8 +409,6 @@ namespace System.Management.Automation.Remoting
         {
             SetDefaultErrorRecord();
         }
-
-
 
         /// <summary>
         /// This constructor takes a localized message and an inner exception.

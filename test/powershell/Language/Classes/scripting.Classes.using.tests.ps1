@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'using module' -Tags "CI" {
     BeforeAll {
         $originalPSModulePath = $env:PSModulePath
@@ -39,7 +41,7 @@ Describe 'using module' -Tags "CI" {
 
         $module = Import-Module Foo  -PassThru
         try {
-            $module.ImplementingAssembly | Should Not Be $null
+            $module.ImplementingAssembly | Should -Not -BeNullOrEmpty
         } finally {
             $module | Remove-Module
         }
@@ -52,7 +54,7 @@ class Bar : Foo {}
 [Bar]
 "@).Invoke()
 
-        $barType.BaseType.Name | Should Be 'Foo'
+        $barType.BaseType.Name | Should -BeExactly 'Foo'
     }
 
     It "can use class from another module in New-Object" {
@@ -63,9 +65,9 @@ New-Object FooWithManifest.Foo
 New-Object Foo.Foo
 "@).Invoke()
 
-        $foo.Count | Should Be 2
-        $foo[0].GetModuleName() | Should Be 'FooWithManifest'
-        $foo[1].GetModuleName() | Should Be 'Foo'
+        $foo.Count | Should -Be 2
+        $foo[0].GetModuleName() | Should -BeExactly 'FooWithManifest'
+        $foo[1].GetModuleName() | Should -BeExactly 'Foo'
     }
 
     It "can use class from another module by full name as base class and [type]" {
@@ -74,7 +76,7 @@ using module Foo
 class Bar : Foo.Foo {}
 [Foo.Foo]::new()
 "@).Invoke()
-        $fooObject.GetModuleName() | Should Be 'Foo'
+        $fooObject.GetModuleName() | Should -BeExactly 'Foo'
     }
 
     It "can use modules with classes collision" {
@@ -97,11 +99,11 @@ class Bar : Foo {}
 (New-Object Foo).GetModuleName() # This
 "@).Invoke()
 
-        $fooModuleName.Count | Should Be 4
-        $fooModuleName[0] | Should Be 'Foo'
-        $fooModuleName[1] | Should Be 'FooWithManifest'
-        $fooModuleName[2] | Should Be 'This'
-        $fooModuleName[3] | Should Be 'This'
+        $fooModuleName.Count | Should -Be 4
+        $fooModuleName[0] | Should -BeExactly 'Foo'
+        $fooModuleName[1] | Should -BeExactly 'FooWithManifest'
+        $fooModuleName[2] | Should -BeExactly 'This'
+        $fooModuleName[3] | Should -BeExactly 'This'
     }
 
     It "doesn't mess up two consecutive scripts" {
@@ -119,8 +121,8 @@ class Bar : Foo {}
 [Bar]::new().GetModuleName()
 
 "@)
-        $sb1.Invoke() | Should Be 'Foo'
-        $sb2.Invoke() | Should Be 'This'
+        $sb1.Invoke() | Should -BeExactly 'Foo'
+        $sb2.Invoke() | Should -BeExactly 'This'
     }
 
     It "can use modules with classes collision simple" {
@@ -139,12 +141,12 @@ class Bar : Foo {}
 (New-Object Foo).GetModuleName() # This
 "@).Invoke()
 
-        $fooModuleName.Count | Should Be 5
-        $fooModuleName[0] | Should Be 'Foo'
-        $fooModuleName[1] | Should Be 'Foo'
-        $fooModuleName[2] | Should Be 'This'
-        $fooModuleName[3] | Should Be 'This'
-        $fooModuleName[4] | Should Be 'This'
+        $fooModuleName.Count | Should -Be 5
+        $fooModuleName[0] | Should -BeExactly 'Foo'
+        $fooModuleName[1] | Should -BeExactly 'Foo'
+        $fooModuleName[2] | Should -BeExactly 'This'
+        $fooModuleName[3] | Should -BeExactly 'This'
+        $fooModuleName[4] | Should -BeExactly 'This'
     }
 
     It "can use class from another module as a base class with using module with manifest" {
@@ -154,7 +156,7 @@ class Bar : Foo {}
 [Bar]
 "@).Invoke()
 
-        $barType.BaseType.Name | Should Be 'Foo'
+        $barType.BaseType.Name | Should -BeExactly 'Foo'
     }
 
     It "can instantiate class from another module" {
@@ -163,7 +165,7 @@ using module Foo
 [Foo]::new()
 "@).Invoke()
 
-        $foo.GetModuleName() | Should Be 'Foo'
+        $foo.GetModuleName() | Should -BeExactly 'Foo'
     }
 
     It "cannot instantiate class from another module without using statement" {
@@ -171,7 +173,7 @@ using module Foo
 #using module Foo
 [Foo]::new()
 "@
-        $err.FullyQualifiedErrorId | Should Be TypeNotFound
+        $err.FullyQualifiedErrorId | Should -BeExactly 'TypeNotFound'
     }
 
     It "can use class from another module in New-Object by short name" {
@@ -179,7 +181,7 @@ using module Foo
 using module FooWithManifest
 New-Object Foo
 "@).Invoke()
-        $foo.GetModuleName() | Should Be 'FooWithManifest'
+        $foo.GetModuleName() | Should -BeExactly 'FooWithManifest'
     }
 
     It "can use class from this module in New-Object by short name" {
@@ -187,7 +189,7 @@ New-Object Foo
 class Foo {}
 New-Object Foo
 "@).Invoke()
-        $foo | Should Not Be $null
+        $foo | Should -Not -BeNullOrEmpty
     }
 
     # Pending reason:
@@ -197,90 +199,90 @@ New-Object Foo
 using module @{ ModuleName = 'FooWithManifest'; ModuleVersion = '1.0' }
 New-Object Foo
 "@).Invoke()
-        $foo.GetModuleName() | Should Be 'FooWithManifest'
+        $foo.GetModuleName() | Should -BeExactly 'FooWithManifest'
     }
 
     Context 'parse time errors' {
 
         It "report an error about not found module" {
             $err = Get-ParseResults "using module ThisModuleDoesntExist"
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'ModuleNotFoundDuringParse'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'ModuleNotFoundDuringParse'
         }
 
         It "report an error about misformatted module specification" {
             $err = Get-ParseResults "using module @{ Foo = 'Foo' }"
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'RequiresModuleInvalid'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'RequiresModuleInvalid'
         }
 
         It "report an error about wildcard in the module name" {
             $err = Get-ParseResults "using module fo*"
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'WildCardModuleNameError'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'WildCardModuleNameError'
         }
 
         It "report an error about wildcard in the module path" {
             $err = Get-ParseResults "using module C:\fo*"
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'WildCardModuleNameError'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'WildCardModuleNameError'
         }
 
         It "report an error about wildcard in the module name inside ModuleSpecification hashtable" {
             $err = Get-ParseResults "using module @{ModuleName = 'Fo*'; RequiredVersion = '1.0'}"
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'WildCardModuleNameError'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'WildCardModuleNameError'
         }
 
         # MSFT:5246105
         It "report an error when tokenizer encounters comma" {
             $err = Get-ParseResults "using module ,FooWithManifest"
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'MissingUsingItemName'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'MissingUsingItemName'
         }
 
         It "report an error when tokenizer encounters nothing" {
             $err = Get-ParseResults "using module "
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'MissingUsingItemName'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'MissingUsingItemName'
         }
 
         It "report an error on badly formatted RequiredVersion" {
             $err = Get-ParseResults "using module @{ModuleName = 'FooWithManifest'; RequiredVersion = 1. }"
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'RequiresModuleInvalid'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'RequiresModuleInvalid'
         }
 
         # MSFT:6897275
         It "report an error on incomplete using input" {
             $err = Get-ParseResults "using module @{ModuleName = 'FooWithManifest'; FooWithManifest = 1." # missing closing bracket
-            $err.Count | Should Be 2
-            $err[0].ErrorId | Should Be 'MissingEndCurlyBrace'
-            $err[1].ErrorId | Should Be 'RequiresModuleInvalid'
+            $err.Count | Should -Be 2
+            $err[0].ErrorId | Should -BeExactly 'MissingEndCurlyBrace'
+            $err[1].ErrorId | Should -BeExactly 'RequiresModuleInvalid'
         }
 
         It "report an error when 'using module' terminating by NewLine" {
             $err = Get-ParseResults "using module"
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'MissingUsingItemName'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'MissingUsingItemName'
         }
 
         It "report an error when 'using module' terminating by Semicolon" {
             $err = Get-ParseResults "using module; $testvar=1"
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'MissingUsingItemName'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'MissingUsingItemName'
         }
 
         It "report an error when a value after 'using module' is a unallowed expression" {
             $err = Get-ParseResults "using module )"
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'InvalidValueForUsingItemName'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'InvalidValueForUsingItemName'
         }
 
         It "report an error when a value after 'using module' is not a valid module name" {
             $err = Get-ParseResults "using module 123"
-            $err.Count | Should Be 1
-            $err[0].ErrorId | Should Be 'InvalidValueForUsingItemName'
+            $err.Count | Should -Be 1
+            $err[0].ErrorId | Should -BeExactly 'InvalidValueForUsingItemName'
         }
     }
 
@@ -291,7 +293,7 @@ using module Foo
 using module FooWithManifest
 class Bar : Foo {}
 "@
-            $err.FullyQualifiedErrorId | Should Be AmbiguousTypeReference
+            $err.FullyQualifiedErrorId | Should -Be AmbiguousTypeReference
         }
 
         It "cannot use as [...]" {
@@ -300,7 +302,7 @@ using module Foo
 using module FooWithManifest
 [Foo]
 "@
-            $err.FullyQualifiedErrorId | Should Be AmbiguousTypeReference
+            $err.FullyQualifiedErrorId | Should -BeExactly 'AmbiguousTypeReference'
         }
 
         It "cannot use in New-Object" {
@@ -309,7 +311,7 @@ using module Foo
 using module FooWithManifest
 New-Object Foo
 "@
-            $err.FullyQualifiedErrorId | Should Be 'AmbiguousTypeReference,Microsoft.PowerShell.Commands.NewObjectCommand'
+            $err.FullyQualifiedErrorId | Should -BeExactly 'AmbiguousTypeReference,Microsoft.PowerShell.Commands.NewObjectCommand'
         }
 
         It "cannot use [type] cast from string" {
@@ -318,7 +320,7 @@ using module Foo
 using module FooWithManifest
 [type]"Foo"
 "@
-            $err.FullyQualifiedErrorId | Should Be AmbiguousTypeReference
+            $err.FullyQualifiedErrorId | Should -BeExactly 'AmbiguousTypeReference'
         }
     }
 
@@ -333,7 +335,7 @@ using module Foo
 [Foo]::new().GetModuleName()
 "@).Invoke()
 
-            $moduleName | Should Be 'Foo2'
+            $moduleName | Should -BeExactly 'Foo2'
         }
     }
 
@@ -355,7 +357,7 @@ using module Foo
 using module FooWithManifest
 [Foo]::new()
 "@).Invoke()
-            $foo.GetModuleName() | Should Be 'Foo230'
+            $foo.GetModuleName() | Should -BeExactly 'Foo230'
         }
 
         It "uses right version, when RequiredModule=1.0 specified" {
@@ -363,7 +365,7 @@ using module FooWithManifest
 using module @{ModuleName = 'FooWithManifest'; RequiredVersion = '1.0'}
 [Foo]::new()
 "@).Invoke()
-            $foo.GetModuleName() | Should Be 'FooWithManifest'
+            $foo.GetModuleName() | Should -BeExactly 'FooWithManifest'
         }
 
         It "uses right version, when RequiredModule=2.3.0 specified" {
@@ -371,7 +373,7 @@ using module @{ModuleName = 'FooWithManifest'; RequiredVersion = '1.0'}
 using module @{ModuleName = 'FooWithManifest'; RequiredVersion = '2.3.0'}
 [Foo]::new()
 "@).Invoke()
-            $foo.GetModuleName() | Should Be 'Foo230'
+            $foo.GetModuleName() | Should -BeExactly 'Foo230'
         }
 
         It "uses right version, when RequiredModule=3.4.5 specified" {
@@ -379,7 +381,7 @@ using module @{ModuleName = 'FooWithManifest'; RequiredVersion = '2.3.0'}
 using module @{ModuleName = 'FooWithManifest'; RequiredVersion = '3.4.5'}
 [Foo]::new()
 "@).Invoke()
-            $foo.GetModuleName() | Should Be 'Foo345'
+            $foo.GetModuleName() | Should -BeExactly 'Foo345'
         }
     }
 
@@ -397,7 +399,7 @@ using module ModuleWithRuntimeError
 [Foo]::new().GetModuleName()
 "@
 
-                $err | Should Be 'error'
+                $err | Should -Be 'error'
         }
     }
 
@@ -419,20 +421,19 @@ function foo()
             $iss.StartupScripts.Add($scriptToProcessPath)
 
             $ps = [powershell]::Create($iss)
-            $ps.AddCommand("foo").Invoke() | Should be Foo
-            $ps.Streams.Error | Should Be $null
+            $ps.AddCommand("foo").Invoke() | Should -BeExactly 'Foo'
+            $ps.Streams.Error | Should -BeNullOrEmpty
 
             $ps1 = [powershell]::Create($iss)
-            $ps1.AddCommand("foo").Invoke() | Should be Foo
-            $ps1.Streams.Error | Should Be $null
+            $ps1.AddCommand("foo").Invoke() | Should -BeExactly 'Foo'
+            $ps1.Streams.Error | Should -BeNullOrEmpty
 
             $ps.Commands.Clear()
             $ps.Streams.Error.Clear()
-            $ps.AddScript(". foo").Invoke() | Should be Foo
-            $ps.Streams.Error | Should Be $null
+            $ps.AddScript(". foo").Invoke() | Should -BeExactly 'Foo'
+            $ps.Streams.Error | Should -BeNullOrEmpty
         }
     }
-
 
     # here we are back to normal $env:PSModulePath, but all modules are there
     Context "Module by path" {
@@ -456,17 +457,17 @@ class Bar : Foo {}
         }
 
         It 'use non-modified PSModulePath' {
-            $env:PSModulePath | Should Be $originalPSModulePath
+            $env:PSModulePath | Should -BeExactly $originalPSModulePath
         }
 
         It "can be accessed by relative path" {
             $barObject = & TestDrive:\FooRelativeConsumer\FooRelativeConsumer.ps1
-            $barObject.GetModuleName() | Should Be 'FooForPaths'
+            $barObject.GetModuleName() | Should -BeExactly 'FooForPaths'
         }
 
         It "cannot be accessed by relative path without .\ from a script" {
             $err = Get-RuntimeError '& TestDrive:\FooRelativeConsumerErr.ps1'
-            $err.FullyQualifiedErrorId | Should Be ModuleNotFoundDuringParse
+            $err.FullyQualifiedErrorId | Should -BeExactly 'ModuleNotFoundDuringParse'
         }
 
         It "can be accessed by absolute path" {
@@ -476,9 +477,9 @@ using module $resolvedTestDrivePath\FooForPaths
 [Foo]::new()
 "@
             $err = Get-ParseResults $s
-            $err.Count | Should Be 0
+            $err.Count | Should -Be 0
             $barObject = [scriptblock]::Create($s).Invoke()
-            $barObject.GetModuleName() | Should Be 'FooForPaths'
+            $barObject.GetModuleName() | Should -BeExactly 'FooForPaths'
         }
 
         It "can be accessed by absolute path with file extension" {
@@ -487,7 +488,7 @@ using module $resolvedTestDrivePath\FooForPaths
 using module $resolvedTestDrivePath\FooForPaths\FooForPaths.psm1
 [Foo]::new()
 "@).Invoke()
-            $barObject.GetModuleName() | Should Be 'FooForPaths'
+            $barObject.GetModuleName() | Should -BeExactly 'FooForPaths'
         }
 
         It "can be accessed by relative path without file" {
@@ -496,7 +497,7 @@ using module $resolvedTestDrivePath\FooForPaths\FooForPaths.psm1
 using module .\FooForPaths
 [Foo]::new()
 "@
-            $err.FullyQualifiedErrorId | Should Be ModuleNotFoundDuringParse
+            $err.FullyQualifiedErrorId | Should -BeExactly 'ModuleNotFoundDuringParse'
 
             Push-Location TestDrive:\modules
             try {
@@ -504,7 +505,7 @@ using module .\FooForPaths
 using module .\FooForPaths
 [Foo]::new()
 "@).Invoke()
-                $barObject.GetModuleName() | Should Be 'FooForPaths'
+                $barObject.GetModuleName() | Should -BeExactly 'FooForPaths'
             } finally {
                 Pop-Location
             }
@@ -517,7 +518,7 @@ using module .\FooForPaths
 using module FooForPaths
 [Foo]::new()
 "@
-                $err.FullyQualifiedErrorId | Should Be ModuleNotFoundDuringParse
+                $err.FullyQualifiedErrorId | Should -BeExactly 'ModuleNotFoundDuringParse'
             } finally {
                 Pop-Location
             }
@@ -542,7 +543,7 @@ class TestClass { [string] GetName() { return "TestClass" } }
 using module $testFile
 [TestClass]::new()
 "@).Invoke()
-            $result.GetName() | Should Be "TestClass"
+            $result.GetName() | Should -BeExactly "TestClass"
         }
     }
 }

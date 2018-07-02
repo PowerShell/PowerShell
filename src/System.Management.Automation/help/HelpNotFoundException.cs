@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
 #pragma warning disable 56506
@@ -61,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
             // Don't do ParentContainsErrorRecordException(this), as this causes recursion, and creates a
             // segmentation fault on Linux
             _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(errMessage), "HelpNotFound", ErrorCategory.ResourceUnavailable, null);
-            _errorRecord.ErrorDetails = new ErrorDetails(typeof(HelpNotFoundException).GetTypeInfo().Assembly, "HelpErrors", "HelpNotFound", _helpTopic);
+            _errorRecord.ErrorDetails = new ErrorDetails(typeof(HelpNotFoundException).Assembly, "HelpErrors", "HelpNotFound", _helpTopic);
         }
 
         private ErrorRecord _errorRecord;
@@ -78,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _helpTopic = "";
+        private string _helpTopic = string.Empty;
 
         /// <summary>
         /// Gets help topic for which help is not found.

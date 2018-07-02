@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -297,8 +296,7 @@ namespace System.Management.Automation
 
             foreach (var member in statement.Members)
             {
-                PropertyMemberAst propAst = member as PropertyMemberAst;
-                if (propAst != null)
+                if (member is PropertyMemberAst propAst && !propAst.PropertyAttributes.HasFlag(PropertyAttributes.Hidden))
                 {
                     Dbg.Assert(propAst.Name != null, "PropName cannot be null");
                     Dbg.Assert(propAst.PropertyType != null, "PropertyType cannot be null");

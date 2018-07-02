@@ -1,8 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 // ----------------------------------------------------------------------
-//
-//  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//
 //  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.
 // ----------------------------------------------------------------------
@@ -329,7 +327,7 @@ namespace System.Management.Automation.Remoting
         private void CleanUpDelegates()
         {
             // Free GCHandles so that the memory they point to may be unpinned (garbage collected)
-            if (null != _pluginShellGCHandle)
+            if (_pluginShellGCHandle != null)
             {
                 _pluginShellGCHandle.Free();
                 _pluginReleaseShellContextGCHandle.Free();
@@ -481,7 +479,7 @@ namespace System.Management.Automation.Remoting
         {
             WSManPluginInstance.PerformShutdown(pluginContext);
 
-            if (null != workerPtrs)
+            if (workerPtrs != null)
             {
                 workerPtrs.Dispose();
             }
@@ -752,7 +750,7 @@ namespace System.Management.Automation.Remoting
             object operationContext,
             bool timedOut)
         {
-            if (null == operationContext)
+            if (operationContext == null)
             {
                 return;
             }

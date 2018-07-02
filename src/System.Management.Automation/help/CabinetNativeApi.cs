@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Runtime.InteropServices;
@@ -70,7 +69,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Free managed objects within 'if (disposing)' if needed
-            if (null != fdiContext)
+            if (fdiContext != null)
             {
                 fdiContext.Dispose();
             }
@@ -152,7 +151,7 @@ namespace System.Management.Automation.Internal
         private void CleanUpDelegates()
         {
             // Free GCHandles so that the memory they point to may be unpinned (garbage collected)
-            if (null != _fdiAllocHandle)
+            if (_fdiAllocHandle != null)
             {
                 _fdiAllocHandle.Free();
                 _fdiFreeHandle.Free();
@@ -226,14 +225,24 @@ namespace System.Management.Automation.Internal
         internal static IntPtr FdiOpen(string filename, int oflag, int pmode)
         {
             FileMode mode = CabinetNativeApi.ConvertOpflagToFileMode(oflag);
+
             FileAccess access = CabinetNativeApi.ConvertPermissionModeToFileAccess(pmode);
             FileShare share = CabinetNativeApi.ConvertPermissionModeToFileShare(pmode);
+
+            // This method is used for opening the cab file as well as saving the extracted files.
+            // When we are opening the cab file we only need read permissions.
+            // We force read permissions so that non-elevated users can extract cab files.
+            if(mode == FileMode.Open || mode == FileMode.OpenOrCreate)
+            {
+                access = FileAccess.Read;
+                share = FileShare.Read;
+            }
 
             try
             {
                 FileStream stream = new FileStream(filename, mode, access, share);
 
-                if (null == stream)
+                if (stream == null)
                 {
                     return new IntPtr(-1);
                 }
@@ -311,7 +320,7 @@ namespace System.Management.Automation.Internal
             GCHandle handle = GCHandle.FromIntPtr(fp);
             FileStream stream = (FileStream)handle.Target;
 
-            if (null == stream)
+            if (stream == null)
             {
                 return -1;
             }

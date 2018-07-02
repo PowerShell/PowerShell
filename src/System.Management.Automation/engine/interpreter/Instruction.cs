@@ -45,7 +45,7 @@ namespace System.Management.Automation.Interpreter
 
         public virtual string InstructionName
         {
-            get { return GetType().Name.Replace("Instruction", ""); }
+            get { return GetType().Name.Replace("Instruction", string.Empty); }
         }
 
         public override string ToString()

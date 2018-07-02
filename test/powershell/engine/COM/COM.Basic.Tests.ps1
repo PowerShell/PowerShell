@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 try {
     $defaultParamValues = $PSdefaultParameterValues.Clone()
@@ -16,11 +18,11 @@ try {
             $items = $folder.Items()
 
             ## $items is a collection of all items belong to the folder, and it should be enumerated.
-            $items.Count | Should Be 3
-            $items | Measure-Object | ForEach-Object Count | Should Be $items.Count
+            $items.Count | Should -Be 3
+            $items | Measure-Object | ForEach-Object Count | Should -Be $items.Count
 
             $names = $items | ForEach-Object { $_.Name }
-            $names -join "," | Should Be "file1,file2,file3"
+            $names -join "," | Should -Be "file1,file2,file3"
         }
 
         It "Should enumerate IEnumVariant interface object without exception" {
@@ -30,8 +32,8 @@ try {
 
             ## $enumVariant is an IEnumVariant interface of all items belong to the folder, and it should be enumerated.
             $enumVariant = $items._NewEnum()
-            $items.Count | Should Be 3
-            $enumVariant | Measure-Object | ForEach-Object Count | Should Be $items.Count
+            $items.Count | Should -Be 3
+            $enumVariant | Measure-Object | ForEach-Object Count | Should -Be $items.Count
         }
 
         It "Should enumerate drives" {
@@ -39,12 +41,12 @@ try {
             $drives = $fileSystem.Drives
 
             ## $drives is a read-only collection of all available drives, and it should be enumerated.
-            $drives | Measure-Object | ForEach-Object Count | Should Be $drives.Count
+            $drives | Measure-Object | ForEach-Object Count | Should -Be $drives.Count
             ## $element should be the first drive from the enumeration. It shouldn't be the same as $drives,
             ## but it should be the same as '$drives.Item($element.DriveLetter)'
             $element = $drives | Select-Object -First 1
-            [System.Object]::ReferenceEquals($element, $drives) | Should Be $false
-            $element | Should Be $drives.Item($element.DriveLetter)
+            [System.Object]::ReferenceEquals($element, $drives) | Should -BeFalse
+            $element | Should -Be $drives.Item($element.DriveLetter)
         }
     }
 
@@ -70,7 +72,7 @@ try {
             $entry2 = ($str, "Hello")
 
             foreach ($pair in ($entry1, $entry2, $entry2, $entry1, $entry1, $entry2)) {
-                $pair[0].Name | Should Be $pair[1]
+                $pair[0].Name | Should -Be $pair[1]
             }
         }
 
@@ -81,7 +83,7 @@ try {
 
             foreach ($pair in ($entry1, $entry2)) {
                 $pair[0].Name = $pair[1]
-                $pair[0].Name | Should Be $pair[1]
+                $pair[0].Name | Should -Be $pair[1]
             }
         }
 
@@ -90,7 +92,7 @@ try {
             $shell | ForEach-Object { $_.Windows() } > $null
 
             ## '$str' is a PSObject that wraps a string, but with ScriptMethod 'Windows'
-            $str.Windows() | Should Be "Windows"
+            $str.Windows() | Should -Be "Windows"
         }
     }
 

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
@@ -30,13 +29,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the help file path for the provider.
         /// </summary>
-        public string HelpFile { get; } = "";
+        public string HelpFile { get; } = string.Empty;
 
         /// <summary>
         /// The instance of session state the provider belongs to.
         /// </summary>
         private SessionState _sessionState;
-
 
         /// <summary>
         /// Gets the name of the provider.
@@ -338,7 +336,6 @@ namespace System.Management.Automation
         {
         }
 
-
         /// <summary>
         /// Constructor for the ProviderInfo class.
         /// </summary>
@@ -421,8 +418,8 @@ namespace System.Management.Automation
                 new PSDriveInfo(
                     this.FullName,
                     this,
-                    "",
-                    "",
+                    string.Empty,
+                    string.Empty,
                     null);
 
             _hiddenDrive.Hidden = true;
@@ -680,5 +677,4 @@ namespace System.Management.Automation
         }
     } // class ProviderInfo
 } // namespace System.Management.Automation
-
 

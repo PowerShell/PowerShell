@@ -1,6 +1,6 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #pragma warning disable 1634, 1691
 
 namespace Microsoft.PowerShell.Commands.Internal
@@ -10,7 +10,6 @@ namespace Microsoft.PowerShell.Commands.Internal
     using System.Transactions;
     using Microsoft.Win32.SafeHandles;
     using System.Management.Automation;
-
 
     [Guid("79427A2B-F895-40e0-BE79-B57DC82ED231"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IKernelTransaction
@@ -53,7 +52,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
             IDtcTransaction dtcTransaction = TransactionInterop.GetDtcTransaction(managedTransaction);
             IKernelTransaction ktmInterface = dtcTransaction as IKernelTransaction;
-            if (null == ktmInterface)
+            if (ktmInterface == null)
             {
                 throw new NotSupportedException(RegistryProviderStrings.NotSupported_KernelTransactions);
             }

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Management.Automation.Remoting;
@@ -36,40 +35,8 @@ namespace System.Management.Automation.Internal
             }
             _commandRuntime = commandRuntime;
         } // ctor
+
         #endregion ctor
-
-        internal static string[] CommonWorkflowParameters = { "PSComputerName", "JobName", "PSApplicationName", "PSCredential", "PSPort", "PSConfigurationName",
-                                                              "PSConnectionURI", "PSSessionOption", "PSAuthentication", "PSAuthenticationLevel", "PSCertificateThumbprint",
-                                                              "PSConnectionRetryCount", "PSConnectionRetryIntervalSec", "PSRunningTimeoutSec", "PSElapsedTimeoutSec",
-                                                              "PSPersist", "PSPrivateMetadata", "InputObject", "PSParameterCollection",
-                                                              "AsJob", "PSUseSSL", "PSAllowRedirection" };
-
-#if !CORECLR // Workflow Not Supported On CSS
-        internal static Type[] CommonWorkflowParameterTypes = {
-             /* PSComputerName */ typeof(string[]),
-             /* JobName */ typeof(string),
-             /* PSApplicationName */ typeof(string),
-             /* PSCredential */ typeof(PSCredential),
-             /* PSPort */ typeof(uint),
-             /* PSConfigurationName */ typeof(string),
-             /* PSConnectionURI */ typeof(string[]),
-             /* PSSessionOption */ typeof(PSSessionOption),
-             /* PSAuthentication */ typeof(AuthenticationMechanism),
-             /* PSAuthenticationLevel */ typeof(AuthenticationLevel),
-             /* PSCertificateThumbprint */ typeof(string),
-             /* PSConnectionRetryCount */ typeof(uint),
-             /* PSConnectionRetryIntervalSec */ typeof(uint),
-             /* ??? PSRunningTimeoutSec */ typeof(int),
-             /* ??? PSElapsedTimeoutSec */ typeof(int),
-             /* PSPersist */ typeof(bool),
-             /* ??? PSPrivateMetadata */ typeof(object),
-             /* ??? InputObject */ typeof(object),
-             /* ??? PSParameterCollection */ typeof(Hashtable),
-             /* AsJob */ typeof(bool),
-             /* PSUseSSL */ typeof(bool),
-             /* PSAllowRedirection */ typeof(bool),
-        };
-#endif
 
         #region parameters
 

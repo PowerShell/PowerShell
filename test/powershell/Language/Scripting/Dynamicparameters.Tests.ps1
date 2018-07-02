@@ -1,4 +1,6 @@
-﻿Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
     BeforeAll {
         Class MyTestParameter {
             [parameter(ParameterSetName = 'pset1', position=0, mandatory=1)]
@@ -58,27 +60,22 @@
     }
 
     It "The dynamic parameter is enabled and bound" {
-        foo-bar -path abc -dp1 42 | Should Be 42
+        foo-bar -path abc -dp1 42 | Should -Be 42
     }
 
     It "When the dynamic parameter is not available, and raises an error when specified" {
-        try {
-            foo-bar -path def -dp1 42
-            Throw "Exception expected, execution should not have reached here"
-        } catch {
-            $_.FullyQualifiedErrorId | Should Be "NamedParameterNotFound,foo-bar"
-        }
+        { foo-bar -path def -dp1 42 } | Should -Throw -ErrorId "NamedParameterNotFound,foo-bar"
     }
 
     It "No dynamic parameter shouldn't cause an errr " {
-        foo-bar -path def  | Should Be 'no dynamic parameters'
+        foo-bar -path def  | Should -BeExactly 'no dynamic parameters'
     }
 
     It "Not specifying dynamic parameter shouldn't cause an error" {
-        foo-bar -path abc | Should Be 'dynamic parameters not passed'
+        foo-bar -path abc | Should -BeExactly 'dynamic parameters not passed'
     }
 
     It "Parameter is defined in Class" {
-        foo-bar -path class -name "myName" | Should Be 'myName'
+        foo-bar -path class -name "myName" | Should -BeExactly 'myName'
     }
 }

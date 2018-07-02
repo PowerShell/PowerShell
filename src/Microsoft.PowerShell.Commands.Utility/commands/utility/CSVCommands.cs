@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -54,7 +53,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "UseCulture")]
         public SwitchParameter UseCulture { get; set; }
 
-
         /// <summary>
         /// Abstract Property - Input Object which is written in Csv format
         /// Derived as Different Attributes.In ConvertTo-CSV, This is a positional parameter. Export-CSV not a Positional behaviour.
@@ -81,8 +79,6 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoTypeInformation { get; set; } = true;
 
         #endregion Command Line Parameters
-
-
 
         /// <summary>
         /// Write the string to a file or pipeline
@@ -155,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter()]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string LiteralPath
         {
@@ -170,8 +166,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private bool _isLiteralPath = false;
-
-
 
         /// <summary>
         /// Property that sets force parameter.
@@ -266,7 +260,6 @@ namespace Microsoft.PowerShell.Commands
             _helper = new ExportCsvHelper(this, base.Delimiter);
         }
 
-
         /// <summary>
         /// Convert the current input object to Csv and write to file/WriteObject
         /// </summary>
@@ -336,7 +329,10 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateFileStream()
         {
-            Dbg.Assert(_path != null, "FileName is mandatory parameter");
+            if (_path == null)
+            {
+                throw new InvalidOperationException(CsvCommandStrings.FileNameIsAMandatoryParameter);
+            }
 
             string resolvedFilePath = PathUtils.ResolveFilePath(this.Path, this, _isLiteralPath);
 
@@ -412,7 +408,7 @@ namespace Microsoft.PowerShell.Commands
                 _fs.Dispose();
                 _fs = null;
                 // reset the read-only attribute
-                if (null != _readOnlyFileInfo)
+                if (_readOnlyFileInfo != null)
                     _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
             }
             if (_helper != null)
@@ -423,8 +419,15 @@ namespace Microsoft.PowerShell.Commands
 
         private void ReconcilePreexistingPropertyNames()
         {
-            Dbg.Assert(_isActuallyAppending, "This method should only get called when appending");
-            Dbg.Assert(_preexistingPropertyNames != null, "This method should only get called when we have successfully read preexisting property names");
+            if (!_isActuallyAppending)
+            {
+                throw new InvalidOperationException(CsvCommandStrings.ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenAppending);
+            }
+
+            if (_preexistingPropertyNames == null)
+            {
+                throw new InvalidOperationException(CsvCommandStrings.ReconcilePreexistingPropertyNamesMethodShouldOnlyGetCalledWhenPreexistingPropertyNamesHaveBeenReadSuccessfully);
+            }
 
             HashSet<string> appendedPropertyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (string appendedPropertyName in _propertyNames)
@@ -516,7 +519,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public char Delimiter { get; set; }
 
-
         /// <summary>
         /// mandatory file name to read from
         /// </summary>
@@ -542,7 +544,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
@@ -575,7 +577,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private bool _useculture;
-
 
         ///<summary>
         /// Header property to customize the names
@@ -703,8 +704,6 @@ namespace Microsoft.PowerShell.Commands
             _helper = new ExportCsvHelper(this, base.Delimiter);
         }
 
-
-
         /// <summary>
         /// Convert the current input object to Csv and write to stream/WriteObject
         /// </summary>
@@ -726,13 +725,13 @@ namespace Microsoft.PowerShell.Commands
                 }
                 //Write property information
                 string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
-                if (!properties.Equals(""))
+                if (!properties.Equals(string.Empty))
                     WriteCsvLine(properties);
             }
 
             string csv = _helper.ConvertPSObjectToCSV(InputObject, _propertyNames);
             //write to the console
-            if (csv != "")
+            if (csv != string.Empty)
                 WriteCsvLine(csv);
         }
 
@@ -885,18 +884,19 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="delimiter"></param>
+        /// <exception cref="ArgumentNullException">throw if cmdlet is null</exception>
         internal
         ExportCsvHelper(PSCmdlet cmdlet, char delimiter)
         {
             if (cmdlet == null)
             {
+                throw new ArgumentNullException("cmdlet");
             }
             _cmdlet = cmdlet;
             _delimiter = delimiter;
         }
 
         //Name of properties to be written in CSV format
-
 
         /// <summary>
         /// Get the name of properties from source PSObject and
@@ -906,7 +906,10 @@ namespace Microsoft.PowerShell.Commands
         IList<string>
         BuildPropertyNames(PSObject source, IList<string> propertyNames)
         {
-            Dbg.Assert(propertyNames == null, "This method should be called only once per cmdlet instance");
+            if (propertyNames != null)
+            {
+                throw new InvalidOperationException(CsvCommandStrings.BuildPropertyNamesMethodShouldBeCalledOnlyOncePerCmdletInstance);
+            }
 
             // serialize only Extended and Adapted properties..
             PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
@@ -929,7 +932,10 @@ namespace Microsoft.PowerShell.Commands
         string
         ConvertPropertyNamesCSV(IList<string> propertyNames)
         {
-            Dbg.Assert(propertyNames != null, "BuildPropertyNames should be called before this method");
+            if (propertyNames == null)
+            {
+                throw new ArgumentNullException("propertyNames");
+            }
 
             StringBuilder dest = new StringBuilder();
             bool first = true;
@@ -959,7 +965,10 @@ namespace Microsoft.PowerShell.Commands
         string
         ConvertPSObjectToCSV(PSObject mshObject, IList<string> propertyNames)
         {
-            Dbg.Assert(propertyNames != null, "PropertyName collection can be empty here, but it should not be null");
+            if (propertyNames == null)
+            {
+                throw new ArgumentNullException("propertyNames");
+            }
 
             StringBuilder dest = new StringBuilder();
             bool first = true;
@@ -995,7 +1004,11 @@ namespace Microsoft.PowerShell.Commands
         string
         GetToStringValueForProperty(PSPropertyInfo property)
         {
-            Dbg.Assert(property != null, "Caller should validate the parameter");
+            if (property == null)
+            {
+                throw new ArgumentNullException("property");
+            }
+
             string value = null;
             try
             {
@@ -1031,7 +1044,11 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Dbg.Assert(tnh[0] != null, "type hierarchy should not have null values");
+                if (tnh[0] == null)
+                {
+                    throw new InvalidOperationException(CsvCommandStrings.TypeHierarchyShouldNotHaveNullValues);
+                }
+
                 string temp = tnh[0];
                 //If type starts with CSV: remove it. This would happen when you export
                 //an imported object. import-csv adds CSV. prefix to the type.
@@ -1145,8 +1162,15 @@ namespace Microsoft.PowerShell.Commands
 
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
-            Dbg.Assert(cmdlet != null, "Caller should verify cmdlet != null");
-            Dbg.Assert(streamReader != null, "Caller should verify textReader != null");
+            if (cmdlet == null)
+            {
+                throw new ArgumentNullException("cmdlet");
+            }
+
+            if (streamReader == null)
+            {
+                throw new ArgumentNullException("streamReader");
+            }
 
             _cmdlet = cmdlet;
             _delimiter = delimiter;
@@ -1175,7 +1199,11 @@ namespace Microsoft.PowerShell.Commands
         char
         ReadChar()
         {
-            Dbg.Assert(!EOF, "This should not be called if EOF is reached");
+            if (EOF)
+            {
+                throw new InvalidOperationException(CsvCommandStrings.EOFIsReached);
+            }
+
             int i = _sr.Read();
             return (char)i;
         }
@@ -1363,7 +1391,6 @@ namespace Microsoft.PowerShell.Commands
                 //Read the next character
                 char ch = ReadChar();
 
-
                 if ((ch == _delimiter))
                 {
                     if (seenBeginQuote)
@@ -1512,7 +1539,7 @@ namespace Microsoft.PowerShell.Commands
         bool
         IsNewLine(char ch, out string newLine)
         {
-            newLine = "";
+            newLine = string.Empty;
             if (ch == '\r')
             {
                 if (PeekNextChar('\n'))
@@ -1530,7 +1557,7 @@ namespace Microsoft.PowerShell.Commands
                 newLine = "\n";
             }
 
-            return newLine != "";
+            return newLine != string.Empty;
         }
 
         /// <summary>

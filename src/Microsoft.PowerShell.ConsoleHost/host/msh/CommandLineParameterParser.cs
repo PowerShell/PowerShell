@@ -1,7 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -10,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
 using System.Diagnostics;
@@ -181,15 +180,15 @@ namespace Microsoft.PowerShell
             "noninteractive",
             "inputformat",
             "outputformat",
-#if !UNIX
             "windowstyle",
-#endif
             "encodedcommand",
             "configurationname",
             "file",
             "executionpolicy",
             "command",
-            "help"
+            "settingsfile",
+            "help",
+            "workingdirectory"
         };
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
@@ -389,12 +388,21 @@ namespace Microsoft.PowerShell
             get { return _noInteractive; }
         }
 
+        internal string WorkingDirectory
+        {
+            get { return _workingDirectory; }
+        }
+
         private void ShowHelp()
         {
             Dbg.Assert(_helpText != null, "_helpText should not be null");
-            _hostUI.WriteLine("");
+            _hostUI.WriteLine(string.Empty);
             _hostUI.Write(_helpText);
-            _hostUI.WriteLine("");
+            if (_showExtendedHelp)
+            {
+                _hostUI.Write(ManagedEntranceStrings.ExtendedHelp);
+            }
+            _hostUI.WriteLine(string.Empty);
         }
 
         private void DisplayBanner()
@@ -459,29 +467,17 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private static string s_groupPolicyBase = @"Software\Policies\Microsoft\Windows\PowerShell";
-        private static string s_consoleSessionConfigurationKey = "ConsoleSessionConfiguration";
-        private static string s_enableConsoleSessionConfiguration = "EnableConsoleSessionConfiguration";
-        private static string s_consoleSessionConfigurationName = "ConsoleSessionConfigurationName";
         private static string GetConfigurationNameFromGroupPolicy()
         {
             // Current user policy takes precedence.
-            var groupPolicySettings = Utils.GetGroupPolicySetting(s_groupPolicyBase, s_consoleSessionConfigurationKey, Utils.RegCurrentUserThenLocalMachine);
-            if (groupPolicySettings != null)
+            var consoleSessionSetting = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
+            if (consoleSessionSetting != null)
             {
-                object keyValue;
-                if (groupPolicySettings.TryGetValue(s_enableConsoleSessionConfiguration, out keyValue))
+                if (consoleSessionSetting.EnableConsoleSessionConfiguration == true)
                 {
-                    if (String.Equals(keyValue.ToString(), "1", StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(consoleSessionSetting.ConsoleSessionConfigurationName))
                     {
-                        if (groupPolicySettings.TryGetValue(s_consoleSessionConfigurationName, out keyValue))
-                        {
-                            string consoleSessionConfigurationName = keyValue.ToString();
-                            if (!string.IsNullOrEmpty(consoleSessionConfigurationName))
-                            {
-                                return consoleSessionConfigurationName;
-                            }
-                        }
+                        return consoleSessionSetting.ConsoleSessionConfigurationName;
                     }
                 }
             }
@@ -536,6 +532,7 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
                     _showHelp = true;
+                    _showExtendedHelp = true;
                     _abortStartup = true;
                 }
                 else if (MatchSwitch(switchKey, "noexit", "noe"))
@@ -594,9 +591,13 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-#if !UNIX
                 else if (MatchSwitch(switchKey, "windowstyle", "w"))
                 {
+#if UNIX
+                    WriteCommandLineError(
+                        CommandLineParameterParserStrings.WindowStyleArgumentNotImplemented);
+                    break;
+#else
                     ++i;
                     if (i >= args.Length)
                     {
@@ -617,8 +618,8 @@ namespace Microsoft.PowerShell
                             string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidWindowStyleArgument, args[i], e.Message));
                         break;
                     }
-                }
 #endif
+                }
                 else if (MatchSwitch(switchKey, "file", "f"))
                 {
                     if (!ParseFile(args, ref i, noexitSeen))
@@ -713,6 +714,36 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
+
+                else if (MatchSwitch(switchKey, "settingsfile", "settings") )
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.MissingSettingsFileArgument);
+                        break;
+                    }
+                    string configFile = null;
+                    try
+                    {
+                        configFile = NormalizeFilePath(args[i]);
+                    }
+                    catch (Exception ex)
+                    {
+                        string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[i], ex.Message);
+                        WriteCommandLineError(error);
+                        break;
+                    }
+
+                    if (!System.IO.File.Exists(configFile))
+                    {
+                        string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.SettingsFileNotExists, configFile);
+                        WriteCommandLineError(error);
+                        break;
+                    }
+                    PowerShellConfig.Instance.SetSystemConfigFilePath(configFile);
+                }
 #if STAMODE
                 // explicit setting of the ApartmentState Not supported on NanoServer
                 else if (MatchSwitch(switchKey, "sta", "s"))
@@ -742,6 +773,18 @@ namespace Microsoft.PowerShell
                     _staMode = false;
                 }
 #endif
+                else if (MatchSwitch(switchKey, "workingdirectory", "wo") || MatchSwitch(switchKey, "wd", "wd"))
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.MissingWorkingDirectoryArgument);
+                        break;
+                    }
+
+                    _workingDirectory = args[i];
+                }
                 else
                 {
                     // The first parameter we fail to recognize marks the beginning of the file string.
@@ -853,6 +896,15 @@ namespace Microsoft.PowerShell
             executionPolicy = args[i];
         }
 
+        private static string NormalizeFilePath(string path)
+        {
+            // Normalize slashes
+            path = path.Replace(StringLiterals.AlternatePathSeparator,
+                                StringLiterals.DefaultPathSeparator);
+
+            return Path.GetFullPath(path);
+        }
+
         private bool ParseFile(string[] args, ref int i, bool noexitSeen)
         {
             // Process file execution. We don't need to worry about checking -command
@@ -910,10 +962,7 @@ namespace Microsoft.PowerShell
                 string exceptionMessage = null;
                 try
                 {
-                    // Normalize slashes
-                    _file = args[i].Replace(StringLiterals.AlternatePathSeparator,
-                                            StringLiterals.DefaultPathSeparator);
-                    _file = Path.GetFullPath(_file);
+                    _file = NormalizeFilePath(args[i]);
                 }
                 catch (Exception e)
                 {
@@ -955,7 +1004,7 @@ namespace Microsoft.PowerShell
                     }
                     WriteCommandLineError(
                         string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.ArgumentFileDoesNotExist, args[i]),
-                        showBanner: false);
+                        showHelp: true);
                     return false;
                 }
 
@@ -990,11 +1039,11 @@ namespace Microsoft.PowerShell
                                 string argName = arg.Substring(0, offset);
                                 if (TryGetBoolValue(argValue, out bool boolValue))
                                 {
-                                        _collectedArgs.Add(new CommandParameter(argName, boolValue));
+                                    _collectedArgs.Add(new CommandParameter(argName, boolValue));
                                 }
                                 else
                                 {
-                                        _collectedArgs.Add(new CommandParameter(argName, argValue));
+                                    _collectedArgs.Add(new CommandParameter(argName, argValue));
                                 }
                             }
                         }
@@ -1164,6 +1213,7 @@ namespace Microsoft.PowerShell
         private string _configurationName;
         private PSHostUserInterface _hostUI;
         private bool _showHelp;
+        private bool _showExtendedHelp;
         private bool _showBanner = true;
         private bool _noInteractive;
         private string _bannerText;
@@ -1191,6 +1241,7 @@ namespace Microsoft.PowerShell
         private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
         private string _file;
         private string _executionPolicy;
+        private string _workingDirectory;
     }
 }   // namespace
 

@@ -1,7 +1,5 @@
-/*============================================================================
- * Copyright (c) Microsoft Corporation. All rights reserved.
- *============================================================================
- */
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #region Using directives
 using System;
@@ -10,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 #endregion
-
 
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
@@ -320,15 +317,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (this.ClientOnly)
             {
                 string conflictParameterName = null;
-                if (null != this.ComputerName)
+                if (this.ComputerName != null)
                 {
                     conflictParameterName = @"ComputerName";
                 }
-                else if (null != this.CimSession)
+                else if (this.CimSession != null)
                 {
                     conflictParameterName = @"CimSession";
                 }
-                if (null != conflictParameterName)
+                if (conflictParameterName != null)
                 {
                     ThrowConflictParameterWasSet(@"New-CimInstance", conflictParameterName, @"ClientOnly");
                     return;

@@ -1,8 +1,10 @@
 # Docker image file that describes an Ubuntu14.04 image with PowerShell installed from Microsoft APT Repo
+ARG FromTag=14.04
 
-FROM ubuntu:trusty
+FROM ubuntu:${FromTag}
 
-ARG POWERSHELL_VERSION=6.0.0-rc
+ARG POWERSHELL_VERSION=6.0.2
+ARG POWERSHELL_VERSION_POSTFIX=-1.ubuntu.14.04
 ARG IMAGE_NAME=microsoft/powershell:ubuntu14.04
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -34,18 +36,23 @@ RUN apt-get update \
         ca-certificates \
         curl \
         apt-transport-https \
+    && apt-get dist-upgrade -y \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Import the public repository GPG keys for Microsoft
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 
 # Register the Microsoft Ubuntu 14.04 repository
-RUN curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | tee /etc/apt/sources.list.d/microsoft.list
+RUN set -o pipefail \
+    && curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | tee /etc/apt/sources.list.d/microsoft.list
 
 # Install powershell from Microsoft Repo
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-	powershell
+	powershell=${POWERSHELL_VERSION}${POWERSHELL_VERSION_POSTFIX} \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c

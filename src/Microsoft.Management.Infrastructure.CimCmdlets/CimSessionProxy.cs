@@ -1,7 +1,5 @@
-/*============================================================================
- * Copyright (c) Microsoft Corporation. All rights reserved.
- *============================================================================
- */
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #region Using directives
 
@@ -228,7 +226,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="session">CimSession to be added</param>
         internal static void AddCimSessionToTemporaryCache(CimSession session)
         {
-            if (null != session)
+            if (session != null)
             {
                 lock (temporarySessionCacheLock)
                 {
@@ -254,7 +252,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private static void RemoveCimSessionFromTemporaryCache(CimSession session,
             bool dispose)
         {
-            if (null != session)
+            if (session != null)
             {
                 bool removed = false;
                 lock (temporarySessionCacheLock)

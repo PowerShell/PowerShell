@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using Xunit;
 using System;
 using System.Collections.Generic;
@@ -13,17 +15,17 @@ using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
+using System.Reflection;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
-    [Collection("AssemblyLoadContext")]
     public class FileSystemProviderTests: IDisposable
     {
         private string testPath;
         private string testContent;
         public FileSystemProviderTests()
         {
-            testPath = Path.Combine(Path.GetTempPath(),"test");
+            testPath = Path.GetTempFileName();
             testContent = "test content!";
             if(File.Exists(testPath)) File.Delete(testPath);
             File.AppendAllText(testPath,testContent);
@@ -37,9 +39,8 @@ namespace PSTests
         {
             CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface =  new DefaultHost(currentCulture,currentCulture);
-            RunspaceConfiguration runspaceConfiguration =  RunspaceConfiguration.Create();
             InitialSessionState iss = InitialSessionState.CreateDefault2();
-            AutomationEngine engine = new AutomationEngine(hostInterface, runspaceConfiguration, iss);
+            AutomationEngine engine = new AutomationEngine(hostInterface, iss);
             ExecutionContext executionContext = new ExecutionContext(engine, hostInterface, iss);
             return executionContext;
         }
@@ -58,7 +59,14 @@ namespace PSTests
         [Fact]
         public void TestCreateJunctionFails()
         {
-            Assert.False(InternalSymbolicLinkLinkCodeMethods.CreateJunction("",""));
+            if(!Platform.IsWindows)
+            {
+                Assert.False(InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty));
+            }
+            else
+            {
+                Assert.Throws<System.ArgumentNullException>(delegate { InternalSymbolicLinkLinkCodeMethods.CreateJunction(string.Empty, string.Empty); });
+            }
         }
 
         [Fact]
@@ -74,12 +82,26 @@ namespace PSTests
         public void TestMode()
         {
             Assert.Equal(FileSystemProvider.Mode(null),String.Empty);
-            FileSystemInfo directoryObject = new DirectoryInfo(@"/");
-            FileSystemInfo fileObject = new FileInfo(@"/etc/hosts");
-            FileSystemInfo executableObject = new FileInfo(@"/bin/echo");
-            Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r","-"),"d-----");
-            Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(fileObject)).Replace("r","-"),"------");
-            Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(executableObject)).Replace("r","-"),"------");
+            FileSystemInfo directoryObject = null;
+            FileSystemInfo fileObject = null;
+            FileSystemInfo executableObject = null;
+
+            if(!Platform.IsWindows)
+            {
+                directoryObject = new DirectoryInfo(@"/");
+                fileObject = new FileInfo(@"/etc/hosts");
+                executableObject = new FileInfo(@"/bin/echo");
+            }
+            else
+            {
+                directoryObject = new DirectoryInfo(System.Environment.CurrentDirectory);
+                fileObject = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
+                executableObject = new FileInfo(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+            }
+
+            Assert.Equal("d-----", FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r","-"));
+            Assert.Equal("------", FileSystemProvider.Mode(PSObject.AsPSObject(fileObject)).Replace("r","-").Replace("a","-"));
+            Assert.Equal("------", FileSystemProvider.Mode(PSObject.AsPSObject(executableObject)).Replace("r","-").Replace("a","-"));
         }
 
         [Fact]
@@ -99,7 +121,7 @@ namespace PSTests
             {
                 if(property.Name == "IsReadOnly")
                 {
-                    Assert.Equal(property.Value,false);
+                    Assert.False((bool)property.Value);
                 }
             }
         }
@@ -116,9 +138,9 @@ namespace PSTests
             PSObject psobject1=PSObject.AsPSObject(fileSystemObject1);
             foreach(PSPropertyInfo property in psobject1.Properties)
             {
-                if(property.Name == "Name")
+                if(property.Name == "FullName")
                 {
-                    Assert.Equal(property.Value,"test");
+                    Assert.Equal(testPath, property.Value);
                 }
             }
         }

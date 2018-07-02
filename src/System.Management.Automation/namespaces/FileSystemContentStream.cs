@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -374,7 +373,6 @@ namespace Microsoft.PowerShell.Commands
             _delimiter = delimiter;
             _usingDelimiter = true;
         }
-
 
         /// <summary>
         /// Reads the specified number of characters or a lines from the file.
@@ -953,7 +951,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         bool isTaskCompleted = tcs.Task.Wait(500);
 
-                        if (null != errorEventArgs)
+                        if (errorEventArgs != null)
                         {
                             throw errorEventArgs.GetException();
                         }

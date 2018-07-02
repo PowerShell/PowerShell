@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 using namespace System.Diagnostics
 
 Describe "Invoke-Item basic tests" -Tags "Feature" {
@@ -43,15 +45,16 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
                 $title = 'tell application "TextEdit" to get name of front window' | osascript
             }
             $afterCount = [int]('tell application "TextEdit" to count of windows' | osascript)
-            $afterCount | Should Be ($beforeCount + 1)
-            $title | Should Be $expectedTitle
+            $afterCount | Should -Be ($beforeCount + 1)
+            $title | Should -Be $expectedTitle
             "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
             'tell application "TextEdit" to quit' | osascript
         }
     }
 
     It "Should invoke an executable file without error" {
-        $ping = Get-Command "ping" -CommandType Application | ForEach-Object Source
+        # In case there is a couple of ping executables, we take the first one.
+        $ping = (Get-Command "ping" -CommandType Application | Select-Object -First 1).Source
         $redirectFile = Join-Path -Path $TestDrive -ChildPath "redirect2.txt"
 
         if ($IsWindows) {
@@ -59,7 +62,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
                 ## On headless SKUs, we use `UseShellExecute = false`
                 ## 'ping.exe' on Windows writes out usage to stdout.
                 & $powershell -noprofile -c "Invoke-Item '$ping'" > $redirectFile
-                Get-Content $redirectFile -Raw | Should Match "usage: ping"
+                Get-Content $redirectFile -Raw | Should -Match "usage: ping"
             } else {
                 ## On full desktop, we use `UseShellExecute = true` to align with Windows PowerShell
                 $notepad = Get-Command "notepad.exe" -CommandType Application | ForEach-Object Source
@@ -67,14 +70,15 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
                 Get-Process -Name $notepadProcessName | Stop-Process -Force
                 Invoke-Item -Path $notepad
                 $notepadProcess = Get-Process -Name $notepadProcessName
-                $notepadProcess.Name | Should Be $notepadProcessName
+                # we need BeIn because multiple notepad processes could be running
+                $notepadProcess.Name | Should -BeIn $notepadProcessName
                 Stop-Process -InputObject $notepadProcess
             }
         } else {
             ## On Unix, we use `UseShellExecute = false`
             ## 'ping' on Unix write out usage to stderr
             & $powershell -noprofile -c "Invoke-Item '$ping'" 2> $redirectFile
-            Get-Content $redirectFile -Raw | Should Match "usage: ping"
+            Get-Content $redirectFile -Raw | Should -Match "usage: ping"
         }
     }
 
@@ -129,9 +133,9 @@ Categories=Application;
                 Wait-UntilTrue -sb { $windows.Count -gt $before } -TimeoutInMilliseconds (10*1000) -IntervalInMilliseconds 100 > $null
                 $after = $windows.Count
 
-                $before + 1 | Should Be $after
+                $before + 1 | Should -Be $after
                 $item = $windows.Item($after - 1)
-                $item.LocationURL | Should Match ($PSHOME -replace '\\', '/')
+                $item.LocationURL | Should -Match ($PSHOME -replace '\\', '/')
                 ## close the windows explorer
                 $item.Quit()
             }
@@ -141,7 +145,7 @@ Categories=Application;
                 Invoke-Item -Path $PSHOME
                 # may take time for handler to start
                 Wait-FileToBePresent -File "$HOME/InvokeItemTest.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
-                Get-Content $HOME/InvokeItemTest.Success | Should Be $PSHOME
+                Get-Content $HOME/InvokeItemTest.Success | Should -Be $PSHOME
             }
             else
             {
@@ -157,8 +161,8 @@ Categories=Application;
                     $title = 'tell application "Finder" to get name of front window' | osascript
                 }
                 $afterCount = [int]('tell application "Finder" to count of windows' | osascript)
-                $afterCount | Should Be ($beforeCount + 1)
-                $title | Should Be $expectedTitle
+                $afterCount | Should -Be ($beforeCount + 1)
+                $title | Should -Be $expectedTitle
                 'tell application "Finder" to close front window' | osascript
             }
         }
@@ -208,11 +212,11 @@ Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {
                 Start-Sleep -Milliseconds 100
                 if (([Datetime]::Now - $startTime) -ge [timespan]"00:00:05") { throw "Timeout exception" }
             }
-        } | Should Not throw
+        } | Should -Not -throw
     }
 
     It "Should start a file without error on Windows full SKUs" -Skip:(-not $isFullWin) {
         Start-Process $testfilepath -Wait
-        Test-Path $renamedtestfilepath | Should Be $true
+        Test-Path $renamedtestfilepath | Should -BeTrue
     }
 }

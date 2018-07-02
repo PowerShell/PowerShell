@@ -1,18 +1,19 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using Xunit;
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     // NOTE: do not call AddCommand("out-host") after invoking or MergeMyResults,
     // otherwise Invoke will not return any objects
 
-    [Collection("AssemblyLoadContext")]
     public class RunspaceTests
     {
-        private static int count = 3;
-        private static string script = String.Format($"get-command | select-object -first {count}");
+        private static int count = 1;
+        private static string script = String.Format($"get-command get-command");
 
         [Fact]
         public void TestRunspaceWithPipeline()
@@ -62,8 +63,7 @@ namespace PSTests
             }
         }
 
-
-        [Fact(Skip="Fails in Travis CI, need investigation")]
+        [Fact]
         public void TestRunspaceWithPowerShellAndInitialSessionState()
         {
             InitialSessionState iss = InitialSessionState.CreateDefault2();
@@ -76,11 +76,14 @@ namespace PSTests
                 using (PowerShell powerShell = PowerShell.Create())
                 {
                     powerShell.Runspace = runspace;
-
+                    powerShell.AddScript("Import-Module Microsoft.PowerShell.Utility -Force");
                     powerShell.AddScript(script);
 
                     int objCount = 0;
-                    foreach (var result in powerShell.Invoke())
+
+                    var results = powerShell.Invoke();
+
+                    foreach (var result in results)
                     {
                         // this is how an object would be captured here and looked at,
                         // each result is a PSObject with the data from the pipeline

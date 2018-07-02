@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -30,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         /// Default constructor used if no.
         /// </summary>
         internal PSHostTraceListener(PSCmdlet cmdlet)
-            : base("")
+            : base(string.Empty)
         {
             if (cmdlet == null)
             {

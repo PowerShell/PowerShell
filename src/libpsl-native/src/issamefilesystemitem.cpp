@@ -1,5 +1,6 @@
-//! @file issamefilesystemitem.cpp
-//! @author Jeff Bienstadt <v-jebien@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Determines whether two paths ultimately point to the same filesystem object
 
 #include "getstat.h"

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Runtime.Serialization;
 using System.Management.Automation.Internal;
@@ -54,7 +53,6 @@ namespace System.Management.Automation
             SetErrorId(errorId);
         }
 
-
         #region Serialization
         /// <summary>
         /// Initializes a new instance of ExtendedTypeSystemException with serialization parameters
@@ -70,7 +68,6 @@ namespace System.Management.Automation
         #endregion ctor
 
     } // ExtendedTypeSystemException
-
 
     /// <summary>
     /// Defines the exception thrown for Method related errors
@@ -122,7 +119,6 @@ namespace System.Management.Automation
             base(errorId, innerException, resourceString, arguments)
         {
         }
-
 
         #region Serialization
         /// <summary>
@@ -189,7 +185,6 @@ namespace System.Management.Automation
         {
         }
 
-
         #region Serialization
         /// <summary>
         /// Initializes a new instance of MethodInvocationException with serialization parameters
@@ -253,7 +248,6 @@ namespace System.Management.Automation
         {
         }
 
-
         #region Serialization
         /// <summary>
         /// Initializes a new instance of GetValueException with serialization parameters
@@ -269,7 +263,6 @@ namespace System.Management.Automation
         #endregion ctor
 
     } // GetValueException
-
 
     /// <summary>
     /// Defines the exception thrown for errors getting the value of properties
@@ -318,7 +311,6 @@ namespace System.Management.Automation
             base(errorId, innerException, resourceString, arguments)
         {
         }
-
 
         #region Serialization
         /// <summary>
@@ -383,7 +375,6 @@ namespace System.Management.Automation
         {
         }
 
-
         #region Serialization
         /// <summary>
         /// Initializes a new instance of GetValueInvocationException with serialization parameters
@@ -445,7 +436,6 @@ namespace System.Management.Automation
         {
         }
 
-
         #region Serialization
         /// <summary>
         /// Initializes a new instance of SetValueException with serialization parameters
@@ -506,7 +496,6 @@ namespace System.Management.Automation
             base(errorId, innerException, resourceString, arguments)
         {
         }
-
 
         #region Serialization
         /// <summary>
@@ -602,7 +591,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -617,5 +606,4 @@ namespace System.Management.Automation
         private string _errorId = "PSInvalidCastException";
     }
 }
-
 

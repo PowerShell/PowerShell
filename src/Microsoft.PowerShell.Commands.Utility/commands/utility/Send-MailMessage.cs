@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -8,7 +7,6 @@ using System.Globalization;
 using System.Net.Mail;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -26,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// If the filename specified can not be found, then the relevant error
         /// message should be thrown.
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [Alias("PsPath")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -44,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the address collection that contains the
         /// blind carbon copy (BCC) recipients for the e-mail message.
         /// </summary>
-        [Parameter]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] Bcc
@@ -60,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the body (content) of the message
         /// </summary>
-        [Parameter(Position = 2)]
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         public String Body
         {
@@ -75,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies a value indicating whether the mail message body is in Html.
         /// </summary>
-        [Parameter]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("BAH")]
         public SwitchParameter BodyAsHtml
         {
@@ -91,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the encoding used for the content of the body and also the subject.
         /// This is set to ASCII to ensure there are no problems with any email server
         /// </summary>
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("BE")]
         [ValidateNotNullOrEmpty]
         [ArgumentCompletions(
@@ -112,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the address collection that contains the
         /// carbon copy (CC) recipients for the e-mail message.
         /// </summary>
-        [Parameter]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Cc")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -130,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the delivery notifications options for the e-mail message. The various
         /// option available for this parameter are None, OnSuccess, OnFailure, Delay and Never
         /// </summary>
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("DNO")]
         [ValidateNotNullOrEmpty]
         public DeliveryNotificationOptions DeliveryNotificationOption
@@ -147,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the from address for this e-mail message. The default value for
         /// this parameter is the email address of the currently logged on user
         /// </summary>
-        [Parameter(Mandatory = true)]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         public String From
         {
@@ -164,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
         /// to the Powershell variable PSEmailServer,if this host can not reached an appropriate error
         /// message will be displayed.
         /// </summary>
-        [Parameter(Position = 3)]
+        [Parameter(Position = 3, ValueFromPipelineByPropertyName = true)]
         [Alias("ComputerName")]
         [ValidateNotNullOrEmpty]
         public String SmtpServer
@@ -180,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the priority of the email message. The valid values for this are Normal, High and Low
         /// </summary>
-        [Parameter]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         public MailPriority Priority
         {
@@ -195,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the subject of the email message.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 1)]
+        [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
         [Alias("sub")]
         [ValidateNotNullOrEmpty]
         public String Subject
@@ -208,11 +206,10 @@ namespace Microsoft.PowerShell.Commands
         }
         private String _subject;
 
-
         /// <summary>
         /// Specifies the To address for this e-mail message.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0)]
+        [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] To
@@ -228,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the credential for this e-mail message.
         /// </summary>
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         [Credential]
         [ValidateNotNullOrEmpty]
         public PSCredential Credential
@@ -244,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies if Secured layer is required or not
         /// </summary>
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         public SwitchParameter UseSsl
         {
             get { return _usessl; }
@@ -261,7 +258,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// Value must be greater than zero.
         /// </remarks>
-        [Parameter()]
+        [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateRange(0, Int32.MaxValue)]
         public int Port
         {
@@ -272,9 +269,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-
         #region private variables and methods
-
 
         // Instantiate a new instance of MailMessage
         private MailMessage _mMailMessage = new MailMessage();
@@ -361,8 +356,6 @@ namespace Microsoft.PowerShell.Commands
                 AddAddressesToMailMessage(_cc, "cc");
             }
 
-
-
             //set the delivery notification
             _mMailMessage.DeliveryNotificationOptions = _deliverynotification;
 
@@ -382,7 +375,6 @@ namespace Microsoft.PowerShell.Commands
             // Set the priority of the mail message to normal
             _mMailMessage.Priority = _priority;
 
-
             //get the PowerShell environment variable
             //globalEmailServer might be null if it is deleted by: PS> del variable:PSEmailServer
             PSVariable globalEmailServer = SessionState.Internal.GetVariable(SpecialVariables.PSEmailServer);
@@ -397,7 +389,7 @@ namespace Microsoft.PowerShell.Commands
                 this.ThrowTerminatingError(er);
             }
 
-            if (0 == _port)
+            if (_port == 0)
             {
                 _mSmtpClient = new SmtpClient(_smtpserver);
             }

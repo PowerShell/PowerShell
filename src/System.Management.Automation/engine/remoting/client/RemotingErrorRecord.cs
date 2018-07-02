@@ -1,6 +1,5 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Runtime.Serialization;
 using System.Management.Automation.Remoting;
@@ -43,7 +42,7 @@ namespace System.Management.Automation.Runspaces
         private RemotingErrorRecord(ErrorRecord errorRecord, OriginInfo originInfo, Exception replaceParentContainsErrorRecordException) :
             base(errorRecord, replaceParentContainsErrorRecordException)
         {
-            if (null != errorRecord)
+            if (errorRecord != null)
             {
                 base.SetInvocationInfo(errorRecord.InvocationInfo);
             }

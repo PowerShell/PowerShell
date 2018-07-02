@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Import-Module HelpersCommon
 #
 # These are general tests that verify non-Windows behavior
 #
@@ -5,23 +8,23 @@ Describe "ExecutionPolicy" -Tags "CI" {
 
     Context "Check Get-ExecutionPolicy behavior" {
         It "Should unrestricted when not on Windows" -Skip:$IsWindows {
-            Get-ExecutionPolicy | Should Be Unrestricted
+            Get-ExecutionPolicy | Should -Be Unrestricted
         }
 
         It "Should return Microsoft.Powershell.ExecutionPolicy PSObject on Windows" -Skip:($IsLinux -Or $IsMacOS) {
-            Get-ExecutionPolicy | Should BeOfType Microsoft.Powershell.ExecutionPolicy
+            Get-ExecutionPolicy | Should -BeOfType Microsoft.Powershell.ExecutionPolicy
         }
     }
 
     Context "Check Set-ExecutionPolicy behavior" {
         It "Should throw PlatformNotSupported when not on Windows" -Skip:$IsWindows {
-            { Set-ExecutionPolicy Unrestricted } | Should Throw "Operation is not supported on this platform."
+            { Set-ExecutionPolicy Unrestricted } | Should -Throw "Operation is not supported on this platform."
         }
 
         It "Should succeed on Windows" -Skip:($IsLinux -Or $IsMacOS) {
             # We use the Process scope to avoid affecting the system
             # Unrestricted is assumed "safe", otherwise these tests would not be running
-            { Set-ExecutionPolicy -Force -Scope Process -ExecutionPolicy Unrestricted } | Should Not Throw
+            { Set-ExecutionPolicy -Force -Scope Process -ExecutionPolicy Unrestricted } | Should -Not -Throw
         }
     }
 }
@@ -60,10 +63,10 @@ try {
 
                     # 'Get-Help Get-Disk' should return one result back
                     Set-ExecutionPolicy -ExecutionPolicy Restricted -Force -ErrorAction Stop
-                    (Get-Help -Name Get-Disk -ErrorAction Stop).Name | Should Be 'Get-Disk'
+                    (Get-Help -Name Get-Disk -ErrorAction Stop).Name | Should -Be 'Get-Disk'
                 }
                 catch {
-                    $_.ToString | should be null
+                    $_.ToString | Should -Be null
                 }
                 finally
                 {
@@ -81,7 +84,7 @@ try {
                 $testDirectory =  Join-Path $drive ("MultiMachineTestData\Commands\Cmdlets\Security_TestData\ExecutionPolicyTestData")
                 if(Test-Path $testDirectory)
                 {
-                    Remove-Item -Force -Recurse $testDirectory -ea SilentlyContinue
+                    Remove-Item -Force -Recurse $testDirectory -ErrorAction SilentlyContinue
                 }
                 $null = New-Item $testDirectory -ItemType Directory -Force
                 $remoteTestDirectory = $testDirectory
@@ -95,6 +98,8 @@ try {
                 $LocalSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath LocalSignatureCorruptedScript.ps1
                 $LocalSignedScript = Join-Path -Path $remoteTestDirectory -ChildPath LocalSignedScript.ps1
                 $LocalUnsignedScript = Join-Path -Path $remoteTestDirectory -ChildPath LocalUnsignedScript.ps1
+                $PSHomeUnsignedModule = Join-Path -Path $PSHome -ChildPath 'Modules' -AdditionalChildPath 'LocalUnsignedModule', 'LocalUnsignedModule.psm1'
+                $PSHomeUntrustedModule = Join-Path -Path $PSHome -ChildPath 'Modules' -AdditionalChildPath 'LocalUntrustedModule', 'LocalUntrustedModule.psm1'
                 $TrustedSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath TrustedSignatureCorruptedScript.ps1
                 $TrustedSignedScript = Join-Path -Path $remoteTestDirectory -ChildPath TrustedSignedScript.ps1
                 $TrustedUnsignedScript = Join-Path -Path $remoteTestDirectory -ChildPath TrustedUnsignedScript.ps1
@@ -170,6 +175,18 @@ try {
                         Corrupted = $false
                     }
                     @{
+                        FilePath = $PSHomeUnsignedModule
+                        FileType = $fileType.Local
+                        AddSignature = $false
+                        Corrupted = $false
+                    }
+                    @{
+                        FilePath = $PSHomeUntrustedModule
+                        FileType = $fileType.Untrusted
+                        AddSignature = $false
+                        Corrupted = $false
+                    }
+                    @{
                         FilePath = $TrustedSignatureCorruptedScript
                         FileType = $fileType.Trusted
                         AddSignature = $true
@@ -230,9 +247,11 @@ try {
                 function createTestFile
                 {
                     param (
+                    [Parameter(Mandatory)]
                     [string]
                     $FilePath,
 
+                    [Parameter(Mandatory)]
                     [int]
                     $FileType,
 
@@ -243,7 +262,14 @@ try {
                     $Corrupted
                     )
 
-                    $null = New-Item -Path $filePath -ItemType File
+                    $folder = Split-Path -Path $FilePath
+                    # create folder if it doesn't already exist
+                    if(!(Test-Path $folder))
+                    {
+                        $null = New-Item -Path $folder -ItemType Directory
+                    }
+
+                    $null = New-Item -Path $filePath -ItemType File -Force
 
                     $content = "`"Hello`"" + "`r`n"
                     if($AddSignature)
@@ -460,6 +486,34 @@ ZoneId=$FileType
                 #Get Execution Policy
                 $originalExecPolicy = Get-ExecutionPolicy
                 $originalExecutionPolicy =  $originalExecPolicy
+
+                $archiveSigned = $false
+                $archivePath = Get-Module -ListAvailable Microsoft.PowerShell.Archive -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path
+                if($archivePath)
+                {
+                    $archiveFolder = Split-Path -Path $archivePath
+
+                    # get all the certs used to sign the module
+                    $script:archiveAllCert = Get-ChildItem -File -Path (Join-Path -Path $archiveFolder -ChildPath '*') -Recurse |
+                        Get-AuthenticodeSignature
+
+                    # filter only to valid signatures
+                    $script:archiveCert = $script:archiveAllCert |
+                        Where-Object { $_.status -eq 'Valid'} |
+                            Select-Object -Unique -ExpandProperty SignerCertificate
+
+                    # if we have valid signatures, add them to trusted publishers so powershell will trust them.
+                    if($script:archiveCert)
+                    {
+                        $store = [System.Security.Cryptography.X509Certificates.X509Store]::new([System.Security.Cryptography.X509Certificates.StoreName]::TrustedPublisher,[System.Security.Cryptography.X509Certificates.StoreLocation]::CurrentUser)
+                        $store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+                        $archiveCert | ForEach-Object {
+                            $store.Add($_)
+                        }
+                        $store.Close()
+                        $archiveSigned = $true
+                    }
+                }
             }
         }
         AfterAll {
@@ -467,8 +521,17 @@ ZoneId=$FileType
                 #Clean up
                 $testDirectory = $remoteTestDirectory
 
-                Remove-Item $testDirectory -Recurse -Force -ea SilentlyContinue
-                Remove-Item function:createTestFile -ea SilentlyContinue
+                Remove-Item $testDirectory -Recurse -Force -ErrorAction SilentlyContinue
+                Remove-Item function:createTestFile -ErrorAction SilentlyContinue
+            }
+        }
+
+        Context "Prereq: Validate that 'Microsoft.PowerShell.Archive' is signed" {
+            It "'Microsoft.PowerShell.Archive' should have a signature" {
+                $script:archiveAllCert | should not be null
+            }
+            It "'Microsoft.PowerShell.Archive' should have a valid signature" {
+                $script:archiveCert | should not be null
             }
         }
 
@@ -496,21 +559,9 @@ ZoneId=$FileType
 
                     $scriptName = $testScript
 
-                    $exception = $null
-                    try {
-                        & $scriptName
-                    }
-                    catch
-                    {
-                        $exception = $_
-                    }
+                    $exception = { & $scriptName } | Should -Throw -PassThru
 
-                    $exception.Exception | Should Not BeNullOrEmpty
-
-                    $exceptionType = $exception.Exception.getType()
-                    $result = $exceptionType
-
-                    $result |  Should be "System.Management.Automation.PSSecurityException"
+                    $exception.Exception | Should -BeOfType "System.Management.Automation.PSSecurityException"
                 }
             }
 
@@ -546,8 +597,8 @@ ZoneId=$FileType
                 # Clean up
                 $testDirectory = $remoteTestDirectory
 
-                Remove-Item $testDirectory -Recurse -Force -ea SilentlyContinue
-                Remove-Item function:createTestFile -ea SilentlyContinue
+                Remove-Item $testDirectory -Recurse -Force -ErrorAction SilentlyContinue
+                Remove-Item function:createTestFile -ErrorAction SilentlyContinue
             }
         }
         Context "Validate that 'Unrestricted' execution policy works on OneCore powershell" {
@@ -575,7 +626,7 @@ ZoneId=$FileType
 
                     $result = & $scriptName
 
-                    $result |  Should be $expected
+                    $result | Should -Be $expected
                 }
             }
 
@@ -597,6 +648,36 @@ ZoneId=$FileType
 
             foreach($testScript in $testScripts) {
                 Test-UnrestrictedExecutionPolicy $testScript $expected
+            }
+
+            $error = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            $testData = @(
+                @{
+                    module = $PSHomeUntrustedModule
+                    error = $null
+                }
+                @{
+                    module = $PSHomeUnsignedModule
+                    error = $null
+                }
+                @{
+                    module = "Microsoft.PowerShell.Archive"
+                    error = $null
+                }
+            )
+
+            $TestTypePrefix = "Test 'Unrestricted' execution policy."
+            It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
+                param([string]$module, [string]$error)
+                $testScript = {Import-Module -Name $module -Force}
+                if($error)
+                {
+                    $testScript | Should -Throw -ErrorId $error
+                }
+                else
+                {
+                    {& $testScript} | Should -Not -Throw
+                }
             }
         }
 
@@ -626,7 +707,7 @@ ZoneId=$FileType
                     $result = & $scriptName
                     return $result
 
-                    $result |  Should be $expected
+                    $result | Should -Be $expected
                 }
             }
 
@@ -705,8 +786,8 @@ ZoneId=$FileType
                     $actualResult = $result."result"
                     $actualError = $result."exception"
 
-                    $actualResult |  Should be $expected
-                    $actualError | Should be $error
+                    $actualResult | Should -Be $expected
+                    $actualError | Should -Be $error
                 }
             }
             $message = "Hello"
@@ -813,102 +894,134 @@ ZoneId=$FileType
                 }
             }
 
-            function Test-AllSignedExecutionPolicy {
+            $TestTypePrefix = "Test 'AllSigned' execution policy."
 
-                param($testScript, $error)
-
-                $TestTypePrefix = "Test 'AllSigned' execution policy."
-
-                It "$TestTypePrefix Running $testScript script should return $error" {
-
-                    $scriptName = $testScript
-
-                    $exception = $null
-                    try
-                    {
-                        & $scriptName
-                    }
-                    catch
-                    {
-                        $exception = $_
-                    }
-                    $errorType = $null
-
-                    if($null -ne $exception)
-                    {
-                        $errorType = $exception.exception.getType()
-                    }
-
-                    $result = $errorType
-
-                    $result | Should be $error
-                }
-            }
-            $error = "System.Management.Automation.PSSecurityException"
+            $error = "UnauthorizedAccess,Microsoft.PowerShell.Commands.ImportModuleCommand"
             $testData = @(
                 @{
-                    testScript = $LocalUnsignedScript
-                    expected = $null
+                    module = $PSHomeUntrustedModule
                     error = $error
                 }
                 @{
-                    testScript = $LocalSignatureCorruptedScript
-                    expected = $null
+                    module = $PSHomeUnsignedModule
                     error = $error
                 }
                 @{
-                    testScript = $MyComputerUnsignedScript
-                    expected = $null
-                    error = $error
+                    module = "Microsoft.PowerShell.Archive"
+                    error = $null
+                }
+            )
+
+            It "$TestTypePrefix Importing <module> Module should throw '<error>'" -TestCases $testData  {
+                param([string]$module, [string]$error)
+                $testScript = {Import-Module -Name $module -Force}
+                if($error)
+                {
+                    $testScript | Should -Throw -ErrorId $error
+                }
+                else
+                {
+                    {& $testScript} | Should -Not -Throw
+                }
+            }
+
+            $error = "UnauthorizedAccess"
+            $pendingTestData = @(
+                # The following files are not signed correctly when generated, so we will skip for now
+                # filed https://github.com/PowerShell/PowerShell/issues/5559
+                @{
+                    testScript = $MyComputerSignedScript
+                    error = $null
                 }
                 @{
-                    testScript = $MyComputerSignatureCorruptedScript
-                    expected = $null
-                    error = $error
+                    testScript = $UntrustedSignedScript
+                    error = $null
                 }
                 @{
-                    testScript = $TrustedUnsignedScript
-                    expected = $null
-                    error = $error
+                    testScript = $TrustedSignedScript
+                    error = $null
                 }
                 @{
-                    testScript = $TrustedSignatureCorruptedScript
-                    expected = $null
-                    error = $error
+                    testScript = $LocalSignedScript
+                    error = $null
                 }
                 @{
-                    testScript = $IntranetUnsignedScript
-                    expected = $null
-                    error = $error
+                    testScript = $IntranetSignedScript
+                    error = $null
                 }
                 @{
-                    testScript = $IntranetSignatureCorruptedScript
-                    expected = $null
+                    testScript = $InternetSignedScript
+                    error = $null
+                }
+            )
+            It "$TestTypePrefix Running <testScript> Script should throw '<error>'" -TestCases $pendingTestData -Pending  {}
+
+            $testData = @(
+                @{
+                    testScript = $InternetSignatureCorruptedScript
                     error = $error
                 }
                 @{
                     testScript = $InternetUnsignedScript
-                    expected = $null
                     error = $error
                 }
                 @{
-                    testScript = $InternetSignatureCorruptedScript
-                    expected = $null
+                    testScript = $IntranetSignatureCorruptedScript
                     error = $error
                 }
                 @{
-                    testScript = $UntrustedUnsignedScript
-                    expected = $null
+                    testScript = $IntranetSignatureCorruptedScript
+                    error = $error
+                }
+                @{
+                    testScript = $IntranetUnsignedScript
+                    error = $error
+                }
+                @{
+                    testScript = $LocalSignatureCorruptedScript
+                    error = $error
+                }
+                @{
+                    testScript = $LocalUnsignedScript
+                    error = $error
+                }
+                @{
+                    testScript = $TrustedSignatureCorruptedScript
+                    error = $error
+                }
+                @{
+                    testScript = $TrustedUnsignedScript
                     error = $error
                 }
                 @{
                     testScript = $UntrustedSignatureCorruptedScript
-                    expected = $null
                     error = $error
                 }
+                @{
+                    testScript = $UntrustedUnsignedScript
+                    error = $error
+                }
+                @{
+                    testScript = $MyComputerSignatureCorruptedScript
+                    error = $error
+                }
+                @{
+                    testScript = $MyComputerUnsignedScript
+                    error = $error
+                }
+
             )
-            foreach($testScript in $testScripts) {
-                Test-AllSignedExecutionPolicy $testScript $error
+            It "$TestTypePrefix Running <testScript> Script should throw '<error>'" -TestCases $testData  {
+                param([string]$testScript, [string]$error)
+                $testScript | Should -Exist
+                if($error)
+                {
+                    {& $testScript} | Should -Throw -ErrorId $error
+                }
+                else
+                {
+                    {& $testScript} | Should -Not -Throw
+                }
             }
         }
     }
@@ -919,13 +1032,8 @@ ZoneId=$FileType
             [string]
             $policyScope
         )
-        try {
-            Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted
-            throw "No Exception!"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should Be "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
-        }
+        { Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted } |
+            Should -Throw -ErrorId "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
     }
 
     function RestoreExecutionPolicy
@@ -999,12 +1107,12 @@ ZoneId=$FileType
 
         It "-Scope Process is Settable" {
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy ByPass
-            Get-ExecutionPolicy -Scope Process | Should Be "ByPass"
+            Get-ExecutionPolicy -Scope Process | Should -Be "ByPass"
         }
 
         It "-Scope CurrentUser is Settable" {
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy ByPass
-            Get-ExecutionPolicy -Scope CurrentUser | Should Be "ByPass"
+            Get-ExecutionPolicy -Scope CurrentUser | Should -Be "ByPass"
         }
     }
 
@@ -1039,16 +1147,11 @@ ZoneId=$FileType
 
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Restricted
-            try
-            {
-                Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
-                throw "Expected exception: ExecutionPolicyOverride"
-            }
-            catch [System.Security.SecurityException] {
-                $_.FullyQualifiedErrorId | Should Be 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
-            }
 
-            Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
+            { Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass } |
+                Should -Throw -ErrorId 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
+
+            Get-ExecutionPolicy -Scope LocalMachine | Should -Be "ByPass"
         }
 
         It '-Scope LocalMachine is Settable' {
@@ -1058,7 +1161,7 @@ ZoneId=$FileType
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Undefined
 
             Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
-            Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
+            Get-ExecutionPolicy -Scope LocalMachine | Should -Be "ByPass"
         }
     }
 }

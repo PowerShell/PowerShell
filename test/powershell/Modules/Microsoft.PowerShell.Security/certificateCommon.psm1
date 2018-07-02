@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Function New-GoodCertificate
 {
     <#
@@ -66,6 +68,21 @@ OksttXT1kXf+aez9EzDlsgQU4ck78h0WTy01zHLwSKNWK4wFFQM=
     return $certLocation
 }
 
+Function New-ProtectedCertificate
+{
+    <#
+    .SYNOPSIS
+    Return existing password-protected pfx certificate
+
+    .NOTES
+    Password: "password"
+    #>
+
+    $certLocation = ".\test\tools\Modules\WebListener\ServerCert.pfx"
+
+    return $certLocation
+}
+
 Function New-BadCertificate
 {
     $codeSigningCert = "
@@ -96,10 +113,10 @@ nMbw+XY4C8xdDnHfS6mF+Hol98dURB/MC/x3sZ3gSjKo
 function Install-TestCertificates
 {
     $script:certLocation = New-GoodCertificate
-    $script:certLocation | Should Not BeNullOrEmpty | Out-Null
+    $script:certLocation | Should -Not -BeNullOrEmpty | Out-Null
 
     $script:badCertLocation = New-BadCertificate
-    $script:badCertLocation | Should Not BeNullOrEmpty | Out-Null
+    $script:badCertLocation | Should -Not -BeNullOrEmpty | Out-Null
 
     if ($IsCoreCLR -and $IsWindows)
     {
@@ -115,7 +132,7 @@ Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\
 Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My | ForEach-Object PSPath
 "@
             $certPaths = & $fullPowerShell -NoProfile -NonInteractive -Command $command
-            $certPaths.Count | Should Be 2 | Out-Null
+            $certPaths.Count | Should -Be 2 | Out-Null
 
             $script:importedCert = Get-ChildItem $certPaths[0]
             $script:testBadCert  = Get-ChildItem $certPaths[1]

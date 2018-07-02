@@ -1,8 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 #if !UNIX
-
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
 
 using Dbg = System.Management.Automation;
 using System;
@@ -453,7 +451,7 @@ namespace System.Management.Automation
 
                         byte[] hashBytes = new byte[size];
                         Marshal.Copy(hashBuffer, hashBytes, 0, size);
-                        hashValue = BitConverter.ToString(hashBytes).Replace("-", "");
+                        hashValue = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
                     }
                     finally
                     {

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" {
   BeforeAll {
     $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
@@ -18,7 +20,7 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
     param($parameter, $value)
     $stopservicecmd = [Microsoft.PowerShell.Commands.StopServiceCommand]::new()
     $stopservicecmd.$parameter = $value
-    $stopservicecmd.$parameter | Should Be $value
+    $stopservicecmd.$parameter | Should -Be $value
   }
 
   It "RestartServiceCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(
@@ -28,30 +30,30 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
     param($parameter, $value)
     $restartservicecmd = [Microsoft.PowerShell.Commands.RestartServiceCommand]::new()
     $restartservicecmd.$parameter = $value
-    $restartservicecmd.$parameter | Should Be $value
+    $restartservicecmd.$parameter | Should -Be $value
   }
 
   It "Stop/Start/Restart-Service works" {
     $wasStopped = $false
     try {
       $spooler = Get-Service Spooler
-      $spooler | Should Not BeNullOrEmpty
+      $spooler | Should -Not -BeNullOrEmpty
       if ($spooler.Status -ne "Running") {
         $wasStopped = $true
         $spooler = Start-Service Spooler -PassThru
       }
-      $spooler.Status | Should Be "Running"
+      $spooler.Status | Should -BeExactly "Running"
       $spooler = Stop-Service Spooler -PassThru
-      $spooler.Status | Should Be "Stopped"
-      (Get-Service Spooler).Status | Should Be "Stopped"
+      $spooler.Status | Should -BeExactly "Stopped"
+      (Get-Service Spooler).Status | Should -BeExactly "Stopped"
       $spooler = Start-Service Spooler -PassThru
-      $spooler.Status | Should Be "Running"
-      (Get-Service Spooler).Status | Should Be "Running"
+      $spooler.Status | Should -BeExactly "Running"
+      (Get-Service Spooler).Status | Should -BeExactly "Running"
       Stop-Service Spooler
-      (Get-Service Spooler).Status | Should Be "Stopped"
+      (Get-Service Spooler).Status | Should -BeExactly "Stopped"
       $spooler = Restart-Service Spooler -PassThru
-      $spooler.Status | Should Be "Running"
-      (Get-Service Spooler).Status | Should Be "Running"
+      $spooler.Status | Should -BeExactly "Running"
+      (Get-Service Spooler).Status | Should -BeExactly "Running"
     } finally {
       if ($wasStopped) {
         Stop-Service Spooler
@@ -68,11 +70,11 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
         $originalState = $service.Status
         Start-Service $serviceName
       }
-      $service | Should Not BeNullOrEmpty
+      $service | Should -Not -BeNullOrEmpty
       Suspend-Service $serviceName
-      (Get-Service $serviceName).Status | Should Be "Paused"
+      (Get-Service $serviceName).Status | Should -BeExactly "Paused"
       Resume-Service $serviceName
-      (Get-Service $serviceName).Status | Should Be "Running"
+      (Get-Service $serviceName).Status | Should -BeExactly "Running"
     } finally {
       Set-Service $serviceName -Status $originalState
     }
@@ -89,7 +91,7 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
     @{script={Restart-Service $(new-guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.RestartServiceCommand"}
   ) {
       param($script,$errorid)
-      { & $script } | ShouldBeErrorId $errorid
+      { & $script } | Should -Throw -ErrorId $errorid
   }
 
 }

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 param(
     [ValidateSet('Bootstrap','Build','Failure','Success')]
     [String]$Stage = 'Build'
@@ -5,7 +7,6 @@ param(
 
 Import-Module $PSScriptRoot/../build.psm1 -Force
 Import-Module $PSScriptRoot/packaging -Force
-
 
 function Send-DailyWebHook
 {
@@ -17,7 +18,7 @@ function Send-DailyWebHook
     # Varible should be set in Travis-CI.org settings
     if ($env:WebHookUrl)
     {
-        log "Sending DailyWebHook with result '$result'."
+        Write-Log "Sending DailyWebHook with result '$result'."
         $webhook = $env:WebHookUrl
 
         $Body = @{
@@ -40,7 +41,7 @@ OS Type: $($PSVersionTable.OS) </br>
     }
     else
     {
-        log "Skipping DailyWebHook.  WebHookUrl environment variable not present."
+        Write-Log "Skipping DailyWebHook.  WebHookUrl environment variable not present."
     }
 }
 
@@ -113,7 +114,7 @@ function Set-DailyBuildBadge
     }
 
     $contentType = "image/svg+xml"
-    # more info: https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/put-blob
+    # more info: https://docs.microsoft.com/rest/api/storageservices/fileservices/put-blob
     $sb = [text.stringbuilder]::new()
     # can't use AppendLine because the `r`n causes the command to fail, it must be `n and only `n
     $null = $sb.Append("$method`n")
@@ -148,7 +149,6 @@ function Set-DailyBuildBadge
     }
 }
 
-
 # https://docs.travis-ci.com/user/environment-variables/
 # TRAVIS_EVENT_TYPE: Indicates how the build was triggered.
 # One of push, pull_request, api, cron.
@@ -157,15 +157,14 @@ $isPR = $env:TRAVIS_EVENT_TYPE -eq 'pull_request'
 # For PRs, Travis-ci strips out [ and ] so read the message directly from git
 if($env:TRAVIS_EVENT_TYPE -eq 'pull_request')
 {
-    # Get the second log entry body
-    # The first log is a merge for a PR
-    $commitMessage = git log --format=%B -n 1 --skip=1
+    # If the current job is a pull request, the env variable 'TRAVIS_PULL_REQUEST_SHA' contains
+    # the commit SHA of the HEAD commit of the PR.
+    $commitMessage = git log --format=%B -n 1 $env:TRAVIS_PULL_REQUEST_SHA
 }
 else
 {
     $commitMessage = $env:TRAVIS_COMMIT_MESSAGE
 }
-
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
 $hasFeatureTag = $commitMessage -match '\[feature\]'
@@ -189,27 +188,33 @@ elseif($Stage -eq 'Build')
     $releaseTag = Get-ReleaseTag
 
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
-    $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
     $originalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     try {
         ## We use CrossGen build to run tests only if it's the daily build.
-        Start-PSBuild -CrossGen -PSModuleRestore -ReleaseTag $releaseTag
+        Start-PSBuild -CrossGen -PSModuleRestore -CI -ReleaseTag $releaseTag -Configuration 'Release'
     }
     finally{
         $ProgressPreference = $originalProgressPreference
     }
 
+    $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
+
+    $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
+    $testResultsSudo = "$pwd/TestResultsSudo.xml"
+
     $pesterParam = @{
-        'binDir'   = $output
-        'PassThru' = $true
-        'Terse'    = $true
+        'binDir'     = $output
+        'PassThru'   = $true
+        'Terse'      = $true
+        'Tag'        = @()
+        'ExcludeTag' = @('RequireSudoOnUnix')
+        'OutputFile' = $testResultsNoSudo
     }
 
     if ($isFullBuild) {
         $pesterParam['Tag'] = @('CI','Feature','Scenario')
-        $pesterParam['ExcludeTag'] = @()
     } else {
         $pesterParam['Tag'] = @('CI')
         $pesterParam['ThrowOnFailure'] = $true
@@ -220,18 +225,20 @@ elseif($Stage -eq 'Build')
         $pesterParam['IncludeFailingTest'] = $true
     }
 
-    # Remove telemetry semaphore file in CI
-    $telemetrySemaphoreFilepath = Join-Path $output DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
-    if ( Test-Path "${telemetrySemaphoreFilepath}" ) {
-        Remove-Item -force ${telemetrySemaphoreFilepath}
-    }
+    # Running tests which do not require sudo.
+    $pesterPassThruNoSudoObject = Start-PSPester @pesterParam
 
-    $pesterPassThruObject = Start-PSPester @pesterParam
+    # Running tests, which require sudo.
+    $pesterParam['Tag'] = @('RequireSudoOnUnix')
+    $pesterParam['ExcludeTag'] = @()
+    $pesterParam['Sudo'] = $true
+    $pesterParam['OutputFile'] = $testResultsSudo
+    $pesterPassThruSudoObject = Start-PSPester @pesterParam
 
     # Determine whether the build passed
     try {
         # this throws if there was an error
-        Test-PSPesterResults -ResultObject $pesterPassThruObject
+        @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject) | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
         $result = "PASS"
     }
     catch {
@@ -240,7 +247,12 @@ elseif($Stage -eq 'Build')
     }
 
     try {
-        Start-PSxUnit
+        $SequentialXUnitTestResultsFile = "$pwd/SequentialXUnitTestResults.xml"
+        $ParallelXUnitTestResultsFile = "$pwd/ParallelXUnitTestResults.xml"
+
+        Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        # If there are failures, Test-XUnitTestResults throws
+        $SequentialXUnitTestResultsFile, $ParallelXUnitTestResultsFile | ForEach-Object { Test-XUnitTestResults -TestResultsFile $_ }
     }
     catch {
         $result = "FAIL"
@@ -257,8 +269,6 @@ elseif($Stage -eq 'Build')
 
         # Only build packages for branches, not pull requests
         $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
-        # Packaging AppImage depends on the deb package
-        $packages += Start-PSPackage  @packageParams -Type AppImage -SkipReleaseChecks
         foreach($package in $packages)
         {
             # Publish the packages to the nuget feed if:
@@ -267,14 +277,14 @@ elseif($Stage -eq 'Build')
             # 3 - it's a nupkg file
             if($isDailyBuild -and $env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
             {
-                log "pushing $package to $env:NUGET_URL"
+                Write-Log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
         if ($IsLinux)
         {
             # Create and package Raspbian .tgz
-            Start-PSBuild -Clean -Runtime linux-arm
+            Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
             Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
         }
     }
@@ -300,7 +310,7 @@ elseif($Stage -in 'Failure', 'Success')
                 write-warning "Could not retrieve $result badge"
             }
             else {
-                log "Setting status badge to '$result'"
+                Write-Log "Setting status badge to '$result'"
                 Set-DailyBuildBadge -content $svgData
             }
         }
@@ -316,7 +326,7 @@ elseif($Stage -in 'Failure', 'Success')
         }
     }
     else {
-        log 'We only send bagde or webhook update for Cron builds'
+        Write-Log 'We only send bagde or webhook update for Cron builds'
     }
 
 }

@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 // TODO/FIXME: move this to Microsoft.PowerShell.Cim namespace (and move in source depot folder as well)
 
@@ -13,7 +12,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// Translates a <see cref="WildcardPattern"/> into a like-operand for WQL.
     /// </summary>
     /// <remarks>
-    /// Documentation on MSDN (http://msdn.microsoft.com/en-us/library/aa392263(VS.85).aspx) is
+    /// Documentation on MSDN (http://msdn.microsoft.com/library/aa392263(VS.85).aspx) is
     /// 1) rather slim / incomplete
     /// 2) sometimes incorrect (i.e. says that '=' is used for character ranges, when it should have said '-')
     ///

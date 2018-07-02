@@ -1,4 +1,6 @@
-﻿Describe "Common parameters support for script cmdlets" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Common parameters support for script cmdlets" -Tags "CI" {
     BeforeEach {
         $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()
         $rs.open()
@@ -30,8 +32,8 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should be "output foo"
-            $ps.Streams.Debug.Count | Should Be 0
+            $output[0] | Should -BeExactly "output foo"
+            $ps.Streams.Debug.Count | Should -Be 0
         }
 
         It 'get-foo -debug' {
@@ -40,9 +42,9 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should Be "output foo"
-            $ps.Streams.Debug[0].Message | Should Be "debug foo"
-            $ps.InvocationStateInfo.State | Should Be 'Completed'
+            $output[0] | Should -BeExactly "output foo"
+            $ps.Streams.Debug[0].Message | Should -BeExactly "debug foo"
+            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 
@@ -65,8 +67,8 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should Be "output foo"
-            $ps.streams.verbose.Count | Should Be 0
+            $output[0] | Should -BeExactly "output foo"
+            $ps.streams.verbose.Count | Should -Be 0
         }
 
         It 'get-foo -verbose' {
@@ -76,9 +78,9 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should Be "output foo"
-            $ps.Streams.verbose[0].Message | Should Be "verbose foo"
-            $ps.InvocationStateInfo.State | Should Be 'Completed'
+            $output[0] | Should -BeExactly "output foo"
+            $ps.Streams.verbose[0].Message | Should -BeExactly "verbose foo"
+            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 
@@ -102,8 +104,8 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should Be "output foo"
-            $ps.Streams.error[0].ToString() | Should match "error foo"
+            $output[0] | Should -BeExactly "output foo"
+            $ps.Streams.error[0].ToString() | Should -Match "error foo"
         }
 
         It 'erroraction continue' {
@@ -113,8 +115,8 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should Be "output foo"
-            $ps.Streams.error[0].ToString() | Should match "error foo"
+            $output[0] | Should -BeExactly "output foo"
+            $ps.Streams.error[0].ToString() | Should -Match "error foo"
         }
 
         It 'erroraction SilentlyContinue' {
@@ -124,8 +126,8 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should Be "output foo"
-            $ps.streams.error.count | Should Be 0
+            $output[0] | Should -BeExactly "output foo"
+            $ps.streams.error.count | Should -Be 0
         }
 
         It 'erroraction Stop' {
@@ -135,20 +137,13 @@
             [void] $ps.AddScript($script + $command)
             $asyncResult = $ps.BeginInvoke()
 
-            try
-            {
-                $ps.EndInvoke($asyncResult)
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ActionPreferenceStopException"
-            } # Exception: "Command execution stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: error foo"
-
+            { $ps.EndInvoke($asyncResult) } | Should -Throw -ErrorId "ActionPreferenceStopException"
+            # Exception: "Command execution stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: error foo"
 
             # BUG in runspace api.
             #$ps.error.count | Should Be 1
 
-            $ps.InvocationStateInfo.State | Should Be 'Failed'
+            $ps.InvocationStateInfo.State | Should -BeExactly 'Failed'
         }
     }
 
@@ -174,7 +169,7 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should Be 'foo action'
+            $output[0] | Should -BeExactly 'foo action'
         }
 
         It 'shouldprocess support -whatif' {
@@ -186,7 +181,7 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $ps.InvocationStateInfo.State | Should Be 'Completed'
+            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
 
         It 'shouldprocess support -confirm under the non-interactive host' {
@@ -197,8 +192,8 @@
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should Be 1 # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should Be 'Completed'
+            $ps.Streams.Error.Count | Should -Be 1 # the host does not implement it.
+            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 
@@ -223,7 +218,7 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should Be 'foo action'
+            $output[0] | Should -BeExactly 'foo action'
         }
 
         It 'get-foo -confirm' {
@@ -232,7 +227,7 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should Be 'foo action'
+            $output[0] | Should -BeExactly 'foo action'
         }
     }
 
@@ -256,7 +251,7 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should Be 'foo action'
+            $output[0] | Should -BeExactly 'foo action'
         }
 
         It 'get-foo -confirm' {
@@ -266,8 +261,8 @@
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should Be 1  # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should Be 'Completed'
+            $ps.Streams.Error.Count | Should -Be 1  # the host does not implement it.
+            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 
@@ -292,7 +287,7 @@
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
-            $output[0] | Should Be 'foo action'
+            $output[0] | Should -BeExactly 'foo action'
         }
 
         It 'get-foo -confirm' {
@@ -302,11 +297,10 @@
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should Be 1  # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should Be 'Completed'
+            $ps.Streams.Error.Count | Should -Be 1  # the host does not implement it.
+            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
-
 
     Context 'confirmimpact support: High under the non-interactive host' {
         BeforeAll {
@@ -329,8 +323,8 @@
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should Be 1 # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should Be 'Completed'
+            $ps.Streams.Error.Count | Should -Be 1 # the host does not implement it.
+            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
 
         It 'get-foo -confirm' {
@@ -339,8 +333,8 @@
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should Be 1 # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should be 'Completed'
+            $ps.Streams.Error.Count | Should -Be 1 # the host does not implement it.
+            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 
@@ -366,8 +360,8 @@
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should Be 1   # the host does not implement it.
-            $ps.InvocationStateInfo.State | Should Be 'Completed'
+            $ps.Streams.Error.Count | Should -Be 1   # the host does not implement it.
+            $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
 }

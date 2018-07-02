@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 //
 // NOTE: A vast majority of this code was copied from BCL in
@@ -50,7 +51,6 @@
 
 */
 
-
 using BCLDebug = System.Diagnostics.Debug;
 
 namespace Microsoft.PowerShell.Commands.Internal
@@ -68,7 +68,6 @@ namespace Microsoft.PowerShell.Commands.Internal
     using System.Globalization;
     using System.Transactions;
     using System.Diagnostics.CodeAnalysis;
-
 
     // Putting this in a separate internal class to avoid OACR warning DoNotDeclareReadOnlyMutableReferenceTypes.
     internal sealed class BaseRegistryKeys
@@ -136,7 +135,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         private RegistryKeyPermissionCheck _checkMode;
         private System.Transactions.Transaction _myTransaction;
         private SafeTransactionHandle _myTransactionHandle;
-
 
         // This is a wrapper around RegOpenKeyTransacted that implements a workaround
         // to TxF bug number 181242 After calling RegOpenKeyTransacted, it calls RegQueryInfoKey.
@@ -212,7 +210,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                                       System.Transactions.Transaction transaction, SafeTransactionHandle txHandle)
         {
             _hkey = hkey;
-            _keyName = "";
+            _keyName = string.Empty;
             if (systemkey)
             {
                 _state |= STATE_SYSTEMKEY;
@@ -223,7 +221,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
             // We want to take our own clone so we can dispose it when we want and
             // aren't susceptible to the caller disposing it.
-            if (null != transaction)
+            if (transaction != null)
             {
                 _myTransaction = transaction.Clone();
                 _myTransactionHandle = txHandle;
@@ -242,7 +240,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             // If myTransaction is not null and is not the same as Transaction.Current
             // this is an invalid operation. The transaction within which the RegistryKey object was created
             // needs to be the same as the transaction being used now.
-            if (null != _myTransaction)
+            if (_myTransaction != null)
             {
                 if (!_myTransaction.Equals(Transaction.Current))
                 {
@@ -290,7 +288,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 }
             }
 
-            if (null != _myTransaction)
+            if (_myTransaction != null)
             {
                 // Dispose the transaction because we cloned it.
                 try
@@ -1288,7 +1286,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             return data;
         }
 
-
         /// <summary>
         /// <para>Retrieves the registry data type of the value associated with the specified name.
         /// Utilizes Transaction.Current for its transaction.</para>
@@ -1712,7 +1709,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             return sb.ToString();
         }
 
-
         private static void FixupPath(StringBuilder path)
         {
             int length = path.Length;
@@ -2046,7 +2042,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private void VerifyTransaction()
         {
             // Require a transaction. This will throw for "Base" keys because they aren't associated with a transaction.
-            if (null == _myTransaction)
+            if (_myTransaction == null)
             {
                 throw new InvalidOperationException(RegistryProviderStrings.InvalidOperation_NotAssociatedWithTransaction);
             }

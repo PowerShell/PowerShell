@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -83,7 +82,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // Get the Format Enumeration Limit.
             _enumerationLimit = InnerFormatShapeCommand.FormatEnumerationLimit();
 
-            _expressionFactory = new MshExpressionFactory();
+            _expressionFactory = new PSPropertyExpressionFactory();
 
             _formatObjectDeserializer = new FormatObjectDeserializer(this.TerminatingErrorContext);
         }
@@ -377,7 +376,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-
         internal override void EndProcessing()
         {
             // need to pop all the contexts, in case the transmission sequence
@@ -447,7 +445,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             this.WriteObject(startFormat);
         }
 
-
         /// <summary>
         /// write a payplad object by properly wrapping it into
         /// a FormatEntry object
@@ -503,8 +500,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return scriptBlock;
         }
 
-
-        private MshExpressionFactory _expressionFactory;
+        private PSPropertyExpressionFactory _expressionFactory;
         #endregion
 
         private FormatObjectDeserializer _formatObjectDeserializer;
@@ -531,7 +527,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         [Parameter]
         public object GroupBy { get; set; } = null;
 
-
         /// <summary>
         /// optional, non positional parameter
         /// </summary>
@@ -555,7 +550,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             set { showErrorsAsMessages = value; }
         }
         internal Nullable<bool> showErrorsAsMessages = null;
-
 
         /// <summary>
         /// optional, non positional parameter
@@ -635,7 +629,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             return null;
         }
-
 
         #endregion
 
@@ -803,7 +796,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
         private Nullable<bool> _multiLine = null;
 
-
         #endregion
         internal override FormattingCommandLineParameters GetCommandLineParameters()
         {
@@ -839,5 +831,4 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 }
-
 

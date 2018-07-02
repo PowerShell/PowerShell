@@ -1,8 +1,7 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-#pragma warning disable 1634, 1691
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
+#pragma warning disable 1634, 1691
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -26,8 +25,8 @@ using System.Management.Automation.Language;
 
 using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
-using NakedWin32Handle = System.IntPtr;
 using System.Management.Automation.Tracing;
+using System.Threading.Tasks;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
@@ -186,6 +185,12 @@ namespace Microsoft.PowerShell
 
                 s_cpp.Parse(tempArgs);
 
+#if UNIX
+                // On Unix, logging has to be deferred until after command-line parsing
+                // completes to allow overriding logging options.
+                PSEtwLog.LogConsoleStartup();
+#endif
+
                 if (s_cpp.ShowVersion)
                 {
                     // Alternatively, we could call s_theConsoleHost.UI.WriteLine(s_theConsoleHost.Version.ToString());
@@ -205,6 +210,16 @@ namespace Microsoft.PowerShell
                     }
                     return ExitCodeBadCommandLineParameter;
                 }
+
+#if !UNIX
+                // Creating a JumpList entry takes around 55ms when the PowerShell process is interactive and
+                // owns the current window (otherwise it does a fast exit anyway). Since there is no 'GET' like API,
+                // we always have to execute this call because we do not know if it has been created yet.
+                // The JumpList does persist as long as the filepath of the executable does not change but there
+                // could be disruptions to it like e.g. the bi-annual Windows update, we decided to
+                // not over-optimize this and always create the JumpList as a non-blocking background task instead.
+                Task.Run(() => TaskbarJumpList.CreateElevatedEntry(ConsoleHostStrings.RunAsAdministrator));
+#endif
 
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
@@ -272,8 +287,6 @@ namespace Microsoft.PowerShell
             }
         }
         private static CommandLineParameterParser s_cpp;
-
-
 
 #if UNIX
         /// <summary>
@@ -856,8 +869,6 @@ namespace Microsoft.PowerShell
         }
         private PSObject _consoleColorProxy;
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -876,8 +887,6 @@ namespace Microsoft.PowerShell
                 }
             }
         }
-
-
 
         /// <summary>
         ///
@@ -1249,7 +1258,6 @@ namespace Microsoft.PowerShell
 
         internal WrappedSerializer.DataFormat OutputFormat { get; private set; }
 
-
         internal WrappedSerializer.DataFormat InputFormat { get; private set; }
 
         internal WrappedDeserializer.DataFormat ErrorFormat
@@ -1352,7 +1360,7 @@ namespace Microsoft.PowerShell
 
         private uint Run(CommandLineParameterParser cpp, bool isPrestartWarned)
         {
-            Dbg.Assert(null != cpp, "CommandLine parameter parser cannot be null.");
+            Dbg.Assert(cpp != null, "CommandLine parameter parser cannot be null.");
             uint exitCode = ExitCodeSuccess;
 
             do
@@ -1614,6 +1622,7 @@ namespace Microsoft.PowerShell
                     OpenConsoleRunspace(consoleRunspace, staMode);
                 }
 
+                Runspace.PrimaryRunspace = consoleRunspace;
                 _runspaceRef = new RunspaceRef(consoleRunspace);
 
                 if (psReadlineFailed)
@@ -1658,10 +1667,8 @@ namespace Microsoft.PowerShell
 #endif
             runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             runspace.EngineActivityId = EtwActivity.GetActivityId();
-            Runspace.PrimaryRunspace = runspace;
 
             s_runspaceInitTracer.WriteLine("Calling Runspace.Open");
-
             runspace.Open();
         }
 
@@ -1754,6 +1761,31 @@ namespace Microsoft.PowerShell
             // if one is specified.
             TelemetryAPI.ReportStartupTelemetry(this);
 #endif
+
+            // If working directory was specified, set it
+            if (s_cpp != null && s_cpp.WorkingDirectory != null)
+            {
+                Pipeline tempPipeline = exec.CreatePipeline();
+                var command = new Command("Set-Location");
+                command.Parameters.Add("LiteralPath", s_cpp.WorkingDirectory);
+                tempPipeline.Commands.Add(command);
+
+                Exception exception;
+                if (IsRunningAsync)
+                {
+                    exec.ExecuteCommandAsyncHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
+                }
+                else
+                {
+                    exec.ExecuteCommandHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
+                }
+
+                if (exception != null)
+                {
+                    _lastRunspaceInitializationException = exception;
+                    ReportException(exception, exec);
+                }
+            }
 
             // If a file was specified as the argument to run, then run it...
             if (s_cpp != null && s_cpp.File != null)
@@ -1919,7 +1951,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         ///
         /// Escapes backtick and tick characters with a backtick, returns the result
@@ -2071,7 +2102,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         internal event EventHandler RunspacePushed;
 
-
         #endregion non-overrides
 
         #region debugger
@@ -2107,7 +2137,7 @@ namespace Microsoft.PowerShell
                 if (_displayDebuggerBanner)
                 {
                     WriteDebuggerMessage(ConsoleHostStrings.EnteringDebugger);
-                    WriteDebuggerMessage("");
+                    WriteDebuggerMessage(string.Empty);
                     _displayDebuggerBanner = false;
                 }
 
@@ -2123,7 +2153,7 @@ namespace Microsoft.PowerShell
                         WriteDebuggerMessage(String.Format(CultureInfo.CurrentCulture, format, breakpoint));
                     }
 
-                    WriteDebuggerMessage("");
+                    WriteDebuggerMessage(string.Empty);
                 }
 
                 //
@@ -2852,7 +2882,7 @@ namespace Microsoft.PowerShell
 
         internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
 
-        private string _savedWindowTitle = "";
+        private string _savedWindowTitle = string.Empty;
         private Version _ver = PSVersionInfo.PSVersion;
         private int _exitCodeFromRunspace;
         private bool _noExit = true;
@@ -2885,10 +2915,7 @@ namespace Microsoft.PowerShell
 
         private static ConsoleHost s_theConsoleHost;
 
-
         internal static InitialSessionState DefaultInitialSessionState;
-
-
 
         [TraceSource("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost")]
         private static
@@ -2936,5 +2963,4 @@ namespace Microsoft.PowerShell
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }
 }   // namespace
-
 

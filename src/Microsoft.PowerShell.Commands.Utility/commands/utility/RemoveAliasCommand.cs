@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -16,23 +19,23 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The alias name to remove.
-        /// </summary>        
+        /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Name { get; set; }
-        
+
         /// <summary>
         /// The scope parameter for the command determines
         /// which scope the alias is removed from.
-        /// </summary>        
+        /// </summary>
         [Parameter]
         public string Scope { get; set; }
 
         /// <summary>
         /// If set to true and an existing alias of the same name exists
         /// and is ReadOnly, it will still be deleted.
-        /// </summary>        
+        /// </summary>
         [Parameter]
-        public SwitchParameter Force { get; set; }        
+        public SwitchParameter Force { get; set; }
 
         #endregion Parameters
 
@@ -40,12 +43,12 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The main processing loop of the command.
-        /// </summary>        
+        /// </summary>
         protected override void ProcessRecord()
         {
             foreach(string aliasName in Name)
-            {            
-                AliasInfo existingAlias = null;           
+            {
+                AliasInfo existingAlias = null;
                 if (String.IsNullOrEmpty(Scope))
                 {
                     existingAlias = SessionState.Internal.GetAlias(aliasName);

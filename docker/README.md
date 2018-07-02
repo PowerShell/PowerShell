@@ -126,7 +126,7 @@ WSManStackVersion              3.0
 Please be sure to use a build from the Windows Insider program, either [Windows Server Insider](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewserver) or the [Windows 10 Insider](https://insider.windows.com/GettingStarted),
 as your Container host before trying to pull this image. Otherwise, pulling this image will **fail**.
 
-Read more about the changes coming to Nano Server in future releases of Windows Server Insider [here](https://docs.microsoft.com/en-us/windows-server/get-started/nano-in-semi-annual-channel).
+Read more about the changes coming to Nano Server in future releases of Windows Server Insider [here](https://docs.microsoft.com/windows-server/get-started/nano-in-semi-annual-channel).
 
 ### This is pre-release software
 

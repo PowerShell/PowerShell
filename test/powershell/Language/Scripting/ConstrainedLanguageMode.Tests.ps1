@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Test constrained language mode" -Tags "CI" {
     It "dynamic invocation on non-PowerShell thread should work" {
@@ -21,7 +23,7 @@ Describe "Test constrained language mode" -Tags "CI" {
 "@
 
         $o = [powershell]::Create()
-        $t::Test($o) | Should Be $o
+        $t::Test($o) | Should -BeExactly $o
 
         try
         {
@@ -30,7 +32,7 @@ Describe "Test constrained language mode" -Tags "CI" {
             $null = $ps.AddScript('$ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"')
             $null = $ps.Invoke()
 
-            $t::Test($o) | Should Be $o
+            $t::Test($o) | Should -BeExactly $o
         }
         finally
         {

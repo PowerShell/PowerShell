@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Threading;
 using PSHost = System.Management.Automation.Host.PSHost;
@@ -73,7 +72,6 @@ namespace System.Management.Automation.Runspaces
             _expectedState = expectedState;
             _currentState = currentState;
         }
-
 
         #region ISerializable Members
 
@@ -740,7 +738,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (_syncObject)
                 {
-                    bool firstEntry = (null == InternalStateChanged);
+                    bool firstEntry = (InternalStateChanged == null);
                     InternalStateChanged += value;
                     if (firstEntry)
                     {
@@ -758,7 +756,7 @@ namespace System.Management.Automation.Runspaces
                 lock (_syncObject)
                 {
                     InternalStateChanged -= value;
-                    if (null == InternalStateChanged)
+                    if (InternalStateChanged == null)
                     {
                         _internalPool.StateChanged -=
                             new EventHandler<RunspacePoolStateChangedEventArgs>(OnStateChanged);
@@ -855,7 +853,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (_syncObject)
                 {
-                    bool firstEntry = (null == InternalRunspaceCreated);
+                    bool firstEntry = (InternalRunspaceCreated == null);
                     InternalRunspaceCreated += value;
                     if (firstEntry)
                     {
@@ -872,7 +870,7 @@ namespace System.Management.Automation.Runspaces
                 lock (_syncObject)
                 {
                     InternalRunspaceCreated -= value;
-                    if (null == InternalRunspaceCreated)
+                    if (InternalRunspaceCreated == null)
                     {
                         _internalPool.RunspaceCreated -= OnRunspaceCreated;
                     }

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -21,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="groupingExpression">name of the grouping property</param>
         /// <param name="displayLabel">display name of the property</param>
-        internal void Initialize(MshExpression groupingExpression, string displayLabel)
+        internal void Initialize(PSPropertyExpression groupingExpression, string displayLabel)
         {
             _groupingKeyExpression = groupingExpression;
             _label = displayLabel;
@@ -52,7 +51,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (_groupingKeyExpression == null)
                 return false;
 
-            List<MshExpressionResult> results = _groupingKeyExpression.GetValues(so);
+            List<PSPropertyExpressionResult> results = _groupingKeyExpression.GetValues(so);
 
             // if we have more that one match, we have to select the first one
             if (results.Count > 0 && results[0].Exception == null)
@@ -118,7 +117,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// name of the current grouping key
         /// </summary>
-        private MshExpression _groupingKeyExpression = null;
+        private PSPropertyExpression _groupingKeyExpression = null;
 
         /// <summary>
         /// the current value of the grouping key

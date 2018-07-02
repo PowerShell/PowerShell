@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Configuration file locations" -tags "CI","Slow" {
 
     BeforeAll {
@@ -38,24 +40,24 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         }
 
         It @ItArgs "Profile location should be correct" {
-            & $powershell -noprofile -c `$PROFILE | Should Be $expectedProfile
+            & $powershell -noprofile -c `$PROFILE | Should -Be $expectedProfile
         }
 
         It @ItArgs "PSModulePath should contain the correct path" {
             $env:PSModulePath = ""
             $actual = & $powershell -noprofile -c `$env:PSModulePath
-            $actual | Should Match ([regex]::Escape($expectedModule))
+            $actual | Should -Match ([regex]::Escape($expectedModule))
         }
 
         It @ItArgs "PSReadLine history save location should be correct" {
-            & $powershell -noprofile { (Get-PSReadlineOption).HistorySavePath } | Should Be $expectedReadline
+            & $powershell -noprofile { (Get-PSReadlineOption).HistorySavePath } | Should -Be $expectedReadline
         }
 
         # This feature (and thus test) has been disabled because of the AssemblyLoadContext scenario
         It "JIT cache should be created correctly" -Skip {
             Remove-Item -ErrorAction SilentlyContinue $expectedCache
             & $powershell -noprofile { exit }
-            $expectedCache | Should Exist
+            $expectedCache | Should -Exist
         }
 
         # The ModuleAnalysisCache cannot be forced to exist, thus we cannot test it
@@ -88,7 +90,7 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         It @ItArgs "Profile should respect XDG_CONFIG_HOME" {
             $env:XDG_CONFIG_HOME = $TestDrive
             $expected = [IO.Path]::Combine($TestDrive, "powershell", $profileName)
-            & $powershell -noprofile -c `$PROFILE | Should Be $expected
+            & $powershell -noprofile -c `$PROFILE | Should -Be $expected
         }
 
         It @ItArgs "PSModulePath should respect XDG_DATA_HOME" {
@@ -96,13 +98,13 @@ Describe "Configuration file locations" -tags "CI","Slow" {
             $env:XDG_DATA_HOME = $TestDrive
             $expected = [IO.Path]::Combine($TestDrive, "powershell", "Modules")
             $actual = & $powershell -noprofile -c `$env:PSModulePath
-            $actual | Should Match $expected
+            $actual | Should -Match $expected
         }
 
         It @ItArgs "PSReadLine history should respect XDG_DATA_HOME" {
             $env:XDG_DATA_HOME = $TestDrive
             $expected = [IO.Path]::Combine($TestDrive, "powershell", "PSReadLine", "ConsoleHost_history.txt")
-            & $powershell -noprofile { (Get-PSReadlineOption).HistorySavePath } | Should Be $expected
+            & $powershell -noprofile { (Get-PSReadlineOption).HistorySavePath } | Should -Be $expected
         }
 
         # This feature (and thus test) has been disabled because of the AssemblyLoadContext scenario
@@ -111,7 +113,31 @@ Describe "Configuration file locations" -tags "CI","Slow" {
             $expected = [IO.Path]::Combine($TestDrive, "powershell", "StartupProfileData-NonInteractive")
             Remove-Item -ErrorAction SilentlyContinue $expected
             & $powershell -noprofile { exit }
-            $expected | Should Exist
+            $expected | Should -Exist
         }
+    }
+}
+
+Describe "Working directory on startup" -Tag "CI" {
+    BeforeAll {
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
+        $testPath = New-Item -ItemType Directory -Path "$TestDrive\test[dir]"
+        $currentDirectory = Get-Location
+    }
+
+    AfterAll {
+        Set-Location $currentDirectory
+    }
+
+    # https://github.com/PowerShell/PowerShell/issues/5752
+    It "Can start in directory where name contains wildcard characters" -Pending {
+        Set-Location -LiteralPath $testPath.FullName
+        if ($IsMacOS) {
+            # on macOS, /tmp is a symlink to /private so the real path is under /private/tmp
+            $expectedPath = "/private" + $testPath.FullName
+        } else {
+            $expectedPath = $testPath.FullName
+        }
+        & $powershell -noprofile -c { $PWD.Path } | Should -BeExactly $expectedPath
     }
 }

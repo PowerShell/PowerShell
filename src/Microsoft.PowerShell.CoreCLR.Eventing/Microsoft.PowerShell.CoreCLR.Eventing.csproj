@@ -6,24 +6,9 @@
     <AssemblyName>Microsoft.PowerShell.CoreCLR.Eventing</AssemblyName>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
-    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.0" />
+    <!-- the following package(s) are from https://github.com/dotnet/corefx -->
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.5.0" />
   </ItemGroup>
 
 </Project>

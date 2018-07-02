@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Threading;
 using System.Management.Automation.Internal;
@@ -134,8 +133,6 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-
-
         private RemoteRunspacePoolInternal _remoteRunspacePool;
 
         /// <summary>
@@ -197,7 +194,7 @@ namespace System.Management.Automation.Remoting
         internal ClientRemoteSessionImpl(RemoteRunspacePoolInternal rsPool,
                                        URIDirectionReported uriRedirectionHandler)
         {
-            Dbg.Assert(null != rsPool, "RunspacePool cannot be null");
+            Dbg.Assert(rsPool != null, "RunspacePool cannot be null");
             base.RemoteRunspacePoolInternal = rsPool;
             Context.RemoteAddress = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<Uri>(rsPool.ConnectionInfo,
                 "ConnectionUri", null);
@@ -232,7 +229,6 @@ namespace System.Management.Automation.Remoting
         #endregion Constructors
 
         #region connect/close
-
 
         /// <summary>
         /// Creates a Remote Session Asynchronously.
@@ -606,5 +602,4 @@ namespace System.Management.Automation.Remoting
         #endregion IDisposable
     }
 }
-
 

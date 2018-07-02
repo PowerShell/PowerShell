@@ -1,8 +1,9 @@
-#if CORECLR
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #if CORECLR
 
 #pragma warning disable
-
 
 namespace Microsoft.PowerShell.Cmdletization.Xml
 {
@@ -25,7 +26,6 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         //     CDXML files are under the namespace "http://schemas.microsoft.com/cmdlets-over-objects/2009/11".
         //  3. ReadTypedPrimitive(XmlQualifiedName type) and ReadTypedNull(XmlQualifiedName type). See the comments
         //     in them for more information.
-
 
         #region "Constructor"
 
@@ -58,7 +58,6 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         }
 
         #endregion "Constructor"
-
 
         #region "Field Definition"
 
@@ -145,7 +144,6 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
 
         #endregion "Field Definition"
 
-
         #region "Property Definition"
 
         internal XmlReader Reader
@@ -196,7 +194,6 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         }
 
         #endregion "Property Definition"
-
 
         #region "Method Definition"
 
@@ -533,7 +530,6 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         }
 
         #endregion "Method Definition"
-
 
         #endregion Copy_From_XmlSerializationReader
 
@@ -1425,11 +1421,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations0, ref readerCount0);
@@ -1564,11 +1560,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations2, ref readerCount2);
@@ -1621,7 +1617,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 string tmp = null;
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else if (Reader.NodeType == System.Xml.XmlNodeType.Text ||
                 Reader.NodeType == System.Xml.XmlNodeType.CDATA ||
@@ -1633,7 +1629,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations3, ref readerCount3);
@@ -1966,11 +1962,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations7, ref readerCount7);
@@ -2027,11 +2023,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations8, ref readerCount8);
@@ -2088,11 +2084,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations9, ref readerCount9);
@@ -2149,11 +2145,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations10, ref readerCount10);
@@ -2679,11 +2675,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations20, ref readerCount20);
@@ -2814,7 +2810,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 string tmp = null;
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else if (Reader.NodeType == System.Xml.XmlNodeType.Text ||
                 Reader.NodeType == System.Xml.XmlNodeType.CDATA ||
@@ -2826,7 +2822,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations22, ref readerCount22);
@@ -3390,11 +3386,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations30, ref readerCount30);
@@ -5768,11 +5764,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations63, ref readerCount63);
@@ -5829,11 +5825,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations64, ref readerCount64);
@@ -5890,11 +5886,11 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 if (Reader.NodeType == System.Xml.XmlNodeType.Element)
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 else
                 {
-                    UnknownNode((object)o, @"");
+                    UnknownNode((object)o, string.Empty);
                 }
                 Reader.MoveToContent();
                 CheckReaderCount(ref whileIterations65, ref readerCount65);
@@ -6232,7 +6228,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             _id1_PowerShellMetadata = Reader.NameTable.Add(@"PowerShellMetadata");
             _id98_HelpUri = Reader.NameTable.Add(@"HelpUri");
             _id91_DefaultValue = Reader.NameTable.Add(@"DefaultValue");
-            _id4_Item = Reader.NameTable.Add(@"");
+            _id4_Item = Reader.NameTable.Add(string.Empty);
             _id32_Item = Reader.NameTable.Add(@"CommonMethodMetadataReturnValue");
             _id43_EnumName = Reader.NameTable.Add(@"EnumName");
             _id122_Enums = Reader.NameTable.Add(@"Enums");
@@ -6333,7 +6329,4 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         }
     }
 }
-#endif
-
-
 #endif

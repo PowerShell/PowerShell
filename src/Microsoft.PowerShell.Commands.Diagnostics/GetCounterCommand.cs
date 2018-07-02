@@ -1,7 +1,5 @@
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
-//
-
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -26,7 +24,6 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 using Microsoft.PowerShell.Commands.GetCounter;
 using Microsoft.PowerShell.Commands.Diagnostics.Common;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -58,7 +55,6 @@ namespace Microsoft.PowerShell.Commands
             set { _listSet = value; }
         }
         private string[] _listSet = { "*" };
-
 
         //
         // Counter parameter
@@ -93,7 +89,6 @@ namespace Microsoft.PowerShell.Commands
 
         private List<string> _accumulatedCounters = new List<string>();
 
-
         //
         // SampleInterval parameter.
         // Defaults to 1 second.
@@ -110,7 +105,6 @@ namespace Microsoft.PowerShell.Commands
             set { _sampleInterval = value; }
         }
         private int _sampleInterval = 1;
-
 
         //
         // MaxSamples parameter
@@ -134,7 +128,6 @@ namespace Microsoft.PowerShell.Commands
         private Int64 _maxSamples = 1;
         private bool _maxSamplesSpecified = false;
 
-
         //
         // Continuous switch
         //
@@ -145,7 +138,6 @@ namespace Microsoft.PowerShell.Commands
             set { _continuous = value; }
         }
         private bool _continuous = false;
-
 
         //
         // ComputerName parameter
@@ -228,7 +220,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-
             if (Continuous.IsPresent && _maxSamplesSpecified)
             {
                 Exception exc = new Exception(string.Format(CultureInfo.CurrentCulture, _resourceMgr.GetString("CounterContinuousOrMaxSamples")));
@@ -248,7 +239,6 @@ namespace Microsoft.PowerShell.Commands
 
             _pdhHelper.Dispose();
         }
-
 
         //
         // Handle Control-C
@@ -449,7 +439,6 @@ namespace Microsoft.PowerShell.Commands
                 _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out characterReplacementList);
             }
 
-
             StringCollection allExpandedPaths = new StringCollection();
             foreach (string path in paths)
             {
@@ -596,7 +585,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(exc, "CounterApiError", ErrorCategory.InvalidResult, null));
             }
         }
-
 
         //
         // CombineMachinesAndCounterPaths() helper.

@@ -1,4 +1,6 @@
-﻿Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         BeforeAll {
             $orgin = $GLOBAL:errorActionPreference
         }
@@ -13,55 +15,49 @@
             $err = $null
             try
             {
-                get-childitem nosuchfile.nosuchextension -ea stop -ev err
+                get-childitem nosuchfile.nosuchextension -ErrorAction stop -ErrorVariable err
             }
             catch {}
 
-            It '$err.Count' { $err.Count | Should Be 1 }
-            It '$err[0] should not be $null' { $err[0] | Should Not Be $null }
-            It '$err[0].GetType().Name' { $err[0] | Should BeOfType "System.Management.Automation.ActionPreferenceStopException" }
-            It '$err[0].ErrorRecord' { $err[0].ErrorRecord | Should not BeNullOrEmpty }
-            It '$err[0].ErrorRecord.Exception.GetType().Name' { $err[0].ErrorRecord.Exception | Should BeOfType "System.Management.Automation.ItemNotFoundException" }
+            It '$err.Count' { $err.Count | Should -Be 1 }
+            It '$err[0] should not be $null' { $err[0] | Should -Not -BeNullOrEmpty }
+            It '$err[0].GetType().Name' { $err[0] | Should -BeOfType "System.Management.Automation.ActionPreferenceStopException" }
+            It '$err[0].ErrorRecord' { $err[0].ErrorRecord | Should -Not -BeNullOrEmpty }
+            It '$err[0].ErrorRecord.Exception.GetType().Name' { $err[0].ErrorRecord.Exception | Should -BeOfType "System.Management.Automation.ItemNotFoundException" }
         }
 
         It 'ActionPreference Ignore Works' {
             $errorCount = $error.Count
             Get-Process -Name asdfasdfsadfsadf -ErrorAction Ignore
 
-            $error.Count | Should Be $errorCount
+            $error.Count | Should -BeExactly $errorCount
         }
 
         It 'action preference of Ignore cannot be set as a preference variable' {
-            try {
+            $e = {
                 $GLOBAL:errorActionPreference = "Ignore"
                 Get-Process -Name asdfasdfasdf
-                Throw "Exception expected, execution should not have reached here"
-             } catch {
-                     $_.CategoryInfo.Reason | Should Be NotSupportedException
-             } finally {
-                $GLOBAL:errorActionPreference = $orgin
-             }
+            } | Should -Throw -ErrorId 'System.NotSupportedException,Microsoft.PowerShell.Commands.GetProcessCommand' -PassThru
+            $e.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
 
+            $GLOBAL:errorActionPreference = $orgin
         }
 
         It 'action preference of Suspend cannot be set as a preference variable' {
-            try {
-                    $GLOBAL:errorActionPreference = "Suspend"
-                    Get-Process -Name asdfasdfasdf
-                    Throw "Exception expected, execution should not have reached here"
-                } catch {
-                    $_.CategoryInfo.Reason | Should Be ArgumentTransformationMetadataException
-                }
-                finally {
-                    $GLOBAL:errorActionPreference = $orgin
-                }
+            $e = {
+                $GLOBAL:errorActionPreference = "Suspend"
+                Get-Process -Name asdfasdfasdf
+            } | Should -Throw -ErrorId 'RuntimeException' -PassThru
+            $e.CategoryInfo.Reason | Should -BeExactly 'ArgumentTransformationMetadataException'
+
+            $GLOBAL:errorActionPreference = $orgin
         }
 
         It 'enum disambiguation works' {
             $errorCount = $error.Count
             Get-Process -Name asdfasdfsadfsadf -ErrorAction Ig
 
-            $error.Count | Should Be $errorCount
+            $error.Count | Should -BeExactly $errorCount
         }
 
         It 'ErrorAction = Suspend works on Workflow' -Skip:$IsCoreCLR {
@@ -76,35 +72,15 @@
                 "Hello"
             }
 
-            try
-            {
-                MyHelperFunction -ErrorAction Suspend
-                Throw "Exception expected, execution should not have reached here"
-            } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,MyHelperFunction"
-            }
+            { MyHelperFunction -ErrorAction Suspend } | Should -Throw -ErrorId "ParameterBindingFailed,MyHelperFunction"
         }
 
         It 'ErrorAction = Suspend does not work on cmdlets' {
-            try
-            {
-                Get-Process -ErrorAction Suspend
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
-            }
+            { Get-Process -ErrorAction Suspend } | Should -Throw -ErrorId "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
         }
 
         It 'WarningAction = Suspend does not work' {
-            try
-            {
-                Get-Process -WarningAction Suspend
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
-            }
+            { Get-Process -WarningAction Suspend } | Should -Throw -ErrorId "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
         }
 
         #issue 2076
@@ -116,15 +92,8 @@
 
             $params | ForEach-Object {
                         $input=@{'InputObject' = 'Test';$_='Suspend'}
-
-                        try {
-                            Write-Output @input
-                            } catch {
-                                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.WriteOutputCommand"
-                                $num++
-                            }
+                        { Write-Output @input } | Should -Throw -ErrorId "ParameterBindingFailed,Microsoft.PowerShell.Commands.WriteOutputCommand"
                     }
-            $num | Should Be 2
         }
 
         It '<switch> does not take precedence over $ErrorActionPreference' -TestCases @(
@@ -140,9 +109,9 @@
             }
             New-Item @params > $null
             $params += @{$switch=$true}
-            { New-Item @params } | Should Not Throw
+            { New-Item @params } | Should -Not -Throw
             $ErrorActionPreference = "Stop"
-            { New-Item @params } | ShouldBeErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
+            { New-Item @params } | Should -Throw -ErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
             Remove-Item "$testdrive\test.txt" -Force
         }
 }

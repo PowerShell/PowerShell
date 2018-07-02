@@ -1,12 +1,19 @@
 # Issue Management
 
+## Security Vulnerabilities
+
+If you believe that there is a security vulnerability in PowerShell Core,
+it **must** be reported to [secure@microsoft.com](https://technet.microsoft.com/security/ff852094.aspx) to allow for [Coordinated Vulnerability Disclosure](https://technet.microsoft.com/security/dn467923).
+**Only** file an issue, if secure@microsoft.com has confirmed filing an issue is appropriate.
+
 ## Long-living issue labels
-=======
-## Issue and PR Labels
+
+### Issue and PR Labels
 
 Issues are opened for many different reasons.
 We use the following labels for issue classifications:
 
+* `Issue-Announcement`: the issue is for discussing an [Announcement](https://github.com/PowerShell/Announcements)
 * `Issue-Bug`: the issue is reporting a bug
 * `Issue-Code Cleanup`: the issue is for cleaning up the code with no impact on functionality
 * `Issue-Discussion`: the issue may not have a clear classification yet.
@@ -61,6 +68,7 @@ These labels describe what feature area of PowerShell that an issue affects:
 ### Operating Systems
 
 These are for issues that are specific to certain Operating Systems:
+
 * `OS-Linux`
 * `OS-macOS`
 * `OS-Windows`
@@ -78,18 +86,19 @@ The following labels are used on PRs:
 
 ### Miscellaneous labels
 
-* `Committee-Reviewed` : The PR/Issue has been reviewed by the [powershell-committee](../community/governance.md#powershell-committee)
-* `Up-for-Grabs`: We've acknowledged the issue but have no immediate plans to address it.
-  If you're looking for a way to contribute, these issues can be a good place to start.
-* `Blocked`: an issue cannot be addressed due to external factors,
+* `Blocked` : An issue cannot be addressed due to external factors,
   but should not be closed because those external factors are temporary.
-* `BVT/DRT`: an issue affecting or exposed by tests that have not been open sourced.
-* `Porting`: an issue that affects a feature not yet ported to other platforms.
-* `Usability`: this label is used to help us filter issues that might be higher priority
-  because they more directly affect the usability of a particular feature or area.
-* `Changelog Needed`: The PR requires an addition to the changelog,
+* `BVT/DRT` : An issue affecting or exposed by tests that have not been open sourced.
+* `Changelog Needed` : The PR requires an addition to the changelog,
   and should be removed when it has been added.
-* `Documentation Needed` : The PR has changes that require a documentation change or new documentation added to [PowerShell-Docs](http://github.com/powershell/powershell-docs)
+* `Committee-Reviewed` : The PR/Issue has been reviewed by the [powershell-committee](../community/governance.md#powershell-committee)
 * `Compliance` : Issues with the compliance label are required to be fixed either in the long term or short term for
   Microsoft to continue to sign and release packages from the project as official Microsoft packages.
   The time frame in which it needs to be fixed should be identified in the issue.
+* `Documentation Needed` : The PR has changes that require a documentation change or new documentation added to [PowerShell-Docs](http://github.com/powershell/powershell-docs)
+* `Porting` : An issue that affects a feature not yet ported to other platforms.
+* `Up-for-Grabs` : We've acknowledged the issue but have no immediate plans to address it.
+  If you're looking for a way to contribute, these issues can be a good place to start.
+* `Usability` : This label is used to help us filter issues that might be higher priority
+  because they more directly affect the usability of a particular feature or area.
+* `Waiting - DotNetCore` : An issue waiting on a fix/change in DotNetCore.

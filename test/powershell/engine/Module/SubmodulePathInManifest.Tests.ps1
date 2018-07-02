@@ -1,4 +1,6 @@
-﻿Describe "Tests for paths of submodules in module manifest" -tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Tests for paths of submodules in module manifest" -tags "CI" {
 
     $moduleName = 'ModuleA'
     $moduleFileName = "$moduleName.psd1"
@@ -41,7 +43,7 @@
     
         New-ModuleManifest $moduleFilePath -NestedModules @($SubModulePath)
         Import-Module $moduleFilePath
-        (Get-Module $moduleName).ExportedCommands.Keys.Contains('TestModuleFunction') | Should Be $true
+        (Get-Module $moduleName).ExportedCommands.Keys.Contains('TestModuleFunction') | Should -BeTrue
     }
 
     It "Test if RootModule path is <SubModulePath>" -TestCases $testCases {
@@ -49,6 +51,6 @@
     
         New-ModuleManifest $moduleFilePath -RootModule $SubModulePath
         Import-Module $moduleFilePath
-        (Get-Module $moduleName).ExportedCommands.Keys.Contains('TestModuleFunction') | Should Be $true
+        (Get-Module $moduleName).ExportedCommands.Keys.Contains('TestModuleFunction') | Should -BeTrue
     }
 }

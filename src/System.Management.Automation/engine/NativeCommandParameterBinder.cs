@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using Microsoft.PowerShell.Commands;
 using System.Collections;
@@ -169,7 +168,7 @@ namespace System.Management.Automation
                 "array argument and ArrayLiteralAst differ in number of elements");
 
             int currentElement = -1;
-            string separator = "";
+            string separator = string.Empty;
             do
             {
                 string arg;
@@ -276,7 +275,7 @@ namespace System.Management.Automation
                     // Expand paths, but only from the file system.
                     if (paths?.Count > 0 && paths.All(p => p.BaseObject is FileSystemInfo))
                     {
-                        var sep = "";
+                        var sep = string.Empty;
                         foreach (var path in paths)
                         {
                             _arguments.Append(sep);

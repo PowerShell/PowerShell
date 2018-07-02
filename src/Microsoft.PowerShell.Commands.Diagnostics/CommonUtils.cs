@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -23,7 +26,7 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
         //
         public static string StringArrayToString(IEnumerable input)
         {
-            string ret = "";
+            string ret = string.Empty;
             foreach (string element in input)
             {
                 ret += element + ", ";
@@ -87,10 +90,8 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
         [DllImport(LibraryLoadDllName)]
         private static extern bool FreeLibrary(IntPtr hModule);
 
-
         [DllImport(LocalizationDllName, EntryPoint = "GetUserDefaultLangID", CallingConvention = CallingConvention.Winapi, SetLastError = true)]
         private static extern ushort GetUserDefaultLangID();
-
 
         public static uint FormatMessageFromModule(uint lastError, string moduleName, out String msg)
         {

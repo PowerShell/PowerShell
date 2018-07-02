@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -42,6 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = PathParameterSetName)]
         [ValidateNotNull]
+        [Alias("Path")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] DestinationPath
         {
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies the literal path to save updates to
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = LiteralPathParameterSetName)]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
@@ -98,7 +98,6 @@ namespace Microsoft.PowerShell.Commands
         public ModuleSpecification[] FullyQualifiedModule { get; set; }
 
         #endregion
-
 
         #region Implementation
 
@@ -268,7 +267,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
-
 
             bool installed = false;
 

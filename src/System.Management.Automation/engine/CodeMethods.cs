@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -64,7 +63,7 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "integer")]
         public static Int64 ConvertLargeIntegerToInt64(PSObject deInstance, PSObject largeIntegerInstance)
         {
-            if (null == largeIntegerInstance)
+            if (largeIntegerInstance == null)
             {
                 throw PSTraceSource.NewArgumentException("largeIntegerInstance");
             }
@@ -108,7 +107,7 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "dn", Justification = "DN represents valid prefix w.r.t Active Directory.")]
         public static string ConvertDNWithBinaryToString(PSObject deInstance, PSObject dnWithBinaryInstance)
         {
-            if (null == dnWithBinaryInstance)
+            if (dnWithBinaryInstance == null)
             {
                 throw PSTraceSource.NewArgumentException("dnWithBinaryInstance");
             }

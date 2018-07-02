@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # DSC MOF Compilation
 # DSC Configuration() script that:
 # Defines base configuration users, groups, settings

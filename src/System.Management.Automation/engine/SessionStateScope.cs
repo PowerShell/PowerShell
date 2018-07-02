@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -535,7 +534,6 @@ namespace System.Management.Automation
                 }
             }
 
-
             _variables[name] = variable;
             variable.SessionState = sessionState;
             return variable;
@@ -935,7 +933,6 @@ namespace System.Management.Automation
                     throw e;
                 }
 
-
                 // Ensure we are not trying to set the alias to constant as this can only be
                 // done at creation time.
 
@@ -989,7 +986,6 @@ namespace System.Management.Automation
             return result;
         } // SetAliasValue
 
-
         /// <summary>
         /// Sets an alias to the given value.
         /// </summary>
@@ -1020,7 +1016,6 @@ namespace System.Management.Automation
             Diagnostics.Assert(
                 aliasToSet != null,
                 "The caller should verify the aliasToSet");
-
 
             var aliasInfos = GetAliases();
             AliasInfo aliasInfo;
@@ -1830,10 +1825,6 @@ namespace System.Management.Automation
             if (originalFunction is FilterInfo)
             {
                 newValue = new FilterInfo(name, (FilterInfo)originalFunction);
-            }
-            else if (originalFunction is WorkflowInfo)
-            {
-                newValue = new WorkflowInfo(name, (WorkflowInfo)originalFunction);
             }
             else if (originalFunction is ConfigurationInfo)
             {

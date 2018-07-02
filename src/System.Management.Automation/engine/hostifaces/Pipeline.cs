@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -206,7 +205,6 @@ namespace System.Management.Automation.Runspaces
             Reason = pipelineStateInfo.Reason;
         }
 
-
         #endregion constructors
 
         #region public_properties
@@ -310,7 +308,7 @@ namespace System.Management.Automation.Runspaces
             }
             // This constructor is used only internally.
             // Caller should make sure the input is valid
-            Dbg.Assert(null != command, "Command cannot be null");
+            Dbg.Assert(command != null, "Command cannot be null");
             InstanceId = runspace.GeneratePipelineId();
             Commands = command;
 
@@ -460,7 +458,6 @@ namespace System.Management.Automation.Runspaces
         #endregion events
 
         #region methods
-
 
         /// <summary>
         /// Invoke the pipeline, synchronously, returning the results as an array of
@@ -744,5 +741,4 @@ namespace System.Management.Automation.Runspaces
         #endregion IDisposable Members
     }
 }
-
 

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -108,7 +107,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static bool IsCollection(Type type)
         {
-            return type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Collection<>));
+            return type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Collection<>));
         }
 
         private static bool IsGenericIEnumerableOfInt(Type type)
@@ -156,7 +155,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private static bool IsDictionary(Type type)
         {
-            return type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Dictionary<,>));
+            return type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Dictionary<,>));
         }
 
         /// <summary>
@@ -336,7 +335,7 @@ namespace System.Management.Automation.Remoting
             {
                 return obj;
             }
-            else if (type.GetTypeInfo().IsEnum)
+            else if (type.IsEnum)
             {
                 return (int)obj;
             }
@@ -450,7 +449,7 @@ namespace System.Management.Automation.Remoting
                 }
                 return cred;
             }
-            else if (obj is int && type.GetTypeInfo().IsEnum)
+            else if (obj is int && type.IsEnum)
             {
                 return Enum.ToObject(type, (int)obj);
             }

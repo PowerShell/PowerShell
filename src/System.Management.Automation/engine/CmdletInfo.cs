@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -298,7 +297,7 @@ namespace System.Management.Automation
                                 _verb,
                                 StringLiterals.CommandVerbNounSeparator,
                                 _noun,
-                                parameterSet.ToString((this.CommandType & CommandTypes.Workflow) == CommandTypes.Workflow)));
+                                parameterSet.ToString()));
                     }
                 }
                 else
@@ -341,7 +340,7 @@ namespace System.Management.Automation
 
                     if (ImplementingType != null)
                     {
-                        foreach (object o in ImplementingType.GetTypeInfo().GetCustomAttributes(typeof(OutputTypeAttribute), false))
+                        foreach (object o in ImplementingType.GetCustomAttributes(typeof(OutputTypeAttribute), false))
                         {
                             OutputTypeAttribute attr = (OutputTypeAttribute)o;
                             _outputType.AddRange(attr.Type);
@@ -492,8 +491,8 @@ namespace System.Management.Automation
                 // Handle the case in one or both of the properties might not be defined.
                 PSPropertyInfo nameProperty = psObject.Properties["Name"];
                 PSPropertyInfo psSnapInProperty = psObject.Properties["PSSnapIn"];
-                string nameString = nameProperty == null ? "" : (string)nameProperty.Value;
-                string psSnapInString = psSnapInProperty == null ? "" : (string)psSnapInProperty.Value;
+                string nameString = nameProperty == null ? string.Empty : (string)nameProperty.Value;
+                string psSnapInString = psSnapInProperty == null ? string.Empty : (string)psSnapInProperty.Value;
                 return GetFullName(psSnapInString, nameString);
             }
         }

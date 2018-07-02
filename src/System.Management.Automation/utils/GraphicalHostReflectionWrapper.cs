@@ -1,11 +1,5 @@
-﻿//-----------------------------------------------------------------------
-// <copyright company="Microsoft">
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-// </copyright>
-// <summary>
-// Implements GraphicalHostReflectionWrapper
-// </summary>
-//-----------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation.Internal
 {
@@ -215,7 +209,7 @@ namespace System.Management.Automation.Internal
         /// <returns>true if the <paramref name="parentCmdlet"/> is being run remotely</returns>
         private static bool IsInputFromRemoting(PSCmdlet parentCmdlet)
         {
-            Diagnostics.Assert(null != parentCmdlet.SessionState, "SessionState should always be available.");
+            Diagnostics.Assert(parentCmdlet.SessionState != null, "SessionState should always be available.");
 
             PSVariable senderInfo = parentCmdlet.SessionState.PSVariable.Get("PSSenderInfo");
             return senderInfo != null;

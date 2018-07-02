@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -269,7 +268,7 @@ namespace System.Management.Automation
             CommandInfo currentMatch = null;
 
             if (_context.EngineSessionState != null &&
-                (_commandTypes & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Workflow | CommandTypes.Configuration)) != 0)
+                (_commandTypes & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
             {
                 currentMatch = GetNextFunction();
             }
@@ -396,7 +395,6 @@ namespace System.Management.Automation
             return currentMatch;
         }
 
-
         /// <summary>
         /// Gets the CommandInfo representing the current command match.
         /// </summary>
@@ -421,7 +419,6 @@ namespace System.Management.Automation
                 return _currentMatch;
             }
         } // Current
-
 
         object IEnumerator.Current
         {
@@ -581,7 +578,7 @@ namespace System.Management.Automation
 
             do // false loop
             {
-                if (!Utils.NativeFileExists(path))
+                if (!Utils.FileExists(path))
                 {
                     CommandDiscovery.discoveryTracer.TraceError("The path does not exist: {0}", path);
                     break;
@@ -629,7 +626,6 @@ namespace System.Management.Automation
                     }
                     break;
                 }
-
 
                 if ((_commandTypes & CommandTypes.Application) != 0)
                 {
@@ -1355,7 +1351,6 @@ namespace System.Management.Automation
 
             return result;
         } // CanDoPathLookup
-
 
         /// <summary>
         /// The command name to search for

@@ -1,4 +1,6 @@
-﻿using namespace system.collections.generic
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+using namespace system.collections.generic
 using namespace System.Management.Automation
 Describe "Generics support" -Tags "CI" {
     # list and stack are in different assemblies, and dictionary
@@ -8,48 +10,48 @@ Describe "Generics support" -Tags "CI" {
         $x = [list[int]]::New()
         $x.Add(42)
         $x.Add(40)
-        $x.count | Should Be 2
+        $x.count | Should -Be 2
     }
 
     It 'Type stack[Int] works properly' {
         $x = [stack[int]]::New()
         $x.Push(42)
         $x.Push(40)
-        $x.count | Should Be 2
+        $x.count | Should -Be 2
     }
 
     It 'Type dictionary[string, Int] works properly' {
         $x = [dictionary[string, int]]::New()
         $x.foo = 42
-        $x.foo | Should Be 42
+        $x.foo | Should -Be 42
     }
 
     It 'Type list[[Int]] works properly' {
         $x = [list[[int]]]::New()
         $x.Add(42)
         $x.Add(40)
-        $x.count | Should Be 2
+        $x.count | Should -Be 2
     }
 
     It 'Type stack[[Int]] works properly' {
         $x = [stack[[int]]]::New()
         $x.Push(42)
         $x.Push(40)
-        $x.count | Should Be 2
+        $x.count | Should -Be 2
     }
 
     It 'Type dictionary[[string], [Int]] works properly' {
         $x = [dictionary[[string], [int]]]::New()
         $x.foo = 42
-        $x.foo | Should Be 42
+        $x.foo | Should -Be 42
     }
 
     It 'Type dictionary[dictionary[list[int],string], stack[double]] works properly' {
         $x = [dictionary[dictionary[list[int],string], stack[double]]]::new()
-        $x.gettype().fullname | should match "double"
+        $x.gettype().fullname | Should -Match "double"
 
         $y = new-object "dictionary[dictionary[list[int],string], stack[double]]"
-        $y.gettype().fullname | should match "double"
+        $y.gettype().fullname | Should -Match "double"
     }
 
     It 'non-generic EventHandler works properly' {
@@ -59,19 +61,13 @@ Describe "Generics support" -Tags "CI" {
 
         # The error message for a generic that doesn't meet the constraints should mention which
         # argument failed.
-        $ex = $null
-        try {
-            [nullable[object]]
-            Throw "Exception expected, execution should not have reached here"
-        } catch {
-            $_.FullyQualifiedErrorId | Should be 'TypeNotFoundWithMessage'
-            $_ | should match "\[T\]"
-        }
+        $e = { [nullable[object]] } | Should -Throw -ErrorId 'TypeNotFoundWithMessage' -PassThru
+        $e | Should -Match "\[T\]"
     }
 
     It 'Array type works properly' -skip:$IsCoreCLR{
         $x = [system.array]::ConvertAll.OverloadDefinitions
-        $x | Should match "static\s+TOutput\[\]\s+ConvertAll\[TInput,\s+TOutput\]\("
+        $x | Should -Match "static\s+TOutput\[\]\s+ConvertAll\[TInput,\s+TOutput\]\("
     }
 
    It 'Class type works properly' {
@@ -90,9 +86,9 @@ Describe "Generics support" -Tags "CI" {
 
         $x = [TestClass]::New("default1", 90, "1...5")
         $x.scriptText = "1...4"
-        $x.name | Should Be 'default1'
-        $x.port | Should Be 90
-        $x.scriptText | Should Be "1...4"
+        $x.name | Should -BeExactly 'default1'
+        $x.port | Should -Be 90
+        $x.scriptText | Should -BeExactly "1...4"
    }
 }
 

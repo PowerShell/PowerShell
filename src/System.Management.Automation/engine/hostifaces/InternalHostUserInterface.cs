@@ -1,8 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Language;
 using System.Management.Automation.Host;
@@ -127,8 +124,6 @@ namespace System.Management.Automation.Internal.Host
             return result;
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -171,8 +166,6 @@ namespace System.Management.Automation.Internal.Host
             return result;
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -203,8 +196,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.Write(value);
         }
-
-
 
         /// <summary>
         ///
@@ -241,8 +232,6 @@ namespace System.Management.Automation.Internal.Host
             _externalUI.Write(foregroundColor, backgroundColor, value);
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -268,8 +257,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteLine();
         }
-
-
 
         /// <summary>
         ///
@@ -302,8 +289,6 @@ namespace System.Management.Automation.Internal.Host
             _externalUI.WriteLine(value);
         }
 
-
-
         public override
         void
         WriteErrorLine(string value)
@@ -320,8 +305,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteErrorLine(value);
         }
-
-
 
         /// <summary>
         ///
@@ -357,8 +340,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteLine(foregroundColor, backgroundColor, value);
         }
-
-
 
         /// <summary>
         ///
@@ -405,7 +386,6 @@ namespace System.Management.Automation.Internal.Host
                 _informationalBuffers.AddDebug(record);
             }
         }
-
 
         /// <summary>
         /// Helper function for WriteDebugLine
@@ -514,8 +494,6 @@ namespace System.Management.Automation.Internal.Host
             WriteDebugRecord(new DebugRecord(message));
         }
 
-
-
         /// <summary>
         ///
         /// Ask the user whether to continue/stop or break to a nested prompt.
@@ -596,8 +574,6 @@ namespace System.Management.Automation.Internal.Host
             return shouldContinue;
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -620,7 +596,7 @@ namespace System.Management.Automation.Internal.Host
             }
 
             // Write to Information Buffers
-            if (null != _informationalBuffers)
+            if (_informationalBuffers != null)
             {
                 _informationalBuffers.AddProgress(record);
             }
@@ -632,8 +608,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteProgress(sourceId, record);
         }
-
-
 
         /// <summary>
         ///
@@ -857,9 +831,6 @@ namespace System.Management.Automation.Internal.Host
             return result;
         }
 
-
-
-
         /// <summary>
         ///
         /// See base class
@@ -942,7 +913,7 @@ namespace System.Management.Automation.Internal.Host
             Collection<int> result = null;
             try
             {
-                if (null == hostForMultipleChoices)
+                if (hostForMultipleChoices == null)
                 {
                     // host did not implement this new interface..
                     // so work with V1 host API to get the behavior..
@@ -989,7 +960,7 @@ namespace System.Management.Automation.Internal.Host
             Collection<ChoiceDescription> choices,
             IEnumerable<int> defaultChoices)
         {
-            Dbg.Assert(null != _externalUI, "externalUI cannot be null.");
+            Dbg.Assert(_externalUI != null, "externalUI cannot be null.");
 
             if (choices == null)
             {
@@ -1003,7 +974,7 @@ namespace System.Management.Automation.Internal.Host
             }
 
             Dictionary<int, bool> defaultChoiceKeys = new Dictionary<int, bool>();
-            if (null != defaultChoices)
+            if (defaultChoices != null)
             {
                 foreach (int defaultChoice in defaultChoices)
                 {
@@ -1055,10 +1026,10 @@ namespace System.Management.Automation.Internal.Host
             }
 
             // default choices
-            string defaultPrompt = "";
+            string defaultPrompt = string.Empty;
             if (defaultChoiceKeys.Count > 0)
             {
-                string prepend = "";
+                string prepend = string.Empty;
                 Text.StringBuilder defaultChoicesBuilder = new Text.StringBuilder();
                 foreach (int defaultChoice in defaultChoiceKeys.Keys)
                 {
@@ -1125,7 +1096,7 @@ namespace System.Management.Automation.Internal.Host
                     choicesSelected++;
                 }
                 // reset messageToBeDisplayed
-                messageToBeDisplayed = "";
+                messageToBeDisplayed = string.Empty;
             } while (true);
 
             return result;

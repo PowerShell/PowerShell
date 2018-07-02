@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -167,7 +166,7 @@ namespace Microsoft.PowerShell
         {
             Utils.CheckSecureStringArg(input, "input");
 
-            string output = "";
+            string output = string.Empty;
             byte[] data = null;
             byte[] protectedData = null;
 

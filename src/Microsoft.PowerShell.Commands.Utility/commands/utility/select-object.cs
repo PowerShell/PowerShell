@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -13,15 +12,15 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// helper class to do wildcard matching on MshExpressions
+    /// helper class to do wildcard matching on PSPropertyExpressions
     /// </summary>
-    internal sealed class MshExpressionFilter
+    internal sealed class PSPropertyExpressionFilter
     {
         /// <summary>
         /// construct the class, using an array of patterns
         /// </summary>
         /// <param name="wildcardPatternsStrings">array of pattern strings to use</param>
-        internal MshExpressionFilter(string[] wildcardPatternsStrings)
+        internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
         {
             if (wildcardPatternsStrings == null)
             {
@@ -39,9 +38,9 @@ namespace Microsoft.PowerShell.Commands
         /// try to match the expression against the array of wildcard patterns.
         /// the first match shortcircuits the search
         /// </summary>
-        /// <param name="expression">MshExpression to test against</param>
+        /// <param name="expression">PSPropertyExpression to test against</param>
         /// <returns>true if there is a match, else false</returns>
-        internal bool IsMatch(MshExpression expression)
+        internal bool IsMatch(PSPropertyExpression expression)
         {
             for (int k = 0; k < _wildcardPatterns.Length; k++)
             {
@@ -78,7 +77,6 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
-
 
         /// <summary>
         ///
@@ -146,7 +144,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private int _first = 0;
         private bool _firstOrLastSpecified;
-
 
         /// <summary>
         /// Skips the specified number of items from top when used with First,from end when used with Last
@@ -293,9 +290,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private List<MshParameter> _expandMshParameterList;
 
-
-
-        private MshExpressionFilter _exclusionFilter;
+        private PSPropertyExpressionFilter _exclusionFilter;
 
         private class UniquePSObjectHelper
         {
@@ -333,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ExcludeProperty != null)
             {
-                _exclusionFilter = new MshExpressionFilter(ExcludeProperty);
+                _exclusionFilter = new PSPropertyExpressionFilter(ExcludeProperty);
                 // ExcludeProperty implies -Property * for better UX
                 if ((Property == null) || (Property.Length == 0))
                 {
@@ -350,7 +345,6 @@ namespace Microsoft.PowerShell.Commands
                 FilteredWriteObject(inputObject, new List<PSNoteProperty>());
                 return;
             }
-
 
             //If property parameter is mentioned
             List<PSNoteProperty> matchedProperties = new List<PSNoteProperty>();
@@ -396,21 +390,19 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
-
         private void ProcessParameter(MshParameter p, PSObject inputObject, List<PSNoteProperty> result)
         {
             string name = p.GetEntry(NameEntryDefinition.NameEntryKey) as string;
 
-            MshExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
-            List<MshExpressionResult> expressionResults = new List<MshExpressionResult>();
-            foreach (MshExpression resolvedName in ex.ResolveNames(inputObject))
+            PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+            List<PSPropertyExpressionResult> expressionResults = new List<PSPropertyExpressionResult>();
+            foreach (PSPropertyExpression resolvedName in ex.ResolveNames(inputObject))
             {
                 if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
                 {
-                    List<MshExpressionResult> tempExprResults = resolvedName.GetValues(inputObject);
+                    List<PSPropertyExpressionResult> tempExprResults = resolvedName.GetValues(inputObject);
                     if (tempExprResults == null) continue;
-                    foreach (MshExpressionResult mshExpRes in tempExprResults)
+                    foreach (PSPropertyExpressionResult mshExpRes in tempExprResults)
                     {
                         expressionResults.Add(mshExpRes);
                     }
@@ -421,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
             // unless noexist-name itself contains wildcards
             if (expressionResults.Count == 0 && !ex.HasWildCardCharacters)
             {
-                expressionResults.Add(new MshExpressionResult(null, ex, null));
+                expressionResults.Add(new PSPropertyExpressionResult(null, ex, null));
             }
 
             // if we have an expansion, renaming is not acceptable
@@ -437,7 +429,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            foreach (MshExpressionResult r in expressionResults)
+            foreach (PSPropertyExpressionResult r in expressionResults)
             {
                 // filter the exclusions, if any
                 if (_exclusionFilter != null && _exclusionFilter.IsMatch(r.ResolvedExpression))
@@ -470,9 +462,8 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessExpandParameter(MshParameter p, PSObject inputObject,
             List<PSNoteProperty> matchedProperties)
         {
-            MshExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
-            List<MshExpressionResult> expressionResults = ex.GetValues(inputObject);
-
+            PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+            List<PSPropertyExpressionResult> expressionResults = ex.GetValues(inputObject);
 
             if (expressionResults.Count == 0)
             {
@@ -493,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new SelectObjectException(errorRecord);
             }
 
-            MshExpressionResult r = expressionResults[0];
+            PSPropertyExpressionResult r = expressionResults[0];
             if (r.Exception == null)
             {
                 // ignore the property value if it's null

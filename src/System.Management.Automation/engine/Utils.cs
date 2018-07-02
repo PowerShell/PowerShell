@@ -1,10 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Security;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Security;
 using System.Reflection;
@@ -68,12 +68,6 @@ namespace System.Management.Automation
         {
             return CombineHashCodes(CombineHashCodes(h1, h2, h3, h4), CombineHashCodes(h5, h6, h7, h8));
         }
-
-        /// <summary>
-        /// The existence of the following registry confirms that the host machine is a WinPE
-        /// HKLM\System\CurrentControlSet\Control\MiniNT
-        /// </summary>
-        internal static string WinPEIdentificationRegKey = @"System\CurrentControlSet\Control\MiniNT";
 
         /// <summary>
         /// Allowed PowerShell Editions
@@ -233,12 +227,11 @@ namespace System.Management.Automation
         }
 #endif
 
-        internal static string DefaultPowerShellAppBase { get; } = GetApplicationBase(DefaultPowerShellShellID);
-
+        internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
         internal static string GetApplicationBase(string shellId)
         {
             // Use the location of SMA.dll as the application base.
-            Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
+            Assembly assembly = typeof(PSObject).Assembly;
             return Path.GetDirectoryName(assembly.Location);
         }
 
@@ -345,7 +338,7 @@ namespace System.Management.Automation
             {
                 // The existence of the following registry confirms that the host machine is a WinPE
                 // HKLM\System\CurrentControlSet\Control\MiniNT
-                winPEKey = Registry.LocalMachine.OpenSubKey(WinPEIdentificationRegKey);
+                winPEKey = Registry.LocalMachine.OpenSubKey(@"System\CurrentControlSet\Control\MiniNT");
 
                 return winPEKey != null;
             }
@@ -362,7 +355,6 @@ namespace System.Management.Automation
 #endif
             return false;
         }
-
 
         #region Versioning related methods
 
@@ -497,125 +489,210 @@ namespace System.Management.Automation
         /// </summary>
         internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
-        internal static string GetRegistryConfigurationPrefix()
-        {
-            // For 3.0 PowerShell, we still use "1" as the registry version key for
-            // Snapin and Custom shell lookup/discovery.
-            // For 3.0 PowerShell, we use "3" as the registry version key only for Engine
-            // related data like ApplicationBase etc.
-            return "SOFTWARE\\Microsoft\\PowerShell\\" + PSVersionInfo.RegistryVersion1Key + "\\ShellIds";
-        }
+        internal readonly static ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.SystemWide };
+        internal readonly static ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
+        internal readonly static ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.SystemWide, ConfigScope.CurrentUser };
+        internal readonly static ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.SystemWide };
 
-        internal static string GetRegistryConfigurationPath(string shellID)
+        internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
-            return GetRegistryConfigurationPrefix() + "\\" + shellID;
-        }
-
-        // Calling static members of 'Registry' on UNIX will raise 'PlatformNotSupportedException'
-#if UNIX
-        internal static RegistryKey[] RegLocalMachine = null;
-        internal static RegistryKey[] RegCurrentUser = null;
-        internal static RegistryKey[] RegLocalMachineThenCurrentUser = null;
-        internal static RegistryKey[] RegCurrentUserThenLocalMachine = null;
-#else
-        internal static RegistryKey[] RegLocalMachine = new[] { Registry.LocalMachine };
-        internal static RegistryKey[] RegCurrentUser = new[] { Registry.CurrentUser };
-        internal static RegistryKey[] RegLocalMachineThenCurrentUser = new[] { Registry.LocalMachine, Registry.CurrentUser };
-        internal static RegistryKey[] RegCurrentUserThenLocalMachine = new[] { Registry.CurrentUser, Registry.LocalMachine };
+            T policy = null;
+#if !UNIX
+            // On Windows, group policy settings from registry take precedence.
+            // If the requested policy is not defined in registry, we query the configuration file.
+            policy = GetPolicySettingFromGPO<T>(preferenceOrder);
+            if (policy != null) { return policy; }
 #endif
-
-        internal static Dictionary<string, object> GetGroupPolicySetting(string settingName, RegistryKey[] preferenceOrder)
-        {
-            string groupPolicyBase = "Software\\Policies\\Microsoft\\Windows\\PowerShell";
-            return GetGroupPolicySetting(groupPolicyBase, settingName, preferenceOrder);
+            policy = GetPolicySettingFromConfigFile<T>(preferenceOrder);
+            return policy;
         }
 
-        // We use a static to avoid creating "extra garbage."
-        private static Dictionary<string, object> s_emptyDictionary = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        private readonly static ConcurrentDictionary<ConfigScope, PowerShellPolicies> s_cachedPoliciesFromConfigFile =
+            new ConcurrentDictionary<ConfigScope, PowerShellPolicies>();
 
-        internal static Dictionary<string, object> GetGroupPolicySetting(string groupPolicyBase, string settingName, RegistryKey[] preferenceOrder)
+        /// <summary>
+        /// Get a specific kind of policy setting from the configuration file.
+        /// </summary>
+        private static T GetPolicySettingFromConfigFile<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
-#if UNIX
-            return s_emptyDictionary;
-#else
-            lock (s_cachedGroupPolicySettings)
+            foreach (ConfigScope scope in preferenceOrder)
             {
-                // Return cached information, if we have it
-                Dictionary<string, object> settings;
-                if ((s_cachedGroupPolicySettings.TryGetValue(settingName, out settings)) &&
-                    !InternalTestHooks.BypassGroupPolicyCaching)
+                PowerShellPolicies policies;
+                if (InternalTestHooks.BypassGroupPolicyCaching)
                 {
-                    return settings;
+                    policies = PowerShellConfig.Instance.GetPowerShellPolicies(scope);
                 }
-
-                if (!String.Equals(".", settingName, StringComparison.OrdinalIgnoreCase))
+                else if (!s_cachedPoliciesFromConfigFile.TryGetValue(scope, out policies))
                 {
-                    groupPolicyBase += "\\" + settingName;
-                }
-
-                settings = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-
-                foreach (RegistryKey searchKey in preferenceOrder)
-                {
-                    try
+                    // Use lock here to reduce the contention on accessing the configuration file
+                    lock (s_cachedPoliciesFromConfigFile)
                     {
-                        // Look up the machine-wide group policy
-                        using (RegistryKey key = searchKey.OpenSubKey(groupPolicyBase))
+                        policies = s_cachedPoliciesFromConfigFile.GetOrAdd(scope, PowerShellConfig.Instance.GetPowerShellPolicies);
+                    }
+                }
+
+                if (policies != null)
+                {
+                    PolicyBase result = null;
+                    switch (typeof(T).Name)
+                    {
+                        case nameof(ScriptExecution):             result = policies.ScriptExecution; break;
+                        case nameof(ScriptBlockLogging):          result = policies.ScriptBlockLogging; break;
+                        case nameof(ModuleLogging):               result = policies.ModuleLogging; break;
+                        case nameof(ProtectedEventLogging):       result = policies.ProtectedEventLogging; break;
+                        case nameof(Transcription):               result = policies.Transcription; break;
+                        case nameof(UpdatableHelp):               result = policies.UpdatableHelp; break;
+                        case nameof(ConsoleSessionConfiguration): result = policies.ConsoleSessionConfiguration; break;
+                        default: Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when new PowerShell policy types are added."); break;
+                    }
+                    if (result != null) { return (T) result; }
+                }
+            }
+
+            return null;
+        }
+
+#if !UNIX
+        private static readonly Dictionary<string, string> GroupPolicyKeys = new Dictionary<string, string>
+        {
+            {nameof(ScriptExecution), @"Software\Policies\Microsoft\PowerShellCore"},
+            {nameof(ScriptBlockLogging), @"Software\Policies\Microsoft\PowerShellCore\ScriptBlockLogging"},
+            {nameof(ModuleLogging), @"Software\Policies\Microsoft\PowerShellCore\ModuleLogging"},
+            {nameof(ProtectedEventLogging), @"Software\Policies\Microsoft\Windows\EventLog\ProtectedEventLogging"},
+            {nameof(Transcription), @"Software\Policies\Microsoft\PowerShellCore\Transcription"},
+            {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
+            {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"}
+        };
+        private readonly static ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase> s_cachedPoliciesFromRegistry =
+            new ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase>();
+
+        /// <summary>
+        /// The implementation of fetching a specific kind of policy setting from the given configuration scope.
+        /// </summary>
+        private static T GetPolicySettingFromGPOImpl<T>(ConfigScope scope) where T : PolicyBase, new()
+        {
+            Type tType = typeof(T);
+            // SystemWide scope means 'LocalMachine' root key when query from registry
+            RegistryKey rootKey = (scope == ConfigScope.SystemWide) ? Registry.LocalMachine : Registry.CurrentUser;
+
+            GroupPolicyKeys.TryGetValue(tType.Name, out string gpoKeyPath);
+            Diagnostics.Assert(gpoKeyPath != null, StringUtil.Format("The GPO registry key path should be pre-defined for {0}", tType.Name));
+
+            using (RegistryKey gpoKey = rootKey.OpenSubKey(gpoKeyPath))
+            {
+                // If the corresponding GPO key doesn't exist, return null
+                if (gpoKey == null) { return null; }
+
+                // The corresponding GPO key exists, then create an instance of T
+                // and populate its properties with the settings
+                object tInstance = Activator.CreateInstance(tType, nonPublic: true);
+                var properties = tType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                bool isAnyPropertySet = false;
+
+                string[] valueNames = gpoKey.GetValueNames();
+                string[] subKeyNames = gpoKey.GetSubKeyNames();
+                var valueNameSet = valueNames.Length > 0 ? new HashSet<string>(valueNames, StringComparer.OrdinalIgnoreCase) : null;
+                var subKeyNameSet = subKeyNames.Length > 0 ? new HashSet<string>(subKeyNames, StringComparer.OrdinalIgnoreCase) : null;
+
+                foreach (var property in properties)
+                {
+                    string settingName = property.Name;
+                    object rawRegistryValue = null;
+
+                    // Get the raw value from registry.
+                    if (valueNameSet != null && valueNameSet.Contains(settingName))
+                    {
+                        rawRegistryValue = gpoKey.GetValue(settingName);
+                    }
+                    else if (subKeyNameSet != null && subKeyNameSet.Contains(settingName))
+                    {
+                        using (RegistryKey subKey = gpoKey.OpenSubKey(settingName))
                         {
-                            if (key != null)
-                            {
-                                foreach (string subkeyName in key.GetValueNames())
-                                {
-                                    // A null or empty subkey name string corresponds to a (Default) key.
-                                    // If it is null, make it an empty string which the Dictionary can handle.
-                                    string keyName = subkeyName ?? string.Empty;
-
-                                    settings[keyName] = key.GetValue(keyName);
-                                }
-
-                                foreach (string subkeyName in key.GetSubKeyNames())
-                                {
-                                    // A null or empty subkey name string corresponds to a (Default) key.
-                                    // If it is null, make it an empty string which the Dictionary can handle.
-                                    string keyName = subkeyName ?? string.Empty;
-
-                                    using (RegistryKey subkey = key.OpenSubKey(keyName))
-                                    {
-                                        if (subkey != null)
-                                        {
-                                            settings[keyName] = subkey.GetValueNames();
-                                        }
-                                    }
-                                }
-
-                                break;
-                            }
+                            if (subKey != null) { rawRegistryValue = subKey.GetValueNames(); }
                         }
                     }
-                    catch (System.Security.SecurityException)
+
+                    // Get the actual property value based on the property type.
+                    // If the final property value is not null, then set the property.
+                    if (rawRegistryValue != null)
                     {
-                        // User doesn't have access to open group policy key
+                        Type propertyType = property.PropertyType;
+                        object propertyValue = null;
+
+                        switch (propertyType)
+                        {
+                            case var _ when propertyType == typeof(bool?):
+                                if (rawRegistryValue is int rawIntValue)
+                                {
+                                    if (rawIntValue == 1) { propertyValue = true; }
+                                    else if (rawIntValue == 0) { propertyValue = false; }
+                                }
+                                break;
+                            case var _ when propertyType == typeof(string):
+                                if (rawRegistryValue is string rawStringValue)
+                                {
+                                    propertyValue = rawStringValue;
+                                }
+                                break;
+                            case var _ when propertyType == typeof(string[]):
+                                if (rawRegistryValue is string[] rawStringArrayValue)
+                                {
+                                    propertyValue = rawStringArrayValue;
+                                }
+                                else if (rawRegistryValue is string stringValue)
+                                {
+                                    propertyValue = new string[] { stringValue };
+                                }
+                                break;
+                            default:
+                                Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when properties of new types are added to PowerShell policy types.");
+                                break;
+                        }
+
+                        // Set the property if the value is not null
+                        if (propertyValue != null)
+                        {
+                            property.SetValue(tInstance, propertyValue);
+                            isAnyPropertySet = true;
+                        }
                     }
                 }
 
-                // No group policy settings, then return null
-                if (settings.Count == 0)
-                {
-                    settings = null;
-                }
-
-                // Cache the data
-                if (!InternalTestHooks.BypassGroupPolicyCaching)
-                {
-                    s_cachedGroupPolicySettings[settingName] = settings;
-                }
-
-                return settings;
+                // If no property is set, then we consider this policy as undefined
+                return isAnyPropertySet ? (T) tInstance : null;
             }
-#endif
         }
-        private static ConcurrentDictionary<string, Dictionary<string, object>> s_cachedGroupPolicySettings =
-            new ConcurrentDictionary<string, Dictionary<string, object>>();
+
+        /// <summary>
+        /// Get a specific kind of policy setting from the group policy registry key.
+        /// </summary>
+        private static T GetPolicySettingFromGPO<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
+        {
+            PolicyBase policy = null;
+            foreach (ConfigScope scope in preferenceOrder)
+            {
+                if (InternalTestHooks.BypassGroupPolicyCaching)
+                {
+                    policy = GetPolicySettingFromGPOImpl<T>(scope);
+                }
+                else
+                {
+                    var key = Tuple.Create(scope, typeof(T).Name);
+                    if (!s_cachedPoliciesFromRegistry.TryGetValue(key, out policy))
+                    {
+                        lock (s_cachedPoliciesFromRegistry)
+                        {
+                            policy = s_cachedPoliciesFromRegistry.GetOrAdd(key, tuple => GetPolicySettingFromGPOImpl<T>(tuple.Item1));
+                        }
+                    }
+                }
+
+                if (policy != null) { return (T) policy; }
+            }
+
+            return null;
+        }
+#endif
 
         /// <summary>
         /// Scheduled job module name.
@@ -660,7 +737,7 @@ namespace System.Management.Automation
                     finally
                     {
                         context.AutoLoadingModuleInProgress.Remove(module);
-                        if (null != ps)
+                        if (ps != null)
                         {
                             ps.Dispose();
                         }
@@ -724,7 +801,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (null != ps)
+                if (ps != null)
                 {
                     ps.Dispose();
                 }
@@ -785,7 +862,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (null != ps)
+                if (ps != null)
                 {
                     ps.Dispose();
                 }
@@ -812,113 +889,57 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static bool NativeItemExists(string path)
+        internal static bool ItemExists(string path)
         {
-            bool unusedIsDirectory;
-            Exception unusedException;
+            try
+            {
+                return ItemExists(path, out bool _);
+            }
+            catch
+            {
+            }
 
-            return NativeItemExists(path, out unusedIsDirectory, out unusedException);
+            return false;
         }
 
-        // This is done through P/Invoke since File.Exists and Directory.Exists pay 13% performance degradation
-        // through the CAS checks, and are terribly slow for network paths.
-        internal static bool NativeItemExists(string path, out bool isDirectory, out Exception exception)
+        internal static bool ItemExists(string path, out bool isDirectory)
         {
-            exception = null;
+            isDirectory = false;
 
             if (String.IsNullOrEmpty(path))
             {
-                isDirectory = false;
                 return false;
             }
-#if UNIX
-            isDirectory = Platform.NonWindowsIsDirectory(path);
-            return Platform.NonWindowsIsFile(path);
-#else
 
             if (IsReservedDeviceName(path))
             {
-                isDirectory = false;
                 return false;
             }
 
-            int result = NativeMethods.GetFileAttributes(path);
-            if (result == -1)
+            try
             {
-                int errorCode = Marshal.GetLastWin32Error();
-                if (errorCode == 5)
-                {
-                    // Handle "Access denied" specifically.
-                    Win32Exception win32Exception = new Win32Exception(errorCode);
-                    exception = new UnauthorizedAccessException(win32Exception.Message, win32Exception);
-                }
-                else if (errorCode == 32)
-                {
-                    // Errorcode 32 is 'ERROR_SHARING_VIOLATION' i.e.
-                    // The process cannot access the file because it is being used by another process.
-                    // GetFileAttributes may return INVALID_FILE_ATTRIBUTES for a system file or directory because of this error.
-                    // GetFileAttributes function tries to open the file with FILE_READ_ATTRIBUTES access right but it fails if the
-                    // sharing flag for the file is set to 0x00000000.This flag prevents it from opening a file for delete, read, or
-                    // write access. For example: C:\pagefile.sys is always opened by OS with sharing flag 0x00000000.
-                    // But FindFirstFile is still able to get attributes as this api retrieves the required information using a find
-                    // handle generated with FILE_LIST_DIRECTORY access.
-                    // Fall back to FindFirstFile to check if the file actually exists.
-                    IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-                    NativeMethods.WIN32_FIND_DATA findData;
-                    IntPtr findHandle = NativeMethods.FindFirstFile(path, out findData);
-                    if (findHandle != INVALID_HANDLE_VALUE)
-                    {
-                        isDirectory = (findData.dwFileAttributes & NativeMethods.FileAttributes.Directory) != 0;
-                        NativeMethods.FindClose(findHandle);
-                        return true;
-                    }
-                }
-                else if (errorCode == 53)
-                {
-                    // ERROR_BAD_NETPATH - The network path was not found.
-                    Win32Exception win32Exception = new Win32Exception(errorCode);
-                    exception = new IOException(win32Exception.Message, win32Exception);
-                }
+                // Use 'File.GetAttributes()' because we want to get access exceptions.
+                FileAttributes attributes = File.GetAttributes(path);
+                isDirectory = attributes.HasFlag(FileAttributes.Directory);
 
-                isDirectory = false;
+                return (int)attributes != -1;
+            }
+            catch (IOException)
+            {
                 return false;
             }
-
-            isDirectory = (result & ((int)NativeMethods.FileAttributes.Directory)) ==
-                ((int)NativeMethods.FileAttributes.Directory);
-
-            return true;
-#endif
         }
 
-        // This is done through P/Invoke since we pay 13% performance degradation
-        // through the CAS checks required by File.Exists and Directory.Exists
-        internal static bool NativeFileExists(string path)
+        internal static bool FileExists(string path)
         {
-            bool isDirectory;
-            Exception ioException;
-
-            bool itemExists = NativeItemExists(path, out isDirectory, out ioException);
-            if (ioException != null)
-            {
-                throw ioException;
-            }
+            bool itemExists = ItemExists(path, out bool isDirectory);
 
             return (itemExists && (!isDirectory));
         }
 
-        // This is done through P/Invoke since we pay 13% performance degradation
-        // through the CAS checks required by File.Exists and Directory.Exists
-        internal static bool NativeDirectoryExists(string path)
+        internal static bool DirectoryExists(string path)
         {
-            bool isDirectory;
-            Exception ioException;
-
-            bool itemExists = NativeItemExists(path, out isDirectory, out ioException);
-            if (ioException != null)
-            {
-                throw ioException;
-            }
+            bool itemExists = ItemExists(path, out bool isDirectory);
 
             return (itemExists && isDirectory);
         }
@@ -955,7 +976,6 @@ namespace System.Management.Automation
                 NativeMethods.FindClose(findHandle);
             }
         }
-
 
         internal static bool IsReservedDeviceName(string destinationPath)
         {
@@ -1113,7 +1133,6 @@ namespace System.Management.Automation
             return assemblyName;
         }
 
-
         /// <summary>
         /// If a mutex is abandoned, in our case, it is ok to proceed
         /// </summary>
@@ -1216,7 +1235,6 @@ namespace System.Management.Automation
 
             return Encoding.ASCII;
         }
-
 
         // BigEndianUTF32 encoding is possible, but requires creation
         internal static Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
@@ -1416,6 +1434,7 @@ namespace System.Management.Automation.Internal
         internal static bool UseDebugAmsiImplementation;
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
+        internal static bool ForcePromptForChoiceDefaultOption;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;
@@ -1438,6 +1457,55 @@ namespace System.Management.Automation.Internal
             {
                 fieldInfo.SetValue(null, value);
             }
+        }
+    }
+
+    /// <summary>
+    /// An bounded stack based on a linked list.
+    /// </summary>
+    internal class BoundedStack<T> : LinkedList<T>
+    {
+        private readonly int _capacity;
+
+        /// <summary>
+        /// Lazy initialisation, i.e. it sets only its limit but does not allocate the memory for the given capacity.
+        /// </summary>
+        /// <param name="capacity"></param>
+        internal BoundedStack(int capacity)
+        {
+            _capacity = capacity;
+        }
+
+        /// <summary>
+        /// Push item.
+        /// </summary>
+        /// <param name="item"></param>
+        internal void Push(T item)
+        {
+            this.AddFirst(item);
+
+            if(this.Count > _capacity)
+            {
+                this.RemoveLast();
+            }
+        }
+
+        /// <summary>
+        /// Pop item.
+        /// </summary>
+        /// <returns></returns>
+        internal T Pop()
+        {
+            var item = this.First.Value;
+            try
+            {
+                this.RemoveFirst();
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException(SessionStateStrings.BoundedStackIsEmpty);
+            }
+            return item;
         }
     }
 }

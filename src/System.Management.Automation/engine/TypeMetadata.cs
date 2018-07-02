@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -39,7 +38,7 @@ namespace System.Management.Automation
         /// <param name="psMD"></param>
         internal ParameterSetMetadata(ParameterSetSpecificMetadata psMD)
         {
-            Dbg.Assert(null != psMD, "ParameterSetSpecificMetadata cannot be null");
+            Dbg.Assert(psMD != null, "ParameterSetSpecificMetadata cannot be null");
             Initialize(psMD);
         }
 
@@ -305,7 +304,7 @@ namespace System.Management.Automation
         internal string GetProxyParameterData()
         {
             Text.StringBuilder result = new System.Text.StringBuilder();
-            string prefix = "";
+            string prefix = string.Empty;
 
             if (_isMandatory)
             {
@@ -475,7 +474,7 @@ namespace System.Management.Automation
         /// </param>
         internal ParameterMetadata(CompiledCommandParameter cmdParameterMD)
         {
-            Dbg.Assert(null != cmdParameterMD,
+            Dbg.Assert(cmdParameterMD != null,
                 "CompiledCommandParameter cannot be null");
 
             Initialize(cmdParameterMD);
@@ -613,7 +612,7 @@ namespace System.Management.Automation
         /// </exception>
         public static Dictionary<string, ParameterMetadata> GetParameterMetadata(Type type)
         {
-            if (null == type)
+            if (type == null)
             {
                 throw PSTraceSource.NewArgumentNullException("type");
             }
@@ -670,7 +669,7 @@ namespace System.Management.Automation
         internal static Dictionary<string, ParameterMetadata> GetParameterMetadata(MergedCommandParameterMetadata
             cmdParameterMetadata)
         {
-            Dbg.Assert(null != cmdParameterMetadata, "cmdParameterMetadata cannot be null");
+            Dbg.Assert(cmdParameterMetadata != null, "cmdParameterMetadata cannot be null");
 
             Dictionary<string, ParameterMetadata> result = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
 
@@ -717,7 +716,7 @@ namespace System.Management.Automation
             }
 
             var wildcardPattern = WildcardPattern.Get(
-                "*" + (psTypeName.Name ?? ""),
+                "*" + (psTypeName.Name ?? string.Empty),
                 WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
             if (wildcardPattern.IsMatch(this.ParameterType.FullName))
             {
@@ -789,7 +788,7 @@ namespace System.Management.Automation
                     string paramSetData = parameterSet.GetProxyParameterData();
                     if (!string.IsNullOrEmpty(paramSetData) || !parameterSetName.Equals(ParameterAttribute.AllParameterSets))
                     {
-                        string separator = "";
+                        string separator = string.Empty;
                         result.Append(prefix);
                         result.Append("[Parameter(");
                         if (!parameterSetName.Equals(ParameterAttribute.AllParameterSets))
@@ -813,7 +812,7 @@ namespace System.Management.Automation
             if ((_aliases != null) && (_aliases.Count > 0))
             {
                 Text.StringBuilder aliasesData = new System.Text.StringBuilder();
-                string comma = ""; // comma is not need for the first element
+                string comma = string.Empty; // comma is not need for the first element
 
                 foreach (string alias in _aliases)
                 {
@@ -943,7 +942,7 @@ namespace System.Management.Automation
             {
                 /* TODO: Validate Pattern dont support Options in ScriptCmdletText.
                 StringBuilder regexOps = new System.Text.StringBuilder();
-                string or = "";
+                string or = string.Empty;
                 string[] regexOptionEnumValues = Enum.GetNames(typeof(System.Text.RegularExpressions.RegexOptions));
 
                 foreach(string regexOption in regexOptionEnumValues)
@@ -997,7 +996,7 @@ namespace System.Management.Automation
             if (setAttrib != null)
             {
                 Text.StringBuilder values = new System.Text.StringBuilder();
-                string comma = "";
+                string comma = string.Empty;
                 foreach (string validValue in setAttrib.ValidValues)
                 {
                     values.AppendFormat(
@@ -1311,14 +1310,13 @@ namespace System.Management.Automation
                 // Create the compiled parameter and add it to the bindable parameters collection
 
                 // NTRAID#Windows Out Of Band Releases-926374-2005/12/22-JonN
-                if (null == parameterDefinition)
+                if (parameterDefinition == null)
                     continue;
 
                 CompiledCommandParameter parameter = new CompiledCommandParameter(parameterDefinition, processingDynamicParameters);
                 AddParameter(parameter, checkNames);
             }
         } // ConstructCompiledParametersUsingRuntimeDefinedParameters
-
 
         /// <summary>
         /// Compiles the parameter using reflection against the CLR type.

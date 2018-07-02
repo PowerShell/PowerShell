@@ -1,7 +1,7 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 // ----------------------------------------------------------------------
-//
-//  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  Contents:  Headers used by pwrshplugin.
 //  pwrshplugin is totally unmanaged.
@@ -25,10 +25,6 @@ using namespace NativeMsh;
 
 // Forward declaration of class PwrshPlugIn
 class PwrshPlugIn;
-
-// To report the plugin completion using WSManPluginReportCompletion API
-// g_pPluginContext MUST be the same context that plugin provided to the WSManPluginStartup method
-PwrshPlugIn* g_pPluginContext;
 
 class PwrshPlugIn
 {
@@ -230,7 +226,6 @@ public:
         // storing the extra info for plugin use later.
         VerifyAndStoreExtraInfo(extraInfo, &initParameters);
         PwrshPlugIn* result = new PwrshPlugIn(applicationIdentification, initParameters);
-        g_pPluginContext = result;
         return result;
     }
 
@@ -495,6 +490,11 @@ private:
         {
             iMajorVersion = iVPSMajorVersion;
 
+            if (NULL != wszMgdPlugInFileName)
+            {
+                *wszMgdPlugInFileName = NULL;
+            }
+
             exitCode = ConstructPowerShellVersion(iVPSMajorVersion, iVPSMinorVersion, &wszMonadVersion);
             if (EXIT_CODE_SUCCESS != exitCode)
             {
@@ -566,9 +566,18 @@ private:
         _In_ PWSTR wszMgdPlugInFileName,
         _In_ PWSTR wszVCLRVersion,  // Conditionally set to wszCLRVersion on success
         _In_ PWSTR wszVAppBase,     // Conditionally set to wszAppBase on success
-        __out_opt PlugInException** pPluginException )
+        __out PlugInException** pPluginException )
     {
         unsigned int exitCode = EXIT_CODE_SUCCESS;
+
+        if (NULL != pPluginException)
+        {
+            *pPluginException = NULL;
+        }
+        else
+        {
+             return g_INVALID_INPUT;
+        }
 
         if (bIsPluginLoaded)
         {
@@ -582,8 +591,6 @@ private:
 
         do
         {
-            *pPluginException = NULL;
-
             // Setting global AppBase and CLR Version
             wszCLRVersion = wszVCLRVersion;
             wszAppBase = wszVAppBase;
@@ -773,7 +780,9 @@ private:
             else
             {
                 PWSTR msg = NULL;
-                GetFormattedErrorMessage(&msg, g_OPTION_SET_NOT_COMPLY, g_BUILD_VERSION);
+                (void) GetFormattedErrorMessage(&msg, g_OPTION_SET_NOT_COMPLY, g_BUILD_VERSION);
+                /* NOTE: Passing possible NULL msg. PlugInExpecption requires allocated
+                   or NULL. Literal strings are not supported. */
                 throw new PlugInException(exitCode, msg);
             }
         }
@@ -1090,13 +1099,3 @@ public:
         return version;
     }
 };
-
-extern "C"
-void WINAPI PerformWSManPluginReportCompletion()
-{
-    // Now report the plugin completion, to indicate that plugin is ready to shutdown.
-    // This API is used by plugins to report completion
-    // - pluginContext MUST be the same context that plugin provided to the WSManPluginStartup method
-    // - flags are reserved, so 0
-    WSManPluginReportCompletion(g_pPluginContext, 0);
-}

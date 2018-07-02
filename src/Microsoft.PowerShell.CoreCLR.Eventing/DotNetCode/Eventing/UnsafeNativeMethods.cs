@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 namespace System.Diagnostics.Eventing
 {
@@ -78,7 +79,6 @@ namespace System.Diagnostics.Eventing
         private const int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
         private const int FORMAT_MESSAGE_ARGUMENT_ARRAY = 0x00002000;
 
-
         [DllImport(FormatMessageDllName, CharSet = CharSet.Unicode, BestFitMapping = false)]
         [SecurityCritical]
         internal static extern int FormatMessage(int dwFlags, IntPtr lpSource,
@@ -139,7 +139,6 @@ namespace System.Diagnostics.Eventing
         [DllImport(EventProviderDllName, ExactSpelling = true, EntryPoint = "EventUnregister", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
         [SecurityCritical]
         internal static extern int EventUnregister([In] long registrationHandle);
-
 
         //
         // Control (Is Enabled) APIs
@@ -524,7 +523,6 @@ namespace System.Diagnostics.Eventing
             public int Flags;
         }
 
-
         //SEEK
         [Flags]
         internal enum EvtSeekFlags
@@ -682,7 +680,6 @@ namespace System.Diagnostics.Eventing
                             out int eventMetadataPropertyBufferUsed
                                    );
 
-
         //Channel Configuration Native Api
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
@@ -702,7 +699,6 @@ namespace System.Diagnostics.Eventing
                             [Out, MarshalAs(UnmanagedType.LPWStr)]StringBuilder channelPathBuffer,
                             out int channelPathBufferUsed
                                     );
-
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
         [SecurityCritical]
@@ -737,7 +733,6 @@ namespace System.Diagnostics.Eventing
                             int flags
                                     );
 
-
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
         [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -747,7 +742,6 @@ namespace System.Diagnostics.Eventing
                             int flags,
                             ref EvtVariant propertyValue
                                     );
-
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
         [SecurityCritical]
@@ -770,7 +764,6 @@ namespace System.Diagnostics.Eventing
                             [MarshalAs(UnmanagedType.LPWStr)] string path,
                             [MarshalAs(UnmanagedType.I4)]PathType flags
                                     );
-
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
         [SecurityCritical]
@@ -839,7 +832,6 @@ namespace System.Diagnostics.Eventing
                             out int propCount
                                         );
 
-
         [DllImport(WEVTAPI, EntryPoint = "EvtRender", CallingConvention = CallingConvention.Winapi, SetLastError = true)]
         [SecurityCritical]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -852,7 +844,6 @@ namespace System.Diagnostics.Eventing
                             out int buffUsed,
                             out int propCount
                                         );
-
 
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
         internal struct EvtStringVariant

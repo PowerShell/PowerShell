@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -53,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         /// mandatory file name to write to
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public string LiteralPath
         {
             get
@@ -167,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
             // cleanup code will be called in IDisposable.Dispose()
             outInner.LineOutput = InstantiateLineOutputInterface();
 
-            if (null == _sw)
+            if (_sw == null)
             {
                 return;
             }
@@ -175,7 +174,6 @@ namespace Microsoft.PowerShell.Commands
             // finally call the base class for general hookup
             base.BeginProcessing();
         }
-
 
         /// <summary>
         /// one time initialization: acquire a screen host interface
@@ -228,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             _processRecordExecuted = true;
-            if (null == _sw)
+            if (_sw == null)
             {
                 return;
             }
@@ -255,7 +253,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (null == _sw)
+            if (_sw == null)
             {
                 return;
             }
@@ -287,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // reset the read-only attribute
-            if (null != _readOnlyFileInfo)
+            if (_readOnlyFileInfo != null)
             {
                 _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
                 _readOnlyFileInfo = null;

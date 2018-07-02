@@ -1,0 +1,52 @@
+{
+    "$schema" : "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+    "settings" : {
+        "indentation" : {
+            "indentationSize" : 4,
+            "tabSize" : 4,
+            "useTabs" : false
+        },
+        "spacingRules" : {
+        },
+        "readabilityRules" : {
+            "allowBuiltInTypeAliases" : true
+        },
+        "orderingRules" : {
+            "elementOrder" : [
+                "kind",
+                "constant",
+                "accessibility",
+                "static",
+                "readonly"
+            ],
+            "systemUsingDirectivesFirst" : true,
+            "usingDirectivesPlacement" : "outsideNamespace",
+            "blankLinesBetweenUsingGroups" : "allow"
+        },
+        "namingRules" : {
+            "allowCommonHungarianPrefixes" : true,
+            "allowedHungarianPrefixes" : [ "c", "r" ]
+        },
+        "maintainabilityRules" : {
+            "topLevelTypes" : [
+                "class",
+                "interface"
+            ]
+        },
+        "layoutRules" : {
+            "newlineAtEndOfFile" : "require",
+            "allowConsecutiveUsings" : false
+        },
+        "documentationRules" : {
+            "copyrightText" : "Copyright (c) Microsoft Corporation. All rights reserved.\nLicensed under the MIT License.",
+            "xmlHeader" : false,
+            "documentInterfaces" : true,
+            "documentExposedElements" : true,
+            "documentInternalElements" : false,
+            "documentPrivateElements" : false,
+            "documentPrivateFields" : false,
+            "documentationCulture" : "en-US",
+            "fileNamingConvention" : "stylecop"
+        }
+    }
+}

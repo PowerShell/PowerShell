@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using Dbg = System.Management.Automation;
@@ -330,7 +329,6 @@ namespace System.Management.Automation
         ///
         private bool _force;
 
-
         /// <summary>
         /// The command which defines the context. This should not be
         /// made visible to anyone and should only be set through the
@@ -342,7 +340,6 @@ namespace System.Management.Automation
         /// This makes the origin of the provider request visible to the internals
         /// </summary>
         internal CommandOrigin Origin { get; } = CommandOrigin.Internal;
-
 
         /// <summary>
         /// This defines the default behavior for the WriteError method.
@@ -544,7 +541,6 @@ namespace System.Management.Automation
             }
         }
         #endregion Transaction Support
-
 
         /// <summary>
         /// Gets or sets the Force property that is passed to providers.
@@ -1199,8 +1195,8 @@ namespace System.Management.Automation
                 // Since we are not streaming, just add the object to the accumulatedErrorObjects
                 _accumulatedErrorObjects.Add(errorRecord);
 
-                if (null != errorRecord.ErrorDetails
-                    && null != errorRecord.ErrorDetails.TextLookupError)
+                if (errorRecord.ErrorDetails != null
+                    && errorRecord.ErrorDetails.TextLookupError != null)
                 {
                     Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
                     errorRecord.ErrorDetails.TextLookupError = null;
@@ -1275,5 +1271,4 @@ namespace System.Management.Automation
         #endregion Public methods
     } // CmdletProviderContext
 }
-
 

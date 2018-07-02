@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -35,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public GenericMeasureInfo()
         {
-            Average = Sum = Maximum = Minimum = null;
+            Average = Sum = Maximum = Minimum = StandardDeviation = null;
         }
 
         /// <summary>
@@ -72,14 +71,18 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// </summary>
         public double? Minimum { get; set; }
+
+        /// <summary>
+        /// The Standard Deviation of property values.
+        /// </summary>
+        public double? StandardDeviation { get; set; }
     }
 
     /// <summary>
     /// Class output by Measure-Object.
     /// </summary>
     /// <remarks>
-    /// This class is created for fixing "Measure-Object -MAX -MIN should work with ANYTHING that supports CompareTo"
-    /// bug (Win8:343911).
+    /// This class is created to make 'Measure-Object -MAX -MIN' work with ANYTHING that supports 'CompareTo'.
     /// GenericMeasureInfo class is shipped with PowerShell V2. Fixing this bug requires, changing the type of
     /// Maximum and Minimum properties which would be a breaking change. Hence created a new class to not
     /// have an appcompat issues with PS V2.
@@ -91,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public GenericObjectMeasureInfo()
         {
-            Average = Sum = null;
+            Average = Sum = StandardDeviation = null;
             Maximum = Minimum = null;
         }
 
@@ -129,8 +132,12 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// </summary>
         public object Minimum { get; set; }
-    }
 
+        /// <summary>
+        /// The Standard Deviation of property values.
+        /// </summary>
+        public double? StandardDeviation { get; set; }
+    }
 
     /// <summary>
     /// Class output by Measure-Object
@@ -227,6 +234,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Generic/Numeric statistics
             internal double sum = 0.0;
+            internal double sumPrevious = 0.0;
+            internal double variance = 0.0;
             internal object max = null;
             internal object min = null;
 
@@ -261,9 +270,27 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0)]
-        public string[] Property { get; set; } = null;
+        public PSPropertyExpression[] Property { get; set; } = null;
 
         #endregion Common parameters in both sets
+
+        /// <summary>
+        /// Set to true if Standard Deviation is to be returned.
+        /// </summary>
+        [Parameter(ParameterSetName = GenericParameterSet)]
+        public SwitchParameter StandardDeviation
+        {
+            get
+            {
+                return _measureStandardDeviation;
+            }
+            set
+            {
+                _measureStandardDeviation = value;
+            }
+        }
+
+        private bool _measureStandardDeviation;
 
         /// <summary>
         /// Set to true is Sum is to be returned
@@ -413,7 +440,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion TextMeasure ParameterSet
         #endregion Command Line Switches
 
-
         /// <summary>
         /// Which parameter set the Cmdlet is in.
         /// </summary>
@@ -459,10 +485,9 @@ namespace Microsoft.PowerShell.Commands
 
             // First iterate over the user-specified list of
             // properties...
-            foreach (string p in Property)
+            foreach (var expression in Property)
             {
-                MshExpression expression = new MshExpression(p);
-                List<MshExpression> resolvedNames = expression.ResolveNames(inObj);
+                List<PSPropertyExpression> resolvedNames = expression.ResolveNames(inObj);
                 if (resolvedNames == null || resolvedNames.Count == 0)
                 {
                     // Insert a blank entry so we can track
@@ -479,7 +504,7 @@ namespace Microsoft.PowerShell.Commands
                 // Each property value can potentially refer
                 // to multiple properties via globbing. Iterate over
                 // the actual property names.
-                foreach (MshExpression resolvedName in resolvedNames)
+                foreach (PSPropertyExpression resolvedName in resolvedNames)
                 {
                     string propertyName = resolvedName.ToString();
                     // skip duplicated properties
@@ -488,7 +513,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    List<MshExpressionResult> tempExprRes = resolvedName.GetValues(inObj);
+                    List<PSPropertyExpressionResult> tempExprRes = resolvedName.GetValues(inObj);
                     if (tempExprRes == null || tempExprRes.Count == 0)
                     {
                         // Shouldn't happen - would somehow mean
@@ -524,11 +549,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (_measureCharacters || _measureWords || _measureLines)
             {
-                string strValue = (objValue == null) ? "" : objValue.ToString();
+                string strValue = (objValue == null) ? string.Empty : objValue.ToString();
                 AnalyzeString(strValue, stat);
             }
 
-            if (_measureAverage || _measureSum)
+            if (_measureAverage || _measureSum || _measureStandardDeviation)
             {
                 double numValue = 0.0;
                 if (!LanguagePrimitives.TryConvertTo(objValue, out numValue))
@@ -546,7 +571,7 @@ namespace Microsoft.PowerShell.Commands
                 AnalyzeNumber(numValue, stat);
             }
 
-            // Win8:343911 Measure-Object -MAX -MIN should work with ANYTHING that supports CompareTo
+            // Measure-Object -MAX -MIN should work with ANYTHING that supports CompareTo
             if (_measureMin)
             {
                 stat.min = Compare(objValue, stat.min, true);
@@ -711,8 +736,19 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void AnalyzeNumber(double numValue, Statistics stat)
         {
-            if (_measureSum || _measureAverage)
+            if (_measureSum || _measureAverage || _measureStandardDeviation)
+            {
+                stat.sumPrevious = stat.sum;
                 stat.sum += numValue;
+            }
+            if (_measureStandardDeviation && stat.count > 1)
+            {
+                // Based off of iterative method of calculating variance on
+                // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
+                double avgPrevious = stat.sumPrevious / (stat.count - 1);
+                stat.variance *= (stat.count - 2.0) / (stat.count - 1);
+                stat.variance += (numValue - avgPrevious) * (numValue - avgPrevious) / stat.count;
+            }
         }
 
         /// <summary>
@@ -793,6 +829,7 @@ namespace Microsoft.PowerShell.Commands
         {
             double? sum = null;
             double? average = null;
+            double? StandardDeviation = null;
             object max = null;
             object min = null;
 
@@ -800,8 +837,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_measureSum)
                     sum = stat.sum;
+
                 if (_measureAverage && stat.count > 0)
                     average = stat.sum / stat.count;
+
+                if (_measureStandardDeviation)
+                {
+                    StandardDeviation = Math.Sqrt(stat.variance);
+                }
             }
 
             if (_measureMax)
@@ -838,11 +881,12 @@ namespace Microsoft.PowerShell.Commands
                 gmi.Count = stat.count;
                 gmi.Sum = sum;
                 gmi.Average = average;
-                if (null != max)
+                gmi.StandardDeviation = StandardDeviation;
+                if (max != null)
                 {
                     gmi.Maximum = (double)max;
                 }
-                if (null != min)
+                if (min != null)
                 {
                     gmi.Minimum = (double)min;
                 }
@@ -890,7 +934,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Whether or not a numeric conversion error occurred.
-        /// If true, then average/sum will not be output.
+        /// If true, then average/sum/standard deviation will not be output.
         /// </summary>
         private bool _nonNumericError = false;
 

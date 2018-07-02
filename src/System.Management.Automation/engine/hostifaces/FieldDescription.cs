@@ -1,7 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -12,8 +10,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 //using System.Globalization;
 //using System.Management.Automation;
 //using System.Reflection;
-
-
 
 namespace System.Management.Automation.Host
 {
@@ -71,7 +67,6 @@ namespace System.Management.Automation.Host
             }
         }
 
-
         /// <summary>
         ///
         /// Sets the ParameterTypeName, ParameterTypeFullName, and ParameterAssemblyFullName as a single operation.
@@ -101,8 +96,6 @@ namespace System.Management.Automation.Host
             SetParameterTypeFullName(parameterType.FullName);
             SetParameterAssemblyFullName(parameterType.AssemblyQualifiedName);
         }
-
-
 
         /// <summary>
         ///
@@ -140,8 +133,6 @@ namespace System.Management.Automation.Host
             }
         }
 
-
-
         /// <summary>
         ///
         /// Gets the full string name of the parameter's type.
@@ -172,7 +163,6 @@ namespace System.Management.Automation.Host
                 return parameterTypeFullName;
             }
         }
-
 
         /// <summary>
         ///
@@ -205,8 +195,6 @@ namespace System.Management.Automation.Host
                 return parameterAssemblyFullName;
             }
         }
-
-
 
         /// <summary>
         ///
@@ -256,8 +244,6 @@ namespace System.Management.Automation.Host
             }
         }
 
-
-
         /// <summary>
         ///
         /// Gets and sets the help message for this field.
@@ -295,7 +281,6 @@ namespace System.Management.Automation.Host
                 helpMessage = value;
             }
         }
-
 
         /// <summary>
         ///
@@ -387,8 +372,6 @@ namespace System.Management.Automation.Host
             parameterTypeName = nameOfType;
         }
 
-
-
         /// <summary>
         ///
         /// For use by remoting serialization.
@@ -412,8 +395,6 @@ namespace System.Management.Automation.Host
 
             parameterTypeFullName = fullNameOfType;
         }
-
-
 
         /// <summary>
         ///
@@ -485,11 +466,11 @@ namespace System.Management.Automation.Host
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         private readonly string name = null;
-        private string label = "";
+        private string label = string.Empty;
         private string parameterTypeName = null;
         private string parameterTypeFullName = null;
         private string parameterAssemblyFullName = null;
-        private string helpMessage = "";
+        private string helpMessage = string.Empty;
         private bool isMandatory = true;
 
         private PSObject defaultValue = null;
@@ -500,6 +481,4 @@ namespace System.Management.Automation.Host
         #endregion
     }
 }
-
-
 

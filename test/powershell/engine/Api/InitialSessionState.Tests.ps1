@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "InitialSessionState capacity" -Tags CI {
     BeforeAll {
         $iss = [initialsessionstate]::CreateDefault()
@@ -26,33 +28,33 @@ Describe "InitialSessionState capacity" -Tags CI {
     }
 
     It "function capacity in initial session state should not be limited" {
-        $ps.AddCommand('f4999').Invoke() | Should Be "fn f4999"
-        $ps.Streams.Error | Should Be $null
+        $ps.AddCommand('f4999').Invoke() | Should -Be "fn f4999"
+        $ps.Streams.Error | Should -BeNullOrEmpty
     }
 
     It "alias capacity in initial session state should not be limited" {
-        $ps.AddCommand('a4999').Invoke() | Should Be "fn f4999"
-        $ps.Streams.Error | Should Be $null
+        $ps.AddCommand('a4999').Invoke() | Should -Be "fn f4999"
+        $ps.Streams.Error | Should -BeNullOrEmpty
     }
 
     It "variable capacity in initial session state should not be limited" {
-        $ps.AddScript('$v4999').Invoke() | Should Be "var v4999"
-        $ps.Streams.Error | Should Be $null
+        $ps.AddScript('$v4999').Invoke() | Should -Be "var v4999"
+        $ps.Streams.Error | Should -BeNullOrEmpty
     }
 
     It "function capacity should not be limited after runspace is opened" {
-        $ps.AddScript('function f5000 { "in f5000" } f5000').Invoke() | Should Be "in f5000"
-        $ps.Streams.Error | Should Be $null
+        $ps.AddScript('function f5000 { "in f5000" } f5000').Invoke() | Should -Be "in f5000"
+        $ps.Streams.Error | Should -BeNullOrEmpty
     }
 
     It "variable capacity should not be limited after runspace is opened" {
-        $ps.AddScript('$v5000 = "var v5000"; $v5000').Invoke() | Should Be "var v5000"
-        $ps.Streams.Error | Should Be $null
+        $ps.AddScript('$v5000 = "var v5000"; $v5000').Invoke() | Should -Be "var v5000"
+        $ps.Streams.Error | Should -BeNullOrEmpty
     }
 
     It "alias capacity should not be limited after runspace is opened" {
-        $ps.AddScript('New-Alias -Name a5000 -Value f1; a5000').Invoke() | Should Be "fn f1"
-        $ps.Streams.Error | Should Be $null
+        $ps.AddScript('New-Alias -Name a5000 -Value f1; a5000').Invoke() | Should -Be "fn f1"
+        $ps.Streams.Error | Should -BeNullOrEmpty
     }
 }
 
@@ -89,7 +91,7 @@ Describe "TypeTable duplicate types in reused runspace InitialSessionState TypeT
 
         It "Verifies that a reused InitialSessionState object created from a TypeTable object does not have duplicate types" {
 
-            { $rs2.Open() } | Should Not Throw
+            { $rs2.Open() } | Should -Not -Throw
         }
     }
 
@@ -113,16 +115,8 @@ Describe "TypeTable duplicate types in reused runspace InitialSessionState TypeT
         It "Verifies that shared TypeTable is not allowed in ISS" {
 
             # Process TypeTable types from ISS.
-            $errorId = ""
-            try
-            {
-                $rs.Open()
-                throw "No Exception!"
-            }
-            catch
-            {
-                $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should Be "ErrorsUpdatingTypes"
-            }
+            $e = { $rs.Open() } | Should -Throw -ErrorId "RuntimeException" -PassThru
+	    $e.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "ErrorsUpdatingTypes"
         }
     }
 }

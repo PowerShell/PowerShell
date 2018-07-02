@@ -1,8 +1,7 @@
-﻿# This is a Pester test suite to validate Copy-Item remotely using a remote session.
-#
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
-#
+# Licensed under the MIT License.
+
+# This is a Pester test suite to validate Copy-Item remotely using a remote session.
 
 # If PS Remoting is not available, do not run the suite.
 function ShouldRun
@@ -37,21 +36,21 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             $copiedFilePath = Join-Path $destination $fileName
         }
 
-        $copiedFilePath | should Exist
+        $copiedFilePath | Should -Exist
 
         # Validate file attributes
         $originalFile = Get-Item $filePath -Force
         $newFile = Get-Item $copiedFilePath -Force
 
         # Validate file Length
-        $newFile.Length | should be  $originalFile.Length
+        $newFile.Length | Should -Be $originalFile.Length
 
         # Validate LastWriteTime
-        $newFile.LastWriteTime | should be  $originalFile.LastWriteTime
-        $newFile.LastWriteTimeUtc | should be  $originalFile.LastWriteTimeUtc
+        $newFile.LastWriteTime | Should -Be $originalFile.LastWriteTime
+        $newFile.LastWriteTimeUtc | Should -Be $originalFile.LastWriteTimeUtc
 
         # Validate Attributes
-        $newFile.Attributes.value__ | Should Be $originalFile.Attributes.value__
+        $newFile.Attributes.value__ | Should -Be $originalFile.Attributes.value__
     }
 
     # Validate a copy item operation.
@@ -62,16 +61,16 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         param ([string]$filePath, $streamName, $expectedStreamContent)
 
         $copiedFilePath = ([string]$filePath).Replace("SourceDirectory", "DestinationDirectory")
-        $copiedFilePath | should Exist
-        (Get-Item $copiedFilePath).Length | should be (Get-Item $filePath).Length
+        $copiedFilePath | Should -Exist
+        (Get-Item $copiedFilePath).Length | Should -Be (Get-Item $filePath).Length
 
         # Validate the stream
-        $actualStreamContent = Get-Content -Path $copiedFilePath -Stream $streamName -ea SilentlyContinue
-        $actualStreamContent | Should Match $expectedStreamContent
+        $actualStreamContent = Get-Content -Path $copiedFilePath -Stream $streamName -ErrorAction SilentlyContinue
+        $actualStreamContent | Should -Match $expectedStreamContent
     }
 
     BeforeAll {
-        $s = New-PSSession -ComputerName . -ea SilentlyContinue
+        $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
         if (-not $s)
         {
             throw "Failed to create PSSession for remote copy operations."
@@ -79,9 +78,9 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
 
         $destinationFolderName = "DestinationDirectory"
         $sourceFolderName = "SourceDirectory"
-        $testDirectory = Join-Path "TestDrive:" "copyItemRemotely"
-        $destinationDirectory = Join-Path $testDirectory $destinationFolderName
-        $sourceDirectory = Join-Path $testDirectory $sourceFolderName
+        $testDirectory = Join-Path -Path "TestDrive:" -ChildPath "copyItemRemotely"
+        $destinationDirectory = Join-Path -Path $testDirectory -ChildPath $destinationFolderName
+        $sourceDirectory = Join-Path -Path $testDirectory -ChildPath $sourceFolderName
 
         # Creates one txt file
         #
@@ -93,14 +92,14 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             New-Item -Path $sourceDirectory -Force -ItemType Directory | Out-Null
 
             # Create the file.
-            $filePath = Join-Path $sourceDirectory "testfileone.txt"
+            $filePath = Join-Path -Path $sourceDirectory -ChildPath "testfileone.txt"
             if (-not $emptyFile)
             {
-                "File test content" | Out-File $filePath -Force
+                "File test content" | Out-File -FilePath $filePath -Force
             }
             else
             {
-                "" | Out-File $filePath -Force
+                "" | Out-File -FilePath $filePath -Force
             }
 
             if (-not (Test-Path $filePath))
@@ -110,7 +109,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
 
             if ($setReadOnlyAttribute)
             {
-                Set-ItemProperty $filePath -Name IsReadOnly -value $true -Force
+                Set-ItemProperty -Path $filePath -Name IsReadOnly -Value $true -Force
             }
 
             return (Get-Item $filePath).FullName
@@ -142,7 +141,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             # Create the directories.
             foreach ($directory in $directoriesToCreate)
             {
-                $directoryPath = Join-Path $sourceDirectory $directory
+                $directoryPath = Join-Path -Path $sourceDirectory -ChildPath $directory
                 New-Item -Path $directoryPath -Force -ItemType Directory | Out-Null
             }
 
@@ -154,20 +153,20 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             # Create the files.
             foreach ($file in $filesToCreate)
             {
-                $filePath = Join-Path $sourceDirectory $file
-                $file + "`r`n File test content" | Out-File $filePath -Force
+                $filePath = Join-Path -Path $sourceDirectory -ChildPath $file
+                $file + "`r`n File test content" | Out-File -FilePath $filePath -Force
 
-                if (-not (Test-Path $filePath))
+                if (-not (Test-Path -Path $filePath))
                 {
                     throw "Failed to create test file $filePath."
                 }
 
                 if ($setReadOnlyAttribute)
                 {
-                    Set-ItemProperty $filePath -Name IsReadOnly -value $true -Force
+                    Set-ItemProperty -Path $filePath -Name IsReadOnly -Value $true -Force
                 }
 
-                $result.Files += (Get-Item $filePath).FullName
+                $result.Files += (Get-Item -Path $filePath).FullName
             }
 
             return $result
@@ -175,15 +174,15 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
 
         function GenerateTestAssembly
         {
-            $assemblyPath = Join-Path $env:TEMP TestModule
-            $outputPath = Join-Path $assemblyPath TestModule.dll
+            $assemblyPath = Join-Path -Path $env:TEMP -ChildPath TestModule
+            $outputPath = Join-Path -Path $assemblyPath -ChildPath TestModule.dll
 
-            if (-not (Test-Path $assemblyPath))
+            if (-not (Test-Path -Path $assemblyPath))
             {
-                New-Item $assemblyPath -Force -ItemType Directory | Out-Null
+                New-Item -Path $assemblyPath -Force -ItemType Directory | Out-Null
             }
 
-            if (-not (Test-Path $outputPath))
+            if (-not (Test-Path -Path $outputPath))
             {
                 $code = @"
                 namespace TestModule
@@ -214,12 +213,12 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
 
         function GetDestinationFolderPath
         {
-            return (Get-Item $destinationDirectory).FullName
+            return (Get-Item -Path $destinationDirectory).FullName
         }
     }
 
     AfterAll {
-        Remove-PSSession -Name $s.Name -ea SilentlyContinue
+        Remove-PSSession -Name $s.Name -ErrorAction SilentlyContinue
     }
 
     BeforeEach {
@@ -232,14 +231,14 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         $sourceDirectory = Join-Path $testDirectory $sourceFolderName
         #>
 
-        if (test-path $testDirectory)
+        if (Test-Path -Path $testDirectory)
         {
-            Remove-Item $testDirectory -Force -ea SilentlyContinue -Recurse
+            Remove-Item -Path $testDirectory -Force -ErrorAction SilentlyContinue -Recurse
         }
 
         # Create testDirectory, and destinationDirectory
-        New-Item $testDirectory -ItemType Directory -Force | Out-Null
-        New-Item $destinationDirectory -ItemType Directory -Force | Out-Null
+        New-Item -Path $testDirectory -ItemType Directory -Force | Out-Null
+        New-Item -Path $destinationDirectory -ItemType Directory -Force | Out-Null
     }
 
     Context "Validate Copy-Item Locally." {
@@ -259,7 +258,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             foreach ($file in $testObject.Files)
             {
                 $copiedFilePath = ([string]$file).Replace("SourceDirectory", "DestinationDirectory\SourceDirectory")
-                $copiedFilePath | should Exist
+                $copiedFilePath | Should -Exist
             }
         }
     }
@@ -298,8 +297,8 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             foreach ($file in $testObject.Files)
             {
                 $copiedFilePath = ([string]$file).Replace("SourceDirectory", "DestinationDirectory\SourceDirectory")
-                $copiedFilePath | should Exist
-                (Get-Item $copiedFilePath).Length | should be (Get-Item $file).Length
+                $copiedFilePath | Should -Exist
+		(Get-Item $copiedFilePath).Length | Should -Be (Get-Item $file).Length
             }
         }
 
@@ -311,8 +310,8 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             foreach ($file in $testObject.Files)
             {
                 $copiedFilePath = ([string]$file).Replace("SourceDirectory", "DestinationDirectory\SourceDirectory")
-                $copiedFilePath | should Exist
-                (Get-Item $copiedFilePath).Length | should be (Get-Item $file).Length
+		$copiedFilePath | Should -Exist
+                (Get-Item $copiedFilePath).Length | Should -Be (Get-Item $file).Length
             }
         }
 
@@ -323,15 +322,8 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             $destinationFolderPath = Join-Path $destinationFolderPath "A\B\C\D\E"
             $expectedFullyQualifiedErrorId = 'RemotePathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand'
 
-            try
-            {
-                Copy-Item -Path $filePath -ToSession $s -Destination $destinationFolderPath -ErrorAction Stop
-                throw "CodeExecuted"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | should be $expectedFullyQualifiedErrorId
-            }
+            { Copy-Item -Path $filePath -ToSession $s -Destination $destinationFolderPath -ErrorAction Stop } |
+                Should -Throw -ErrorId $expectedFullyQualifiedErrorId
         }
 
         It "Copy folder to remote session recursively works even if the target directory does not exist." {
@@ -343,8 +335,8 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             foreach ($file in $testObject.Files)
             {
                 $copiedFilePath = ([string]$file).Replace("SourceDirectory", "DestinationDirectory\FoderThatDoesNotExist")
-                $copiedFilePath | should Exist
-                (Get-Item $copiedFilePath).Length | should be (Get-Item $file).Length
+                $copiedFilePath | Should -Exist
+                (Get-Item $copiedFilePath).Length | Should -Be (Get-Item $file).Length
             }
         }
 
@@ -353,10 +345,10 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             $filePath = CreateTestFile -emptyFile
             $destinationFolderPath = GetDestinationFolderPath
             $copiedFilePath = ([string]$filePath).Replace("SourceDirectory", "DestinationDirectory")
-            $copiedFilePath | should Not Exist
+            $copiedFilePath | Should -Not -Exist
             Copy-Item -Path $filePath  -ToSession $s -Destination $destinationFolderPath
-            $copiedFilePath | should Exist
-            (Get-Item $copiedFilePath).Length | should be (Get-Item $filePath).Length
+            $copiedFilePath | Should -Exist
+            (Get-Item $copiedFilePath).Length | Should -Be (Get-Item $filePath).Length
         }
 
         It "Copy-Item to session supports alternate data streams." {
@@ -378,7 +370,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             $filePath = CreateTestFile
             $destinationFolderPath = GetDestinationFolderPath
             $copiedFilePath = ([string]$filePath).Replace("SourceDirectory", "DestinationDirectory")
-            $copiedFilePath | should Not Exist
+            $copiedFilePath | Should -Not -Exist
             Copy-Item -Path $filePath  -FromSession $s -Destination $destinationFolderPath
             ValidateCopyItemOperation -filePath $filePath
         }
@@ -388,7 +380,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             $filePath = CreateTestFile -emptyFile
             $destinationFolderPath = GetDestinationFolderPath
             $copiedFilePath = ([string]$filePath).Replace("SourceDirectory", "DestinationDirectory")
-            $copiedFilePath | should Not Exist
+            $copiedFilePath | Should -Not -Exist
             Copy-Item -Path $filePath  -FromSession $s -Destination $destinationFolderPath
             ValidateCopyItemOperation -filePath $filePath
         }
@@ -403,26 +395,19 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             foreach ($file in $testObject.Files)
             {
                 $copiedFilePath = ([string]$file).Replace("SourceDirectory", "DestinationDirectory\SourceDirectory")
-                $copiedFilePath | should Exist
-                (Get-Item $copiedFilePath).Length | should be (Get-Item $file).Length
+                $copiedFilePath | Should -Exist
+                (Get-Item $copiedFilePath).Length | Should -Be (Get-Item $file).Length
             }
         }
 
         It "Copy one file from remote session fails when the target directory does not exist." {
-
             $filePath = CreateTestFile
             $destinationFolderPath = GetDestinationFolderPath
             $destinationFolderPath = Join-Path $destinationFolderPath "A\B\C\D\E"
             $expectedFullyQualifiedErrorId = 'CopyItemRemotelyIOError,Microsoft.PowerShell.Commands.CopyItemCommand'
-            try
-            {
-                Copy-Item -Path $filePath -FromSession $s -Destination $destinationFolderPath -ErrorAction Stop
-                throw "CodeExecuted"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | should be $expectedFullyQualifiedErrorId
-            }
+
+            { Copy-Item -Path $filePath -FromSession $s -Destination $destinationFolderPath -ErrorAction Stop } |
+                Should -Throw -ErrorId $expectedFullyQualifiedErrorId
         }
 
         It "Copy folder from remote session recursively works even if the target directory does not exist." {
@@ -436,8 +421,8 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             foreach ($file in $testObject.Files)
             {
                 $copiedFilePath = ([string]$file).Replace("SourceDirectory", "DestinationDirectory\FoderThatDoesNotExist")
-                $copiedFilePath | should Exist
-                (Get-Item $copiedFilePath).Length | should be (Get-Item $file).Length
+                $copiedFilePath | Should -Exist
+                (Get-Item $copiedFilePath).Length | Should -Be (Get-Item $file).Length
             }
         }
 
@@ -470,7 +455,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             }
             finally
             {
-                Remove-Module $testAssembly.ModuleName -Force -ea SilentlyContinue
+                Remove-Module $testAssembly.ModuleName -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -483,6 +468,32 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             Set-Content -Path $filePath -Value $streamContent -Stream $streamName
             Copy-Item -Path $filePath -FromSession $s -Destination $destinationFolderPath
             ValidateCopyItemOperationForAlternateDataStream -filePath $filePath -streamName $streamName -expectedStreamContent $streamContent
+        }
+
+        It "Copy file to the same directory fails." {
+            $filePath = CreateTestFile
+            { Copy-Item -Path $filePath -Destination $sourceDirectory -FromSession $s -ErrorAction Stop } | Should -Throw -ErrorId "System.IO.IOException,WriteException"
+        }
+
+        It "Copy directory with a -Destination parameter given as a file path fails." {
+            $filePath = CreateTestFile
+            $folderToCopy = GetDestinationFolderPath
+            { Copy-Item -Path $folderToCopy -Destination $filePath -FromSession $s -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+        }
+
+        It "Copy-Item parameters -FromSession and -ToSession are mutually exclusive." {
+            try
+            {
+                $s1 = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
+                $s1 | Should Not BeNullOrEmpty
+                $filePath = CreateTestFile
+                $destinationFolderPath = GetDestinationFolderPath
+                { Copy-Item -Path $filePath -Destination $destinationFolderPath -FromSession $s -ToSession $s1 -ErrorAction Stop } | Should -Throw -ErrorId "InvalidInput,Microsoft.PowerShell.Commands.CopyItemCommand"
+            }
+            finally
+            {
+                Remove-PSSession -Session $s1 -ErrorAction SilentlyContinue
+            }
         }
     }
 
@@ -499,8 +510,8 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             foreach ($file in $sourceFiles)
             {
                 $copiedFilePath = Join-Path $destinationFolderPath (Split-Path $file -Leaf)
-                $copiedFilePath | Should Exist
-                (Get-Item $copiedFilePath).Length | Should Be (Get-Item $file).Length
+                $copiedFilePath | Should -Exist
+                (Get-Item $copiedFilePath).Length | Should -Be (Get-Item $file).Length
             }
         }
 
@@ -515,8 +526,8 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             foreach ($file in $sourceFiles)
             {
                 $copiedFilePath = Join-Path $destinationFolderPath (Split-Path $file -Leaf)
-                $copiedFilePath | Should Exist
-                (Get-Item $copiedFilePath).Length | Should Be (Get-Item $file).Length
+                $copiedFilePath | Should -Exist
+                (Get-Item $copiedFilePath).Length | Should -Be (Get-Item $file).Length
             }
         }
     }
@@ -528,7 +539,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             $testFilePath = Join-Path "TestDrive:" "testfile.txt"
             if (test-path $testFilePath)
             {
-                Remove-Item $testFilePath -Force -ea SilentlyContinue
+                Remove-Item $testFilePath -Force -ErrorAction SilentlyContinue
             }
             "File test content" | Out-File $testFilePath -Force
         }
@@ -540,29 +551,15 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             if ($fromSession)
             {
                 It "Copy-Item FromSession -Path '$path' throws $expectedFullyQualifiedErrorId" {
-                    try
-                    {
-                        Copy-Item -Path $path -FromSession $s -Destination $destination -ErrorAction Stop
-                        throw "CodeExecuted"
-                    }
-                    catch
-                    {
-                        $_.FullyQualifiedErrorId | should be $expectedFullyQualifiedErrorId
-                    }
+                    { Copy-Item -Path $path -FromSession $s -Destination $destination -ErrorAction Stop } |
+                        Should -Throw -ErrorId $expectedFullyQualifiedErrorId
                 }
             }
             else
             {
                 It "Copy-Item ToSession -Destination '$path' throws $expectedFullyQualifiedErrorId" {
-                    try
-                    {
-                        Copy-Item -Path $path -ToSession $s -Destination $destination -ErrorAction Stop
-                        throw "CodeExecuted"
-                    }
-                    catch
-                    {
-                        $_.FullyQualifiedErrorId | should be $expectedFullyQualifiedErrorId
-                    }
+                    { Copy-Item -Path $path -ToSession $s -Destination $destination -ErrorAction Stop } |
+                        Should -Throw -ErrorId $expectedFullyQualifiedErrorId
                 }
             }
         }
@@ -682,22 +679,22 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
             $testSession = New-PSSession -ConfigurationName $sessionName
 
             # Validate that the session is opened.
-            $testSession.State | Should Be "Opened"
+            $testSession.State | Should -Be "Opened"
 
             # Add the new session to the list.
             $testSessions[$languageMode] = $testSession
 
             # Remove the pssc file.
-            Remove-Item $configFilePath -Force -ea SilentlyContinue
+            Remove-Item $configFilePath -Force -ErrorAction SilentlyContinue
         }
     }
 
     AfterAll {
 
-        $testSessions.Values | Remove-PSSession -ea SilentlyContinue
+        $testSessions.Values | Remove-PSSession -ErrorAction SilentlyContinue
 
         $sessionToUnregister | ForEach-Object {
-            Unregister-PSSessionConfiguration -Name $_ -Force -ea SilentlyContinue
+            Unregister-PSSessionConfiguration -Name $_ -Force -ErrorAction SilentlyContinue
         }
     }
 
@@ -708,26 +705,12 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
         It "Copy-Item throws 'SessionIsNotInFullLanguageMode' error for a session in '$languageMode'" {
 
             # FromSession
-            try
-            {
-                Copy-Item -Path $testFilePath -FromSession $session -Destination $destination -Force -Verbose -ea Stop
-                throw "CodeExecuted"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | should be "SessionIsNotInFullLanguageMode,Microsoft.PowerShell.Commands.CopyItemCommand"
-            }
+            { Copy-Item -Path $testFilePath -FromSession $session -Destination $destination -Force -Verbose -ErrorAction Stop } |
+                Should -Throw -ErrorId "SessionIsNotInFullLanguageMode,Microsoft.PowerShell.Commands.CopyItemCommand"
 
             # ToSession
-            try
-            {
-                Copy-Item -Path $testFilePath -ToSession $session -Destination $destination -Force -Verbose -ea Stop
-                throw "CodeExecuted"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | should be "SessionIsNotInFullLanguageMode,Microsoft.PowerShell.Commands.CopyItemCommand"
-            }
+            { Copy-Item -Path $testFilePath -ToSession $session -Destination $destination -Force -Verbose -ErrorAction Stop } |
+                Should -Throw -ErrorId "SessionIsNotInFullLanguageMode,Microsoft.PowerShell.Commands.CopyItemCommand"
         }
     }
 }
@@ -737,7 +720,7 @@ Describe "Copy-Item can use Recurse and Exclude together" -Tags "Feature" {
     Context "Local and Remote Tests" {
 
         BeforeAll {
-            $s = New-PSSession -ComputerName . -ea SilentlyContinue
+            $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
             if (-not $s)
             {
                 throw "Failed to create PSSession for remote copy operations."
@@ -756,19 +739,19 @@ Describe "Copy-Item can use Recurse and Exclude together" -Tags "Feature" {
         It "can exclude files at sub directory" {
             Copy-Item -Path TestDrive:\Parent\* -Recurse -Exclude s*.txt -Destination TestDrive:\Temp -Force
             $copiedFiles = Get-ChildItem -Recurse -Path TestDrive:\Temp
-            $copiedFiles.Count | Should Be 3
+            $copiedFiles.Count | Should -Be 3
         }
 
         It "can exclude files at sub directory to a session" {
             Copy-Item -Path TestDrive:\Parent\* -Recurse -Exclude s*.txt -Destination $TestDrive\Temp2 -Force -ToSession $s
             $copiedFiles = Get-ChildItem -Recurse -Path TestDrive:\Temp
-            $copiedFiles.Count | Should Be 3
+            $copiedFiles.Count | Should -Be 3
         }
 
         It "can exclude files at sub directory from a session" {
             Copy-Item -Path $TestDrive\Parent\* -Recurse -Exclude s*.txt -Destination TestDrive:\Temp3 -FromSession $s
             $copiedFiles = Get-ChildItem -Recurse -Path TestDrive:\Temp2
-            $copiedFiles.Count | Should Be 3
+            $copiedFiles.Count | Should -Be 3
         }
 
         AfterAll {
@@ -818,8 +801,8 @@ Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
             Copy-Item -Path "TestDrive:\Source\testFile1.txt" -Destination "$TestDrive\Destination\testFile1.txt" -ToSession $s
 
             # Validate the the file was overwritten
-            $fileContent = Get-Content "TestDrive:\Destination\testFile1.txt" -ea SilentlyContinue -Raw
-            $fileContent | Should Match $newContent
+            $fileContent = Get-Content "TestDrive:\Destination\testFile1.txt" -ErrorAction SilentlyContinue -Raw
+            $fileContent | Should -Match $newContent
         }
 
         It "Copy item -fromsession overwrites the content of an existing file." {
@@ -828,8 +811,8 @@ Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
             Copy-Item -Path "$TestDrive\Source\testFile1.txt" -Destination "TestDrive:\Destination\testFile1.txt" -FromSession $s
 
             # Validate the the file was overwritten
-            $fileContent = Get-Content "TestDrive:\Destination\testFile1.txt" -ea SilentlyContinue -Raw
-            $fileContent | Should Match $newContent
+            $fileContent = Get-Content "TestDrive:\Destination\testFile1.txt" -ErrorAction SilentlyContinue -Raw
+            $fileContent | Should -Match $newContent
         }
     }
 
@@ -839,12 +822,12 @@ Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
 
             if (Test-Path "TestDrive:\AnotherDestination")
             {
-                Remove-Item "TestDrive:\AnotherDestination" -Force -Recurse -ea SilentlyContinue
+                Remove-Item "TestDrive:\AnotherDestination" -Force -Recurse -ErrorAction SilentlyContinue
             }
             $null = New-Item -ItemType Directory -Path "TestDrive:\AnotherDestination"
 
             # Ensure the file does not exist
-            "TestDrive:\AnotherDestination\FileThatDoesNotExist.txt" | Should Not Exist
+            "TestDrive:\AnotherDestination\FileThatDoesNotExist.txt" | Should -Not -Exist
         }
 
         It "Copy-Item -tosession creates the file if it does not exist on the remote destination." {
@@ -853,7 +836,7 @@ Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
             Copy-Item -Path "TestDrive:\Source\testFile1.txt" -Destination "$TestDrive\AnotherDestination\FileThatDoesNotExist.txt" -ToSession $s
 
             # Verify that the file was created
-            "TestDrive:\AnotherDestination\FileThatDoesNotExist.txt" | Should Exist
+            "TestDrive:\AnotherDestination\FileThatDoesNotExist.txt" | Should -Exist
         }
 
         It "Copy-Item -fromsession creates the file if it does not exist on the local machine." {
@@ -862,7 +845,7 @@ Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
             Copy-Item -Path "$TestDrive\Source\testFile1.txt" -Destination "TestDrive:\AnotherDestination\FileThatDoesNotExist.txt" -FromSession $s
 
             # Verify that the file was created
-            "TestDrive:\AnotherDestination\FileThatDoesNotExist.txt" | Should Exist
+            "TestDrive:\AnotherDestination\FileThatDoesNotExist.txt" | Should -Exist
         }
     }
 }

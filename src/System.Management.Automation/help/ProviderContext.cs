@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Provider;
 using System.Xml;
@@ -41,7 +40,7 @@ namespace System.Management.Automation
             ExecutionContext executionContext,
             PathIntrinsics pathIntrinsics)
         {
-            Dbg.Assert(null != executionContext, "ExecutionContext cannot be null.");
+            Dbg.Assert(executionContext != null, "ExecutionContext cannot be null.");
             _requestedPath = requestedPath;
             _executionContext = executionContext;
             _pathIntrinsics = pathIntrinsics;

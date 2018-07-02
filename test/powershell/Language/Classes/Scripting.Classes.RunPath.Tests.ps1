@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Script with a class definition run path" -Tags "CI" {
 
     $TestCases = @(
@@ -15,6 +17,6 @@ class MyClass { static [string]$MyProperty = 'Some value' }
 [MyClass]::MyProperty
 '@ | Out-File -FilePath $FilePath
 
-        ( . $FilePath ) | Should Match 'Some value'
+        ( . $FilePath ) | Should -Match 'Some value'
     }
 }

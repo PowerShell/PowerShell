@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 <#
 Enumerate all events in the manifest and create a hash table of event id to message id.
 >  $manifest.assembly.instrumentation.events.provider.events.event
@@ -238,7 +240,7 @@ class EventMessage
       The message string to update.
 
     .NOTES
-      See https://msdn.microsoft.com/en-us/library/windows/desktop/ms679351(v=vs.85).aspx.
+      See https://msdn.microsoft.com/library/windows/desktop/ms679351(v=vs.85).aspx.
       Replaceable parameters are limited to %1 ... %99. Width and precision specifiers are
       not currently supported since the manifest does not use them at the time of this writing.
     #>
@@ -288,16 +290,15 @@ class EventMessage
     }
 
     static hidden $escapeStrings =
-    @(
-        {Source = '%t'; Dest = '`t'},
-        {Source = '%n'; Dest = '`n'},
-        {Source = '%r'; Dest = '`r'},
-        {Source = '%%'; Dest = '`%'},
-        {Source = '%space'; Dest = ' '},
-        {Source = '%.'; Dest = '.'}
-    )
+    @{
+        '%t' = "`t";
+        '%n'="`n";
+        '%r'="`r";
+        '%%'='%';
+        '%space'=' ';
+        '%.'='.'
+    }
 }
-
 
 enum LogLevel
 {

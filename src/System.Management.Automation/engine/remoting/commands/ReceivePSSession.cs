@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -88,7 +87,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public PSSession Session { get; set; }
 
-
         /// <summary>
         /// Session Id of PSSession object to receive data from.
         /// </summary>
@@ -98,7 +96,6 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipeline = true,
                    ParameterSetName = ReceivePSSessionCommand.IdParameterSet)]
         public Int32 Id { get; set; }
-
 
         /// <summary>
         /// Computer name to receive session data from.
@@ -199,7 +196,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public Guid InstanceId { get; set; }
 
-
         /// <summary>
         /// Name of PSSession object to receive data from.
         /// </summary>
@@ -214,7 +210,6 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ReceivePSSessionCommand.ConnectionUriSessionNameParameterSet)]
         [ValidateNotNullOrEmpty]
         public string Name { get; set; }
-
 
         /// <summary>
         /// Determines how running command output is returned on client.
@@ -243,7 +238,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string JobName { get; set; } = string.Empty;
 
-
         /// <summary>
         /// Specifies the credentials of the user to impersonate in the
         /// remote machine. If this parameter is not specified then the
@@ -266,7 +260,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private PSCredential _psCredential;
 
-
         /// <summary>
         /// Use basic authentication to authenticate the user.
         /// </summary>
@@ -285,7 +278,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private AuthenticationMechanism _authentication;
-
 
         /// <summary>
         /// Specifies the certificate thumbprint to be used to impersonate the user on the
@@ -307,7 +299,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _thumbprint;
 
-
         /// <summary>
         /// Port specifies the alternate port to be used in case the
         /// default ports are not used for the transport mechanism
@@ -323,7 +314,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
         [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
         public Int32 Port { get; set; }
-
 
         /// <summary>
         /// This parameter suggests that the transport scheme to be used for
@@ -818,7 +808,7 @@ namespace Microsoft.PowerShell.Commands
         {
             WriteWarning(
                 GetMessage(RemotingErrorIdStrings.ReceivePSSessionInDebugMode));
-            WriteObject("");
+            WriteObject(string.Empty);
         }
 
         /// <summary>

@@ -13,10 +13,10 @@ CompatiblePSEditions = @('Core')
 GUID = '508bb97f-de2e-482e-aae2-01caec0be8c7'
 
 # Author of this module
-Author = 'Microsoft'
+Author = 'PowerShell'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'Microsoft Corporation'
 
 # Copyright statement for this module
 Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'

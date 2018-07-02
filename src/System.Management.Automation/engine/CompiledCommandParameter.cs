@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -438,7 +437,7 @@ namespace System.Management.Automation
             ref string[] aliases)
         {
             // NTRAID#Windows Out Of Band Releases-926374-2005/12/22-JonN
-            if (null == attribute)
+            if (attribute == null)
                 return;
 
             CompiledAttributes.Add(attribute);
@@ -614,7 +613,6 @@ namespace System.Management.Automation
         {
             ParameterCollectionType = ParameterCollectionType.NotCollection;
             Diagnostics.Assert(type != null, "Caller to verify type argument");
-            TypeInfo typeInfo = type.GetTypeInfo();
 
             // NTRAID#Windows OS Bugs-1009284-2004/05/11-JeffJon
             // What other collection types should be supported?
@@ -637,8 +635,8 @@ namespace System.Management.Automation
             }
 
             Type[] interfaces = type.GetInterfaces();
-            if (interfaces.Any(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
-                || (typeInfo.IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+            if (interfaces.Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
             {
                 return;
             }
@@ -649,7 +647,7 @@ namespace System.Management.Automation
             // is more efficient to bind than ICollection<T>.  This optimization
             // retrieves the element type so that we can coerce the elements.
             // Otherwise they must already be the right type.
-            if (implementsIList && typeInfo.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Collection<>)))
+            if (implementsIList && type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Collection<>)))
             {
                 ParameterCollectionType = ParameterCollectionType.IList;
                 // figure out elementType
@@ -667,7 +665,7 @@ namespace System.Management.Automation
             // to an ICollection<T> is via reflected calls to Add(T),
             // but the advantage over plain IList is that we can typecast the elements.
             Type interfaceICollection =
-                interfaces.FirstOrDefault(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
+                interfaces.FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
             if (interfaceICollection != null)
             {
                 // We only deal with the first type for which ICollection<T> is implemented
@@ -698,8 +696,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The type of the elements in the collection
         /// </summary>
-        internal Type ElementType { get; set; }
+        internal Type ElementType { get; private set; }
     }
 }
-
 

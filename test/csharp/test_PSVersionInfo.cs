@@ -1,10 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using Xunit;
 using System;
 using System.Management.Automation;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
-    [Collection("AssemblyLoadContext")]
     public static class PSVersionInfoTests
     {
         [Fact]

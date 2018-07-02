@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Runtime.Serialization;
 using System.Reflection;
@@ -102,7 +101,7 @@ namespace System.Management.Automation.Runspaces
             // no useful information anyway.
             if (!String.IsNullOrEmpty(_PSSnapin) && !String.IsNullOrEmpty(_reason))
             {
-                Assembly currentAssembly = typeof(PSSnapInException).GetTypeInfo().Assembly;
+                Assembly currentAssembly = typeof(PSSnapInException).Assembly;
 
                 if (_warning)
                 {
@@ -133,7 +132,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _isErrorRecordOriginallyNull = true;
                     _errorRecord = new ErrorRecord(
@@ -146,8 +145,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private string _PSSnapin = "";
-        private string _reason = "";
+        private string _PSSnapin = string.Empty;
+        private string _reason = string.Empty;
 
         /// <summary>
         /// Gets message for this exception.

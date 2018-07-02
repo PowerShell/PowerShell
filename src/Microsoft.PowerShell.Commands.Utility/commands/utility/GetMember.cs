@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
@@ -68,7 +67,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; }
 
-
         /// <summary>
         /// The member names to be retrieved
         /// </summary>
@@ -76,14 +74,12 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] Name { set; get; } = new string[] { "*" };
 
-
         /// <summary>
         /// The member types to be retrieved
         /// </summary>
         [Parameter]
         [Alias("Type")]
         public PSMemberTypes MemberType { set; get; } = PSMemberTypes.All;
-
 
         /// <summary>
         /// View from which the members are retrieved.
@@ -177,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                _typesAlreadyDisplayed.Add(typeName, "");
+                _typesAlreadyDisplayed.Add(typeName, string.Empty);
             }
 
             PSMemberTypes memberTypeToSearch = MemberType;
@@ -189,7 +185,6 @@ namespace Microsoft.PowerShell.Commands
                 // PSMemberSet is an internal memberset and its properties/methods are populated differently.
                 // PSMemberSet instance is created to represent PSExtended, PSAdapted, PSBase, PSObject hidden
                 // properties. We should honor extended properties for such case.
-
 
                 // request is to search dotnet or adapted or both members.
                 // dotnet,adapted members cannot be Script*,Note*,Code*
@@ -235,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!Force)
                     {
                         PSMethod memberAsPSMethod = member as PSMethod;
-                        if ((null != memberAsPSMethod) && (memberAsPSMethod.IsSpecial))
+                        if ((memberAsPSMethod != null) && (memberAsPSMethod.IsSpecial))
                         {
                             continue;
                         }
@@ -264,7 +259,6 @@ namespace Microsoft.PowerShell.Commands
                 return String.Compare(first.Name, second.Name, StringComparison.OrdinalIgnoreCase);
             }
         }
-
 
         /// <summary>
         /// This method implements the End method for get-member command

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Globalization;
@@ -689,11 +688,12 @@ namespace System.Management.Automation
     #endregion
 }
 
+#if UNIX
+
 namespace System.Management.Automation.Security
 {
     /// <summary>
-    /// We don't need Windows Lockdown Policy related types on CSS because CSS is
-    /// amd64 only and is used internally.
+    /// Application white listing security policies only affect Windows OSs.
     /// </summary>
     internal sealed class SystemPolicy
     {
@@ -738,9 +738,6 @@ namespace System.Management.Automation.Security
         Enforce = 2
     }
 }
-
-
-#if UNIX
 
 // Porting note: Tracing is absolutely not available on Linux
 namespace System.Management.Automation.Tracing
@@ -977,7 +974,6 @@ namespace System.Management.Automation.Tracing
         {
             return false;
         }
-
 
         /// <summary>
         ///

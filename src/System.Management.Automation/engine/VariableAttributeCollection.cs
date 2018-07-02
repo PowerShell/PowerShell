@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using Dbg = System.Management.Automation;
 using System.Collections.ObjectModel;
@@ -157,7 +156,7 @@ namespace System.Management.Automation
                     null,
                     Metadata.InvalidMetadataForCurrentValue,
                     _variable.Name,
-                    ((_variable.Value != null) ? _variable.Value.ToString() : ""));
+                    ((_variable.Value != null) ? _variable.Value.ToString() : string.Empty));
 
                 throw e;
             }

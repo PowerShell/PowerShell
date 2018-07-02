@@ -1,14 +1,14 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
 using Dbg = System.Management.Automation;
-
 
 namespace System.Management.Automation
 {
@@ -231,10 +231,28 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             string providerId = null;
 
+            // Replace path with last working directory when '-' was passed.
+            bool pushNextLocation = true;
+            if (originalPath.Equals("-", StringComparison.OrdinalIgnoreCase))
+            {
+                if (_SetLocationHistory.Count <= 0)
+                {
+                    throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
+                }
+                var previousLocation =  _SetLocationHistory.Pop();
+                path = previousLocation.Path;
+                pushNextLocation = false;
+            }
+
+            if (pushNextLocation)
+            {
+                var newPushPathInfo = GetNewPushPathInfo();
+                _SetLocationHistory.Push(newPushPathInfo);
+            }
+
             PSDriveInfo previousWorkingDrive = CurrentDrive;
 
             // First check to see if the path is a home path
-
             if (LocationGlobber.IsHomePath(path))
             {
                 path = Globber.GetHomeRelativePath(path);
@@ -264,9 +282,17 @@ namespace System.Management.Automation
                     // Since the path is an absolute path
                     // we need to change the current working
                     // drive
-
                     PSDriveInfo newWorkingDrive = GetDrive(driveName);
                     CurrentDrive = newWorkingDrive;
+
+                    // If the path is simply a colon-terminated drive,
+                    // not a slash-terminated path to the root of a drive,
+                    // set the path to the current working directory of that drive.
+                    string colonTerminatedVolume = CurrentDrive.Name + ':';
+                    if (CurrentDrive.VolumeSeparatedByColon && (path.Length == colonTerminatedVolume.Length))
+                    {
+                        path = Path.Combine((colonTerminatedVolume + Path.DirectorySeparatorChar), CurrentDrive.CurrentLocation);
+                    }
 
                     // Now that the current working drive is set,
                     // process the rest of the path as a relative path.
@@ -777,6 +803,11 @@ namespace System.Management.Automation
         #region push-Pop current working directory
 
         /// <summary>
+        /// A bounded stack for the location history of Set-Location
+        /// </summary>
+        private BoundedStack<PathInfo> _SetLocationHistory;
+
+        /// <summary>
         /// A stack of the most recently pushed locations
         /// </summary>
         private Dictionary<String, Stack<PathInfo>> _workingLocationStack;
@@ -804,8 +835,23 @@ namespace System.Management.Automation
                 stackName = _defaultStackName;
             }
 
-            // Create a new instance of the directory/drive pair
+            // Get the location stack from the hashtable
+            Stack<PathInfo> locationStack = null;
 
+            if (!_workingLocationStack.TryGetValue(stackName, out locationStack))
+            {
+                locationStack = new Stack<PathInfo>();
+                _workingLocationStack[stackName] = locationStack;
+            }
+
+            // Push the directory/drive pair onto the stack
+            var newPushPathInfo = GetNewPushPathInfo();
+            locationStack.Push(newPushPathInfo);
+        }
+
+        private PathInfo GetNewPushPathInfo()
+        {
+             // Create a new instance of the directory/drive pair
             ProviderInfo provider = CurrentDrive.Provider;
             string mshQualifiedPath =
                 LocationGlobber.GetMshQualifiedPath(CurrentDrive.CurrentLocation, CurrentDrive);
@@ -822,19 +868,7 @@ namespace System.Management.Automation
                 CurrentDrive.Name,
                 mshQualifiedPath);
 
-            // Get the location stack from the hashtable
-
-            Stack<PathInfo> locationStack = null;
-
-            if (!_workingLocationStack.TryGetValue(stackName, out locationStack))
-            {
-                locationStack = new Stack<PathInfo>();
-                _workingLocationStack[stackName] = locationStack;
-            }
-
-            // Push the directory/drive pair onto the stack
-
-            locationStack.Push(newPushLocation);
+            return newPushLocation;
         }
 
         /// <summary>
@@ -1067,6 +1101,4 @@ namespace System.Management.Automation
         #endregion push-Pop current working directory
     }           // SessionStateInternal class
 }
-
-
 

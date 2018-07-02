@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -367,7 +366,7 @@ namespace System.Management.Automation
             };
 
         /// <summary>
-        /// Is true the PSScheduledJob and PSWorkflow modules are loaded for this runspace
+        /// Is true if the PSScheduledJob module is loaded for this runspace
         /// </summary>
         internal bool IsModuleWithJobSourceAdapterLoaded
         {
@@ -398,8 +397,6 @@ namespace System.Management.Automation
         #endregion Properties
 
         #region Engine State
-
-
 
         /// <summary>
         /// The state for current engine that is running.
@@ -572,7 +569,6 @@ namespace System.Management.Automation
         /// <value>Reference to command discovery</value>
         internal CommandProcessorBase CurrentCommandProcessor { get; set; }
 
-
         /// <summary>
         /// Redirect to the CommandDiscovery in the engine.
         /// </summary>
@@ -584,7 +580,6 @@ namespace System.Management.Automation
                 return Engine.CommandDiscovery;
             }
         }
-
 
         /// <summary>
         /// Interface that should be used for interaction with host
@@ -604,7 +599,6 @@ namespace System.Management.Automation
         {
             get { return EngineHostInterface; }
         }
-
 
         /// <summary>
         /// Interface to the public API for the engine
@@ -748,7 +742,7 @@ namespace System.Management.Automation
 
             object old = this.DollarErrorVariable;
             ArrayList arraylist = old as ArrayList;
-            if (null == arraylist)
+            if (arraylist == null)
             {
                 Diagnostics.Assert(false, "$error should be a global constant ArrayList");
                 return;
@@ -1263,7 +1257,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // If the assembly is loaded, we ignore error as it may come from the filepath loading.        
+            // If the assembly is loaded, we ignore error as it may come from the filepath loading.
             if (loadedAssembly != null)
             {
                 error = null;
@@ -1290,9 +1284,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (null == host) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (null == ui) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(
                         StringUtil.Format(resourceString, arguments));
                 }
@@ -1320,9 +1314,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (null == host) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (null == ui) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(error);
                 }
             }
@@ -1355,9 +1349,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (null == host) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (null == ui) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(e.Message);
                 }
             }
@@ -1383,9 +1377,9 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (null == host) return;
+                    if (host == null) return;
                     PSHostUserInterface ui = host.UI;
-                    if (null == ui) return;
+                    if (ui == null) return;
                     ui.WriteErrorLine(errorRecord.ToString());
                 }
             }

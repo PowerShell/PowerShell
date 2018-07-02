@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 
@@ -238,7 +237,7 @@ namespace System.Management.Automation.ComInterop
                 return;
             }
 
-            String typeNames = "";
+            String typeNames = string.Empty;
             for (int i = 0; i < compatibleComTypes.Count; i++)
             {
                 string typeName = s_comToManagedPrimitiveTypes[compatibleComTypes[i]].Name;
@@ -252,7 +251,6 @@ namespace System.Management.Automation.ComInterop
                 }
                 typeNames += typeName;
             }
-
 
             throw Error.AmbiguousConversion(argumentType.Name, typeNames);
         }
@@ -487,7 +485,6 @@ namespace System.Management.Automation.ComInterop
 
             return new VariantBuilder(varEnum, argBuilder);
         }
-
 
         // This helper is called when we are looking for a ByVal marshalling
         // In a ByVal case we can take into account conversions or IConvertible if all other

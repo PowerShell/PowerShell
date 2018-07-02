@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -65,9 +64,6 @@ namespace System.Management.Automation.Language
             typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIeq), staticFlags);
         internal static readonly MethodInfo CharOps_CompareStringIne =
             typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIne), staticFlags);
-        internal static readonly MethodInfo CharOps_Range =
-            typeof(CharOps).GetMethod(nameof(CharOps.Range), staticFlags);
-
         internal static readonly MethodInfo CommandParameterInternal_CreateArgument =
             typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateArgument), staticFlags);
         internal static readonly MethodInfo CommandParameterInternal_CreateParameter =
@@ -248,9 +244,6 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo InterpreterError_NewInterpreterExceptionWithInnerException =
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterExceptionWithInnerException), staticFlags);
 
-        internal static readonly MethodInfo IntOps_Range =
-            typeof(IntOps).GetMethod(nameof(IntOps.Range), staticFlags);
-
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), staticFlags);
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
@@ -292,6 +285,10 @@ namespace System.Management.Automation.Language
             typeof(ParserOps).GetMethod(nameof(ParserOps.LikeOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_MatchOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.MatchOperator), staticFlags);
+        internal static readonly MethodInfo ParserOps_RangeOperator =
+            typeof(ParserOps).GetMethod(nameof(ParserOps.RangeOperator), staticFlags);
+        internal static readonly MethodInfo ParserOps_GetRangeEnumerator =
+            typeof(ParserOps).GetMethod(nameof(ParserOps.GetRangeEnumerator), staticFlags);
         internal static readonly MethodInfo ParserOps_ReplaceOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.ReplaceOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_SplitOperator =
@@ -397,9 +394,6 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PSCreateInstanceBinder_GetTargetTypeName =
             typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.GetTargetTypeName), staticFlags);
 
-        internal static readonly ConstructorInfo RangeEnumerator_ctor =
-            typeof(RangeEnumerator).GetConstructor(new Type[] { typeof(int), typeof(int) });
-
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSAdaptedMemberSet =
             typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSAdaptedMemberSet), staticFlags);
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSBaseMemberSet =
@@ -418,8 +412,6 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo RestrictedLanguageChecker_EnsureUtilityModuleLoaded =
             typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.EnsureUtilityModuleLoaded), staticFlags);
-
-
 
         internal static readonly ConstructorInfo ReturnException_ctor =
             typeof(ReturnException).GetConstructor(instanceFlags, null, CallingConventions.Standard, new Type[] { typeof(object) }, null);
@@ -539,7 +531,7 @@ namespace System.Management.Automation.Language
         internal static readonly Expression NullType = Expression.Constant(null, typeof(Type));
         internal static readonly Expression NullDelegateArray = Expression.Constant(null, typeof(Action<FunctionContext>[]));
         internal static readonly Expression NullPipe = Expression.Constant(new Pipe { NullPipe = true });
-        internal static readonly Expression ConstEmptyString = Expression.Constant("");
+        internal static readonly Expression ConstEmptyString = Expression.Constant(string.Empty);
         internal static readonly Expression CompareOptionsIgnoreCase = Expression.Constant(CompareOptions.IgnoreCase);
         internal static readonly Expression CompareOptionsNone = Expression.Constant(CompareOptions.None);
         internal static readonly Expression Ordinal = Expression.Constant(StringComparison.Ordinal);
@@ -604,7 +596,7 @@ namespace System.Management.Automation.Language
                 return Expression.Convert(expr, type);
             }
 
-            if (type.GetTypeInfo().ContainsGenericParameters)
+            if (type.ContainsGenericParameters)
             {
                 return Expression.Call(
                     CachedReflectionInfo.LanguagePrimitives_ThrowInvalidCastException,
@@ -622,7 +614,7 @@ namespace System.Management.Automation.Language
                 return expr;
             }
 
-            if ((expr.Type.IsFloating() || expr.Type == typeof(Decimal)) && type.GetTypeInfo().IsPrimitive)
+            if ((expr.Type.IsFloating() || expr.Type == typeof(Decimal)) && type.IsPrimitive)
             {
                 // Convert correctly handles most "primitive" conversions for PowerShell,
                 // but it does not correctly handle floating point.
@@ -1309,14 +1301,16 @@ namespace System.Management.Automation.Language
             // 'ValidateSet([CustomGeneratorType], IgnoreCase=$false)' is supported in scripts.
             if (ast.PositionalArguments.Count == 1 && ast.PositionalArguments[0] is TypeExpressionAst generatorTypeAst)
             {
-                if (TypeResolver.TryResolveType(generatorTypeAst.TypeName.FullName, out Type generatorType))
+                var generatorType = TypeResolver.ResolveITypeName(generatorTypeAst.TypeName, out Exception exception);
+                if (generatorType != null)
                 {
                     result = new ValidateSetAttribute(generatorType);
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(ast, typeof(RuntimeException), ast.Extent,
-                        "TypeNotFound", ParserStrings.TypeNotFound, generatorTypeAst.TypeName.FullName, typeof(System.Management.Automation.IValidateSetValuesGenerator).FullName);
+                    throw InterpreterError.NewInterpreterExceptionWithInnerException(
+                        ast, typeof(RuntimeException), ast.Extent, "TypeNotFound", ParserStrings.TypeNotFound, exception,
+                        generatorTypeAst.TypeName.FullName, typeof(System.Management.Automation.IValidateSetValuesGenerator).FullName);
                 }
             }
             else
@@ -1519,7 +1513,7 @@ namespace System.Management.Automation.Language
                 return true;
             }
 
-            if (type.GetTypeInfo().IsClass)
+            if (type.IsClass)
             {
                 value = null;
                 return true;
@@ -1537,7 +1531,7 @@ namespace System.Management.Automation.Language
                 return true;
             }
 
-            if (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type)) && !type.GetTypeInfo().IsEnum)
+            if (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type)) && !type.IsEnum)
             {
                 value = 0;
                 return true;
@@ -3039,6 +3033,12 @@ namespace System.Management.Automation.Language
                             input = GetRangeEnumerator(firstCommandExpr.Expression) ??
                                     Compile(firstCommandExpr.Expression);
                         }
+
+                        if (input.Type == typeof(void))
+                        {
+                            input = Expression.Block(input, ExpressionCache.AutomationNullConstant);
+                        }
+
                         i = 1;
                         commandsInPipe = pipeElements.Count - 1;
                     }
@@ -3964,7 +3964,7 @@ namespace System.Management.Automation.Language
                     Expression.IfThenElse(
                         Expression.Call(breakExceptionVar,
                                         CachedReflectionInfo.LoopFlowException_MatchLabel,
-                                        Expression.Constant(label ?? "", typeof(string))),
+                                        Expression.Constant(label ?? string.Empty, typeof(string))),
                         Expression.Break(breakLabel),
                         Expression.Rethrow())),
 
@@ -3973,7 +3973,7 @@ namespace System.Management.Automation.Language
                     Expression.IfThenElse(
                         Expression.Call(continueExceptionVar,
                                         CachedReflectionInfo.LoopFlowException_MatchLabel,
-                                        Expression.Constant(label ?? "", typeof(string))),
+                                        Expression.Constant(label ?? string.Empty, typeof(string))),
                         Expression.Continue(continueLabel),
                         Expression.Rethrow()))
             };
@@ -4041,7 +4041,7 @@ namespace System.Management.Automation.Language
             var loopBodyExprs = new List<Expression>();
             loopBodyExprs.Add(s_callCheckForInterrupts);
 
-            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? "", breakLabel, continueLabel));
+            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? string.Empty, breakLabel, continueLabel));
             _generatingWhileOrDoLoop = true;
             generateLoopBody(loopBodyExprs, breakLabel, continueLabel);
             _generatingWhileOrDoLoop = false;
@@ -4120,7 +4120,7 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Label(repeatLabel));
             exprs.Add(enterLoopExpression);
 
-            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? "", breakLabel, continueLabel));
+            _loopTargets.Add(new LoopGotoTargets(loopLabel ?? string.Empty, breakLabel, continueLabel));
             _generatingWhileOrDoLoop = true;
             var loopBodyExprs = new List<Expression>
                                     {
@@ -4286,7 +4286,6 @@ namespace System.Management.Automation.Language
 
         private Expression GetRangeEnumerator(ExpressionAst condExpr)
         {
-            Expression result = null;
             if (condExpr != null)
             {
                 var binaryExpr = condExpr as BinaryExpressionAst;
@@ -4295,12 +4294,13 @@ namespace System.Management.Automation.Language
                     Expression lhs = Compile(binaryExpr.Left);
                     Expression rhs = Compile(binaryExpr.Right);
 
-                    result = Expression.New(CachedReflectionInfo.RangeEnumerator_ctor,
-                                            lhs.Convert(typeof(int)),
-                                            rhs.Convert(typeof(int)));
+                    return Expression.Call(CachedReflectionInfo.ParserOps_GetRangeEnumerator,
+                                           lhs.Cast(typeof(object)),
+                                           rhs.Cast(typeof(object)));
                 }
             }
-            return result;
+
+            return null;
         }
 
         public object VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst)
@@ -4856,7 +4856,7 @@ namespace System.Management.Automation.Language
                         var isType = (Type)((ConstantExpression)rhs).Value;
                         if (!(isType == typeof(PSCustomObject)) && !(isType == typeof(PSObject)))
                         {
-                            lhs = lhs.Type.GetTypeInfo().IsValueType ? lhs : Expression.Call(CachedReflectionInfo.PSObject_Base, lhs);
+                            lhs = lhs.Type.IsValueType ? lhs : Expression.Call(CachedReflectionInfo.PSObject_Base, lhs);
                             if (binaryExpressionAst.Operator == TokenKind.Is)
                                 return Expression.TypeIs(lhs, isType);
                             return Expression.Not(Expression.TypeIs(lhs, isType));
@@ -4874,14 +4874,13 @@ namespace System.Management.Automation.Language
                     return Expression.Call(CachedReflectionInfo.TypeOps_AsOperator, lhs.Cast(typeof(object)), rhs.Convert(typeof(Type)));
 
                 case TokenKind.DotDot:
-                    if(lhs.Type == typeof(string)){
-                        return Expression.Call(CachedReflectionInfo.CharOps_Range,
-                                               lhs.Convert(typeof(char)),
-                                               rhs.Convert(typeof(char)));
-                    }
-                    return Expression.Call(CachedReflectionInfo.IntOps_Range,
-                                           lhs.Convert(typeof(int)),
-                                           rhs.Convert(typeof(int)));
+                    // We could generate faster code using Expression.Dynamic with a binder.
+                    // Currently, type checks are done in ParserOps.RangeOperator at runtime every time
+                    // a range operator is used. By replacing with Expression.Dynamic and a binder, the
+                    // type check is done only once when you repeatedly execute the same line in script.
+                    return Expression.Call(
+                        CachedReflectionInfo.ParserOps_RangeOperator, lhs.Cast(typeof(object)), rhs.Cast(typeof(object)));
+
                 case TokenKind.Multiply:
                     if (lhs.Type == typeof(double) && rhs.Type == typeof(double))
                     {
@@ -5163,7 +5162,7 @@ namespace System.Management.Automation.Language
                 var newValue = DynamicExpression.Dynamic(PSUnaryOperationBinder.Get(valueToAdd == 1 ? ExpressionType.Increment : ExpressionType.Decrement),
                                                          typeof(object), tmp);
                 exprs.Add(av.SetValue(this, newValue));
-                if (tmp.Type.GetTypeInfo().IsValueType)
+                if (tmp.Type.IsValueType)
                 {
                     // This is the result of the expression - it might be unused, but we don't bother knowing if it is used or not.
                     exprs.Add(tmp);
@@ -5364,7 +5363,7 @@ namespace System.Management.Automation.Language
             if (memberExpressionAst.Static && (memberExpressionAst.Expression is TypeExpressionAst))
             {
                 var type = ((TypeExpressionAst)memberExpressionAst.Expression).TypeName.GetReflectionType();
-                if (type != null && !type.GetTypeInfo().IsGenericTypeDefinition)
+                if (type != null && !type.IsGenericTypeDefinition)
                 {
                     var member = memberExpressionAst.Member as StringConstantExpressionAst;
                     if (member != null)
@@ -5420,7 +5419,7 @@ namespace System.Management.Automation.Language
             TypeDefinitionAst typeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(invokeMemberExpressionAst);
             if (typeDefinitionAst != null)
             {
-                targetTypeConstraint = (typeDefinitionAst as TypeDefinitionAst).Type.GetTypeInfo().BaseType;
+                targetTypeConstraint = (typeDefinitionAst as TypeDefinitionAst).Type.BaseType;
             }
             else
             {
@@ -5525,7 +5524,7 @@ namespace System.Management.Automation.Language
             if (values.Type == typeof(void))
             {
                 // A dynamic site can't take void - but a void value is just an empty array.
-                return Expression.NewArrayInit(typeof(object));
+                return Expression.Block(values, Expression.NewArrayInit(typeof(object)));
             }
 
             return DynamicExpression.Dynamic(PSToObjectArrayBinder.Get(), typeof(object[]), values);
@@ -5533,8 +5532,13 @@ namespace System.Management.Automation.Language
 
         public object VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst)
         {
-            return Expression.NewArrayInit(typeof(object),
-                                           arrayLiteralAst.Elements.Select(elem => Compile(elem).Cast(typeof(object))));
+            List<Expression> elementValues = new List<Expression>(arrayLiteralAst.Elements.Count);
+            foreach (var element in arrayLiteralAst.Elements)
+            {
+                var eValue = Compile(element);
+                elementValues.Add(eValue.Type != typeof(void) ? eValue.Cast(typeof(object)) : Expression.Block(eValue, ExpressionCache.AutomationNullConstant));
+            }
+            return Expression.NewArrayInit(typeof(object), elementValues);
         }
 
         private IEnumerable<Expression> BuildHashtable(ReadOnlyCollection<KeyValuePair> keyValuePairs, ParameterExpression temp, bool ordered)

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Update-FormatData" -Tags "CI" {
 
     BeforeAll {
@@ -15,14 +17,14 @@ Describe "Update-FormatData" -Tags "CI" {
     Context "Validate Update-FormatData update correctly" {
 
         It "Should not throw upon reloading previous formatting file" {
-            { Update-FormatData } | Should Not throw
+            { Update-FormatData } | Should -Not -throw
         }
 
         It "Should validly load formatting data" {
             Get-FormatData -typename System.Diagnostics.Process | Export-FormatData -Path $path
             $null = $ps.AddScript("Update-FormatData -prependPath $path")
             $ps.Invoke()
-            $ps.HadErrors | Should be $false
+            $ps.HadErrors | Should -BeFalse
         }
     }
 }
@@ -53,8 +55,8 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
 
     It "Update-FormatData with WhatIf should work"{
 
-        { Update-FormatData -Append $testfile -WhatIf } | Should Not Throw
-        { Update-FormatData -Prepend $testfile -WhatIf } | Should Not Throw
+        { Update-FormatData -Append $testfile -WhatIf } | Should -Not -Throw
+        { Update-FormatData -Prepend $testfile -WhatIf } | Should -Not -Throw
     }
 
     It "Update with invalid format xml should fail" -Pending {
@@ -68,10 +70,9 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
 </Configuration>
 "@
         $xmlContent | Out-File -FilePath "$testdrive\test.format.ps1xml" -Encoding ascii
-        { Update-FormatData -Path "$testdrive\test.format.ps1xml" -ErrorAction Stop } | ShouldBeErrorId "FormatXmlUpdateException,Microsoft.PowerShell.Commands.UpdateFormatDataCommand"
+        { Update-FormatData -Path "$testdrive\test.format.ps1xml" -ErrorAction Stop } | Should -Throw -ErrorId "FormatXmlUpdateException,Microsoft.PowerShell.Commands.UpdateFormatDataCommand"
     }
 }
-
 
 Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
 
@@ -95,7 +96,7 @@ Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
             $null = $ps.AddScript("Update-FormatData -PrependPath $formatFilePath")
             $ps.Streams.Error.Clear()
             $ps.Invoke()
-            $ps.Streams.Error | Should BeNullOrEmpty
+            $ps.Streams.Error | Should -BeNullOrEmpty
 
         }
         It "Resources in CorePS syntax should be loaded successfully" {
@@ -104,7 +105,7 @@ Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
             $null = $ps.AddScript("Update-FormatData -PrependPath $formatFilePath")
             $ps.Streams.Error.Clear()
             $ps.Invoke()
-            $ps.Streams.Error | Should BeNullOrEmpty
+            $ps.Streams.Error | Should -BeNullOrEmpty
         }
         It "Verify assembly path in error message when resource is Not found" {
             $format = Get-Content -Path $templatePath -Raw
@@ -114,8 +115,8 @@ Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
             $ps.Invoke()
             $sma = [appdomain]::CurrentDomain.GetAssemblies() | ? { if ($_.Location) {$_.Location.EndsWith("System.Management.Automation.dll")}}
             $smaLocation = $sma.Location
-            $ps.Streams.Error | %{ $_.Exception.Message.Contains($smaLocation) | Should be $true }
-            $ps.Streams.Error | %{ $_.FullyQualifiedErrorId | Should Match 'FormatXmlUpdateException' }
+            $ps.Streams.Error | %{ $_.Exception.Message.Contains($smaLocation) | Should -BeTrue }
+            $ps.Streams.Error | %{ $_.FullyQualifiedErrorId | Should -Match 'FormatXmlUpdateException' }
         }
     }
 }

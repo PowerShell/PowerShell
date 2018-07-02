@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Linq;
@@ -86,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _companyName; }
             set { _companyName = value; }
         }
-        private string _companyName = "";
+        private string _companyName = string.Empty;
 
         /// <summary>
         /// Set the copyright string in the module manifest
@@ -473,7 +472,7 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _defaultCommandPrefix;
 
-        private string _indent = "";
+        private string _indent = string.Empty;
 
         /// <summary>
         /// Return a single-quoted string. Any embedded single quotes will be doubled.
@@ -568,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private IEnumerable PreProcessModuleSpec(IEnumerable moduleSpecs)
         {
-            if (null != moduleSpecs)
+            if (moduleSpecs != null)
             {
                 foreach (object spec in moduleSpecs)
                 {
@@ -939,21 +938,17 @@ namespace Microsoft.PowerShell.Commands
 
                 // Now open the output file...
                 PathUtils.MasterStreamOpen(
-                    this,
-                    filePath,
-#if UNIX
-                    new UTF8Encoding(false), // UTF-8, no BOM
-#else
-                    EncodingConversion.Unicode, // UTF-16 with BOM
-#endif
-                    /* defaultEncoding */ false,
-                    /* Append */ false,
-                    /* Force */ false,
-                    /* NoClobber */ false,
-                    out fileStream,
-                    out streamWriter,
-                    out readOnlyFileInfo,
-                    false
+                    cmdlet : this,
+                    filePath : filePath,
+                    resolvedEncoding : new UTF8Encoding(encoderShouldEmitUTF8Identifier : false),
+                    defaultEncoding : false,
+                    Append : false,
+                    Force : false,
+                    NoClobber : false,
+                    fileStream : out fileStream,
+                    streamWriter : out streamWriter,
+                    readOnlyFileInfo : out readOnlyFileInfo,
+                    isLiteralPath : false
                 );
 
                 try
@@ -961,16 +956,16 @@ namespace Microsoft.PowerShell.Commands
                     StringBuilder result = new StringBuilder();
 
                     // Insert the formatted manifest header...
-                    result.Append(ManifestComment("", streamWriter));
+                    result.Append(ManifestComment(string.Empty, streamWriter));
                     result.Append(ManifestComment(StringUtil.Format(Modules.ManifestHeaderLine1, System.IO.Path.GetFileNameWithoutExtension(filePath)),
                             streamWriter));
-                    result.Append(ManifestComment("", streamWriter));
+                    result.Append(ManifestComment(string.Empty, streamWriter));
                     result.Append(ManifestComment(StringUtil.Format(Modules.ManifestHeaderLine2, _author),
                             streamWriter));
-                    result.Append(ManifestComment("", streamWriter));
+                    result.Append(ManifestComment(string.Empty, streamWriter));
                     result.Append(ManifestComment(StringUtil.Format(Modules.ManifestHeaderLine3, DateTime.Now.ToString("d", CultureInfo.CurrentCulture)),
                             streamWriter));
-                    result.Append(ManifestComment("", streamWriter));
+                    result.Append(ManifestComment(string.Empty, streamWriter));
                     result.Append(streamWriter.NewLine);
                     result.Append("@{");
                     result.Append(streamWriter.NewLine);
@@ -1150,7 +1145,7 @@ namespace Microsoft.PowerShell.Commands
                 result.Append("} ");
                 result.Append(ManifestComment(StringUtil.Format(Modules.EndOfManifestHashTable, "PrivateData"), streamWriter));
 
-                _indent = "";
+                _indent = string.Empty;
 
                 result.Append(streamWriter.NewLine);
             }

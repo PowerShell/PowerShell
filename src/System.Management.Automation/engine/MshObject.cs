@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -24,9 +23,9 @@ using System.Runtime.Serialization;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Management.Infrastructure;
-
-#if !CORECLR
+#if !UNIX
 using System.DirectoryServices;
+using System.Management;
 #endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -172,9 +171,9 @@ namespace System.Management.Automation
         private static PSMemberInfoInternalCollection<T> DotNetGetMembersDelegate<T>(PSObject msjObj) where T : PSMemberInfo
         {
             // Don't lookup dotnet members if the object doesn't insist.
-            if (null != msjObj.InternalAdapterSet.DotNetAdapter)
+            if (msjObj.InternalBaseDotNetAdapter != null)
             {
-                PSMemberInfoInternalCollection<T> retValue = msjObj.InternalAdapterSet.DotNetAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
+                PSMemberInfoInternalCollection<T> retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
                 PSObject.memberResolution.WriteLine("DotNet members: {0}.", retValue.VisibleCount);
                 return retValue;
             }
@@ -185,9 +184,9 @@ namespace System.Management.Automation
         private static T DotNetGetMemberDelegate<T>(PSObject msjObj, string name) where T : PSMemberInfo
         {
             // Don't lookup dotnet member if the object doesn't insist.
-            if (null != msjObj.InternalAdapterSet.DotNetAdapter)
+            if (msjObj.InternalBaseDotNetAdapter != null)
             {
-                T retValue = msjObj.InternalAdapterSet.DotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
+                T retValue = msjObj.InternalBaseDotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
                 PSObject.memberResolution.WriteLine("DotNet member: {0}.", retValue == null ? "not found" : retValue.Name);
                 return retValue;
             }
@@ -380,8 +379,7 @@ namespace System.Management.Automation
             new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
                                     PSObject.dotNetInstanceAdapter);
-
-#if !CORECLR // WMIv1/ADSI Adapters Not Supported in PowerShell Core
+#if !UNIX
         private static readonly AdapterSet managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), dotNetInstanceAdapter);
         private static readonly AdapterSet managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), dotNetInstanceAdapter);
         private static readonly AdapterSet directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), dotNetInstanceAdapter);
@@ -411,8 +409,7 @@ namespace System.Management.Automation
             if (obj is PSMemberSet) { return PSObject.s_mshMemberSetAdapter; }
             if (obj is PSObject) { return PSObject.s_mshObjectAdapter; }
             if (obj is CimInstance) { return PSObject.s_cimInstanceAdapter; }
-
-#if !CORECLR // WMIv1/ADSI Adapters Not Supported in PowerShell Core
+#if !UNIX
             if (obj is ManagementClass) { return PSObject.managementClassAdapter; }
             if (obj is ManagementBaseObject) { return PSObject.managementObjectAdapter; }
             if (obj is DirectoryEntry) { return PSObject.directoryEntryAdapter; }
@@ -587,7 +584,6 @@ namespace System.Management.Automation
         /// </summary>
         private object _immediateBaseObject;
 
-
         private WeakReference<TypeTable> _typeTable;
 
         /// <summary>
@@ -633,11 +629,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _adapterSet)
+                if (_adapterSet == null)
                 {
                     lock (_lockObject)
                     {
-                        if (null == _adapterSet)
+                        if (_adapterSet == null)
                         {
                             _adapterSet = GetMappedAdapter(_immediateBaseObject, GetTypeTable());
                         }
@@ -735,7 +731,6 @@ namespace System.Management.Automation
 
         #endregion instance fields
 
-
         #endregion fields
 
         #region properties
@@ -808,7 +803,6 @@ namespace System.Management.Automation
             }
         }
         private PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
-
 
         /// <summary>
         /// Gets the object we are directly wrapping.
@@ -1584,7 +1578,6 @@ namespace System.Management.Automation
                 returnValue._immediateBaseObject = CopyValueType(returnValue._immediateBaseObject);
             }
 
-
             // needToReAddInstanceMembersAndTypeNames = returnValue will have a different key (different from "this") returned from GetKeyForResurrectionTables
             bool needToReAddInstanceMembersAndTypeNames = !object.ReferenceEquals(GetKeyForResurrectionTables(this), GetKeyForResurrectionTables(returnValue));
             if (needToReAddInstanceMembersAndTypeNames)
@@ -1755,7 +1748,6 @@ namespace System.Management.Automation
         /// </remarks>
         public const string BaseObjectMemberSetName = "psbase";
 
-
         /// <summary>
         /// The PSObject's properties
         /// </summary>
@@ -1852,14 +1844,12 @@ namespace System.Management.Automation
             return note.Value;
         }
 
-
-
         internal int GetSerializationDepth(TypeTable backupTypeTable)
         {
             int result = 0;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (null != typeTable)
+            if (typeTable != null)
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
@@ -1896,7 +1886,7 @@ namespace System.Management.Automation
             SerializationMethod result = TypeTable.defaultSerializationMethod;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (null != typeTable)
+            if (typeTable != null)
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
@@ -1935,7 +1925,7 @@ namespace System.Management.Automation
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(
                     this, typeTable, TypeTable.PSStandardMembers);
-                if (null != standardMemberSet)
+                if (standardMemberSet != null)
                 {
                     standardMemberSet.ReplicateInstance(this);
                     PSMemberInfoIntegratingCollection<PSMemberInfo> members =
@@ -1961,7 +1951,7 @@ namespace System.Management.Automation
         internal Type GetTargetTypeForDeserialization(TypeTable backupTypeTable)
         {
             PSMemberInfo targetType = this.GetPSStandardMember(backupTypeTable, TypeTable.TargetTypeForDeserialization);
-            if (null != targetType)
+            if (targetType != null)
             {
                 return (targetType.Value as Type);
             }
@@ -1983,7 +1973,7 @@ namespace System.Management.Automation
         internal Collection<string> GetSpecificPropertiesToSerialize(TypeTable backupTypeTable)
         {
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
-            if (null != typeTable)
+            if (typeTable != null)
             {
                 Collection<string> tmp = typeTable.GetSpecificProperties(this.InternalTypeNames);
                 return tmp;
@@ -2370,7 +2360,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string ToString()
         {
-            return "";
+            return string.Empty;
         }
     }
 
@@ -2415,8 +2405,7 @@ namespace Microsoft.PowerShell
                 return String.Empty;
 
             string result;
-            TypeInfo typeinfo = type.GetTypeInfo();
-            if (typeinfo.IsGenericType && !typeinfo.IsGenericTypeDefinition)
+            if (type.IsGenericType && !type.IsGenericTypeDefinition)
             {
                 string genericDefinition = Type(type.GetGenericTypeDefinition(), dropNamespaces);
                 // For regular generic types, we find the backtick character, for example:
@@ -2425,12 +2414,12 @@ namespace Microsoft.PowerShell
                 // For nested generic types, we find the left bracket character, for example:
                 //      System.Collections.Generic.Dictionary`2+Enumerator[TKey, TValue] ->
                 //      System.Collections.Generic.Dictionary`2+Enumerator[string,string]
-                int backtickOrLeftBracketIndex = genericDefinition.LastIndexOf(typeinfo.IsNested ? '[' : '`');
+                int backtickOrLeftBracketIndex = genericDefinition.LastIndexOf(type.IsNested ? '[' : '`');
                 var sb = new StringBuilder(genericDefinition, 0, backtickOrLeftBracketIndex, 512);
                 AddGenericArguments(sb, type.GetGenericArguments(), dropNamespaces);
                 result = sb.ToString();
             }
-            else if (typeinfo.IsArray)
+            else if (type.IsArray)
             {
                 string elementDefinition = Type(type.GetElementType(), dropNamespaces);
                 var sb = new StringBuilder(elementDefinition, elementDefinition.Length + 10);
@@ -2453,7 +2442,7 @@ namespace Microsoft.PowerShell
                     }
                     if (dropNamespaces)
                     {
-                        if (typeinfo.IsNested)
+                        if (type.IsNested)
                         {
                             // For nested types, we should return OuterType+InnerType. For example,
                             //  System.Environment+SpecialFolder ->  Environment+SpecialFolder
@@ -2476,10 +2465,10 @@ namespace Microsoft.PowerShell
 
             // We can't round trip anything with a generic parameter.
             // We also can't round trip if we're dropping the namespace.
-            if (!typeinfo.IsGenericParameter
-                && !typeinfo.ContainsGenericParameters
+            if (!type.IsGenericParameter
+                && !type.ContainsGenericParameters
                 && !dropNamespaces
-                && !typeinfo.Assembly.GetCustomAttributes(typeof(DynamicClassImplementationAssemblyAttribute)).Any())
+                && !type.Assembly.GetCustomAttributes(typeof(DynamicClassImplementationAssemblyAttribute)).Any())
             {
                 Type roundTripType;
                 TypeResolver.TryResolveType(result, out roundTripType);

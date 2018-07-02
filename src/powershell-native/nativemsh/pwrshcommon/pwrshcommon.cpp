@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 //
 // Implementation of common code used by native PowerShell
@@ -670,9 +669,10 @@ namespace NativeMsh
     static PCSTR trustedAssemblies[] =
     {
         "Microsoft.ApplicationInsights",
-        "Microsoft.CodeAnalysis",
         "Microsoft.CodeAnalysis.CSharp",
+        "Microsoft.CodeAnalysis",
         "Microsoft.CSharp",
+        "Microsoft.DiaSymReader.Native.amd64",
         "Microsoft.Management.Infrastructure",
         "Microsoft.Management.Infrastructure.CimCmdlets",
         "Microsoft.Management.Infrastructure.Native",
@@ -681,58 +681,70 @@ namespace NativeMsh
         "Microsoft.PowerShell.Commands.Utility",
         "Microsoft.PowerShell.ConsoleHost",
         "Microsoft.PowerShell.CoreCLR.Eventing",
-        "Microsoft.PowerShell.LocalAccounts",
-        "Microsoft.PowerShell.PSReadLine",
         "Microsoft.PowerShell.SDK",
         "Microsoft.PowerShell.Security",
         "Microsoft.VisualBasic",
         "Microsoft.Win32.Primitives",
         "Microsoft.Win32.Registry",
         "Microsoft.Win32.Registry.AccessControl",
+        "Microsoft.Win32.SystemEvents",
         "Microsoft.WSMan.Management",
         "Microsoft.WSMan.Runtime",
         "mscorlib",
         "netstandard",
         "Newtonsoft.Json",
+        "NJsonSchema",
+        "PowerShell.Core.Instrumentation",
         "System",
         "System.AppContext",
         "System.Buffers",
+        "System.CodeDom",
         "System.Collections",
         "System.Collections.Concurrent",
         "System.Collections.Immutable",
         "System.Collections.NonGeneric",
         "System.Collections.Specialized",
-        "System.Configuration",
-        "System.ComponentModel",
         "System.ComponentModel.Annotations",
         "System.ComponentModel.Composition",
         "System.ComponentModel.DataAnnotations",
+        "System.ComponentModel",
         "System.ComponentModel.EventBasedAsync",
         "System.ComponentModel.Primitives",
         "System.ComponentModel.TypeConverter",
+        "System.Configuration",
+        "System.Configuration.ConfigurationManager",
         "System.Console",
         "System.Core",
         "System.Data",
         "System.Data.Common",
+        "System.Data.DataSetExtensions",
+        "System.Data.Odbc",
         "System.Data.SqlClient",
         "System.Diagnostics.Contracts",
         "System.Diagnostics.Debug",
         "System.Diagnostics.DiagnosticSource",
+        "System.Diagnostics.EventLog",
         "System.Diagnostics.FileVersionInfo",
+        "System.Diagnostics.PerformanceCounter",
         "System.Diagnostics.Process",
         "System.Diagnostics.StackTrace",
         "System.Diagnostics.TextWriterTraceListener",
         "System.Diagnostics.Tools",
         "System.Diagnostics.TraceSource",
         "System.Diagnostics.Tracing",
+        "System.DirectoryServices",
+        "System.DirectoryServices.AccountManagement",
+        "System.DirectoryServices.Protocols",
         "System.Drawing",
+        "System.Drawing.Common",
         "System.Drawing.Primitives",
         "System.Dynamic.Runtime",
-        "System.Globalization",
         "System.Globalization.Calendars",
+        "System.Globalization",
         "System.Globalization.Extensions",
         "System.IO",
         "System.IO.Compression",
+        "System.IO.Compression.Brotli",
         "System.IO.Compression.FileSystem",
         "System.IO.Compression.ZipFile",
         "System.IO.FileSystem",
@@ -744,12 +756,16 @@ namespace NativeMsh
         "System.IO.MemoryMappedFiles",
         "System.IO.Packaging",
         "System.IO.Pipes",
+        "System.IO.Pipes.AccessControl",
+        "System.IO.Ports",
         "System.IO.UnmanagedMemoryStream",
         "System.Linq",
         "System.Linq.Expressions",
         "System.Linq.Parallel",
         "System.Linq.Queryable",
+        "System.Management",
         "System.Management.Automation",
+        "System.Memory",
         "System.Net",
         "System.Net.Http",
         "System.Net.Http.WinHttpHandler",
@@ -790,6 +806,8 @@ namespace NativeMsh
         "System.Resources.ResourceManager",
         "System.Resources.Writer",
         "System.Runtime",
+        "System.Runtime.Caching",
+        "System.Runtime.CompilerServices.Unsafe",
         "System.Runtime.CompilerServices.VisualC",
         "System.Runtime.Extensions",
         "System.Runtime.Handles",
@@ -803,7 +821,6 @@ namespace NativeMsh
         "System.Runtime.Serialization.Json",
         "System.Runtime.Serialization.Primitives",
         "System.Runtime.Serialization.Xml",
-        "System.Security",
         "System.Security.AccessControl",
         "System.Security.Claims",
         "System.Security.Cryptography.Algorithms",
@@ -813,16 +830,21 @@ namespace NativeMsh
         "System.Security.Cryptography.OpenSsl",
         "System.Security.Cryptography.Pkcs",
         "System.Security.Cryptography.Primitives",
+        "System.Security.Cryptography.ProtectedData",
         "System.Security.Cryptography.X509Certificates",
+        "System.Security.Cryptography.Xml",
+        "System.Security",
         "System.Security.Permissions",
         "System.Security.Principal",
         "System.Security.Principal.Windows",
         "System.Security.SecureString",
+        "System.ServiceModel",
         "System.ServiceModel.Duplex",
         "System.ServiceModel.Http",
         "System.ServiceModel.NetTcp",
         "System.ServiceModel.Primitives",
         "System.ServiceModel.Security",
+        "System.ServiceModel.Syndication",
         "System.ServiceModel.Web",
         "System.ServiceProcess",
         "System.ServiceProcess.ServiceController",
@@ -834,8 +856,8 @@ namespace NativeMsh
         "System.Threading",
         "System.Threading.AccessControl",
         "System.Threading.Overlapped",
-        "System.Threading.Tasks",
         "System.Threading.Tasks.Dataflow",
+        "System.Threading.Tasks",
         "System.Threading.Tasks.Extensions",
         "System.Threading.Tasks.Parallel",
         "System.Threading.Thread",
@@ -1238,18 +1260,19 @@ namespace NativeMsh
     // Note: During successful calls the following values must be freed by the caller:
     //      pwszMonadVersion
     //      pwszRuntimeVersion
-    //      pwzsRegKeyValue
+    //      pwszRegKeyValue
     //
     // The caller must take care to check to see if they must be freed during error scenarios
     // because the function may fail after allocating one or more strings.
     //
+    _Success_(return == 0)
     unsigned int PwrshCommon::GetRegistryInfo(
-        __deref_out_opt PWSTR * pwszMonadVersion,
+        __out PWSTR * pwszMonadVersion,
         __inout_ecount(1) int * lpMonadMajorVersion,
         int monadMinorVersion,
-        __deref_out_opt PWSTR * pwszRuntimeVersion,
+        __out PWSTR * pwszRuntimeVersion,
         LPCWSTR lpszRegKeyNameToRead,
-        __deref_out_opt PWSTR * pwzsRegKeyValue)
+        __out PWSTR * pwszRegKeyValue)
     {
         HKEY hEngineKey = NULL;
         bool bEngineKeyOpened = true;
@@ -1257,12 +1280,27 @@ namespace NativeMsh
         wchar_t * wszMshEngineRegKeyPath = NULL;
         LPWSTR wszFullMonadVersion = NULL;
 
+        if (NULL != pwszRegKeyValue)
+        {
+            *pwszRegKeyValue = NULL;
+        }
+
+        if (NULL != pwszRuntimeVersion)
+        {
+            *pwszRuntimeVersion = NULL;
+        }
+
+        if (NULL != pwszMonadVersion)
+        {
+            *pwszMonadVersion = NULL;
+        }
+
         do
         {
             if (NULL == pwszMonadVersion ||
                 NULL == lpMonadMajorVersion ||
                 NULL == pwszRuntimeVersion ||
-                NULL == pwzsRegKeyValue)
+                NULL == pwszRegKeyValue)
             {
                 exitCode = EXIT_CODE_READ_REGISTRY_FAILURE;
                 break;
@@ -1315,7 +1353,7 @@ namespace NativeMsh
             {
                 LPCWSTR wszRequestedRegValueName = lpszRegKeyNameToRead;
                 if (!this->RegQueryREG_SZValue(hEngineKey, wszRequestedRegValueName,
-                    wszMshEngineRegKeyPath, pwzsRegKeyValue))
+                    wszMshEngineRegKeyPath, pwszRegKeyValue))
                 {
                     exitCode = EXIT_CODE_READ_REGISTRY_FAILURE;
                     break;
@@ -1361,12 +1399,13 @@ namespace NativeMsh
         return exitCode;
     }
 
+    _Success_(return == 0)
     unsigned int PwrshCommon::GetRegistryInfo(
-        __deref_out_opt PWSTR * pwszMonadVersion,
+        __out PWSTR * pwszMonadVersion,
         __inout_ecount(1) int * lpMonadMajorVersion,
         int monadMinorVersion,
-        __deref_out_opt PWSTR * pwszRuntimeVersion,
-        __deref_out_opt PWSTR * pwszConsoleHostAssemblyName)
+        __out PWSTR * pwszRuntimeVersion,
+        __out PWSTR * pwszConsoleHostAssemblyName)
     {
         return GetRegistryInfo(pwszMonadVersion,
             lpMonadMajorVersion,

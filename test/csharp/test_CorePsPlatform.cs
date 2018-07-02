@@ -1,12 +1,13 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using Xunit;
 using System;
 using System.IO;
 using System.Diagnostics;
 using System.Management.Automation;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
-    [Collection("AssemblyLoadContext")]
     public static class PlatformTests
     {
         [Fact]
@@ -15,6 +16,7 @@ namespace PSTests
             Assert.True(Platform.IsCoreCLR);
         }
 
+#if Unix
         [Fact]
         public static void TestGetUserName()
         {
@@ -38,7 +40,7 @@ namespace PSTests
             }
         }
 
-        [Fact(Skip="Bad arguments for macOS")]
+        [Fact]
         public static void TestGetMachineName()
         {
             var startInfo = new ProcessStartInfo
@@ -61,7 +63,7 @@ namespace PSTests
             }
         }
 
-        [Fact(Skip="Bad arguments for macOS")]
+        [Fact]
         public static void TestGetFQDN()
         {
             var startInfo = new ProcessStartInfo
@@ -81,29 +83,6 @@ namespace PSTests
                 Assert.Equal(0, process.ExitCode);
                 // It should be the same as what our platform code returns
                 Assert.Equal(hostname, Platform.NonWindowsGetHostName());
-            }
-        }
-
-        [Fact(Skip="Bad arguments for macOS")]
-        public static void TestGetDomainName()
-        {
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = @"/usr/bin/env",
-                Arguments = "dnsdomainname",
-                RedirectStandardOutput = true,
-                UseShellExecute = false
-            };
-            using (Process process = Process.Start(startInfo))
-            {
-                 // Get output of call to hostname without trailing newline
-                string domainName = process.StandardOutput.ReadToEnd().Trim();
-                process.WaitForExit();
-
-                // The process should return an exit code of 0 on success
-                Assert.Equal(0, process.ExitCode);
-                // It should be the same as what our platform code returns
-                Assert.Equal(domainName, Platform.NonWindowsGetDomainName());
             }
         }
 
@@ -176,7 +155,6 @@ namespace PSTests
                 process.WaitForExit();
                 Assert.Equal(0, process.ExitCode);
             }
-
 
             // Since there are now two references to the file, both are considered
             // hardlinks by our API (though all files are hardlinks on Linux)
@@ -255,5 +233,6 @@ namespace PSTests
             File.Delete(path);
             File.Delete(link);
         }
+#endif
     }
 }

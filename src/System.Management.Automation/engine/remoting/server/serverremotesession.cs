@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Threading;
 using System.Management.Automation.Runspaces;
@@ -124,7 +123,7 @@ namespace System.Management.Automation.Remoting
             string initializationParameters,
             AbstractServerSessionTransportManager transportManager)
         {
-            Dbg.Assert(null != transportManager, "transportManager cannot be null.");
+            Dbg.Assert(transportManager != null, "transportManager cannot be null.");
 
             // let input,output and error from native commands redirect as we have
             // to send (or receive) them back to client for action.
@@ -238,7 +237,7 @@ namespace System.Management.Automation.Remoting
             string configurationName)
         {
             ServerRemoteSession result = CreateServerRemoteSession(senderInfo,
-                "Microsoft.PowerShell", "", transportManager, configurationName);
+                "Microsoft.PowerShell", string.Empty, transportManager, configurationName);
             result._initScriptForOutOfProcRS = initializationScriptForOutOfProcessRunspace;
             return result;
         }
@@ -799,7 +798,7 @@ namespace System.Management.Automation.Remoting
                 rsSessionStateToUse = _sessionConfigProvider.GetInitialSessionState(_senderInfo);
             }
 
-            if (null == rsSessionStateToUse)
+            if (rsSessionStateToUse == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.InitialSessionStateNull, _configProviderId);
             }
@@ -953,14 +952,14 @@ namespace System.Management.Automation.Remoting
         /// <param name="eventArgs"></param>
         private void HandleSessionDSHandlerClosing(object sender, EventArgs eventArgs)
         {
-            if (null != _runspacePoolDriver)
+            if (_runspacePoolDriver != null)
             {
                 _runspacePoolDriver.Close();
             }
 
             // dispose the session configuration object..this will let them
             // clean their resources.
-            if (null != _sessionConfigProvider)
+            if (_sessionConfigProvider != null)
             {
                 _sessionConfigProvider.Dispose();
                 _sessionConfigProvider = null;
@@ -1158,7 +1157,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal void ApplyQuotaOnCommandTransportManager(AbstractServerTransportManager cmdTransportManager)
         {
-            Dbg.Assert(null != cmdTransportManager, "cmdTransportManager cannot be null");
+            Dbg.Assert(cmdTransportManager != null, "cmdTransportManager cannot be null");
             cmdTransportManager.ReceivedDataCollection.MaximumReceivedDataSize = _maxRecvdDataSizeCommand;
             cmdTransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
         }

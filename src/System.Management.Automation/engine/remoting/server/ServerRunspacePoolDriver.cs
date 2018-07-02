@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -93,7 +92,6 @@ namespace System.Management.Automation
 
         #region Constructors
 
-
 #if CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// Creates the runspace pool driver
@@ -176,7 +174,7 @@ namespace System.Management.Automation
             string configurationName)
 #endif
         {
-            Dbg.Assert(null != configData, "ConfigurationData cannot be null");
+            Dbg.Assert(configData != null, "ConfigurationData cannot be null");
 
             _serverCapability = serverCapability;
             _clientPSVersion = psClientVersion;
@@ -680,7 +678,7 @@ namespace System.Management.Automation
                 cmdToRun = new Command(_configData.InitializationScriptForOutOfProcessRunspace, true, false);
             }
 
-            if (null != cmdToRun)
+            if (cmdToRun != null)
             {
                 InvokeScript(cmdToRun, args);
 

@@ -1,15 +1,11 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -51,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         /// The literal name of the file in which to write the transcript.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [ValidateNotNullOrEmpty]
         public string LiteralPath
         {
@@ -146,7 +142,6 @@ namespace Microsoft.PowerShell.Commands
         {
             get; set;
         }
-
 
         /// <summary>
         ///
@@ -343,6 +338,4 @@ namespace Microsoft.PowerShell.Commands
         private bool _isFilenameSet;
     }
 }
-
-
 

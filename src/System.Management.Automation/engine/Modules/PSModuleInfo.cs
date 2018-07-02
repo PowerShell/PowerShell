@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -539,7 +538,6 @@ namespace System.Management.Automation
             }
         }
 
-
         private bool IsScriptModuleFile(string path)
         {
             var ext = System.IO.Path.GetExtension(path);
@@ -577,29 +575,28 @@ namespace System.Management.Automation
             }
 
             var res = new Dictionary<string, TypeDefinitionAst>(StringComparer.OrdinalIgnoreCase);
-            if (this.NestedModules != null)
+            foreach (var nestedModule in this.NestedModules)
             {
-                foreach (var nestedModule in this.NestedModules)
+                if (nestedModule == this)
                 {
-                    if (nestedModule == this)
-                    {
-                        // this is totally bizzare, but it happens for some reasons for
-                        // Microsoft.Powershell.Workflow.ServiceCore.dll, when there is a workflow defined in a nested module.
-                        // TODO(sevoroby): we should handle possible circular dependencies
-                        continue;
-                    }
-
-                    foreach (var typePairs in nestedModule.GetExportedTypeDefinitions())
-                    {
-                        // The last one name wins! It's the same for command names in nested modules.
-                        // For rootModule C with Two nested modules (A, B) the order is: A, B, C
-                        res[typePairs.Key] = typePairs.Value;
-                    }
+                    // Circular nested modules could happen with ill-organized module structure.
+                    // For example, module folder 'test' has two files: 'test.psd1' and 'test.psm1', and 'test.psd1' has the following content:
+                    //    "@{ ModuleVersion = '0.0.1'; RootModule = 'test'; NestedModules = @('test') }"
+                    // Then, 'Import-Module test.psd1 -PassThru' will return a ModuleInfo object with circular nested modules.
+                    continue;
                 }
-                foreach (var typePairs in _exportedTypeDefinitionsNoNested)
+
+                foreach (var typePairs in nestedModule.GetExportedTypeDefinitions())
                 {
+                    // The last one name wins! It's the same for command names in nested modules.
+                    // For rootModule C with Two nested modules (A, B) the order is: A, B, C
                     res[typePairs.Key] = typePairs.Value;
                 }
+            }
+
+            foreach (var typePairs in _exportedTypeDefinitionsNoNested)
+            {
+                res[typePairs.Key] = typePairs.Value;
             }
 
             return new ReadOnlyDictionary<string, TypeDefinitionAst>(res);
@@ -642,8 +639,6 @@ namespace System.Management.Automation
         internal Collection<string> DeclaredFunctionExports = null;
         internal List<string> _detectedFunctionExports = new List<string>();
 
-        internal List<string> _detectedWorkflowExports = new List<string>();
-
         /// <summary>
         /// Add function to the fixed exports list
         /// </summary>
@@ -655,20 +650,6 @@ namespace System.Management.Automation
             if (!_detectedFunctionExports.Contains(name))
             {
                 _detectedFunctionExports.Add(name);
-            }
-        }
-
-        /// <summary>
-        /// Add workflow to the fixed exports list
-        /// </summary>
-        /// <param name="name">the function to add</param>
-        internal void AddDetectedWorkflowExport(string name)
-        {
-            Dbg.Assert(name != null, "AddDetectedWorkflowExport should not be called with a null value");
-
-            if (!_detectedWorkflowExports.Contains(name))
-            {
-                _detectedWorkflowExports.Add(name);
             }
         }
 
@@ -761,15 +742,6 @@ namespace System.Management.Automation
                     }
                 }
 
-                Dictionary<string, FunctionInfo> workflows = this.ExportedWorkflows;
-                if (workflows != null)
-                {
-                    foreach (var workflow in workflows)
-                    {
-                        exports[workflow.Key] = workflow.Value;
-                    }
-                }
-
                 Dictionary<string, AliasInfo> aliases = this.ExportedAliases;
                 if (aliases != null)
                 {
@@ -821,7 +793,6 @@ namespace System.Management.Automation
 
         private readonly List<CmdletInfo> _compiledExports = new List<CmdletInfo>();
 
-
         /// <summary>
         /// Add AliasInfo to the fixed exports list...
         /// </summary>
@@ -839,7 +810,6 @@ namespace System.Management.Automation
         /// module. We need to consolidate the list so it can properly be constrained.
         /// </summary>
         internal List<AliasInfo> CompiledAliasExports { get; } = new List<AliasInfo>();
-
 
         /// <summary>
         /// FileList
@@ -1181,48 +1151,9 @@ namespace System.Management.Automation
         {
             get
             {
-                Dictionary<string, FunctionInfo> exportedWorkflows = new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
-
-                if ((DeclaredWorkflowExports != null) && (DeclaredWorkflowExports.Count > 0))
-                {
-                    foreach (string fn in DeclaredWorkflowExports)
-                    {
-                        WorkflowInfo tempWf = new WorkflowInfo(fn, ScriptBlock.EmptyScriptBlock, context: null) { Module = this };
-                        exportedWorkflows[fn] = tempWf;
-                    }
-                }
-                if ((DeclaredWorkflowExports != null) && (DeclaredWorkflowExports.Count == 0))
-                {
-                    return exportedWorkflows;
-                }
-                else
-                {
-                    // If there is no session state object associated with this list,
-                    // just return a null list of exports. This will be true if the
-                    // module is a compiled module.
-                    if (SessionState == null)
-                    {
-                        foreach (string detectedExport in _detectedWorkflowExports)
-                        {
-                            if (!exportedWorkflows.ContainsKey(detectedExport))
-                            {
-                                WorkflowInfo tempWf = new WorkflowInfo(detectedExport, ScriptBlock.EmptyScriptBlock, context: null) { Module = this };
-                                exportedWorkflows[detectedExport] = tempWf;
-                            }
-                        }
-                        return exportedWorkflows;
-                    }
-
-                    foreach (WorkflowInfo wi in SessionState.Internal.ExportedWorkflows)
-                    {
-                        exportedWorkflows[wi.Name] = wi;
-                    }
-                }
-
-                return exportedWorkflows;
+                return new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
             }
         }
-        internal Collection<string> DeclaredWorkflowExports = null;
 
         /// <summary>
         ///
@@ -1504,7 +1435,6 @@ namespace System.Management.Automation
             s_appdomainModulePathCache.Clear();
         }
 
-
 #if DEBUG
         /// <summary>
         /// A method available in debug mode providing access to the module path cache.
@@ -1613,7 +1543,6 @@ namespace System.Management.Automation
         /// </summary>
         Constant = 2
     }
-
 
     /// <summary>
     /// An EqualityComparer to compare 2 PSModuleInfo instances. 2 PSModuleInfos are

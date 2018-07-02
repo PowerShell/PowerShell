@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
@@ -72,10 +71,6 @@ namespace System.Management.Automation
                 else if (extension.Equals(StringLiterals.PowerShellCmdletizationFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     result = AnalyzeCdxmlModule(modulePath, context, lastWriteTime);
-                }
-                else if (extension.Equals(StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
-                {
-                    result = AnalyzeXamlModule(modulePath, context, lastWriteTime);
                 }
                 else if (extension.Equals(".dll", StringComparison.OrdinalIgnoreCase))
                 {
@@ -367,11 +362,6 @@ namespace System.Management.Automation
             return result;
         }
 
-        private static ConcurrentDictionary<string, CommandTypes> AnalyzeXamlModule(string modulePath, ExecutionContext context, DateTime lastWriteTime)
-        {
-            return AnalyzeTheOldWay(modulePath, context, lastWriteTime);
-        }
-
         private static ConcurrentDictionary<string, CommandTypes> AnalyzeCdxmlModule(string modulePath, ExecutionContext context, DateTime lastWriteTime)
         {
             return AnalyzeTheOldWay(modulePath, context, lastWriteTime);
@@ -660,7 +650,7 @@ namespace System.Management.Automation
             var keys = Entries.Keys;
             foreach (var key in keys)
             {
-                if (!Utils.NativeFileExists(key))
+                if (!Utils.FileExists(key))
                 {
                     ModuleCacheEntry unused;
                     removedSomething |= Entries.TryRemove(key, out unused);
@@ -700,7 +690,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (Utils.NativeFileExists(filename))
+                if (Utils.FileExists(filename))
                 {
                     var fileLastWriteTime = new FileInfo(filename).LastWriteTime;
                     if (fileLastWriteTime > this.LastReadTime)
@@ -997,7 +987,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if (Utils.NativeFileExists(s_cacheStoreLocation))
+                    if (Utils.FileExists(s_cacheStoreLocation))
                     {
                         return Deserialize(s_cacheStoreLocation);
                     }

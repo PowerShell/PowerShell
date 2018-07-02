@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
@@ -10,7 +9,6 @@ using System.Diagnostics;
 using System.Management.Automation.Internal;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
-
 
 namespace System.Management.Automation
 {
@@ -409,7 +407,6 @@ namespace System.Management.Automation
         /// </summary>
         private bool _bailInNextCall;
 
-
         /// <summary>
         /// Populates the parameters specified from the pipeline.
         /// </summary>
@@ -727,7 +724,7 @@ namespace System.Management.Automation
 
                 throw commandException;
             }
-            if (null != initError)
+            if (initError != null)
             {
                 // Log a command health event
                 MshLog.LogCommandHealthEvent(
@@ -855,5 +852,4 @@ namespace System.Management.Automation
 #endregion helper_methods
     }
 }
-
 

@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #region Using directives
 using System;
 using System.Collections.Generic;
@@ -7,7 +10,6 @@ using System.Management.Automation;
 using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
 #endregion
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -64,8 +66,6 @@ namespace Microsoft.PowerShell.Commands
         private System.Security.Principal.SecurityIdentifier[] sid;
         #endregion Parameter Properties
 
-
-
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -74,7 +74,6 @@ namespace Microsoft.PowerShell.Commands
         {
             sam = new Sam();
         }
-
 
         /// <summary>
         /// ProcessRecord method.
@@ -92,7 +91,6 @@ namespace Microsoft.PowerShell.Commands
             ProcessNames();
             ProcessSids();
         }
-
 
         /// <summary>
         /// EndProcessing method.

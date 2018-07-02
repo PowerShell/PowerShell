@@ -21,6 +21,7 @@ AppImage
 AppVeyor
 argumentlist
 arm32
+arm64
 artifact
 artifacts
 ASP.NET
@@ -102,6 +103,7 @@ linux-x64
 lockfile
 macOS
 md
+microsoft
 Microsoft.PowerShell.Archive
 microsoft.powershell.commands.diagnostics
 microsoft.powershell.commands.management
@@ -148,6 +150,7 @@ PSObject
 psobjects
 psproxyjobs
 PSReadline
+psrp.windows
 PSSessionConfiguration
 pwsh
 redistributables
@@ -184,6 +187,7 @@ TeamCity
 thenewstellw
 throttlelimit
 toolset
+toolchain
 TraceSource
 Unregister-Event
 Unregister-PSSessionConfiguration
@@ -202,6 +206,8 @@ writingpestertests.md
 WSMan
 wsmansessionoption.cs
 xUnit
+0-powershell-crossplatform
+ReportGenerator
 #endregion
 
 #region ./tools/install-powershell.readme.md Overrides
@@ -220,6 +226,8 @@ _Jobs
 -Include
 -Title
 0xfeeddeadbeef
+about_
+about_Jobs
 acceptance
 alpha.10
 alpha.11
@@ -230,6 +238,7 @@ alpha.16
 alpha.17
 alpha.18
 args
+Bhaal22
 behavioral
 bergmeister
 beta.1
@@ -288,6 +297,7 @@ KeyFileParameter
 KeyHandler
 KirkMunro
 kittholland
+kvprasoon
 kwiknick
 kylesferrazza
 LDSpits
@@ -327,6 +337,7 @@ Pwrshplughin.dll
 raghav710
 Raspbian
 rc
+rc.2
 rc2-24027
 rc3-24011
 README.md
@@ -366,6 +377,7 @@ v0.4.0
 v0.5.0
 v0.6.0
 v6.0.0
+v6.0.1
 ValidateNotNullOrEmpty
 WebListener
 WebRequest
@@ -375,11 +387,62 @@ WindowsVersion
 WSManCredSSP
 XPath
 Youtube
+stuntguy3000
+SwarfegaGit
+v6.0.2
+diddledan
+v6.1.0
+preview.1
+tandasat
+kwkam
+stknohg
+CloudyDino
+KevinMarquette
+tomconte
+DarqueWarrior
+Pawamoy
+strawgate
+CallmeJoeBob
+maertendMSFT
+seemethere
+zackJKnight
+brianbunke
+timothywlewis
+rpalo
+kanjibates
+kasper3
+ppadmavilasom
+Stanzilla
+mababio
+v4
+preview.2
+AppLocker
+DeviceGuard
+ffeldhaus
+gabrielsroka
+SimonWahlin
+sethvs
+Dockerfile
+VisualStudio
+readonly
+PowerShell.6
+preview.3
+Auth
+mcbobke
+wesholton84
+Patochun
+Jumplist
+bjh7242
+beta2
+PSGallery
+adelton
+qmfrederik
 #endregion
 
 #region CODE_OF_CONDUCT.md Overrides
  - CODE_OF_CONDUCT.md
 microsoft.com
+o
 opencode
 #endregion
 
@@ -411,6 +474,8 @@ u
 
 #region demos/DSC/readme.md Overrides
  - demos/DSC/readme.md
+www.github.com
+omi
 #endregion
 
 #region demos/python/README.md Overrides
@@ -419,50 +484,9 @@ _script.ps1
 _script.ps1.
 #endregion
 
-#region demos/Raspberry-Pi/README.md Overrides
- - demos/Raspberry-Pi/README.md
-2.0.x
-2.1.x
-Raspbian
-toolchain
-#endregion
-
 #region demos/rest/README.md Overrides
  - demos/rest/README.md
 rest.ps1
-#endregion
-
-#region demos/SSHRemoting/README.md Overrides
- - demos/SSHRemoting/README.md
-_config
-2kCbnhT2dUE6WCGgVJ8Hyfu1z2wE4lifaJXLO7QJy0Y
-com.openssh.sshd
-ComputerName
-ComputerType
-ConfigurationName
-Enter-PSSession
-HostName
-KeyFilePath
-KeyPath
-launchctl
-New-PSSession
-NoLogo
-NoProfile
-openssh-client
-openssh-server
-PasswordAuthentication
-PSCredential
-PSSessions
-PubkeyAuthentication
-RSAAuthentication
-ssh.exe
-sshd
-sshd.exe
-sshs
-TestUser
-UbuntuVM1
-UbuntuVM1s
-usr
 #endregion
 
 #region demos/SystemD/readme.md Overrides
@@ -484,7 +508,6 @@ WindowsPSModulePath
 andschwa's
 CurrentUser
 hub.docker.com
-microsoft
 NanoServer-Insider
 nanoserver-insider-powershell
 #endregion
@@ -495,10 +518,14 @@ Catalog
 flavor
 libpsl
 MSBuild
+nuget.exe
 plugin
 powershell-unix
-psrp.windows
 src
+v141
+x64_arm
+x64_arm64
+msbuild
 #endregion
 
 #region docs/building/macos.md Overrides
@@ -618,52 +645,6 @@ sample-dotnet1
 sample-dotnet2
 #endregion
 
-#region docs/installation/linux.md Overrides
- - docs/installation/linux.md
-compat-openssl10
-dockerfile
-libc6
-libcurl
-libcurl3
-libgcc1
-libgssapi-krb5-2
-libicu
-libicu52
-libicu55
-libicu57
-liblttng-ust0
-libssl1.0.0
-libssl1.0.2
-libstdc
-libunwind
-libunwind8
-libuuid1
-openssl-libs
-OpenSUSE
-zlib1g
-zypper
-#endregion
-
-#region docs/installation/windows.md Overrides
- - docs/installation/windows.md
-Install-PowerShellRemoting
-pwrshplugin.dll
-System32
-Win8
-windir
-#endregion
-
-#region docs/KNOWNISSUES.md Overrides
- - docs/KNOWNISSUES.md
-cp
-globbing
-pipelining
-psl-omi-provider
-Register-WmiEvent
-System.Management.Automation.SemanticVersion
-System.Timers.Timer
-#endregion
-
 #region docs/learning-powershell/create-powershell-scripts.md Overrides
  - docs/learning-powershell/create-powershell-scripts.md
 NetIP.ps1.
@@ -673,6 +654,7 @@ RemoteSigned
 #region docs/learning-powershell/debugging-from-commandline.md Overrides
  - docs/learning-powershell/debugging-from-commandline.md
 _Debuggers
+about_Debuggers
 celsius
 Set-PSBreakpoint
 test.ps1
@@ -783,6 +765,7 @@ Enable-RunspaceDebug
 Enable-WSManCredSSP
 Enable-WSManTrace
 Enter-PSHostProcess
+Enter-PSSession
 Exit-PSHostProcess
 Exit-PSSession
 Export-BinaryMiLog
@@ -848,6 +831,7 @@ New-LocalGroup
 New-LocalUser
 New-ModuleManifest
 New-PSDrive
+New-PSSession
 New-PSRoleCapabilityFile
 New-PSSessionConfigurationFile
 New-ScriptFileInfo
@@ -924,6 +908,7 @@ TabCompletion
 
 #region docs/testing-guidelines/TestRoadmap.md Overrides
  - docs/testing-guidelines/TestRoadmap.md
+_no_
 corefx
 DotCover
 Downlevel
@@ -957,8 +942,10 @@ Gitter
 microsoft.com
 msi
 omnisharp-vscode
+o
 opencode
 pkg
+tgz
 UserVoice
 #endregion
 
@@ -975,6 +962,7 @@ libpsl-native
 _history.txt
 _PSReadline
 50ms
+about_PSReadline
 AddToHistoryHandler
 AppData
 BackgroundColor
@@ -1038,184 +1026,6 @@ psd1
 psm1
 #endregion
 
-#region src/Modules/Shared/Pester/CHANGELOG.md Overrides
- - src/Modules/Shared/Pester/CHANGELOG.md
-_be
-AfterAll
-AfterEach
-ArgumentList
-Assert-MockCalled
-BeExactly
-BeforeAll
-BeforeEach
-BeGreaterThan
-BeLessThan
-BeNullOrEmpty
-BeOfType
-beta2
-cleanup
-CodeCoverage
-DisableOldStyleAssertions
-dynamicparam
-eg
-EnableExit
-EnableLegacyAssertions
-EnableLegacyExpectations
-ErrorAction
-ExcludeTagFilter
-ExclusiveFilter
-ExecutionContext
-ExecutionPolicy
-FunctionName
-fynctions
-GetDynamicParameters
-Get-MockDynamicParameters
-Get-TestDriveItem
-GH-100
-GH-102
-GH-107
-GH-109
-GH-113
-GH-114
-GH-123
-GH-125
-GH-126
-GH-129
-GH-13
-GH-130
-GH-134
-GH-135
-GH-136
-GH-137
-GH-139
-GH-143
-GH-144
-GH-147
-GH-148
-GH-149
-GH-150
-GH-152
-GH-155
-GH-156
-GH-158
-GH-163
-GH-164
-GH-165
-GH-166
-GH-167
-GH-168
-GH-171
-GH-172
-GH-174
-GH-176
-GH-183
-GH-185
-GH-186
-GH-187
-GH-188
-GH-19
-GH-190
-GH-192
-GH-195
-GH-200
-GH-203
-GH-209
-GH-215
-GH-223
-GH-232
-GH-234
-GH-249
-GH-254
-GH-26
-GH-266
-GH-267
-GH-27
-GH-272
-GH-274
-GH-276
-GH-278
-GH-281
-GH-290
-GH-295
-GH-304
-GH-306
-GH-307
-GH-322
-GH-323
-GH-324
-GH-326
-GH-327
-GH-333
-GH-341
-GH-346
-GH-35
-GH-354
-GH-358
-GH-362
-GH-368
-GH-37
-GH-38
-GH-39
-GH-40
-GH-42
-GH-46
-GH-49
-GH-50
-GH-52
-GH-58
-GH-61
-GH-68
-GH-69
-GH-70
-GH-71
-GH-84
-GH-86
-GH-9
-GH-90
-GH-92
-GH-94
-GH-95
-GH-98
-GH-99
-InModuleScope
-Invoke-Pester's
-ISESteroids
-LegacyNUnitXml
-ModuleName
-MyInvocation
-nuget.exe
-OutputFile
-OutputFormat
-OutputXml
-ParameterFilter
-PassThru
-Passthu
-pester.bat
-Pester.bat
-PesterException
-PesterThrowFailureMessage
-PSCommandPath
-PSv3
-should.not
-ShouldArgs
-StrictMode
-TestName
-Tests.ps1.
-v2
-v3
-v3.0
-Validate-Xml
-Write-UsageForNewFixture
-#endregion
-
-#region src/Modules/Shared/Pester/README.md Overrides
- - src/Modules/Shared/Pester/README.md
-hoc
-pester-bdd-for-the-system-administrator
-powershell-bdd-testing-pester-screencast
-v1.0.
-#endregion
-
 #region src/powershell/README.md Overrides
  - src/powershell/README.md
 powershell-unix
@@ -1251,6 +1061,16 @@ v6.0.
 #region test/tools/WebListener/README.md Overrides
  - test/tools/WebListener/README.md
 Auth
+failureCode
+failureCount
+NoResume
 NTLM
+NumberBytes
 ResponseHeaders
+sessionId
 #endregion
+includeide
+interactivetesting
+allowprerelease
+prereleases
+url

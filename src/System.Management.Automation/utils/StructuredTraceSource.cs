@@ -1,6 +1,6 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #define TRACE
 
 using System.Collections.Generic;
@@ -442,7 +442,6 @@ namespace System.Management.Automation
                     assemblyFileInfo.CreationTime);
             }
 
-
             StringBuilder flagBuilder = new StringBuilder();
             // Label
 
@@ -606,7 +605,7 @@ namespace System.Management.Automation
                                 eventHandlerOutputFormatter,
                                 eventHandlerLeavingFormatter,
                                 methodName,
-                                "");
+                                string.Empty);
                 }
                 catch
                 {
@@ -1614,7 +1613,7 @@ namespace System.Management.Automation
                 scopeOutputFormatter,
                 leavingScopeFormatter,
                 scopeName,
-                "");
+                string.Empty);
         }
 
         /// <summary>
@@ -1688,7 +1687,7 @@ namespace System.Management.Automation
                     scopeOutputFormatter,
                     leavingScopeFormatter,
                     scopeName,
-                    "");
+                    string.Empty);
             }
         }
 

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -84,7 +83,6 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Parameters
 
-
         #region Cmdlet Overrides
 
         /// <summary>
@@ -143,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                 Collection<FieldDescription> fdc = new Collection<FieldDescription>();
                 fdc.Add(fd);
 
-                Dictionary<string, PSObject> result = Host.UI.Prompt("", "", fdc);
+                Dictionary<string, PSObject> result = Host.UI.Prompt(string.Empty, string.Empty, fdc);
                 // Result can be null depending on the host implementation. One typical
                 // example of a null return is for a canceled dialog.
                 if (result != null)
@@ -170,8 +168,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Cmdlet Overrides
-
-
 
         private object _prompt = null;
         private Boolean _safe = false;

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -1541,8 +1540,6 @@ namespace System.Management.Automation.Runspaces
             SetDefaultErrorRecord();
         }
 
-
-
         /// <summary>
         /// This constructor takes a localized message and an inner exception.
         /// </summary>
@@ -1616,7 +1613,7 @@ namespace System.Management.Automation.Runspaces
             base.GetObjectData(info, context);
 
             // If there are simple fields, serialize them with info.AddValue
-            if (null != _errors)
+            if (_errors != null)
             {
                 int errorCount = _errors.Count;
                 info.AddValue("ErrorCount", errorCount);
@@ -1987,7 +1984,6 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
-
 
         // They are of NoteProperty
         private string _serializationMethod;
@@ -2433,7 +2429,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="referencedProperties"></param>
         public PropertySetData(IEnumerable<string> referencedProperties)
         {
-            if (null == referencedProperties)
+            if (referencedProperties == null)
             {
                 throw PSTraceSource.NewArgumentNullException("referencedProperties");
             }
@@ -2530,7 +2526,6 @@ namespace System.Management.Automation.Runspaces
     }
 
     #endregion TypeData
-
 
     /// <summary>
     /// A class that keeps the information from types.ps1xml files in a cache table
@@ -2748,7 +2743,6 @@ namespace System.Management.Automation.Runspaces
             return false;
         }
 
-
         /// <summary>
         /// Issue appropriate errors and remove members as necessary if:
         ///     - The serialization settings do not fall into one of the combinations of the table below
@@ -2888,7 +2882,7 @@ namespace System.Management.Automation.Runspaces
             }
             else
             {
-                if (null != targetTypeForDeserialization)
+                if (targetTypeForDeserialization != null)
                 {
                     // GetCheckNote converts the value from string to System.Type.. We should store value as Type
                     // as this will save time spent converting string to Type.
@@ -3176,7 +3170,6 @@ namespace System.Management.Automation.Runspaces
                 AddMember(errors, typeName, standardMemberSet, membersCollection, true);
             }
         }
-
 
         private void ProcessTypeDataToAdd(ConcurrentBag<string> errors, TypeData typeData)
         {
@@ -3471,7 +3464,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal TypeTable(IEnumerable<string> typeFiles, AuthorizationManager authorizationManager, PSHost host)
         {
-            if (null == typeFiles)
+            if (typeFiles == null)
             {
                 throw PSTraceSource.NewArgumentNullException("typeFiles");
             }
@@ -3558,7 +3551,6 @@ namespace System.Management.Automation.Runspaces
         {
             return PSObject.TransformMemberInfoCollection<PSMemberInfo, T>(GetMembers(types));
         }
-
 
         private PSMemberInfoInternalCollection<PSMemberInfo> GetMembers(ConsolidatedString types)
         {

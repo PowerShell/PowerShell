@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
@@ -661,11 +660,10 @@ namespace System.Management.Automation.Provider
                 }
                 basePath = basePath.TrimEnd(StringLiterals.DefaultPathSeparator);
 
-
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
                 if (String.Equals(normalizedPath, normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
-                    (!originalPath.EndsWith("" + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase)))
+                    (!originalPath.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
                 {
                     string childName = GetChildName(path);
                     result = MakePath("..", childName);
@@ -705,7 +703,7 @@ namespace System.Management.Automation.Provider
                     if (!String.IsNullOrEmpty(commonBase))
                     {
                         if (String.Equals(normalizedPath, commonBase, StringComparison.OrdinalIgnoreCase) &&
-                            (!normalizedPath.EndsWith("" + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase)))
+                            (!normalizedPath.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
                         {
                             string childName = GetChildName(path);
                             result = MakePath("..", result);
@@ -854,7 +852,6 @@ namespace System.Management.Automation.Provider
             }
         } // GetChildName
 
-
         /// <summary>
         /// Determines if the item specified by the path is a container.
         /// </summary>
@@ -886,7 +883,6 @@ namespace System.Management.Automation.Provider
                         SessionStateStrings.CmdletProvider_NotSupported);
             }
         }
-
 
         /// <summary>
         /// Moves the item specified by path to the specified destination.
@@ -963,7 +959,6 @@ namespace System.Management.Automation.Provider
                 return null;
             }
         } // MoveItemDynamicParameters
-
 
         #endregion Protected methods
 

@@ -57,7 +57,7 @@ namespace System.Management.Automation.Interpreter
                 return GetArrayAccessor(info, argumentCount);
             }
 
-            if (info is DynamicMethod || !info.IsStatic && info.DeclaringType.GetTypeInfo().IsValueType)
+            if (info is DynamicMethod || !info.IsStatic && info.DeclaringType.IsValueType)
             {
                 return new MethodInfoCallInstruction(info, argumentCount);
             }

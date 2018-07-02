@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -54,7 +53,7 @@ namespace Microsoft.PowerShell
 
             hostUI.Write(prompt);
             ss = hostUI.ReadLineAsSecureString();
-            hostUI.WriteLine("");
+            hostUI.WriteLine(string.Empty);
 
             return ss;
         }
@@ -157,7 +156,6 @@ namespace Microsoft.PowerShell
             return er;
         }
 
-
         /// <summary>
         /// Create an error record for 'operation not supported' condition
         /// </summary>
@@ -183,7 +181,6 @@ namespace Microsoft.PowerShell
             return er;
         }
 
-
         /// <summary>
         /// convert the specified provider path to a provider path
         /// and make sure that all of the following is true:
@@ -207,7 +204,7 @@ namespace Microsoft.PowerShell
                                                          string path)
         {
             string resolvedProviderPath = cmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path);
-            if (Utils.NativeFileExists(resolvedProviderPath))
+            if (Utils.FileExists(resolvedProviderPath))
             {
                 return resolvedProviderPath;
             }

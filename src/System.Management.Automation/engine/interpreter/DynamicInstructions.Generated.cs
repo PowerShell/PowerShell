@@ -13,7 +13,6 @@
  *
  * ***************************************************************************/
 
-
 using System;
 using System.Linq;
 using System.Reflection;
@@ -496,10 +495,8 @@ namespace System.Management.Automation.Interpreter {
         }
     }
 
-
     // *** END GENERATED CODE ***
 
     #endregion
-
 
 }

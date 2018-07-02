@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
@@ -48,7 +47,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private const string extensionSet = "ExtensionSet";
 
-
         /// <summary>
         /// The parameter set name to get the qualifier set.
         /// </summary>
@@ -85,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the literal path parameter to the command
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPathSet", Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public string[] LiteralPath
         {
             get
@@ -186,7 +184,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region parameter data
-
 
         #endregion parameter data
 

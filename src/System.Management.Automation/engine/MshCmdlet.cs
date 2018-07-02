@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Collections;
@@ -278,7 +277,7 @@ namespace System.Management.Automation
         /// </exception>
         public string ExpandString(string source)
         {
-            if (null != _cmdlet)
+            if (_cmdlet != null)
                 _cmdlet.ThrowIfStopping();
             return _context.Engine.Expand(source);
         }
@@ -445,7 +444,7 @@ namespace System.Management.Automation
             }
 
             CmdletAttribute ca = null;
-            foreach (var attr in cmdletType.GetTypeInfo().GetCustomAttributes(true))
+            foreach (var attr in cmdletType.GetCustomAttributes(true))
             {
                 ca = attr as CmdletAttribute;
                 if (ca != null)
@@ -788,7 +787,7 @@ namespace System.Management.Automation
         private Collection<PSObject> InvokeScript(ScriptBlock sb, bool useNewScope,
             PipelineResultTypes writeToPipeline, IList input, params object[] args)
         {
-            if (null != _cmdlet)
+            if (_cmdlet != null)
                 _cmdlet.ThrowIfStopping();
 
             Cmdlet cmdletToUse = null;
@@ -880,7 +879,7 @@ namespace System.Management.Automation
         /// <exception cref="ParseException"></exception>
         public ScriptBlock NewScriptBlock(string scriptText)
         {
-            if (null != _commandRuntime)
+            if (_commandRuntime != null)
                 _commandRuntime.ThrowIfStopping();
 
             ScriptBlock result = ScriptBlock.Create(_context, scriptText);

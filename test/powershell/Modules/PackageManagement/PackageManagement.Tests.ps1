@@ -1,4 +1,4 @@
-﻿#
+#
 #  Copyright (c) Microsoft Corporation. All rights reserved.
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 $InternalGallery = "https://dtlgalleryint.cloudapp.net/api/v2/"
 $InternalSource = 'OneGetTestSource'
 
-
 Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
  BeforeAll{
@@ -32,45 +31,43 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
         $gpp = Get-PackageProvider
 
-        $gpp | Where-Object { $_.name -eq "NuGet" } | should not BeNullOrEmpty
+        $gpp.Name | Should -Contain 'NuGet'
 
-        $gpp | Where-Object { $_.name -eq "PowerShellGet" } | should not BeNullOrEmpty
+        $gpp.Name | Should -Contain 'PowerShellGet'
     }
-
 
     It "find-packageprovider PowerShellGet" {
         $fpp = (Find-PackageProvider -Name "PowerShellGet" -force).name
-        $fpp -contains "PowerShellGet" | should be $true
+        $fpp | Should -Contain "PowerShellGet"
     }
 
      It "install-packageprovider, Expect succeed" {
         $ipp = (install-PackageProvider -name gistprovider -force -source $InternalSource -Scope CurrentUser).name
-        $ipp -contains "gistprovider" | should be $true
+        $ipp | Should -Contain "gistprovider"
     }
-
 
     it "Find-package"  {
         $f = Find-Package -ProviderName NuGet -Name jquery -source Nugettest
-        $f.Name -contains "jquery" | should be $true
+        $f.Name | Should -Contain "jquery"
 	}
 
     it "Install-package"  {
         $i = install-Package -ProviderName NuGet -Name jquery -force -source Nugettest -Scope CurrentUser
-        $i.Name -contains "jquery" | should be $true
+        $i.Name | Should -Contain "jquery"
 	}
 
     it "Get-package"  {
         $g = Get-Package -ProviderName NuGet -Name jquery
-        $g.Name -contains "jquery" | should be $true
+        $g.Name | Should -Contain "jquery"
 	}
 
     it "save-package"  {
         $s = save-Package -ProviderName NuGet -Name jquery -path $TestDrive -force -source Nugettest
-        $s.Name -contains "jquery" | should be $true
+        $s.Name | Should -Contain "jquery"
 	}
 
     it "uninstall-package"  {
         $u = uninstall-Package -ProviderName NuGet -Name jquery
-        $u.Name -contains "jquery" | should be $true
+        $u.Name | Should -Contain "jquery"
 	}
 }

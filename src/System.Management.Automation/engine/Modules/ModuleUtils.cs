@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Globalization;
@@ -176,7 +175,7 @@ namespace System.Management.Automation.Internal
             {
                 string moduleFile = Path.Combine(directory, fileName) + ext;
 
-                if (!Utils.NativeFileExists(moduleFile))
+                if (!Utils.FileExists(moduleFile))
                 {
                     continue;
                 }
@@ -234,7 +233,7 @@ namespace System.Management.Automation.Internal
                 foreach (string ext in ModuleIntrinsics.PSModuleExtensions)
                 {
                     string moduleFile = Path.Combine(directoryToCheck, proposedModuleName) + ext;
-                    if (!Utils.NativeFileExists(moduleFile))
+                    if (!File.Exists(moduleFile))
                     {
                         continue;
                     }
@@ -373,9 +372,6 @@ namespace System.Management.Automation.Internal
                                         case CommandTypes.Alias:
                                             current = new AliasInfo(entry.Value.Name, null, context);
                                             break;
-                                        case CommandTypes.Workflow:
-                                            current = new WorkflowInfo(entry.Value.Name, ScriptBlock.EmptyScriptBlock, context);
-                                            break;
                                         case CommandTypes.Function:
                                             current = new FunctionInfo(entry.Value.Name, ScriptBlock.EmptyScriptBlock, context);
                                             break;
@@ -481,13 +477,6 @@ namespace System.Management.Automation.Internal
                                 if ((commandTypes & CommandTypes.Configuration) == CommandTypes.Configuration)
                                 {
                                     yield return new ConfigurationInfo(commandName, ScriptBlock.EmptyScriptBlock, context)
-                                    {
-                                        Module = tempModuleInfo
-                                    };
-                                }
-                                if ((commandTypes & CommandTypes.Workflow) == CommandTypes.Workflow)
-                                {
-                                    yield return new WorkflowInfo(commandName, ScriptBlock.EmptyScriptBlock, context)
                                     {
                                         Module = tempModuleInfo
                                     };

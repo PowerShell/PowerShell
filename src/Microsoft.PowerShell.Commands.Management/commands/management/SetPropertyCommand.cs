@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -42,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = propertyPSObjectLiteralPathSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public string[] LiteralPath
         {
             get { return paths; }
@@ -226,7 +225,6 @@ namespace Microsoft.PowerShell.Commands
             }
         } // ProcessRecord
         #endregion Command code
-
 
     } // SetItemPropertyCommand
 } // namespace Microsoft.PowerShell.Commands

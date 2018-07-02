@@ -1,6 +1,5 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Runtime.InteropServices;
 using System.Reflection;
@@ -35,7 +34,7 @@ namespace System.Management.Automation
             // TypeAttributes.WindowsRuntime is part of CLR 4.5. Inorder to build PowerShell for
             // CLR 4.0, a string comparison for the for the existence of TypeAttributes.WindowsRuntime
             // in the Attributes flag is performed rather than the actual bitwise comparison.
-            return type.GetTypeInfo().Attributes.ToString().Contains("WindowsRuntime");
+            return type.Attributes.ToString().Contains("WindowsRuntime");
         }
     }
 }

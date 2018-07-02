@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Runtime.InteropServices;
 using System.Management.Automation.ComInterop;
@@ -96,7 +95,6 @@ namespace System.Management.Automation
 
             return builder.ToString();
         }
-
 
         /// <summary>
         /// Gets the name of the method or property defined by funcdesc
@@ -236,7 +234,7 @@ namespace System.Management.Automation
                     return "object[]";
 
                 case VarEnum.VT_EMPTY:
-                    return "";
+                    return string.Empty;
 
                 default:
                     return "Unknown!";

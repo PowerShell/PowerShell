@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -596,7 +595,6 @@ namespace Microsoft.PowerShell.Commands
                 base.AllowRedirection = value;
             }
         }
-
 
         /// <summary>
         /// Extended Session Options for controlling the session creation. Use

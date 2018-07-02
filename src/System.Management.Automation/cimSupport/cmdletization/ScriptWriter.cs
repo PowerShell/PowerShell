@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -132,8 +131,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
             string objectModelWrapperName = _cmdletizationMetadata.Class.CmdletAdapter ?? defaultObjectModelWrapper;
             _objectModelWrapper = (Type)LanguagePrimitives.ConvertTo(objectModelWrapperName, typeof(Type), CultureInfo.InvariantCulture);
-            TypeInfo objectModelWrapperTypeInfo = _objectModelWrapper.GetTypeInfo();
-            if (objectModelWrapperTypeInfo.IsGenericType)
+            if (_objectModelWrapper.IsGenericType)
             {
                 string message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -142,10 +140,9 @@ namespace Microsoft.PowerShell.Cmdletization
                 throw new XmlException(message);
             }
             Type baseType = _objectModelWrapper;
-            TypeInfo baseTypeInfo = objectModelWrapperTypeInfo;
-            while ((!baseTypeInfo.IsGenericType) || baseTypeInfo.GetGenericTypeDefinition() != typeof(CmdletAdapter<>))
+            while ((!baseType.IsGenericType) || baseType.GetGenericTypeDefinition() != typeof(CmdletAdapter<>))
             {
-                baseType = baseTypeInfo.BaseType;
+                baseType = baseType.BaseType;
                 if (baseType == typeof(object))
                 {
                     string message = string.Format(
@@ -155,7 +152,6 @@ namespace Microsoft.PowerShell.Cmdletization
                         typeof(CmdletAdapter<>).FullName);
                     throw new XmlException(message);
                 }
-                baseTypeInfo = baseType.GetTypeInfo();
             }
             _objectInstanceType = baseType.GetGenericArguments()[0];
 
@@ -916,7 +912,6 @@ function __cmdletization_BindCommonParameters
                 }
             }
         }
-
 
         private const string StaticCommonParameterSetTemplate = "{1}"; //"{0}::{1}";
         private const string StaticMethodParameterSetTemplate = "{0}"; //"{1}::{0}";
@@ -2195,7 +2190,6 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                     cmdletMetadatas.Concat(
                         _cmdletizationMetadata.Class.StaticCmdlets.Select(c => c.CmdletMetadata));
             }
-
 
             foreach (CommonCmdletMetadata cmdletMetadata in cmdletMetadatas)
             {

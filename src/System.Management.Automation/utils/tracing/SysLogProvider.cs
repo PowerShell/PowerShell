@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 #if UNIX
 
 using System;
@@ -88,7 +90,7 @@ namespace System.Management.Automation.Tracing
         /// Initializes a new instance of this class.
         /// </summary>
         /// <param name="applicationId">The log identity name used to identify the application in syslog.</param>
-        /// <param name="level">The trace lavel to enable.</param>
+        /// <param name="level">The trace level to enable.</param>
         /// <param name="keywords">The keywords to enable.</param>
         /// <param name="channels">The output channels to enable.</param>
         public SysLogProvider(string applicationId, PSLevel level, PSKeyword keywords, PSChannel channels)
@@ -102,6 +104,14 @@ namespace System.Management.Automation.Tracing
             _keywordFilter = (ulong)keywords;
             _levelFilter = (byte) level;
             _channelFilter = (byte) channels;
+            if ((_channelFilter & (ulong) PSChannel.Operational) != 0)
+            {
+                _keywordFilter |= (ulong) PSKeyword.UseAlwaysOperational;
+            }
+            if ((_channelFilter & (ulong) PSChannel.Analytic) != 0)
+            {
+                _keywordFilter |= (ulong) PSKeyword.UseAlwaysAnalytic;
+            }
         }
 
         /// <summary>
@@ -188,7 +198,7 @@ namespace System.Management.Automation.Tracing
             {
                 if (object.ReferenceEquals(_resourceManager, null))
                 {
-                    _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).GetTypeInfo().Assembly);
+                    _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).Assembly);
                 }
                 return _resourceManager;
             }
@@ -357,6 +367,7 @@ namespace System.Management.Automation.Tracing
 
     internal static class NativeMethods
     {
+        const string libpslnative = "libpsl-native";
         /// <summary>
         /// Write a message to the system logger, which in turn writes the message to the system console, log files, etc.
         /// See man 3 syslog for more info.
@@ -365,13 +376,13 @@ namespace System.Management.Automation.Tracing
         /// The OR of a priority and facility in the SysLogPriority enum indicating the the priority and facility of the log entry.
         /// </param>
         /// <param name="message">The message to put in the log entry.</param>
-        [DllImport("psl-native", CharSet = CharSet.Ansi, EntryPoint = "Native_SysLog")]
+        [DllImport(libpslnative, CharSet = CharSet.Ansi, EntryPoint = "Native_SysLog")]
         internal static extern void SysLog(SysLogPriority priority, string message);
 
-        [DllImport("psl-native", CharSet = CharSet.Ansi, EntryPoint = "Native_OpenLog")]
+        [DllImport(libpslnative, CharSet = CharSet.Ansi, EntryPoint = "Native_OpenLog")]
         internal static extern void OpenLog(IntPtr ident, SysLogPriority facility);
 
-        [DllImport("psl-native", EntryPoint = "Native_CloseLog")]
+        [DllImport(libpslnative, EntryPoint = "Native_CloseLog")]
         internal static extern void CloseLog();
 
         [Flags]

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -29,6 +28,7 @@ namespace Microsoft.PowerShell.Commands
         /// FilePath parameter
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "File")]
+        [Alias("Path")]
         public string FilePath
         {
             get { return _fileName; }
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         /// Literal FilePath parameter
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralFile")]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public string LiteralPath
         {
             get

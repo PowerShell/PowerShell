@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #region Using directives
 using System;
 using System.Collections.Generic;
@@ -10,7 +13,6 @@ using System.Management.Automation.SecurityAccountsManager.Extensions;
 using Microsoft.PowerShell.LocalAccounts;
 using System.Diagnostics.CodeAnalysis;
 #endregion
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -94,7 +96,6 @@ namespace Microsoft.PowerShell.Commands
         private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
 
-
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -103,7 +104,6 @@ namespace Microsoft.PowerShell.Commands
         {
             sam = new Sam();
         }
-
 
         /// <summary>
         /// ProcessRecord method.
@@ -124,7 +124,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(ex.MakeErrorRecord());
             }
         }
-
 
         /// <summary>
         /// EndProcessing method.
@@ -209,7 +208,6 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
-
         /// <summary>
         /// Determine if a principal should be processed.
         /// Just a wrapper around Cmdlet.ShouldProcess, with localized string
@@ -245,10 +243,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (var member in this.Member)
             {
                 LocalPrincipal principal = MakePrincipal(groupId, member);
-                if (null != principal)
+                if (principal != null)
                 {
                     var ex = sam.AddLocalGroupMember(group, principal);
-                    if (null != ex)
+                    if (ex != null)
                     {
                         WriteError(ex.MakeErrorRecord());
                     }
@@ -279,10 +277,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (var member in this.Member)
             {
                 LocalPrincipal principal = MakePrincipal(groupSid.ToString(), member);
-                if (null != principal)
+                if (principal != null)
                 {
                     var ex = sam.AddLocalGroupMember(groupSid, principal);
-                    if (null != ex)
+                    if (ex != null)
                     {
                         WriteError(ex.MakeErrorRecord());
                     }

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Net;
 using System.Net.Sockets;
@@ -246,7 +245,6 @@ namespace System.Management.Automation.Runspaces
         internal const int DefaultOpenTimeout = 3 * 60 * 1000; // 3 minutes
         internal const int DefaultTimeout = -1;
         internal const int InfiniteTimeout = 0;
-
 
         /// <summary>
         /// The duration (in ms) for which PowerShell should wait before it times out on cancel operations
@@ -714,7 +712,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-
         /// <summary>
         /// When connecting over HTTPS, the client does not validate that the server
         /// certificate is signed by a trusted certificate authority (CA). Use only when
@@ -1130,7 +1127,7 @@ namespace System.Management.Automation.Runspaces
             string property, T defaultValue)
         {
             WSManConnectionInfo wsCI = rsCI as WSManConnectionInfo;
-            if (null == wsCI)
+            if (wsCI == null)
             {
                 return defaultValue;
             }
@@ -1140,7 +1137,7 @@ namespace System.Management.Automation.Runspaces
 
         internal void SetConnectionUri(Uri newUri)
         {
-            Dbg.Assert(null != newUri, "newUri cannot be null.");
+            Dbg.Assert(newUri != null, "newUri cannot be null.");
             _connectionUri = newUri;
         }
 
@@ -1870,6 +1867,15 @@ namespace System.Management.Automation.Runspaces
             set;
         }
 
+        /// <summary>
+        /// Subsystem to use
+        /// </summary>
+        private string Subsystem
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Constructors
@@ -1897,6 +1903,7 @@ namespace System.Management.Automation.Runspaces
             this.ComputerName = computerName;
             this.KeyFilePath = keyFilePath;
             this.Port = DefaultPort;
+            this.Subsystem = DefaultSubsystem;
         }
 
         /// <summary>
@@ -1915,6 +1922,27 @@ namespace System.Management.Automation.Runspaces
             ValidatePortInRange(port);
 
             this.Port = (port != 0) ? port : DefaultPort;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="userName">User Name</param>
+        /// <param name="computerName">Computer Name</param>
+        /// <param name="keyFilePath">Key File Path</param>
+        /// <param name="port">Port number for connection (default 22)</param>
+        /// <param name="subsystem">Subsystem to use (default 'powershell')</param>
+        public SSHConnectionInfo(
+            string userName,
+            string computerName,
+            string keyFilePath,
+            int port,
+            string subsystem) : this(userName, computerName, keyFilePath)
+        {
+            ValidatePortInRange(port);
+
+            this.Port = (port != 0) ? port : DefaultPort;
+            this.Subsystem = (String.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
         }
 
         #endregion
@@ -1968,6 +1996,7 @@ namespace System.Management.Automation.Runspaces
             newCopy.UserName = this.UserName;
             newCopy.KeyFilePath = this.KeyFilePath;
             newCopy.Port = this.Port;
+            newCopy.Subsystem = this.Subsystem;
 
             return newCopy;
         }
@@ -2043,14 +2072,14 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 arguments = (string.IsNullOrEmpty(domainName)) ?
-                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" {1}@{2} -p {3} -s powershell", this.KeyFilePath, userName, this.ComputerName, this.Port) :
-                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" -l {1}@{2} {3} -p {4} -s powershell", this.KeyFilePath, userName, domainName, this.ComputerName, this.Port);
+                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" {1}@{2} -p {3} -s {4}", this.KeyFilePath, userName, this.ComputerName, this.Port, this.Subsystem) :
+                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" -l {1}@{2} {3} -p {4} -s {5}", this.KeyFilePath, userName, domainName, this.ComputerName, this.Port, this.Subsystem);
             }
             else
             {
                 arguments = (string.IsNullOrEmpty(domainName)) ?
-                    string.Format(CultureInfo.InvariantCulture, @"{0}@{1} -p {2} -s powershell", userName, this.ComputerName, this.Port) :
-                    string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1} {2} -p {3} -s powershell", userName, domainName, this.ComputerName, this.Port);
+                    string.Format(CultureInfo.InvariantCulture, @"{0}@{1} -p {2} -s {3}", userName, this.ComputerName, this.Port, this.Subsystem) :
+                    string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1} {2} -p {3} -s {4}", userName, domainName, this.ComputerName, this.Port, this.Subsystem);
             }
 
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(
@@ -2084,6 +2113,11 @@ namespace System.Management.Automation.Runspaces
         /// Default value for port
         /// </summary>
         private const int DefaultPort = 22;
+
+        /// <summary>
+        /// Default value for subsystem
+        /// </summary>
+        private const string DefaultSubsystem = "powershell";
 
         #endregion
 
@@ -2148,7 +2182,7 @@ namespace System.Management.Automation.Runspaces
 
             string filename = startInfo.FileName;
             string[] argv = ParseArgv(startInfo);
-            string[] envp = new string[0];
+            string[] envp = CopyEnvVariables(startInfo);
             string cwd = !string.IsNullOrWhiteSpace(startInfo.WorkingDirectory) ? startInfo.WorkingDirectory : null;
 
             // Invoke the shim fork/execve routine.  It will create pipes for all requested
@@ -2203,6 +2237,20 @@ namespace System.Management.Automation.Runspaces
             return new FileStream(
                 new SafeFileHandle((IntPtr)fd, ownsHandle: true),
                 access, StreamBufferSize, isAsync: false);
+        }
+
+        /// <summary>Copies environment variables from ProcessStartInfo </summary>
+        /// <param name="psi">ProcessStartInfo</param>
+        /// <returns>String array of environment key/value pairs</returns>
+        private static string[] CopyEnvVariables(ProcessStartInfo psi)
+        {
+            var envp = new string[psi.Environment.Count];
+            int index = 0;
+            foreach (var pair in psi.Environment)
+            {
+                envp[index++] = pair.Key + "=" + pair.Value;
+            }
+            return envp;
         }
 
         /// <summary>Converts the filename and arguments information from a ProcessStartInfo into an argv array.</summary>

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Language;
 using System.Security;
@@ -8,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
@@ -67,6 +67,10 @@ namespace System.Management.Automation
 
             _workingLocationStack = new Dictionary<String, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
 
+            // Conservative choice to limit the Set-Location history in order to limit memory impact in case of a regression.
+            const int locationHistoryLimit = 20;
+            _SetLocationHistory = new BoundedStack<PathInfo>(locationHistoryLimit);
+
             GlobalScope = new SessionStateScope(null);
             ModuleScope = GlobalScope;
             _currentScope = GlobalScope;
@@ -77,7 +81,6 @@ namespace System.Management.Automation
             // the starting script scope.  That way, if you dot-source a script
             // that uses variables qualified by script: it works.
             GlobalScope.ScriptScope = GlobalScope;
-
 
             if (parent != null)
             {
@@ -123,7 +126,6 @@ namespace System.Management.Automation
             PSVariable errorvariable = new PSVariable("Error", new ArrayList(), ScopedItemOptions.Constant);
             GlobalScope.SetVariable(errorvariable.Name, errorvariable, false, false, this, fastPath: true);
 
-
             // Set variable $PSDefaultParameterValues
             Collection<Attribute> attributes = new Collection<Attribute>();
             attributes.Add(new ArgumentTypeConverterAttribute(typeof(System.Management.Automation.DefaultParameterDictionary)));
@@ -133,7 +135,6 @@ namespace System.Management.Automation
                                                                          RunspaceInit.PSDefaultParameterValuesDescription);
             GlobalScope.SetVariable(psDefaultParameterValuesVariable.Name, psDefaultParameterValuesVariable, false, false, this, fastPath: true);
         }
-
 
         #endregion Constructor
 
@@ -234,7 +235,6 @@ namespace System.Management.Automation
         /// is in the list, then all applications can be run. (This is the default.)
         /// </summary>
         public List<string> Applications { get; } = new List<string>(new string[] { "*" });
-
 
         /// <summary>
         /// List of functions/filters to export from this session state object...
@@ -366,7 +366,7 @@ namespace System.Management.Automation
             // $PSHOME
             // This depends on the shellId. If we cannot read the application base
             // registry key, set the variable to empty string
-            string applicationBase = "";
+            string applicationBase = string.Empty;
             try
             {
                 applicationBase = Utils.GetApplicationBase(shellId);
@@ -379,55 +379,6 @@ namespace System.Management.Automation
                     RunspaceInit.PSHOMEDescription);
 
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
-        }
-
-        /// <summary>
-        /// Add all of the default built-in functions to this session state instance...
-        /// </summary>
-        internal void AddBuiltInEntries(bool addSetStrictMode)
-        {
-            // Other built-in variables
-            AddBuiltInVariables();
-            AddBuiltInFunctions();
-            AddBuiltInAliases();
-            if (addSetStrictMode)
-            {
-                SessionStateFunctionEntry f = new SessionStateFunctionEntry("Set-StrictMode", "");
-                this.AddSessionStateEntry(f);
-            }
-        }
-
-        /// <summary>
-        /// Add the built-in variables to this instance of session state...
-        /// </summary>
-        internal void AddBuiltInVariables()
-        {
-            foreach (SessionStateVariableEntry e in InitialSessionState.BuiltInVariables)
-            {
-                this.AddSessionStateEntry(e);
-            }
-        }
-
-        /// <summary>
-        /// Add the built-in functions to this instance of session state...
-        /// </summary>
-        internal void AddBuiltInFunctions()
-        {
-            foreach (SessionStateFunctionEntry f in InitialSessionState.BuiltInFunctions)
-            {
-                this.AddSessionStateEntry(f);
-            }
-        }
-
-        /// <summary>
-        /// Add the built-in aliases to this instance of session state...
-        /// </summary>
-        internal void AddBuiltInAliases()
-        {
-            foreach (SessionStateAliasEntry ae in InitialSessionState.BuiltInAliases)
-            {
-                this.AddSessionStateEntry(ae, StringLiterals.Global);
-            }
         }
 
         /// <summary>
@@ -535,7 +486,6 @@ namespace System.Management.Automation
             return NewProviderInvocationException(resourceId, resourceStr, provider, path, e, true);
         }
 
-
         /// <summary>
         /// Constructs a new instance of a ProviderInvocationException
         /// using the specified data
@@ -590,7 +540,7 @@ namespace System.Management.Automation
             //  ProviderInvocationException, and we don't want to
             //  re-wrap it.
             ProviderInvocationException pie = e as ProviderInvocationException;
-            if (null != pie)
+            if (pie != null)
             {
                 pie._providerInfo = provider;
                 return pie;

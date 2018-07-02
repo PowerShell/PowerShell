@@ -1,4 +1,7 @@
-﻿using System;
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using System;
 
 using Microsoft.PowerShell.LocalAccounts;
 
@@ -47,7 +50,6 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Construction
 
-
         #region Public Methods
         /// <summary>
         /// Provides a string representation of the LocalGroup object.
@@ -68,10 +70,6 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public LocalGroup Clone()
         {
-            if (null == this)
-            {
-                throw new NullReferenceException();
-            }
             return new LocalGroup(this);
         }
         #endregion Public Methods

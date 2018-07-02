@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -730,7 +729,7 @@ namespace System.Management.Automation
         /// </returns>
         internal static Collection<string> MaskDeserializationPrefix(Collection<string> typeNames)
         {
-            Dbg.Assert(null != typeNames, "typeNames cannot be null");
+            Dbg.Assert(typeNames != null, "typeNames cannot be null");
 
             bool atleastOneDeserializedTypeFound = false;
 
@@ -1059,7 +1058,6 @@ namespace System.Management.Automation
             }
             return false;
         }
-
 
         /// <summary>
         ///
@@ -2504,7 +2502,6 @@ namespace System.Management.Automation
             WriteEncodedString(serializer, streamName, property, Convert.ToString(source, CultureInfo.InvariantCulture), entry);
         }
 
-
         /// <summary>
         /// Serialize string as item or property
         /// </summary>
@@ -2868,7 +2865,6 @@ namespace System.Management.Automation
             }
             return new String(result, 0, rlen);
         }
-
 
         /// <summary>
         /// Writes element string in monad namespace
@@ -3503,7 +3499,7 @@ namespace System.Management.Automation
 
                 bool isKnownPrimitiveType;
                 object result = ReadOneDeserializedObject(out streamName, out isKnownPrimitiveType);
-                if (null == result)
+                if (result == null)
                 {
                     return null;
                 }
@@ -3518,7 +3514,7 @@ namespace System.Management.Automation
 
                     // Convert deserialized object to a user-defined type (specified in a types.ps1xml file)
                     Type targetType = mshSource.GetTargetTypeForDeserialization(_typeTable);
-                    if (null != targetType)
+                    if (targetType != null)
                     {
                         Exception rehydrationException = null;
                         try
@@ -3759,7 +3755,6 @@ namespace System.Management.Automation
                     - 29 // size of <Obj><TNRef RefId="0"/></Obj> in UTF8 encoding
                     );
                 dso.InternalTypeNames = new ConsolidatedString(typeNames);
-
 
                 //Skip the node
                 Skip();
@@ -5197,12 +5192,6 @@ namespace System.Management.Automation
                                       InternalSerializer.WriteVersion,
                                       InternalDeserializer.DeserializeVersion),
 
-            new TypeSerializationInfo(typeof(SemanticVersion),
-                                      SerializationStrings.SemanticVersionTag,
-                                      SerializationStrings.SemanticVersionTag,
-                                      InternalSerializer.WriteSemanticVersion,
-                                      InternalDeserializer.DeserializeSemanticVersion),
-
             s_xdInfo,
 
             new TypeSerializationInfo(typeof(ProgressRecord),
@@ -5313,7 +5302,7 @@ namespace System.Management.Automation
             else
             {
                 Type gt = source.GetType();
-                if (gt.GetTypeInfo().IsGenericType)
+                if (gt.IsGenericType)
                 {
                     if (DerivesFromGenericType(gt, typeof(Stack<>)))
                     {
@@ -5387,14 +5376,14 @@ namespace System.Management.Automation
             Dbg.Assert(baseType != null, "caller should validate the parameter");
             while (derived != null)
             {
-                if (derived.GetTypeInfo().IsGenericType)
+                if (derived.IsGenericType)
                     derived = derived.GetGenericTypeDefinition();
 
                 if (derived == baseType)
                 {
                     return true;
                 }
-                derived = derived.GetTypeInfo().BaseType;
+                derived = derived.BaseType;
             }
             return false;
         }
@@ -6425,14 +6414,14 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static PSPrimitiveDictionary CloneAndAddPSVersionTable(PSPrimitiveDictionary originalHash)
         {
-            if ((null != originalHash) &&
+            if ((originalHash != null) &&
                 (originalHash.ContainsKey(PSVersionInfo.PSVersionTableName)))
             {
                 return (PSPrimitiveDictionary)originalHash.Clone();
             }
 
             PSPrimitiveDictionary result = originalHash;
-            if (null != originalHash)
+            if (originalHash != null)
             {
                 result = (PSPrimitiveDictionary)originalHash.Clone();
             }

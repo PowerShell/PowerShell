@@ -1,6 +1,5 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,7 +26,7 @@ namespace System.Management.Automation.Interpreter
         internal static Type GetNullableType(Type type)
         {
             Debug.Assert(type != null, "type cannot be null");
-            if (type.GetTypeInfo().IsValueType && !IsNullableType(type))
+            if (type.IsValueType && !IsNullableType(type))
             {
                 return typeof(Nullable<>).MakeGenericType(type);
             }
@@ -36,8 +35,7 @@ namespace System.Management.Automation.Interpreter
 
         internal static bool IsNullableType(Type type)
         {
-            var typeInfo = type.GetTypeInfo();
-            return typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(Nullable<>);
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
         internal static bool IsBool(Type type)
@@ -48,7 +46,7 @@ namespace System.Management.Automation.Interpreter
         internal static bool IsNumeric(Type type)
         {
             type = GetNonNullableType(type);
-            if (!type.GetTypeInfo().IsEnum)
+            if (!type.IsEnum)
             {
                 switch (type.GetTypeCode())
                 {
@@ -92,7 +90,7 @@ namespace System.Management.Automation.Interpreter
         internal static bool IsArithmetic(Type type)
         {
             type = GetNonNullableType(type);
-            if (!type.GetTypeInfo().IsEnum)
+            if (!type.IsEnum)
             {
                 switch (type.GetTypeCode())
                 {
@@ -675,7 +673,6 @@ namespace System.Management.Automation.Interpreter
         private static readonly StorageInfo[] s_updating = Automation.Utils.EmptyArray<StorageInfo>();   // a marker used when updating the array
         private readonly bool _refCounted;
 
-
         public ThreadLocal()
         {
         }
@@ -757,31 +754,6 @@ namespace System.Management.Automation.Interpreter
 
         #region Storage implementation
 
-#if SILVERLIGHT
-        private static int _cfThreadIdDispenser = 1;
-
-        [ThreadStatic]
-        private static int _cfThreadId;
-
-        private static int GetCurrentThreadId() {
-            if (PlatformAdaptationLayer.IsCompactFramework) {
-                // CF doesn't index threads by small integers, so we need to do the indexing ourselves:
-                int id = _cfThreadId;
-                if (id == 0) {
-                    _cfThreadId = id = Interlocked.Increment(ref _cfThreadIdDispenser);
-                }
-                return id;
-            } else {
-                return Thread.CurrentThread.ManagedThreadId;
-            }
-        }
-#else
-        private static int GetCurrentThreadId()
-        {
-            return Thread.CurrentThread.ManagedThreadId;
-        }
-#endif
-
         /// <summary>
         /// Gets the StorageInfo for the current thread.
         /// </summary>
@@ -792,7 +764,7 @@ namespace System.Management.Automation.Interpreter
 
         private StorageInfo GetStorageInfo(StorageInfo[] curStorage)
         {
-            int threadId = GetCurrentThreadId();
+            int threadId = Thread.CurrentThread.ManagedThreadId;
 
             // fast path if we already have a value in the array
             if (curStorage != null && curStorage.Length > threadId)
@@ -842,7 +814,7 @@ namespace System.Management.Automation.Interpreter
             StorageInfo[] curStorage = s_updating;
             try
             {
-                int threadId = GetCurrentThreadId();
+                int threadId = Thread.CurrentThread.ManagedThreadId;
                 StorageInfo newInfo = new StorageInfo(Thread.CurrentThread);
 
                 // set to updating while potentially resizing/mutating, then we'll

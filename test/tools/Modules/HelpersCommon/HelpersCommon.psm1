@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 function Wait-UntilTrue
 {
     [CmdletBinding()]
@@ -54,30 +56,6 @@ function Test-IsElevated
     }
     return $IsElevated
 }
-#This function follows the pester naming convention
-function ShouldBeErrorId
-{
-    param([Parameter(ValueFromPipeline, Mandatory)]
-        [ScriptBlock]
-        $sb,
-
-        [Parameter(Mandatory, Position=0)]
-        [string]
-        $FullyQualifiedErrorId)
-
-        try
-        {
-            & $sb | Out-Null
-            Throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be $FullyQualifiedErrorId | Out-Null
-            # Write the exception to output that allow us to check later other properies of the exception
-            Write-Output $_
-        }
-}
-
 function Get-RandomFileName
 {
     [System.IO.Path]::GetFileNameWithoutExtension([IO.Path]::GetRandomFileName())
@@ -88,7 +66,7 @@ function Get-RandomFileName
 # note these manipulate private data in the PowerShell engine which will
 # enable us to not actually alter the system or mock returned data
 #
-$SCRIPT:TesthookType = [system.management.automation.internal.internaltesthooks] 
+$SCRIPT:TesthookType = [system.management.automation.internal.internaltesthooks]
 function Test-TesthookIsSet
 {
     param (
@@ -130,10 +108,87 @@ function Set-TesthookResult
     param (
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory=$true)]
-        $testhookName, 
+        $testhookName,
         [ValidateNotNullOrEmpty()]
         [Parameter(Mandatory=$true)]
         $value
     )
     ${Script:TesthookType}::SetTestHook($testhookName, $value)
+}
+
+function Add-TestDynamicType
+{
+    param()
+
+    Add-Type -TypeDefinition @'
+using System.Collections.Generic;
+using System.Dynamic;
+
+public class TestDynamic : DynamicObject
+{
+    private static readonly string[] s_dynamicMemberNames = new string[] { "FooProp", "BarProp", "FooMethod", "SerialNumber" };
+
+    private static int s_lastSerialNumber;
+
+    private readonly int _serialNumber;
+
+    public TestDynamic()
+    {
+        _serialNumber = ++s_lastSerialNumber;
+    }
+
+    public override IEnumerable<string> GetDynamicMemberNames()
+    {
+        return s_dynamicMemberNames;
+    }
+
+    public override bool TryGetMember(GetMemberBinder binder, out object result)
+    {
+        result = null;
+
+        if (binder.Name == "FooProp")
+        {
+            result = 123;
+            return true;
+        }
+        else if (binder.Name == "BarProp")
+        {
+            result = 456;
+            return true;
+        }
+        else if (binder.Name == "SerialNumber")
+        {
+            result = _serialNumber;
+            return true;
+        }
+        else if (binder.Name == "HiddenProp")
+        {
+            // Not presented in GetDynamicMemberNames
+            result = 789;
+            return true;
+        }
+
+        return false;
+    }
+
+    public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+    {
+        result = null;
+
+        if (binder.Name == "FooMethod")
+        {
+            result = "yes";
+            return true;
+        }
+        else if (binder.Name == "HiddenMethod")
+        {
+            // Not presented in GetDynamicMemberNames
+            result = _serialNumber;
+            return true;
+        }
+
+        return false;
+    }
+}
+'@
 }

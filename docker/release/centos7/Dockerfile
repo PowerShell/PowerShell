@@ -1,8 +1,9 @@
 # Docker image file that describes an Centos7 image with PowerShell installed from Microsoft YUM Repo
+ARG FromTag=7
 
-FROM centos:7
+FROM centos:${FromTag}
 
-ARG POWERSHELL_VERSION=6.0.0-rc
+ARG POWERSHELL_VERSION=6.0.2
 ARG IMAGE_NAME=microsoft/powershell:centos7
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -34,11 +35,13 @@ RUN yum install -y \
     && yum clean all
 
 # Download and configure Microsoft Repository config file
-RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.repos.d/microsoft.repo
+RUN set -o pipefail \
+    && curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.repos.d/microsoft.repo
 
 # Install latest powershell from Microsoft YUM Repo
 RUN yum install -y \
-        powershell
+        powershell-${POWERSHELL_VERSION} \
+    && yum clean all
 
 # Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c

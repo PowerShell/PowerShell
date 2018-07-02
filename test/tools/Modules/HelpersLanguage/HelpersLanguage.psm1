@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 #
 # Run the new parser, return either errors or the ast
 #
@@ -51,7 +53,6 @@ function position_message
     }
 }
 
-
 #
 # Pester friendly version of Test-Error
 #
@@ -98,14 +99,13 @@ function ShouldBeParseError
             {
                 $errorId = $err.ErrorId
             }
-            It "Error Id" { $errorId | Should Be $expectedErrors[$i] }
+            It "Error Id (iteration:$i)" { $errorId | Should Be $expectedErrors[$i] }
             $acutalPostion = $err.Extent.StartScriptPosition.Offset
             if ( $CheckColumnNumber ) { $acutalPostion = $err.Extent.StartScriptPosition.ColumnNumber }
-            It "Error position" -Pending:$SkipAndCheckRuntimeError { $acutalPostion | Should Be $expectedOffsets[$i] }
+            It "Error position (iteration:$i)" -Pending:$SkipAndCheckRuntimeError { $acutalPostion | Should Be $expectedOffsets[$i] }
        }
     }
 }
-
 
 function Flatten-Ast
 {

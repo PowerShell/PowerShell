@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
     BeforeAll {
@@ -14,7 +16,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
                 #Add sample text to the file
                 $content = "This is sample text!"
                 $content | Out-File -FilePath $outputFilePath
-                Test-Path $outputFilePath | Should be $true
+                Test-Path $outputFilePath | Should -BeTrue
             }
 
             try {
@@ -24,17 +26,17 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
                 $ps.commands.clear()
 
                 if($expectedError) {
-                    $ps.hadErrors | Should be $true
-                    $ps.Streams.Error.FullyQualifiedErrorId | Should be $expectedError
+                    $ps.hadErrors | Should -BeTrue
+                    $ps.Streams.Error.FullyQualifiedErrorId | Should -Be $expectedError
                 } else {
                     $ps.addscript("Get-Date").Invoke()
                     $ps.commands.clear()
                     $ps.addscript("Stop-Transcript").Invoke()
 
-                    Test-Path $outputFilePath | Should be $true
-                    $outputFilePath | should contain "Get-Date"
+                    Test-Path $outputFilePath | Should -BeTrue
+                    $outputFilePath | Should -FileContentMatch "Get-Date"
                     if($append) {
-                        $outputFilePath | Should contain $content
+                        $outputFilePath | Should -FileContentMatch $content
                     }
                 }
             } finally {
@@ -49,9 +51,9 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         Remove-Item $transcriptFilePath -Force -ErrorAction SilentlyContinue
     }
 
-
     AfterEach {
         Remove-Item $transcriptFilePath -ErrorAction SilentlyContinue
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $False)
     }
 
     It "Should create Transcript file at default path" {
@@ -121,8 +123,8 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             }
         }
 
-        Test-Path $transcriptFilePath | Should be $true
-        $transcriptFilePath | Should contain "After Dispose"
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -FileContentMatch "After Dispose"
     }
 
     It "Transcription should be closed if the only runspace gets closed" {
@@ -130,20 +132,144 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $powerShellCommand = $powerShellPath + ' -c "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"'
         Invoke-Expression $powerShellCommand
 
-        Test-Path $transcriptFilePath | Should be $true
-        $transcriptFilePath | Should contain "Before Dispose"
-        $transcriptFilePath | Should contain "PowerShell transcript end"
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -FileContentMatch "Before Dispose"
+        $transcriptFilePath | Should -FileContentMatch "PowerShell transcript end"
     }
 
     It "Transcription should record native command output" {
         $script = {
             Start-Transcript -Path $transcriptFilePath
             hostname
-            Stop-Transcript }
-        & $script
-        Test-Path $transcriptFilePath | Should be $true
+            Stop-Transcript
+        }
 
+        & $script
+
+        $transcriptFilePath | Should -Exist
         $machineName = [System.Environment]::MachineName
-        $transcriptFilePath | Should contain $machineName
+        $transcriptFilePath | Should -FileContentMatch $machineName
+    }
+
+    It "Transcription should record Write-Information output when InformationAction is set to Continue" {
+        [String]$message = New-Guid
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Information -Message $message -InformationAction Continue
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
+        $transcriptFilePath | Should -FileContentMatch $message
+    }
+
+    It "Transcription should not record Write-Information output when InformationAction is set to SilentlyContinue" {
+        [String]$message = New-Guid
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Information -Message $message -InformationAction SilentlyContinue
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
+        $transcriptFilePath | Should -Not -FileContentMatch $message
+    }
+
+    It "Transcription should not record Write-Information output when InformationAction is set to Ignore" {
+        [String]$message = New-Guid
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Information -Message $message -InformationAction Ignore
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
+        $transcriptFilePath | Should -Not -FileContentMatch $message
+    }
+
+    It "Transcription should record Write-Information output in correct order when InformationAction is set to Inquire" {
+        [String]$message = New-Guid
+        $newLine = [System.Environment]::NewLine
+        $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
+        $script = {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $True)
+            Start-Transcript -Path $transcriptFilePath
+            Write-Information -Message $message -InformationAction Inquire
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -Not -FileContentMatch "INFO: "
+        $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
+    }
+
+    It "Transcription should record Write-Host output when InformationAction is set to Continue" {
+        [String]$message = New-Guid
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Host -Message $message -InformationAction Continue
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -FileContentMatch $message
+    }
+
+    It "Transcription should record Write-Host output when InformationAction is set to SilentlyContinue" {
+        [String]$message = New-Guid
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Host -Message $message -InformationAction SilentlyContinue
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -FileContentMatch $message
+    }
+
+    It "Transcription should not record Write-Host output when InformationAction is set to Ignore" {
+        [String]$message = New-Guid
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            Write-Host -Message $message -InformationAction Ignore
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -Not -FileContentMatch $message
+    }
+
+    It "Transcription should record Write-Host output in correct order when InformationAction is set to Inquire" {
+        [String]$message = New-Guid
+        $newLine = [System.Environment]::NewLine
+        $expectedContent = "$message$($newLine)Confirm$($newLine)Continue with this operation?"
+        $script = {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForcePromptForChoiceDefaultOption', $True)
+            Start-Transcript -Path $transcriptFilePath
+            Write-Host -Message $message -InformationAction Inquire
+            Stop-Transcript
+        }
+
+        & $script
+
+        $transcriptFilePath | Should -Exist
+        $transcriptFilePath | Should -FileContentMatchMultiline $expectedContent
     }
 }

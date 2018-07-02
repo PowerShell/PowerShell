@@ -1,3 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+//
+//  Application white listing policies such as AppLocker and DeviceGuard UMCI are only implemented on Windows OSs
+//
+#if !UNIX
+
 using System.Management.Automation.Internal;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
@@ -167,7 +175,6 @@ namespace System.Management.Automation.Security
         }
         private static SystemEnforcementMode? s_cachedWldpSystemPolicy = null;
 
-
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
             SaferPolicy result = SaferPolicy.Disallowed;
@@ -237,7 +244,7 @@ namespace System.Management.Automation.Security
                             if (!error) { break; }
 
                             // Try again with the AppData\LocalLow\Temp path using known folder id:
-                            // https://msdn.microsoft.com/en-us/library/dd378457.aspx
+                            // https://msdn.microsoft.com/library/dd378457.aspx
                             Guid AppDatalocalLowFolderId = new Guid("A520A1A4-1780-4FF6-BD18-167343C5AF16");
                             tempPath = GetKnownFolderPath(AppDatalocalLowFolderId) + @"\Temp";
                         } // end while loop
@@ -331,11 +338,6 @@ namespace System.Management.Automation.Security
 
         private static SystemEnforcementMode GetDebugLockdownPolicy(string path)
         {
-            if (PsUtils.IsRunningOnProcessorArchitectureARM())
-            {
-                return SystemEnforcementMode.Enforce;
-            }
-
             s_wasSystemPolicyDebugPolicy = true;
 
             // Support fall-back debug hook for path exclusions on non-WOA platforms
@@ -392,8 +394,6 @@ namespace System.Management.Automation.Security
             return SystemEnforcementMode.None;
         }
         private static bool s_hadMissingWldpAssembly = false;
-
-
 
         /// <summary>
         /// Gets lockdown policy as applied to a COM object
@@ -465,7 +465,7 @@ namespace System.Management.Automation.Security
 
         internal static string DumpLockdownState(uint pdwLockdownState)
         {
-            string returnValue = "";
+            string returnValue = string.Empty;
 
             if ((pdwLockdownState & WldpNativeConstants.WLDP_LOCKDOWN_DEFINED_FLAG) == WldpNativeConstants.WLDP_LOCKDOWN_DEFINED_FLAG)
             {
@@ -560,7 +560,6 @@ namespace System.Management.Automation.Security
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpGetLockdownPolicy")]
             internal static extern int WldpGetLockdownPolicy(ref WLDP_HOST_INFORMATION pHostInformation, ref uint pdwLockdownState, uint dwFlags);
 
-
             /// Return Type: HRESULT->LONG->int
             /// rclsid: IID*
             /// pHostInformation: PWLDP_HOST_INFORMATION->_WLDP_HOST_INFORMATION*
@@ -579,3 +578,5 @@ namespace System.Management.Automation.Security
         }
     }
 }
+
+#endif

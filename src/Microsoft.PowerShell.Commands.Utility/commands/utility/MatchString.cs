@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -95,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the text of the matching line.
         /// </summary>
         /// <value>The text of the matching line.</value>
-        public string Line { get; set; } = "";
+        public string Line { get; set; } = string.Empty;
 
         /// <summary>
         /// Returns the base name of the file containing the matching line.
@@ -115,7 +114,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private string _filename;
-
 
         /// <summary>
         /// The full path of the file containing the matching line.
@@ -434,7 +432,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new NotImplementedException();
             }
-
 
             [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
             public void CopyTo(T[] array, int arrayIndex)
@@ -973,7 +970,7 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                _inputObject = LanguagePrimitives.IsNull(value) ? PSObject.AsPSObject("") : value;
+                _inputObject = LanguagePrimitives.IsNull(value) ? PSObject.AsPSObject(string.Empty) : value;
             }
         }
         private PSObject _inputObject = AutomationNull.Value;
@@ -1004,7 +1001,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralFile")]
         [FileinfoToString]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {

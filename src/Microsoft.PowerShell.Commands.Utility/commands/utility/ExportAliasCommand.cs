@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -54,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public string LiteralPath
         {
             get { return _path; }
@@ -254,7 +253,6 @@ namespace Microsoft.PowerShell.Commands
             }
         } // ProcessRecord
 
-
         /// <summary>
         /// Writes the aliases to the file
         /// </summary>
@@ -269,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
                     writer = OpenFile(out readOnlyFileInfo);
                 }
 
-                if (null != writer)
+                if (writer != null)
                     WriteHeader(writer);
 
                 // Now write out the aliases
@@ -286,7 +284,7 @@ namespace Microsoft.PowerShell.Commands
                         line = GetAliasLine(alias, "set-alias -Name:\"{0}\" -Value:\"{1}\" -Description:\"{2}\" -Option:\"{3}\"");
                     }
 
-                    if (null != writer)
+                    if (writer != null)
                         writer.WriteLine(line);
 
                     if (PassThru)
@@ -297,10 +295,10 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (null != writer)
+                if (writer != null)
                     writer.Dispose();
                 // reset the read-only attribute
-                if (null != readOnlyFileInfo)
+                if (readOnlyFileInfo != null)
                     readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
             }
         }
@@ -326,7 +324,6 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
-
 
         private void WriteHeader(StreamWriter writer)
         {

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -470,7 +469,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // finally build the item to return
-                // add either the text token or the MshExpression with optional format string
+                // add either the text token or the PSPropertyExpression with optional format string
                 if (match.TextToken != null)
                 {
                     rid.formatTokenList.Add(match.TextToken);

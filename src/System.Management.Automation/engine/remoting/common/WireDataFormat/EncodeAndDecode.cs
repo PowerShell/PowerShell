@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Tracing;
 using System.Threading;
@@ -787,8 +786,6 @@ namespace System.Management.Automation
                                             Guid.Empty,
                                             dataAsPSObject);
         }
-
-
 
         /// <summary>
         /// This method generates a Remoting data structure handler message for
@@ -1652,7 +1649,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("propertyName");
             }
 
-            if (typeof(T).GetTypeInfo().IsEnum)
+            if (typeof(T).IsEnum)
             {
                 if (propertyValue is string)
                 {
@@ -1701,14 +1698,12 @@ namespace System.Management.Automation
             }
             else if (propertyValue == null)
             {
-                TypeInfo typeInfo = typeof(T).GetTypeInfo();
-
-                if (!typeInfo.IsValueType)
+                if (!typeof(T).IsValueType)
                 {
                     return default(T);
                 }
 
-                if (typeInfo.IsGenericType && typeof(T).GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+                if (typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
                 {
                     return default(T);
                 }
@@ -2233,7 +2228,7 @@ namespace System.Management.Automation
             CommandTypes commandType = GetPropertyValue<CommandTypes>(dataAsPSObject, RemoteDataNameStrings.DiscoveryType);
 
             string[] name;
-            if (null != GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryName))
+            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryName) != null)
             {
                 IEnumerable<string> tmp = EnumerateListProperty<string>(dataAsPSObject, RemoteDataNameStrings.DiscoveryName);
                 name = new List<string>(tmp).ToArray();
@@ -2244,7 +2239,7 @@ namespace System.Management.Automation
             }
 
             string[] module;
-            if (null != GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryModule))
+            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryModule) != null)
             {
                 IEnumerable<string> tmp = EnumerateListProperty<string>(dataAsPSObject, RemoteDataNameStrings.DiscoveryModule);
                 module = new List<string>(tmp).ToArray();
@@ -2255,16 +2250,16 @@ namespace System.Management.Automation
             }
 
             ModuleSpecification[] fullyQualifiedName = null;
-            if (null != DeserializingTypeConverter.GetPropertyValue<PSObject>(dataAsPSObject,
-                                                                             RemoteDataNameStrings.DiscoveryFullyQualifiedModule,
-                                                                             DeserializingTypeConverter.RehydrationFlags.NullValueOk | DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk))
+            if (DeserializingTypeConverter.GetPropertyValue<PSObject>(dataAsPSObject,
+                                                                      RemoteDataNameStrings.DiscoveryFullyQualifiedModule,
+                                                                      DeserializingTypeConverter.RehydrationFlags.NullValueOk | DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk) != null)
             {
                 IEnumerable<ModuleSpecification> tmp = EnumerateListProperty<ModuleSpecification>(dataAsPSObject, RemoteDataNameStrings.DiscoveryFullyQualifiedModule);
                 fullyQualifiedName = new List<ModuleSpecification>(tmp).ToArray();
             }
 
             object[] argumentList;
-            if (null != GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryArgumentList))
+            if (GetPropertyValue<PSObject>(dataAsPSObject, RemoteDataNameStrings.DiscoveryArgumentList) != null)
             {
                 IEnumerable<object> tmp = EnumerateListProperty<object>(dataAsPSObject, RemoteDataNameStrings.DiscoveryArgumentList);
                 argumentList = new List<object>(tmp).ToArray();

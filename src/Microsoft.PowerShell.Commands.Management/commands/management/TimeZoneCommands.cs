@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -73,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else // ParameterSetName == "Name"
             {
-                if (null != Name)
+                if (Name != null)
                 {
                     // lookup each time zone name (or wildcard pattern)
                     foreach (string tzname in Name)
@@ -623,7 +626,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Definition of SE_TIME_ZONE_NAME constant from Win32 API
             /// </summary>
-            public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; //http://msdn.microsoft.com/en-us/library/bb530716(VS.85).aspx
+            public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"; //http://msdn.microsoft.com/library/bb530716(VS.85).aspx
 
             /// <summary>
             /// PInvoke GetCurrentProcess API
@@ -664,7 +667,6 @@ namespace Microsoft.PowerShell.Commands
             [DllImport(PrivilegeCheckApiDllName, SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false)]
             [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool PrivilegeCheck(IntPtr ClientToken, ref PRIVILEGE_SET RequiredPrivileges, ref bool pfResult);
-
 
             /// <summary>
             /// PInvoke AdjustTokenPrivilege API

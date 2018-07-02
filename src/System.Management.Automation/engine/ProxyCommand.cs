@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -40,12 +39,12 @@ namespace System.Management.Automation
         /// </exception>
         public static string Create(CommandMetadata commandMetadata)
         {
-            if (null == commandMetadata)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
 
-            return commandMetadata.GetProxyCommand("", true);
+            return commandMetadata.GetProxyCommand(string.Empty, true);
         }
 
         /// <summary>
@@ -66,7 +65,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string Create(CommandMetadata commandMetadata, string helpComment)
         {
-            if (null == commandMetadata)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -96,7 +95,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string Create(CommandMetadata commandMetadata, string helpComment, bool generateDynamicParameters)
         {
-            if (null == commandMetadata)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -119,7 +118,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string GetCmdletBindingAttribute(CommandMetadata commandMetadata)
         {
-            if (null == commandMetadata)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -144,7 +143,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public static string GetParamBlock(CommandMetadata commandMetadata)
         {
-            if (null == commandMetadata)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -168,7 +167,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string GetBegin(CommandMetadata commandMetadata)
         {
-            if (null == commandMetadata)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -191,7 +190,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string GetProcess(CommandMetadata commandMetadata)
         {
-            if (null == commandMetadata)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -214,7 +213,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string GetDynamicParam(CommandMetadata commandMetadata)
         {
-            if (null == commandMetadata)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
@@ -237,7 +236,7 @@ namespace System.Management.Automation
         /// </exception>
         public static string GetEnd(CommandMetadata commandMetadata)
         {
-            if (null == commandMetadata)
+            if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }

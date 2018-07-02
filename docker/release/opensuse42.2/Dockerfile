@@ -1,9 +1,10 @@
 # Docker image file that describes an OpenSUSE 42.2 image with PowerShell installed from PowerShell Release
+ARG FromTag=42.2
 
-FROM opensuse:42.2
+FROM opensuse:${FromTag}
 
-ARG POWERSHELL_VERSION=6.0.0-rc
-ARG POWERSHELL_PACKAGE=powershell-6.0.0-rc-linux-x64.tar.gz
+ARG POWERSHELL_VERSION=6.0.2
+ARG POWERSHELL_PACKAGE=powershell-6.0.2-linux-x64.tar.gz
 ARG IMAGE_NAME=microsoft/powershell:opensuse42.2
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \

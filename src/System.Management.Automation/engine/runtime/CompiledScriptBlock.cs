@@ -1,12 +1,12 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
@@ -37,7 +37,6 @@ namespace System.Management.Automation
         End,
         ProcessBlockOnly,
     }
-
 
     internal class CompiledScriptBlockData
     {
@@ -357,7 +356,7 @@ namespace System.Management.Automation
                 {
                     if (_parameterMetadata == null)
                     {
-                        CommandMetadata metadata = new CommandMetadata(scriptBlock, "", LocalPipeline.GetExecutionContextFromTLS());
+                        CommandMetadata metadata = new CommandMetadata(scriptBlock, string.Empty, LocalPipeline.GetExecutionContextFromTLS());
                         _parameterMetadata = metadata.StaticCommandParameterMetadata;
                     }
                 }
@@ -504,7 +503,7 @@ namespace System.Management.Automation
             s_cachedScripts.Clear();
         }
 
-        internal static ScriptBlock EmptyScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock("", isProductCode: true);
+        internal static ScriptBlock EmptyScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(string.Empty, isProductCode: true);
 
         internal static ScriptBlock Create(Parser parser, string fileName, string fileContents)
         {
@@ -756,7 +755,9 @@ namespace System.Management.Automation
             if (HasBeginBlock || HasProcessBlock || ast.Body.ParamBlock != null)
             {
                 Ast errorAst = ast.Body.BeginBlock ?? (Ast)ast.Body.ProcessBlock ?? ast.Body.ParamBlock;
-                parser.ReportError(errorAst.Extent, () => ParserStrings.InvalidScriptBlockInDataSection);
+                parser.ReportError(errorAst.Extent,
+                    nameof(ParserStrings.InvalidScriptBlockInDataSection),
+                    ParserStrings.InvalidScriptBlockInDataSection);
             }
 
             if (HasEndBlock)
@@ -1234,13 +1235,14 @@ namespace System.Management.Automation
 
         internal static void LogScriptBlockCreation(ScriptBlock scriptBlock, bool force)
         {
-            if (force || ShouldLogScriptBlockActivity("EnableScriptBlockLogging"))
+            ScriptBlockLogging logSetting = GetScriptBlockLoggingSetting();
+            if (force || logSetting?.EnableScriptBlockLogging == true)
             {
                 if (!scriptBlock.HasLogged || InternalTestHooks.ForceScriptBlockLogging)
                 {
                     // If script block logging is explicitly disabled, or it's from a trusted
                     // file or internal, skip logging.
-                    if (ScriptBlockLoggingExplicitlyDisabled() ||
+                    if (logSetting?.EnableScriptBlockLogging == false ||
                         scriptBlock.ScriptBlockData.IsProductCode)
                     {
                         return;
@@ -1284,18 +1286,17 @@ namespace System.Management.Automation
 
         private static bool WriteScriptBlockToLog(ScriptBlock scriptBlock, int segment, int segments, string textToLog)
         {
-            // See if we need to encrypt the event log message. This info is all cached by Utils.GetGroupPolicySetting(),
-            // so we're not hitting the registry for every script block we compile.
-            Dictionary<string, object> protectedEventLoggingSettings = Utils.GetGroupPolicySetting(
-                "Software\\Policies\\Microsoft\\Windows\\EventLog", "ProtectedEventLogging", Utils.RegLocalMachine);
-            if (protectedEventLoggingSettings != null)
+            // See if we need to encrypt the event log message. This info is all cached by Utils.GetPolicySetting(),
+            // so we're not hitting the configuration file for every script block we compile.
+            ProtectedEventLogging logSetting = Utils.GetPolicySetting<ProtectedEventLogging>(Utils.SystemWideOnlyConfig);
+            if (logSetting != null)
             {
                 lock (s_syncObject)
                 {
                     // Populates the encryptionRecipients list from the Group Policy, if possible. If not possible,
                     // does all appropriate logging and encryptionRecipients is 'null'. 'CouldLog' being false
                     // implies the engine wasn't ready for logging yet.
-                    bool couldLog = GetAndValidateEncryptionRecipients(scriptBlock);
+                    bool couldLog = GetAndValidateEncryptionRecipients(scriptBlock, logSetting);
                     if (!couldLog)
                     {
                         return false;
@@ -1320,7 +1321,7 @@ namespace System.Management.Automation
                             // they can just wait on the compromised box and see the sensitive data eventually anyways.
 
                             string errorMessage = StringUtil.Format(SecuritySupportStrings.CouldNotEncryptContent, textToLog, error.ToString());
-                            PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysAnalytic,
+                            PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
                                             0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
                         }
                         else
@@ -1333,121 +1334,104 @@ namespace System.Management.Automation
 
             if (scriptBlock._scriptBlockData.HasSuspiciousContent)
             {
-                PSEtwLog.LogOperationalWarning(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysAnalytic,
+                PSEtwLog.LogOperationalWarning(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
                     segment + 1, segments, textToLog, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
             }
             else
             {
-                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysAnalytic,
+                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
                     segment + 1, segments, textToLog, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
             }
 
             return true;
         }
 
-        private static bool GetAndValidateEncryptionRecipients(ScriptBlock scriptBlock)
+        private static bool GetAndValidateEncryptionRecipients(ScriptBlock scriptBlock, ProtectedEventLogging logSetting)
         {
-            Dictionary<string, object> protectedEventLoggingSettings = Utils.GetGroupPolicySetting(
-                "Software\\Policies\\Microsoft\\Windows\\EventLog", "ProtectedEventLogging", Utils.RegLocalMachine);
-
             // See if protected event logging is enabled
-            object enableProtectedEventLogging = null;
-            if (protectedEventLoggingSettings.TryGetValue("EnableProtectedEventLogging", out enableProtectedEventLogging))
+            if (logSetting.EnableProtectedEventLogging == true)
             {
-                if (String.Equals("1", enableProtectedEventLogging.ToString(), StringComparison.OrdinalIgnoreCase))
+                // Get the encryption certificate
+                if (logSetting.EncryptionCertificate != null)
                 {
-                    // Get the encryption certificate
-                    object encryptionCertificate = null;
-                    if (protectedEventLoggingSettings.TryGetValue("EncryptionCertificate", out encryptionCertificate))
+                    ErrorRecord error = null;
+                    ExecutionContext executionContext = LocalPipeline.GetExecutionContextFromTLS();
+                    SessionState sessionState = null;
+
+                    // Use the session state from the current pipeline, if it exists.
+                    if (executionContext != null)
                     {
-                        ErrorRecord error = null;
-                        ExecutionContext executionContext = LocalPipeline.GetExecutionContextFromTLS();
-                        SessionState sessionState = null;
+                        sessionState = executionContext.SessionState;
+                    }
 
-                        // Use the session state from the current pipeline, if it exists.
-                        if (executionContext != null)
+                    // If the engine hasn't started up yet, then we're just compiling script
+                    // blocks. We'll have to log them when they are used and we have an engine
+                    // to work with.
+                    if (sessionState == null)
+                    {
+                        return false;
+                    }
+
+                    string fullCertificateContent = String.Join(Environment.NewLine, logSetting.EncryptionCertificate);
+
+                    // If the certificate has changed, drop all of our cached information
+                    ResetCertificateCacheIfNeeded(fullCertificateContent);
+
+                    // If we have valid recipients, no need for further analysis.
+                    if (s_encryptionRecipients != null)
+                    {
+                        return true;
+                    }
+
+                    // If we've already verified all of the properties of the cert we care about (even if it
+                    // didn't result in a valid cert), return now.
+                    if (s_hasProcessedCertificate)
+                    {
+                        return true;
+                    }
+
+                    // Resolve the certificate to a recipient
+                    CmsMessageRecipient recipient = new CmsMessageRecipient(fullCertificateContent);
+                    recipient.Resolve(sessionState, ResolutionPurpose.Encryption, out error);
+                    s_hasProcessedCertificate = true;
+
+                    // If there's an error that we haven't already reported, report it in the event log.
+                    // We only do this once, as the error will always be the same for a given certificate.
+                    if (error != null)
+                    {
+                        // If we got an error resolving the encryption certificate, log a warning and continue
+                        // logging the (unencrypted) message anyways. Logging trumps protected logging -
+                        // being able to detect that an attacker has compromised a box outweighs the danger of the
+                        // attacker seeing potentially sensitive data. Because if they aren't detected, then
+                        // they can just wait on the compromised box and see the sensitive data eventually anyways.
+                        string errorMessage = StringUtil.Format(SecuritySupportStrings.CouldNotUseCertificate, error.ToString());
+                        PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
+                                        0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
+
+                        return true;
+                    }
+
+                    // Now, save the certificate. We'll be comfortable using this one from now on.
+                    s_encryptionRecipients = new CmsMessageRecipient[] { recipient };
+
+                    // Check if the certificate has a private key, and report a warning if so.
+                    // We only do this once, as the error will always be the same for a given certificate.
+                    foreach (X509Certificate2 validationCertificate in recipient.Certificates)
+                    {
+                        if (validationCertificate.HasPrivateKey)
                         {
-                            sessionState = executionContext.SessionState;
-                        }
-
-                        // If the engine hasn't started up yet, then we're just compiling script
-                        // blocks. We'll have to log them when they are used and we have an engine
-                        // to work with.
-                        if (sessionState == null)
-                        {
-                            return false;
-                        }
-
-                        string[] encryptionCertificateContent = encryptionCertificate as string[];
-                        string fullCertificateContent = null;
-                        if (encryptionCertificateContent != null)
-                        {
-                            fullCertificateContent = String.Join(Environment.NewLine, encryptionCertificateContent);
-                        }
-                        else
-                        {
-                            fullCertificateContent = encryptionCertificate as string;
-                        }
-
-                        // If the certificate has changed, drop all of our cached information
-                        ResetCertificateCacheIfNeeded(fullCertificateContent);
-
-                        // If we have valid recipients, no need for further analysis.
-                        if (s_encryptionRecipients != null)
-                        {
-                            return true;
-                        }
-
-                        // If we've already verified all of the properties of the cert we care about (even if it
-                        // didn't result in a valid cert), return now.
-                        if (s_hasProcessedCertificate)
-                        {
-                            return true;
-                        }
-
-                        // Resolve the certificate to a recipient
-                        CmsMessageRecipient recipient = new CmsMessageRecipient(fullCertificateContent);
-                        recipient.Resolve(sessionState, ResolutionPurpose.Encryption, out error);
-                        s_hasProcessedCertificate = true;
-
-                        // If there's an error that we haven't already reported, report it in the event log.
-                        // We only do this once, as the error will always be the same for a given certificate.
-                        if (error != null)
-                        {
-                            // If we got an error resolving the encryption certificate, log a warning and continue
-                            // logging the (unencrypted) message anyways. Logging trumps protected logging -
-                            // being able to detect that an attacker has compromised a box outweighs the danger of the
-                            // attacker seeing potentially sensitive data. Because if they aren't detected, then
-                            // they can just wait on the compromised box and see the sensitive data eventually anyways.
-                            string errorMessage = StringUtil.Format(SecuritySupportStrings.CouldNotUseCertificate, error.ToString());
-                            PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysAnalytic,
-                                            0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
-
-                            return true;
-                        }
-
-                        // Now, save the certificate. We'll be comfortable using this one from now on.
-                        s_encryptionRecipients = new CmsMessageRecipient[] { recipient };
-
-                        // Check if the certificate has a private key, and report a warning if so.
-                        // We only do this once, as the error will always be the same for a given certificate.
-                        foreach (X509Certificate2 validationCertificate in recipient.Certificates)
-                        {
-                            if (validationCertificate.HasPrivateKey)
+                            // Only log the first line of what we pulled from the configuration. If this is a path, this will have enough information.
+                            // If this is the actual certificate, only include the first line of the certificate content so that we're not permanently keeping the private
+                            // key in the log.
+                            string certificateForLog = fullCertificateContent;
+                            if (logSetting.EncryptionCertificate.Length > 1)
                             {
-                                // Only log the first line of what we pulled from the registry. If this is a path, this will have enough information.
-                                // If this is the actual certificate, only include the first line of the certificate content so that we're not permanently keeping the private
-                                // key in the log.
-                                string certificateForLog = fullCertificateContent;
-                                if ((encryptionCertificateContent != null) && (encryptionCertificateContent.Length > 1))
-                                {
-                                    certificateForLog = encryptionCertificateContent[1];
-                                }
-
-                                string errorMessage = StringUtil.Format(SecuritySupportStrings.CertificateContainsPrivateKey, certificateForLog);
-                                PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysAnalytic,
-                                                0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
+                                certificateForLog = logSetting.EncryptionCertificate[1];
                             }
+
+                            string errorMessage = StringUtil.Format(SecuritySupportStrings.CertificateContainsPrivateKey, certificateForLog);
+                            PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
+                                            0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
                         }
                     }
                 }
@@ -1472,23 +1456,9 @@ namespace System.Management.Automation
             }
         }
 
-        private static bool ShouldLogScriptBlockActivity(string activity)
+        private static ScriptBlockLogging GetScriptBlockLoggingSetting()
         {
-            // If script block logging is turned on, log this one.
-            Dictionary<string, object> groupPolicySettings = Utils.GetGroupPolicySetting("ScriptBlockLogging", Utils.RegLocalMachineThenCurrentUser);
-            if (groupPolicySettings != null)
-            {
-                object logScriptBlockExecution = null;
-                if (groupPolicySettings.TryGetValue(activity, out logScriptBlockExecution))
-                {
-                    if (String.Equals("1", logScriptBlockExecution.ToString(), StringComparison.OrdinalIgnoreCase))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            return Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig);
         }
 
         // Quick check for script blocks that may have suspicious content. If this
@@ -1808,27 +1778,6 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static bool ScriptBlockLoggingExplicitlyDisabled()
-        {
-            // Verify they haven't explicitly turned off script block logging.
-            Dictionary<string, object> groupPolicySettings = Utils.GetGroupPolicySetting("ScriptBlockLogging", Utils.RegLocalMachineThenCurrentUser);
-            if (groupPolicySettings != null)
-            {
-                object logScriptBlockExecution;
-                if (groupPolicySettings.TryGetValue("EnableScriptBlockLogging", out logScriptBlockExecution))
-                {
-                    // If it is configured and explicitly disabled, return true.
-                    // (Don't even auto-log ones with suspicious content)
-                    if (String.Equals("0", logScriptBlockExecution.ToString(), StringComparison.OrdinalIgnoreCase))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
         internal static void LogScriptBlockStart(ScriptBlock scriptBlock, Guid runspaceId)
         {
             // When invoking, log the creation of the script block if it has suspicious
@@ -1843,18 +1792,18 @@ namespace System.Management.Automation
             // properly analyzed the script block's security.
             LogScriptBlockCreation(scriptBlock, forceLogCreation);
 
-            if (ShouldLogScriptBlockActivity("EnableScriptBlockInvocationLogging"))
+            if (GetScriptBlockLoggingSetting()?.EnableScriptBlockInvocationLogging == true)
             {
-                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Invoke_Start_Detail, PSOpcode.Create, PSTask.CommandStart, PSKeyword.UseAlwaysAnalytic,
+                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Invoke_Start_Detail, PSOpcode.Create, PSTask.CommandStart, PSKeyword.UseAlwaysOperational,
                     scriptBlock.Id.ToString(), runspaceId.ToString());
             }
         }
 
         internal static void LogScriptBlockEnd(ScriptBlock scriptBlock, Guid runspaceId)
         {
-            if (ShouldLogScriptBlockActivity("EnableScriptBlockInvocationLogging"))
+            if (GetScriptBlockLoggingSetting()?.EnableScriptBlockInvocationLogging == true)
             {
-                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Invoke_Complete_Detail, PSOpcode.Create, PSTask.CommandStop, PSKeyword.UseAlwaysAnalytic,
+                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Invoke_Complete_Detail, PSOpcode.Create, PSTask.CommandStop, PSKeyword.UseAlwaysOperational,
                     scriptBlock.Id.ToString(), runspaceId.ToString());
             }
         }

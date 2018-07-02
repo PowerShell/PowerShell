@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Specialized;
@@ -23,7 +22,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         [TraceSource("format_out_OutputManagerInner", "OutputManagerInner")]
         internal static PSTraceSource tracer = PSTraceSource.GetTracer("format_out_OutputManagerInner", "OutputManagerInner");
         #endregion tracer
-
 
         #region LineOutput
         internal LineOutput LineOutput
@@ -122,7 +120,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _mgr = null;
             }
         }
-
 
         /// <summary>
         /// instance of the pipeline manager object

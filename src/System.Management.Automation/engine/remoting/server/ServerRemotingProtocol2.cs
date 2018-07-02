@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Management.Automation.Remoting;
@@ -345,7 +344,7 @@ namespace System.Management.Automation
         /// data structure handler class</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
-            Dbg.Assert(null != data, "Cannot send null object.");
+            Dbg.Assert(data != null, "Cannot send null object.");
             _transportManager.SendDataToClient(data, true);
         }
 
@@ -776,7 +775,7 @@ namespace System.Management.Automation
         /// data structure handler class</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
-            Dbg.Assert(null != data, "Cannot send null object.");
+            Dbg.Assert(data != null, "Cannot send null object.");
             // this is from a command execution..let transport manager collect
             // as much data as possible and send bigger buffer to client.
             _transportManager.SendDataToClient(data, false);

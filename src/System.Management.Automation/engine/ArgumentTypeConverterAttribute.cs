@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Globalization;
 using System.Linq;
@@ -186,7 +185,7 @@ namespace System.Management.Automation
             }
             else
             {
-                bool isNullable = boolType.GetTypeInfo().IsGenericType &&
+                bool isNullable = boolType.IsGenericType &&
                     boolType.GetGenericTypeDefinition() == typeof(Nullable<>);
 
                 if (!isNullable && LanguagePrimitives.IsBooleanType(boolType))

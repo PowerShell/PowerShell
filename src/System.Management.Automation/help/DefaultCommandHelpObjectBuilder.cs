@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
@@ -69,18 +68,15 @@ namespace System.Management.Automation.Help
             {
                 CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
                 bool common = false;
-                bool commonWorkflow = false;
                 if (cmdletInfo.Parameters != null)
                 {
                     common = HasCommonParameters(cmdletInfo.Parameters);
-                    commonWorkflow = ((cmdletInfo.CommandType & CommandTypes.Workflow) == CommandTypes.Workflow);
                 }
 
                 obj.Properties.Add(new PSNoteProperty("CommonParameters", common));
-                obj.Properties.Add(new PSNoteProperty("WorkflowCommonParameters", commonWorkflow));
                 AddDetailsProperties(obj, cmdletInfo.Name, cmdletInfo.Noun, cmdletInfo.Verb, TypeNameForDefaultHelp);
-                AddSyntaxProperties(obj, cmdletInfo.Name, cmdletInfo.ParameterSets, common, commonWorkflow, TypeNameForDefaultHelp);
-                AddParametersProperties(obj, cmdletInfo.Parameters, common, commonWorkflow, TypeNameForDefaultHelp);
+                AddSyntaxProperties(obj, cmdletInfo.Name, cmdletInfo.ParameterSets, common, TypeNameForDefaultHelp);
+                AddParametersProperties(obj, cmdletInfo.Parameters, common, TypeNameForDefaultHelp);
                 AddInputTypesProperties(obj, cmdletInfo.Parameters);
                 AddRelatedLinksProperties(obj, commandInfo.CommandMetadata.HelpUri);
 
@@ -110,13 +106,11 @@ namespace System.Management.Automation.Help
             {
                 FunctionInfo funcInfo = commandInfo as FunctionInfo;
                 bool common = HasCommonParameters(funcInfo.Parameters);
-                bool commonWorkflow = ((commandInfo.CommandType & CommandTypes.Workflow) == CommandTypes.Workflow);
 
                 obj.Properties.Add(new PSNoteProperty("CommonParameters", common));
-                obj.Properties.Add(new PSNoteProperty("WorkflowCommonParameters", commonWorkflow));
                 AddDetailsProperties(obj, funcInfo.Name, String.Empty, String.Empty, TypeNameForDefaultHelp);
-                AddSyntaxProperties(obj, funcInfo.Name, funcInfo.ParameterSets, common, commonWorkflow, TypeNameForDefaultHelp);
-                AddParametersProperties(obj, funcInfo.Parameters, common, commonWorkflow, TypeNameForDefaultHelp);
+                AddSyntaxProperties(obj, funcInfo.Name, funcInfo.ParameterSets, common, TypeNameForDefaultHelp);
+                AddParametersProperties(obj, funcInfo.Parameters, common, TypeNameForDefaultHelp);
                 AddInputTypesProperties(obj, funcInfo.Parameters);
                 AddRelatedLinksProperties(obj, funcInfo.CommandMetadata.HelpUri);
 
@@ -195,16 +189,15 @@ namespace System.Management.Automation.Help
         /// <param name="cmdletName">command name</param>
         /// <param name="parameterSets">parameter sets</param>
         /// <param name="common">common parameters</param>
-        /// <param name="commonWorkflow">common workflow parameters</param>
         /// <param name="typeNameForHelp">type name for help</param>
-        internal static void AddSyntaxProperties(PSObject obj, string cmdletName, ReadOnlyCollection<CommandParameterSetInfo> parameterSets, bool common, bool commonWorkflow, string typeNameForHelp)
+        internal static void AddSyntaxProperties(PSObject obj, string cmdletName, ReadOnlyCollection<CommandParameterSetInfo> parameterSets, bool common, string typeNameForHelp)
         {
             PSObject mshObject = new PSObject();
 
             mshObject.TypeNames.Clear();
             mshObject.TypeNames.Add(String.Format(CultureInfo.InvariantCulture, "{0}#syntax", typeNameForHelp));
 
-            AddSyntaxItemProperties(mshObject, cmdletName, parameterSets, common, commonWorkflow, typeNameForHelp);
+            AddSyntaxItemProperties(mshObject, cmdletName, parameterSets, common, typeNameForHelp);
 
             obj.Properties.Add(new PSNoteProperty("Syntax", mshObject));
         }
@@ -216,9 +209,8 @@ namespace System.Management.Automation.Help
         /// <param name="cmdletName">cmdlet name, you can't get this from parameterSets</param>
         /// <param name="parameterSets">a collection of parameter sets</param>
         /// <param name="common">common parameters</param>
-        /// <param name="commonWorkflow">common workflow parameters</param>
         /// <param name="typeNameForHelp">type name for help</param>
-        private static void AddSyntaxItemProperties(PSObject obj, string cmdletName, ReadOnlyCollection<CommandParameterSetInfo> parameterSets, bool common, bool commonWorkflow, string typeNameForHelp)
+        private static void AddSyntaxItemProperties(PSObject obj, string cmdletName, ReadOnlyCollection<CommandParameterSetInfo> parameterSets, bool common, string typeNameForHelp)
         {
             ArrayList mshObjects = new ArrayList();
 
@@ -231,18 +223,15 @@ namespace System.Management.Automation.Help
 
                 mshObject.Properties.Add(new PSNoteProperty("name", cmdletName));
                 mshObject.Properties.Add(new PSNoteProperty("CommonParameters", common));
-                mshObject.Properties.Add(new PSNoteProperty("WorkflowCommonParameters", commonWorkflow));
 
                 Collection<CommandParameterInfo> parameters = new Collection<CommandParameterInfo>();
                 // GenerateParameters parameters in display order
                 // ie., Positional followed by
                 //      Named Mandatory (in alpha numeric) followed by
                 //      Named (in alpha numeric)
-                parameterSet.GenerateParametersInDisplayOrder(commonWorkflow,
-                                                  parameters.Add,
-                                                  delegate { });
+                parameterSet.GenerateParametersInDisplayOrder(parameters.Add, delegate { });
 
-                AddSyntaxParametersProperties(mshObject, parameters, common, commonWorkflow, parameterSet.Name);
+                AddSyntaxParametersProperties(mshObject, parameters, common, parameterSet.Name);
 
                 mshObjects.Add(mshObject);
             }
@@ -261,20 +250,14 @@ namespace System.Management.Automation.Help
         ///      Named (in alpha numeric)
         /// </param>
         /// <param name="common">common parameters</param>
-        /// <param name="commonWorkflow">common workflow</param>
         /// <param name="parameterSetName">Name of the parameter set for which the syntax is generated</param>
         private static void AddSyntaxParametersProperties(PSObject obj, IEnumerable<CommandParameterInfo> parameters,
-            bool common, bool commonWorkflow, string parameterSetName)
+            bool common, string parameterSetName)
         {
             ArrayList mshObjects = new ArrayList();
 
             foreach (CommandParameterInfo parameter in parameters)
             {
-                if (commonWorkflow && IsCommonWorkflowParameter(parameter.Name))
-                {
-                    continue;
-                }
-
                 if (common && Cmdlet.CommonParameters.Contains(parameter.Name))
                 {
                     continue;
@@ -307,19 +290,19 @@ namespace System.Management.Automation.Help
                 }
                 else
                 {
-                    if (parameter.ParameterType.GetTypeInfo().IsEnum && (Enum.GetNames(parameter.ParameterType) != null))
+                    if (parameter.ParameterType.IsEnum && (Enum.GetNames(parameter.ParameterType) != null))
                     {
                         AddParameterValueGroupProperties(mshObject, Enum.GetNames(parameter.ParameterType));
                     }
                     else if (parameter.ParameterType.IsArray)
                     {
-                        if (parameter.ParameterType.GetElementType().GetTypeInfo().IsEnum &&
+                        if (parameter.ParameterType.GetElementType().IsEnum &&
                             Enum.GetNames(parameter.ParameterType.GetElementType()) != null)
                         {
                             AddParameterValueGroupProperties(mshObject, Enum.GetNames(parameter.ParameterType.GetElementType()));
                         }
                     }
-                    else if (parameter.ParameterType.GetTypeInfo().IsGenericType)
+                    else if (parameter.ParameterType.IsGenericType)
                     {
                         Type[] types = parameter.ParameterType.GetGenericArguments();
 
@@ -327,13 +310,13 @@ namespace System.Management.Automation.Help
                         {
                             Type type = types[0];
 
-                            if (type.GetTypeInfo().IsEnum && (Enum.GetNames(type) != null))
+                            if (type.IsEnum && (Enum.GetNames(type) != null))
                             {
                                 AddParameterValueGroupProperties(mshObject, Enum.GetNames(type));
                             }
                             else if (type.IsArray)
                             {
-                                if (type.GetElementType().GetTypeInfo().IsEnum &&
+                                if (type.GetElementType().IsEnum &&
                                     Enum.GetNames(type.GetElementType()) != null)
                                 {
                                     AddParameterValueGroupProperties(mshObject, Enum.GetNames(type.GetElementType()));
@@ -373,9 +356,8 @@ namespace System.Management.Automation.Help
         /// <param name="obj">HelpInfo object</param>
         /// <param name="parameters">parameters</param>
         /// <param name="common">common parameters</param>
-        /// <param name="commonWorkflow">common workflow parameters</param>
         /// <param name="typeNameForHelp">type name for help</param>
-        internal static void AddParametersProperties(PSObject obj, Dictionary<string, ParameterMetadata> parameters, bool common, bool commonWorkflow, string typeNameForHelp)
+        internal static void AddParametersProperties(PSObject obj, Dictionary<string, ParameterMetadata> parameters, bool common, string typeNameForHelp)
         {
             PSObject paramsObject = new PSObject();
 
@@ -398,11 +380,6 @@ namespace System.Management.Automation.Help
 
             foreach (string parameter in sortedParameters)
             {
-                if (commonWorkflow && IsCommonWorkflowParameter(parameter))
-                {
-                    continue;
-                }
-
                 if (common && Cmdlet.CommonParameters.Contains(parameter))
                 {
                     continue;
@@ -442,13 +419,13 @@ namespace System.Management.Automation.Help
 
             if (attribs.Count == 0)
             {
-                obj.Properties.Add(new PSNoteProperty("required", ""));
-                obj.Properties.Add(new PSNoteProperty("pipelineInput", ""));
-                obj.Properties.Add(new PSNoteProperty("isDynamic", ""));
-                obj.Properties.Add(new PSNoteProperty("parameterSetName", ""));
-                obj.Properties.Add(new PSNoteProperty("description", ""));
-                obj.Properties.Add(new PSNoteProperty("position", ""));
-                obj.Properties.Add(new PSNoteProperty("aliases", ""));
+                obj.Properties.Add(new PSNoteProperty("required", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("pipelineInput", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("isDynamic", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("parameterSetName", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("description", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("position", string.Empty));
+                obj.Properties.Add(new PSNoteProperty("aliases", string.Empty));
             }
             else
             {
@@ -910,22 +887,6 @@ namespace System.Management.Automation.Help
             }
 
             return (commonParams.Count == Cmdlet.CommonParameters.Count);
-        }
-
-        /// <summary>
-        /// Checks if a parameter is a common workflow parameter
-        /// </summary>
-        /// <param name="name">parameter name</param>
-        /// <returns>true if it is a common parameter, false if not</returns>
-        private static bool IsCommonWorkflowParameter(string name)
-        {
-            foreach (string parameter in CommonParameters.CommonWorkflowParameters)
-            {
-                if (name == parameter)
-                    return true;
-            }
-
-            return false;
         }
 
         /// <summary>

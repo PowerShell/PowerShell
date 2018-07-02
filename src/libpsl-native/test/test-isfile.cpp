@@ -1,5 +1,6 @@
-//! @file test-isfile.cpp
-//! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Tests Isfile
 
 #include <gtest/gtest.h>
@@ -9,7 +10,7 @@
 
 TEST(IsFileTest, RootIsFile)
 {
-    EXPECT_TRUE(IsFile("/"));
+    EXPECT_FALSE(IsFile("/"));
 }
 
 TEST(IsFileTest, BinLsIsFile)

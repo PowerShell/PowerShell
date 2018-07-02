@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Host;
 using System.Threading;
@@ -18,8 +17,6 @@ namespace System.Management.Automation.Internal
             return String.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o);
         }
 
-
-
         internal static
         string
         Format(string formatSpec, object o1, object o2)
@@ -27,16 +24,12 @@ namespace System.Management.Automation.Internal
             return String.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o1, o2);
         }
 
-
-
         internal static
         string
         Format(string formatSpec, params object[] o)
         {
             return String.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o);
         }
-
-
 
         internal static
         string
@@ -84,6 +77,24 @@ namespace System.Management.Automation.Internal
             {
                 Interlocked.CompareExchange(ref IndentCache[countOfSpaces], new string(' ', countOfSpaces), null);
                 result = IndentCache[countOfSpaces];
+            }
+
+            return result;
+        }
+
+        private const int DashCacheMax = 120;
+        private static readonly string[] DashCache = new string[DashCacheMax];
+        internal static string DashPadding(int count)
+        {
+            if (count >= DashCacheMax)
+                return new string('-', count);
+
+            var result = DashCache[count];
+
+            if (result == null)
+            {
+                Interlocked.CompareExchange(ref DashCache[count], new string('-', count), null);
+                result = DashCache[count];
             }
 
             return result;

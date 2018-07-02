@@ -1,4 +1,6 @@
-﻿Describe "Cmdlet declaration statement" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Cmdlet declaration statement" -Tags "CI" {
     $testData = @(
         @{ Name = 'Verify non-cmdlet formatted names are allowed';
            Script = '
@@ -106,7 +108,6 @@
                     $a
                 }'})
 
-
         It '<Name>' -TestCases $testData {
             param($Name, $script)
 
@@ -115,7 +116,7 @@
             $null = [system.management.automation.psparser]::tokenize($script, [ref] $syntaxerrors)
 
             #Error should not be reported
-            $syntaxerrors.Count | Should Be 0
+            $syntaxerrors.Count | Should -Be 0
         }
 }
 

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
 #pragma warning disable 56506
@@ -72,7 +71,6 @@ namespace System.Management.Automation
                 string caption = null;
                 string prompt = null;
 
-
                 caption = CredentialAttributeStrings.CredentialAttribute_Prompt_Caption;
 
                 prompt = CredentialAttributeStrings.CredentialAttribute_Prompt;
@@ -81,7 +79,7 @@ namespace System.Management.Automation
                            caption,
                            prompt,
                            userName,
-                           "");
+                           string.Empty);
             }
 
             return cred;

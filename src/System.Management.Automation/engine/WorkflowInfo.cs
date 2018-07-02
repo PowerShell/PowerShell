@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 
@@ -40,7 +39,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="workflow"/> is null.
         /// </exception>
-        public WorkflowInfo(string name, string definition, ScriptBlock workflow, string xamlDefinition, WorkflowInfo[] workflowsCalled)
+        internal WorkflowInfo(string name, string definition, ScriptBlock workflow, string xamlDefinition, WorkflowInfo[] workflowsCalled)
             : this(name, workflow, (ExecutionContext)null)
         {
             if (string.IsNullOrEmpty(xamlDefinition))
@@ -78,7 +77,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="workflow"/> is null.
         /// </exception>
-        public WorkflowInfo(string name, string definition, ScriptBlock workflow, string xamlDefinition, WorkflowInfo[] workflowsCalled, PSModuleInfo module)
+        internal WorkflowInfo(string name, string definition, ScriptBlock workflow, string xamlDefinition, WorkflowInfo[] workflowsCalled, PSModuleInfo module)
             : this(name, definition, workflow, xamlDefinition, workflowsCalled)
         {
             this.Module = module;
@@ -282,7 +281,7 @@ namespace System.Management.Automation
         {
             get { return _definition; }
         }
-        private string _definition = "";
+        private string _definition = string.Empty;
 
         /// <summary>
         /// Gets the XAML that represents the definition of the workflow.

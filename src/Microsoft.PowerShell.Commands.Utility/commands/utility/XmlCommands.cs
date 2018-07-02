@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -46,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         /// mandatory file name to write to
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public string LiteralPath
         {
             get
@@ -137,7 +136,6 @@ namespace Microsoft.PowerShell.Commands
             CreateFileStream();
         }
 
-
         /// <summary>
         ///
         /// </summary>
@@ -145,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
-            if (null != _serializer)
+            if (_serializer != null)
             {
                 _serializer.Serialize(InputObject);
                 _xw.Flush();
@@ -298,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
         /// mandatory file name to read from
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] LiteralPath
         {
@@ -313,7 +311,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private bool _isLiteralPath = false;
-
 
         #endregion Command Line Parameters
 
@@ -367,7 +364,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-
     /// <summary>
     /// implementation for the convertto-xml command
     /// </summary>
@@ -378,7 +374,6 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Command Line Parameters
 
-
         /// <summary>
         /// Depth of serialization
         /// </summary>
@@ -386,14 +381,12 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(1, int.MaxValue)]
         public int Depth { get; set; } = 0;
 
-
         /// <summary>
         /// Input Object which is written to XML format
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
         [AllowNull]
         public PSObject InputObject { get; set; }
-
 
         /// <summary>
         /// Property that sets NoTypeInformation parameter.
@@ -422,7 +415,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Command Line Parameters
 
-
         #region Overrides
 
         /// <summary>
@@ -441,7 +433,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         /// <summary>
         /// override ProcessRecord
         /// </summary>
@@ -451,11 +442,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 CreateMemoryStream();
 
-                if (null != _serializer)
+                if (_serializer != null)
                     _serializer.SerializeAsStream(InputObject);
 
-
-                if (null != _serializer)
+                if (_serializer != null)
                 {
                     _serializer.DoneAsStream();
                     _serializer = null;
@@ -471,7 +461,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (null != _serializer)
+                if (_serializer != null)
                     _serializer.Serialize(InputObject);
             }
         }
@@ -481,7 +471,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (null != _serializer)
+            if (_serializer != null)
             {
                 _serializer.Done();
                 _serializer = null;
@@ -630,7 +620,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion IDisposable Members
     }
 
-
     /// <summary>
     /// Helper class to import single XML file
     /// </summary>
@@ -742,7 +731,6 @@ namespace Microsoft.PowerShell.Commands
                 _cmdlet.WriteObject(totalCount);
             }
 
-
             ulong skip = _cmdlet.PagingParameters.Skip;
             ulong first = _cmdlet.PagingParameters.First;
 
@@ -837,7 +825,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath")]
+        [Alias("PSPath","LP")]
         public String[] LiteralPath
         {
             get { return Path; }

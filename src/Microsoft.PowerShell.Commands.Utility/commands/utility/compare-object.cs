@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -151,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="differenceEntry"></param>
         private void Process(OrderByPropertyEntry differenceEntry)
         {
-            Diagnostics.Assert(null != _referenceEntries, "null referenceEntries");
+            Diagnostics.Assert(_referenceEntries != null, "null referenceEntries");
 
             // Retrieve the next reference object (referenceEntry) if any
             OrderByPropertyEntry referenceEntry = null;
@@ -165,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
             //   Return
             // 2005/07/19 Switched order of referenceEntry and differenceEntry
             //   so that we cast differenceEntry to the type of referenceEntry.
-            if (null != referenceEntry && null != differenceEntry &&
+            if (referenceEntry != null && differenceEntry != null &&
                 0 == _comparer.Compare(referenceEntry, differenceEntry))
             {
                 EmitMatch(referenceEntry);
@@ -178,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
             //   Clear differenceEntry
             OrderByPropertyEntry matchingEntry =
                 MatchAndRemove(differenceEntry, _referenceEntryBacklog);
-            if (null != matchingEntry)
+            if (matchingEntry != null)
             {
                 EmitMatch(matchingEntry);
                 differenceEntry = null;
@@ -190,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
             //   Clear referenceEntry
             matchingEntry =
                 MatchAndRemove(referenceEntry, _differenceEntryBacklog);
-            if (null != matchingEntry)
+            if (matchingEntry != null)
             {
                 EmitMatch(referenceEntry);
                 referenceEntry = null;
@@ -204,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
             //       Emit oldest entry in differenceEntryBacklog as unmatched
             //       Remove oldest entry from differenceEntryBacklog
             //     Add differenceEntry to differenceEntryBacklog
-            if (null != differenceEntry)
+            if (differenceEntry != null)
             {
                 if (0 < SyncWindow)
                 {
@@ -229,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
             //       Emit oldest entry in referenceEntryBacklog as unmatched
             //       Remove oldest entry from referenceEntryBacklog
             //     Add referenceEntry to referenceEntryBacklog
-            if (null != referenceEntry)
+            if (referenceEntry != null)
             {
                 if (0 < SyncWindow)
                 {
@@ -249,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void InitComparer()
         {
-            if (null != _comparer)
+            if (_comparer != null)
                 return;
 
             List<PSObject> referenceObjectList = new List<PSObject>(ReferenceObject);
@@ -273,13 +272,13 @@ namespace Microsoft.PowerShell.Commands
             OrderByPropertyEntry match,
             List<OrderByPropertyEntry> list)
         {
-            if (null == match || null == list)
+            if (match == null || list == null)
                 return null;
-            Diagnostics.Assert(null != _comparer, "null comparer");
+            Diagnostics.Assert(_comparer != null, "null comparer");
             for (int i = 0; i < list.Count; i++)
             {
                 OrderByPropertyEntry listEntry = list[i];
-                Diagnostics.Assert(null != listEntry, "null listEntry " + i);
+                Diagnostics.Assert(listEntry != null, "null listEntry " + i);
                 if (0 == _comparer.Compare(match, listEntry))
                 {
                     list.RemoveAt(i);
@@ -310,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void Emit(OrderByPropertyEntry entry, string sideIndicator)
         {
-            Diagnostics.Assert(null != entry, "null entry");
+            Diagnostics.Assert(entry != null, "null entry");
 
             PSObject mshobj;
             if (PassThru)
@@ -320,7 +319,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 mshobj = new PSObject();
-                if (null == Property || 0 == Property.Length)
+                if (Property == null || 0 == Property.Length)
                 {
                     PSNoteProperty inputNote = new PSNoteProperty(
                         InputObjectPropertyName, entry.inputObject);
@@ -329,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     List<MshParameter> mshParameterList = _orderByProperty.MshParameterList;
-                    Diagnostics.Assert(null != mshParameterList, "null mshParameterList");
+                    Diagnostics.Assert(mshParameterList != null, "null mshParameterList");
                     Diagnostics.Assert(mshParameterList.Count == Property.Length, "mshParameterList.Count " + mshParameterList.Count);
 
                     for (int i = 0; i < Property.Length; i++)
@@ -337,11 +336,11 @@ namespace Microsoft.PowerShell.Commands
                         // 2005/07/05 This is the closest we can come to
                         // the string typed by the user
                         MshParameter mshParameter = mshParameterList[i];
-                        Diagnostics.Assert(null != mshParameter, "null mshParameter");
+                        Diagnostics.Assert(mshParameter != null, "null mshParameter");
                         Hashtable hash = mshParameter.hash;
-                        Diagnostics.Assert(null != hash, "null hash");
+                        Diagnostics.Assert(hash != null, "null hash");
                         object prop = hash[FormatParameterDefinitionKeys.ExpressionEntryKey];
-                        Diagnostics.Assert(null != prop, "null prop");
+                        Diagnostics.Assert(prop != null, "null prop");
                         string propName = prop.ToString();
                         PSNoteProperty propertyNote = new PSNoteProperty(
                             propName,
@@ -405,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (null == _comparer && 0 < DifferenceObject.Length)
+            if (_comparer == null && 0 < DifferenceObject.Length)
             {
                 InitComparer();
             }

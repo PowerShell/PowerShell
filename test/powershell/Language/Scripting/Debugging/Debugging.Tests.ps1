@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $script1 = @'
 'aaa'.ToString() > $null
 'aa' > $null
@@ -23,7 +25,7 @@ Describe "Breakpoints when set should be hit" -tag "CI" {
     It "A redirected breakpoint is hit" {
         & $path
         foreach ( $bp in $bps ) {
-            $bp.HitCount | should be 1
+            $bp.HitCount | Should -Be 1
         }
     }
 }
@@ -62,29 +64,29 @@ Describe "It should be possible to reset runspace debugging" -tag "Feature" {
         if ( $null -ne $ss ) { $rs.Dispose() }
     }
     It "2 breakpoints should have been set" {
-        $breakpoints.Count | Should be 2
+        $breakpoints.Count | Should -Be 2
     }
     It "The breakpoint Should have been hit" {
-        $completed | should be $true
+        $completed | Should -BeTrue
     }
     It "The reset debugger should not be in a breakpoint" {
-        $rs.Debugger.InBreakPoint | should be $false
+        $rs.Debugger.InBreakPoint | Should -BeFalse
     }
     It "The reset debugger should not be active" {
-        $rs.Debugger.IsActive | should be $false
+        $rs.Debugger.IsActive | Should -BeFalse
     }
     It "The reset debugger mode should be set to 'Default'" {
-        $rs.Debugger.DebugMode | should be "Default"
+        $rs.Debugger.DebugMode | Should -Be "Default"
     }
     It "The debugger should be the same before and after the reset" {
-        $rs.Debugger | Should be $debuggerBeforeReset
+        $rs.Debugger | Should -Be $debuggerBeforeReset
     }
     It "The breakpoints should be gone after reset" {
         $ps.Commands.clear()
-        $ps.AddCommand("Get-PSBreakpoint").Invoke() | Should BeNullOrEmpty
+        $ps.AddCommand("Get-PSBreakpoint").Invoke() | Should -BeNullOrEmpty
     }
     It "The script should run without a break" {
         $ps.Commands.Clear()
-        $ps.addscript("$testdrive/TestScript_2.ps1").Invoke().Count | should be 3
+        $ps.addscript("$testdrive/TestScript_2.ps1").Invoke().Count | Should -Be 3
     }
 }

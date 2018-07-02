@@ -1,17 +1,17 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using Xunit;
 using System;
 using System.Management.Automation;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
-    [Collection("AssemblyLoadContext")]
     public static class PSTypeExtensionsTests
     {
         [Fact]
-        public static void TestIsComObject()
+        public static void TestIsNumeric()
         {
-            // It just needs an arbitrary type
-            Assert.False(PSTypeExtensions.IsComObject(42.GetType()));
+            Assert.True(PSTypeExtensions.IsNumeric(42.GetType()));
         }
     }
 }

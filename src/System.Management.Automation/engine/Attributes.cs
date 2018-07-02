@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -484,7 +483,6 @@ namespace System.Management.Automation
             Type = new[] { new PSTypeName(typeName) };
         }
 
-
         /// <summary>
         /// Construct the attribute from an array of <see>System.Type</see>
         /// </summary>
@@ -810,7 +808,6 @@ namespace System.Management.Automation
         public string Help { get; set; }
     }
 
-
     /// <summary>
     /// Specify that the member is hidden for the purposes of cmdlets like Get-Member and
     /// that the member is not displayed by default by Format-* cmdlets.
@@ -874,7 +871,6 @@ namespace System.Management.Automation
                     MaxLength, len);
             }
         }
-
 
         /// <summary>
         /// Initializes a new instance of the ValidateLengthAttribute class
@@ -1420,7 +1416,6 @@ namespace System.Management.Automation
             IEnumerable ie;
             IEnumerator ienumerator;
 
-
             if (arguments == null || arguments == AutomationNull.Value)
             {
                 // treat a nul list the same as an empty list
@@ -1865,11 +1860,40 @@ namespace System.Management.Automation
     #endregion
 
     #region NULL validation attributes
+
+    /// <summary>
+    /// Base type of Null Validation attributes.
+    /// </summary>
+    public abstract class NullValidationAttributeBase : ValidateArgumentsAttribute
+    {
+        /// <summary>
+        /// Check if the argument type is a collection.
+        /// </summary>
+        protected bool IsArgumentCollection(Type argumentType, out bool isElementValueType)
+        {
+            isElementValueType = false;
+            var information = new ParameterCollectionTypeInformation(argumentType);
+            switch (information.ParameterCollectionType)
+            {
+                // If 'arguments' is an array, or implement 'IList', or implement 'ICollection<>'
+                // then we continue to check each element of the collection.
+                case ParameterCollectionType.Array:
+                case ParameterCollectionType.IList:
+                case ParameterCollectionType.ICollectionGeneric:
+                    Type elementType = information.ElementType;
+                    isElementValueType = elementType != null && elementType.IsValueType;
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }
+
     /// <summary>
     /// Validates that the parameters's argument is not null
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ValidateNotNullAttribute : ValidateArgumentsAttribute
+    public sealed class ValidateNotNullAttribute : NullValidationAttributeBase
     {
         /// <summary>
         /// Verifies the argument is not null and if it is a collection, that each
@@ -1891,9 +1915,6 @@ namespace System.Management.Automation
         /// </exception>
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {
-            IEnumerable ienum = null;
-            IEnumerator itor = null;
-
             if (arguments == null || arguments == AutomationNull.Value)
             {
                 throw new ValidationMetadataException(
@@ -1901,24 +1922,17 @@ namespace System.Management.Automation
                     null,
                     Metadata.ValidateNotNullFailure);
             }
-            else if ((ienum = arguments as IEnumerable) != null)
+            else if (IsArgumentCollection(arguments.GetType(), out bool isElementValueType))
             {
-                foreach (object element in ienum)
+                // If the element of the collection is of value type, then no need to check for null
+                // because a value-type value cannot be null.
+                if (isElementValueType) { return; }
+
+                IEnumerator ienum = LanguagePrimitives.GetEnumerator(arguments);
+                while (ienum.MoveNext())
                 {
+                    object element = ienum.Current;
                     if (element == null || element == AutomationNull.Value)
-                    {
-                        throw new ValidationMetadataException(
-                            "ArgumentIsNull",
-                            null,
-                            Metadata.ValidateNotNullCollectionFailure);
-                    }
-                }
-            }
-            else if ((itor = arguments as IEnumerator) != null)
-            {
-                for (; itor.MoveNext() == true;)
-                {
-                    if (itor.Current == null || itor.Current == AutomationNull.Value)
                     {
                         throw new ValidationMetadataException(
                             "ArgumentIsNull",
@@ -1935,7 +1949,7 @@ namespace System.Management.Automation
     /// an empty string, and is not an empty collection.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ValidateNotNullOrEmptyAttribute : ValidateArgumentsAttribute
+    public sealed class ValidateNotNullOrEmptyAttribute : NullValidationAttributeBase
     {
         /// <summary>
         /// Validates that the parameters's argument is not null, is not
@@ -1954,10 +1968,6 @@ namespace System.Management.Automation
         /// </exception>
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {
-            IEnumerable ienum = null;
-            IEnumerator itor = null;
-            string str = null;
-
             if (arguments == null || arguments == AutomationNull.Value)
             {
                 throw new ValidationMetadataException(
@@ -1965,7 +1975,7 @@ namespace System.Management.Automation
                     null,
                     Metadata.ValidateNotNullOrEmptyFailure);
             }
-            else if ((str = arguments as String) != null)
+            else if (arguments is string str)
             {
                 if (String.IsNullOrEmpty(str))
                 {
@@ -1975,34 +1985,40 @@ namespace System.Management.Automation
                         Metadata.ValidateNotNullOrEmptyFailure);
                 }
             }
-            else if ((ienum = arguments as IEnumerable) != null)
+            else if (IsArgumentCollection(arguments.GetType(), out bool isElementValueType))
             {
-                int validElements = 0;
-                foreach (object element in ienum)
-                {
-                    validElements++;
-                    if (element == null || element == AutomationNull.Value)
-                    {
-                        throw new ValidationMetadataException(
-                            "ArgumentIsNull",
-                            null,
-                            Metadata.ValidateNotNullOrEmptyCollectionFailure);
-                    }
+                bool isEmpty = true;
+                IEnumerator ienum = LanguagePrimitives.GetEnumerator(arguments);
+                if (ienum.MoveNext()) { isEmpty = false; }
 
-                    string elementAsString = element as String;
-                    if (elementAsString != null)
-                    {
-                        if (String.IsNullOrEmpty(elementAsString))
+                // If the element of the collection is of value type, then no need to check for null
+                // because a value-type value cannot be null.
+                if (!isEmpty && !isElementValueType)
+                {
+                    do {
+                        object element = ienum.Current;
+                        if (element == null || element == AutomationNull.Value)
                         {
                             throw new ValidationMetadataException(
-                                "ArgumentCollectionContainsEmpty",
+                                "ArgumentIsNull",
                                 null,
-                                Metadata.ValidateNotNullOrEmptyFailure);
+                                Metadata.ValidateNotNullOrEmptyCollectionFailure);
                         }
-                    }
+
+                        if (element is string elementAsString)
+                        {
+                            if (String.IsNullOrEmpty(elementAsString))
+                            {
+                                throw new ValidationMetadataException(
+                                    "ArgumentCollectionContainsEmpty",
+                                    null,
+                                    Metadata.ValidateNotNullOrEmptyCollectionFailure);
+                            }
+                        }
+                    } while (ienum.MoveNext());
                 }
 
-                if (validElements == 0)
+                if (isEmpty)
                 {
                     throw new ValidationMetadataException(
                         "ArgumentIsEmpty",
@@ -2010,21 +2026,9 @@ namespace System.Management.Automation
                         Metadata.ValidateNotNullOrEmptyCollectionFailure);
                 }
             }
-            else if ((itor = arguments as IEnumerator) != null)
+            else if (arguments is IDictionary dict)
             {
-                int validElements = 0;
-                for (; itor.MoveNext() == true;)
-                {
-                    validElements++;
-                    if (itor.Current == null || itor.Current == AutomationNull.Value)
-                    {
-                        throw new ValidationMetadataException(
-                            "ArgumentIsNull",
-                            null,
-                            Metadata.ValidateNotNullOrEmptyCollectionFailure);
-                    }
-                }
-                if (validElements == 0)
+                if (dict.Count == 0)
                 {
                     throw new ValidationMetadataException(
                         "ArgumentIsEmpty",

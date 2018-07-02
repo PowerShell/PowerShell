@@ -1,9 +1,7 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #if !UNIX
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
-
 
 using System;
 using System.Management.Automation;
@@ -18,8 +16,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using WORD = System.UInt16;
 using DWORD = System.UInt32;
-
-
 
 namespace Microsoft.PowerShell
 {
@@ -131,8 +127,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -189,8 +183,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -233,8 +225,6 @@ namespace Microsoft.PowerShell
                 ConsoleControl.SetConsoleCursorPosition(handle, value);
             }
         }
-
-
 
         /// <summary>
         ///
@@ -302,8 +292,6 @@ namespace Microsoft.PowerShell
                 }
             }
         }
-
-
 
         /// <summary>
         ///
@@ -375,8 +363,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -435,8 +421,6 @@ namespace Microsoft.PowerShell
                 }
             }
         }
-
-
 
         /// <summary>
         ///
@@ -570,8 +554,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -597,8 +579,6 @@ namespace Microsoft.PowerShell
                 return s;
             }
         }
-
-
 
         /// <summary>
         ///
@@ -788,8 +768,6 @@ namespace Microsoft.PowerShell
             return keyInfo;
         }
 
-
-
         private static
         void
         KEY_EVENT_RECORDToKeyInfo(ConsoleControl.KEY_EVENT_RECORD keyEventRecord, out KeyInfo keyInfo)
@@ -800,8 +778,6 @@ namespace Microsoft.PowerShell
                 (ControlKeyStates)keyEventRecord.ControlKeyState,
                 keyEventRecord.KeyDown);
         }
-
-
 
         /// <summary>
         ///
@@ -825,8 +801,6 @@ namespace Microsoft.PowerShell
 
             cachedKeyEvent.RepeatCount = 0;
         }
-
-
 
         /// <summary>
         ///
@@ -883,7 +857,6 @@ namespace Microsoft.PowerShell
                 return false;
             }
         }
-
 
         /// <summary>
         ///
@@ -1003,8 +976,6 @@ namespace Microsoft.PowerShell
 
             ConsoleControl.WriteConsoleOutput(handle, origin, contents);
         }
-
-
 
         /// <summary>
         ///
@@ -1185,8 +1156,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         /// <summary>
         ///
         /// See base class.
@@ -1270,8 +1239,6 @@ namespace Microsoft.PowerShell
 
             return contents;
         }
-
-
 
         /// <summary>
         ///
@@ -1386,7 +1353,6 @@ namespace Microsoft.PowerShell
             return ConsoleControl.LengthInBufferCells(s, offset, parent.SupportsVirtualTerminal);
         }
 
-
         /// <summary>
         ///
         /// See base class
@@ -1423,7 +1389,6 @@ namespace Microsoft.PowerShell
 
 #region helpers
 
-
         // pass-by-ref for speed.
         /// <summary>
         ///
@@ -1455,7 +1420,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         /// Get output buffer info
         /// </summary>
@@ -1474,8 +1438,6 @@ namespace Microsoft.PowerShell
             bufferInfo = ConsoleControl.GetConsoleScreenBufferInfo(result);
             return result;
         }
-
-
 
 #endregion helpers
 
@@ -1511,7 +1473,7 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.PowerShell
 {
-    // this is all originally from https://msdn.microsoft.com/en-us/library/ee706570%28v=vs.85%29.aspx
+    // this is all originally from https://msdn.microsoft.com/library/ee706570%28v=vs.85%29.aspx
 
     internal sealed class ConsoleHostRawUserInterface : PSHostRawUserInterface
     {
@@ -1779,7 +1741,6 @@ namespace Microsoft.PowerShell
             {
                 PSTraceSource.NewArgumentNullException("contents");
             }
-
             //if the cursor is on the last line, we need to make more space to print the specified buffer
             if (origin.Y == BufferSize.Height - 1 && origin.X >= BufferSize.Width)
             {
@@ -1793,6 +1754,14 @@ namespace Microsoft.PowerShell
                     origin.Y -= rows;
                 }
             }
+
+#if UNIX
+            // Make sure that the physical cursor position matches where we think it is.
+            // This is a problem on *nix, because input that the user types is echoed
+            // and that moves the cursor. As a consequence, the cursor needs to be repositioned
+            // before we update the screen.
+            CursorPosition = origin;
+#endif
 
             //iterate through the buffer to set
             foreach (var charitem in contents)

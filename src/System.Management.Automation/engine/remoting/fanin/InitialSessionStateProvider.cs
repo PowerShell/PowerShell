@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +16,6 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
-
 
 namespace System.Management.Automation.Remoting
 {
@@ -204,7 +202,6 @@ namespace System.Management.Automation.Remoting
             return result;
         }
 
-
         /// <summary>
         /// Creates the struct from initialization parameters xml.
         /// </summary>
@@ -290,12 +287,12 @@ namespace System.Management.Automation.Remoting
             }
 
             // assign defaults after parsing the xml content.
-            if (null == result.MaxReceivedObjectSizeMB)
+            if (result.MaxReceivedObjectSizeMB == null)
             {
                 result.MaxReceivedObjectSizeMB = BaseTransportManager.MaximumReceivedObjectSize;
             }
 
-            if (null == result.MaxReceivedCommandSizeMB)
+            if (result.MaxReceivedCommandSizeMB == null)
             {
                 result.MaxReceivedCommandSizeMB = BaseTransportManager.MaximumReceivedDataSize;
             }
@@ -543,7 +540,7 @@ namespace System.Management.Automation.Remoting
                     assemblyName, shellId);
 
                 assembly = LoadSsnStateProviderAssembly(applicationBase, assemblyName);
-                if (null == assembly)
+                if (assembly == null)
                 {
                     throw PSTraceSource.NewArgumentException("assemblyName", RemotingErrorIdStrings.UnableToLoadAssembly,
                         assemblyName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
@@ -551,7 +548,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // configuration xml specified an assembly and typetoload.
-            if (null != assembly)
+            if (assembly != null)
             {
                 try
                 {
@@ -560,7 +557,7 @@ namespace System.Management.Automation.Remoting
                         typeToLoad, shellId);
 
                     Type type = assembly.GetType(typeToLoad, true, true);
-                    if (null == type)
+                    if (type == null)
                     {
                         throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
                             typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
@@ -676,7 +673,7 @@ namespace System.Management.Automation.Remoting
                     s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
                 }
 
-                if (null != result)
+                if (result != null)
                 {
                     return result;
                 }
@@ -2076,7 +2073,7 @@ namespace System.Management.Automation.Remoting
                     throw ioe;
                 }
 
-                if (null != modules)
+                if (modules != null)
                 {
                     Collection<ModuleSpecification> modulesToImport = new Collection<ModuleSpecification>();
                     foreach (object module in modules)
@@ -2090,14 +2087,14 @@ namespace System.Management.Automation.Remoting
                         else
                         {
                             Hashtable moduleHash = module as Hashtable;
-                            if (null != moduleHash)
+                            if (moduleHash != null)
                             {
                                 moduleSpec = new ModuleSpecification(moduleHash);
                             }
                         }
 
                         // Now add the moduleSpec to modulesToImport
-                        if (null != moduleSpec)
+                        if (moduleSpec != null)
                         {
                             if (string.Equals(InitialSessionState.CoreModule, moduleSpec.Name,
                                               StringComparison.OrdinalIgnoreCase))

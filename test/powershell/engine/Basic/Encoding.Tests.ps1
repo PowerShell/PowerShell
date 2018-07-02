@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "File encoding tests" -Tag CI {
 
     Context "ParameterType for parameter 'Encoding' should be 'Encoding'" {
@@ -8,7 +10,7 @@ Describe "File encoding tests" -Tag CI {
         }
         It "Encoding parameter of command '<Command>' is type 'Encoding'" -Testcase $testCases {
             param ( $command )
-            $command.Parameters['Encoding'].ParameterType.FullName | Should BeExactly "System.Text.Encoding"
+            $command.Parameters['Encoding'].ParameterType.FullName | Should -BeExactly "System.Text.Encoding"
         }
     }
     Context "File contents are UTF8 without BOM" {
@@ -51,15 +53,15 @@ Describe "File encoding tests" -Tag CI {
         It "Export-CSV creates file with UTF-8 encoding without BOM" {
             [pscustomobject]@{ Key = $testStr } | Export-Csv $outputFile
             $bytes = Get-FileBytes $outputFile
-            $bytes[0,1,2] -join "-" | should not be ($utf8Preamble -join "-")
-            $bytes -join "-" | should match ($utf8bytes -join "-")
+            $bytes[0,1,2] -join "-" | should -Not -Be ($utf8Preamble -join "-")
+            $bytes -join "-" | should -Match ($utf8bytes -join "-")
         }
 
         It "Export-CliXml creates file with UTF-8 encoding without BOM" {
             [pscustomobject]@{ Key = $testStr } | Export-Clixml $outputFile
             $bytes = Get-FileBytes $outputFile
-            $bytes[0,1,2] -join "-" | should not be ($utf8Preamble -join "-")
-            $bytes -join "-" | should match ($utf8bytes -join "-")
+            $bytes[0,1,2] -join "-" | should -Not -Be ($utf8Preamble -join "-")
+            $bytes -join "-" | should -Match ($utf8bytes -join "-")
         }
 
         It "Appends correctly on non-Windows systems" -Skip:$IsWindows {
@@ -67,7 +69,7 @@ Describe "File encoding tests" -Tag CI {
             ${testStr} >> $outputFile
             $bytes = Get-FileBytes $outputFile
             $Expected = $( $ExpectedWithNewline; $ExpectedWithNewline )
-            $bytes -join "-" | should be ($Expected -join "-")
+            $bytes -join "-" | should -Be ($Expected -join "-")
         }
     }
 }

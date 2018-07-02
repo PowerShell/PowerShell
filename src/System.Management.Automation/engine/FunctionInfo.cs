@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Text;
 using System.Management.Automation.Runspaces;
@@ -485,7 +484,7 @@ namespace System.Management.Automation
                             Globalization.CultureInfo.CurrentCulture,
                             "{0} {1}",
                             Name,
-                            parameterSet.ToString((this.CommandType & CommandTypes.Workflow) == CommandTypes.Workflow)));
+                            parameterSet.ToString()));
                 }
 
                 return synopsis.ToString();

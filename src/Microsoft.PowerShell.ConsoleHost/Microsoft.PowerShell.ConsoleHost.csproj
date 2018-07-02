@@ -8,12 +8,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.4.0" />
+    <!-- the following package(s) are from https://github.com/microsoft/applicationinsights-??? -->
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.6.4" />
   </ItemGroup>
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
+    <Compile Remove="WindowsTaskbarJumpList\*.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="singleshell\installer\EngineInstaller.cs" />
@@ -22,17 +27,5 @@
 
     <EmbeddedResource Remove="resources\HostMshSnapinResources.resx" />
   </ItemGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
-    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
 
 </Project>

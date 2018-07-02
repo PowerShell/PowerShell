@@ -1,8 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 // ----------------------------------------------------------------------
-//
-//  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation. All rights reserved.
-//
 //  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.
 // ----------------------------------------------------------------------
@@ -189,7 +187,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManShellStartupInfo_UnToMan startupInfo,
             WSManNativeApi.WSManData_UnToMan inboundShellInformation)
         {
-            if (null == requestDetails)
+            if (requestDetails == null)
             {
                 // Nothing can be done because requestDetails are required to report operation complete
                 PSEtwLog.LogAnalyticInformational(PSEventId.ReportOperationComplete,
@@ -205,8 +203,8 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if ((null == requestDetails.senderDetails) ||
-                (null == requestDetails.operationInfo))
+            if ((requestDetails.senderDetails == null) ||
+                (requestDetails.operationInfo == null))
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -218,7 +216,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            if (null == startupInfo)
+            if (startupInfo == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -294,7 +292,7 @@ namespace System.Management.Automation.Remoting
                     extraInfo,
                     serverTransportMgr);
 
-                if (null == remoteShellSession)
+                if (remoteShellSession == null)
                 {
                     WSManPluginInstance.ReportWSManOperationComplete(
                         requestDetails,
@@ -303,7 +301,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 context = new WSManPluginOperationShutdownContext(pluginContext, requestDetails.unmanagedHandle, IntPtr.Zero, false);
-                if (null == context)
+                if (context == null)
                 {
                     ReportOperationComplete(requestDetails, WSManPluginErrorCodes.OutOfMemory);
                     return;
@@ -314,7 +312,7 @@ namespace System.Management.Automation.Remoting
                 AddToActiveShellSessions(mgdShellSession);
                 mgdShellSession.SessionClosed += new EventHandler<EventArgs>(HandleShellSessionClosed);
 
-                if (null != inboundShellInformation)
+                if (inboundShellInformation != null)
                 {
                     if ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT != inboundShellInformation.Type)
                     {
@@ -400,14 +398,13 @@ namespace System.Management.Automation.Remoting
                                                            p);
                 }
 
-
                 mgdShellSession.registeredShutDownWaitHandle = ThreadPool.RegisterWaitForSingleObject(
                                  eventWaitHandle,
                                  new WaitOrTimerCallback(WSManPluginManagedEntryWrapper.PSPluginOperationShutdownCallback),
                                  context,
                                  -1, // INFINITE
                                  true); // TODO: Do I need to worry not being able to set missing WT_TRANSFER_IMPERSONATION?
-                if (null == mgdShellSession.registeredShutDownWaitHandle)
+                if (mgdShellSession.registeredShutDownWaitHandle == null)
                 {
                     isRegisterWaitForSingleObjectSucceeded = false;
                 }
@@ -466,7 +463,7 @@ namespace System.Management.Automation.Remoting
                 context.isReceiveOperation.ToString());
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(context.shellContext);
-            if (null == mgdShellSession)
+            if (mgdShellSession == null)
             {
                 // this should never be the case. this will protect the service.
                 //Dbg.Assert(false, "context.shellContext not matched");
@@ -494,7 +491,7 @@ namespace System.Management.Automation.Remoting
                 context.isReceiveOperation.ToString());
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(context.shellContext);
-            if (null == mgdShellSession)
+            if (mgdShellSession == null)
             {
                 // this should never be the case. this will protect the service.
                 //Dbg.Assert(false, "context.shellContext not matched");
@@ -597,7 +594,7 @@ namespace System.Management.Automation.Remoting
             IntPtr shellContext,
             string inputFunctionName)
         {
-            if (null == requestDetails)
+            if (requestDetails == null)
             {
                 // Nothing can be done because requestDetails are required to report operation complete
                 PSEtwLog.LogAnalyticInformational(PSEventId.ReportOperationComplete,
@@ -657,7 +654,7 @@ namespace System.Management.Automation.Remoting
                 ((IntPtr)shellContext).ToString(), requestDetails.ToString());
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(shellContext);
-            if (null == mgdShellSession)
+            if (mgdShellSession == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -675,7 +672,7 @@ namespace System.Management.Automation.Remoting
             IntPtr shellContext,
             IntPtr commandContext)
         {
-            if (null == requestDetails)
+            if (requestDetails == null)
             {
                 // Nothing can be done because requestDetails are required to report operation complete
                 PSEtwLog.LogAnalyticInformational(PSEventId.ReportOperationComplete,
@@ -701,7 +698,7 @@ namespace System.Management.Automation.Remoting
                     requestDetails.ToString());
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(shellContext);
-            if (null == mgdShellSession)
+            if (mgdShellSession == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -712,7 +709,7 @@ namespace System.Management.Automation.Remoting
             }
 
             WSManPluginCommandSession mgdCommandSession = mgdShellSession.GetCommandSession(commandContext);
-            if (null == mgdCommandSession)
+            if (mgdCommandSession == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -766,7 +763,7 @@ namespace System.Management.Automation.Remoting
                 ((IntPtr)shellContext).ToString(), ((IntPtr)commandContext).ToString(), ((IntPtr)requestDetails).ToString());*/
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(shellContext);
-            if (null == mgdShellSession)
+            if (mgdShellSession == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -784,7 +781,7 @@ namespace System.Management.Automation.Remoting
 
             // this connect is on a command
             WSManPluginCommandSession mgdCmdSession = mgdShellSession.GetCommandSession(commandContext);
-            if (null == mgdCmdSession)
+            if (mgdCmdSession == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -827,7 +824,7 @@ namespace System.Management.Automation.Remoting
                 ((IntPtr)shellContext).ToString(), ((IntPtr)commandContext).ToString(), requestDetails.ToString());
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(shellContext);
-            if (null == mgdShellSession)
+            if (mgdShellSession == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -847,7 +844,7 @@ namespace System.Management.Automation.Remoting
 
             // the data is destined for command.
             WSManPluginCommandSession mgdCmdSession = mgdShellSession.GetCommandSession(commandContext);
-            if (null == mgdCmdSession)
+            if (mgdCmdSession == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -893,7 +890,7 @@ namespace System.Management.Automation.Remoting
                     requestDetails.ToString());
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(shellContext);
-            if (null == mgdShellSession)
+            if (mgdShellSession == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -905,7 +902,7 @@ namespace System.Management.Automation.Remoting
             }
 
             WSManPluginOperationShutdownContext ctxtToReport = new WSManPluginOperationShutdownContext(pluginContext, shellContext, IntPtr.Zero, true);
-            if (null == ctxtToReport)
+            if (ctxtToReport == null)
             {
                 ReportOperationComplete(requestDetails, WSManPluginErrorCodes.OutOfMemory);
                 return;
@@ -925,7 +922,7 @@ namespace System.Management.Automation.Remoting
                 ctxtToReport.commandContext = commandContext;
                 WSManPluginCommandSession mgdCmdSession = mgdShellSession.GetCommandSession(commandContext);
 
-                if (null == mgdCmdSession)
+                if (mgdCmdSession == null)
                 {
                     ReportOperationComplete(
                         requestDetails,
@@ -951,12 +948,12 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManSenderDetails senderDetails)
         {
             // senderDetails will not be null.
-            Dbg.Assert(null != senderDetails, "senderDetails cannot be null");
+            Dbg.Assert(senderDetails != null, "senderDetails cannot be null");
 
             // Construct PSIdentity
             PSCertificateDetails psCertDetails = null;
             // Construct Certificate Details
-            if (null != senderDetails.certificateDetails)
+            if (senderDetails.certificateDetails != null)
             {
                 psCertDetails = new PSCertificateDetails(
                     senderDetails.certificateDetails.subject,
@@ -1100,7 +1097,7 @@ namespace System.Management.Automation.Remoting
             System.Version clientVersion = Utils.StringToVersion(clientVersionString);
             System.Version serverVersion = Utils.StringToVersion(WSManPluginConstants.PowerShellStartupProtocolVersionValue);
 
-            if ((null != clientVersion) && (null != serverVersion) &&
+            if ((clientVersion != null) && (serverVersion != null) &&
                 (clientVersion.Major == serverVersion.Major) &&
                 (clientVersion.Minor >= serverVersion.Minor))
             {
@@ -1137,12 +1134,12 @@ namespace System.Management.Automation.Remoting
         {
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
-            if (null == pluginToUse)
+            if (pluginToUse == null)
             {
                 lock (s_activePlugins)
                 {
                     pluginToUse = GetFromActivePlugins(pluginContext);
-                    if (null == pluginToUse)
+                    if (pluginToUse == null)
                     {
                         // create a new plugin
                         WSManPluginInstance mgdPlugin = new WSManPluginInstance();
@@ -1170,7 +1167,7 @@ namespace System.Management.Automation.Remoting
         {
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
-            if (null == pluginToUse)
+            if (pluginToUse == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -1197,7 +1194,7 @@ namespace System.Management.Automation.Remoting
         {
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
-            if (null == pluginToUse)
+            if (pluginToUse == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -1225,7 +1222,7 @@ namespace System.Management.Automation.Remoting
         {
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
-            if (null == pluginToUse)
+            if (pluginToUse == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -1252,7 +1249,7 @@ namespace System.Management.Automation.Remoting
         {
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
-            if (null == pluginToUse)
+            if (pluginToUse == null)
             {
                 ReportOperationComplete(
                     requestDetails,
@@ -1286,7 +1283,7 @@ namespace System.Management.Automation.Remoting
                 {
                     // Close operations associated with this command..
                     WSManPluginOperationShutdownContext cmdCtxt = new WSManPluginOperationShutdownContext(pluginContext, shellContext, commandContext, false);
-                    if (null != cmdCtxt)
+                    if (cmdCtxt != null)
                     {
                         PerformCloseOperation(cmdCtxt);
                     }
@@ -1301,7 +1298,7 @@ namespace System.Management.Automation.Remoting
                     // we got crtl_c (stop) message from client. so stop powershell
                     WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
-                    if (null == pluginToUse)
+                    if (pluginToUse == null)
                     {
                         ReportOperationComplete(
                             request,
@@ -1330,7 +1327,7 @@ namespace System.Management.Automation.Remoting
         {
             WSManPluginInstance pluginToUse = GetFromActivePlugins(context.pluginContext);
 
-            if (null == pluginToUse)
+            if (pluginToUse == null)
             {
                 return;
             }
@@ -1356,7 +1353,7 @@ namespace System.Management.Automation.Remoting
         {
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
-            if (null == pluginToUse)
+            if (pluginToUse == null)
             {
                 return;
             }
@@ -1397,7 +1394,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails,
             WSManPluginErrorCodes errorCode)
         {
-            Dbg.Assert(null != requestDetails, "requestDetails cannot be null in operation complete.");
+            Dbg.Assert(requestDetails != null, "requestDetails cannot be null in operation complete.");
 
             PSEtwLog.LogAnalyticInformational(PSEventId.ReportOperationComplete,
                 PSOpcode.Close, PSTask.None,
@@ -1419,13 +1416,13 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails,
             Exception reasonForClose)
         {
-            Dbg.Assert(null != requestDetails, "requestDetails cannot be null in operation complete.");
+            Dbg.Assert(requestDetails != null, "requestDetails cannot be null in operation complete.");
 
             WSManPluginErrorCodes error = WSManPluginErrorCodes.NoError;
             String errorMessage = String.Empty;
             String stackTrace = String.Empty;
 
-            if (null != reasonForClose)
+            if (reasonForClose != null)
             {
                 error = WSManPluginErrorCodes.ManagedException;
                 errorMessage = reasonForClose.Message;
@@ -1440,7 +1437,7 @@ namespace System.Management.Automation.Remoting
                 errorMessage,
                 stackTrace);
 
-            if (null != reasonForClose)
+            if (reasonForClose != null)
             {
                 // report operation complete to wsman with the error message (if any).
                 ReportOperationComplete(
@@ -1469,7 +1466,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails)
         {
             // requestDetails cannot not be null.
-            Dbg.Assert(null != requestDetails, "requestDetails cannot be null");
+            Dbg.Assert(requestDetails != null, "requestDetails cannot be null");
 
             //IntPtr nativeLocaleData = IntPtr.Zero;
             WSManNativeApi.WSManDataStruct outputStruct = new WSManNativeApi.WSManDataStruct();
@@ -1559,7 +1556,7 @@ namespace System.Management.Automation.Remoting
             WSManPluginErrorCodes errorCode,
             string errorMessage)
         {
-            if (null != requestDetails)
+            if (requestDetails != null)
             {
                 ReportOperationComplete(requestDetails.unmanagedHandle, errorCode, errorMessage);
             }
@@ -1575,7 +1572,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest requestDetails,
             WSManPluginErrorCodes errorCode)
         {
-            if (null != requestDetails &&
+            if (requestDetails != null &&
                 IntPtr.Zero != requestDetails.unmanagedHandle)
             {
                 wsmanPinvokeStatic.WSManPluginOperationComplete(

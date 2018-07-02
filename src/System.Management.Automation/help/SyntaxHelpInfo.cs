@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation
 {
@@ -27,13 +26,13 @@ namespace System.Management.Automation
         /// Name for the help info
         /// </summary>
         /// <value>Name for the help info</value>
-        internal override string Name { get; } = "";
+        internal override string Name { get; } = string.Empty;
 
         /// <summary>
         /// Synopsis for the help info
         /// </summary>
         /// <value>Synopsis for the help info</value>
-        internal override string Synopsis { get; } = "";
+        internal override string Synopsis { get; } = string.Empty;
 
         /// <summary>
         /// Full help object for this help info

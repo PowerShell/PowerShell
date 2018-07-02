@@ -1,15 +1,11 @@
-﻿//-----------------------------------------------------------------------
-// <copyright company="Microsoft">
-//     Copyright (c) Microsoft Corporation. All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 namespace Microsoft.PowerShell.Commands.ShowCommandExtension
 {
     using System;
     using System.Collections;
     using System.Management.Automation;
-
 
     /// <summary>
     /// Implements a facade around ShowCommandParameterInfo and its deserialized counterpart
@@ -25,7 +21,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterType(Type other)
         {
-            if (null == other)
+            if (other == null)
             {
                 throw new ArgumentNullException("other");
             }
@@ -55,7 +51,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// </param>
         public ShowCommandParameterType(PSObject other)
         {
-            if (null == other)
+            if (other == null)
             {
                 throw new ArgumentNullException("other");
             }

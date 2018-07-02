@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 
@@ -108,7 +107,7 @@ namespace System.Management.Automation
         /// alias.
         /// </summary>
         /// <value>forward target object name</value>
-        internal string ForwardTarget { get; set; } = "";
+        internal string ForwardTarget { get; set; } = string.Empty;
 
         /// <summary>
         /// Full help object for this help item.

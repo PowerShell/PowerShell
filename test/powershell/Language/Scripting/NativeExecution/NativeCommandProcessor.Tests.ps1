@@ -1,7 +1,9 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Native pipeline should have proper encoding' -tags 'CI' {
     It '$OutputEncoding should be set to UTF8 without BOM' {
-        $OutputEncoding.BodyName | Should Be "utf-8"
-        $OutputEncoding.GetPreamble().Length | Should Be 0
+        $OutputEncoding.BodyName | Should -Be "utf-8"
+        $OutputEncoding.GetPreamble().Length | Should -Be 0
     }
 }
 
@@ -25,7 +27,7 @@ Describe 'native commands with pipeline' -tags 'Feature' {
 
         # waiting 30 seconds, because powershell startup time could be long on the slow machines,
         # such as CI
-        Wait-UntilTrue { $rs.RunspaceAvailability -eq 'Available' } -timeout 30000 -interval 100 | Should Be $true
+        Wait-UntilTrue { $rs.RunspaceAvailability -eq 'Available' } -timeout 30000 -interval 100 | Should -BeTrue
 
         $ps.Stop()
         $rs.ResetRunspaceState()
@@ -35,10 +37,10 @@ Describe 'native commands with pipeline' -tags 'Feature' {
 
         if ($IsWindows) {
             $result = @(ping.exe | findstr.exe count | findstr.exe ping)
-            $result[0] | Should Match "Usage: ping"
+            $result[0] | Should -Match "Usage: ping"
         } else {
             $result = @(ps aux | grep pwsh | grep -v grep)
-            $result[0] | Should Match "pwsh"
+            $result[0] | Should -Match "pwsh"
         }
     }
 }
@@ -58,10 +60,10 @@ Describe "Native Command Processor" -tags "Feature" {
         $ps.AddArgument("-createchildprocess")
         $ps.AddArgument($numToCreate)
         $async = $ps.BeginInvoke()
-        $ps.InvocationStateInfo.State | Should Be "Running"
+        $ps.InvocationStateInfo.State | Should -Be "Running"
 
         [bool] $childrenCreated = $false
-        while (-not $childrenCreated)
+        while (-Not $childrenCreated)
         {
             $childprocesses = Get-Process testexe -ErrorAction SilentlyContinue
             if ($childprocesses.count -eq $numToCreate+1)
@@ -83,13 +85,13 @@ Describe "Native Command Processor" -tags "Feature" {
         $childprocesses = Get-Process testexe
         $count = $childprocesses.count
         $childprocesses | Stop-Process
-        $count | Should Be 0
+        $count | Should -Be 0
     }
 
     It "Should not block running Windows executables" -Skip:(!$IsWindows -or !(Get-Command notepad.exe)) {
         function FindNewNotepad
         {
-            Get-Process -Name notepad -ErrorAction Ignore | Where-Object { $_.Id -notin $dontKill }
+            Get-Process -Name notepad -ErrorAction Ignore | Where-Object { $_.Id -NotIn $dontKill }
         }
 
         # We need to kill the windows process we start and can't know the process id, so get a list of
@@ -111,11 +113,11 @@ Describe "Native Command Processor" -tags "Feature" {
 
             # Stop the new instance of notepad
             $newNotepad = FindNewNotepad
-            $newNotepad | Should Not Be $null
+            $newNotepad | Should -Not -BeNullOrEmpty
             $newNotepad | Stop-Process
 
-            $async.IsCompleted | Should Be $true
-            $ps.EndInvoke($async) | Should Be "ran notepad"
+            $async.IsCompleted | Should -BeTrue
+            $ps.EndInvoke($async) | Should -Be "ran notepad"
         }
         finally
         {
@@ -195,8 +197,8 @@ Categories=Application;
                 $title = 'tell application "TextEdit" to get name of front window' | osascript
             }
             $afterCount = [int]('tell application "TextEdit" to count of windows' | osascript)
-            $afterCount | Should Be ($beforeCount + 1)
-            $title | Should Be $expectedTitle
+            $afterCount | Should -Be ($beforeCount + 1)
+            $title | Should -BeExactly $expectedTitle
             "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
             'tell application "TextEdit" to quit' | osascript
         }
@@ -205,17 +207,17 @@ Categories=Application;
             & $TestFile
             # It may take time for handler to start
             Wait-FileToBePresent -File "$HOME/nativeCommandProcessor.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
-            Get-Content $HOME/nativeCommandProcessor.Success | Should Be $TestFile
+            Get-Content $HOME/nativeCommandProcessor.Success | Should -BeExactly $TestFile
         }
         else {
             & $TestFile
             Wait-FileToBePresent -File $TestDrive\foo.txt -TimeoutInSeconds 10 -IntervalInMilliseconds 100
-            "$TestDrive\foo.txt" | Should Exist
-            Get-Content $TestDrive\foo.txt | Should BeExactly $TestFile
+            "$TestDrive\foo.txt" | Should -Exist
+            Get-Content $TestDrive\foo.txt | Should -BeExactly $TestFile
         }
     }
 
     It "Opening a file with an unregistered extension on Windows should fail" -Skip:(!$IsWindows) {
-        { $dllFile = "$PSHOME\System.Management.Automation.dll"; & $dllFile } | ShouldBeErrorId "NativeCommandFailed"
+        { $dllFile = "$PSHOME\System.Management.Automation.dll"; & $dllFile } | Should -Throw -ErrorId "NativeCommandFailed"
     }
 }

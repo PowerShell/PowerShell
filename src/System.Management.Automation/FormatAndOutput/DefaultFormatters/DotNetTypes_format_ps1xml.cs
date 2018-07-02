@@ -1,7 +1,5 @@
-
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 
@@ -514,7 +512,7 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(width: 6)
                     .AddHeader(width: 6)
                     .AddHeader(width: 6)
-                    .AddHeader(width: 9)
+                    .AddHeader(width: 15)
                     .AddHeader(width: 11)
                     .StartRowDefinition()
                         .AddPropertyColumn("Major")

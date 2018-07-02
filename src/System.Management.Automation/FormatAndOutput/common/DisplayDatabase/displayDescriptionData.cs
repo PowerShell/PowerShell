@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 // this file contains the data structures for the in memory database
 // containing display and formatting information
@@ -41,7 +40,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal ViewDefinitionsSection viewDefinitionsSection = new ViewDefinitionsSection();
         internal FormatControlDefinitionHolder formatControlDefinitionHolder = new FormatControlDefinitionHolder();
 
-
         /// <summary>
         /// cache for resource strings in format.ps1xml
         /// </summary>
@@ -58,7 +56,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal DateTime loadTime = DateTime.Now;
     }
     #endregion
-
 
     #region Default Settings
 
@@ -121,7 +118,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
         private bool? _multilineTables;
 
-
         internal FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy();
         internal ShapeSelectionDirectives shapeSelectionDirectives = new ShapeSelectionDirectives();
         internal List<EnumerableExpansionDirective> enumerableExpansionDirectiveList = new List<EnumerableExpansionDirective>();
@@ -174,7 +170,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// string to display in the formatted display (e.g. cell in a table)
-        /// when the evaluation of an MshExpression fails
+        /// when the evaluation of a PSPropertyExpression fails
         /// </summary>
         internal string errorStringInFormattedOutput = "#ERR";
 
@@ -184,7 +180,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal string formatErrorStringInFormattedOutput = "#FMTERR";
     }
-
 
     internal sealed class ShapeSelectionDirectives
     {
@@ -229,7 +224,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     #endregion
 
-
     #region Type Groups Definitions
 
     internal sealed class TypeGroupsSection
@@ -261,9 +255,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
     }
 
-
     #endregion
-
 
     #region Elementary Tokens
 
@@ -365,7 +357,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     #endregion Elementary Tokens
 
-
     #region Control Definitions: common data
 
     /// <summary>
@@ -391,7 +382,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return FormatShape.Complex.ToString();
             }
-            return "";
+            return string.Empty;
         }
 
         /// <summary>
@@ -453,7 +444,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     #endregion
 
-
     #region View Definitions: common data
     internal sealed class ViewDefinitionsSection
     {
@@ -476,7 +466,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // such as stat and footer.
 
     }
-
 
     internal sealed class StartGroup
     {

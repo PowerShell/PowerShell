@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 /*
  * Contains definition for PSSenderInfo, PSPrincipal, PSIdentity which are
@@ -211,7 +210,7 @@ namespace System.Management.Automation.Remoting
         /// </returns>
         public bool IsInRole(string role)
         {
-            if (null != WindowsIdentity)
+            if (WindowsIdentity != null)
             {
                 // Get Windows Principal for this identity
                 WindowsPrincipal windowsPrincipal = new WindowsPrincipal(WindowsIdentity);
@@ -228,7 +227,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal bool IsInRole(WindowsBuiltInRole role)
         {
-            if (null != WindowsIdentity)
+            if (WindowsIdentity != null)
             {
                 // Get Windows Principal for this identity
                 WindowsPrincipal windowsPrincipal = new WindowsPrincipal(WindowsIdentity);
