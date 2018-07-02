@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureSum;
 
         /// <summary>
-        /// Sets all generic parameters to true and returns all the statitics.
+        /// Sets all generic parameters to true and returns all the statistics.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = GenericParameterSet)]
@@ -472,6 +472,19 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Does the begin part of the cmdlet.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            // Sets all other generic parameters to true to get all statistics.
+            if (_allStats)
+            {
+                _measureSum = _measureStandardDeviation = _measureAverage = _measureMax = _measureMin = true;
+            }
+
+        }
+
+        /// <summary>
         /// Collect data about each record that comes in.
         /// Side effects: Updates totalRecordCount.
         /// </summary>
@@ -480,11 +493,6 @@ namespace Microsoft.PowerShell.Commands
             if (InputObject == null || InputObject == AutomationNull.Value)
             {
                 return;
-            }
-
-            if (_allStats)
-            {
-                _measureSum = _measureStandardDeviation = _measureAverage = _measureMax = _measureMin = true;
             }
 
             _totalRecordCount++;
