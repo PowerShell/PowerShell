@@ -648,6 +648,11 @@ Fix steps:
     if ($PSModuleRestore) {
         Restore-PSModuleToBuild -PublishPath $publishPath
     }
+
+    # Restore the Pester module
+    if ($CI) {
+        Restore-PSPester -Destination (Join-Path $publishPath "Modules")
+    }
 }
 
 function Restore-PSPackage
