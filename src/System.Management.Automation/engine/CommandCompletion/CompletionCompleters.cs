@@ -4166,7 +4166,7 @@ namespace System.Management.Automation
                                     string[] entries = null;
                                     try
                                     {
-                                        entries = Directory.GetFileSystemEntries(parentPath, leaf);
+                                        entries = Directory.GetFileSystemEntries(parentPath, leaf, new System.IO.EnumerationOptions { MatchCasing = MatchCasing.CaseInsensitive });
                                     }
                                     catch (Exception)
                                     {
