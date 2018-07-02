@@ -2512,7 +2512,7 @@ namespace System.Management.Automation.Runspaces
                         foreach (var unresolvedCommand in commandsToResolve)
                         {
                             // Use the analysis cache to find the first module containing the unresolved command.
-                            foreach (string modulePath in ModuleUtils.GetDefaultAvailableModuleFiles(true, true, context))
+                            foreach (string modulePath in ModuleUtils.GetDefaultAvailableModuleFiles(isForAutoDiscovery: true, context))
                             {
                                 string expandedModulePath = IO.Path.GetFullPath(modulePath);
                                 var exportedCommands = AnalysisCache.GetExportedCommands(expandedModulePath, false, context);
