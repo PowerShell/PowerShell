@@ -481,7 +481,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 _measureSum = _measureStandardDeviation = _measureAverage = _measureMax = _measureMin = true;
             }
-
         }
 
         /// <summary>
