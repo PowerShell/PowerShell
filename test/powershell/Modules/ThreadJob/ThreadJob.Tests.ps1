@@ -361,7 +361,7 @@ Describe 'Job2 class API tests' -Tags 'CI' {
 
         # Get-Job -Filter is not supported
         $result = Get-Job -Filter @{Id = ($job.Id)} 3>$null
-        $result | Should -Be $null
+        $result | Should -BeNullOrEmpty
     }
 
     It 'Verifies terminating job error' {
