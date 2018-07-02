@@ -1002,8 +1002,7 @@ function Start-PSPester {
         [switch]$IncludeFailingTest
     )
 
-    $getModuleResults = Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue
-    if (-not ($getModuleResults | Where-Object { $_.Version -ge "4.2" } ))
+    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
     {
           Restore-PSPester
     }
