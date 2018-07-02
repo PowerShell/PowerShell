@@ -1307,11 +1307,11 @@ namespace Microsoft.PowerShell.Commands
                 var invokeProcess = new System.Diagnostics.Process();
                 invokeProcess.StartInfo.FileName = path;
 #if UNIX
-                bool invokeDefaultProgram = false;
+                bool useShellExecute = false;
                 if (Directory.Exists(path))
                 {
                     // Path points to a directory. We have to use xdg-open/open on Linux/macOS.
-                    invokeDefaultProgram = true;
+                    useShellExecute = true;
                 }
                 else
                 {
@@ -1324,19 +1324,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Error code 13 -- Permission denied
                         // The file is possibly not an executable. We try xdg-open/open on Linux/macOS.
-                        invokeDefaultProgram = true;
+                        useShellExecute = true;
                     }
                 }
 
-                if (invokeDefaultProgram)
+                if (useShellExecute)
                 {
-                    const string quoteFormat = "\"{0}\"";
-                    invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* macOS */ "open";
-                    if (NativeCommandParameterBinder.NeedQuotes(path))
-                    {
-                        path = string.Format(CultureInfo.InvariantCulture, quoteFormat, path);
-                    }
-                    invokeProcess.StartInfo.Arguments = path;
+                    invokeProcess.StartInfo.UseShellExecute = true;
                     invokeProcess.Start();
                 }
 #else
