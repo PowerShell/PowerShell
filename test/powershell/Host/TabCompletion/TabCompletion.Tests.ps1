@@ -260,7 +260,7 @@ Describe "TabCompletion" -Tags CI {
             Pop-Location
         }
 
-        It "TabCompletion should be case-insensitive for file names on Windows" -Skip:(!$IsWindows) {
+        It "TabCompletion should be case-insensitive for file names on Windows and MacOS" -Skip:($IsLinux) {
             Push-Location -Path $tempDir
             $res = TabExpansion2 -inputScript $oneSubDirLowerTest -cursorColumn $oneSubDirLowerTest.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
@@ -271,7 +271,7 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches[0].CompletionText | Should Be ".${separator}$oneSubDirTest"
         }
 
-        It "TabCompletion should be case-sensitive for file names on Unix" -Skip:($IsWindows) {
+        It "TabCompletion should be case-sensitive for file names on Unix" -Skip:(!$IsLinux) {
             Push-Location -Path $tempDir
             $res = TabExpansion2 -inputScript $oneSubDirLowerTest -cursorColumn $oneSubDirLowerTest.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
