@@ -1828,10 +1828,10 @@
                 <Directory Id="dir37EBACBC570E49108415C3BA316EB66D" Name="ThreadJob">
                     <Directory Id="dirCB93DAC4CEB64A8583295B9AC4A79883" Name="1.1.1">
                         <Component Id="cmp9ADDEE83EFD3497C804FDC6B93A58031" Guid="{9ADDEE83EFD3497C804FDC6B93A58031}">
-                            <File Id="fil15E1EF74BF8C4AFFA6E9B53D8CF6E15E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\1.1.0\ThreadJob.dll" />
+                            <File Id="fil15E1EF74BF8C4AFFA6E9B53D8CF6E15E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\1.1.1\ThreadJob.dll" />
                         </Component>
                         <Component Id="cmp57A7DBFA4541443CB3AB8A4B82DB53E0" Guid="{57A7DBFA4541443CB3AB8A4B82DB53E0}">
-                            <File Id="fil57D698A50A2A40E58B0B954F55AEEA37" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\1.1.0\ThreadJob.psd1" />
+                            <File Id="fil57D698A50A2A40E58B0B954F55AEEA37" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\1.1.1\ThreadJob.psd1" />
                         </Component>
                     </Directory>
                 </Directory>
