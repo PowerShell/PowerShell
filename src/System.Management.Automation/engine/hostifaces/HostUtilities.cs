@@ -776,7 +776,7 @@ namespace System.Management.Automation
             SSHConnectionInfo sshConnectionInfo = runspace.ConnectionInfo as SSHConnectionInfo;
             if (sshConnectionInfo != null &&
                 !string.IsNullOrEmpty(sshConnectionInfo.UserName) &&
-                !System.Environment.UserName.Equals(sshConnectionInfo.UserName, StringComparison.OrdinalIgnoreCase))
+                !System.Environment.UserName.Equals(sshConnectionInfo.UserName, StringComparison.Ordinal)) // Usernames are case-sensitive on Unix
             {
                 return string.Format(CultureInfo.InvariantCulture, "[{0}@{1}]: {2}", sshConnectionInfo.UserName, sshConnectionInfo.ComputerName, basePrompt);
             }
