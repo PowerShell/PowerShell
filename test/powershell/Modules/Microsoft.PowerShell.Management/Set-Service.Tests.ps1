@@ -331,12 +331,13 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
 
     It "Set-Service can run -Status Stopped to stop a service with dependencies" {
-        $servicename = "wuauserv"
-        $originalStatus = (Get-CimInstance -ClassName Win32_Service -Filter "Name='$($servicename)'").State
+        $servicename = "spooler"
+        $originalStatus = (Get-Service $servicename).Status
         try {
             Set-Service -Status Running $servicename
             $script = { Set-Service -Status Stopped $servicename }
             { & $script } | Should -Not -Throw
+            (Get-Service $servicename).Status | Should -BeExactly "Stopped"
         }
         finally {
             Set-Service -Status $originalStatus $servicename -ErrorAction SilentlyContinue
