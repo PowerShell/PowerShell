@@ -981,11 +981,12 @@ function Publish-PSTestTools {
 function Start-PSPester {
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
+        [Parameter(Position=0)]
+        [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
         [string[]]$ExcludeTag = 'Slow',
         [string[]]$Tag = @("CI","Feature"),
-        [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
         [string]$binDir = (Split-Path (Get-PSOptions -DefaultToNew).Output),
         [string]$powershell = (Join-Path $binDir 'pwsh'),
@@ -1001,24 +1002,9 @@ function Start-PSPester {
         [switch]$IncludeFailingTest
     )
 
-    $getModuleResults = Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue
-    if (-not $getModuleResults)
+    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
     {
-        Write-Warning @"
-Pester module not found.
-Restore the module to '$Pester' by running:
-    Restore-PSPester
-"@
-        return;
-    }
-
-    if (-not ($getModuleResults | Where-Object { $_.Version -ge "4.2" } )) {
-        Write-Warning @"
-No Pester module of version 4.2 and higher.
-Restore the required module version to '$Pester' by running:
-    Restore-PSPester
-"@
-        return;
+          Restore-PSPester
     }
 
     if ($IncludeFailingTest.IsPresent)
