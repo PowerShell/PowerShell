@@ -131,7 +131,7 @@ namespace System.Management.Automation
 
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            Diagnostics.Assert(null != pattern, "pattern cannot be null.");
+            Diagnostics.Assert(pattern != null, "pattern cannot be null.");
 
             string helpContent = string.Empty;
             LanguagePrimitives.TryConvertTo<string>(FullHelp, out helpContent);

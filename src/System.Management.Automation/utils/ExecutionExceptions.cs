@@ -31,12 +31,12 @@ namespace System.Management.Automation
         internal CmdletInvocationException(ErrorRecord errorRecord)
             : base(RetrieveMessage(errorRecord), RetrieveException(errorRecord))
         {
-            if (null == errorRecord)
+            if (errorRecord == null)
             {
                 throw new ArgumentNullException("errorRecord");
             }
             _errorRecord = errorRecord;
-            if (null != errorRecord.Exception)
+            if (errorRecord.Exception != null)
             {
                 // 2005/04/13-JonN Can't do this in an unsealed class: HelpLink = errorRecord.Exception.HelpLink;
                 // Exception.Source is set by Throw
@@ -55,14 +55,14 @@ namespace System.Management.Automation
                                            InvocationInfo invocationInfo)
             : base(RetrieveMessage(innerException), innerException)
         {
-            if (null == innerException)
+            if (innerException == null)
             {
                 throw new ArgumentNullException("innerException");
             }
             // invocationInfo may be null
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
-            if (null != icer && null != icer.ErrorRecord)
+            if (icer != null && icer.ErrorRecord != null)
             {
                 _errorRecord = new ErrorRecord(icer.ErrorRecord, innerException);
             }
@@ -144,7 +144,7 @@ namespace System.Management.Automation
             }
 
             base.GetObjectData(info, context);
-            bool hasErrorRecord = (null != _errorRecord);
+            bool hasErrorRecord = (_errorRecord != null);
             info.AddValue("HasErrorRecord", hasErrorRecord);
             if (hasErrorRecord)
                 info.AddValue("ErrorRecord", _errorRecord);
@@ -161,7 +161,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -202,7 +202,7 @@ namespace System.Management.Automation
                     InvocationInfo myInvocation)
             : base(GetInnerException(innerException), myInvocation)
         {
-            if (null == innerException)
+            if (innerException == null)
             {
                 throw new ArgumentNullException("innerException");
             }
@@ -281,7 +281,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (null == _providerInvocationException)
+                return (_providerInvocationException == null)
                     ? null
                     : _providerInvocationException.ProviderInfo;
             }
@@ -465,7 +465,7 @@ namespace System.Management.Automation
         internal ActionPreferenceStopException(ErrorRecord error)
             : this(RetrieveMessage(error))
         {
-            if (null == error)
+            if (error == null)
             {
                 throw new ArgumentNullException("error");
             }
@@ -533,9 +533,9 @@ namespace System.Management.Automation
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            if (null != info)
+            if (info != null)
             {
-                bool hasErrorRecord = (null != _errorRecord);
+                bool hasErrorRecord = (_errorRecord != null);
                 info.AddValue("HasErrorRecord", hasErrorRecord);
                 if (hasErrorRecord)
                 {
@@ -702,7 +702,7 @@ namespace System.Management.Automation
         public override string Message
         {
             get {
-                return _message ?? (_message = (null != _wrapperException) ? _wrapperException.Message : String.Empty);
+                return _message ?? (_message = (_wrapperException != null) ? _wrapperException.Message : String.Empty);
             }
         }
 
@@ -888,7 +888,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
@@ -996,7 +996,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),

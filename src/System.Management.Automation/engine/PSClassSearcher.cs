@@ -157,7 +157,7 @@ namespace System.Management.Automation
         {
             bool matchFound = false;
 
-            var moduleList = ModuleUtils.GetDefaultAvailableModuleFiles(false, false, _context);
+            var moduleList = ModuleUtils.GetDefaultAvailableModuleFiles(isForAutoDiscovery: false, _context);
 
             foreach (var modulePath in moduleList)
             {
@@ -296,8 +296,7 @@ namespace System.Management.Automation
 
             foreach (var member in statement.Members)
             {
-                PropertyMemberAst propAst = member as PropertyMemberAst;
-                if (propAst != null)
+                if (member is PropertyMemberAst propAst && !propAst.PropertyAttributes.HasFlag(PropertyAttributes.Hidden))
                 {
                     Dbg.Assert(propAst.Name != null, "PropName cannot be null");
                     Dbg.Assert(propAst.PropertyType != null, "PropertyType cannot be null");

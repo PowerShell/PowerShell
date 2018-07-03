@@ -407,7 +407,7 @@ namespace System.Management.Automation
         internal WildcardPatternException(ErrorRecord errorRecord)
             : base(RetrieveMessage(errorRecord))
         {
-            if (null == errorRecord)
+            if (errorRecord == null)
             {
                 throw new ArgumentNullException("errorRecord");
             }

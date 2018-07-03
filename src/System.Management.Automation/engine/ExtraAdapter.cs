@@ -30,7 +30,10 @@ namespace System.Management.Automation
 
         #region member
 
-        internal override bool SiteBinderCanOptimize { get { return false; } }
+        internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn)
+        {
+            return false;
+        }
 
         /// <summary>
         /// Returns null if memberName is not a member in the adapter or
@@ -62,7 +65,7 @@ namespace System.Management.Automation
                 object invokeGetValue = entry.InvokeGet(memberName);
                 // if entry.Properties[memberName] returns empty value and invokeGet non-empty
                 // value..take invokeGet's value. This will fix bug Windows Bug 121188.
-                if ((null == collection) || ((null == collection.Value) && (null != invokeGetValue)))
+                if ((collection == null) || ((collection.Value == null) && (invokeGetValue != null)))
                 {
                     valueToTake = invokeGetValue;
                 }
@@ -187,7 +190,7 @@ namespace System.Management.Automation
         {
             PropertyValueCollection values = property.adapterData as PropertyValueCollection;
 
-            if (null != values)
+            if (values != null)
             {
                 // This means GetMember returned PropertyValueCollection
                 try
@@ -348,7 +351,7 @@ namespace System.Management.Automation
             // this code is reached only on exception
             // check if there is a dotnet method, invoke the dotnet method if available
             PSMethod dotNetmethod = s_dotNetAdapter.GetDotNetMethod<PSMethod>(method.baseObject, method.name);
-            if (null != dotNetmethod)
+            if (dotNetmethod != null)
             {
                 return dotNetmethod.Invoke(arguments);
             }

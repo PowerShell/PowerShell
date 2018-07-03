@@ -2512,7 +2512,7 @@ namespace System.Management.Automation.Runspaces
                         foreach (var unresolvedCommand in commandsToResolve)
                         {
                             // Use the analysis cache to find the first module containing the unresolved command.
-                            foreach (string modulePath in ModuleUtils.GetDefaultAvailableModuleFiles(true, true, context))
+                            foreach (string modulePath in ModuleUtils.GetDefaultAvailableModuleFiles(isForAutoDiscovery: true, context))
                             {
                                 string expandedModulePath = IO.Path.GetFullPath(modulePath);
                                 var exportedCommands = AnalysisCache.GetExportedCommands(expandedModulePath, false, context);
@@ -2846,14 +2846,14 @@ namespace System.Management.Automation.Runspaces
             foreach (object module in moduleList)
             {
                 string moduleName = module as string;
-                if (null != moduleName)
+                if (moduleName != null)
                 {
                     exceptionToReturn = ProcessImportModule(initializedRunspace, moduleName, null, path, publicCommands);
                 }
                 else
                 {
                     ModuleSpecification moduleSpecification = module as ModuleSpecification;
-                    if (null != moduleSpecification)
+                    if (moduleSpecification != null)
                     {
                         if ((moduleSpecification.RequiredVersion == null) && (moduleSpecification.Version == null) && (moduleSpecification.MaximumVersion == null) && (moduleSpecification.Guid == null))
                         {
@@ -3014,7 +3014,7 @@ namespace System.Management.Automation.Runspaces
             {
                 CommandInfo c = new CmdletInfo("Import-Module", typeof(ImportModuleCommand), null, null, initializedRunspace.ExecutionContext);
                 Command cmd = new Command(c);
-                if (null != moduleInfoToLoad)
+                if (moduleInfoToLoad != null)
                 {
                     cmd.Parameters.Add("ModuleInfo", moduleInfoToLoad);
                     name = moduleInfoToLoad.Name;
@@ -3112,7 +3112,7 @@ namespace System.Management.Automation.Runspaces
                     rome = new RunspaceOpenModuleLoadException(moduleName, mergedErrors);
                 }
 
-                if (null != rome)
+                if (rome != null)
                 {
                     return rome;
                 }
@@ -3672,7 +3672,7 @@ namespace System.Management.Automation.Runspaces
 
             // Now actually load the snapin...
             PSSnapInInfo snapin = ImportPSSnapIn(newPSSnapIn, out warning);
-            if (null != snapin)
+            if (snapin != null)
             {
                 ImportedSnapins.Add(snapin.Name, snapin);
             }

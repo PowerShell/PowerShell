@@ -717,4 +717,87 @@ abc bcd
             $output = $obj | Format-Table | Out-String
             $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
+
+        It "Should render header correctly where header is shorter than column width with justification: <variation>" -TestCases @(
+            @{ variation = "left/right"; obj = [PSCustomObject]@{a="abc";b=123}; expectedTable = @"
+
+a     b
+-     -
+abc 123
+
+
+
+"@ },
+            @{ variation = "left/left"; obj = [PSCustomObject]@{a="abc";b="abc"}; expectedTable = @"
+
+a   b
+-   -
+abc abc
+
+
+
+"@ },
+            @{ variation = "right/left"; obj = [PSCustomObject]@{a=123;b="abc"}; expectedTable = @"
+
+  a b
+  - -
+123 abc
+
+
+
+"@ },
+            @{ variation = "right/right"; obj = [PSCustomObject]@{a=123;b=123}; expectedTable = @"
+
+  a   b
+  -   -
+123 123
+
+
+
+"@ }
+        ) {
+            param($obj, $expectedTable)
+            $output = $obj | Format-Table | Out-String
+            $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
+        }
+
+        It "Should render rows correctly when wrapped: <variation>" -TestCases @(
+            @{ variation = "right"; obj = [pscustomobject] @{A=1;B=2;Name="This`nIs some random`nmultiline content"}; expectedTable = @"
+
+A B Name
+- - ----
+1 2 This
+    Is some random
+    multiline content
+
+
+
+"@ },
+            @{ variation = "left"; obj = [pscustomobject] @{Name="This`nIs some random`nmultiline content";A=1;B=2}; expectedTable = @"
+
+Name                                  A B
+----                                  - -
+This                                  1 2
+Is some random
+multiline content
+
+
+
+"@ },
+            @{ variation = "middle"; obj = [pscustomobject] @{A=1;Name="This`nIs some random`nmultiline content";B=2}; expectedTable = @"
+
+A Name                                  B
+- ----                                  -
+1 This                                  2
+  Is some random
+  multiline content
+
+
+
+"@ }
+        ) {
+            param($obj, $expectedTable)
+            $output = $obj | Format-Table -Wrap | Out-String
+            $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
+        }
     }

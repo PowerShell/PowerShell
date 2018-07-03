@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                                 "MshResolvedExpressionParameterAssociation");
         #endregion tracer
 
-        internal MshResolvedExpressionParameterAssociation(MshParameter parameter, MshExpression expression)
+        internal MshResolvedExpressionParameterAssociation(MshParameter parameter, PSPropertyExpression expression)
         {
             if (expression == null)
                 throw PSTraceSource.NewArgumentNullException("expression");
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ResolvedExpression = expression;
         }
 
-        internal MshExpression ResolvedExpression { get; }
+        internal PSPropertyExpression ResolvedExpression { get; }
 
         internal MshParameter OriginatingParameter { get; }
     }
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal static class AssociationManager
     {
         internal static List<MshResolvedExpressionParameterAssociation> SetupActiveProperties(List<MshParameter> rawMshParameterList,
-                                                   PSObject target, MshExpressionFactory expressionFactory)
+                                                   PSObject target, PSPropertyExpressionFactory expressionFactory)
         {
             // check if we received properties from the command line
             if (rawMshParameterList != null && rawMshParameterList.Count > 0)
@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (PSObjectHelper.ShouldShowComputerNameProperty(target))
                 {
                     activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null,
-                        new MshExpression(RemotingConstants.ComputerNameNoteProperty)));
+                        new PSPropertyExpression(RemotingConstants.ComputerNameNoteProperty)));
                 }
 
                 return activeAssociationList;
@@ -77,8 +77,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             foreach (MshParameter par in parameters)
             {
-                MshExpression expression = par.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
-                List<MshExpression> expandedExpressionList = expression.ResolveNames(target);
+                PSPropertyExpression expression = par.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                List<PSPropertyExpression> expandedExpressionList = expression.ResolveNames(target);
 
                 if (!expression.HasWildCardCharacters && expandedExpressionList.Count == 0)
                 {
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     retVal.Add(new MshResolvedExpressionParameterAssociation(par, expression));
                 }
 
-                foreach (MshExpression ex in expandedExpressionList)
+                foreach (PSPropertyExpression ex in expandedExpressionList)
                 {
                     retVal.Add(new MshResolvedExpressionParameterAssociation(par, ex));
                 }
@@ -101,10 +101,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             foreach (MshParameter par in parameters)
             {
-                MshExpression expression = par.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
-                List<MshExpression> expandedExpressionList = expression.ResolveNames(target);
+                PSPropertyExpression expression = par.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
+                List<PSPropertyExpression> expandedExpressionList = expression.ResolveNames(target);
 
-                foreach (MshExpression ex in expandedExpressionList)
+                foreach (PSPropertyExpression ex in expandedExpressionList)
                 {
                     retVal.Add(new MshResolvedExpressionParameterAssociation(par, ex));
                 }
@@ -113,12 +113,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return retVal;
         }
 
-        internal static List<MshResolvedExpressionParameterAssociation> ExpandDefaultPropertySet(PSObject target, MshExpressionFactory expressionFactory)
+        internal static List<MshResolvedExpressionParameterAssociation> ExpandDefaultPropertySet(PSObject target, PSPropertyExpressionFactory expressionFactory)
         {
             List<MshResolvedExpressionParameterAssociation> retVal = new List<MshResolvedExpressionParameterAssociation>();
-            List<MshExpression> expandedExpressionList = PSObjectHelper.GetDefaultPropertySet(target);
+            List<PSPropertyExpression> expandedExpressionList = PSObjectHelper.GetDefaultPropertySet(target);
 
-            foreach (MshExpression ex in expandedExpressionList)
+            foreach (PSPropertyExpression ex in expandedExpressionList)
             {
                 retVal.Add(new MshResolvedExpressionParameterAssociation(null, ex));
             }
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (!duplicatesFinder.ContainsKey(property))
                 {
                     duplicatesFinder.Add(property, null);
-                    MshExpression expr = new MshExpression(property, true);
+                    PSPropertyExpression expr = new PSPropertyExpression(property, true);
                     retVal.Add(new MshResolvedExpressionParameterAssociation(null, expr));
                 }
             }
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="activeAssociationList"></param>
         internal static void HandleComputerNameProperties(PSObject so, List<MshResolvedExpressionParameterAssociation> activeAssociationList)
         {
-            if (null != so.Properties[RemotingConstants.ShowComputerNameNoteProperty])
+            if (so.Properties[RemotingConstants.ShowComputerNameNoteProperty] != null)
             {
                 // always remove PSShowComputerName for the display. This is an internal property
                 // that should never be visible to the user.
@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // otherwise the PSComputerName property does not belong to a remote object:
                 // Ex: icm $s { gps } | select pscomputername --> In this case we want to show
                 // PSComputerName
-                if ((null != so.Properties[RemotingConstants.ComputerNameNoteProperty]) &&
+                if ((so.Properties[RemotingConstants.ComputerNameNoteProperty] != null) &&
                     (!PSObjectHelper.ShouldShowComputerNameProperty(so)))
                 {
                     foreach (MshResolvedExpressionParameterAssociation cpProp in activeAssociationList)

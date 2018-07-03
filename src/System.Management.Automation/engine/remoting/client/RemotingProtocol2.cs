@@ -1359,7 +1359,7 @@ namespace System.Management.Automation.Internal
             // wait for the close to complete and then dispose the transport manager
             TransportManager.CloseCompleted += delegate (object source, EventArgs args)
             {
-                if (null != CloseCompleted)
+                if (CloseCompleted != null)
                 {
                     // If the provided event args are empty then call CloseCompleted with
                     // RemoteSessionStateEventArgs containing session closed reason exception.

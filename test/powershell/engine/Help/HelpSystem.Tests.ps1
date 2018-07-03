@@ -295,6 +295,14 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
         Remove-Item $helpFilePath2 -Force -ErrorAction SilentlyContinue
     }
 
+    BeforeEach {
+        $currentPSModulePath = $env:PSModulePath
+    }
+
+    AfterEach {
+        $env:PSModulePath = $currentPSModulePath
+    }
+
     $testcases = @(
         @{command = {Get-Help about_testCas?1}; testname = "test ? pattern"; result = "about_test1"}
         @{command = {Get-Help about_testCase.?}; testname = "test ? pattern with dot"; result = "about_test2"}
@@ -308,6 +316,22 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
             $result
         )
         $command.Invoke() | Should -Be $result
+    }
+
+    It "Get-Help should fail expectedly searching for class help with hidden members" {
+        $testModule = @'
+        class foo
+        {
+            hidden static $monthNames = @('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun','Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+        }
+'@
+        $modulesFolder = Join-Path $TestDrive "Modules"
+        $modulePath = Join-Path $modulesFolder "TestModule"
+        New-Item -ItemType Directory -Path $modulePath -Force > $null
+        Set-Content -Path (Join-Path $modulePath "TestModule.psm1") -Value $testModule
+        $env:PSModulePath += [System.IO.Path]::PathSeparator + $modulesFolder
+
+        { Get-Help -Category Class -Name foo -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
     }
 }
 

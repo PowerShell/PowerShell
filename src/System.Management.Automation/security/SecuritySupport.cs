@@ -477,6 +477,8 @@ namespace System.Management.Automation.Internal
 
 #endregion execution policy
 
+        private static bool _saferIdentifyLevelApiSupported = true;
+
         /// <summary>
         /// Get the pass / fail result of calling the SAFER API
         /// </summary>
@@ -488,6 +490,11 @@ namespace System.Management.Automation.Internal
         internal static SaferPolicy GetSaferPolicy(string path, SafeHandle handle)
         {
             SaferPolicy status = SaferPolicy.Allowed;
+
+            if (!_saferIdentifyLevelApiSupported)
+            {
+                return status;
+            }
 
             SAFER_CODE_PROPERTIES codeProperties = new SAFER_CODE_PROPERTIES();
             IntPtr hAuthzLevel;
@@ -555,7 +562,15 @@ namespace System.Management.Automation.Internal
             }
             else
             {
-                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+                int lastError = Marshal.GetLastWin32Error();
+                if (lastError == NativeConstants.FUNCTION_NOT_SUPPORTED)
+                {
+                    _saferIdentifyLevelApiSupported = false;
+                }
+                else
+                {
+                    throw new System.ComponentModel.Win32Exception(lastError);
+                }
             }
 
             return status;

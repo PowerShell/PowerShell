@@ -859,7 +859,7 @@ namespace System.Management.Automation.Internal
         {
             if (disposing)
             {
-                if (null != _hSessionKey)
+                if (_hSessionKey != null)
                 {
                     if (!_hSessionKey.IsInvalid)
                     {
@@ -873,9 +873,9 @@ namespace System.Management.Automation.Internal
                 // since otherwise, these are just references
                 // to the static members
 
-                if (null == s_hStaticRSAKey)
+                if (s_hStaticRSAKey == null)
                 {
-                    if (null != _hRSAKey)
+                    if (_hRSAKey != null)
                     {
                         if (!_hRSAKey.IsInvalid)
                         {
@@ -885,9 +885,9 @@ namespace System.Management.Automation.Internal
                     }
                 }
 
-                if (null == s_hStaticProv)
+                if (s_hStaticProv == null)
                 {
-                    if (null != _hProv)
+                    if (_hProv != null)
                     {
                         if (!_hProv.IsInvalid)
                         {

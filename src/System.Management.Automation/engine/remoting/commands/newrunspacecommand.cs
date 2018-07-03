@@ -410,7 +410,7 @@ namespace Microsoft.PowerShell.Commands
 
             // since we got state changed event..we dont need to listen on
             // URI redirections anymore
-            if (null != remoteRunspace)
+            if (remoteRunspace != null)
             {
                 remoteRunspace.URIRedirectionReported -= HandleURIDirectionReported;
             }
@@ -645,7 +645,7 @@ namespace Microsoft.PowerShell.Commands
                             WSManConnectionInfo originalWSManConnectionInfo = remoteRunspace.ConnectionInfo as WSManConnectionInfo;
                             WSManConnectionInfo newWSManConnectionInfo = null;
 
-                            if (null != originalWSManConnectionInfo)
+                            if (originalWSManConnectionInfo != null)
                             {
                                 newWSManConnectionInfo = originalWSManConnectionInfo.Copy();
                                 newWSManConnectionInfo.EnableNetworkAccess = (newWSManConnectionInfo.EnableNetworkAccess || EnableNetworkAccess) ? true : false;

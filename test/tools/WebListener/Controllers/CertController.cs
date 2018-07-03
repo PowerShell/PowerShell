@@ -16,13 +16,13 @@ namespace mvc.Controllers
         public JsonResult Index()
         {
             // X509Certificate2 objects do not serialize as JSON. Create a HashTable instead
-            Hashtable output = new Hashtable 
+            Hashtable output = new Hashtable
             {
                 {"Status", "FAILED"}
             };
-            if (null != HttpContext.Connection.ClientCertificate)
-            {   
-                output = new Hashtable 
+            if (HttpContext.Connection.ClientCertificate != null)
+            {
+                output = new Hashtable
                 {
                     {"Status"      , "OK"},
                     {"Thumbprint"  , HttpContext.Connection.ClientCertificate.Thumbprint},

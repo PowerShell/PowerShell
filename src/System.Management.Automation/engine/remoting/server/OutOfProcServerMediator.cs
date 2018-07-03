@@ -133,7 +133,7 @@ namespace System.Management.Automation.Remoting.Server
                     cmdTM = sessionTM.GetCommandTransportManager(psGuid);
                 }
 
-                if (null != cmdTM)
+                if (cmdTM != null)
                 {
                     // not throwing when there is no associated command as the command might have
                     // legitimately closed while the client is sending data. however the client
@@ -198,7 +198,7 @@ namespace System.Management.Automation.Remoting.Server
                     }
 
                     // dont throw if there is no cmdTM as it might have legitimately closed
-                    if (null != cmdTM)
+                    if (cmdTM != null)
                     {
                         cmdTM.Close(null);
                     }
@@ -265,7 +265,7 @@ namespace System.Management.Automation.Remoting.Server
                 }
 
                 // dont throw if there is no cmdTM as it might have legitimately closed
-                if (null != cmdTM)
+                if (cmdTM != null)
                 {
                     cmdTM.Close(null);
                 }
@@ -465,7 +465,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             lock (SyncObject)
             {
-                if (null != s_singletonInstance)
+                if (s_singletonInstance != null)
                 {
                     Dbg.Assert(false, "Run should not be called multiple times");
                     return;

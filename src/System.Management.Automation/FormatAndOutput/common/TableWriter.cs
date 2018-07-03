@@ -294,14 +294,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             System.Span<int> lastColWithContent = screenRows <= OutCommandInner.StackAllocThreshold ? stackalloc int[screenRows] : new int[screenRows];
             for (int row = 0; row < screenRows; row++)
             {
-                for (int col = scArray.Length - 1; col > 0; col--)
+                for (int col = 0; col < scArray.Length; col++)
                 {
-                    int colWidth = _si.columnInfo[validColumnArray[col]].width;
-                    int headerLength = values[col].Length;
-                    if (headerLength / colWidth >= row && headerLength % colWidth > 0)
+                    if (scArray[col].Count > row)
                     {
                         lastColWithContent[row] = col;
-                        break;
                     }
                 }
             }
@@ -371,7 +368,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             StringCollection sc = StringManipulationHelper.GenerateLines(dc, val,
                                         _si.columnInfo[k].width, _si.columnInfo[k].width);
-            if (addPadding)
+            if (addPadding || alignment == TextAlignment.Right)
             {
                 // if length is shorter, do some padding
                 for (int col = 0; col < sc.Count; col++)

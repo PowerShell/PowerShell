@@ -279,6 +279,12 @@
   <data name="GetContentWriterDynamicParametersProviderException" xml:space="preserve">
     <value>The dynamic parameters for the GetContentWriter operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
   </data>
+  <data name="SetContentToLastLocationWhenHistoryIsEmpty" xml:space="preserve">
+    <value>There is no location history left to navigate backwards.</value>
+  </data>
+  <data name="BoundedStackIsEmpty" xml:space="preserve">
+    <value>The BoundedStack is empty.</value>
+  </data>
   <data name="ClearContentProviderException" xml:space="preserve">
     <value>Attempting to perform the ClearContent operation on the '{0}' provider failed for path '{1}'. {2}</value>
   </data>

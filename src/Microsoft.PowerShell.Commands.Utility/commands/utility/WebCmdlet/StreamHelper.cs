@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
                 ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
                 for (int read = 1; 0 < read; totalLength += read)
                 {
-                    if (null != _ownerCmdlet)
+                    if (_ownerCmdlet != null)
                     {
                         record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus, totalLength);
                         _ownerCmdlet.WriteProgress(record);
@@ -437,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
             bool isDefaultEncoding = false;
-            if (null == encoding)
+            if (encoding == null)
             {
                 // Use the default encoding if one wasn't provided
                 encoding = ContentHelper.GetDefaultEncoding();
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static Byte[] EncodeToBytes(String str, Encoding encoding)
         {
-            if (null == encoding)
+            if (encoding == null)
             {
                 // just use the default encoding if one wasn't provided
                 encoding = ContentHelper.GetDefaultEncoding();

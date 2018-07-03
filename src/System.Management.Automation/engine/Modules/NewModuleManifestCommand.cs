@@ -567,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private IEnumerable PreProcessModuleSpec(IEnumerable moduleSpecs)
         {
-            if (null != moduleSpecs)
+            if (moduleSpecs != null)
             {
                 foreach (object spec in moduleSpecs)
                 {

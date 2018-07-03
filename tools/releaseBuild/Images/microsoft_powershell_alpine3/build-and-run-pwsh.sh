@@ -1,5 +1,17 @@
 #!/bin/sh
 
+set -e
+
+# this script needs to be run from within Alpine with dotnet 2.1 SDK installed, example:
+# docker run -it -v ~/repos/PowerShell:/PowerShell microsoft/dotnet:2.1-sdk-alpine
+
+# build tools required:
+# apk update
+# apk add build-base gcc abuild binutils git python bash cmake
+
+# run from root of PowerShell repo:
+# tools/releaseBuild/Images/microsoft_powershell_alpine3/build-and-run-pwsh.sh /PowerShell /PowerShell 6.1.0
+
 repoRoot=$1
 destination=$2
 releaseTag=$3
@@ -37,10 +49,10 @@ esac
 # remove v from release tag (v3.5 => 3.5)
 if [ "${releaseTag:0:1}" = "v" ]; then
   releaseTag=${releaseTag:1}
-  tarName=$destination/powershell-$releaseTag-alpine.3-$arch.tar.gz
+  tarName=$destination/powershell-$releaseTag-linux-musl-$arch.tar.gz
   dotnetArguments=/p:ReleaseTag=$releaseTag;
 else
-  tarName=$destination/powershell-alpine.3-$arch.tar.gz
+  tarName=$destination/powershell-linux-musl-$arch.tar.gz
 fi
 
 # Build libpsl-native
@@ -62,13 +74,13 @@ cd ..
 targetFile="Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
 cat > $targetFile <<-"EOF"
 <Project>
-  <Target Name="_GetDependencies"
-          DependsOnTargets="ResolveAssemblyReferencesDesignTime">
-    <ItemGroup>
-      <_RefAssemblyPath Include="%(_ReferencesFromRAR.ResolvedPath)%3B" Condition=" '%(_ReferencesFromRAR.Type)' == 'assembly' And '%(_ReferencesFromRAR.PackageName)' != 'Microsoft.Management.Infrastructure' " />
-    </ItemGroup>
-    <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
-  </Target>
+    <Target Name="_GetDependencies"
+            DependsOnTargets="ResolveAssemblyReferencesDesignTime">
+        <ItemGroup>
+            <_RefAssemblyPath Include="%(_ReferencesFromRAR.HintPath)%3B"  Condition=" '%(_ReferencesFromRAR.NuGetPackageId)' != 'Microsoft.Management.Infrastructure' "/>
+        </ItemGroup>
+        <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
+    </Target>
 </Project>
 EOF
 
@@ -79,12 +91,14 @@ dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs powershe
 
 # build PowerShell
 cd ../powershell-unix
-dotnet publish --configuration Linux --runtime linux-x64 $dotnetArguments
+dotnet publish --configuration Release --runtime linux-musl-x64 $dotnetArguments
 
 # add libpsl-native to build
-mv libpsl-native.so bin/Linux/netcoreapp2.0/linux-x64
+mv libpsl-native.so bin/Release/netcoreapp2.1/linux-musl-x64/publish
 
 # tar build for output
-cd bin/Linux/netcoreapp2.0/linux-x64
+cd bin/Release/netcoreapp2.1/linux-musl-x64/publish
 
 tar -czvf $tarName .
+
+echo "Created $tarName"

@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
@@ -65,6 +66,10 @@ namespace System.Management.Automation
             // is used for the pushd and popd commands
 
             _workingLocationStack = new Dictionary<String, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
+
+            // Conservative choice to limit the Set-Location history in order to limit memory impact in case of a regression.
+            const int locationHistoryLimit = 20;
+            _SetLocationHistory = new BoundedStack<PathInfo>(locationHistoryLimit);
 
             GlobalScope = new SessionStateScope(null);
             ModuleScope = GlobalScope;
@@ -535,7 +540,7 @@ namespace System.Management.Automation
             //  ProviderInvocationException, and we don't want to
             //  re-wrap it.
             ProviderInvocationException pie = e as ProviderInvocationException;
-            if (null != pie)
+            if (pie != null)
             {
                 pie._providerInfo = provider;
                 return pie;

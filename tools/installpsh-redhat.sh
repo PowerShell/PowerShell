@@ -19,12 +19,13 @@
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
 
-VERSION="1.1.2"
+VERSION="1.2.0"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=redhat
 repobased=true
 gitscriptname="installpsh-redhat.psh"
+powershellpackageid=powershell
 
 echo
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
@@ -90,33 +91,30 @@ fi
 
 ## Check requirements and prerequisites
 
-#Only do SUDO if we are not root
-SUDO=''
-if (( $EUID != 0 )); then
-    SUDO='sudo'
+#Check for sudo if not root
+if [[ "${CI}" == "true" ]]; then
+    echo "Running on CI (as determined by env var CI set to true), skipping SUDO check."
+    set -- "$@" '-skip-sudo-check'
 fi
 
-#Check that sudo is available
-if [[ "$SUDO" == "sudo" && ! ("'$*'" =~ skip-sudo-check) ]]; then
-
-    $SUDO -v
-    if [ $? -ne 0 ]; then
-      echo "ERROR: You must either be root or be able to use sudo" >&2
-      exit 5
+SUDO=''
+if (( $EUID != 0 )); then
+    #Check that sudo is available
+    if [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
+        SUDO='sudo'
+    else
+        echo "ERROR: You must either be root or be able to use sudo" >&2
+        #exit 5
     fi
 fi
 
-#Collect any variation details if required for this distro
+if [[ "'$*'" =~ preview ]] ; then
+    echo
+    echo "-preview was used, the latest preview release will be installed (side-by-side with your production release)"
+    powershellpackageid=powershell-preview
+fi
 
-#END Collect any variation details if required for this distro
-
-#If there are known incompatible versions of this distro, put the test, message and script exit here:
-
-#END Verify The Installer Choice
-
-##END Check requirements and prerequisites
-
-echo
+release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`echo
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
 if ! hash curl 2>/dev/null; then
     echo "curl not found, installing..."
@@ -128,7 +126,7 @@ echo "*** Current version on git is: $release, repo version may differ slightly.
 
 echo "*** Setting up PowerShell Core repo..."
 $SUDO curl https://packages.microsoft.com/config/rhel/7/prod.repo > /etc/yum.repos.d/microsoft.repo
-$SUDO yum install -y powershell
+$SUDO yum install -y ${powershellpackageid}
 
 pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
 Run `"pwsh`" to start a PowerShell session."'
@@ -152,12 +150,11 @@ if [[ "'$*'" =~ includeide ]] ; then
     echo
     echo "*** Installing VS Code PowerShell Extension"
     code --install-extension ms-vscode.PowerShell
-fi
-
-if [[ "'$*'" =~ -interactivetesting ]] ; then
-    echo "*** Loading test code in VS Code"
-    curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
-    code ./testpowershell.ps1        
+    if [[ "'$*'" =~ -interactivetesting ]] ; then
+        echo "*** Loading test code in VS Code"
+        curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
+        code ./testpowershell.ps1
+    fi
 fi
 
 if [[ "$repobased" == true ]] ; then

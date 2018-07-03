@@ -8,6 +8,7 @@ CompatiblePSEditions = @("Core")
 PowerShellVersion="6.1"
 RootModule="Microsoft.Management.Infrastructure.CimCmdlets"
 RequiredAssemblies="Microsoft.Management.Infrastructure.CimCmdlets.dll","Microsoft.Management.Infrastructure.Dll"
+FunctionsToExport = @()
 CmdletsToExport= "Get-CimAssociatedInstance", "Get-CimClass", "Get-CimInstance", "Get-CimSession", "Invoke-CimMethod",
     "New-CimInstance","New-CimSession","New-CimSessionOption","Register-CimIndicationEvent","Remove-CimInstance",
     "Remove-CimSession","Set-CimInstance",

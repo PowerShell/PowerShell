@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
                 exRef = ex;
                 doc = null;
             }
-            return (null != doc);
+            return (doc != null);
         }
 
         private bool TryConvertToJson(string json, out object obj, ref Exception exRef)
@@ -177,9 +177,9 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord error;
                 obj = JsonObject.ConvertFromJson(json, out error);
 
-                if (null == obj)
+                if (obj == null)
                 {
-                    // This ensures that a null returned by ConvertFromJson() is the actual JSON null literal. 
+                    // This ensures that a null returned by ConvertFromJson() is the actual JSON null literal.
                     // if not, the ArgumentException will be caught.
                     JToken.Parse(json);
                 }
@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="response"></param>
         internal override void ProcessResponse(HttpResponseMessage response)
         {
-            if (null == response) { throw new ArgumentNullException("response"); }
+            if (response == null) { throw new ArgumentNullException("response"); }
 
             using (BufferingStreamReader responseStream = new BufferingStreamReader(StreamHelper.GetResponseStream(response)))
             {
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.Commands
 
         private RestReturnType CheckReturnType(HttpResponseMessage response)
         {
-            if (null == response) { throw new ArgumentNullException("response"); }
+            if (response == null) { throw new ArgumentNullException("response"); }
 
             RestReturnType rt = RestReturnType.Detect;
             string contentType = ContentHelper.GetContentType(response);

@@ -66,7 +66,7 @@ namespace System.Management.Automation
 
             _underType = Enum.GetUnderlyingType(typeof(T));
 
-            if (null == expression)
+            if (expression == null)
             {
                 throw InterpreterError.NewInterpreterException(null, typeof(ArgumentNullException),
                     null, "EmptyInputString", EnumExpressionEvaluatorStrings.EmptyInputString);

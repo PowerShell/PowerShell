@@ -87,7 +87,7 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
             return $rv
         }
 
-        $PesterArgs = @{ Name = "Can send mail message from user to self"}
+        $PesterArgs = @{Name = ""}
         $alreadyHasMail = $true
 
         if (-not $IsLinux)
@@ -126,17 +126,39 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
         }
         $alreadyHasMail = $false
     }
-    AfterAll {
+
+    AfterEach {
        if (-not $alreadyHasMail)
        {
            Set-Content -Value "" -Path $mailBox -Force -ErrorAction SilentlyContinue
        }
     }
 
-    It @PesterArgs {
+    $ItArgs = $PesterArgs.Clone()
+    $ItArgs['Name'] = "Can send mail message from user to self " + $ItArgs['Name']
+
+    It @ItArgs {
         $body = "Greetings from me."
         $subject = "Test message"
         Send-MailMessage -To $address -From $address -Subject $subject -Body $body -SmtpServer 127.0.0.1
+        Test-Path -Path $mailBox | Should -BeTrue
+        $mail = read-mail $mailBox
+        $mail.From | Should -BeExactly $address
+        $mail.To.Count | Should -BeExactly 1
+        $mail.To[0] | Should -BeExactly $address
+        $mail.Subject | Should -BeExactly $subject
+        $mail.Body.Count | Should -BeExactly 1
+        $mail.Body[0] | Should -BeExactly $body
+    }
+
+    $ItArgs = $PesterArgs.Clone()
+    $ItArgs['Name'] = "Can send mail message from user to self using pipeline " + $ItArgs['Name']
+
+    It @ItArgs {
+        $body = "Greetings from me again."
+        $subject = "Second test message"
+        $object = [PSCustomObject]@{"To" = $address; "From" = $address; "Subject" = $subject; "Body" = $body; $SmtpServer = '127.0.0.1'}
+        $object | Send-MailMessage
         Test-Path -Path $mailBox | Should -BeTrue
         $mail = read-mail $mailBox
         $mail.From | Should -BeExactly $address

@@ -206,7 +206,7 @@ namespace System.Management.Automation
             RegisterDataStructureHandlerEventHandlers(DataStructureHandler);
 
             // set the runspace pool and invoke this powershell
-            if (null != rsToUse)
+            if (rsToUse != null)
             {
                 LocalPowerShell.Runspace = rsToUse;
                 if (extraPowerShell != null)

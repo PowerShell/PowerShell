@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Diagnostics.Assert(null != Command, "Command is null");
+            Diagnostics.Assert(Command != null, "Command is null");
 
             ScriptBlock myScriptBlock = InvokeCommand.NewScriptBlock(Command);
 

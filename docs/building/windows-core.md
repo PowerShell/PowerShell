@@ -58,11 +58,11 @@ Import-Module ./build.psm1
 Start-PSBuild
 ```
 
-Congratulations! If everything went right, PowerShell is now built and executable as `./src/powershell-win-core/bin/Debug/netcoreapp2.0/win7-x64/publish/pwsh`.
+Congratulations! If everything went right, PowerShell is now built and executable as `./src/powershell-win-core/bin/Debug/netcoreapp2.1/win7-x64/publish/pwsh.exe`.
 
 This location is of the form `./[project]/bin/[configuration]/[framework]/[rid]/publish/[binary name]`,
 and our project is `powershell`, configuration is `Debug` by default,
-framework is `netcoreapp2.0`, runtime identifier is `win7-x64` by default,
+framework is `netcoreapp2.1`, runtime identifier is `win7-x64` by default,
 and binary name is `pwsh`.
 The function `Get-PSOutput` will return the path to the executable;
 thus you can execute the development copy via `& (Get-PSOutput)`.

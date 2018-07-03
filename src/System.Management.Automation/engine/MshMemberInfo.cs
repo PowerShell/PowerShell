@@ -3354,11 +3354,11 @@ namespace System.Management.Automation
                 }
 
                 // cache "psbase" and "psobject"
-                if (null == internalMembers)
+                if (internalMembers == null)
                 {
                     lock (_syncObject)
                     {
-                        if (null == internalMembers)
+                        if (internalMembers == null)
                         {
                             internalMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
 
@@ -4371,7 +4371,7 @@ namespace System.Management.Automation
         internal static void GeneratePSTypeNames(object obj)
         {
             PSObject mshOwner = PSObject.AsPSObject(obj);
-            if (null != mshOwner.InstanceMembers[PSObject.PSTypeNames])
+            if (mshOwner.InstanceMembers[PSObject.PSTypeNames] != null)
             {
                 // PSTypeNames member set is already generated..just return.
                 return;

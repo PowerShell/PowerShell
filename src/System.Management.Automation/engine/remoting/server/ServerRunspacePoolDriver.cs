@@ -174,7 +174,7 @@ namespace System.Management.Automation
             string configurationName)
 #endif
         {
-            Dbg.Assert(null != configData, "ConfigurationData cannot be null");
+            Dbg.Assert(configData != null, "ConfigurationData cannot be null");
 
             _serverCapability = serverCapability;
             _clientPSVersion = psClientVersion;
@@ -678,7 +678,7 @@ namespace System.Management.Automation
                 cmdToRun = new Command(_configData.InitializationScriptForOutOfProcessRunspace, true, false);
             }
 
-            if (null != cmdToRun)
+            if (cmdToRun != null)
             {
                 InvokeScript(cmdToRun, args);
 

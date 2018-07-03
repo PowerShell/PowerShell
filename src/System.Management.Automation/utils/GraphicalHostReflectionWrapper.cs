@@ -209,7 +209,7 @@ namespace System.Management.Automation.Internal
         /// <returns>true if the <paramref name="parentCmdlet"/> is being run remotely</returns>
         private static bool IsInputFromRemoting(PSCmdlet parentCmdlet)
         {
-            Diagnostics.Assert(null != parentCmdlet.SessionState, "SessionState should always be available.");
+            Diagnostics.Assert(parentCmdlet.SessionState != null, "SessionState should always be available.");
 
             PSVariable senderInfo = parentCmdlet.SessionState.PSVariable.Get("PSSenderInfo");
             return senderInfo != null;

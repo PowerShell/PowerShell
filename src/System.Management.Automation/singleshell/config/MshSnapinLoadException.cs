@@ -132,7 +132,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _isErrorRecordOriginallyNull = true;
                     _errorRecord = new ErrorRecord(

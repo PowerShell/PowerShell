@@ -97,12 +97,6 @@ namespace Microsoft.PowerShell
                 // Update the progress pane only when the timer set up the update flag or WriteProgress is completed.
                 // As a result, we do not block WriteProgress and whole script and eliminate unnecessary console locks and updates.
                 _progPane.Show(_pendingProgress);
-
-                // Reset the cursor back to where it started
-                if (record.RecordType == ProgressRecordType.Completed)
-                {
-                    _progPane.Hide();
-                }
             }
         }
 

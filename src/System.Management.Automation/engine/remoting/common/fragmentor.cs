@@ -97,7 +97,7 @@ namespace System.Management.Automation.Remoting
         internal FragmentedRemoteObject(byte[] blob, long objectId, long fragmentId,
             bool isEndFragment)
         {
-            Dbg.Assert((null != blob) || (blob.Length == 0), "Cannot create a fragment for null or empty data.");
+            Dbg.Assert((blob != null) || (blob.Length == 0), "Cannot create a fragment for null or empty data.");
             Dbg.Assert(objectId >= 0, "Object Id cannot be < 0");
             Dbg.Assert(fragmentId >= 0, "Fragment Id cannot be < 0");
 
@@ -157,7 +157,7 @@ namespace System.Management.Automation.Remoting
             get { return _blob; }
             set
             {
-                Dbg.Assert(null != value, "Blob cannot be null");
+                Dbg.Assert(value != null, "Blob cannot be null");
                 _blob = value;
             }
         }
@@ -275,7 +275,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal static long GetObjectId(byte[] fragmentBytes, int startIndex)
         {
-            Dbg.Assert(null != fragmentBytes, "fragmentBytes cannot be null");
+            Dbg.Assert(fragmentBytes != null, "fragmentBytes cannot be null");
             Dbg.Assert(fragmentBytes.Length >= HeaderLength, "not enough data to decode object id");
             long objectId = 0;
 
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal static long GetFragmentId(byte[] fragmentBytes, int startIndex)
         {
-            Dbg.Assert(null != fragmentBytes, "fragmentBytes cannot be null");
+            Dbg.Assert(fragmentBytes != null, "fragmentBytes cannot be null");
             Dbg.Assert(fragmentBytes.Length >= HeaderLength, "not enough data to decode fragment id");
             long fragmentId = 0;
             int idx = startIndex + _fragmentIdOffset;
@@ -344,7 +344,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal static bool GetIsStartFragment(byte[] fragmentBytes, int startIndex)
         {
-            Dbg.Assert(null != fragmentBytes, "fragment cannot be null");
+            Dbg.Assert(fragmentBytes != null, "fragment cannot be null");
             Dbg.Assert(fragmentBytes.Length >= HeaderLength, "not enough data to decode if it is a start fragment.");
 
             if ((fragmentBytes[startIndex + _flagsOffset] & SFlag) != 0)
@@ -373,7 +373,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal static bool GetIsEndFragment(byte[] fragmentBytes, int startIndex)
         {
-            Dbg.Assert(null != fragmentBytes, "fragment cannot be null");
+            Dbg.Assert(fragmentBytes != null, "fragment cannot be null");
             Dbg.Assert(fragmentBytes.Length >= HeaderLength, "not enough data to decode if it is an end fragment.");
 
             if ((fragmentBytes[startIndex + _flagsOffset] & EFlag) != 0)
@@ -402,7 +402,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal static int GetBlobLength(byte[] fragmentBytes, int startIndex)
         {
-            Dbg.Assert(null != fragmentBytes, "fragment cannot be null");
+            Dbg.Assert(fragmentBytes != null, "fragment cannot be null");
             Dbg.Assert(fragmentBytes.Length >= HeaderLength, "not enough data to decode blob length.");
 
             int blobLength = 0;
@@ -503,7 +503,7 @@ namespace System.Management.Automation.Remoting
         internal SerializedDataStream(int fragmentSize,
             OnDataAvailableCallback callbackToNotify) : this(fragmentSize)
         {
-            if (null != callbackToNotify)
+            if (callbackToNotify != null)
             {
                 _notifyOnWriteFragmentImmediately = true;
                 _onDataAvailableCallback = callbackToNotify;
@@ -691,7 +691,7 @@ namespace System.Management.Automation.Remoting
 
                 while (dataWritten < count)
                 {
-                    if (null == _readStream)
+                    if (_readStream == null)
                     {
                         if (_queuedStreams.Count > 0)
                         {
@@ -779,7 +779,7 @@ namespace System.Management.Automation.Remoting
                         return;
                     }
 
-                    if (null == _writeStream)
+                    if (_writeStream == null)
                     {
                         _writeStream = new MemoryStream(_fragmentSize);
                         s_trace.WriteLine("Created write stream: {0}", _writeStream.GetHashCode());
@@ -809,7 +809,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // call the callback since we have data available
-            if (null != _onDataAvailableCallback)
+            if (_onDataAvailableCallback != null)
             {
                 _onDataAvailableCallback(data, _currentFragment.IsEndFragment);
             }
@@ -862,12 +862,12 @@ namespace System.Management.Automation.Remoting
                         }
                     }
 
-                    if ((null != _readStream) && (_readStream.CanRead))
+                    if ((_readStream != null) && (_readStream.CanRead))
                     {
                         _readStream.Dispose();
                     }
 
-                    if ((null != _writeStream) && (_writeStream.CanRead))
+                    if ((_writeStream != null) && (_writeStream.CanRead))
                     {
                         _writeStream.Dispose();
                     }
@@ -1008,8 +1008,8 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal void Fragment<T>(RemoteDataObject<T> obj, SerializedDataStream dataToBeSent)
         {
-            Dbg.Assert(null != obj, "Cannot fragment a null object");
-            Dbg.Assert(null != dataToBeSent, "SendDataCollection cannot be null");
+            Dbg.Assert(obj != null, "Cannot fragment a null object");
+            Dbg.Assert(dataToBeSent != null, "SendDataCollection cannot be null");
 
             dataToBeSent.Enter();
             try
@@ -1054,8 +1054,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void SerializeToBytes(object obj, Stream streamToWriteTo)
         {
-            Dbg.Assert(null != obj, "Cannot serialize a null object");
-            Dbg.Assert(null != streamToWriteTo, "Stream to write to cannot be null");
+            Dbg.Assert(obj != null, "Cannot serialize a null object");
+            Dbg.Assert(streamToWriteTo != null, "Stream to write to cannot be null");
 
             XmlWriterSettings xmlSettings = new XmlWriterSettings();
             xmlSettings.CheckCharacters = false;
@@ -1095,7 +1095,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal PSObject DeserializeToPSObject(Stream serializedDataStream)
         {
-            Dbg.Assert(null != serializedDataStream, "Cannot Deserialize null data");
+            Dbg.Assert(serializedDataStream != null, "Cannot Deserialize null data");
             Dbg.Assert(serializedDataStream.Length != 0, "Cannot Deserialize empty data");
 
             object result = null;

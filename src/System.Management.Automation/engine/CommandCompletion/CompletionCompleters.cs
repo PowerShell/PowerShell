@@ -3172,6 +3172,12 @@ namespace System.Management.Automation
                         completionText = quote + completionText + quote;
                     }
 
+                    // on macOS, system processes names will be empty if PowerShell isn't run as `sudo`
+                    if (string.IsNullOrEmpty(listItemText))
+                    {
+                        continue;
+                    }
+
                     result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
                 }
 

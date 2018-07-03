@@ -413,10 +413,10 @@ namespace System.Management.Automation
             IDictionary<string, MergedCompiledCommandParameter> dict)
         {
             MergedCompiledCommandParameter mergedParam = dict[key];
-            if (null != mergedParam)
+            if (mergedParam != null)
             {
                 CompiledCommandParameter compiledParam = mergedParam.Parameter;
-                if (null != compiledParam)
+                if (compiledParam != null)
                 {
                     if (!String.IsNullOrEmpty(compiledParam.Name))
                         return compiledParam.Name;

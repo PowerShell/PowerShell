@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             ErrorRecord errorRecord = this.ErrorRecord;
-            if (null != errorRecord)
+            if (errorRecord != null)
             {
                 // copy constructor
                 errorRecord = new ErrorRecord(errorRecord, null);
@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Exception e = this.Exception;
                 string msg = Message;
-                if (null == e)
+                if (e == null)
                 {
                     e = new WriteErrorException(msg);
                 }
@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.Commands
                     TargetObject
                     );
 
-                if ((null != this.Exception && !String.IsNullOrEmpty(msg)))
+                if (this.Exception != null && !String.IsNullOrEmpty(msg))
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(msg);
                 }
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
             string recact = RecommendedAction;
             if (!String.IsNullOrEmpty(recact))
             {
-                if (null == errorRecord.ErrorDetails)
+                if (errorRecord.ErrorDetails == null)
                 {
                     errorRecord.ErrorDetails = new ErrorDetails(errorRecord.ToString());
                 }
@@ -374,7 +374,7 @@ namespace Microsoft.PowerShell.Commands
             // 2005/07/14-913791 "write-error output is confusing and misleading"
             // set InvocationInfo to the script not the command
             InvocationInfo myInvocation = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-            if (null != myInvocation)
+            if (myInvocation != null)
             {
                 errorRecord.SetInvocationInfo(myInvocation);
                 errorRecord.PreserveInvocationInfoOnce = true;

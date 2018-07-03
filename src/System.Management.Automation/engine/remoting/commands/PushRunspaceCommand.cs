@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // A third-party host can throw any exception here..we should
                 // clean the runspace created in this case.
-                if ((null != remoteRunspace) && (remoteRunspace.ShouldCloseOnPop))
+                if ((remoteRunspace != null) && (remoteRunspace.ShouldCloseOnPop))
                 {
                     remoteRunspace.Close();
                 }
@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (null != _stream)
+            if (_stream != null)
             {
                 while (true)
                 {

@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell.Commands
                         + ": " + e.Message);
                     throw;
                 }
-                if ((null != entry) &&
+                if ((entry != null) &&
                 ((lastindex == Int32.MinValue
                   || lastindex - entry.Index == 1)))
                 {

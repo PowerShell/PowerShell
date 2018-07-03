@@ -407,7 +407,7 @@ namespace System.Management.Automation.Configuration
                             jsonObject = (JObject) JToken.ReadFrom(jsonReader);
                             JProperty propertyToModify = jsonObject.Property(key);
 
-                            if (null == propertyToModify)
+                            if (propertyToModify == null)
                             {
                                 // The property doesn't exist, so add it
                                 if (addValue)
