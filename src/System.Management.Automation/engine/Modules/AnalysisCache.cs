@@ -100,6 +100,12 @@ namespace System.Management.Automation
                 var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
                 if (moduleManifestProperties != null)
                 {
+                    if (ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
+                    {
+                        ModuleIntrinsics.Tracer.WriteLine($"Module lies on edition-compatibility-checked path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
+                        return null;
+                    }
+
                     Version version;
                     if (ModuleUtils.IsModuleInVersionSubdirectory(modulePath, out version))
                     {
@@ -156,6 +162,31 @@ namespace System.Management.Automation
             if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleManifestAnalysisResult(modulePath, result != null);
 
             return result ?? AnalyzeTheOldWay(modulePath, context, lastWriteTime);
+        }
+
+        /// <summary>
+        /// Check if a module is compatible with the current PSEdition given its path and its manifest properties.
+        /// </summary>
+        /// <param name="modulePath">The path to the module.</param>
+        /// <param name="moduleManifestProperties">The properties of the module's manifest.</param>
+        /// <returns></returns>
+        internal static bool ModuleIsEditionIncompatible(string modulePath, Hashtable moduleManifestProperties)
+        {
+#if UNIX
+            return false;
+#else
+            if (!ModuleUtils.ShouldCheckEditionOfModulesOnPath(modulePath))
+            {
+                return false;
+            }
+
+            if (!moduleManifestProperties.ContainsKey("CompatiblePSEditions"))
+            {
+                return true;
+            }
+
+            return !Utils.IsPSEditionSupported(LanguagePrimitives.ConvertTo<string[]>(moduleManifestProperties["CompatiblePSEditions"]));
+#endif
         }
 
         internal static bool ModuleAnalysisViaGetModuleRequired(object modulePathObj, bool hadCmdlets, bool hadFunctions, bool hadAliases)

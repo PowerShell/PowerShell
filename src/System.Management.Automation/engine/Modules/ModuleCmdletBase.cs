@@ -3403,8 +3403,7 @@ namespace Microsoft.PowerShell.Commands
             return true;
 #else
 
-            string windowsPSModulePath = ModuleIntrinsics.GetWindowsPowerShellPSHomeModulePath();
-            if (!moduleManifestPath.StartsWith(windowsPSModulePath, StringComparison.OrdinalIgnoreCase))
+            if (!ModuleUtils.ShouldCheckEditionOfModulesOnPath(moduleManifestPath))
             {
                 return true;
             }

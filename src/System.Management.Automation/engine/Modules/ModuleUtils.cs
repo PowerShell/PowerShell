@@ -13,11 +13,6 @@ namespace System.Management.Automation.Internal
 {
     internal static class ModuleUtils
     {
-        // Cache for modules on the System32 module path, which are assumed to not be deleted or have their editions change.
-        // Null entries denote incompatible modules.
-        private static readonly ConcurrentDictionary<string, PSModuleInfo> s_incompatibleEditionSystem32Modules =
-            new ConcurrentDictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
-
         // Default option for local file system enumeration:
         //  - Ignore files/directories when access is denied;
         //  - Search top directory only.
@@ -351,6 +346,16 @@ namespace System.Management.Automation.Internal
             return false;
         }
 
+#if !UNIX
+        internal static bool ShouldCheckEditionOfModulesOnPath(string path)
+        {
+            Dbg.Assert(!String.IsNullOrEmpty(path), $"Caller to verify that {nameof(path)} is not null or empty");
+
+            string windowsPowerShellPSHomePath = ModuleIntrinsics.GetWindowsPowerShellPSHomeModulePath();
+            return path.StartsWith(windowsPowerShellPSHomePath, StringComparison.OrdinalIgnoreCase);
+        }
+#endif
+
         /// <summary>
         /// Gets a list of matching commands
         /// </summary>
@@ -435,18 +440,6 @@ namespace System.Management.Automation.Internal
                     }
 
                     string moduleShortName = System.IO.Path.GetFileNameWithoutExtension(modulePath);
-
-// System32 module CompatiblePSEditions checks:
-// incompatible modules should not appear as completions
-#if !UNIX
-                    // If the module is on the System32 path where CompatiblePSEditions are checked,
-                    // we skip it -- only give completions for loaded modules on this path
-                    string psCompatibleEditionsCheckedPath = ModuleIntrinsics.GetWindowsPowerShellPSHomeModulePath();
-                    if (modulePath.StartsWith(psCompatibleEditionsCheckedPath, StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-#endif
 
                     IDictionary<string, CommandTypes> exportedCommands = AnalysisCache.GetExportedCommands(modulePath, testOnly: false, context);
 
