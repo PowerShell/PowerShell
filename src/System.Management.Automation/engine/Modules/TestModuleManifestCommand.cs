@@ -24,6 +24,14 @@ namespace Microsoft.PowerShell.Commands
     public sealed class TestModuleManifestCommand : ModuleCmdletBase
     {
         /// <summary>
+        /// Creates an instance of the Test-ModuleManifest command
+        /// </summary>
+        public TestModuleManifestCommand()
+        {
+            BaseSkipEditionCheck = true;
+        }
+
+        /// <summary>
         /// The output path for the generated file...
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ValueFromPipelineByPropertyName = true)]

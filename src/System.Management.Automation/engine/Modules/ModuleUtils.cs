@@ -411,39 +411,11 @@ namespace System.Management.Automation.Internal
 // incompatible modules should not appear as completions
 #if !UNIX
                     // If the module is on the System32 path where CompatiblePSEditions are checked,
-                    // we are forced to use Get-Module to discover the compatibility of the module
+                    // we skip it -- only give completions for loaded modules on this path
                     string psCompatibleEditionsCheckedPath = ModuleIntrinsics.GetWindowsPowerShellPSHomeModulePath();
                     if (modulePath.StartsWith(psCompatibleEditionsCheckedPath, StringComparison.OrdinalIgnoreCase))
                     {
-                        // Do our best not to call Get-Module by using a cache
-                        if (s_incompatibleEditionSystem32Modules.ContainsKey(modulePath))
-                        {
-                            // We have already identified the module as incompatible
-                            continue;
-                        }
-                        else
-                        {
-                            using (PowerShell pwsh = PowerShell.Create())
-                            {
-                                PSModuleInfo module = pwsh.AddCommand("Get-Module")
-                                    .AddParameter("ListAvailable")
-                                    .AddParameter("SkipEditionCheck")
-                                    .AddArgument(modulePath)
-                                    .Invoke<PSModuleInfo>()
-                                    .FirstOrDefault();
-
-                                if (module == null)
-                                {
-                                    continue;
-                                }
-
-                                if (!Utils.IsPSEditionSupported(module.CompatiblePSEditions))
-                                {
-                                    s_incompatibleEditionSystem32Modules[modulePath] = module;
-                                    continue;
-                                }
-                            }
-                        }
+                        continue;
                     }
 #endif
 
