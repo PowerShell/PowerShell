@@ -105,6 +105,24 @@ Describe "Group-Object" -Tags "CI" {
     It "Should not throw error when using AsString when the AsHashTable was added" {
         { $testObject | Group-Object -AsHashTable -AsString } | Should -Not -Throw
     }
+
+    It "Should be able to retrieve objects by key when using -AsHashTable without -AsString" {
+        $testObject = [pscustomobject] @{a="one"; b=2}, [pscustomobject] @{a="two"; b=10}
+        $result = $testObject | Group-Object -AsHashtable -Property a
+        $result.one.b | Should -Be 2
+        $result["two"].b | Should -Be 10
+    }
+
+    It "User's scenario should work (see issue #6933 for link to stackoverflow question)" {
+        # Sort numbers into two groups even succeeded, odd failed.
+        $result = 1..9 | foreach {[PSCustomObject]@{ErrorMessage = if ($_ % 2) {'SomeError'} else {''}}} |
+            Group-Object -Property {if ($_.ErrorMessage) {'Failed'} else {'Successful'}} -AsHashTable
+
+        $result['Failed'].ErrorMessage.Count | Should -Be 5
+        $result['Failed'].ErrorMessage[0] | Should -Be 'SomeError'
+        $result['Successful'].ErrorMessage.Count | Should -Be 4
+        $result['Successful'].ErrorMessage[0] | Should -Be ''
+    }
 }
 
 Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-Object, Compare-Object)" -Tags "CI" {

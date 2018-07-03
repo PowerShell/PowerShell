@@ -317,15 +317,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (this.ClientOnly)
             {
                 string conflictParameterName = null;
-                if (null != this.ComputerName)
+                if (this.ComputerName != null)
                 {
                     conflictParameterName = @"ComputerName";
                 }
-                else if (null != this.CimSession)
+                else if (this.CimSession != null)
                 {
                     conflictParameterName = @"CimSession";
                 }
-                if (null != conflictParameterName)
+                if (conflictParameterName != null)
                 {
                     ThrowConflictParameterWasSet(@"New-CimInstance", conflictParameterName, @"ClientOnly");
                     return;

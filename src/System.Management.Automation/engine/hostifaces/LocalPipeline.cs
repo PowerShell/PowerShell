@@ -505,7 +505,7 @@ namespace System.Management.Automation.Runspaces
             finally
             {
                 // 2004/02/26-JonN added IDisposable to PipelineProcessor
-                if (null != pipelineProcessor)
+                if (pipelineProcessor != null)
                 {
                     pipelineProcessor.Dispose();
                     pipelineProcessor = null;
@@ -532,7 +532,7 @@ namespace System.Management.Automation.Runspaces
                 System.Security.Principal.WindowsImpersonationContext oldImpersonationCtxt = null;
                 try
                 {
-                    if ((null != InvocationSettings) && (InvocationSettings.FlowImpersonationPolicy))
+                    if ((InvocationSettings != null) && (InvocationSettings.FlowImpersonationPolicy))
                     {
                         // we have a valid identity to impersonate.
                         System.Security.Principal.WindowsIdentity identityToImPersonate =
@@ -591,7 +591,7 @@ namespace System.Management.Automation.Runspaces
                     // If sensitive operations such as impersonation occur in the try block, and an
                     // exception is thrown, the filter can execute before the finally block. For the
                     // impersonation example, this means that the filter would execute as the impersonated user.
-                    if (null != oldImpersonationCtxt)
+                    if (oldImpersonationCtxt != null)
                     {
                         try
                         {

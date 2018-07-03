@@ -69,7 +69,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Free managed objects within 'if (disposing)' if needed
-            if (null != fdiContext)
+            if (fdiContext != null)
             {
                 fdiContext.Dispose();
             }
@@ -151,7 +151,7 @@ namespace System.Management.Automation.Internal
         private void CleanUpDelegates()
         {
             // Free GCHandles so that the memory they point to may be unpinned (garbage collected)
-            if (null != _fdiAllocHandle)
+            if (_fdiAllocHandle != null)
             {
                 _fdiAllocHandle.Free();
                 _fdiFreeHandle.Free();
@@ -242,7 +242,7 @@ namespace System.Management.Automation.Internal
             {
                 FileStream stream = new FileStream(filename, mode, access, share);
 
-                if (null == stream)
+                if (stream == null)
                 {
                     return new IntPtr(-1);
                 }
@@ -320,7 +320,7 @@ namespace System.Management.Automation.Internal
             GCHandle handle = GCHandle.FromIntPtr(fp);
             FileStream stream = (FileStream)handle.Target;
 
-            if (null == stream)
+            if (stream == null)
             {
                 return -1;
             }

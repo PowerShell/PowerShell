@@ -117,7 +117,7 @@ Describe "Type accelerators" -Tags "CI" {
                 @{
                     Accelerator = 'cimtype'
                     Type        = [Microsoft.Management.Infrastructure.CimType]
-                }           
+                }
                 @{
                     Accelerator = 'cimconverter'
                     Type        = [Microsoft.Management.Infrastructure.CimConverter]
@@ -197,7 +197,7 @@ Describe "Type accelerators" -Tags "CI" {
                 @{
                     Accelerator = 'SupportsWildcards'
                     Type        = [System.Management.Automation.SupportsWildcardsAttribute]
-                }           
+                }
                 @{
                     Accelerator = 'switch'
                     Type        = [System.Management.Automation.SwitchParameter]
@@ -353,7 +353,7 @@ Describe "Type accelerators" -Tags "CI" {
                 @{
                     Accelerator = 'psscriptmethod'
                     Type        = [System.Management.Automation.PSScriptMethod]
-                }  
+                }
                 @{
                     Accelerator = 'psscriptproperty'
                     Type        = [System.Management.Automation.PSScriptProperty]
@@ -370,15 +370,19 @@ Describe "Type accelerators" -Tags "CI" {
                     Accelerator = 'psvariableproperty'
                     Type        = [System.Management.Automation.PSVariableProperty]
                 }
+                @{
+                    Accelerator = 'pspropertyexpression'
+                    Type = [Microsoft.PowerShell.Commands.PSPropertyExpression]
+                }
             )
-        
-            if ( $IsCoreCLR )
+
+            if ( !$IsWindows )
             {
-                $totalAccelerators = 90 
+                $totalAccelerators = 91
             }
             else
             {
-                $totalAccelerators = 94
+                $totalAccelerators = 96
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{
@@ -413,13 +417,13 @@ Describe "Type accelerators" -Tags "CI" {
             param($Accelerator, $Type)
             $TypeAcceleratorsType::Get[$Accelerator] | Should -Be ($Type)
         }
-    
-        It 'Should have a type accelerator for non-dotnet-core type: <Accelerator>' -Skip:$IsCoreCLR -TestCases $extraFullPSAcceleratorTestCases {
+
+        It 'Should have a type accelerator for non-dotnet-core type: <Accelerator>' -Skip:(!$IsWindows) -TestCases $extraFullPSAcceleratorTestCases {
             param($Accelerator, $Type)
             $TypeAcceleratorsType::Get[$Accelerator] | Should -Be ($Type)
         }
     }
-    
+
     Context 'User Defined Accelerators' {
         BeforeAll {
             $TypeAcceleratorsType::Add('userDefinedAcceleratorType', [int])

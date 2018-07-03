@@ -617,14 +617,14 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         public void EndOpen(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((null == rsAsyncResult) ||
+            if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (!rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -684,14 +684,14 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         public virtual void EndClose(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
 
-            if ((null == rsAsyncResult) ||
+            if ((rsAsyncResult == null) ||
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
@@ -726,7 +726,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             // throw the exception that occurred while
             // processing the async operation
-            if (null != asyncResult.Exception)
+            if (asyncResult.Exception != null)
             {
                 throw asyncResult.Exception;
             }
@@ -753,7 +753,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </exception>
         public void ReleaseRunspace(Runspace runspace)
         {
-            if (null == runspace)
+            if (runspace == null)
             {
                 throw PSTraceSource.NewArgumentNullException("runspace");
             }
@@ -893,7 +893,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </param>
         internal void CancelGetRunspace(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
@@ -901,7 +901,7 @@ namespace System.Management.Automation.Runspaces.Internal
             GetRunspaceAsyncResult grsAsyncResult =
                 asyncResult as GetRunspaceAsyncResult;
 
-            if ((null == grsAsyncResult) || (grsAsyncResult.OwnerId != instanceId))
+            if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
             {
                 throw PSTraceSource.NewArgumentException("asyncResult",
                                                          RunspacePoolStrings.AsyncResultNotOwned,
@@ -932,7 +932,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         internal Runspace EndGetRunspace(IAsyncResult asyncResult)
         {
-            if (null == asyncResult)
+            if (asyncResult == null)
             {
                 throw PSTraceSource.NewArgumentNullException("asyncResult");
             }
@@ -940,7 +940,7 @@ namespace System.Management.Automation.Runspaces.Internal
             GetRunspaceAsyncResult grsAsyncResult =
                 asyncResult as GetRunspaceAsyncResult;
 
-            if ((null == grsAsyncResult) || (grsAsyncResult.OwnerId != instanceId))
+            if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
             {
                 throw PSTraceSource.NewArgumentException("asyncResult",
                                                          RunspacePoolStrings.AsyncResultNotOwned,
@@ -1248,7 +1248,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         protected Runspace CreateRunspace()
         {
-            Dbg.Assert(null != _initialSessionState, "_initialSessionState should not be null");
+            Dbg.Assert(_initialSessionState != null, "_initialSessionState should not be null");
             // TODO: exceptions thrown here need to be documented
             // runspace.Open() did not document all the exceptions.
             Runspace result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
@@ -1296,7 +1296,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </param>
         protected void DestroyRunspace(Runspace runspace)
         {
-            Dbg.Assert(null != runspace, "Runspace cannot be null");
+            Dbg.Assert(runspace != null, "Runspace cannot be null");
             runspace.Events.ForwardEvent -= OnRunspaceForwardEvent; // this must be done after open since open initializes the ExecutionContext
             runspace.Close();
             runspace.Dispose();
@@ -1611,7 +1611,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
             }
 
-            if ((useCallingThread) && (null != runspaceRequester))
+            if ((useCallingThread) && (runspaceRequester != null))
             {
                 // call DoComplete outside of the lock and finally..as the
                 // DoComplete handler may handle the runspace in the same

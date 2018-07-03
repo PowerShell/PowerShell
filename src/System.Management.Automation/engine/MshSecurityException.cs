@@ -93,7 +93,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == _errorRecord)
+                if (_errorRecord == null)
                 {
                     _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),

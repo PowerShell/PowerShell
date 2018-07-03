@@ -91,7 +91,7 @@ namespace System.Management.Automation.Remoting
             get { return _fragmentor; }
             set
             {
-                Dbg.Assert(null != value, "Fragmentor cannot be null.");
+                Dbg.Assert(value != null, "Fragmentor cannot be null.");
                 _fragmentor = value;
                 // create serialized streams using fragment size.
                 string[] names = Enum.GetNames(typeof(DataPriorityType));
@@ -120,9 +120,9 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal void Add<T>(RemoteDataObject<T> data, DataPriorityType priority)
         {
-            Dbg.Assert(null != data, "Cannot send null data object");
-            Dbg.Assert(null != _fragmentor, "Fragmentor cannot be null while adding objects");
-            Dbg.Assert(null != _dataToBeSent, "Serialized streams are not initialized");
+            Dbg.Assert(data != null, "Cannot send null data object");
+            Dbg.Assert(_fragmentor != null, "Fragmentor cannot be null while adding objects");
+            Dbg.Assert(_dataToBeSent != null, "Serialized streams are not initialized");
 
             // make sure the only one object is fragmented and added to the collection
             // at any give time. This way the order of fragment is maintained
@@ -160,14 +160,14 @@ namespace System.Management.Automation.Remoting
                 causing an unhandled exception in finalize and a process crash.
                 Verify arrays and dataToBeSent objects before referencing.
             */
-            if (null != _dataSyncObjects && null != _dataToBeSent)
+            if (_dataSyncObjects != null && _dataToBeSent != null)
             {
                 int promptResponseIndex = (int)DataPriorityType.PromptResponse;
                 int defaultIndex = (int)DataPriorityType.Default;
 
                 lock (_dataSyncObjects[promptResponseIndex])
                 {
-                    if (null != _dataToBeSent[promptResponseIndex])
+                    if (_dataToBeSent[promptResponseIndex] != null)
                     {
                         _dataToBeSent[promptResponseIndex].Dispose();
                         _dataToBeSent[promptResponseIndex] = null;
@@ -176,7 +176,7 @@ namespace System.Management.Automation.Remoting
 
                 lock (_dataSyncObjects[defaultIndex])
                 {
-                    if (null != _dataToBeSent[defaultIndex])
+                    if (_dataToBeSent[defaultIndex] != null)
                     {
                         _dataToBeSent[defaultIndex].Dispose();
                         _dataToBeSent[defaultIndex] = null;
@@ -222,13 +222,13 @@ namespace System.Management.Automation.Remoting
                 result = _dataToBeSent[(int)DataPriorityType.PromptResponse].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
                 priorityType = DataPriorityType.PromptResponse;
 
-                if (null == result)
+                if (result == null)
                 {
                     result = _dataToBeSent[(int)DataPriorityType.Default].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
                     priorityType = DataPriorityType.Default;
                 }
                 // no data to return..so register the callback.
-                if (null == result)
+                if (result == null)
                 {
                     // register callback.
                     _onDataAvailableCallback = callback;
@@ -252,13 +252,13 @@ namespace System.Management.Automation.Remoting
                 _isHandlingCallback = true;
             }
 
-            if (null != _onDataAvailableCallback)
+            if (_onDataAvailableCallback != null)
             {
                 DataPriorityType prType;
                 // now get the fragment and call the callback..
                 byte[] result = ReadOrRegisterCallback(_onDataAvailableCallback, out prType);
 
-                if (null != result)
+                if (result != null)
                 {
                     // reset the onDataAvailableCallback so that we dont notify
                     // multiple times. we are resetting before actually calling
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal ReceiveDataCollection(Fragmentor defragmentor, bool createdByClientTM)
         {
-            Dbg.Assert(null != defragmentor, "ReceiveDataCollection needs a defragmentor to work with");
+            Dbg.Assert(defragmentor != null, "ReceiveDataCollection needs a defragmentor to work with");
 
             // Memory streams created with an unsigned byte array provide a non-resizable stream view
             // of the data, and can only be written to. When using a byte array, you can neither append
@@ -431,8 +431,8 @@ namespace System.Management.Automation.Remoting
         /// </remarks>
         internal void ProcessRawData(byte[] data, OnDataAvailableCallback callback)
         {
-            Dbg.Assert(null != data, "Cannot process null data");
-            Dbg.Assert(null != callback, "Callback cannot be null");
+            Dbg.Assert(data != null, "Cannot process null data");
+            Dbg.Assert(callback != null, "Callback cannot be null");
 
             lock (_syncObject)
             {
@@ -568,7 +568,7 @@ namespace System.Management.Automation.Remoting
                     // reset incoming stream.
                     _pendingDataStream.Dispose();
                     _pendingDataStream = new MemoryStream();
-                    if (null != extraData)
+                    if (extraData != null)
                     {
                         _pendingDataStream.Write(extraData, 0, extraData.Length);
                     }
@@ -672,7 +672,7 @@ namespace System.Management.Automation.Remoting
         private void ResetReceiveData()
         {
             // reset resources used to store incoming data (for a single object)
-            if (null != _dataToProcessStream)
+            if (_dataToProcessStream != null)
             {
                 _dataToProcessStream.Dispose();
             }
@@ -683,13 +683,13 @@ namespace System.Management.Automation.Remoting
 
         private void ReleaseResources()
         {
-            if (null != _pendingDataStream)
+            if (_pendingDataStream != null)
             {
                 _pendingDataStream.Dispose();
                 _pendingDataStream = null;
             }
 
-            if (null != _dataToProcessStream)
+            if (_dataToProcessStream != null)
             {
                 _dataToProcessStream.Dispose();
                 _dataToProcessStream = null;
@@ -852,7 +852,7 @@ namespace System.Management.Automation.Remoting
             DataPriorityType priorityType,
             ReceiveDataCollection.OnDataAvailableCallback callback)
         {
-            Dbg.Assert(null != data, "Cannot process null data");
+            Dbg.Assert(data != null, "Cannot process null data");
 
             try
             {
@@ -899,7 +899,7 @@ namespace System.Management.Automation.Remoting
 
         internal virtual void Dispose(bool isDisposing)
         {
-            if (null != _recvdData)
+            if (_recvdData != null)
             {
                 for (int index = 0; index < _recvdData.Length; index++)
                 {

@@ -13,20 +13,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // tableBody to use for this instance of the ViewGenerator;
         private ListControlBody _listBody;
 
-        internal override void Initialize(TerminatingErrorContext terminatingErrorContext, MshExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
+        internal override void Initialize(TerminatingErrorContext terminatingErrorContext, PSPropertyExpressionFactory mshExpressionFactory, TypeInfoDataBase db, ViewDefinition view, FormattingCommandLineParameters formatParameters)
         {
             base.Initialize(terminatingErrorContext, mshExpressionFactory, db, view, formatParameters);
-            if ((null != this.dataBaseInfo) && (null != this.dataBaseInfo.view))
+            if ((this.dataBaseInfo != null) && (this.dataBaseInfo.view != null))
             {
                 _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl;
             }
         }
 
-        internal override void Initialize(TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory,
+        internal override void Initialize(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                                     PSObject so, TypeInfoDataBase db, FormattingCommandLineParameters parameters)
         {
             base.Initialize(errorContext, expressionFactory, so, db, parameters);
-            if ((null != this.dataBaseInfo) && (null != this.dataBaseInfo.view))
+            if ((this.dataBaseInfo != null) && (this.dataBaseInfo.view != null))
             {
                 _listBody = (ListControlBody)this.dataBaseInfo.view.mainControl;
             }
@@ -42,10 +42,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="so"></param>
         internal override void PrepareForRemoteObjects(PSObject so)
         {
-            Diagnostics.Assert(null != so, "so cannot be null");
+            Diagnostics.Assert(so != null, "so cannot be null");
 
             // make sure computername property exists.
-            Diagnostics.Assert(null != so.Properties[RemotingConstants.ComputerNameNoteProperty],
+            Diagnostics.Assert(so.Properties[RemotingConstants.ComputerNameNoteProperty] != null,
                 "PrepareForRemoteObjects cannot be called when the object does not contain ComputerName property.");
 
             if ((dataBaseInfo != null) && (dataBaseInfo.view != null) && (dataBaseInfo.view.mainControl != null))
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
 
                 ListViewField lvf = new ListViewField();
-                MshExpressionResult result;
+                PSPropertyExpressionResult result;
                 lvf.formatPropertyField = GenerateFormatPropertyField(listItem.formatTokenList, so, enumerationLimit, out result);
 
                 // we need now to provide a label
@@ -112,14 +112,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     // we did fail getting a result (i.e. property does not exist on the object)
 
-                    // we try to fall back and see if we have an un-resolved MshExpression
+                    // we try to fall back and see if we have an un-resolved PSPropertyExpression
                     FormatToken token = listItem.formatTokenList[0];
                     FieldPropertyToken fpt = token as FieldPropertyToken;
                     if (fpt != null)
                     {
-                        MshExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
+                        PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
 
-                        // use the un-resolved MshExpression string as a label
+                        // use the un-resolved PSPropertyExpression string as a label
                         lvf.label = ex.ToString();
                     }
                     else
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             else
             {
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
-                if (null != typesWithoutPrefix)
+                if (typesWithoutPrefix != null)
                 {
                     match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typesWithoutPrefix);
                     foreach (ListControlEntryDefinition x in listBody.optionalEntryList)

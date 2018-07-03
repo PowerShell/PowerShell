@@ -951,7 +951,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         bool isTaskCompleted = tcs.Task.Wait(500);
 
-                        if (null != errorEventArgs)
+                        if (errorEventArgs != null)
                         {
                             throw errorEventArgs.GetException();
                         }

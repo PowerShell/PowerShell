@@ -114,7 +114,7 @@ namespace Microsoft.WSMan.Management
         {
             WSManHelper helper = new WSManHelper(this);
             IWSManSession m_SessionObj = CreateWSManSession();
-            if (null == m_SessionObj)
+            if (m_SessionObj == null)
             {
                 return;
             }
@@ -180,7 +180,7 @@ namespace Microsoft.WSMan.Management
         {
             WSManHelper helper = new WSManHelper(this);
             IWSManSession m_SessionObj = CreateWSManSession();
-            if (null == m_SessionObj)
+            if (m_SessionObj == null)
             {
                 return;
             }
@@ -549,7 +549,7 @@ namespace Microsoft.WSMan.Management
             }
 
             IWSManSession m_SessionObj = CreateWSManSession();
-            if (null == m_SessionObj)
+            if (m_SessionObj == null)
             {
                 return;
             }
@@ -630,7 +630,7 @@ namespace Microsoft.WSMan.Management
             }
 
             IWSManSession m_SessionObj = CreateWSManSession();
-            if (null == m_SessionObj)
+            if (m_SessionObj == null)
             {
                 return;
             }

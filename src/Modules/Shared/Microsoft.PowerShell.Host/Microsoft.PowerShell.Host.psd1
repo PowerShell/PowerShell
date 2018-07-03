@@ -6,7 +6,9 @@ Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="6.1.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion="6.1"
+FunctionsToExport = @()
 CmdletsToExport="Start-Transcript", "Stop-Transcript"
+AliasesToExport = @()
 NestedModules="Microsoft.PowerShell.ConsoleHost.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855956'
 }

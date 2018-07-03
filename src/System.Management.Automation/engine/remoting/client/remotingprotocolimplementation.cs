@@ -92,7 +92,7 @@ namespace System.Management.Automation.Remoting
             _transportManager.RobustConnectionNotification += new EventHandler<ConnectionStatusEventArgs>(HandleRobustConnectionNotification);
 
             WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (null != wsmanConnectionInfo)
+            if (wsmanConnectionInfo != null)
             {
                 // only WSMan transport supports redirection
 
@@ -432,7 +432,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="newURI"></param>
         private void PerformURIRedirectionStep2(System.Uri newURI)
         {
-            Dbg.Assert(null != newURI, "Uri cannot be null");
+            Dbg.Assert(newURI != null, "Uri cannot be null");
             lock (_syncObject)
             {
                 // if connection is closed by the user..no need to redirect
@@ -442,7 +442,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 // raise warning to report the redirection
-                if (null != _uriRedirectionHandler)
+                if (_uriRedirectionHandler != null)
                 {
                     _uriRedirectionHandler(newURI);
                 }
@@ -486,7 +486,7 @@ namespace System.Management.Automation.Remoting
                     exception = uriFormatException;
                 }
                 // if we are here, there must be an exception constructing a uri
-                if (null != exception)
+                if (exception != null)
                 {
                     PSRemotingTransportException newException =
                         new PSRemotingTransportException(PSRemotingErrorId.RedirectedURINotWellFormatted, RemotingErrorIdStrings.RedirectedURINotWellFormatted,

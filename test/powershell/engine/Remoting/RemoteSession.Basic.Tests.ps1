@@ -16,10 +16,24 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
         $err = ({New-PSSession -ComputerName 'localhost' -Credential $credential -Authentication Basic}  | Should -Throw -PassThru  -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand')
         $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
         # Should be PSRemotingErrorId.ConnectFailed
-        # Ensures we are looking at teh expected instance
+        # Ensures we are looking at the expected instance
         $err.Exception.ErrorCode | Should -Be 801
     }
 
+   # Marked as pending due to https://github.com/Microsoft/omi/issues/502
+   # It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
+    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -Pending {
+        $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+        $credential = [PSCredential]::new('username', $password)
+
+        # use a Uri that specifies HTTPS to test Basic Auth logic.
+        # NOTE: The connection is expected to fail but not with a  ConnectFailed exception
+        $uri = "https://localhost"
+        New-PSSession -Uri $uri -Credential $credential -Authentication Basic -ErrorVariable err
+        $err.Exception | Should -BeOfType [System.Management.Automation.Remoting.PSRemotingTransportException]
+        $err.FullyQualifiedErrorId | Should -Be '1,PSSessionOpenFailed'
+        $err.Exception.HResult | Should -Be 0x80131501
+    }
 }
 
 Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnWindows') {

@@ -225,7 +225,7 @@ function Start-BuildNativeWindowsBinaries {
         $vcvarsallbatPath = (Get-ChildItem $vcPath -Filter vcvarsall.bat -Recurse -File | Select-Object -First 1).FullName
     }
 
-    if ((Test-Path -Path $vcvarsallbatPath) -eq $false) {
+    if ([string]::IsNullOrEmpty($vcvarsallbatPath) -or (Test-Path -Path $vcvarsallbatPath) -eq $false) {
         throw "Could not find Visual Studio vcvarsall.bat at $vcvarsallbatPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
     }
 
@@ -419,13 +419,14 @@ function Start-PSBuild {
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         # If this parameter is not provided it will get determined automatically.
-        [ValidateSet("win7-x64",
-                     "win7-x86",
-                     "osx-x64",
+        [ValidateSet("linux-arm",
+                     "linux-musl-x64",
                      "linux-x64",
-                     "linux-arm",
+                     "osx-x64",
                      "win-arm",
-                     "win-arm64")]
+                     "win-arm64",
+                     "win7-x64",
+                     "win7-x86")]
         [string]$Runtime,
 
         [ValidateSet('Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
@@ -737,13 +738,14 @@ function New-PSOptions {
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
-                     "win7-x86",
-                     "win7-x64",
-                     "osx-x64",
-                     "linux-x64",
                      "linux-arm",
+                     "linux-musl-x64",
+                     "linux-x64",
+                     "osx-x64",
                      "win-arm",
-                     "win-arm64")]
+                     "win-arm64",
+                     "win7-x64",
+                     "win7-x86")]
         [string]$Runtime,
 
         [switch]$CrossGen,
@@ -2160,13 +2162,14 @@ function Start-CrossGen {
         $PublishPath,
 
         [Parameter(Mandatory=$true)]
-        [ValidateSet("win7-x86",
-                     "win7-x64",
-                     "osx-x64",
+        [ValidateSet("linux-arm",
+                     "linux-musl-x64",
                      "linux-x64",
-                     "linux-arm",
+                     "osx-x64",
                      "win-arm",
-                     "win-arm64")]
+                     "win-arm64",
+                     "win7-x64",
+                     "win7-x86")]
         [string]
         $Runtime
     )
@@ -2227,10 +2230,8 @@ function Start-CrossGen {
         }
     } elseif ($Runtime -eq "linux-arm") {
         throw "crossgen is not available for 'linux-arm'"
-    } elseif ($Environment.IsLinux) {
-        "linux-x64"
-    } elseif ($Environment.IsMacOS) {
-        "osx-x64"
+    } else {
+        $Runtime
     }
 
     if (-not $crossGenRuntime) {

@@ -648,7 +648,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public override string ToString()
         {
-            if (null != CommandInfo)
+            if (CommandInfo != null)
                 return CommandInfo.ToString();
             return "<NullCommandInfo>"; // does not require localization
         }
@@ -750,7 +750,7 @@ namespace System.Management.Automation
         {
             try
             {
-                if (null != Command)
+                if (Command != null)
                 {
                     do // false loop
                     {
@@ -873,7 +873,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void ManageScriptException(RuntimeException e)
         {
-            if (null != Command && null != commandRuntime.PipelineProcessor)
+            if (Command != null && commandRuntime.PipelineProcessor != null)
             {
                 commandRuntime.PipelineProcessor.RecordFailure(e, Command);
 
@@ -892,7 +892,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void ForgetScriptException()
         {
-            if (null != Command && null != commandRuntime.PipelineProcessor)
+            if (Command != null && commandRuntime.PipelineProcessor != null)
             {
                 commandRuntime.PipelineProcessor.ForgetFailure();
             }
@@ -930,7 +930,7 @@ namespace System.Management.Automation
                 // whether IDisposable is implemented, in order to avoid
                 // this expensive reflection cast.
                 IDisposable id = Command as IDisposable;
-                if (null != id)
+                if (id != null)
                 {
                     id.Dispose();
                 }

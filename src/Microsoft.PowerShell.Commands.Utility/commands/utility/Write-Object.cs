@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (null == _inputObjects)
+            if (_inputObjects == null)
             {
                 WriteObject(_inputObjects);
                 return;

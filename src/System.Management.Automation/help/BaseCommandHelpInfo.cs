@@ -204,7 +204,7 @@ namespace System.Management.Automation
             if (this.FullHelp.Properties["ModuleName"] != null)
             {
                 PSNoteProperty moduleNameNP = this.FullHelp.Properties["ModuleName"] as PSNoteProperty;
-                if (null != moduleNameNP)
+                if (moduleNameNP != null)
                 {
                     LanguagePrimitives.TryConvertTo<string>(moduleNameNP.Value, CultureInfo.InvariantCulture,
                                                             out moduleName);
@@ -219,7 +219,7 @@ namespace System.Management.Automation
             }
 
             ExecutionContext context = LocalPipeline.GetExecutionContextFromTLS();
-            if (null == context)
+            if (context == null)
             {
                 return null;
             }
@@ -306,7 +306,7 @@ namespace System.Management.Automation
 
                 PSObject navigationLink = PSObject.AsPSObject(navigationLinkAsObject);
                 PSNoteProperty uriNP = navigationLink.Properties["uri"] as PSNoteProperty;
-                if (null != uriNP)
+                if (uriNP != null)
                 {
                     string uriString = string.Empty;
                     LanguagePrimitives.TryConvertTo<string>(uriNP.Value, CultureInfo.InvariantCulture, out uriString);
@@ -351,17 +351,17 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override bool MatchPatternInContent(WildcardPattern pattern)
         {
-            Dbg.Assert(null != pattern, "pattern cannot be null");
+            Dbg.Assert(pattern != null, "pattern cannot be null");
 
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (null == synopsis)
+            if (synopsis == null)
             {
                 synopsis = string.Empty;
             }
 
-            if (null == detailedDescription)
+            if (detailedDescription == null)
             {
                 detailedDescription = string.Empty;
             }
@@ -464,9 +464,9 @@ namespace System.Management.Automation
                     }
 
                     PSObject descriptionObject = PSObject.AsPSObject(descriptionItem);
-                    if ((null == descriptionObject) ||
-                        (null == descriptionObject.Properties["Text"]) ||
-                        (null == descriptionObject.Properties["Text"].Value))
+                    if ((descriptionObject == null) ||
+                        (descriptionObject.Properties["Text"] == null) ||
+                        (descriptionObject.Properties["Text"].Value == null))
                     {
                         continue;
                     }

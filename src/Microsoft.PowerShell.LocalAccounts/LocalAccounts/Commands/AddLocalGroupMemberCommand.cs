@@ -243,10 +243,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (var member in this.Member)
             {
                 LocalPrincipal principal = MakePrincipal(groupId, member);
-                if (null != principal)
+                if (principal != null)
                 {
                     var ex = sam.AddLocalGroupMember(group, principal);
-                    if (null != ex)
+                    if (ex != null)
                     {
                         WriteError(ex.MakeErrorRecord());
                     }
@@ -277,10 +277,10 @@ namespace Microsoft.PowerShell.Commands
             foreach (var member in this.Member)
             {
                 LocalPrincipal principal = MakePrincipal(groupSid.ToString(), member);
-                if (null != principal)
+                if (principal != null)
                 {
                     var ex = sam.AddLocalGroupMember(groupSid, principal);
-                    if (null != ex)
+                    if (ex != null)
                     {
                         WriteError(ex.MakeErrorRecord());
                     }

@@ -95,7 +95,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static byte[] GetCurrentTimeZoneInByteFormat()
         {
-            if (null == _timeZoneInByteFormat)
+            if (_timeZoneInByteFormat == null)
             {
                 Exception e = null;
                 try
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Remoting
 
                 // if there is any exception serializing the timezone information
                 // ignore it and dont try to serialize again.
-                if (null != e)
+                if (e != null)
                 {
                     _timeZoneInByteFormat = Utils.EmptyArray<byte>();
                 }

@@ -8,4 +8,6 @@
     PowerShellVersion="6.1"
     ModuleToProcess="PSDiagnostics.psm1"
     FunctionsToExport="Disable-PSTrace","Disable-PSWSManCombinedTrace","Disable-WSManTrace","Enable-PSTrace","Enable-PSWSManCombinedTrace","Enable-WSManTrace","Get-LogProperties","Set-LogProperties","Start-Trace","Stop-Trace"
+    CmdletsToExport = @()
+    AliasesToExport = @()
 }
