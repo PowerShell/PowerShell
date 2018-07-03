@@ -5,10 +5,12 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -1025,12 +1027,52 @@ namespace System.Management.Automation
 
         static AnalysisCacheData()
         {
-            s_cacheStoreLocation =
-                Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath") ??
+            // If user defines a custom cache path, then use that.
+            string userDefinedCachePath = Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath");
+            if (!String.IsNullOrEmpty(userDefinedCachePath))
+            {
+                s_cacheStoreLocation = userDefinedCachePath;
+            }
+
+            string cacheFileName = "ModuleAnalysisCache";
+            if (ExperimentalFeature.EnabledExperimentalFeatureNames.Count > 0)
+            {
+                // If any experimental features are enabled, we cannot use the default cache file because those
+                // features may expose commands that are not available in a regular powershell session, and we
+                // should not cache those commands in the default cache file because that will result in wrong
+                // auto-completion suggestions when the default cache file is used in another powershell session.
+                //
+                // Here we will generate a cache file name that represent the combination of enabled feature names.
+                // We first convert enabled feature names to lower case, then we sort the feature names, and then
+                // compute an SHA1 hash from the sorted feature names. We will use a short SHA name (first 8 chars)
+                // to generate the cache file name.
+                int index = 0;
+                string[] featureNames = new string[ExperimentalFeature.EnabledExperimentalFeatureNames.Count];
+                foreach (var featureName in ExperimentalFeature.EnabledExperimentalFeatureNames)
+                {
+                    featureNames[index++] = featureName.ToLowerInvariant();
+                }
+
+                Array.Sort(featureNames);
+                string allNames = String.Join(Environment.NewLine, featureNames);
+
+                // Use SHA1 because it's faster.
+                // It's very unlikely to get colision from hashing the combinations of enabled features names.
+                byte[] hashBytes;
+                using (var sha1 = SHA1.Create())
+                {
+                    hashBytes = sha1.ComputeHash(Encoding.UTF8.GetBytes(allNames));
+                }
+
+                // Use the first 8 characters of the hash string for a short SHA. 
+                string stringVal = BitConverter.ToString(hashBytes, startIndex: 0, length: 4).Replace("-", String.Empty);
+                cacheFileName = String.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, stringVal);
+            }
+
 #if UNIX
-                Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ModuleAnalysisCache");
+            s_cacheStoreLocation = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), cacheFileName);
 #else
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\PowerShell\ModuleAnalysisCache");
+            s_cacheStoreLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\PowerShell", cacheFileName);
 #endif
         }
     }
@@ -1044,4 +1086,4 @@ namespace System.Management.Automation
         public ConcurrentDictionary<string, CommandTypes> Commands;
         public ConcurrentDictionary<string, TypeAttributes> Types;
     }
-} // System.Management.Automation
+}
