@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             WriteObject(_stopWatch.Elapsed);
-        } // EndProcessing
+        }
 
         /// <summary>
         /// Execute the script block passing in the current pipeline object as
@@ -71,8 +71,6 @@ namespace Microsoft.PowerShell.Commands
 
             _stopWatch.Stop();
         }
-
         #endregion
     }
-} // namespace Microsoft.PowerShell.Commands
-
+}

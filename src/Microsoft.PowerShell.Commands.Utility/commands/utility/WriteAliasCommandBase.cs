@@ -94,6 +94,5 @@ namespace Microsoft.PowerShell.Commands
         private bool _force;
         #endregion Parameters
 
-    } // class WriteAliasCommandBase
-}//Microsoft.PowerShell.Commands
-
+    }
+}

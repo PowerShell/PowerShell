@@ -98,9 +98,9 @@ namespace Microsoft.PowerShell.Commands
                         default:
                             tempString += c;
                             break;
-                    }//switch
-                }//else
-            }//for int
+                    }
+                }
+            }
             if (tempString.Length > 0)
             {
                 result.Add(tempString);
@@ -109,4 +109,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
