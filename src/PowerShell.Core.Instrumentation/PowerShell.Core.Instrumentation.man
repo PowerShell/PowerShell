@@ -5483,11 +5483,11 @@
             />
         <string
             id="PS_PROVIDER.event.E_O_ExperimentalFeatureInvalidName.message"
-            value="Experimental Feature Initialization: Ignore the experimental feature %1 from the config file. %2"
+            value="Experimental Feature Initialization: Ignore the experimental feature '%1' from the config file. %2"
             />
         <string
             id="PS_PROVIDER.event.E_O_ExperimentalFeatureReadConfigError.message"
-            value="Experimental Feature Initialization: Failed to read the config file.%n Exception %1: %n Message: %2 %n StackTrace: %3 %n"
+            value="Experimental Feature Initialization: Failed to read the config file.%n Exception: %1 %n Message: %2 %n StackTrace: %3 %n"
             />
         <string
             id="PS_PROVIDER.task.T_ExperimentalFeature.message"
