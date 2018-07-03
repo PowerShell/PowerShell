@@ -176,15 +176,12 @@ Describe "Measure-Object" -Tags "CI" {
         }
 
         It "Should be able to return all the statitics for given values" {
-            $testNumbers = 1,1,2,4,5,6
-            $actual      = $testNumbers | Measure-Object -AllStats
-
-            $actual.Average | Should -Not -BeNullOrEmpty
-            $actual.Count | Should -Not -BeNullOrEmpty
-            $actual.Sum | Should -Not -BeNullOrEmpty
-            $actual.Maximum | Should -Not -BeNullOrEmpty
-            $actual.Average | Should -Not -BeNullOrEmpty
-            $actual.StandardDeviation | Should -Not -BeNullOrEmpty
+            $result = 1..10  | Measure-Object -AllStats
+            $result.Count    | Should -Be 10
+            $result.Average  | Should -Be 5.5
+            $result.Sum      | Should -Be 55
+            $result.Minimum  | Should -Be 1
+            $result.Maximum  | Should -Be 10
         }
     }
 

@@ -481,6 +481,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 _measureSum = _measureStandardDeviation = _measureAverage = _measureMax = _measureMin = true;
             }
+
+            // finally call the base class.
+            base.BeginProcessing();            
         }
 
         /// <summary>
