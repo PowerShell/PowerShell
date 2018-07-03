@@ -352,8 +352,76 @@ Describe "Type inference Tests" -tags "CI" {
         }
     }
 
-    It "Infers typeof Select-Object when Member is ExpandProperty" {
-        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Select-Object -ExpandProperty Directory }.Ast)
+    It "Infers typeof pscustomobject" {
+
+        $res = [AstTypeInference]::InferTypeOf( { [pscustomobject] @{
+                    B = "X"
+                    A = 1
+                }}.Ast)
+        $res.Count | Should -Be 1
+        $res[0].GetType().Name | Should -Be "PSSyntheticTypeName"
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject#A:B"
+        $res[0].Members[0].Name | Should -Be "A"
+        $res[0].Members[0].PSTypeName | Should -Be "System.Int32"
+        $res[0].Members[1].Name | Should -Be "B"
+        $res[0].Members[1].PSTypeName | Should -Be "System.String"
+    }
+
+    It "Infers typeof pscustomobject with PSTypeName" {
+
+        $res = [AstTypeInference]::InferTypeOf( { [pscustomobject] @{
+                    A          = 1
+                    B          = "X"
+                    PSTypeName = "MyType"
+                }}.Ast)
+        $res.Count | Should -Be 1
+        $res[0].GetType().Name | Should -Be "PSSyntheticTypeName"
+        $res.Members.Count  | Should Be 2
+        $res[0].Name | Should -Be "MyType#A:B"
+        $res[0].Members[0].Name | Should -Be "A"
+        $res[0].Members[0].PSTypeName | Should -Be "System.Int32"
+    }
+
+    It "Infers typeof Select-Object when Parameter is Property" {
+        $res = [AstTypeInference]::InferTypeOf( { [io.fileinfo]::new("file") | Select-Object -Property Directory }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].GetType().Name | Should -Be "PSSyntheticTypeName"
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject#Directory"
+        $res[0].Members[0].Name | Should -Be "Directory"
+        $res[0].Members[0].PSTypeName | Should -Be "System.IO.DirectoryInfo"
+    }
+
+    It "Infers typeof Select-Object when PSObject and Parameter is Property" {
+        $res = [AstTypeInference]::InferTypeOf( { [PSCustomObject] @{A = 1; B = "2"} | Select-Object -Property A}.Ast)
+        $res.Count | Should -Be 1
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject#A"
+        $res[0].Members[0].Name | Should -Be "A"
+        $res[0].Members[0].PSTypeName | Should -Be "System.Int32"
+    }
+
+    It "Infers typeof Select-Object when Parameter is Properties" {
+        $res = [AstTypeInference]::InferTypeOf( {  [io.fileinfo]::new("file")  | Select-Object -Property Director*, Name }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject#Directory:DirectoryName:Name"
+        $res[0].Members[0].Name | Should -Be "Directory"
+        $res[0].Members[0].PSTypeName | Should -Be "System.IO.DirectoryInfo"
+        $res[0].Members[1].Name | Should -Be "DirectoryName"
+        $res[0].Members[1].PSTypeName | Should -Be "System.String"
+    }
+
+    It "Infers typeof Select-Object when Parameter is ExcludeProperty" {
+        $res = [AstTypeInference]::InferTypeOf( {  [io.fileinfo]::new("file")  |  Select-Object -ExcludeProperty *Time*, E* }.Ast)
+        $res.Count | Should -Be 1
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LinkType:Mode:Name:Target"
+        $names = $res[0].Members.Name
+        $names -contains "BaseName" | Should -BeTrue
+        $names -contains "Name" | Should -BeTrue
+        $names -contains "Mode" | Should -BeTrue
+        $names -contains "Exits" | Should -BeFalse
+    }
+
+    It "Infers typeof Select-Object when Parameter is ExpandProperty" {
+        $res = [AstTypeInference]::InferTypeOf( { [io.fileinfo]::new("file")  | Select-Object -ExpandProperty Directory }.Ast)
         $res.Count | Should -Be 1
         $res.Name | Should -Be "System.IO.DirectoryInfo"
     }
@@ -364,11 +432,47 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be "System.String"
     }
 
-    It "Don't Infer typeof Select-Object when projection is done" {
-        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Select-Object -Property Name}.Ast)
-        $res.Count | Should -Be 0
+    It "Infers typeof Group-Object Group" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object | Foreach-Object Group  }.Ast)
+        $res.Count | Should -Be 3
+        ($res.Name | Sort-Object)[1,2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
     }
 
+    It "Infers typeof Group-Object Values" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object | Foreach-Object Values  }.Ast)
+        $res.Count | Should -Be 3
+        ($res.Name | Sort-Object)[1,2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
+    }
+
+    It "Infers typeof Group-Object Group with Property" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name | Foreach-Object Group  }.Ast)
+        $res.Count | Should -Be 3
+        ($res.Name | Sort-Object)[1,2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
+    }
+
+    It "Infers typeof Group-Object Values with Property" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name | Foreach-Object Values  }.Ast)
+        $res.Count | Should -Be 2
+        $res.Name -join ', ' | Should -Be "System.String, System.Collections.ArrayList"
+    }
+
+    It "Infers typeof Group-Object Group with NoElement" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name -NoElement | Foreach-Object Group  }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -BeLike "*Collection*PSObject*"
+    }
+
+    It "Infers typeof Group-Object Values with Properties" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name,CreationTime | Foreach-Object Values  }.Ast)
+        $res.Count | Should -Be 3
+        ($res.Name | Sort-Object)  -join ', ' | Should -Be "System.Collections.ArrayList, System.DateTime, System.String"
+    }
+
+    It "ignores Group-Object Group with Scriptblock" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property {$_.Name} | Foreach-Object Values  }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be "System.Collections.ArrayList"
+    }
 
     It "Infers type from OutputTypeAttribute" {
         $res = [AstTypeInference]::InferTypeOf( { Get-Process -Id 2345 }.Ast)

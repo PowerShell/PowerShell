@@ -8,6 +8,7 @@ using System.Linq;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 using Microsoft.PowerShell.Commands;
@@ -174,6 +175,14 @@ namespace System.Management.Automation
             List<object> results = new List<object>();
 
             Func<object, bool> filterToCall = filter;
+            if (typename is PSSyntheticTypeName synthetic)
+            {
+                foreach (var mem in synthetic.Members)
+                {
+                    results.Add(new PSInferredProperty(mem.Name, mem.PSTypeName));
+                }
+            }
+
             if (typename.Type != null)
             {
                 AddMembersByInferredTypesClrType(typename, isStatic, filter, filterToCall, results);
@@ -400,8 +409,8 @@ namespace System.Management.Automation
             type = null;
             if (value != null)
             {
-                var list = value as IList;
-                if (list != null && list.Count > 0)
+                if (value is IList list
+                    && list.Count > 0)
                 {
                     value = list[0];
                 }
@@ -515,6 +524,33 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitHashtable(HashtableAst hashtableAst)
         {
+            if (hashtableAst.KeyValuePairs.Count > 0)
+            {
+                var properties = new List<PSMemberNameAndType>();
+
+                foreach (var kv in hashtableAst.KeyValuePairs)
+                {
+                    if (SafeExprEvaluator.TrySafeEval(kv.Item1, _context.ExecutionContext, out object nameValue))
+                    {
+                        var name = nameValue.ToString();
+                        var typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name ?? "System.Object";
+                        object value = null;
+                        if (kv.Item2 is PipelineAst pipelineAst
+                            && pipelineAst.PipelineElements[0] is CommandExpressionAst commandExpressionAst
+                            && SafeExprEvaluator.TrySafeEval(commandExpressionAst.Expression, _context.ExecutionContext, out object safeValue))
+                        {
+                            value = safeValue;
+                        }
+
+                        var pstypeName = value != null ? new PSTypeName(value.GetType()) : new PSTypeName(typeName);
+
+                        properties.Add(new PSMemberNameAndType(name, pstypeName, value));
+                    }
+                }
+
+                return new[] { PSSyntheticTypeName.Create(typeof(Hashtable), properties) };
+            }
+
             return new[] { new PSTypeName(typeof(Hashtable)) };
         }
 
@@ -581,6 +617,15 @@ namespace System.Management.Automation
         object ICustomAstVisitor.VisitConvertExpression(ConvertExpressionAst convertExpressionAst)
         {
             var type = convertExpressionAst.Type.TypeName.GetReflectionType();
+
+            if (type == typeof(PSObject) && convertExpressionAst.Child is HashtableAst hashtableAst)
+            {
+                if (InferTypes(hashtableAst).FirstOrDefault() is PSSyntheticTypeName syntheticTypeName)
+                {
+                    return new[] { PSSyntheticTypeName.Create(type, syntheticTypeName.Members) };
+                }
+            }
+
             var psTypeName = type != null ? new PSTypeName(type) : new PSTypeName(convertExpressionAst.Type.TypeName.FullName);
             return new[] { psTypeName };
         }
@@ -960,7 +1005,7 @@ namespace System.Management.Automation
         /// <param name="commandAst">The ast to infer types from.</param>
         /// <param name="cmdletInfo">The cmdletInfo.</param>
         /// <param name="pseudoBinding">Pseudo bindings of parameters.</param>
-        /// <returns>List of inferred typenames.</returns>
+        /// <returns>List of inferred type names.</returns>
         private List<PSTypeName> InferTypesFromObjectCmdlets(CommandAst commandAst, CmdletInfo cmdletInfo, PseudoBindingInfo pseudoBinding)
         {
             var inferredTypes = new List<PSTypeName>(16);
@@ -995,9 +1040,14 @@ namespace System.Management.Automation
             }
             else if (cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.SelectObjectCommand"))
             {
-                // Select-object - yields whatever we saw before where-object in the pipeline.
+                // Select-object - adds whatever we saw before where-object in the pipeline.
                 // unless -property or -excludeproperty
                 InferTypesFromSelectCommand(pseudoBinding, commandAst, inferredTypes);
+            }
+            else if (cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.GroupObjectCommand"))
+            {
+                // Group-object - annotates the types of Group and Value based on whatever we saw before Group-Object in the pipeline.
+                InferTypesFromGroupCommand(pseudoBinding, commandAst, inferredTypes);
             }
 
             return inferredTypes;
@@ -1072,6 +1122,118 @@ namespace System.Management.Automation
             }
         }
 
+        private void InferTypesFromGroupCommand(PseudoBindingInfo pseudoBinding, CommandAst commandAst, List<PSTypeName> inferredTypes)
+        {
+            if (pseudoBinding.BoundArguments.TryGetValue("AsHashTable", out AstParameterArgumentPair _))
+            {
+                inferredTypes.Add(new PSTypeName(typeof(Hashtable)));
+                return;
+            }
+
+            var noElement = pseudoBinding.BoundArguments.TryGetValue("NoElement", out AstParameterArgumentPair _);
+
+            string[] properties = null;
+            bool scriptBlockProperty = false;
+            if (pseudoBinding.BoundArguments.TryGetValue("Property", out AstParameterArgumentPair propertyArgumentPair))
+            {
+                if (propertyArgumentPair is AstPair astPair)
+                {
+                    switch (astPair.Argument)
+                    {
+                        case StringConstantExpressionAst stringConstant:
+                        {
+                            properties = new[] { stringConstant.Value };
+                            break;
+                        }
+                        case ArrayLiteralAst arrayLiteral:
+                        {
+                            properties = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Select(c => c.Value).ToArray();
+                            scriptBlockProperty = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Any();
+                                break;
+                        }
+                        case CommandElementAst _:
+                        {
+                            scriptBlockProperty = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            bool IsInPropertyArgument(object o)
+            {
+                if (properties == null)
+                {
+                    return true;
+                }
+
+                string name;
+                switch (o)
+                {
+                    case string s:
+                        name = s;
+                        break;
+                    default:
+                        name = GetMemberName(o);
+                        break;
+                }
+
+                foreach (var propertyName in properties)
+                {
+                    if (string.Compare(name, propertyName, StringComparison.CurrentCultureIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
+            var typeName = "Microsoft.PowerShell.Commands.GroupInfo";
+            var members = new List<PSMemberNameAndType>();
+            foreach (var prevType in InferTypes(previousPipelineElement))
+            {
+                members.Clear();
+                if (noElement)
+                {
+                    members.Add(new PSMemberNameAndType("Values", new PSTypeName(prevType.Name)));
+                    inferredTypes.Add(PSSyntheticTypeName.Create(typeName, members));
+                    continue;
+                }
+
+                var memberNameAndTypes = GetMemberNameAndTypeFromProperties(prevType, IsInPropertyArgument);
+                if (!memberNameAndTypes.Any())
+                {
+                    continue;
+                }
+
+                if (properties != null)
+                {
+                    foreach (var memType in memberNameAndTypes)
+                    {
+                        members.Clear();
+                        members.Add(new PSMemberNameAndType("Group", new PSTypeName(prevType.Name)));
+                        members.Add(new PSMemberNameAndType("Values", new PSTypeName(memType.PSTypeName.Name)));
+                        inferredTypes.Add(PSSyntheticTypeName.Create(typeName, members));
+                    }
+                }
+                else
+                {
+                    // No Property parameter given
+                    // group infers to IList<PrevType>
+                    members.Add(new PSMemberNameAndType("Group", new PSTypeName(prevType.Name)));
+                    // Value infers to IList<PrevType>
+                    if (!scriptBlockProperty)
+                    {
+                        members.Add(new PSMemberNameAndType("Values", new PSTypeName(prevType.Name)));
+                    }
+                }
+
+                inferredTypes.Add(PSSyntheticTypeName.Create(typeName, members));
+            }
+        }
+
         private void InferTypesFromWhereAndSortCommand(CommandAst commandAst, List<PSTypeName> inferredTypes)
         {
             InferTypesFromPreviousCommand(commandAst, inferredTypes);
@@ -1099,15 +1261,97 @@ namespace System.Management.Automation
 
         private void InferTypesFromSelectCommand(PseudoBindingInfo pseudoBinding, CommandAst commandAst, List<PSTypeName> inferredTypes)
         {
-            if (pseudoBinding.BoundArguments.TryGetValue("Property", out _)
-                || pseudoBinding.BoundArguments.TryGetValue("ExcludeProperty", out _))
+            void InferFromSelectProperties(AstParameterArgumentPair astParameterArgumentPair, CommandBaseAst previousPipelineElementAst, bool includeMatchedProperties = true)
             {
-                return;
+                if (astParameterArgumentPair is AstPair astPair)
+                {
+                    object ToWildCardOrString(string value) => WildcardPattern.ContainsWildcardCharacters(value) ? (object)new WildcardPattern(value) : value;
+                    object[] properties = null;
+                    switch (astPair.Argument)
+                    {
+                        case StringConstantExpressionAst stringConstant:
+                        {
+                            properties = new[] { ToWildCardOrString(stringConstant.Value) };
+                            break;
+                        }
+                        case ArrayLiteralAst arrayLiteral:
+                        {
+                            properties = arrayLiteral.Elements.OfType<StringConstantExpressionAst>().Select(c => ToWildCardOrString(c.Value)).ToArray();
+                            break;
+                        }
+                    }
+
+                    if (properties == null)
+                    {
+                        return;
+                    }
+
+                    bool IsInPropertyArgument(object o)
+                    {
+                        string name;
+                        switch (o)
+                        {
+                            case string s:
+                                name = s;
+                                break;
+                            default:
+                                name = GetMemberName(o);
+                                break;
+                        }
+
+                        foreach (var propertyNameOrPattern in properties)
+                        {
+                            switch (propertyNameOrPattern)
+                            {
+                                case string propertyName:
+                                {
+                                    if (string.Compare(name, propertyName, StringComparison.CurrentCultureIgnoreCase) == 0)
+                                    {
+                                        return includeMatchedProperties;
+                                    }
+
+                                    break;
+                                }
+                                case WildcardPattern pattern:
+                                {
+                                    if (pattern.IsMatch(name))
+                                    {
+                                        return includeMatchedProperties;
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        return !includeMatchedProperties;
+                    }
+
+                    foreach (var t in InferTypes(previousPipelineElementAst))
+                    {
+                        var list = GetMemberNameAndTypeFromProperties(t, IsInPropertyArgument);
+                        inferredTypes.Add(PSSyntheticTypeName.Create(typeof(PSObject), list));
+                    }
+                }
             }
 
             var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
             if (previousPipelineElement == null)
             {
+                return;
+            }
+
+            if (pseudoBinding.BoundArguments.TryGetValue("Property", out var property))
+            {
+                InferFromSelectProperties(property, previousPipelineElement);
+
+                return;
+            }
+
+            if (pseudoBinding.BoundArguments.TryGetValue("ExcludeProperty", out var excludeProperty))
+            {
+                InferFromSelectProperties(excludeProperty, previousPipelineElement, includeMatchedProperties: false);
+
                 return;
             }
 
@@ -1129,6 +1373,71 @@ namespace System.Management.Automation
             }
 
             InferTypesFromPreviousCommand(commandAst, inferredTypes);
+        }
+
+        private List<PSMemberNameAndType> GetMemberNameAndTypeFromProperties(PSTypeName t, Func<object, bool> isInPropertyList)
+        {
+            var list = new List<PSMemberNameAndType>(8);
+            var members = _context.GetMembersByInferredType(t, false, isInPropertyList);
+            var memberTypes = new List<PSTypeName>();
+            foreach (var mem in members)
+            {
+                if (!IsProperty(mem))
+                {
+                    continue;
+                }
+
+                var memberName = GetMemberName(mem);
+                if (!isInPropertyList(memberName))
+                {
+                    continue;
+                }
+
+                bool maybeWantDefaultCtor = false;
+                memberTypes.Clear();
+                GetTypesOfMembers(t, memberName, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst: false, memberTypes);
+                if (memberTypes.Count > 0)
+                {
+                    list.Add(new PSMemberNameAndType(memberName, memberTypes[0]));
+                }
+            }
+
+            return list;
+        }
+
+        private static bool IsProperty(object member)
+        {
+            switch (member)
+            {
+                case PropertyInfo _: return true;
+                case PSMemberInfo memberInfo: return (memberInfo.MemberType & PSMemberTypes.Properties) == memberInfo.MemberType;
+                default: return false;
+            }
+        }
+
+        private static string GetMemberName(object member)
+        {
+            var name = string.Empty;
+            switch (member)
+            {
+                case PSMemberInfo psMemberInfo:
+                    name = psMemberInfo.Name;
+                    break;
+                case MemberInfo memberInfo:
+                    name = memberInfo.Name;
+                    break;
+                case PropertyMemberAst propertyMember:
+                    name = propertyMember.Name;
+                    break;
+                case FunctionMemberAst functionMember:
+                    name = functionMember.Name;
+                    break;
+                case DotNetAdapter.MethodCacheEntry methodCacheEntry:
+                    name = methodCacheEntry[0].method.Name;
+                    break;
+            }
+
+            return name;
         }
 
         private static PSTypeName InferTypesFromNewObjectCommand(PseudoBindingInfo pseudoBinding)
@@ -1359,6 +1668,11 @@ namespace System.Management.Automation
                         case PSScriptMethod scriptMethod:
                         {
                             scriptBlock = scriptMethod.Script;
+                            break;
+                        }
+                        case PSInferredProperty inferredProperty:
+                        {
+                            result.Add(inferredProperty.TypeName);
                             break;
                         }
                     }

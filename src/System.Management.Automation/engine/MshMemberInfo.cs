@@ -83,9 +83,13 @@ namespace System.Management.Automation
         /// </summary>
         Dynamic = 4096,
         /// <summary>
+        /// Members that are inferred by type inference for PSObject and hashtable.
+        /// </summary>
+        InferredProperty = 8192,
+        /// <summary>
         /// All property member types
         /// </summary>
-        Properties = AliasProperty | CodeProperty | Property | NoteProperty | ScriptProperty,
+        Properties = AliasProperty | CodeProperty | Property | NoteProperty | ScriptProperty | InferredProperty,
         /// <summary>
         /// All method member types
         /// </summary>
@@ -952,6 +956,34 @@ namespace System.Management.Automation
         }
         #endregion virtual implementation
 
+    }
+
+    /// <summary>
+    /// Type used to capture the properties inferred from Hashtable and PSObject.
+    /// </summary>
+    internal class PSInferredProperty : PSPropertyInfo
+    {
+        public PSInferredProperty(string name, PSTypeName typeName)
+        {
+            this.name = name;
+            TypeName = typeName;
+        }
+
+        internal PSTypeName TypeName { get; }
+
+        public override PSMemberTypes MemberType => PSMemberTypes.InferredProperty;
+
+        public override object Value { get; set; }
+
+        public override string TypeNameOfValue => TypeName.Name;
+
+        public override PSMemberInfo Copy() => new PSInferredProperty(Name, TypeName);
+
+        public override bool IsSettable => false;
+
+        public override bool IsGettable => false;
+
+        public override string ToString() => $"{ToStringCodeMethods.Type(TypeName.Type)} {Name}";
     }
 
     /// <summary>
