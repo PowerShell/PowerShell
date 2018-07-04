@@ -2360,7 +2360,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // If we're trying to load the module, return null so that caches
                     // are not polluted
-                    if ((manifestProcessingFlags & ManifestProcessingFlags.LoadElements) != 0)
+                    if (manifestProcessingFlags.HasFlag(ManifestProcessingFlags.LoadElements))
                     {
                         return null;
                     }
