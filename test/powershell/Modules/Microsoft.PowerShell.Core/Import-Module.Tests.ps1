@@ -99,9 +99,9 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
     }
 }
 
-Describe "Import-Module for Binary Modules in GAC" -Tags 'CI' {
+Describe "Import-Module for Binary Modules in GAC" -Tags 'Feature' {
     Context "Modules are not loaded from GAC" {
-        It "Load PSScheduledJob from Windows Powershell Modules folder should fail" -Skip:(-not $IsWindows) -Tags "Feature" {
+        It "Load PSScheduledJob from Windows Powershell Modules folder should fail" -Skip:(-not $IsWindows) {
             $testScript = {
                 [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('DisableGACLoading', $true)
                 $modulePath = Join-Path $env:windir "System32/WindowsPowershell/v1.0/Modules/PSScheduledJob"
