@@ -101,17 +101,14 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
 
 Describe "Import-Module for Binary Modules in GAC" -Tags 'CI' {
     Context "Modules are not loaded from GAC" {
-        BeforeAll {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('DisableGACLoading', $true)
-        }
-
-        AfterAll {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('DisableGACLoading', $false)
-        }
-
-        It "Load PSScheduledJob from Windows Powershell Modules folder should fail" -Skip:(-not $IsWindows) {
-            $modulePath = Join-Path $env:windir "System32/WindowsPowershell/v1.0/Modules/PSScheduledJob"
-            { Import-Module $modulePath -SkipEditionCheck -ErrorAction SilentlyContinue } | Should -Throw -ErrorId 'FormatXmlUpdateException,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        It "Load PSScheduledJob from Windows Powershell Modules folder should fail" -Skip:(-not $IsWindows) -Tags "Feature" {
+            $testScript = {
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('DisableGACLoading', $true)
+                $modulePath = Join-Path $env:windir "System32/WindowsPowershell/v1.0/Modules/PSScheduledJob"
+                Import-Module $modulePath -SkipEditionCheck
+            }
+            $err = (& "$PSHOME\pwsh.exe" -c $testScript 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] })[0]
+            $err.FullyQualifiedErrorId | Should -Be "FormatXmlUpdateException,Microsoft.PowerShell.Commands.ImportModuleCommand"
         }
     }
 
