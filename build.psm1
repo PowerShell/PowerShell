@@ -458,10 +458,11 @@ function Start-PSBuild {
     }
 
     if ($Clean) {
-        Write-Log "Cleaning your working directory. You can also do it with 'git clean -fdX'"
+        Write-Log "Cleaning your working directory. You can also do it with 'git clean -fdx --exclude .vs/PowerShell/v15/Server/sqlite3'"
         Push-Location $PSScriptRoot
         try {
-            git clean -fdX
+            # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
+            git clean -fdx --exclude .vs/PowerShell/v15/Server/sqlite3
             # Extra cleaning is required to delete the CMake temporary files.
             # These are not cleaned when using "X" and cause CMake to retain state, leading to
             # mis-configured environment issues when switching between x86 and x64 compilation
