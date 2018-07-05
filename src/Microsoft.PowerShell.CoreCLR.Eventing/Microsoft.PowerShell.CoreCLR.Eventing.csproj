@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.1" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.5.0" />
   </ItemGroup>
 
 </Project>

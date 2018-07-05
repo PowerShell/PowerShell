@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.5.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.6.4" />
   </ItemGroup>
 
   <PropertyGroup>
