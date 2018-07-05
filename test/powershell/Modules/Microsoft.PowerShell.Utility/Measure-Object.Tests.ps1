@@ -182,6 +182,7 @@ Describe "Measure-Object" -Tags "CI" {
             $result.Sum      | Should -Be 55
             $result.Minimum  | Should -Be 1
             $result.Maximum  | Should -Be 10
+            ($result.StandardDeviation).ToString()  | Should -Be '3.02765035409749'
         }
     }
 
