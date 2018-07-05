@@ -653,8 +653,10 @@ function Restore-PSModuleToBuild
 
     # Restore modules from powershellgallery feed
     # PowerShellGet depends on PackageManagement module, so we will install PackageManagement module first.
-    Restore-PSModule -Destination $modulesDir -Name 'PackageManagement' -RequiredVersion '1.1.7.0' -SourceLocation "https://www.powershellgallery.com/api/v2/"
     Restore-PSModule -Destination $modulesDir -Name 'PowerShellGet' -RequiredVersion '1.6.0' -SourceLocation "https://www.powershellgallery.com/api/v2/"
+    # Save module will always install the newest PackageManagement when installing PowerShellGet, remove it, and install the correct one
+    Remove-Item (Join-Path $modulesDir -ChildPath 'PackageManagement') -Recurse
+    Restore-PSModule -Destination $modulesDir -Name 'PackageManagement' -RequiredVersion '1.1.7.0' -SourceLocation "https://www.powershellgallery.com/api/v2/"
     Restore-PSModule -Destination $modulesDir -Name 'Microsoft.PowerShell.Archive' -SourceLocation "https://www.powershellgallery.com/api/v2/"
 
     if($CI.IsPresent)
