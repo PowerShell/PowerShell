@@ -1259,7 +1259,9 @@ namespace System.Management.Automation
         /// The text representation of the object being validated and the validating regex is passed as
         /// the first and second formatting parameters to the ErrorMessage formatting pattern.
         /// <example>
+        /// <code>
         /// [ValidatePattern("\s+", ErrorMessage="The text '{0}' did not pass validation of regex '{1}'")]
+        /// </code>
         /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }
@@ -1322,7 +1324,9 @@ namespace System.Management.Automation
         /// formatting argument.
         ///
         /// <example>
+        /// <code>
         /// [ValidateScript("$_ % 2", ErrorMessage = "The item '{0}' did not pass validation of script '{1}'")]
+        /// </code>
         /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }
@@ -1569,7 +1573,9 @@ namespace System.Management.Automation
         /// is passed as the first and second formatting argument to the ErrorMessage formatting pattern.
         ///
         /// <example>
+        /// <code>
         /// [ValidateSet("A","B","C", ErrorMessage="The item '{0}' is not part of the set '{1}'.")
+        /// </code>
         /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }
