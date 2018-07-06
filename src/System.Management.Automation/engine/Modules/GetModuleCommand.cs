@@ -489,9 +489,8 @@ namespace Microsoft.PowerShell.Commands
             IEnumerable<PSModuleInfo> modules,
             IDictionary<string, ModuleSpecification> moduleSpecificationTable)
         {
-// Edition check only applies to Windows
-// System32 module path
 #if !UNIX
+            // Edition check only applies to Windows System32 module path
             if (!SkipEditionCheck)
             {
                 modules = FilterModulesForIncompatibleOnEditionCheckedPath(modules);

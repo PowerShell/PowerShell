@@ -2468,6 +2468,7 @@ namespace Microsoft.PowerShell.Commands
             manifestInfo.Copyright = copyright;
             manifestInfo.DotNetFrameworkVersion = requestedDotNetFrameworkVersion;
             manifestInfo.ClrVersion = requestedClrVersion;
+            manifestInfo.IsLoadedFromCompatibilityCheckedPath = isOnSystem32ModulePath;
             manifestInfo.PowerShellHostName = requestedHostName;
             manifestInfo.PowerShellHostVersion = requestedHostVersion;
             manifestInfo.PowerShellVersion = powerShellVersion;
@@ -2501,12 +2502,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 manifestInfo.AddToCompatiblePSEditions(compatiblePSEditions);
             }
-
-// Modules loaded from the System32 module path may
-// not have the CompatiblePSEditions fields ignored
-#if !UNIX
-            manifestInfo.IsLoadedFromCompatibilityCheckedPath = isOnSystem32ModulePath;
-#endif
 
             if (scriptsToProcess != null)
             {
@@ -3074,12 +3069,7 @@ namespace Microsoft.PowerShell.Commands
                 newManifestInfo.LicenseUri = manifestInfo.LicenseUri;
                 newManifestInfo.IconUri = manifestInfo.IconUri;
                 newManifestInfo.RepositorySourceLocation = manifestInfo.RepositorySourceLocation;
-
-// On Windows, we need to copy over the field indicating
-// whether the module was imported from the System32 module path
-#if !UNIX
                 newManifestInfo.IsLoadedFromCompatibilityCheckedPath = manifestInfo.IsLoadedFromCompatibilityCheckedPath;
-#endif
 
                 // If we are in module discovery, then fix the path.
                 if (ss == null)
