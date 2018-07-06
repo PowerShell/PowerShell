@@ -687,9 +687,12 @@ Describe "Pwsh exe resources tests" -Tag CI {
 Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
-        $dirnames = "[T]est","[Test","T][est","T*est","Test"
-        foreach ( $d in $dirnames ) { new-item -type Directory -path "${TESTDRIVE}/$d" }
-        $testcases = foreach ( $d in $dirnames ) { @{ Dirname = $d } }
+        $dirnames = "[T]est","[Test","T][est","Test"
+        $testcases = @()
+        foreach ( $d in $dirnames ) {
+            $null = New-Item -type Directory -path "${TESTDRIVE}/$d"
+            $testcases += @{ Dirname = $d }
+        }
     }
 
     It "pwsh can startup in a directory named <dirname>" -testcases $testcases {
