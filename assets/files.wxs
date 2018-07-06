@@ -1825,6 +1825,16 @@
                         </Directory>
                     </Directory>
                 </Directory>
+                <Directory Id="dir37EBACBC570E49108415C3BA316EB66D" Name="ThreadJob">
+                    <Directory Id="dirCB93DAC4CEB64A8583295B9AC4A79883" Name="1.1.1">
+                        <Component Id="cmp9ADDEE83EFD3497C804FDC6B93A58031" Guid="{9ADDEE83EFD3497C804FDC6B93A58031}">
+                            <File Id="fil15E1EF74BF8C4AFFA6E9B53D8CF6E15E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\1.1.1\ThreadJob.dll" />
+                        </Component>
+                        <Component Id="cmp57A7DBFA4541443CB3AB8A4B82DB53E0" Guid="{57A7DBFA4541443CB3AB8A4B82DB53E0}">
+                            <File Id="fil57D698A50A2A40E58B0B954F55AEEA37" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\1.1.1\ThreadJob.psd1" />
+                        </Component>
+                    </Directory>
+                </Directory>
                 <Directory Id="dirECE37E3EC3637A365744D075BD8132E9" Name="Microsoft.PowerShell.Management">
                     <Component Id="cmp6DAFD01CAA3A4C67185922F445EDE495" Guid="{D4374EC0-26FC-4607-AF6B-35721698E8A5}">
                         <File Id="fil92C4A6B2083E49B1909D17BC06E7526F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Management\Microsoft.PowerShell.Management.psd1" />
@@ -2195,6 +2205,8 @@
             <ComponentRef Id="cmpEC5CF579D39FC75DC38E051E55A5CAD5" />
             <ComponentRef Id="cmp0B896DBA6AFF2FD27FCD0E0968E23992" />
             <ComponentRef Id="cmpC6A24F97E0D6739A51FE9CC80148F511" />
+            <ComponentRef Id="cmp9ADDEE83EFD3497C804FDC6B93A58031" />
+            <ComponentRef Id="cmp57A7DBFA4541443CB3AB8A4B82DB53E0" />
             <ComponentRef Id="cmp5E6D0C75A767F360277D22D90E4689FF" />
             <ComponentRef Id="cmp9544B34C5A30F75D0F45F5718A1795F0" />
             <ComponentRef Id="cmpBDF0DC73F4F799A46B1DE220E58C1920" />
