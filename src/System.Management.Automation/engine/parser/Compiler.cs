@@ -1481,7 +1481,7 @@ namespace System.Management.Automation.Language
 
         private static RuntimeDefinedParameter GetRuntimeDefinedParameter(ParameterAst parameterAst, ref bool customParameterSet, ref bool usesCmdletBinding)
         {
-            List<Attribute> attributes = new List<Attribute>(parameterAst.Attributes.Count);
+            var attributes = new List<Attribute>(parameterAst.Attributes.Count);
             bool hasParameterAttribute = false;
             bool hasEnabledParamAttribute = false;
             bool hasSeenExpAttribute = false;
@@ -1509,7 +1509,7 @@ namespace System.Management.Automation.Language
                     usesCmdletBinding = true;
                     if (paramAttribute.Position != int.MinValue ||
                         !paramAttribute.ParameterSetName.Equals(ParameterAttribute.AllParameterSets,
-                                                                    StringComparison.OrdinalIgnoreCase))
+                                                                StringComparison.OrdinalIgnoreCase))
                     {
                         customParameterSet = true;
                     }

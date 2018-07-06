@@ -71,6 +71,18 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.DscResourceAttribute]
                 }
                 @{
+                    Accelerator = 'ExperimentAction'
+                    Type        = [System.Management.Automation.ExperimentAction]
+                }
+                @{
+                    Accelerator = 'Experimental'
+                    Type        = [System.Management.Automation.ExperimentalAttribute]
+                }
+                @{
+                    Accelerator = 'ExperimentalFeature'
+                    Type        = [System.Management.Automation.ExperimentalFeature]
+                }
+                @{
                     Accelerator = 'float'
                     Type        = [System.Single]
                 }
