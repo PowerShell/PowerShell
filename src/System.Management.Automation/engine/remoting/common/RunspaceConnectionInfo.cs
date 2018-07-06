@@ -3207,11 +3207,11 @@ namespace System.Management.Automation.Runspaces
                     //
                     // Hyper-V container (i.e., RuntimeId is not empty) uses Hyper-V socket transport.
                     // Windows Server container (i.e., RuntimeId is empty) uses named pipe transport for now.
-                    // This code executes `powershell.exe` as it exists in the container which currently is
-                    // expected to be Windows PowerShell as it's inbox in the container.
+                    // This code executes `pwsh.exe` as it exists in the container which currently is
+                    // expected to be PowerShell Core as it's inbox in the container.
                     //
                     cmd = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                        @"{{""CommandLine"": ""powershell.exe {0} -NoLogo {1}"",""RestrictedToken"": {2}}}",
+                        @"{{""CommandLine"": ""pwsh.exe {0} -NoLogo {1}"",""RestrictedToken"": {2}}}",
                         (RuntimeId != Guid.Empty) ? "-so -NoProfile" : "-NamedPipeServerMode",
                         String.IsNullOrEmpty(ConfigurationName) ? String.Empty : String.Concat("-Config ", ConfigurationName),
                         (RunAsAdmin) ? "false" : "true");
@@ -3223,14 +3223,35 @@ namespace System.Management.Automation.Runspaces
                     // Create PowerShell process inside the container.
                     //
                     result = HcsCreateProcess(ComputeSystem, cmd, ref ProcessInformation, ref Process, ref resultString);
-                    if (result != 0)
+                    if (result == 0)
                     {
-                        processId = 0;
-                        error = result;
+                        processId = Convert.ToInt32(ProcessInformation.ProcessId);
+                    }
+                    else if (result == 2147942402) // 0x80070002 (2147942402) - The system cannot find the file specified.
+                    {
+                        // If we cannot find PowerShell Core, fall back to `powershell.exe` or Windows Powershell
+                        // We cannot do "cmd.exe /c powershell" because it returns process id of cmd instead powershell/pwsh.
+                        cmd = string.Format(System.Globalization.CultureInfo.InvariantCulture,
+                            @"{{""CommandLine"": ""powershell.exe {0} -NoLogo {1}"",""RestrictedToken"": {2}}}",
+                            (RuntimeId != Guid.Empty) ? "-so -NoProfile" : "-NamedPipeServerMode",
+                            String.IsNullOrEmpty(ConfigurationName) ? String.Empty : String.Concat("-Config ", ConfigurationName),
+                            (RunAsAdmin) ? "false" : "true");
+
+                        result = HcsCreateProcess(ComputeSystem, cmd, ref ProcessInformation, ref Process, ref resultString);
+                        if (result != 0)
+                        {
+                            processId = 0;
+                            error = result;
+                        }
+                        else
+                        {
+                            processId = Convert.ToInt32(ProcessInformation.ProcessId);
+                        }
                     }
                     else
                     {
-                        processId = Convert.ToInt32(ProcessInformation.ProcessId);
+                        processId = 0;
+                        error = result;
                     }
                 }
             }
