@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         continue;
                     }
-                } // if (!Force)
+                }
 
                 // Set the alias in the specified scope or the
                 // current scope.
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(result);
                 }
             }
-        } // ProcessRecord
+        }
 
         private Dictionary<string, CommandTypes> _existingCommands;
         private Dictionary<string, CommandTypes> ExistingCommands
@@ -480,6 +480,5 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
         #endregion Command code
-    } // class ImportAliasCommand
-}//Microsoft.PowerShell.Commands
-
+    }
+}

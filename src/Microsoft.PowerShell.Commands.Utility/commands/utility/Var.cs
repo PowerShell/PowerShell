@@ -564,8 +564,8 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(newVariable);
                 }
             }
-        } // ProcessRecord
-    } // NewVariableCommand
+        }
+    }
 
     /// <summary>
     /// This class implements set-variable command
@@ -1016,8 +1016,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
-    } // SetVariableCommand
+        }
+    }
 
     /// <summary>
     /// The Remove-Variable cmdlet implementation
@@ -1169,8 +1169,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
-    } // RemoveVariableCommand
+        }
+    }
 
     /// <summary>
     /// This class implements set-variable command
@@ -1347,7 +1347,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// Clears the value of the variable using the PSVariable instance if the scope
@@ -1372,6 +1372,5 @@ namespace Microsoft.PowerShell.Commands
             }
             return result;
         }
-    } // ClearVariableCommand
+    }
 }
-

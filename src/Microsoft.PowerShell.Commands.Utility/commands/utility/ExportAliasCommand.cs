@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Commands
                             itemNotFound));
                 }
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// Writes the aliases to the file
@@ -413,6 +413,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Command code
-    } // class ExportAliasCommand
-}//Microsoft.PowerShell.Commands
-
+    }
+}

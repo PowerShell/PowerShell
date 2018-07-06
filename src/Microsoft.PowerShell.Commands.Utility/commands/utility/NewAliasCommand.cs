@@ -127,8 +127,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(result);
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
-    } // class NewAliasCommand
-}//Microsoft.PowerShell.Commands
-
+    }
+}

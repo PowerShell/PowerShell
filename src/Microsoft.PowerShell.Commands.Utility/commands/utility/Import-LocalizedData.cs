@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         variable.Value = result;
                     }
-                } // end _bindingvariable != null
+                }
 
                 // If binding variable is null, write the object to stream
                 else
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return;
-        } // ProcessRecord
+        }
 
         private string GetFilePath()
         {
@@ -373,6 +373,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Command code
-    } // class ImportLocalizedData
-}//Microsoft.PowerShell.Commands
-
+    }
+}
