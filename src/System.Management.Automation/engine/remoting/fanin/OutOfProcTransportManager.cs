@@ -711,15 +711,16 @@ namespace System.Management.Automation.Remoting.Client
 
             int exitCode;
             string exitMessage;
-            if (sender is Process jobProcess && jobProcess != null)
+            try
             {
+                var jobProcess = (Process)sender;
                 exitCode = jobProcess.ExitCode;
                 exitMessage = exitCode == 0 ? jobProcess.StandardOutput.ReadToEnd() : jobProcess.StandardError.ReadToEnd();
             }
-            else
+            catch (Exception exception)
             {
                 exitCode = -1;
-                exitMessage = "<Unable to read streams from job process>";
+                exitMessage = StringUtil.Format("<Unable to read streams from job process for reason '{0}'>", exception.Message);
             }
 
             string exitErrorMsg = StringUtil.Format(RemotingErrorIdStrings.IPCServerProcessExited, exitCode, exitMessage);
