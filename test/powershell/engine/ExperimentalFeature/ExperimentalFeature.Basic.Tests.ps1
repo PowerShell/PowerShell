@@ -14,7 +14,12 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
             $TestModule = Join-Path $PSScriptRoot "assets" "ExpTest"
             $AssemblyPath = Join-Path $TestModule "ExpTest.dll"
             if (-not (Test-Path $AssemblyPath)) {
+                ## When using $SourcePath directly, 'Add-Type' fails in AppVeyor CI runs with an 'access denied' error.
+                ## It turns out Pester doesn't handle an exception like this from 'BeforeAll'. It causes the Pester to
+                ## be somehow corrupted, and results in random failures in other tests.
+                ## To work around this issue, we copy the source file to 'TestDrive' before calling 'Add-Type'.
                 $SourcePath = Join-Path $TestModule "ExpTest.cs"
+                $SourcePath = (Copy-Item $SourcePath TestDrive:\ -PassThru).FullName
                 Add-Type -Path $SourcePath -OutputType Library -OutputAssembly $AssemblyPath
             }
             $moduleInfo = Import-Module $TestModule -PassThru
@@ -130,7 +135,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         ## 11 common parameters + '-ByUrl', '-ByRadio', '-FileName', '-Configuration'
         $command.Parameters.Count | Should -Be 15
         $command.ParameterSets.Count | Should -Be 2
-        
+
         $command.Parameters["ByUrl"].ParameterSets.Count | Should -Be 1
         $command.Parameters["ByUrl"].ParameterSets.ContainsKey("UrlSet") | Should -Be $true
 
@@ -325,7 +330,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         ## 11 common parameters + '-ByUrl', '-ByRadio', '-FileName', '-Destination'
         $command.Parameters.Count | Should -Be 15
         $command.ParameterSets.Count | Should -Be 2
-        
+
         $command.Parameters["ByUrl"].ParameterSets.Count | Should -Be 1
         $command.Parameters["ByUrl"].ParameterSets.ContainsKey("UrlSet") | Should -Be $true
 
