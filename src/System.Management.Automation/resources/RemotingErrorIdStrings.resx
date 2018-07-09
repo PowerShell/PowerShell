@@ -794,7 +794,7 @@ Do you want to continue?</value>
     <value>The background process reported an error with the following message: {0}.</value>
   </data>
   <data name="IPCServerProcessExited" xml:space="preserve">
-    <value>The background process closed or ended abnormally.</value>
+    <value>The background process closed or ended abnormally with exit code {0} - information from process: '{1}'.</value>
   </data>
   <data name="IPCErrorProcessingServerData" xml:space="preserve">
     <value>There is an error processing data from the background process. Error reported: {0}.</value>

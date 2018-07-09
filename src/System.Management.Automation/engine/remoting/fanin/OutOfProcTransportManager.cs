@@ -708,8 +708,25 @@ namespace System.Management.Automation.Remoting.Client
                 //
                 stdInWriter.StopWriting();
             }
-            PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCServerProcessExited,
-                                RemotingErrorIdStrings.IPCServerProcessExited);
+
+            int exitCode;
+            string exitMessage;
+            if (sender is Process jobProcess && jobProcess != null)
+            {
+                exitCode = jobProcess.ExitCode;
+                exitMessage = exitCode == 0 ? jobProcess.StandardOutput.ReadToEnd() : jobProcess.StandardError.ReadToEnd();
+            }
+            else
+            {
+                exitCode = -1;
+                exitMessage = "<Unable to read streams from job process>";
+            }
+
+            string exitErrorMsg = StringUtil.Format(RemotingErrorIdStrings.IPCServerProcessExited, exitCode, exitMessage);
+
+            var psrte = new PSRemotingTransportException(
+                                PSRemotingErrorId.IPCServerProcessExited,
+                                exitErrorMsg);
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, transportMethod));
         }
 
