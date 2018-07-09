@@ -164,7 +164,7 @@ namespace System.Management.Automation
         /// This can be any attribute that can be applied to a normal parameter.
         /// </remarks>
         public Collection<Attribute> Attributes { get; } = new Collection<Attribute>();
-    } // class RuntimeDefinedParameter
+    }
 
     /// <summary>
     /// Represents a collection of runtime-defined parameters that are keyed based on the name
@@ -190,10 +190,10 @@ namespace System.Management.Automation
         public RuntimeDefinedParameterDictionary()
             : base(StringComparer.OrdinalIgnoreCase)
         {
-        } // ctor
+        }
 
         /// <summary>
-        /// Gets or sets the help file that documents these parameters
+        /// Gets or sets the help file that documents these parameters.
         /// </summary>
         public string HelpFile
         {
@@ -208,5 +208,5 @@ namespace System.Management.Automation
         public object Data { get; set; }
 
         internal static RuntimeDefinedParameter[] EmptyParameterArray = new RuntimeDefinedParameter[0];
-    } // class RuntimeDefinedParameterDictionary
-} // namespace System.Management.Automation
+    }
+}

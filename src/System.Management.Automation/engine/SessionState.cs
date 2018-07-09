@@ -357,23 +357,13 @@ namespace System.Management.Automation
 
             // $ShellId - if there is no runspace config, use the default string
             string shellId = ExecutionContext.ShellID;
-
             v = new PSVariable(SpecialVariables.ShellId, shellId,
                    ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.MshShellIdDescription);
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSHOME
-            // This depends on the shellId. If we cannot read the application base
-            // registry key, set the variable to empty string
-            string applicationBase = string.Empty;
-            try
-            {
-                applicationBase = Utils.GetApplicationBase(shellId);
-            }
-            catch (SecurityException)
-            {
-            }
+            string applicationBase = Utils.DefaultPowerShellAppBase;
             v = new PSVariable(SpecialVariables.PSHome, applicationBase,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PSHOMEDescription);
