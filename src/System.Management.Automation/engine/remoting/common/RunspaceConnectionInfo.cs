@@ -2953,6 +2953,8 @@ namespace System.Management.Automation.Runspaces
         private const uint ContainersFeatureNotEnabled = 2;
         private const uint OtherError = 9999;
 
+        private const uint FileNotFoundHResult = 0x80070002;
+
         #endregion
 
         #region Properties
@@ -3237,7 +3239,7 @@ namespace System.Management.Automation.Runspaces
                             // the process was started, exit the loop.
                             break;
                         }
-                        else if (result == 0x80070002)
+                        else if (result == FileNotFoundHResult)
                         {
                             // "The system cannot find the file specified", try the next one
                             // or exit the loop of none are left to try.
