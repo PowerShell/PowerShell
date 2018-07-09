@@ -3214,43 +3214,36 @@ namespace System.Management.Automation.Runspaces
                     // Windows Server container (i.e., RuntimeId is empty) uses named pipe transport for now.
                     // This code executes `pwsh.exe` as it exists in the container which currently is
                     // expected to be PowerShell Core as it's inbox in the container.
+                    // If `pwsh.exe` does not exist, fall back to `powershell.exe` which is Windows PowerShell.
                     //
-                    Executable = "pwsh.exe";
-                    cmd = GetContainerProcessCommand();
-
-                    HCS_PROCESS_INFORMATION ProcessInformation = new HCS_PROCESS_INFORMATION();
-                    IntPtr Process = IntPtr.Zero;
-
-                    //
-                    // Create PowerShell process inside the container.
-                    //
-                    result = HcsCreateProcess(ComputeSystem, cmd, ref ProcessInformation, ref Process, ref resultString);
-                    if (result == 0)
+                    string[] executables = new string[]("pwsh.exe"."powershell.exe")
+                    foreach(string executableToTry in executables)
                     {
-                        processId = Convert.ToInt32(ProcessInformation.ProcessId);
-                    }
-                    else if (result == 2147942402) // 0x80070002 (2147942402) - The system cannot find the file specified.
-                    {
-                        // If we cannot find PowerShell Core, fall back to `powershell.exe` or Windows Powershell
-                        // We cannot do "cmd.exe /c powershell" because it returns process id of cmd instead powershell/pwsh.
-                        Executable = "powershell.exe";
+                        Executable = executableToTry;
                         cmd = GetContainerProcessCommand();
 
+                        HCS_PROCESS_INFORMATION ProcessInformation = new HCS_PROCESS_INFORMATION();
+                        IntPtr Process = IntPtr.Zero;
+
+                        //
+                        // Create PowerShell process inside the container.
+                        //
                         result = HcsCreateProcess(ComputeSystem, cmd, ref ProcessInformation, ref Process, ref resultString);
-                        if (result != 0)
+                        if (result == 0)
                         {
-                            processId = 0;
-                            error = result;
+                            processId = Convert.ToInt32(ProcessInformation.ProcessId);
+                            break;
+                        }
+                        else if (result == 0x80070002) // 0x80070002 (2147942402) - The system cannot find the file specified.
+                        {
+                            continue;
                         }
                         else
                         {
-                            processId = Convert.ToInt32(ProcessInformation.ProcessId);
+                            processId = 0;
+                            error = result;
+                            break;
                         }
-                    }
-                    else
-                    {
-                        processId = 0;
-                        error = result;
                     }
                 }
             }
