@@ -247,7 +247,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 }
 
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
-    It "Allows Windows PowerShell subprocesses to call `$PSHome modules still" {
+    It "Allows Windows PowerShell subprocesses to call `$PSHome modules still" -Skip:(-not $IsWindows) {
         $errors = powershell.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
         $errors | Should -Be $null
     }
