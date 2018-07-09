@@ -3128,7 +3128,9 @@ namespace System.Management.Automation.Runspaces
                 // other errors caught without exception
                 default:
                     throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotCreateProcessInContainer,
-                                                                            ContainerId, Executable));
+                                                                            ContainerId, 
+                                                                            Executable,
+                                                                            ErrorCode));
             }
         }
 
