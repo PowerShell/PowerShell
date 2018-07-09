@@ -311,6 +311,26 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureSum;
 
         /// <summary>
+        /// Gets or sets the value indicating if all statistics should be returned.
+        /// </summary>
+        /// <value></value>
+        [Parameter(ParameterSetName = GenericParameterSet)]
+        public SwitchParameter AllStats
+        {
+            get
+            {
+                return _allStats;
+            }
+
+            set
+            {
+                _allStats = value;
+            }
+        }
+        
+        private bool _allStats;
+
+        /// <summary>
         /// Set to true is Average is to be returned
         /// </summary>
         /// <value></value>
@@ -449,6 +469,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 return String.Compare(ParameterSetName, GenericParameterSet, StringComparison.Ordinal) == 0;
             }
+        }
+
+        /// <summary>
+        /// Does the begin part of the cmdlet.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            // Sets all other generic parameters to true to get all statistics.
+            if (_allStats)
+            {
+                _measureSum = _measureStandardDeviation = _measureAverage = _measureMax = _measureMin = true;
+            }
+
+            // finally call the base class.
+            base.BeginProcessing();            
         }
 
         /// <summary>
