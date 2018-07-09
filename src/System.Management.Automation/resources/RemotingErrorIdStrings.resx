@@ -1199,7 +1199,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>The Hyper-V Module for PowerShell is not available on this machine.</value>
   </data>
   <data name="CannotCreateProcessInContainer" xml:space="preserve">
-    <value>Failed to launch PowerShell process ({1}) inside container with id {0}.</value>
+    <value>Failed to launch PowerShell process ({1}) inside container with id {0} with error: {2}.</value>
   </data>
   <data name="ContainersFeatureNotEnabled" xml:space="preserve">
     <value>The Containers feature may not be enabled on this machine.</value>
