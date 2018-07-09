@@ -3225,8 +3225,7 @@ namespace System.Management.Automation.Runspaces
                     //
                     foreach(string executableToTry in Executables)
                     {
-                        Executable = executableToTry;
-                        cmd = GetContainerProcessCommand();
+                        cmd = GetContainerProcessCommand(executableToTry);
 
                         HCS_PROCESS_INFORMATION ProcessInformation = new HCS_PROCESS_INFORMATION();
                         IntPtr Process = IntPtr.Zero;
@@ -3287,8 +3286,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get Command to launch container process based on instance properties.
         /// </summary>
-        private string GetContainerProcessCommand()
+        private string GetContainerProcessCommand(string executable)
         {
+            Executable = executable;
             return string.Format(System.Globalization.CultureInfo.InvariantCulture,
                         @"{{""CommandLine"": ""{0} {1} -NoLogo {2}"",""RestrictedToken"": {3}}}",
                         Executable, 
