@@ -1698,11 +1698,9 @@ namespace System.Management.Automation
 
             foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
             {
-                if (att is ValidateSetAttribute)
+                if (att is ValidateSetAttribute setAtt)
                 {
                     RemoveLastNullCompletionResult(result);
-
-                    var setAtt = (ValidateSetAttribute)att;
 
                     string wordToComplete = context.WordToComplete;
                     string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
