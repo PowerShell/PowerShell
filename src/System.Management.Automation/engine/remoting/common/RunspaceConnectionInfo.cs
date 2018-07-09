@@ -3004,6 +3004,11 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal string ErrorMessage { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The PowerShell executable being used to host the runspace.
+        /// </summary>
+        internal string Executable { get; set; } = string.Empty;
+
         #endregion
 
         #region Native HCS (i.e., host compute service) methods
@@ -3123,7 +3128,7 @@ namespace System.Management.Automation.Runspaces
                 // other errors caught without exception
                 default:
                     throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotCreateProcessInContainer,
-                                                                            ContainerId));
+                                                                            ContainerId, Executable));
             }
         }
 
@@ -3210,11 +3215,8 @@ namespace System.Management.Automation.Runspaces
                     // This code executes `pwsh.exe` as it exists in the container which currently is
                     // expected to be PowerShell Core as it's inbox in the container.
                     //
-                    cmd = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                        @"{{""CommandLine"": ""pwsh.exe {0} -NoLogo {1}"",""RestrictedToken"": {2}}}",
-                        (RuntimeId != Guid.Empty) ? "-so -NoProfile" : "-NamedPipeServerMode",
-                        String.IsNullOrEmpty(ConfigurationName) ? String.Empty : String.Concat("-Config ", ConfigurationName),
-                        (RunAsAdmin) ? "false" : "true");
+                    Executable = "pwsh.exe";
+                    cmd = GetContainerProcessCommand();
 
                     HCS_PROCESS_INFORMATION ProcessInformation = new HCS_PROCESS_INFORMATION();
                     IntPtr Process = IntPtr.Zero;
@@ -3231,11 +3233,8 @@ namespace System.Management.Automation.Runspaces
                     {
                         // If we cannot find PowerShell Core, fall back to `powershell.exe` or Windows Powershell
                         // We cannot do "cmd.exe /c powershell" because it returns process id of cmd instead powershell/pwsh.
-                        cmd = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                            @"{{""CommandLine"": ""powershell.exe {0} -NoLogo {1}"",""RestrictedToken"": {2}}}",
-                            (RuntimeId != Guid.Empty) ? "-so -NoProfile" : "-NamedPipeServerMode",
-                            String.IsNullOrEmpty(ConfigurationName) ? String.Empty : String.Concat("-Config ", ConfigurationName),
-                            (RunAsAdmin) ? "false" : "true");
+                        Executable = "powershell.exe";
+                        cmd = GetContainerProcessCommand();
 
                         result = HcsCreateProcess(ComputeSystem, cmd, ref ProcessInformation, ref Process, ref resultString);
                         if (result != 0)
@@ -3279,6 +3278,19 @@ namespace System.Management.Automation.Runspaces
 
             ProcessId = processId;
             ErrorCode = error;
+        }
+
+        /// <summary>
+        /// Get Command to launch container process based on instance properties.
+        /// </summary>
+        private string GetContainerProcessCommand()
+        {
+            return string.Format(System.Globalization.CultureInfo.InvariantCulture,
+                        @"{{""CommandLine"": ""{0} {1} -NoLogo {2}"",""RestrictedToken"": {3}}}",
+                        Executable, 
+                        (RuntimeId != Guid.Empty) ? "-so -NoProfile" : "-NamedPipeServerMode",
+                        String.IsNullOrEmpty(ConfigurationName) ? String.Empty : String.Concat("-Config ", ConfigurationName),
+                        (RunAsAdmin) ? "false" : "true");
         }
 
         /// <summary>
