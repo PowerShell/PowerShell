@@ -3237,9 +3237,9 @@ namespace System.Management.Automation.Runspaces
                             // the process was started, exit the loop.
                             break;
                         }
-                        else if (result == 0x80070002) // 0x80070002 (2147942402) - The system cannot find the file specified.
+                        else if (result == 0x80070002)
                         {
-                            // this executable was not find, try the next one
+                            // "The system cannot find the file specified", try the next one
                             // or exit the loop of none are left to try.
                             continue;
                         }
