@@ -503,6 +503,7 @@ namespace System.Management.Automation
                 if (extension.Equals(ext, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
+
             return false;
         }
 
@@ -553,7 +554,9 @@ namespace System.Management.Automation
         internal static string GetPSHomeModulePath()
         {
             if (s_psHomeModulePath != null)
+            {
                 return s_psHomeModulePath;
+            }
 
             try
             {
@@ -573,7 +576,9 @@ namespace System.Management.Automation
                     Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
                 }
             }
-            catch (System.Security.SecurityException) { }
+            catch (System.Security.SecurityException)
+            {
+            }
 
             return s_psHomeModulePath;
         }
@@ -596,6 +601,7 @@ namespace System.Management.Automation
             {
                 sharedModulePath = Path.Combine(sharedModulePath, Utils.ModuleDirectory);
             }
+
             return sharedModulePath;
 #endif
         }
@@ -1053,9 +1059,14 @@ namespace System.Management.Automation
         /// <param name="variablePatterns">Patterns describing the variables to export</param>
         /// <param name="doNotExportCmdlets">List of Cmdlets that will not be exported,
         ///     even if they match in cmdletPatterns.</param>
-        internal static void ExportModuleMembers(PSCmdlet cmdlet, SessionStateInternal sessionState,
-            List<WildcardPattern> functionPatterns, List<WildcardPattern> cmdletPatterns,
-            List<WildcardPattern> aliasPatterns, List<WildcardPattern> variablePatterns, List<string> doNotExportCmdlets)
+        internal static void ExportModuleMembers(
+            PSCmdlet cmdlet,
+            SessionStateInternal sessionState,
+            List<WildcardPattern> functionPatterns,
+            List<WildcardPattern> cmdletPatterns,
+            List<WildcardPattern> aliasPatterns,
+            List<WildcardPattern> variablePatterns,
+            List<string> doNotExportCmdlets)
         {
             // If this cmdlet is called, then mark that the export list should be used for exporting
             // module members...
