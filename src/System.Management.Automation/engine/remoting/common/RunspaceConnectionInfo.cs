@@ -3232,16 +3232,21 @@ namespace System.Management.Automation.Runspaces
                         if (result == 0)
                         {
                             processId = Convert.ToInt32(ProcessInformation.ProcessId);
+                            // the process was started, exit the loop.
                             break;
                         }
                         else if (result == 0x80070002) // 0x80070002 (2147942402) - The system cannot find the file specified.
                         {
+                            // this executable was not find, try the next one
+                            // or exit the loop of none are left to try.
                             continue;
                         }
                         else
                         {
                             processId = 0;
                             error = result;
+                            // the executable was found but did not work
+                            // exit the loop with the error state.
                             break;
                         }
                     }
