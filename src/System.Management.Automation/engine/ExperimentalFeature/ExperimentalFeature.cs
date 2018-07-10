@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
@@ -180,16 +180,27 @@ namespace System.Management.Automation
         /// <param name="moduleName">When specified, we check if the feature name matches the module name</param>
         internal static bool IsModuleFeatureName(string featureName, string moduleName = null)
         {
-            int firstDotIndex = featureName.IndexOf('.');
-            int lastDotIndex = featureName.LastIndexOf('.');
-
-            bool legit = firstDotIndex > 0 && lastDotIndex < featureName.Length - 1;
-            if (legit && moduleName != null)
+            // Feature names cannot start with a dot
+            if (featureName.StartsWith('.'))
             {
-                var moduleNamePart = featureName.AsSpan(0, lastDotIndex);
-                return moduleNamePart.Equals(moduleName.AsSpan(), StringComparison.OrdinalIgnoreCase);
+                return false;
             }
-            return legit;
+
+            // Feature names must contain a dot, but not at the end
+            int lastDotIndex = featureName.LastIndexOf('.');
+            if (lastDotIndex == -1 || lastDotIndex == featureName.Length - 1)
+            {
+                return false;
+            }
+
+            if (moduleName == null)
+            {
+                return true;
+            }
+
+            // If the module name is given, it must match the prefix of the feature name (up to the last dot).
+            var moduleNamePart = featureName.AsSpan(0, lastDotIndex);
+            return moduleNamePart.Equals(moduleName.AsSpan(), StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -266,16 +277,7 @@ namespace System.Management.Automation
         /// </summary>
         public ExperimentalAttribute(string experimentName, ExperimentAction experimentAction)
         {
-            if (string.IsNullOrEmpty(experimentName))
-            {
-                throw PSTraceSource.NewArgumentException(nameof(experimentName));
-            }
-
-            if (experimentAction == ExperimentAction.None)
-            {
-                throw PSTraceSource.NewArgumentException(nameof(experimentAction));
-            }
-
+            ValidateArguments(experimentName, experimentAction);
             ExperimentName = experimentName;
             ExperimentAction = experimentAction;
         }
@@ -289,6 +291,26 @@ namespace System.Management.Automation
         /// An instance that represents the none-value.
         /// </summary>
         internal static readonly ExperimentalAttribute None = new ExperimentalAttribute();
+
+        /// <summary>
+        /// Validate arguments for the constructor.
+        /// </summary>
+        internal static void ValidateArguments(string experimentName, ExperimentAction experimentAction)
+        {
+            if (string.IsNullOrEmpty(experimentName))
+            {
+                string paramName = nameof(experimentName);
+                throw PSTraceSource.NewArgumentNullException(paramName, Metadata.ArgumentNullOrEmpty, paramName);
+            }
+
+            if (experimentAction == ExperimentAction.None)
+            {
+                string paramName = nameof(experimentAction);
+                string invalidMember = ExperimentAction.None.ToString();
+                string validMembers = StringUtil.Format("{0}, {1}", ExperimentAction.Hide, ExperimentAction.Show);
+                throw PSTraceSource.NewArgumentException(paramName, Metadata.InvalidEnumArgument, invalidMember, paramName, validMembers);
+            }
+        }
 
         internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;

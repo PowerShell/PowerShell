@@ -2083,7 +2083,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (writingErrors)
                         {
-                            string invalidNameStr = String.Join(',', invalidNames);
+                            string invalidNameStr = String.Join(", ", invalidNames);
                             string errorMsg = StringUtil.Format(Modules.InvalidExperimentalFeatureName, invalidNameStr);
                             WriteError(new ErrorRecord(new ArgumentException(errorMsg),
                                                     "Modules_InvalidExperimentalFeatureName",

@@ -625,16 +625,7 @@ namespace System.Management.Automation
         /// </summary>
         public ParameterAttribute(string experimentName, ExperimentAction experimentAction)
         {
-            if (string.IsNullOrEmpty(experimentName))
-            {
-                throw PSTraceSource.NewArgumentException(nameof(experimentName));
-            }
-
-            if (experimentAction == ExperimentAction.None)
-            {
-                throw PSTraceSource.NewArgumentException(nameof(experimentAction));
-            }
-
+            ExperimentalAttribute.ValidateArguments(experimentName, experimentAction);
             ExperimentName = experimentName;
             ExperimentAction = experimentAction;
         }

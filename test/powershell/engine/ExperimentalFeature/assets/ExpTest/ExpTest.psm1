@@ -54,7 +54,7 @@ function Get-GreetingMessage
 
     $message = "Hello World $Name."
 
-    if ([ExperimentalFeature]::HasEnabled("ExpTest.FeatureOne"))
+    if ([ExperimentalFeature]::IsEnabled("ExpTest.FeatureOne"))
     {
         if ($SwitchOne) { $message += "-SwitchOne is on." }
         if ($SwitchTwo) { $message += "-SwitchTwo is on." }

@@ -1249,7 +1249,7 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("ExperimentalFeature",
                 TableControl.Create()
                     .AddHeader(Alignment.Left, width: 35)
-                    .AddHeader(Alignment.Right, width: 10)
+                    .AddHeader(Alignment.Right, width: 7)
                     .AddHeader(Alignment.Left, width: 35)
                     .AddHeader(Alignment.Left)
                     .StartRowDefinition()

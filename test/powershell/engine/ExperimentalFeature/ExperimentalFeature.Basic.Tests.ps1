@@ -11,6 +11,8 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
         } else {
+            ## Common parameters are defined in the type 'CommonParameters' as public properties.
+            $CommonParameterCount = [System.Management.Automation.Internal.CommonParameters].GetProperties().Length
             $TestModule = Join-Path $PSScriptRoot "assets" "ExpTest"
             $AssemblyPath = Join-Path $TestModule "ExpTest.dll"
             if (-not (Test-Path $AssemblyPath)) {
@@ -62,8 +64,8 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         param($Name, $CommandType)
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
-        ## 11 common parameters + '-Name'
-        $command.Parameters.Count | Should -Be 12
+        ## Common parameters + '-Name'
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 1)
         & $Name -Name Joe | Should -BeExactly "Hello World Joe."
     }
 
@@ -75,8 +77,8 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
 
-        ## 11 common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-VMName', '-Port', '-ThrottleLimit' and '-Command'
-        $command.Parameters.Count | Should -Be 18
+        ## Common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-VMName', '-Port', '-ThrottleLimit' and '-Command'
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 7)
         $command.ParameterSets.Count | Should -Be 2
 
         $command.Parameters["UserName"].ParameterSets.Count | Should -Be 1
@@ -100,13 +102,13 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         $command.Parameters["Command"].ParameterSets.Count | Should -Be 1
         $command.Parameters["Command"].ParameterSets.ContainsKey("__AllParameterSets") | Should -Be $true
 
-        ## 11 common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-ThrottleLimit' and '-Command'
+        ## Common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-ThrottleLimit' and '-Command'
         $command.ParameterSets[0].Name | Should -BeExactly "ComputerSet"
-        $command.ParameterSets[0].Parameters.Count | Should -Be 16
+        $command.ParameterSets[0].Parameters.Count | Should -Be ($CommonParameterCount + 5)
 
-        ## 11 common parameters + '-VMName', '-Port', '-ThrottleLimit' and '-Command'
+        ## Common parameters + '-VMName', '-Port', '-ThrottleLimit' and '-Command'
         $command.ParameterSets[1].Name | Should -BeExactly "VMSet"
-        $command.ParameterSets[1].Parameters.Count | Should -Be 15
+        $command.ParameterSets[1].Parameters.Count | Should -Be ($CommonParameterCount + 4)
 
         & $Name -UserName "user" -ComputerName "localhost" -ConfigurationName "config" | Should -BeExactly "Invoke-MyCommand with ComputerSet"
         & $Name -VMName "VM" -Port "80" | Should -BeExactly "Invoke-MyCommand with VMSet"
@@ -119,8 +121,8 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         param($Name, $CommandType)
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
-        ## 11 common parameters + '-SessionName'
-        $command.Parameters.Count | Should -Be 12
+        ## Common parameters + '-SessionName'
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 1)
         $command.Parameters["SessionName"].ParameterType.FullName | Should -BeExactly "System.String"
         $command.Parameters.ContainsKey("ComputerName") | Should -Be $false
     }
@@ -132,8 +134,8 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         param($Name, $CommandType)
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
-        ## 11 common parameters + '-ByUrl', '-ByRadio', '-FileName', '-Configuration'
-        $command.Parameters.Count | Should -Be 15
+        ## Common parameters + '-ByUrl', '-ByRadio', '-FileName', '-Configuration'
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 4)
         $command.ParameterSets.Count | Should -Be 2
 
         $command.Parameters["ByUrl"].ParameterSets.Count | Should -Be 1
@@ -161,13 +163,13 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         param($Name, $CommandType)
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
-        ## 11 common parameters + '-Name' (dynamic parameters are not triggered)
-        $command.Parameters.Count | Should -Be 12
+        ## Common parameters + '-Name' (dynamic parameters are not triggered)
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 1)
         $command.Parameters["Name"] | Should -Not -BeNullOrEmpty
 
         $command = Get-Command $Name -ArgumentList "Joe"
-        ## 11 common parameters + '-Name' and '-ConfigName' (dynamic parameters are triggered)
-        $command.Parameters.Count | Should -Be 13
+        ## Common parameters + '-Name' and '-ConfigName' (dynamic parameters are triggered)
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 2)
         $command.Parameters["ConfigName"].Attributes.Count | Should -Be 2
         $command.Parameters["ConfigName"].Attributes[0] | Should -BeOfType [parameter]
         $command.Parameters["ConfigName"].Attributes[1] | Should -BeOfType [ValidateNotNullOrEmpty]
@@ -186,10 +188,13 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
         } else {
+            ## Common parameters are defined in the type 'CommonParameters' as public properties.
+            $CommonParameterCount = [System.Management.Automation.Internal.CommonParameters].GetProperties().Length
             $TestModule = Join-Path $PSScriptRoot "assets" "ExpTest"
             $AssemblyPath = Join-Path $TestModule "ExpTest.dll"
             if (-not (Test-Path $AssemblyPath)) {
                 $SourcePath = Join-Path $TestModule "ExpTest.cs"
+                $SourcePath = (Copy-Item $SourcePath TestDrive:\ -PassThru).FullName
                 Add-Type -Path $SourcePath -OutputType Library -OutputAssembly $AssemblyPath
             }
             $moduleInfo = Import-Module $TestModule -PassThru
@@ -234,8 +239,8 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         param($Name, $CommandType)
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
-        ## 11 common parameters + '-Name' + '-SwitchOne' + '-SwitchTwo'
-        $command.Parameters.Count | Should -Be 14
+        ## Common parameters + '-Name' + '-SwitchOne' + '-SwitchTwo'
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 3)
         $command.ParameterSets.Count | Should -Be 3
 
         & $Name -Name Joe | Should -BeExactly "Hello World Joe."
@@ -251,9 +256,9 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
 
-        ## 11 common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-VMName', '-Port',
+        ## Common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-VMName', '-Port',
         ## '-Token', '-WebSocketUrl', '-ThrottleLimit' and '-Command'
-        $command.Parameters.Count | Should -Be 20
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 9)
         $command.ParameterSets.Count | Should -Be 3
 
         $command.Parameters["UserName"].ParameterSets.Count | Should -Be 1
@@ -285,17 +290,17 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command.Parameters["Command"].ParameterSets.Count | Should -Be 1
         $command.Parameters["Command"].ParameterSets.ContainsKey("__AllParameterSets") | Should -Be $true
 
-        ## 11 common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-ThrottleLimit' and '-Command'
+        ## Common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-ThrottleLimit' and '-Command'
         $command.ParameterSets[0].Name | Should -BeExactly "ComputerSet"
-        $command.ParameterSets[0].Parameters.Count | Should -Be 16
+        $command.ParameterSets[0].Parameters.Count | Should -Be ($CommonParameterCount + 5)
 
-        ## 11 common parameters + '-VMName', '-Port', '-ThrottleLimit' and '-Command'
+        ## Common parameters + '-VMName', '-Port', '-ThrottleLimit' and '-Command'
         $command.ParameterSets[1].Name | Should -BeExactly "VMSet"
-        $command.ParameterSets[1].Parameters.Count | Should -Be 15
+        $command.ParameterSets[1].Parameters.Count | Should -Be ($CommonParameterCount + 4)
 
-        ## 11 common parameters + '-Token', '-WebSocketUrl', '-ConfigurationName', '-Port', '-ThrottleLimit', '-Command'
+        ## Common parameters + '-Token', '-WebSocketUrl', '-ConfigurationName', '-Port', '-ThrottleLimit', '-Command'
         $command.ParameterSets[2].Name | Should -BeExactly "WebSocketSet"
-        $command.ParameterSets[2].Parameters.Count | Should -Be 17
+        $command.ParameterSets[2].Parameters.Count | Should -Be ($CommonParameterCount + 6)
 
         & $Name -UserName "user" -ComputerName "localhost" | Should -BeExactly "Invoke-MyCommand with ComputerSet"
         & $Name -UserName "user" -ComputerName "localhost" -ConfigurationName "config" | Should -BeExactly "Invoke-MyCommand with ComputerSet"
@@ -314,8 +319,8 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         param($Name, $CommandType)
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
-        ## 11 common parameters + '-ComputerName'
-        $command.Parameters.Count | Should -Be 12
+        ## Common parameters + '-ComputerName'
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 1)
         $command.Parameters["ComputerName"].ParameterType.FullName | Should -BeExactly "System.String"
         $command.Parameters.ContainsKey("SessionName") | Should -Be $false
     }
@@ -327,8 +332,8 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         param($Name, $CommandType)
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
-        ## 11 common parameters + '-ByUrl', '-ByRadio', '-FileName', '-Destination'
-        $command.Parameters.Count | Should -Be 15
+        ## Common parameters + '-ByUrl', '-ByRadio', '-FileName', '-Destination'
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 4)
         $command.ParameterSets.Count | Should -Be 2
 
         $command.Parameters["ByUrl"].ParameterSets.Count | Should -Be 1
@@ -356,17 +361,69 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
 
         $command = Get-Command $Name
         $command.CommandType | Should -Be $CommandType
-        ## 11 common parameters + '-Name' (dynamic parameters are not triggered)
-        $command.Parameters.Count | Should -Be 12
+        ## Common parameters + '-Name' (dynamic parameters are not triggered)
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 1)
         $command.Parameters["Name"] | Should -Not -BeNullOrEmpty
 
         $command = Get-Command $Name -ArgumentList "Joe"
-        ## 11 common parameters + '-Name' and '-ConfigFile' (dynamic parameters are triggered)
-        $command.Parameters.Count | Should -Be 13
+        ## Common parameters + '-Name' and '-ConfigFile' (dynamic parameters are triggered)
+        $command.Parameters.Count | Should -Be ($CommonParameterCount + 2)
         $command.Parameters["ConfigFile"].Attributes.Count | Should -Be 2
         $command.Parameters["ConfigFile"].Attributes[0] | Should -BeOfType [parameter]
         $command.Parameters["ConfigFile"].Attributes[1] | Should -BeOfType [ValidateNotNullOrEmpty]
 
         $command.Parameters.ContainsKey("ConfigName") | Should -Be $false
+    }
+}
+
+Describe "Expected errors" -Tag "CI" {
+    It "'[Experimental()]' should fail to construct the attribute" {
+        { [Experimental()]param() } | Should -Throw -ErrorId "MethodCountCouldNotFindBest"
+    }
+
+    It "Argument validation for constructors of 'ExperimentalAttribute' and 'ParameterAttribute'" {
+        { [Experimental]::new("", "None") } | Should -Throw -ErrorId "PSArgumentNullException"
+        { [Experimental]::new([NullString]::Value, "None") } | Should -Throw -ErrorId "PSArgumentNullException"
+        { [Experimental]::new("feature", "None") } | Should -Throw -ErrorId "PSArgumentException"
+        { [Experimental]::new("feature", "Show") } | Should -Not -Throw
+        { [Experimental]::new("feature", "Hide") } | Should -Not -Throw
+
+        { [Parameter]::new("", "None") } | Should -Throw -ErrorId "PSArgumentNullException"
+        { [Parameter]::new([NullString]::Value, "None") } | Should -Throw -ErrorId "PSArgumentNullException"
+        { [Parameter]::new("feature", "None") } | Should -Throw -ErrorId "PSArgumentException"
+        { [Parameter]::new("feature", "Show") } | Should -Not -Throw
+        { [Parameter]::new("feature", "Hide") } | Should -Not -Throw
+    }
+
+    It "Feature name check" {
+        $psd1Content = @'
+@{
+ModuleVersion = '0.0.1'
+CompatiblePSEditions = @('Core')
+GUID = 'ce31259c-1804-4016-bc29-083bd2599e19'
+PrivateData = @{
+    PSData = @{
+        ExperimentalFeatures = @(
+            @{ Name = '.Feature1'; Description = "Test feature number 1." }
+            @{ Name = 'Feature2.'; Description = "Test feature number 2." }
+            @{ Name = 'Feature3'; Description = "Test feature number 3." }
+            @{ Name = 'Module.Feature4'; Description = "Test feature number 4." }
+            @{ Name = 'InvalidFeatureName.Feature5'; Description = "Test feature number 5." }
+        )
+    }
+}
+}
+'@
+        $moduleFile = Join-Path $TestDrive InvalidFeatureName.psd1
+        Set-Content -Path $moduleFile -Value $psd1Content -Encoding Ascii
+
+        Import-Module $moduleFile -ErrorVariable featureNameError -ErrorAction SilentlyContinue
+        $featureNameError | Should -Not -BeNullOrEmpty
+        $featureNameError[0].FullyQualifiedErrorId | Should -Be "Modules_InvalidExperimentalFeatureName,Microsoft.PowerShell.Commands.ImportModuleCommand"
+        $featureNameError[0].Exception.Message.Contains(".Feature1") | Should -Be $true
+        $featureNameError[0].Exception.Message.Contains("Feature2.") | Should -Be $true
+        $featureNameError[0].Exception.Message.Contains("Feature3") | Should -Be $true
+        $featureNameError[0].Exception.Message.Contains("Module.Feature4") | Should -Be $true
+        $featureNameError[0].Exception.Message.Contains("InvalidFeatureName.Feature5") | Should -Be $false
     }
 }
