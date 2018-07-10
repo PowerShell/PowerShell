@@ -724,8 +724,7 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception exception)
             {
-                string failureMessage = StringUtil.Format(RemotingErrorIdStrings.ProcessInfoNotRecoverable, exception.Message);
-                processDiagnosticMessage = StringUtil.Format(RemotingErrorIdStrings.IPCServerProcessExited, failureMessage);
+                processDiagnosticMessage = StringUtil.Format(RemotingErrorIdStrings.ProcessInfoNotRecoverable, exception.Message);
             }
 
             string exitErrorMsg = StringUtil.Format(RemotingErrorIdStrings.IPCServerProcessExited, processFailureMessage);
