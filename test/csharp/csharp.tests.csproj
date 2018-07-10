@@ -1,15 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 
+   <Import Project="../Test.Common.props"/>
+
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RuntimeIdentifiers>win7-x86;win7-x64;osx-x64;linux-x64</RuntimeIdentifiers>
-    <Product>PowerShell Core Test</Product>
-    <Company>Microsoft Corporation</Company>
-    <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
     <Description>PowerShell xUnit Tests</Description>
     <AssemblyName>powershell-tests</AssemblyName>
-    <IsPackable>false</IsPackable>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RuntimeIdentifiers>win7-x86;win7-x64;osx-x64;linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <PropertyGroup>
