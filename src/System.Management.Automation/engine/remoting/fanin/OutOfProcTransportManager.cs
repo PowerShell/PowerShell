@@ -732,8 +732,8 @@ namespace System.Management.Automation.Remoting.Client
                 RemotingErrorIdStrings.IPCServerProcessExited,
                 processDiagnosticMessage);
             var psrte = new PSRemotingTransportException(
-                                PSRemotingErrorId.IPCServerProcessExited,
-                                exitErrorMsg);
+                PSRemotingErrorId.IPCServerProcessExited,
+                exitErrorMsg);
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, transportMethod));
         }
 
