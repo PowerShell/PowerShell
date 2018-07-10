@@ -1057,8 +1057,7 @@ namespace System.Management.Automation
         /// <param name="cmdletPatterns">Patterns describing the cmdlets to export</param>
         /// <param name="aliasPatterns">Patterns describing the aliases to export</param>
         /// <param name="variablePatterns">Patterns describing the variables to export</param>
-        /// <param name="doNotExportCmdlets">List of Cmdlets that will not be exported,
-        ///     even if they match in cmdletPatterns.</param>
+        /// <param name="doNotExportCmdlets">List of Cmdlets that will not be exported, even if they match in cmdletPatterns.</param>
         internal static void ExportModuleMembers(
             PSCmdlet cmdlet,
             SessionStateInternal sessionState,

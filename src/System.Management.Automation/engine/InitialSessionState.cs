@@ -372,8 +372,8 @@ namespace System.Management.Automation.Runspaces
         public FormatTable Formattable { get; }
 
         /// <summary>
-        /// The FormatData specified with constructor. This can be null if
-        /// FileName or FormatTable constructor is used.
+        /// The FormatData specified with constructor.
+        /// This can be null if the FileName or FormatTable constructors are used.
         /// </summary>
         public ExtendedTypeDefinition FormatData { get; }
 
@@ -587,7 +587,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         ///  Define an alias entry to add to the initial session state.
         /// </summary>
-        /// <param name="name">Name of the alias</param>
+        /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
         public SessionStateAliasEntry(string name, string definition)
             : base(name, SessionStateEntryVisibility.Public)
@@ -599,7 +599,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         ///  Define an alias entry to add to the initial session state.
         /// </summary>
-        /// <param name="name">Name of the alias</param>
+        /// <param name="name">The name of the alias entry to add.</param>
         /// <param name="definition">The name of the command it resolves to.</param>
         /// <param name="description">A description of the purpose of the alias.</param>
         public SessionStateAliasEntry(string name, string definition, string description)
@@ -613,10 +613,10 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         ///  Define an alias entry to add to the initial session state.
         /// </summary>
-        /// <param name="name">Name of the alias</param>
-        /// <param name="definition">The name of the command it resolves to</param>
+        /// <param name="name">The name of the alias entry to add.</param>
+        /// <param name="definition">The name of the command it resolves to.</param>
         /// <param name="description">A description of the purpose of the alias.</param>
-        /// <param name="options">Options defining the scope visibility, readonly and constant</param>
+        /// <param name="options">Options defining the scope visibility, readonly and constant.</param>
         public SessionStateAliasEntry(string name, string definition, string description, ScopedItemOptions options)
             : base(name, SessionStateEntryVisibility.Public)
         {
@@ -629,10 +629,10 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         ///  Define an alias entry to add to the initial session state.
         /// </summary>
-        /// <param name="name">Name of the alias</param>
-        /// <param name="definition">The name of the command it resolves to</param>
+        /// <param name="name">The name of the alias entry to add.</param>
+        /// <param name="definition">The name of the command it resolves to.</param>
         /// <param name="description">A description of the purpose of the alias.</param>
-        /// <param name="options">Options defining the scope visibility, readonly and constant</param>
+        /// <param name="options">Options defining the scope visibility, readonly and constant.</param>
         /// <param name="visibility"></param>
         internal SessionStateAliasEntry(string name, string definition, string description,
             ScopedItemOptions options, SessionStateEntryVisibility visibility)
@@ -1007,7 +1007,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Clone this collection.
         /// </summary>
-        /// <returns>The cloned object.</returns>
+        /// <returns>The cloned collection.</returns>
         public InitialSessionStateEntryCollection<T> Clone()
         {
             InitialSessionStateEntryCollection<T> result;
@@ -1770,7 +1770,7 @@ namespace System.Management.Automation.Runspaces
         public PSLanguageMode LanguageMode { get; set; } = PSLanguageMode.NoLanguage;
 
         /// <summary>
-        /// Specifies the directory to be used for collection session transcripts.null
+        /// Specifies the directory to be used for collection session transcripts.
         /// </summary>
         public string TranscriptDirectory { get; set; } = null;
 
@@ -1839,7 +1839,7 @@ namespace System.Management.Automation.Runspaces
 #endif
 
         /// <summary>
-        /// This property determines whether a new thread is create for each invocation of a command.
+        /// This property determines whether a new thread is created for each invocation of a command.
         /// </summary>
         public PSThreadOptions ThreadOptions { get; set; } = PSThreadOptions.Default;
 

@@ -3292,9 +3292,10 @@ namespace Microsoft.PowerShell.Commands
                             List<PSVariable> updated = new List<PSVariable>();
                             foreach (PSVariable element in ss.Internal.ExportedVariables)
                             {
-                                if (SessionStateUtilities.MatchesAnyWildcardPattern(element.Name,
-                                                                                    exportedVariables,
-                                                                                    defaultValue: false))
+                                if (SessionStateUtilities.MatchesAnyWildcardPattern(
+                                        element.Name,
+                                        exportedVariables,
+                                        defaultValue: false))
                                 {
                                     updated.Add(element);
                                 }
@@ -4355,7 +4356,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
         /// <param name="key">the table key to use.</param>
-        /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.am>
+        /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.>
         /// <param name="result">Value from the manifest converted to the right type.</param>
         /// <returns><c>true</c> if success; <c>false</c> if there were errors.</returns>
         internal bool GetScalarFromData<T>(
@@ -4655,8 +4656,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Removes a module from the session state.
         /// </summary>
-        /// <param name="module">module to remove.</param>
-        ///  <param name="moduleNameInRemoveModuleCmdlet">module name specified in the cmdlet.</param>
+        /// <param name="module">Module to remove.</param>
+        /// <param name="moduleNameInRemoveModuleCmdlet">Module name specified in the cmdlet.</param>
         internal void RemoveModule(PSModuleInfo module, string moduleNameInRemoveModuleCmdlet)
         {
             bool isTopLevelModule = false;
