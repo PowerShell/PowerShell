@@ -21,9 +21,7 @@ namespace Microsoft.PowerShell.MarkdownRender
 
             foreach (var item in obj)
             {
-                var listItem = item as ListItemBlock;
-
-                if (listItem != null)
+                if (item is ListItemBlock listItem)
                 {
                     if (obj.IsOrdered)
                     {
@@ -44,9 +42,7 @@ namespace Microsoft.PowerShell.MarkdownRender
             // For a numbered list, we need to make sure the index is incremented.
             foreach (var line in block)
             {
-                var paragraphBlock = line as ParagraphBlock;
-
-                if(paragraphBlock != null)
+                if(line is ParagraphBlock paragraphBlock)
                 {
                     renderer.Write(index.ToString()).Write(". ").Write(paragraphBlock.Inline);
                 }

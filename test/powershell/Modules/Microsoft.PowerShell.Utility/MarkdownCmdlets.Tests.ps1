@@ -150,7 +150,7 @@ bool function()`n{`n}
                 $expectedString = GetExpectedString -ElementType $element -CodeText $codeText
             }
 
-            $output.VT100EncodedString | Should BeExactly $expectedString
+            $output.VT100EncodedString | Should -BeExactly $expectedString
         }
 
         It 'Can convert element : <element> to HTML using pipeline input' -TestCases $TestCases {
@@ -181,22 +181,22 @@ bool function()`n{`n}
                 $expectedString = GetExpectedHTML -ElementType $element -Text $text -Url $url
             }
 
-            $output.Html | Should BeExactly $expectedString
+            $output.Html | Should -BeExactly $expectedString
         }
 
         It 'Can convert input from a file path to vt100 encoded string' {
             $output = ConvertFrom-Markdown -Path $mdFile.FullName -AsVT100EncodedString
-            $output.VT100EncodedString | Should BeExactly $expectedStringFromFile
+            $output.VT100EncodedString | Should -BeExactly $expectedStringFromFile
         }
 
         It 'Can convert input from a fileinfo object to vt100 encoded string' {
             $ouputFromFileInfo = $mdFile | ConvertFrom-Markdown -AsVT100EncodedString
-            $ouputFromFileInfo.VT100EncodedString | Should BeExactly $expectedStringFromFile
+            $ouputFromFileInfo.VT100EncodedString | Should -BeExactly $expectedStringFromFile
         }
 
         It 'Can convert input from a literal path to vt100 encoded string' {
             $output = ConvertFrom-Markdown -Path $mdLiteralPath -AsVT100EncodedString
-            $output.VT100EncodedString | Should BeExactly $expectedStringFromFile
+            $output.VT100EncodedString | Should -BeExactly $expectedStringFromFile
         }
     }
 
@@ -213,4 +213,80 @@ bool function()`n{`n}
             { ConvertFrom-Markdown -InputObject 1 -ErrorAction Stop } | Should -Throw -ErrorId 'InvalidInputObject,Microsoft.PowerShell.Commands.ConvertFromMarkdownCommand'
         }
     }
+
+    Context "Get/Set-MarkdownOption tests" {
+
+        BeforeAll {
+            $esc = [char]0x1b
+        }
+
+        BeforeEach {
+            $originalOptions = Get-MarkdownOption
+        }
+
+        AfterEach {
+            Set-MarkdownOption -InputObject $originalOptions
+        }
+
+        It "Verify default values for MarkdownOptions" {
+            $options = Get-MarkdownOption
+
+            $options.Header1 | Should -BeExactly "$esc[7m[7m$esc[0m"
+            $options.Header2 | Should -BeExactly "$esc[4;93m[4;93m$esc[0m"
+            $options.Header3 | Should -BeExactly "$esc[4;94m[4;94m$esc[0m"
+            $options.Header4 | Should -BeExactly "$esc[4;95m[4;95m$esc[0m"
+            $options.Header5 | Should -BeExactly "$esc[4;96m[4;96m$esc[0m"
+            $options.Header6 | Should -BeExactly "$esc[4;97m[4;97m$esc[0m"
+            $options.Code | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
+            $options.Link | Should -BeExactly "$esc[4;38;5;117m[4;38;5;117m$esc[0m"
+            $options.Image | Should -BeExactly "$esc[33m[33m$esc[0m"
+            $options.EmphasisBold | Should -BeExactly "$esc[1m[1m$esc[0m"
+            $options.EmphasisItalics | Should -BeExactly "$esc[36m[36m$esc[0m"
+        }
+
+        It "Verify Set-MarkdownOption can get options" {
+            Set-MarkdownOption `
+                -Header1Color "[4;1m" `
+                -Header2Color "[93m" `
+                -Header3Color "[94m" `
+                -Header4Color "[95m" `
+                -Header5Color "[96m" `
+                -Header6Color "[97m" `
+                -ImageAltTextForegroundColor "[34m" `
+                -LinkForegroundColor "[4;38;5;88m" `
+                -ItalicsForegroundColor "[35m" `
+                -BoldForegroundColor "[32m"
+
+            $newOptions = Get-MarkdownOption
+
+            $options.Header1 | Should -BeExactly "$esc[4;1m[4;1m$esc[0m"
+            $options.Header2 | Should -BeExactly "$esc[93m[93m$esc[0m"
+            $options.Header3 | Should -BeExactly "$esc[94m[94m$esc[0m"
+            $options.Header4 | Should -BeExactly "$esc[95m[95m$esc[0m"
+            $options.Header5 | Should -BeExactly "$esc[96m[96m$esc[0m"
+            $options.Header6 | Should -BeExactly "$esc[97m[97m$esc[0m"
+            #$options.Code | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
+            $options.Link | Should -BeExactly "$esc[4;38;5;88m[4;38;5;88m$esc[0m"
+            $options.Image | Should -BeExactly "$esc[34m[34m$esc[0m"
+            $options.EmphasisBold | Should -BeExactly "$esc[32m[32m$esc[0m"
+            $options.EmphasisItalics | Should -BeExactly "$esc[35m[35m$esc[0m"
+        }
+
+        It "Verify defaults for light theme" {
+            $options = Get-MarkdownOption
+
+            $options.Header1 | Should -BeExactly "$esc[7m[7m$esc[0m"
+            $options.Header2 | Should -BeExactly "$esc[4;33m[4;33m$esc[0m"
+            $options.Header3 | Should -BeExactly "$esc[4;34m[4;34m$esc[0m"
+            $options.Header4 | Should -BeExactly "$esc[4;35m[4;35m$esc[0m"
+            $options.Header5 | Should -BeExactly "$esc[4;36m[4;36m$esc[0m"
+            $options.Header6 | Should -BeExactly "$esc[4;30m[4;30m$esc[0m"
+            $options.Code | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
+            $options.Link | Should -BeExactly "$esc[4;38;5;117m[4;38;5;117m$esc[0m"
+            $options.Image | Should -BeExactly "$esc[33m[33m$esc[0m"
+            $options.EmphasisBold | Should -BeExactly "$esc[1m[1m$esc[0m"
+            $options.EmphasisItalics | Should -BeExactly "$esc[36m[36m$esc[0m"
+        }
+    }
+
 }

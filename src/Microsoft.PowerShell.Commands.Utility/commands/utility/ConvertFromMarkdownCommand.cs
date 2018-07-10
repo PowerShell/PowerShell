@@ -19,28 +19,28 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(
         VerbsData.ConvertFrom, "Markdown",
-        DefaultParameterSetName = PathParamSet,
+        DefaultParameterSetName = PathParameterSet,
         HelpUri = "TBD"
     )]
     [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.MarkdownInfo))]
     public class ConvertFromMarkdownCommand : PSCmdlet
     {
         /// <summary>
-        /// Path to the file to convert from Markdown to MarkdownInfo
+        /// Path to the file to convert from Markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
-        [Parameter(ParameterSetName = PathParamSet, Mandatory = true)]
+        [Parameter(ParameterSetName = PathParameterSet, Mandatory = true)]
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Path to the file to convert from Markdown to MarkdownInfo
+        /// Path to the file to convert from Markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
-        [Parameter(ParameterSetName = LitPathParamSet, Mandatory = true)]
+        [Parameter(ParameterSetName = LiteralPathParameterSet, Mandatory = true)]
         public string[] LiteralPath { get; set; }
 
         /// <summary>
-        /// InputObject of type System.IO.FileInfo or string with content to convert from Markdown to MarkdownInfo
+        /// InputObject of type System.IO.FileInfo or string with content to convert from Markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = InputObjParamSet, Mandatory = true, ValueFromPipeline = true)]
@@ -52,19 +52,18 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter AsVT100EncodedString { get; set; }
 
-        private const string PathParamSet = "PathParamSet";
-        private const string LitPathParamSet = "LiteralParamSet";
-
+        private const string PathParameterSet = "PathParamSet";
+        private const string LiteralPathParameterSet = "LiteralParamSet";
         private const string InputObjParamSet = "InputObjParamSet";
+        private MarkdownConversionType conversionType = MarkdownConversionType.HTML;
+        private MarkdownOptionInfo mdOption = null;
 
         /// <summary>
-        /// Override ProcessRecord
+        /// Override BeginProcess.
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void BeginProcessing()
         {
-            var conversionType = MarkdownConversionType.HTML;
-
-            var mdOption = (SessionState.PSVariable.GetValue("MarkdownOptionInfo", new MarkdownOptionInfo())) as MarkdownOptionInfo;
+            mdOption = (SessionState.PSVariable.GetValue("MarkdownOptionInfo", new MarkdownOptionInfo())) as MarkdownOptionInfo;
 
             if(mdOption == null)
             {
@@ -75,14 +74,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 conversionType = MarkdownConversionType.VT100;
             }
+        }
 
+        /// <summary>
+        /// Override ProcessRecord.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
             switch (ParameterSetName)
             {
                 case InputObjParamSet:
                     Object baseObj = InputObject.BaseObject;
 
-                    var fileInfo = baseObj as FileInfo;
-                    if (fileInfo != null)
+                    //var fileInfo = baseObj as FileInfo;
+                    if (baseObj is FileInfo fileInfo)
                     {
                         WriteObject(
                             MarkdownConverter.Convert(
@@ -92,33 +97,28 @@ namespace Microsoft.PowerShell.Commands
                             )
                         );
                     }
+                    else if (baseObj is string inpObj)
+                    {
+                        WriteObject(MarkdownConverter.Convert(inpObj, conversionType, mdOption));
+                    }
                     else
                     {
-                        var inpObj = baseObj as string;
-                        if (inpObj != null)
-                        {
-                            WriteObject(MarkdownConverter.Convert(inpObj, conversionType, mdOption));
-                        }
-                        else
-                        {
-                            string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, baseObj.GetType());
-                            ErrorRecord errorRecord = new ErrorRecord(
-                                new InvalidDataException(errorMessage),
-                                "InvalidInputObject",
-                                ErrorCategory.InvalidData,
-                                InputObject);
+                        string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, baseObj.GetType());
+                        ErrorRecord errorRecord = new ErrorRecord(
+                            new InvalidDataException(errorMessage),
+                            "InvalidInputObject",
+                            ErrorCategory.InvalidData,
+                            InputObject);
 
-                            WriteError(errorRecord);
-                        }
+                        WriteError(errorRecord);
                     }
-
                     break;
 
-                case PathParamSet:
+                case PathParameterSet:
                     ConvertEachFile(Path, conversionType, isLiteral: false, optionInfo: mdOption);
                     break;
 
-                case LitPathParamSet:
+                case LiteralPathParameterSet:
                     ConvertEachFile(LiteralPath, conversionType, isLiteral: true, optionInfo: mdOption);
                     break;
             }
@@ -128,7 +128,6 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (var path in paths)
             {
-                // ResolvePath checks for file existence.
                 var resolvedPaths = ResolvePath(path, isLiteral);
 
                 foreach (var resolvedPath in resolvedPaths)

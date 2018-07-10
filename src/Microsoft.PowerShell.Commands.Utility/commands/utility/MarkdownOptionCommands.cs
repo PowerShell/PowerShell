@@ -22,101 +22,112 @@ namespace Microsoft.PowerShell.Commands
     public class SetMarkdownOptionCommand : PSCmdlet
     {
         /// <summary>
+        /// Gets or sets the VT100 escape sequence for Header Level 1.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
         public string Header1Color { get; set;}
 
         /// <summary>
+        /// Gets or sets the VT100 escape sequence for Header Level 2.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
         public string Header2Color { get; set;}
 
         /// <summary>
+        /// Gets or sets the VT100 escape sequence for Header Level 3.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
         public string Header3Color { get; set;}
 
         /// <summary>
+        /// Gets or sets the VT100 escape sequence for Header Level 4.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
         public string Header4Color { get; set;}
 
         /// <summary>
+        /// Gets or sets the VT100 escape sequence for Header Level 5.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
         public string Header5Color { get; set;}
 
         /// <summary>
+        /// Gets or sets the VT100 escape sequence for Header Level 6.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
         public string Header6Color { get; set;}
 
         /// <summary>
+        /// Gets or sets the VT100 escape sequence for code block background.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string CodeBlockForegroundColor { get; set;}
+        public string Code { get; set;}
 
         /// <summary>
-        /// </summary>
-        [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
-        [Parameter(ParameterSetName = IndividualSetting)]
-        public string CodeBlockBackgroundColor { get; set;}
-
-        /// <summary>
+        /// Gets or sets the VT100 escape sequence for image alt text foreground.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
         public string ImageAltTextForegroundColor { get; set;}
 
         /// <summary>
+        /// Gets or sets the VT100 escape sequence for link foreground.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
         public string LinkForegroundColor { get; set;}
 
         /// <summary>
+        /// Gets or sets the VT100 escape sequence for italics text foreground.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
         public string ItalicsForegroundColor { get; set;}
 
         /// <summary>
+        /// Gets or sets the VT100 escape sequence for bold text foreground.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
         public string BoldForegroundColor { get; set;}
 
         /// <summary>
+        /// Gets or sets the switch to PassThru the values set.
         /// </summary>
         [Parameter()]
         public SwitchParameter PassThru { get; set;}
 
         /// <summary>
+        /// Gets or sets the Theme.
         /// </summary>
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = ThemeParamSet, Mandatory = true)]
+        [ValidateSet(DarkThemeName, LightThemeName)]
         public string Theme { get; set;}
 
         /// <summary>
+        /// Gets or sets InputObject.
         /// </summary>
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = InputObjectParamSet, Mandatory = true, ValueFromPipeline = true)]
         public PSObject InputObject { get; set;}
 
         private const string IndividualSetting = "IndividualSetting";
-
         private const string InputObjectParamSet = "InputObject";
-
         private const string ThemeParamSet = "Theme";
+        private const string MarkdownOptionInfoVariableName = "MarkdownOptionInfo";
+        private const string LightThemeName = "Light";
+        private const string DarkThemeName = "Dark";
 
         /// <summary>
+        /// Override EndProcessing.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -126,11 +137,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 case ThemeParamSet:
                     mdOptionInfo = new MarkdownOptionInfo();
-                    if(string.Equals(Theme, "Light", StringComparison.OrdinalIgnoreCase))
+                    if(string.Equals(Theme, LightThemeName, StringComparison.OrdinalIgnoreCase))
                     {
                         mdOptionInfo.SetLightTheme();
                     }
-                    else if(string.Equals(Theme, "Dark", StringComparison.OrdinalIgnoreCase))
+                    else if(string.Equals(Theme, DarkThemeName, StringComparison.OrdinalIgnoreCase))
                     {
                         mdOptionInfo.SetDarkTheme();
                     }
@@ -144,7 +155,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         throw new ArgumentException();
                     }
-
                     break;
 
                 case IndividualSetting:
@@ -154,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var sessionVar = SessionState.PSVariable;
-            sessionVar.Set("MarkdownOptionInfo", mdOptionInfo);
+            sessionVar.Set(MarkdownOptionInfoVariableName, mdOptionInfo);
 
             if(PassThru.IsPresent)
             {
@@ -194,14 +204,9 @@ namespace Microsoft.PowerShell.Commands
                 mdOptionInfo.Header6 = Header6Color;
             }
 
-            if (!String.IsNullOrEmpty(CodeBlockBackgroundColor))
+            if (!String.IsNullOrEmpty(Code))
             {
-                mdOptionInfo.Code = CodeBlockBackgroundColor;
-            }
-
-            if (!String.IsNullOrEmpty(CodeBlockForegroundColor))
-            {
-                mdOptionInfo.Code = CodeBlockForegroundColor;
+                mdOptionInfo.Code = Code;
             }
 
             if (!String.IsNullOrEmpty(ImageAltTextForegroundColor))
@@ -227,6 +232,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
+    /// Implements the cmdlet for getting the markdown options that are set.
     /// </summary>
     [Cmdlet(
         VerbsCommon.Get, "MarkdownOption",
@@ -235,11 +241,14 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.MarkdownOptionInfo))]
     public class GetMarkdownOptionCommand : PSCmdlet
     {
+        private const string MarkdownOptionInfoVariableName = "MarkdownOptionInfo";
+
         /// <summary>
+        /// Override endproessing.
         /// </summary>
         protected override void EndProcessing()
         {
-            WriteObject(SessionState.PSVariable.GetValue("MarkdownOptionInfo", new MarkdownOptionInfo()));
+            WriteObject(SessionState.PSVariable.GetValue(MarkdownOptionInfoVariableName, new MarkdownOptionInfo()));
         }
     }
 }

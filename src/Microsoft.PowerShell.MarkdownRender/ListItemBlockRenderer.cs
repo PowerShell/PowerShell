@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Renderers;
@@ -33,7 +34,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         private void RenderWithIndent(VT100Renderer renderer, MarkdownObject block, char listBullet, int indentLevel)
         {
             // Indent left by 2 for each level on list.
-            string indent = "".PadLeft(indentLevel * 2);
+            string indent = Padding(indentLevel * 2);
 
             var paragraphBlock = block as ParagraphBlock;
 
@@ -61,6 +62,25 @@ namespace Microsoft.PowerShell.MarkdownRender
                     }
                 }
             }
+        }
+
+        // Typical padding is at most a screen's width, any more than that and we won't bother caching.
+        private const int IndentCacheMax = 120;
+        private static readonly string[] IndentCache = new string[IndentCacheMax];
+        internal static string Padding(int countOfSpaces)
+        {
+            if (countOfSpaces >= IndentCacheMax)
+                return new string(' ', countOfSpaces);
+
+            var result = IndentCache[countOfSpaces];
+
+            if (result == null)
+            {
+                Interlocked.CompareExchange(ref IndentCache[countOfSpaces], new string(' ', countOfSpaces), comparand:null);
+                result = IndentCache[countOfSpaces];
+            }
+
+            return result;
         }
     }
 }

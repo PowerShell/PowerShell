@@ -58,7 +58,8 @@ namespace Microsoft.PowerShell.Commands
         {
             Object inpObj = InputObject.BaseObject;
             var markdownInfo = inpObj as MarkdownInfo;
-            if (markdownInfo == null)
+
+            if (markdownInfo != null)
             {
                 var errorRecord = new ErrorRecord(
                             new ArgumentException(),

@@ -6,7 +6,7 @@
     <AssemblyName>Microsoft.PowerShell.MarkdownRender</AssemblyName>
   </PropertyGroup>
 
-  <PropertyGroup>
+  <!--PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
 
@@ -20,7 +20,7 @@
 
   <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
     <DebugType>full</DebugType>
-  </PropertyGroup>
+  </PropertyGroup-->
 
   <ItemGroup>
   <!-- Source: https://github.com/lunet-io/markdig/ -->
