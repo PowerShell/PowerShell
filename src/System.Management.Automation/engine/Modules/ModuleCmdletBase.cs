@@ -2047,20 +2047,18 @@ namespace Microsoft.PowerShell.Commands
                     string moduleName = ModuleIntrinsics.GetModuleName(moduleManifestPath);
                     expFeatureList = new List<ExperimentalFeature>(features.Length);
 
-                    foreach (var feature in features)
+                    foreach (Hashtable feature in features)
                     {
                         string featureName = feature["Name"] as string;
-                        if (String.IsNullOrEmpty(featureName))
+                        if (string.IsNullOrEmpty(featureName))
                         {
                             nameMissingOrEmpty = true;
-                            continue;
                         }
-
-                        if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
+                        else if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
                         {
                             string featureDescription = feature["Description"] as string;
                             expFeatureList.Add(new ExperimentalFeature(featureName, featureDescription, moduleManifestPath,
-                                                                       ExperimentalFeature.HasEnabled(featureName)));
+                                                                       ExperimentalFeature.IsEnabled(featureName)));
                         }
                         else
                         {

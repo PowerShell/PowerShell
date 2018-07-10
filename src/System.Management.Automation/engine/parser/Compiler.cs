@@ -1001,8 +1001,8 @@ namespace System.Management.Automation.Language
 
         internal static RuntimeDefinedParameterDictionary GetParameterMetaData(ReadOnlyCollection<ParameterAst> parameters, bool automaticPositions, ref bool usesCmdletBinding)
         {
-            var md = new RuntimeDefinedParameterDictionary();
-            var listMd = new List<RuntimeDefinedParameter>(parameters.Count);
+            var runtimeDefinedParamDict = new RuntimeDefinedParameterDictionary();
+            var runtimeDefinedParamList = new List<RuntimeDefinedParameter>(parameters.Count);
             var customParameterSet = false;
             for (int index = 0; index < parameters.Count; index++)
             {
@@ -1010,17 +1010,17 @@ namespace System.Management.Automation.Language
                 var rdp = GetRuntimeDefinedParameter(param, ref customParameterSet, ref usesCmdletBinding);
                 if (rdp != null)
                 {
-                    listMd.Add(rdp);
-                    md.Add(param.Name.VariablePath.UserPath, rdp);
+                    runtimeDefinedParamList.Add(rdp);
+                    runtimeDefinedParamDict.Add(param.Name.VariablePath.UserPath, rdp);
                 }
             }
 
             int pos = 0;
             if (automaticPositions && !customParameterSet)
             {
-                for (int index = 0; index < listMd.Count; index++)
+                for (int index = 0; index < runtimeDefinedParamList.Count; index++)
                 {
-                    var rdp = listMd[index];
+                    var rdp = runtimeDefinedParamList[index];
                     var paramAttribute = (ParameterAttribute)rdp.Attributes.First(attr => attr is ParameterAttribute);
                     if (!(rdp.ParameterType == typeof(SwitchParameter)))
                     {
@@ -1029,8 +1029,8 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            md.Data = listMd.ToArray();
-            return md;
+            runtimeDefinedParamDict.Data = runtimeDefinedParamList.ToArray();
+            return runtimeDefinedParamDict;
         }
 
         private static readonly Dictionary<CallInfo, Delegate> s_attributeGeneratorCache = new Dictionary<CallInfo, Delegate>();
@@ -1165,9 +1165,8 @@ namespace System.Management.Automation.Language
             int positionalArgCount = ast.PositionalArguments.Count;
             if (positionalArgCount != 2)
             {
-                throw InterpreterError.NewInterpreterException(null, typeof(MethodException), ast.Extent,
-                    "MethodCountCouldNotFindBest", ExtendedTypeSystem.MethodArgumentCountException, ".ctor",
-                    positionalArgCount);
+                throw InterpreterError.NewInterpreterException(targetObject: null, typeof(MethodException), ast.Extent,
+                    "MethodCountCouldNotFindBest", ExtendedTypeSystem.MethodArgumentCountException, ".ctor", positionalArgCount);
             }
 
             var (name, action) = GetFeatureNameAndAction(ast);
@@ -1188,9 +1187,8 @@ namespace System.Management.Automation.Language
                     result = new ParameterAttribute(name, action);
                     break;
                 default:
-                    throw InterpreterError.NewInterpreterException(null, typeof(MethodException), ast.Extent,
-                        "MethodCountCouldNotFindBest", ExtendedTypeSystem.MethodArgumentCountException, ".ctor",
-                        positionalArgCount);
+                    throw InterpreterError.NewInterpreterException(targetObject: null, typeof(MethodException), ast.Extent,
+                        "MethodCountCouldNotFindBest", ExtendedTypeSystem.MethodArgumentCountException, ".ctor", positionalArgCount);
             }
 
             foreach (var namedArg in ast.NamedArguments)

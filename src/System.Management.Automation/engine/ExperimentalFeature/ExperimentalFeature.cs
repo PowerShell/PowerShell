@@ -115,7 +115,7 @@ namespace System.Management.Automation
         /// </summary>
         private static ImmutableHashSet<string> ProcessEnabledFeatures(string[] enabledFeatures)
         {
-            if (enabledFeatures.Length == 0) { return ImmutableHashSet.Create<string>(); }
+            if (enabledFeatures.Length == 0) { return ImmutableHashSet<string>.Empty; }
 
             var list = new List<string>(enabledFeatures.Length);
             foreach (string name in enabledFeatures)
@@ -169,7 +169,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsEngineFeatureName(string featureName)
         {
-            return featureName.IndexOf('.') == -1 && featureName.Length > 2 && featureName.StartsWith("PS", StringComparison.Ordinal);
+            return featureName.Length > 2 && featureName.IndexOf('.') == -1 && featureName.StartsWith("PS", StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace System.Management.Automation
             }
 
             ExperimentAction action = experimentAction;
-            if (!HasEnabled(experimentName))
+            if (!IsEnabled(experimentName))
             {
                 action = (action == ExperimentAction.Hide) ? ExperimentAction.Show : ExperimentAction.Hide;
             }
@@ -216,7 +216,7 @@ namespace System.Management.Automation
         /// Check if the specified experimental feature has been enabled.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool HasEnabled(string featureName)
+        public static bool IsEnabled(string featureName)
         {
             return EnabledExperimentalFeatureNames.Contains(featureName);
         }
@@ -298,7 +298,8 @@ namespace System.Management.Automation
         /// </summary>
         private ExperimentAction EffectiveAction
         {
-            get {
+            get
+            {
                 if (_effectiveAction == ExperimentAction.None)
                 {
                     _effectiveAction = ExperimentalFeature.GetActionToTake(ExperimentName, ExperimentAction);
@@ -306,6 +307,6 @@ namespace System.Management.Automation
                 return _effectiveAction;
             }
         }
-        private ExperimentAction _effectiveAction = default(ExperimentAction);
+        private ExperimentAction _effectiveAction = ExperimentAction.None;
     }
 }

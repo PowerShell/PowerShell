@@ -489,7 +489,7 @@ namespace System.Management.Automation
                             {
                                 string featureDescription = feature["Description"] as string;
                                 expFeatureList.Add(new ExperimentalFeature(featureName, featureDescription, manifestPath,
-                                                                           ExperimentalFeature.HasEnabled(featureName)));
+                                                                           ExperimentalFeature.IsEnabled(featureName)));
                             }
                         }
                         return expFeatureList.ToArray();
