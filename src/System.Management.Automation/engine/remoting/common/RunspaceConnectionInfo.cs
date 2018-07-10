@@ -2955,6 +2955,9 @@ namespace System.Management.Automation.Runspaces
 
         private const uint FileNotFoundHResult = 0x80070002;
 
+        // The list of executable to try in order
+        private static readonly string[] Executables = new string[]{"pwsh.exe","powershell.exe"};
+
         #endregion
 
         #region Properties
@@ -3220,8 +3223,7 @@ namespace System.Management.Automation.Runspaces
                     // expected to be PowerShell Core as it's inbox in the container.
                     // If `pwsh.exe` does not exist, fall back to `powershell.exe` which is Windows PowerShell.
                     //
-                    string[] executables = new string[]("pwsh.exe"."powershell.exe")
-                    foreach(string executableToTry in executables)
+                    foreach(string executableToTry in Executables)
                     {
                         Executable = executableToTry;
                         cmd = GetContainerProcessCommand();
