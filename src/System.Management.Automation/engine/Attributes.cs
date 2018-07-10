@@ -639,12 +639,12 @@ namespace System.Management.Automation
         #region Experimental Feature Related Properties
 
         /// <summary>
-        /// Name of the experimental feature this attribute is associated with.
+        /// Get name of the experimental feature this attribute is associated with.
         /// </summary>
         public string ExperimentName { get; }
 
         /// <summary>
-        /// Action for engine to take when the experimental feature is enabled.
+        /// Get action for engine to take when the experimental feature is enabled.
         /// </summary>
         public ExperimentAction ExperimentAction { get; }
 
@@ -652,7 +652,7 @@ namespace System.Management.Automation
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;
 
         /// <summary>
-        /// Effective action to take at run time.
+        /// Get effective action to take at run time.
         /// </summary>
         private ExperimentAction EffectiveAction
         {

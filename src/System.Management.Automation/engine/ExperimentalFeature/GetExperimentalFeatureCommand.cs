@@ -17,14 +17,14 @@ namespace Microsoft.PowerShell.Commands
     public class GetExperimentalFeatureCommand : PSCmdlet
     {
         /// <summary>
-        /// Specify the feature names.
+        /// Get and set the feature names.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Position = 0)]
         [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
 
         /// <summary>
-        /// Search module paths to find all available experimental features.
+        /// Get and set the switch flag to search module paths to find all available experimental features.
         /// </summary>
         [Parameter]
         public SwitchParameter ListAvailable { get; set; }

@@ -1419,7 +1419,10 @@ namespace System.Management.Automation.Language
                     {
                         return Compiler.GetAttribute(potentialExpAttr) as ExperimentalAttribute;
                     }
-                    catch (Exception) { /* catch all and assume it's not a declaration of ExperimentalAttribute */ }
+                    catch (Exception)
+                    {
+                        // catch all and assume it's not a declaration of ExperimentalAttribute
+                    }
                 }
 
                 return null;

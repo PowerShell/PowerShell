@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Support experimental features in PowerShell
+    /// Support experimental features in PowerShell.
     /// </summary>
     public class ExperimentalFeature
     {
@@ -103,7 +103,11 @@ namespace System.Management.Automation
             //      instead, it will be done when the type is used for the first time, which is always earlier than
             //      any experimental features take effect.
             string[] enabledFeatures = Utils.EmptyArray<string>();
-            try { enabledFeatures = PowerShellConfig.Instance.GetExperimentalFeatures(); } catch (Exception e) when (LogException(e)) { }
+            try
+            {
+                enabledFeatures = PowerShellConfig.Instance.GetExperimentalFeatures();
+            }
+            catch (Exception e) when (LogException(e)) { }
 
             EnabledExperimentalFeatureNames = ProcessEnabledFeatures(enabledFeatures);
         }
@@ -165,7 +169,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Check if the name follows the engine experimental feature name convention.
-        /// Convention: prefix 'PS' to the feature name -- PSFeatureName
+        /// Convention: prefix 'PS' to the feature name -- 'PSFeatureName'.
         /// </summary>
         internal static bool IsEngineFeatureName(string featureName)
         {
@@ -174,10 +178,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Check if the name follows the module experimental feature name convention.
-        /// Convention: ModuleName.FeatureName
+        /// Convention: prefix the module name to the feature name -- 'ModuleName.FeatureName'.
         /// </summary>
         /// <param name="featureName">The feature name to check.</param>
-        /// <param name="moduleName">When specified, we check if the feature name matches the module name</param>
+        /// <param name="moduleName">When specified, we check if the feature name matches the module name.</param>
         internal static bool IsModuleFeatureName(string featureName, string moduleName = null)
         {
             // Feature names cannot start with a dot
@@ -263,12 +267,12 @@ namespace System.Management.Automation
     public sealed class ExperimentalAttribute : ParsingBaseAttribute
     {
         /// <summary>
-        /// Specify the experimental feature this attribute is associated with.
+        /// Get name of the experimental feature this attribute is associated with.
         /// </summary>
         public string ExperimentName { get; }
 
         /// <summary>
-        /// Specify the action for engine to take when the experimental feature is enabled.
+        /// Get action for engine to take when the experimental feature is enabled.
         /// </summary>
         public ExperimentAction ExperimentAction { get; }
 
@@ -316,7 +320,7 @@ namespace System.Management.Automation
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;
 
         /// <summary>
-        /// Effective action to take at run time.
+        /// Get effective action to take at run time.
         /// </summary>
         private ExperimentAction EffectiveAction
         {

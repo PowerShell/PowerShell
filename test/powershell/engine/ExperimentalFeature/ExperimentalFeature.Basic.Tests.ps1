@@ -381,18 +381,36 @@ Describe "Expected errors" -Tag "CI" {
         { [Experimental()]param() } | Should -Throw -ErrorId "MethodCountCouldNotFindBest"
     }
 
-    It "Argument validation for constructors of 'ExperimentalAttribute' and 'ParameterAttribute'" {
-        { [Experimental]::new("", "None") } | Should -Throw -ErrorId "PSArgumentNullException"
-        { [Experimental]::new([NullString]::Value, "None") } | Should -Throw -ErrorId "PSArgumentNullException"
-        { [Experimental]::new("feature", "None") } | Should -Throw -ErrorId "PSArgumentException"
-        { [Experimental]::new("feature", "Show") } | Should -Not -Throw
-        { [Experimental]::new("feature", "Hide") } | Should -Not -Throw
+    It "Argument validation for constructors of 'ExperimentalAttribute' - <TestName>" -TestCases @(
+        @{ TestName = "Name is empty string"; FeatureName = "";                  FeatureAction = "None"; ErrorId = "PSArgumentNullException" }
+        @{ TestName = "Name is null";         FeatureName = [NullString]::Value; FeatureAction = "None"; ErrorId = "PSArgumentNullException" }
+        @{ TestName = "Action is None";       FeatureName = "feature";           FeatureAction = "None"; ErrorId = "PSArgumentException" }
+        @{ TestName = "Action is Show";       FeatureName = "feature";           FeatureAction = "Show"; ErrorId = $null }
+        @{ TestName = "Action is Hide";       FeatureName = "feature";           FeatureAction = "Hide"; ErrorId = $null }
+    ) {
+        param($FeatureName, $FeatureAction, $ErrorId)
 
-        { [Parameter]::new("", "None") } | Should -Throw -ErrorId "PSArgumentNullException"
-        { [Parameter]::new([NullString]::Value, "None") } | Should -Throw -ErrorId "PSArgumentNullException"
-        { [Parameter]::new("feature", "None") } | Should -Throw -ErrorId "PSArgumentException"
-        { [Parameter]::new("feature", "Show") } | Should -Not -Throw
-        { [Parameter]::new("feature", "Hide") } | Should -Not -Throw
+        if ($ErrorId -ne $null) {
+            { [Experimental]::new($FeatureName, $FeatureAction) } | Should -Throw -ErrorId $ErrorId
+        } else {
+            { [Experimental]::new($FeatureName, $FeatureAction) } | Should -Not -Throw
+        }
+    }
+
+    It "Argument validation for constructors of 'ParameterAttribute' - <TestName>" -TestCases @(
+        @{ TestName = "Name is empty string"; FeatureName = "";                  FeatureAction = "None"; ErrorId = "PSArgumentNullException" }
+        @{ TestName = "Name is null";         FeatureName = [NullString]::Value; FeatureAction = "None"; ErrorId = "PSArgumentNullException" }
+        @{ TestName = "Action is None";       FeatureName = "feature";           FeatureAction = "None"; ErrorId = "PSArgumentException" }
+        @{ TestName = "Action is Show";       FeatureName = "feature";           FeatureAction = "Show"; ErrorId = $null }
+        @{ TestName = "Action is Hide";       FeatureName = "feature";           FeatureAction = "Hide"; ErrorId = $null }
+    ) {
+        param($FeatureName, $FeatureAction, $ErrorId)
+
+        if ($ErrorId -ne $null) {
+            { [Parameter]::new($FeatureName, $FeatureAction) } | Should -Throw -ErrorId $ErrorId
+        } else {
+            { [Parameter]::new($FeatureName, $FeatureAction) } | Should -Not -Throw
+        }
     }
 
     It "Feature name check" {

@@ -2071,8 +2071,8 @@ namespace Microsoft.PowerShell.Commands
                         if (writingErrors)
                         {
                             WriteError(new ErrorRecord(new ArgumentException(Modules.ExperimentalFeatureNameMissingOrEmpty),
-                                                    "Modules_ExperimentalFeatureNameMissingOrEmpty",
-                                                    ErrorCategory.InvalidData, null));
+                                                       "Modules_ExperimentalFeatureNameMissingOrEmpty",
+                                                       ErrorCategory.InvalidData, null));
                         }
 
                         containedErrors = true;
@@ -2086,8 +2086,8 @@ namespace Microsoft.PowerShell.Commands
                             string invalidNameStr = String.Join(", ", invalidNames);
                             string errorMsg = StringUtil.Format(Modules.InvalidExperimentalFeatureName, invalidNameStr);
                             WriteError(new ErrorRecord(new ArgumentException(errorMsg),
-                                                    "Modules_InvalidExperimentalFeatureName",
-                                                    ErrorCategory.InvalidData, null));
+                                                       "Modules_InvalidExperimentalFeatureName",
+                                                       ErrorCategory.InvalidData, null));
                         }
 
                         containedErrors = true;
