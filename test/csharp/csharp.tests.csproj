@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 
-   <Import Project="../Test.Common.props"/>
+  <Import Project="../Test.Common.props"/>
 
   <PropertyGroup>
     <Description>PowerShell xUnit Tests</Description>
@@ -15,9 +15,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj" />
-    <ProjectReference Include="../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj" />
-    <ProjectReference Include="../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj" />
+    <ProjectReference Include="../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj"/>
+    <ProjectReference Include="../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj"/>
+    <ProjectReference Include="../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
