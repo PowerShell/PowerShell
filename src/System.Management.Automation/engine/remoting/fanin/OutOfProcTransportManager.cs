@@ -709,22 +709,26 @@ namespace System.Management.Automation.Remoting.Client
                 stdInWriter.StopWriting();
             }
 
-            int exitCode;
-            string exitMessage;
+            // Try to get details about why the process exited
+            // and if they're not available, give information as to why
+            string processFailureMessage;
             try
             {
                 var jobProcess = (Process)sender;
-                exitCode = jobProcess.ExitCode;
-                exitMessage = exitCode == 0 ? jobProcess.StandardOutput.ReadToEnd() : jobProcess.StandardError.ReadToEnd();
+                int exitCode = jobProcess.ExitCode;
+                processDiagnosticMessage = StringUtil.Format(
+                    RemotingErrorIdStrings.ProcessExitInfo,
+                    exitCode,
+                    jobProcess.StandardOutput.ReadToEnd(),
+                    jobProcess.StandardError.ReadToEnd());
             }
             catch (Exception exception)
             {
-                exitCode = -1;
-                exitMessage = StringUtil.Format("<Unable to read streams from job process for reason '{0}'>", exception.Message);
+                string failureMessage = StringUtil.Format(RemotingErrorIdStrings.ProcessInfoNotRecoverable, exception.Message);
+                processDiagnosticMessage = StringUtil.Format(RemotingErrorIdStrings.IPCServerProcessExited, failureMessage);
             }
 
-            string exitErrorMsg = StringUtil.Format(RemotingErrorIdStrings.IPCServerProcessExited, exitCode, exitMessage);
-
+            string exitErrorMsg = StringUtil.Format(RemotingErrorIdStrings.IPCServerProcessExited, processFailureMessage);
             var psrte = new PSRemotingTransportException(
                                 PSRemotingErrorId.IPCServerProcessExited,
                                 exitErrorMsg);
