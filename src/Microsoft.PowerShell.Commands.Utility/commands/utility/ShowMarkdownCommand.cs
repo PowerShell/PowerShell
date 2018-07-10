@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
             Object inpObj = InputObject.BaseObject;
             var markdownInfo = inpObj as MarkdownInfo;
 
-            if (markdownInfo != null)
+            if (markdownInfo == null)
             {
                 var errorRecord = new ErrorRecord(
                             new ArgumentException(),
@@ -81,6 +81,12 @@ namespace Microsoft.PowerShell.Commands
                         using (var writer = new StreamWriter(new FileStream(tmpFilePath, FileMode.Create, FileAccess.Write, FileShare.Write)))
                         {
                             writer.Write(html);
+                        }
+
+                        if(OutputBypassTestHook)
+                        {
+                            WriteObject(html);
+                            return;
                         }
 
                         ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -112,6 +118,12 @@ namespace Microsoft.PowerShell.Commands
 
                     if(!String.IsNullOrEmpty(vt100String))
                     {
+                        if(OutputBypassTestHook)
+                        {
+                            WriteObject(vt100String);
+                            return;
+                        }
+
                         if(stepPipe != null)
                         {
                             stepPipe.Process(vt100String);
@@ -132,6 +144,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Override EndProcessing.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -139,6 +152,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 stepPipe.End();
             }
+        }
+
+        private static bool OutputBypassTestHook = false;
+
+        /// <summary>
+        /// Test hook to enable or disable launching of browser.
+        /// When set, the converted output is returned.
+        /// </summary>
+        public static void SetOutputBypassTestHook(bool value)
+        {
+            OutputBypassTestHook = value;
         }
     }
 }

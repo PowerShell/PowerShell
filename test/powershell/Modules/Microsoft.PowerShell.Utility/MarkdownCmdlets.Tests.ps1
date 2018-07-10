@@ -259,20 +259,21 @@ bool function()`n{`n}
 
             $newOptions = Get-MarkdownOption
 
-            $options.Header1 | Should -BeExactly "$esc[4;1m[4;1m$esc[0m"
-            $options.Header2 | Should -BeExactly "$esc[93m[93m$esc[0m"
-            $options.Header3 | Should -BeExactly "$esc[94m[94m$esc[0m"
-            $options.Header4 | Should -BeExactly "$esc[95m[95m$esc[0m"
-            $options.Header5 | Should -BeExactly "$esc[96m[96m$esc[0m"
-            $options.Header6 | Should -BeExactly "$esc[97m[97m$esc[0m"
+            $newOptions.Header1 | Should -BeExactly "$esc[4;1m[4;1m$esc[0m"
+            $newOptions.Header2 | Should -BeExactly "$esc[93m[93m$esc[0m"
+            $newOptions.Header3 | Should -BeExactly "$esc[94m[94m$esc[0m"
+            $newOptions.Header4 | Should -BeExactly "$esc[95m[95m$esc[0m"
+            $newOptions.Header5 | Should -BeExactly "$esc[96m[96m$esc[0m"
+            $newOptions.Header6 | Should -BeExactly "$esc[97m[97m$esc[0m"
             #$options.Code | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
-            $options.Link | Should -BeExactly "$esc[4;38;5;88m[4;38;5;88m$esc[0m"
-            $options.Image | Should -BeExactly "$esc[34m[34m$esc[0m"
-            $options.EmphasisBold | Should -BeExactly "$esc[32m[32m$esc[0m"
-            $options.EmphasisItalics | Should -BeExactly "$esc[35m[35m$esc[0m"
+            $newOptions.Link | Should -BeExactly "$esc[4;38;5;88m[4;38;5;88m$esc[0m"
+            $newOptions.Image | Should -BeExactly "$esc[34m[34m$esc[0m"
+            $newOptions.EmphasisBold | Should -BeExactly "$esc[32m[32m$esc[0m"
+            $newOptions.EmphasisItalics | Should -BeExactly "$esc[35m[35m$esc[0m"
         }
 
         It "Verify defaults for light theme" {
+            Set-MarkdownOption -Theme Light
             $options = Get-MarkdownOption
 
             $options.Header1 | Should -BeExactly "$esc[7m[7m$esc[0m"
@@ -289,4 +290,31 @@ bool function()`n{`n}
         }
     }
 
+    Context "Show-Markdown tests" {
+        BeforeEach {
+            [Microsoft.PowerShell.Commands.ShowMarkdownCommand]::SetOutputBypassTestHook($true)
+        }
+
+        AfterEach {
+            [Microsoft.PowerShell.Commands.ShowMarkdownCommand]::SetOutputBypassTestHook($false)
+        }
+
+        It "can show VT100 converted from markdown" {
+            $text = "Bold"
+            $mdText = "**$text**"
+            $expectedString = GetExpectedString -ElementType 'Bold' -Text $text
+
+            $result = $mdText | ConvertFrom-Markdown -AsVT100EncodedString | Show-Markdown
+            $result | Should -BeExactly $expectedString
+        }
+
+        It "can show HTML converted from markdown" {
+            $text = "Bold"
+            $mdText = "**$text**"
+            $expectedString = GetExpectedHTML -ElementType 'Bold' -Text $text
+
+            $result = $mdText | ConvertFrom-Markdown | Show-Markdown -UseBrowser
+            $result | Should -BeExactly $expectedString
+        }
+    }
 }
