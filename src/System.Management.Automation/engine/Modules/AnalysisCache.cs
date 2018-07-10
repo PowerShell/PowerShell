@@ -1048,13 +1048,13 @@ namespace System.Management.Automation
                 // to generate the cache file name.
                 int index = 0;
                 string[] featureNames = new string[ExperimentalFeature.EnabledExperimentalFeatureNames.Count];
-                foreach (var featureName in ExperimentalFeature.EnabledExperimentalFeatureNames)
+                foreach (string featureName in ExperimentalFeature.EnabledExperimentalFeatureNames)
                 {
                     featureNames[index++] = featureName.ToLowerInvariant();
                 }
 
                 Array.Sort(featureNames);
-                string allNames = String.Join(Environment.NewLine, featureNames);
+                string allNames = string.Join(Environment.NewLine, featureNames);
 
                 // Use SHA1 because it's faster.
                 // It's very unlikely to get colision from hashing the combinations of enabled features names.

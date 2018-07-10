@@ -34,7 +34,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         }
     }
 
-    It "No experimental features is enabled" {
+    It "No experimental feature is enabled" {
         $EnabledExperimentalFeatures.Count | Should -Be 0
     }
 

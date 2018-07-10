@@ -43,7 +43,7 @@ namespace System.Management.Automation
 
             if (commandInfo is IScriptCommandInfo scriptCommand)
             {
-                var expAttribute = scriptCommand.ScriptBlock.ExperimentalAttribute;
+                ExperimentalAttribute expAttribute = scriptCommand.ScriptBlock.ExperimentalAttribute;
                 if (expAttribute != null && expAttribute.ToHide)
                 {
                     string errorTemplate = expAttribute.ExperimentAction == ExperimentAction.Hide

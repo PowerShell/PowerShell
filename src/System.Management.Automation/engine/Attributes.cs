@@ -665,7 +665,8 @@ namespace System.Management.Automation
         /// </summary>
         private ExperimentAction EffectiveAction
         {
-            get {
+            get
+            {
                 if (_effectiveAction == ExperimentAction.None)
                 {
                     _effectiveAction = ExperimentalFeature.GetActionToTake(ExperimentName, ExperimentAction);

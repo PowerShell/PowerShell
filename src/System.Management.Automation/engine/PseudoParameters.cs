@@ -174,7 +174,7 @@ namespace System.Management.Automation
             bool hasEnabledParamAttribute = false;
             bool hasSeenExpAttribute = false;
 
-            foreach (var attr in Attributes)
+            foreach (Attribute attr in Attributes)
             {
                 if (!hasSeenExpAttribute && attr is ExperimentalAttribute expAttribute)
                 {

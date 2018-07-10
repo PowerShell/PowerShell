@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Search module paths to find all available experimental features.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter ListAvailable { get; set; }
 
         /// <summary>
@@ -66,10 +66,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return "0:" + feature.Name;
             }
-            else
-            {
-                return "1:" + feature.Name;
-            }
+            return "1:" + feature.Name;
         }
 
         /// <summary>
@@ -103,8 +100,7 @@ namespace Microsoft.PowerShell.Commands
                 var featuresFromGivenModules = new Dictionary<string, ExperimentalFeature>(StringComparer.OrdinalIgnoreCase);
                 foreach (string moduleFile in GetValidModuleFiles(moduleNames))
                 {
-                    ExperimentalFeature[] features = ModuleIntrinsics.GetExperimentalFeature(moduleFile);
-                    foreach (var feature in features)
+                    foreach (var feature in ModuleIntrinsics.GetExperimentalFeature(moduleFile))
                     {
                         featuresFromGivenModules.TryAdd(feature.Name, feature);
                     }

@@ -1375,8 +1375,8 @@ namespace System.Management.Automation.Language
         {
             for (int index = 0; index < Attributes.Count; index++)
             {
-                var attributeAst = Attributes[index];
-                var expAttr = GetExpAttributeHelper(attributeAst);
+                AttributeAst attributeAst = Attributes[index];
+                ExperimentalAttribute expAttr = GetExpAttributeHelper(attributeAst);
                 if (expAttr != null) { yield return expAttr; }
             }
 
