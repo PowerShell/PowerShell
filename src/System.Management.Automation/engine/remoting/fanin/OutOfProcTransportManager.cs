@@ -711,23 +711,26 @@ namespace System.Management.Automation.Remoting.Client
 
             // Try to get details about why the process exited
             // and if they're not available, give information as to why
-            string processFailureMessage;
+            string processDiagnosticMessage;
             try
             {
                 var jobProcess = (Process)sender;
-                int exitCode = jobProcess.ExitCode;
                 processDiagnosticMessage = StringUtil.Format(
                     RemotingErrorIdStrings.ProcessExitInfo,
-                    exitCode,
+                    jobProcess.ExitCode,
                     jobProcess.StandardOutput.ReadToEnd(),
                     jobProcess.StandardError.ReadToEnd());
             }
             catch (Exception exception)
             {
-                processDiagnosticMessage = StringUtil.Format(RemotingErrorIdStrings.ProcessInfoNotRecoverable, exception.Message);
+                processDiagnosticMessage = StringUtil.Format(
+                    RemotingErrorIdStrings.ProcessInfoNotRecoverable,
+                    exception.Message);
             }
 
-            string exitErrorMsg = StringUtil.Format(RemotingErrorIdStrings.IPCServerProcessExited, processFailureMessage);
+            string exitErrorMsg = StringUtil.Format(
+                RemotingErrorIdStrings.IPCServerProcessExited,
+                processDiagnosticMessage);
             var psrte = new PSRemotingTransportException(
                                 PSRemotingErrorId.IPCServerProcessExited,
                                 exitErrorMsg);
