@@ -1097,7 +1097,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static (string name, ExperimentAction action) GetFeatureNameAndAction(AttributeAst ast)
+        private static (string, ExperimentAction) GetFeatureNameAndAction(AttributeAst ast)
         {
             var argValue0 = ast.PositionalArguments[0].Accept(s_cvv);
             var argValue1 = ast.PositionalArguments[1].Accept(s_cvv);
@@ -1169,7 +1169,7 @@ namespace System.Management.Automation.Language
                     "MethodCountCouldNotFindBest", ExtendedTypeSystem.MethodArgumentCountException, ".ctor", positionalArgCount);
             }
 
-            var (name, action) = GetFeatureNameAndAction(ast);
+            (string name, ExperimentAction action) = GetFeatureNameAndAction(ast);
             return new ExperimentalAttribute(name, action);
         }
 
@@ -1183,7 +1183,7 @@ namespace System.Management.Automation.Language
                     result = new ParameterAttribute();
                     break;
                 case 2:
-                    var (name, action) = GetFeatureNameAndAction(ast);
+                    (string name, ExperimentAction action) = GetFeatureNameAndAction(ast);
                     result = new ParameterAttribute(name, action);
                     break;
                 default:

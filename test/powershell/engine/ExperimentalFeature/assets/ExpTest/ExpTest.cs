@@ -59,7 +59,7 @@ namespace ExperimentalFeatureTest
         protected override void EndProcessing()
         {
             string message = $"Hello World {Name}.";
-            if (ExperimentalFeature.HasEnabled("ExpTest.FeatureOne"))
+            if (ExperimentalFeature.IsEnabled("ExpTest.FeatureOne"))
             {
                 if (SwitchOne.IsPresent) { message += "-SwitchOne is on."; }
                 if (SwitchTwo.IsPresent) { message += "-SwitchTwo is on."; }
