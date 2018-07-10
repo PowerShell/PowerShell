@@ -3237,6 +3237,8 @@ namespace System.Management.Automation.Runspaces
                         if (result == 0)
                         {
                             processId = Convert.ToInt32(ProcessInformation.ProcessId);
+                            // Reset error to 0 in case this is not the first iteration of the loop.
+                            error = 0;
                             // the process was started, exit the loop.
                             break;
                         }
@@ -3244,6 +3246,9 @@ namespace System.Management.Automation.Runspaces
                         {
                             // "The system cannot find the file specified", try the next one
                             // or exit the loop of none are left to try.
+                            // Set the process and error information in case we exit the loop.
+                            processId = 0;
+                            error = result;
                             continue;
                         }
                         else
