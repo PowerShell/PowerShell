@@ -316,5 +316,20 @@ bool function()`n{`n}
             $result = $mdText | ConvertFrom-Markdown | Show-Markdown -UseBrowser
             $result | Should -BeExactly $expectedString
         }
+
+        It "Gets an error if the input object is missing the <propertyname> property." -TestCases @(@{propertyname = 'Html'}, @{propertyname = 'VT100EncodedString'}) {
+            param($propertyname)
+
+            $markdownInfo = [Microsoft.PowerShell.MarkdownRender.MarkdownInfo]::new()
+
+            if($propertyname -eq 'VT100EncodedString')
+            {
+                { Show-Markdown -InputObject $markdownInfo -ErrorAction Stop } | Should -Throw -ErrorId 'VT100EncodedStringIsNullOrEmpty,Microsoft.PowerShell.Commands.ShowMarkdownCommand'
+            }
+            else
+            {
+                { Show-Markdown -UseBrowser -InputObject $markdownInfo -ErrorAction Stop } | Should -Throw -ErrorId 'HtmlIsNullOrEmpty,Microsoft.PowerShell.Commands.ShowMarkdownCommand'
+            }
+        }
     }
 }

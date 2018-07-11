@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using Microsoft.PowerShell.MarkdownRender;
 
 namespace Microsoft.PowerShell.Commands
@@ -61,8 +62,9 @@ namespace Microsoft.PowerShell.Commands
 
             if (markdownInfo == null)
             {
+                string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, inpObj.GetType());
                 var errorRecord = new ErrorRecord(
-                            new ArgumentException(),
+                            new ArgumentException(errorMessage),
                             "InvalidInputObject",
                             ErrorCategory.InvalidArgument,
                             InputObject);
@@ -90,21 +92,15 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         ProcessStartInfo startInfo = new ProcessStartInfo();
-
-#if UNIX
-                        startInfo.FileName = Platform.IsLinux ? "xdg-open" : /* macOS */ "open";
-                        startInfo.Arguments = tmpFilePath;
-#else
                         startInfo.FileName = tmpFilePath;
                         startInfo.UseShellExecute = true;
-#endif
-
                         Process.Start(startInfo);
                     }
                     else
                     {
+                        string errorMessage = StringUtil.Format(ConvertMarkdownStrings.MarkdownInfoInvalid, "Html");
                         var errorRecord = new ErrorRecord(
-                            new InvalidDataException(),
+                            new InvalidDataException(errorMessage),
                             "HtmlIsNullOrEmpty",
                             ErrorCategory.InvalidData,
                             html);
@@ -131,8 +127,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
+                        string errorMessage = StringUtil.Format(ConvertMarkdownStrings.MarkdownInfoInvalid, "VT100EncodedString");
                         var errorRecord = new ErrorRecord(
-                            new InvalidDataException(),
+                            new InvalidDataException(errorMessage),
                             "VT100EncodedStringIsNullOrEmpty",
                             ErrorCategory.InvalidData,
                             vt100String);

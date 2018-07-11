@@ -126,4 +126,7 @@
   <data name="FileSystemPathsOnly" xml:space="preserve">
     <value>Only FileSystem Provider paths are supported. The given path '{0}' is not supported.</value>
   </data>
+  <data name="MarkdownInfoInvalid" xml:space="preserve">
+    <value>The property {0} of the given object is null or empty.</value>
+  </data>
 </root>
