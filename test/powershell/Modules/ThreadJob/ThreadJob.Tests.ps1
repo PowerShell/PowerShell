@@ -1,6 +1,41 @@
 ﻿# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+# Helper function to wait for job to reach a running or completed state
+# Job state can go to "Running" before the underlying runspace thread is running
+# so we always first wait 100 mSec before checking state.
+function Wait-ForJobRunning
+{
+    param (
+        $job
+    )
+
+    $iteration = 10
+    Do
+    {
+        Start-Sleep -Milliseconds 100
+    }
+    Until (($job.State -match "Running|Completed|Failed") -or (--$iteration -eq 0))
+
+    if ($job.State -notmatch "Running|Completed|Failed")
+    {
+        throw ("Cannot start job '{0}'. Job state is '{1}'" -f $job,$job.State)
+    }
+}
+
+function Wait-ForExpectedRSCount
+{
+    param (
+        $expectedRSCount
+    )
+
+    $iteration = 20
+    while (((Get-Runspace).Count -ne $expectedRSCount) -and ($iteration-- -gt 0))
+    {
+        Start-Sleep -Milliseconds 100
+    }
+}
+
 Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
     BeforeAll {
@@ -205,13 +240,13 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         {
             # Start four thread jobs with ThrottleLimit set to two
             Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
-            Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 } -ThrottleLimit 2
-            Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
-            Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
-            Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
+            $job1 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 } -ThrottleLimit 2
+            $job2 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
+            $job3 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
+            $job4 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
 
             # Allow jobs to start
-            Start-Sleep -Seconds 1
+            Wait-ForJobRunning $job2
 
             $numRunningThreadJobs = (Get-Job | where { ($_.PSJobTypeName -eq "ThreadJob") -and ($_.State -eq "Running") }).Count
             $numQueuedThreadJobs = (Get-Job | where { ($_.PSJobTypeName -eq "ThreadJob") -and ($_.State -eq "NotStarted") }).Count
@@ -243,8 +278,8 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
             $job1,$job2,$job3,$job4 | Wait-Job
 
-            # Allow for clean to happen
-            Start-Sleep -Seconds 1
+            # Allow for runspace clean up to happen
+            Wait-ForExpectedRSCount $rsStartCount
 
             (Get-Runspace).Count | Should -Be $rsStartCount
         }
@@ -266,23 +301,22 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             $job3 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
             $job4 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
 
-            # Allow jobs to start
-            Start-Sleep -Seconds 1
-
+            Wait-ForExpectedRSCount ($rsStartCount + 4)
             (Get-Runspace).Count | Should -Be ($rsStartCount + 4)
 
             # Stop two jobs
             $job1 | Remove-Job -Force
             $job3 | Remove-Job -Force
 
+            Wait-ForExpectedRSCount ($rsStartCount + 2)
             (Get-Runspace).Count | Should -Be ($rsStartCount + 2)
-
         }
         finally
         {
             Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
         }
 
+        Wait-ForExpectedRSCount $rsStartCount
         (Get-Runspace).Count | Should -Be $rsStartCount
     }
 
@@ -290,10 +324,10 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
         Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
 
-        $job1 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Seconds 1; "Output $_" } } -ThrottleLimit 2
-        $job2 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Seconds 1; "Output $_" } }
-        $job3 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Seconds 1; "Output $_" } }
-        $job4 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Seconds 1; "Output $_" } }
+        $job1 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Milliseconds 100; "Output $_" } } -ThrottleLimit 5
+        $job2 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Milliseconds 100; "Output $_" } }
+        $job3 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Milliseconds 100; "Output $_" } }
+        $job4 = Start-ThreadJob -ScriptBlock { 1..2 | foreach { Start-Sleep -Milliseconds 100; "Output $_" } }
 
         $null = $job1,$job2,$job3,$job4 | Receive-Job -Wait -AutoRemoveJob
 
@@ -316,6 +350,7 @@ Describe 'Job2 class API tests' -Tags 'CI' {
     It 'Verifies StopJob API' {
 
         $job = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 } -ThrottleLimit 5
+        Wait-ForJobRunning $job
         $job.StopJob($true, "No Reason")
         $job.JobStateInfo.State | Should -Be "Stopped"
     }
@@ -323,6 +358,7 @@ Describe 'Job2 class API tests' -Tags 'CI' {
     It 'Verifies StopJobAsync API' {
 
         $job = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 } -ThrottleLimit 5
+        Wait-ForJobRunning $job
         $job.StopJobAsync($true, "No Reason")
         Wait-Job $job
         $job.JobStateInfo.State | Should -Be "Stopped"
@@ -337,6 +373,7 @@ Describe 'Job2 class API tests' -Tags 'CI' {
 
         # StartJobAsync starts jobs synchronously for ThreadJob jobs
         $jobNotRunning.StartJobAsync()
+        Wait-ForJobRunning $jobNotRunning
         $jobNotRunning.JobStateInfo.State | Should -Be "Running"
     }
 
