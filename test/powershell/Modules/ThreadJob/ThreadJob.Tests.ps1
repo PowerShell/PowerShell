@@ -275,7 +275,6 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             $job2 = Start-ThreadJob -ScriptBlock { "Hello 2!" }
             $job3 = Start-ThreadJob -ScriptBlock { "Hello 3!" }
             $job4 = Start-ThreadJob -ScriptBlock { "Hello 4!" }
-            wait-forrunning $job4
 
             $job1,$job2,$job3,$job4 | Wait-Job
 
