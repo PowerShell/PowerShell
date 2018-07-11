@@ -5,8 +5,8 @@ using System;
 using System.IO;
 using System.Threading;
 using Markdig;
-using Markdig.Syntax;
 using Markdig.Renderers;
+using Markdig.Syntax;
 
 namespace Microsoft.PowerShell.MarkdownRender
 {
@@ -38,20 +38,21 @@ namespace Microsoft.PowerShell.MarkdownRender
 
             var paragraphBlock = block as ParagraphBlock;
 
-            if(paragraphBlock != null)
+            if (paragraphBlock != null)
             {
                 renderer.Write(indent).Write(listBullet).Write(" ").Write(paragraphBlock.Inline);
             }
-            else //If there is a sublist, the block is a ListBlock instead of ParagraphBlock.
+            else
             {
+                // If there is a sublist, the block is a ListBlock instead of ParagraphBlock.
                 var subList = block as ListBlock;
                 if (subList != null)
                 {
-                    foreach(var subListItem in subList)
+                    foreach (var subListItem in subList)
                     {
                         var subListItemBlock = subListItem as ListItemBlock;
 
-                        if(subListItemBlock != null)
+                        if (subListItemBlock != null)
                         {
                             foreach (var line in subListItemBlock)
                             {
@@ -67,16 +68,19 @@ namespace Microsoft.PowerShell.MarkdownRender
         // Typical padding is at most a screen's width, any more than that and we won't bother caching.
         private const int IndentCacheMax = 120;
         private static readonly string[] IndentCache = new string[IndentCacheMax];
+
         internal static string Padding(int countOfSpaces)
         {
             if (countOfSpaces >= IndentCacheMax)
+            {
                 return new string(' ', countOfSpaces);
+            }
 
             var result = IndentCache[countOfSpaces];
 
             if (result == null)
             {
-                Interlocked.CompareExchange(ref IndentCache[countOfSpaces], new string(' ', countOfSpaces), comparand:null);
+                Interlocked.CompareExchange(ref IndentCache[countOfSpaces], new string(' ', countOfSpaces), comparand : null);
                 result = IndentCache[countOfSpaces];
             }
 

@@ -4,8 +4,8 @@
 using System;
 using System.IO;
 using Markdig;
-using Markdig.Syntax.Inlines;
 using Markdig.Renderers;
+using Markdig.Syntax.Inlines;
 
 namespace Microsoft.PowerShell.MarkdownRender
 {
@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         protected override void Write(VT100Renderer renderer, LinkInline obj)
         {
             // Format link as image or link.
-            if(obj.IsImage)
+            if (obj.IsImage)
             {
                 renderer.Write(renderer.EscapeSequences.FormatImage(obj.FirstChild.ToString()));
             }

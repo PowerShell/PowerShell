@@ -4,12 +4,11 @@
 using System;
 using System.IO;
 using Markdig;
-using Markdig.Syntax.Inlines;
 using Markdig.Renderers;
+using Markdig.Syntax.Inlines;
 
 namespace Microsoft.PowerShell.MarkdownRender
 {
-
     /// <summary>
     /// Renderer for adding VT100 escape sequences for line breaks.
     /// </summary>
@@ -19,7 +18,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         {
             // If it is a hard line break add new line at the end.
             // Else, add a space for after the last character to improve readability.
-            if(obj.IsHard)
+            if (obj.IsHard)
             {
                 renderer.WriteLine();
             }

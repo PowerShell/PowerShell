@@ -4,8 +4,8 @@
 using System;
 using System.IO;
 using Markdig;
-using Markdig.Syntax.Inlines;
 using Markdig.Renderers;
+using Markdig.Syntax.Inlines;
 
 namespace Microsoft.PowerShell.MarkdownRender
 {
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.MarkdownRender
             // If the next sibling is null, then this is the last line in the paragraph.
             // Add new line character at the end.
             // Else just write without newline at the end.
-            if(obj.NextSibling == null)
+            if (obj.NextSibling == null)
             {
                 renderer.WriteLine(obj.ToString());
             }

@@ -4,8 +4,8 @@
 using System;
 using System.IO;
 using Markdig;
-using Markdig.Syntax;
 using Markdig.Renderers;
+using Markdig.Syntax;
 
 namespace Microsoft.PowerShell.MarkdownRender
 {
@@ -18,11 +18,11 @@ namespace Microsoft.PowerShell.MarkdownRender
         {
             foreach (var codeLine in obj.Lines.Lines)
             {
-                if (!String.IsNullOrWhiteSpace(codeLine.ToString()))
+                if (!string.IsNullOrWhiteSpace(codeLine.ToString()))
                 {
                     // If the code block is of type YAML, then tab to right to improve readability.
                     // This specifically helps for parameters help content.
-                    if (String.Equals(obj.Info, "yaml", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(obj.Info, "yaml", StringComparison.OrdinalIgnoreCase))
                     {
                         renderer.WriteLine("\t" + codeLine.ToString());
                     }

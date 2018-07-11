@@ -2,22 +2,22 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation;
+using System.Threading.Tasks;
 using Microsoft.PowerShell.MarkdownRender;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
+    /// Class for implementing Set-MarkdownOption cmdlet.
     /// </summary>
     [Cmdlet(
         VerbsCommon.Set, "MarkdownOption",
         DefaultParameterSetName = IndividualSetting,
-        HelpUri = "TBD"
-    )]
+        HelpUri = "TBD")]
     [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.MarkdownOptionInfo))]
     public class SetMarkdownOptionCommand : PSCmdlet
     {
@@ -26,83 +26,83 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string Header1Color { get; set;}
+        public string Header1Color { get; set; }
 
         /// <summary>
         /// Gets or sets the VT100 escape sequence for Header Level 2.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string Header2Color { get; set;}
+        public string Header2Color { get; set; }
 
         /// <summary>
         /// Gets or sets the VT100 escape sequence for Header Level 3.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string Header3Color { get; set;}
+        public string Header3Color { get; set; }
 
         /// <summary>
         /// Gets or sets the VT100 escape sequence for Header Level 4.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string Header4Color { get; set;}
+        public string Header4Color { get; set; }
 
         /// <summary>
         /// Gets or sets the VT100 escape sequence for Header Level 5.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string Header5Color { get; set;}
+        public string Header5Color { get; set; }
 
         /// <summary>
         /// Gets or sets the VT100 escape sequence for Header Level 6.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string Header6Color { get; set;}
+        public string Header6Color { get; set; }
 
         /// <summary>
         /// Gets or sets the VT100 escape sequence for code block background.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string Code { get; set;}
+        public string Code { get; set; }
 
         /// <summary>
         /// Gets or sets the VT100 escape sequence for image alt text foreground.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string ImageAltTextForegroundColor { get; set;}
+        public string ImageAltTextForegroundColor { get; set; }
 
         /// <summary>
         /// Gets or sets the VT100 escape sequence for link foreground.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string LinkForegroundColor { get; set;}
+        public string LinkForegroundColor { get; set; }
 
         /// <summary>
         /// Gets or sets the VT100 escape sequence for italics text foreground.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string ItalicsForegroundColor { get; set;}
+        public string ItalicsForegroundColor { get; set; }
 
         /// <summary>
         /// Gets or sets the VT100 escape sequence for bold text foreground.
         /// </summary>
         [ValidatePattern(@"^\[*[0-9;]*?m{1}")]
         [Parameter(ParameterSetName = IndividualSetting)]
-        public string BoldForegroundColor { get; set;}
+        public string BoldForegroundColor { get; set; }
 
         /// <summary>
         /// Gets or sets the switch to PassThru the values set.
         /// </summary>
-        [Parameter()]
-        public SwitchParameter PassThru { get; set;}
+        [Parameter]
+        public SwitchParameter PassThru { get; set; }
 
         /// <summary>
         /// Gets or sets the Theme.
@@ -110,14 +110,14 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = ThemeParamSet, Mandatory = true)]
         [ValidateSet(DarkThemeName, LightThemeName)]
-        public string Theme { get; set;}
+        public string Theme { get; set; }
 
         /// <summary>
         /// Gets or sets InputObject.
         /// </summary>
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = InputObjectParamSet, Mandatory = true, ValueFromPipeline = true)]
-        public PSObject InputObject { get; set;}
+        public PSObject InputObject { get; set; }
 
         private const string IndividualSetting = "IndividualSetting";
         private const string InputObjectParamSet = "InputObject";
@@ -133,28 +133,30 @@ namespace Microsoft.PowerShell.Commands
         {
             MarkdownOptionInfo mdOptionInfo = null;
 
-            switch(ParameterSetName)
+            switch (ParameterSetName)
             {
                 case ThemeParamSet:
                     mdOptionInfo = new MarkdownOptionInfo();
-                    if(string.Equals(Theme, LightThemeName, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(Theme, LightThemeName, StringComparison.OrdinalIgnoreCase))
                     {
                         mdOptionInfo.SetLightTheme();
                     }
-                    else if(string.Equals(Theme, DarkThemeName, StringComparison.OrdinalIgnoreCase))
+                    else if (string.Equals(Theme, DarkThemeName, StringComparison.OrdinalIgnoreCase))
                     {
                         mdOptionInfo.SetDarkTheme();
                     }
+
                     break;
 
                 case InputObjectParamSet:
-                    Object baseObj = InputObject.BaseObject;
+                    object baseObj = InputObject.BaseObject;
                     mdOptionInfo = baseObj as MarkdownOptionInfo;
 
-                    if(mdOptionInfo == null)
+                    if (mdOptionInfo == null)
                     {
                         throw new ArgumentException();
                     }
+
                     break;
 
                 case IndividualSetting:
@@ -174,57 +176,57 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetOptions(MarkdownOptionInfo mdOptionInfo)
         {
-            if (!String.IsNullOrEmpty(Header1Color))
+            if (!string.IsNullOrEmpty(Header1Color))
             {
                 mdOptionInfo.Header1 = Header1Color;
             }
 
-            if (!String.IsNullOrEmpty(Header2Color))
+            if (!string.IsNullOrEmpty(Header2Color))
             {
                 mdOptionInfo.Header2 = Header2Color;
             }
 
-            if (!String.IsNullOrEmpty(Header3Color))
+            if (!string.IsNullOrEmpty(Header3Color))
             {
                 mdOptionInfo.Header3 = Header3Color;
             }
 
-            if (!String.IsNullOrEmpty(Header4Color))
+            if (!string.IsNullOrEmpty(Header4Color))
             {
                 mdOptionInfo.Header4 = Header4Color;
             }
 
-            if (!String.IsNullOrEmpty(Header5Color))
+            if (!string.IsNullOrEmpty(Header5Color))
             {
                 mdOptionInfo.Header5 = Header5Color;
             }
 
-            if (!String.IsNullOrEmpty(Header6Color))
+            if (!string.IsNullOrEmpty(Header6Color))
             {
                 mdOptionInfo.Header6 = Header6Color;
             }
 
-            if (!String.IsNullOrEmpty(Code))
+            if (!string.IsNullOrEmpty(Code))
             {
                 mdOptionInfo.Code = Code;
             }
 
-            if (!String.IsNullOrEmpty(ImageAltTextForegroundColor))
+            if (!string.IsNullOrEmpty(ImageAltTextForegroundColor))
             {
                 mdOptionInfo.Image = ImageAltTextForegroundColor;
             }
 
-            if (!String.IsNullOrEmpty(LinkForegroundColor))
+            if (!string.IsNullOrEmpty(LinkForegroundColor))
             {
                 mdOptionInfo.Link = LinkForegroundColor;
             }
 
-            if (!String.IsNullOrEmpty(ItalicsForegroundColor))
+            if (!string.IsNullOrEmpty(ItalicsForegroundColor))
             {
                 mdOptionInfo.EmphasisItalics = ItalicsForegroundColor;
             }
 
-            if (!String.IsNullOrEmpty(BoldForegroundColor))
+            if (!string.IsNullOrEmpty(BoldForegroundColor))
             {
                 mdOptionInfo.EmphasisBold = BoldForegroundColor;
             }
@@ -236,15 +238,14 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(
         VerbsCommon.Get, "MarkdownOption",
-        HelpUri = "TBD"
-    )]
+        HelpUri = "TBD")]
     [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.MarkdownOptionInfo))]
     public class GetMarkdownOptionCommand : PSCmdlet
     {
         private const string MarkdownOptionInfoVariableName = "MarkdownOptionInfo";
 
         /// <summary>
-        /// Override endproessing.
+        /// Override EndProcessing.
         /// </summary>
         protected override void EndProcessing()
         {

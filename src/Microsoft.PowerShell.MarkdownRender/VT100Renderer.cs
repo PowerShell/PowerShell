@@ -4,19 +4,21 @@
 using System;
 using System.IO;
 using Markdig;
-using Markdig.Syntax;
 using Markdig.Renderers;
+using Markdig.Syntax;
 
 namespace Microsoft.PowerShell.MarkdownRender
 {
     /// <summary>
-    /// Implementation of the VT100 renderer.
+    /// Initializes an instance of the VT100 renderer.
     /// </summary>
     public sealed class VT100Renderer : TextRendererBase<VT100Renderer>
     {
         /// <summary>
-        /// Initialize the VT100 renderer with <param name="optionInfo"/> and write the output <param name="writer"/>.
+        /// Initializes a new instance of the <see cref="VT100Renderer"/> class.
         /// </summary>
+        /// <param name="writer">TextWriter to write to.</param>
+        /// <param name="optionInfo">MarkdownOptionInfo object with options.</param>
         public VT100Renderer(TextWriter writer, MarkdownOptionInfo optionInfo) : base(writer)
         {
             EscapeSequences = new VT100EscapeSequences(optionInfo);
@@ -36,8 +38,8 @@ namespace Microsoft.PowerShell.MarkdownRender
         }
 
         /// <summary>
-        /// Get the current escape sequences.
+        /// Gets the current escape sequences.
         /// </summary>
-        public VT100EscapeSequences EscapeSequences { get; private set;}
+        public VT100EscapeSequences EscapeSequences { get; private set; }
     }
 }

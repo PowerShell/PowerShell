@@ -2,12 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Threading.Tasks;
 using Microsoft.PowerShell.MarkdownRender;
 using Dbg = System.Management.Automation;
 
@@ -20,36 +20,35 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(
         VerbsData.ConvertFrom, "Markdown",
         DefaultParameterSetName = PathParameterSet,
-        HelpUri = "TBD"
-    )]
+        HelpUri = "TBD")]
     [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.MarkdownInfo))]
     public class ConvertFromMarkdownCommand : PSCmdlet
     {
         /// <summary>
-        /// Path to the file to convert from Markdown to MarkdownInfo.
+        /// Gets or sets path to the file to convert from markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = PathParameterSet, Mandatory = true)]
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Path to the file to convert from Markdown to MarkdownInfo.
+        /// Gets or sets the path to the file to convert from markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = LiteralPathParameterSet, Mandatory = true)]
         public string[] LiteralPath { get; set; }
 
         /// <summary>
-        /// InputObject of type System.IO.FileInfo or string with content to convert from Markdown to MarkdownInfo.
+        /// Gets or sets the InputObject of type System.IO.FileInfo or string with content to convert from markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = InputObjParamSet, Mandatory = true, ValueFromPipeline = true)]
         public PSObject InputObject { get; set; }
 
         /// <summary>
-        /// The Markdown document should be converted to a VT100 encoded string.
+        /// Gets or sets if the markdown document should be converted to a VT100 encoded string.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter AsVT100EncodedString { get; set; }
 
         private const string PathParameterSet = "PathParamSet";
@@ -59,13 +58,13 @@ namespace Microsoft.PowerShell.Commands
         private MarkdownOptionInfo mdOption = null;
 
         /// <summary>
-        /// Override BeginProcess.
+        /// Override BeginProcessing.
         /// </summary>
         protected override void BeginProcessing()
         {
-            mdOption = (SessionState.PSVariable.GetValue("MarkdownOptionInfo", new MarkdownOptionInfo())) as MarkdownOptionInfo;
+            mdOption = SessionState.PSVariable.GetValue("MarkdownOptionInfo", new MarkdownOptionInfo()) as MarkdownOptionInfo;
 
-            if(mdOption == null)
+            if (mdOption == null)
             {
                 throw new InvalidOperationException();
             }
@@ -84,18 +83,15 @@ namespace Microsoft.PowerShell.Commands
             switch (ParameterSetName)
             {
                 case InputObjParamSet:
-                    Object baseObj = InputObject.BaseObject;
+                    object baseObj = InputObject.BaseObject;
 
-                    //var fileInfo = baseObj as FileInfo;
                     if (baseObj is FileInfo fileInfo)
                     {
                         WriteObject(
                             MarkdownConverter.Convert(
                                 ReadContentFromFile(fileInfo.FullName).Result,
                                 conversionType,
-                                mdOption
-                            )
-                        );
+                                mdOption));
                     }
                     else if (baseObj is string inpObj)
                     {
@@ -112,6 +108,7 @@ namespace Microsoft.PowerShell.Commands
 
                         WriteError(errorRecord);
                     }
+
                     break;
 
                 case PathParameterSet:
@@ -136,8 +133,7 @@ namespace Microsoft.PowerShell.Commands
                             MarkdownConverter.Convert(
                                 ReadContentFromFile(resolvedPath).Result,
                                 conversionType,
-                                optionInfo)
-                        );
+                                optionInfo));
                 }
             }
         }
@@ -151,7 +147,6 @@ namespace Microsoft.PowerShell.Commands
                 string mdContent = await reader.ReadToEndAsync();
                 return mdContent;
             }
-
         }
 
         private List<string> ResolvePath(string path, bool isLiteral)
@@ -186,10 +181,12 @@ namespace Microsoft.PowerShell.Commands
             if (!provider.Name.Equals("FileSystem", StringComparison.OrdinalIgnoreCase))
             {
                 string errorMessage = StringUtil.Format(ConvertMarkdownStrings.FileSystemPathsOnly, path);
-                ErrorRecord errorRecord = new ErrorRecord(new ArgumentException(),
-                                                                "OnlyFileSystemPathsSupported",
-                                                                ErrorCategory.InvalidArgument,
-                                                                path);
+                ErrorRecord errorRecord = new ErrorRecord(
+                    new ArgumentException(),
+                    "OnlyFileSystemPathsSupported",
+                    ErrorCategory.InvalidArgument,
+                    path);
+
                 WriteError(errorRecord);
 
                 return null;

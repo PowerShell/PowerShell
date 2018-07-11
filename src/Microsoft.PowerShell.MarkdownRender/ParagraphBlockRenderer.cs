@@ -4,8 +4,8 @@
 using System;
 using System.IO;
 using Markdig;
-using Markdig.Syntax;
 using Markdig.Renderers;
+using Markdig.Syntax;
 
 namespace Microsoft.PowerShell.MarkdownRender
 {
@@ -18,6 +18,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         {
             // Call the renderer for children, leaf inline or line breaks.
             renderer.WriteChildren(obj.Inline);
+
             // Add new line at the end of the paragraph.
             renderer.WriteLine();
         }

@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
 using System.Collections;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Management.Automation;
 using Microsoft.PowerShell.MarkdownRender;
 
@@ -19,31 +19,31 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(
         VerbsCommon.Show, "Markdown",
-        HelpUri = "TBD"
-    )]
+        HelpUri = "TBD")]
     [OutputType(typeof(string))]
     public class ShowMarkdownCommand : PSCmdlet
     {
         /// <summary>
-        /// InputObject of type Microsoft.PowerShell.MarkdownRender.MarkdownInfo to display
+        /// Gets or sets InputObject of type Microsoft.PowerShell.MarkdownRender.MarkdownInfo to display.
         /// </summary>
         [ValidateNotNullOrEmpty]
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         public PSObject InputObject { get; set; }
 
         /// <summary>
-        /// Switch to view Html in default browser.
+        /// Gets or sets the switch to view Html in default browser.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter UseBrowser { get; set; }
 
         private SteppablePipeline stepPipe;
 
         /// <summary>
+        /// Override BeginProcessing.
         /// </summary>
         protected override void BeginProcessing()
         {
-            if(! this.MyInvocation.BoundParameters.ContainsKey("UseBrowser"))
+            if (!this.MyInvocation.BoundParameters.ContainsKey("UseBrowser"))
             {
                 // Since UseBrowser is not bound, we use proxy to Out-Default
                 stepPipe = ScriptBlock.Create(@"Microsoft.PowerShell.Core\Out-Default @PSBoundParameters").GetSteppablePipeline(this.MyInvocation.CommandOrigin);
@@ -52,11 +52,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Override ProcessRecord
+        /// Override ProcessRecord.
         /// </summary>
         protected override void ProcessRecord()
         {
-            Object inpObj = InputObject.BaseObject;
+            object inpObj = InputObject.BaseObject;
             var markdownInfo = inpObj as MarkdownInfo;
 
             if (markdownInfo == null)
@@ -75,15 +75,15 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var html = markdownInfo.Html;
 
-                    if (!String.IsNullOrEmpty(html))
+                    if (!string.IsNullOrEmpty(html))
                     {
-                        string tmpFilePath = Path.Combine(Path.GetTempPath(), (Guid.NewGuid().ToString() + ".html"));
+                        string tmpFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".html");
                         using (var writer = new StreamWriter(new FileStream(tmpFilePath, FileMode.Create, FileAccess.Write, FileShare.Write)))
                         {
                             writer.Write(html);
                         }
 
-                        if(OutputBypassTestHook)
+                        if (outputBypassTestHook)
                         {
                             WriteObject(html);
                             return;
@@ -116,15 +116,15 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var vt100String = markdownInfo.VT100EncodedString;
 
-                    if(!String.IsNullOrEmpty(vt100String))
+                    if (!string.IsNullOrEmpty(vt100String))
                     {
-                        if(OutputBypassTestHook)
+                        if (outputBypassTestHook)
                         {
                             WriteObject(vt100String);
                             return;
                         }
 
-                        if(stepPipe != null)
+                        if (stepPipe != null)
                         {
                             stepPipe.Process(vt100String);
                         }
@@ -148,21 +148,22 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if(stepPipe != null)
+            if (stepPipe != null)
             {
                 stepPipe.End();
             }
         }
 
-        private static bool OutputBypassTestHook = false;
+        private static bool outputBypassTestHook = false;
 
         /// <summary>
         /// Test hook to enable or disable launching of browser.
         /// When set, the converted output is returned.
         /// </summary>
+        /// <param name="value">True to enable test hook, false to disable.</param>
         public static void SetOutputBypassTestHook(bool value)
         {
-            OutputBypassTestHook = value;
+            outputBypassTestHook = value;
         }
     }
 }

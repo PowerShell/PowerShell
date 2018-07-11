@@ -4,8 +4,8 @@
 using System;
 using System.IO;
 using Markdig;
-using Markdig.Syntax;
 using Markdig.Renderers;
+using Markdig.Syntax;
 
 namespace Microsoft.PowerShell.MarkdownRender
 {
@@ -32,17 +32,17 @@ namespace Microsoft.PowerShell.MarkdownRender
     public class MarkdownInfo
     {
         /// <summary>
-        /// Html content after conversion.
+        /// Gets the Html content after conversion.
         /// </summary>
-        public string Html { get; internal set;}
+        public string Html { get; internal set; }
 
         /// <summary>
-        /// VT100 encoded string after conversion.
+        /// Gets the VT100 encoded string after conversion.
         /// </summary>
-        public string VT100EncodedString { get; internal set;}
+        public string VT100EncodedString { get; internal set; }
 
         /// <summary>
-        /// AST of the markdown string.
+        /// Gets the AST of the markdown string.
         /// </summary>
         public Markdig.Syntax.MarkdownDocument Tokens { get; internal set; }
     }
@@ -55,25 +55,27 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <summary>
         /// Convert from markdown string to VT100 encoded string or HTML. Returns MarkdownInfo object.
         /// </summary>
-        /// <param name="markdownString">string with markdown content to be converted</param>
-        /// <param name="conversionType">specifies type of conversion, either VT100 or HTML</param>
-        /// <param name="optionInfo">specifies the rendering options for VT100 rendering</param>
+        /// <param name="markdownString">String with markdown content to be converted.</param>
+        /// <param name="conversionType">Specifies type of conversion, either VT100 or HTML.</param>
+        /// <param name="optionInfo">Specifies the rendering options for VT100 rendering.</param>
+        /// <returns>MarkdownInfo object with the converted output.</returns>
         public static MarkdownInfo Convert(string markdownString, MarkdownConversionType conversionType, MarkdownOptionInfo optionInfo)
         {
             var renderInfo = new MarkdownInfo();
             var writer = new StringWriter();
             MarkdownPipeline pipeline = null;
 
-            if(conversionType.HasFlag(MarkdownConversionType.HTML))
+            if (conversionType.HasFlag(MarkdownConversionType.HTML))
             {
                 pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
                 var renderer = new Markdig.Renderers.HtmlRenderer(writer);
                 renderInfo.Html = Markdig.Markdown.Convert(markdownString, renderer, pipeline).ToString();
             }
 
-            if(conversionType.HasFlag(MarkdownConversionType.VT100))
+            if (conversionType.HasFlag(MarkdownConversionType.VT100))
             {
                 pipeline = new MarkdownPipelineBuilder().Build();
+
                 // Use the VT100 renderer.
                 var renderer = new VT100Renderer(writer, optionInfo);
                 renderInfo.VT100EncodedString = Markdig.Markdown.Convert(markdownString, renderer, pipeline).ToString();

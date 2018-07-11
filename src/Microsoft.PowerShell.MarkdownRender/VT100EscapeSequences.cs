@@ -4,8 +4,8 @@
 using System;
 using System.IO;
 using Markdig;
-using Markdig.Syntax;
 using Markdig.Renderers;
+using Markdig.Syntax;
 
 namespace Microsoft.PowerShell.MarkdownRender
 {
@@ -14,60 +14,60 @@ namespace Microsoft.PowerShell.MarkdownRender
     /// </summary>
     public sealed class MarkdownOptionInfo
     {
-        private const char Esc = (char) 0x1b;
+        private const char Esc = (char)0x1b;
 
         /// <summary>
-        /// Current VT100 escape sequence for header 1.
+        /// Gets or sets current VT100 escape sequence for header 1.
         /// </summary>
         public string Header1 { get; set; }
 
         /// <summary>
-        /// Current VT100 escape sequence for header 2.
+        /// Gets or sets current VT100 escape sequence for header 2.
         /// </summary>
         public string Header2 { get; set; }
 
         /// <summary>
-        /// Current VT100 escape sequence for header 3.
+        /// Gets or sets current VT100 escape sequence for header 3.
         /// </summary>
         public string Header3 { get; set; }
 
         /// <summary>
-        /// Current VT100 escape sequence for header 4.
+        /// Gets or sets current VT100 escape sequence for header 4.
         /// </summary>
         public string Header4 { get; set; }
 
         /// <summary>
-        /// Current VT100 escape sequence for header 5.
+        /// Gets or sets current VT100 escape sequence for header 5.
         /// </summary>
         public string Header5 { get; set; }
 
         /// <summary>
-        /// Current VT100 escape sequence for header 6.
+        /// Gets or sets current VT100 escape sequence for header 6.
         /// </summary>
         public string Header6 { get; set; }
 
         /// <summary>
-        /// Current VT100 escape sequence for code inline and code blocks.
+        /// Gets or sets current VT100 escape sequence for code inline and code blocks.
         /// </summary>
         public string Code { get; set; }
 
         /// <summary>
-        /// Current VT100 escape sequence for links.
+        /// Gets or sets current VT100 escape sequence for links.
         /// </summary>
         public string Link { get; set; }
 
         /// <summary>
-        /// Current VT100 escape sequence for images.
+        /// Gets or sets current VT100 escape sequence for images.
         /// </summary>
         public string Image { get; set; }
 
         /// <summary>
-        /// Current VT100 escape sequence for bold text.
+        /// Gets or sets current VT100 escape sequence for bold text.
         /// </summary>
         public string EmphasisBold { get; set; }
 
         /// <summary>
-        /// Current VT100 escape sequence for italics text.
+        /// Gets or sets current VT100 escape sequence for italics text.
         /// </summary>
         public string EmphasisItalics { get; set; }
 
@@ -75,11 +75,13 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// Get the property as an rendered escape sequence.
         /// This is used for typesps1xml for displaying.
         /// </summary>
+        /// <param name="propertyName">Name of the property to get as escape sequence.</param>
+        /// <returns>Specified property name as escape sequence.</returns>
         public string AsEscapeSequence(string propertyName)
         {
             var propertyValue = this.GetType().GetProperty(propertyName)?.GetValue(this) as string;
 
-            if(!String.IsNullOrEmpty(propertyValue))
+            if (!string.IsNullOrEmpty(propertyValue))
             {
                 return string.Concat(Esc, propertyValue, propertyValue, Esc, "[0m");
             }
@@ -90,7 +92,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         }
 
         /// <summary>
-        /// Set dark as the default theme.
+        /// Initializes a new instance of <see cref="MarkdownOptionInfo"/> class and sets dark as the default theme.
         /// </summary>
         public MarkdownOptionInfo()
         {
@@ -134,23 +136,24 @@ namespace Microsoft.PowerShell.MarkdownRender
         }
     }
 
-    ///<summary>
-    /// Class to represent default VT100 escape sequences
-    ///</summary>
+    /// <summary>
+    /// Class to represent default VT100 escape sequences.
+    /// </summary>
     public class VT100EscapeSequences
     {
-        private const char Esc = (char) 0x1B;
+        private const char Esc = (char)0x1B;
 
-        private string EndSequence = Esc + "[0m";
+        private string endSequence = Esc + "[0m";
 
         private MarkdownOptionInfo options;
 
         /// <summary>
-        /// Set the options as per <param name="optionInfo"/>
+        /// Initializes a new instance of the <see cref="VT100EscapeSequences"/> class.
         /// </summary>
+        /// <param name="optionInfo">MarkdownOptionInfo object to initialize with.</param>
         public VT100EscapeSequences(MarkdownOptionInfo optionInfo)
         {
-            if(optionInfo == null)
+            if (optionInfo == null)
             {
                 throw new ArgumentNullException("optionInfo");
             }
@@ -158,100 +161,124 @@ namespace Microsoft.PowerShell.MarkdownRender
             options = optionInfo;
         }
 
-        ///<summary>
-        /// Class to represent default VT100 escape sequences
-        ///</summary>
+        /// <summary>
+        /// Class to represent default VT100 escape sequences.
+        /// </summary>
+        /// <param name="headerText">Text of the header to format.</param>
+        /// <returns>Formatted Header 1 string.</returns>
         public string FormatHeader1(string headerText)
         {
-            return String.Concat(Esc, options.Header1, headerText, EndSequence);
+            return string.Concat(Esc, options.Header1, headerText, endSequence);
         }
 
-        ///<summary>
-        /// Class to represent default VT100 escape sequences
-        ///</summary>
+        /// <summary>
+        /// Class to represent default VT100 escape sequences.
+        /// </summary>
+        /// <param name="headerText">Text of the header to format.</param>
+        /// <returns>Formatted Header 2 string.</returns>
         public string FormatHeader2(string headerText)
         {
-            return String.Concat(Esc, options.Header2, headerText, EndSequence);
+            return string.Concat(Esc, options.Header2, headerText, endSequence);
         }
 
-        ///<summary>
-        /// Class to represent default VT100 escape sequences
-        ///</summary>
+        /// <summary>
+        /// Class to represent default VT100 escape sequences.
+        /// </summary>
+        /// <param name="headerText">Text of the header to format.</param>
+        /// <returns>Formatted Header 3 string.</returns>
         public string FormatHeader3(string headerText)
         {
-            return String.Concat(Esc, options.Header3, headerText, EndSequence);
+            return string.Concat(Esc, options.Header3, headerText, endSequence);
         }
 
-        ///<summary>
-        /// Class to represent default VT100 escape sequences
-        ///</summary>
+        /// <summary>
+        /// Class to represent default VT100 escape sequences.
+        /// </summary>
+        /// <param name="headerText">Text of the header to format.</param>
+        /// <returns>Formatted Header 4 string.</returns>
         public string FormatHeader4(string headerText)
         {
-            return String.Concat(Esc, options.Header4, headerText, EndSequence);
+            return string.Concat(Esc, options.Header4, headerText, endSequence);
         }
 
-        ///<summary>
-        /// Class to represent default VT100 escape sequences
-        ///</summary>
+        /// <summary>
+        /// Class to represent default VT100 escape sequences.
+        /// </summary>
+        /// <param name="headerText">Text of the header to format.</param>
+        /// <returns>Formatted Header 5 string.</returns>
         public string FormatHeader5(string headerText)
         {
-            return String.Concat(Esc, options.Header5, headerText, EndSequence);
+            return string.Concat(Esc, options.Header5, headerText, endSequence);
         }
 
-        ///<summary>
-        /// Class to represent default VT100 escape sequences
-        ///</summary>
+        /// <summary>
+        /// Class to represent default VT100 escape sequences.
+        /// </summary>
+        /// <param name="headerText">Text of the header to format.</param>
+        /// <returns>Formatted Header 6 string.</returns>
         public string FormatHeader6(string headerText)
         {
-            return String.Concat(Esc, options.Header6, headerText, EndSequence);
+            return string.Concat(Esc, options.Header6, headerText, endSequence);
         }
 
-        ///<summary>
-        /// Class to represent default VT100 escape sequences
-        ///</summary>
+        /// <summary>
+        /// Class to represent default VT100 escape sequences.
+        /// </summary>
+        /// <param name="codeText">Text of the code block to format.</param>
+        /// <param name="isInline">True if it is a inline code block, false otherwise.</param>
+        /// <returns>Formatted code block string.</returns>
         public string FormatCode(string codeText, bool isInline)
         {
-            if(isInline)
+            if (isInline)
             {
-                return String.Concat(Esc, options.Code, codeText, EndSequence);
+                return string.Concat(Esc, options.Code, codeText, endSequence);
             }
             else
             {
                 // For code blocks, [500@ make sure that the whole line has background color.
-                return String.Concat(Esc, options.Code, codeText, Esc, "[500@", EndSequence);
+                return string.Concat(Esc, options.Code, codeText, Esc, "[500@", endSequence);
             }
         }
 
-        ///<summary>
-        /// Class to represent default VT100 escape sequences
-        ///</summary>
+        /// <summary>
+        /// Class to represent default VT100 escape sequences.
+        /// </summary>
+        /// <param name="linkText">Text of the link to format.</param>
+        /// <param name="url">URL of the link.</param>
+        /// <param name="hideUrl">True url should be hidden, false otherwise. Default is true.</param>
+        /// <returns>Formatted link string.</returns>
         public string FormatLink(string linkText, string url, bool hideUrl = true)
         {
-            if(hideUrl)
+            if (hideUrl)
             {
-                return String.Concat(Esc, options.Link, "\"", linkText, "\"", EndSequence);
+                return string.Concat(Esc, options.Link, "\"", linkText, "\"", endSequence);
             }
             else
             {
-                return String.Concat("\"", linkText, "\" (", Esc, options.Link, url, EndSequence, ")");
+                return string.Concat("\"", linkText, "\" (", Esc, options.Link, url, endSequence, ")");
             }
         }
 
-        ///<summary>
-        /// Class to represent default VT100 escape sequences
-        ///</summary>
+        /// <summary>
+        /// Class to represent default VT100 escape sequences.
+        /// </summary>
+        /// <param name="emphasisText">Text to format as emphasis.</param>
+        /// <param name="isBold">True if it is to be formatted as bold, false to format it as italics.</param>
+        /// <returns>Formatted emphasis string.</returns>
         public string FormatEmphasis(string emphasisText, bool isBold)
         {
             var sequence = isBold ? options.EmphasisBold : options.EmphasisItalics;
-            return String.Concat(Esc, sequence, emphasisText, EndSequence);
+            return string.Concat(Esc, sequence, emphasisText, endSequence);
         }
 
-        ///<summary>
-        /// Class to represent default VT100 escape sequences
-        ///</summary>
+        /// <summary>
+        /// Class to represent default VT100 escape sequences.
+        /// </summary>
+        /// <param name="altText">Text of the image to format.</param>
+        /// <returns>Formatted image string.</returns>
         public string FormatImage(string altText)
         {
-            return String.Concat(Esc, options.Image, "[", altText, "]", EndSequence);
+            return string.Concat(Esc, options.Image, "[", altText, "]", endSequence);
         }
     }
 }
