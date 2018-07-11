@@ -5,11 +5,18 @@ $script:oldModulePath = $env:PSModulePath
 
 function Add-ModulePath
 {
-    param([string]$Path)
+    param([string]$Path, [switch]$Prepend)
 
     $script:oldModulePath = $env:PSModulePath
 
-    $env:PSModulePath = $env:PSModulePath + [System.IO.Path]::PathSeparator + $Path
+    if ($Prepend)
+    {
+        $env:PSModulePAth = $Path + [System.IO.Path]::PathSeparator + $env:PSModulePath
+    }
+    else
+    {
+        $env:PSModulePath = $env:PSModulePath + [System.IO.Path]::PathSeparator + $Path
+    }
 }
 
 function Restore-ModulePath
@@ -83,7 +90,6 @@ Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
     }
 
     AfterAll {
-        Remove-Item -Force -Recurse $basePath
         [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $null)
     }
 
@@ -179,7 +185,6 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
     }
 
     AfterAll {
-        Remove-Item -Force -Recurse $basePath
         [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $null)
     }
 
@@ -247,6 +252,17 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 }
 
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
+<<<<<<< Updated upstream
+=======
+    BeforeAll {
+        Add-ModulePath (Join-Path $env:windir "System32\WindowsPowerShell\v1.0\Modules") -Prepend
+    }
+
+    AfterAll {
+        Restore-ModulePath
+    }
+
+>>>>>>> Stashed changes
     It "Allows Windows PowerShell subprocesses to call `$PSHome modules still" -Skip:(-not $IsWindows) {
         $errors = powershell.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
         $errors | Should -Be $null

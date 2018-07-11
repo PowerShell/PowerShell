@@ -2333,7 +2333,7 @@ namespace Microsoft.PowerShell.Commands
             // On Windows, we want to include any modules under %WINDIR%\System32\WindowsPowerShell\v1.0\Modules
             // that have declared compatibility with PS Core (or if the check is skipped)
             IEnumerable<string> inferredCompatiblePSEditions = compatiblePSEditions ?? DefaultCompatiblePSEditions;
-            if (!IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions, out bool isOnSystem32ModulePath))
+            if (!IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions, out bool doesModuleDeclareIsCompatible))
             {
                 containedErrors = true;
 
@@ -2370,7 +2370,7 @@ namespace Microsoft.PowerShell.Commands
                     return new PSModuleInfo(moduleManifestPath, context: null, sessionState: null)
                     {
                         HadErrorsLoading = true,
-                        IsLoadedFromCompatibilityCheckedPath = isOnSystem32ModulePath
+                        IsCompatibleWithCurrentEdition = false,
                     };
                 }
             }
@@ -2468,7 +2468,7 @@ namespace Microsoft.PowerShell.Commands
             manifestInfo.Copyright = copyright;
             manifestInfo.DotNetFrameworkVersion = requestedDotNetFrameworkVersion;
             manifestInfo.ClrVersion = requestedClrVersion;
-            manifestInfo.IsLoadedFromCompatibilityCheckedPath = isOnSystem32ModulePath;
+            manifestInfo.IsCompatibleWithCurrentEdition = doesModuleDeclareIsCompatible;
             manifestInfo.PowerShellHostName = requestedHostName;
             manifestInfo.PowerShellHostVersion = requestedHostVersion;
             manifestInfo.PowerShellVersion = powerShellVersion;
@@ -3069,7 +3069,7 @@ namespace Microsoft.PowerShell.Commands
                 newManifestInfo.LicenseUri = manifestInfo.LicenseUri;
                 newManifestInfo.IconUri = manifestInfo.IconUri;
                 newManifestInfo.RepositorySourceLocation = manifestInfo.RepositorySourceLocation;
-                newManifestInfo.IsLoadedFromCompatibilityCheckedPath = manifestInfo.IsLoadedFromCompatibilityCheckedPath;
+                newManifestInfo.IsCompatibleWithCurrentEdition = manifestInfo.IsCompatibleWithCurrentEdition;
 
                 // If we are in module discovery, then fix the path.
                 if (ss == null)
@@ -3378,29 +3378,28 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="moduleManifestPath">The path to the module manifest being checked.</param>
         /// <param name="compatiblePSEditions">The value of the CompatiblePSEditions field of the module manifest.</param>
-        /// <param name="isOnSystem32ModulePath">
-        /// True if the module is being loaded from the Windows PowerShell $PSHOME module path (under %WINDIR%\System32), false otherwise.
+        /// <param name="doesModuleDeclareIsCompatible">
+        /// True if the module itself declares it is compatible with the current edition, false otherwise.
+        /// This can be false and the method return true if the module did not come from the system32 path.
         /// </param>
         /// <returns>True if the module is compatible with the running PowerShell edition, false otherwise.</returns>
         private bool IsPSEditionCompatible(
             string moduleManifestPath,
             IEnumerable<string> compatiblePSEditions,
-            out bool isOnSystem32ModulePath)
+            out bool doesModuleDeclareIsCompatible)
         {
-            isOnSystem32ModulePath = false;
-
 #if UNIX
+            doesModuleDeclareIsCompatible = true;
             return true;
 #else
+            doesModuleDeclareIsCompatible = Utils.IsPSEditionSupported(compatiblePSEditions);
 
-            if (!ModuleUtils.ShouldCheckEditionOfModulesOnPath(moduleManifestPath))
+            if (!ModuleUtils.IsOnSystem32ModulePath(moduleManifestPath))
             {
                 return true;
             }
 
-            isOnSystem32ModulePath = true;
-
-            return BaseSkipEditionCheck || Utils.IsPSEditionSupported(compatiblePSEditions);
+            return doesModuleDeclareIsCompatible || BaseSkipEditionCheck;
 #endif
         }
 

@@ -847,11 +847,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Indicates whether this module has been loaded from a path where its compatibility should be checked.
-        /// If true, this module's CompatiblePSEditions should be checked against the current PowerShell Edition
-        /// before it is shown by cmdlets like Get-Module -ListAvailable.
+        /// Describes whether the module is compatible with the current PowerShell edition,
+        /// as determined by the module's CompatiblePSEditions field and the path is was loaded from.
         /// </summary>
-        internal bool IsLoadedFromCompatibilityCheckedPath { get; set; } = false;
+        internal bool IsCompatibleWithCurrentEdition { get; set; }
 
         /// <summary>
         /// ModuleList

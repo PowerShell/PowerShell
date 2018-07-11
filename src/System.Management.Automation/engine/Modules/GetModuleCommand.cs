@@ -87,7 +87,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// When set, CompatiblePSEditions checking is disabled for modules in the System32 (Windows PowerShell) module directory.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = ParameterSet_AvailableLocally)]
+        [Parameter(ParameterSetName = ParameterSet_AvailableInPsrpSession)]
+        [Parameter(ParameterSetName = ParameterSet_AvailableInCimSession)]
         public SwitchParameter SkipEditionCheck
         {
             get { return (SwitchParameter)BaseSkipEditionCheck; }
@@ -351,6 +353,18 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
+            // -SkipEditionCheck only makes sense for -ListAvailable (otherwise the module is already loaded)
+            if (SkipEditionCheck && !ListAvailable)
+            {
+                ErrorRecord error = new ErrorRecord(
+                    new InvalidOperationException("-SkipEditionCheck can only be used with -ListAvailable"),
+                    "SkipEditionCheckCannotBeSpecifiedWithoutListAvailable",
+                    ErrorCategory.InvalidOperation,
+                    targetObject: null);
+
+                ThrowTerminatingError(error);
+            }
+
             var strNames = new List<string>();
             if (Name != null)
             {
@@ -522,14 +536,13 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (PSModuleInfo module in modules)
             {
-                if (!module.IsLoadedFromCompatibilityCheckedPath)
+                if (!ModuleUtils.IsOnSystem32ModulePath(module.ModuleBase))
                 {
                     yield return module;
                     continue;
                 }
 
-                IEnumerable<string> moduleCompatibleEditions = module.CompatiblePSEditions.Any() ? module.CompatiblePSEditions : DefaultCompatiblePSEditions;
-                if (Utils.IsPSEditionSupported(moduleCompatibleEditions))
+                if (module.IsCompatibleWithCurrentEdition)
                 {
                     yield return module;
                 }

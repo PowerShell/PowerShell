@@ -413,10 +413,12 @@ namespace System.Management.Automation
             if (!loadedModulesOnly)
             {
                 powershell.AddParameter("ListAvailable", true);
-            }
-            if (skipEditionCheck)
-            {
-                powershell.AddParameter("SkipEditionCheck", true);
+
+                // -SkipEditionCheck should only be set or apply to -ListAvailable
+                if (skipEditionCheck)
+                {
+                    powershell.AddParameter("SkipEditionCheck", true);
+                }
             }
 
             Exception exceptionThrown;
@@ -2105,7 +2107,7 @@ namespace System.Management.Automation
                 case "Get-Module":
                     {
                         bool loadedModulesOnly = boundArguments == null || !boundArguments.ContainsKey("ListAvailable");
-                        bool skipEditionCheck = boundArguments != null && boundArguments.ContainsKey("SkipEditionCheck");
+                        bool skipEditionCheck = !loadedModulesOnly && boundArguments.ContainsKey("SkipEditionCheck");
                         NativeCompletionModuleCommands(context, parameterName, result, loadedModulesOnly, skipEditionCheck: skipEditionCheck);
                         break;
                     }

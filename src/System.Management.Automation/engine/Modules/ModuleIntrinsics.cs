@@ -916,10 +916,9 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(newModulePathString))
             {
-// If on Windows, we want to add the System32
-// Windows PowerShell module directory
-// so that Windows modules are discovered
 #if !UNIX
+                // If on Windows, we want to add the System32 Windows PowerShell module directory
+                // so that Windows modules are discoverable
                 newModulePathString += Path.PathSeparator + GetWindowsPowerShellPSHomeModulePath();
 #endif
 

@@ -347,7 +347,7 @@ namespace System.Management.Automation.Internal
         }
 
 #if !UNIX
-        internal static bool ShouldCheckEditionOfModulesOnPath(string path)
+        internal static bool IsOnSystem32ModulePath(string path)
         {
             Dbg.Assert(!String.IsNullOrEmpty(path), $"Caller to verify that {nameof(path)} is not null or empty");
 
