@@ -1029,9 +1029,10 @@ namespace System.Management.Automation
         {
             // If user defines a custom cache path, then use that.
             string userDefinedCachePath = Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath");
-            if (!String.IsNullOrEmpty(userDefinedCachePath))
+            if (!string.IsNullOrEmpty(userDefinedCachePath))
             {
                 s_cacheStoreLocation = userDefinedCachePath;
+                return;
             }
 
             string cacheFileName = "ModuleAnalysisCache";
@@ -1057,7 +1058,7 @@ namespace System.Management.Automation
                 string allNames = string.Join(Environment.NewLine, featureNames);
 
                 // Use SHA1 because it's faster.
-                // It's very unlikely to get colision from hashing the combinations of enabled features names.
+                // It's very unlikely to get collision from hashing the combinations of enabled features names.
                 byte[] hashBytes;
                 using (var sha1 = SHA1.Create())
                 {
