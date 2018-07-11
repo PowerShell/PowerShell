@@ -2956,61 +2956,61 @@ namespace System.Management.Automation.Runspaces
         private const uint FileNotFoundHResult = 0x80070002;
 
         // The list of executable to try in order
-        private static readonly string[] Executables = new string[]{"pwsh.exe","powershell.exe"};
+        private static readonly string[] Executables = new string[] { "pwsh.exe", "powershell.exe"};
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// For Hyper-V container, it is Guid of utility VM hosting Hyper-V container.
+        /// Gets or Sets, for Hyper-V container, the Guid of utility VM hosting Hyper-V container.
         /// For Windows Server Container, it is empty.
         /// </summary>
         public Guid RuntimeId { get; set; }
 
         /// <summary>
-        /// OB root of the container.
+        /// Gets or sets the OB root of the container.
         /// </summary>
         public string ContainerObRoot { get; set; }
 
         /// <summary>
-        /// ID of the container.
+        /// Gets or sets the ID of the container.
         /// </summary>
         public string ContainerId { get; set; }
 
         /// <summary>
-        /// Process ID of the process created in container.
+        /// Gets or sets the process ID of the process created in container.
         /// </summary>
         internal int ProcessId { get; set; }
 
         /// <summary>
-        /// Whether the process in container should be launched as high privileged account
+        /// Gets or sets whether the process in container should be launched as high privileged account
         /// (RunAsAdmin being true) or low privileged account (RunAsAdmin being false).
         /// </summary>
         internal bool RunAsAdmin { get; set; } = false;
 
         /// <summary>
-        /// The configuration name of the container session.
+        /// Gets or sets the configuration name of the container session.
         /// </summary>
         internal string ConfigurationName { get; set; }
 
         /// <summary>
-        /// Whether the process in container has terminated.
+        /// Gets or sets whether the process in container has terminated.
         /// </summary>
         internal bool ProcessTerminated { get; set; } = false;
 
         /// <summary>
-        /// The error code.
+        /// Gets or sets the error code.
         /// </summary>
         internal uint ErrorCode { get; set; } = 0;
 
         /// <summary>
-        /// The error message for other errors.
+        /// Gets or sets the error message for other errors.
         /// </summary>
         internal string ErrorMessage { get; set; } = string.Empty;
 
         /// <summary>
-        /// The PowerShell executable being used to host the runspace.
+        /// Gets or sets the PowerShell executable being used to host the runspace.
         /// </summary>
         internal string Executable { get; set; } = string.Empty;
 
@@ -3223,7 +3223,7 @@ namespace System.Management.Automation.Runspaces
                     // expected to be PowerShell Core as it's inbox in the container.
                     // If `pwsh.exe` does not exist, fall back to `powershell.exe` which is Windows PowerShell.
                     //
-                    foreach(string executableToTry in Executables)
+                    foreach (string executableToTry in Executables)
                     {
                         cmd = GetContainerProcessCommand(executableToTry);
 
@@ -3237,8 +3237,10 @@ namespace System.Management.Automation.Runspaces
                         if (result == 0)
                         {
                             processId = Convert.ToInt32(ProcessInformation.ProcessId);
+
                             // Reset error to 0 in case this is not the first iteration of the loop.
                             error = 0;
+
                             // the process was started, exit the loop.
                             break;
                         }
@@ -3255,6 +3257,7 @@ namespace System.Management.Automation.Runspaces
                         {
                             processId = 0;
                             error = result;
+
                             // the executable was found but did not work
                             // exit the loop with the error state.
                             break;
@@ -3291,15 +3294,18 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Get Command to launch container process based on instance properties.
         /// </summary>
+        /// <param name="executable">The name of the executable to use in the command.</param>
+        /// <returns>The command to launch the container process.</returns>
         private string GetContainerProcessCommand(string executable)
         {
             Executable = executable;
-            return string.Format(System.Globalization.CultureInfo.InvariantCulture,
+            return string.Format(
+                        System.Globalization.CultureInfo.InvariantCulture,
                         @"{{""CommandLine"": ""{0} {1} -NoLogo {2}"",""RestrictedToken"": {3}}}",
                         Executable, 
                         (RuntimeId != Guid.Empty) ? "-SocketServerMode -NoProfile" : "-NamedPipeServerMode",
-                        String.IsNullOrEmpty(ConfigurationName) ? String.Empty : String.Concat("-Config ", ConfigurationName),
-                        (RunAsAdmin) ? "false" : "true");
+                        string.IsNullOrEmpty(ConfigurationName) ? string.Empty : string.Concat("-Config ", ConfigurationName),
+                        RunAsAdmin ? "false" : "true");
         }
 
         /// <summary>
