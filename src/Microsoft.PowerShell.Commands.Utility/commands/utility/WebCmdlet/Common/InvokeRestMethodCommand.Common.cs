@@ -30,8 +30,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// gets or sets the parameter CustomMethod
         /// </summary>
-        [Parameter(Mandatory=true,ParameterSetName = "CustomMethod")]
-        [Parameter(Mandatory=true,ParameterSetName = "CustomMethodNoProxy")]
+        [Parameter(Mandatory = true, ParameterSetName = "CustomMethod")]
+        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
         public override string CustomMethod

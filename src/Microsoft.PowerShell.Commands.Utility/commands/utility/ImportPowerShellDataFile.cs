@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=623621", RemotingCapability = RemotingCapability.None)]
     public class ImportPowerShellDataFileCommand : PSCmdlet
     {
-        bool _isLiteralPath;
+        private bool _isLiteralPath;
 
         /// <summary>
         /// Path specified, using globbing to resolve
@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByLiteralPath", ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (var path in Path)
             {
                 var resolved = PathUtils.ResolveFilePath(path, this, _isLiteralPath);
-                if(!string.IsNullOrEmpty(resolved) && System.IO.File.Exists(resolved))
+                if (!string.IsNullOrEmpty(resolved) && System.IO.File.Exists(resolved))
                 {
                     Token[] tokens;
                     ParseError[] errors;
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
             WriteError(errorRecord);
         }
 
-        void WriteInvalidDataFileError(string resolvedPath, string errorId)
+        private void WriteInvalidDataFileError(string resolvedPath, string errorId)
         {
             var errorCategory = ErrorCategory.InvalidData;
             var errorMessage = string.Format(UtilityResources.CouldNotParseAsPowerShellDataFile, resolvedPath);

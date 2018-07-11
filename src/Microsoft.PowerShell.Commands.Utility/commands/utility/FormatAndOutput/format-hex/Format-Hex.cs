@@ -15,9 +15,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Displays the hexidecimal equivalent of the input data.
     /// </summary>
-    [Cmdlet(VerbsCommon.Format, "Hex", SupportsShouldProcess = true, HelpUri ="https://go.microsoft.com/fwlink/?LinkId=526919")]
+    [Cmdlet(VerbsCommon.Format, "Hex", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526919")]
     [OutputType(typeof(Microsoft.PowerShell.Commands.ByteCollection))]
-    [Alias ("fhx")]
+    [Alias("fhx")]
     public sealed class FormatHex : PSCmdlet
     {
         private const int BUFFERSIZE = 16;
@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty()]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public string[] LiteralPath { get; set; }
 
         /// <summary>

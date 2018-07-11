@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell.Commands
                 _allStats = value;
             }
         }
-        
+
         private bool _allStats;
 
         /// <summary>
@@ -483,7 +483,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // finally call the base class.
-            base.BeginProcessing();            
+            base.BeginProcessing();
         }
 
         /// <summary>

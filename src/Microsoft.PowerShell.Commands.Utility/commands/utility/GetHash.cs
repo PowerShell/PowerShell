@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, ParameterSetName = LiteralPathParameterSet, Position = 0, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public String[] LiteralPath
         {
             get
@@ -275,21 +275,21 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// FileHashInfo class contains information about a file hash
     /// </summary>
-     public class FileHashInfo
-     {
+    public class FileHashInfo
+    {
         /// <summary>
         /// Hash algorithm name
         /// </summary>
-        public string Algorithm { get; set;}
+        public string Algorithm { get; set; }
 
         /// <summary>
         /// Hash value
         /// </summary>
-        public string Hash { get; set;}
+        public string Hash { get; set; }
 
         /// <summary>
         /// File path
         /// </summary>
-        public string Path { get; set;}
-     }
+        public string Path { get; set; }
+    }
 }

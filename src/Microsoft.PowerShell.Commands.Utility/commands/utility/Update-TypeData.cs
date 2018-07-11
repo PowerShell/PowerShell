@@ -976,11 +976,11 @@ namespace Microsoft.PowerShell.Commands
                     if (entries.Count > 0)
                     {
                         Context.FormatDBManager.UpdateDataBase(entries, this.Context.AuthorizationManager, this.Context.EngineHostInterface, false);
-                        FormatAndTypeDataHelper.ThrowExceptionOnError( "ErrorsUpdatingFormats",
+                        FormatAndTypeDataHelper.ThrowExceptionOnError("ErrorsUpdatingFormats",
                             null,
                             entries,
                             RunspaceConfigurationCategory.Formats);
-                     }
+                    }
                 }
                 catch (RuntimeException e)
                 {

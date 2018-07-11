@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if(_headers == null)
+                if (_headers == null)
                 {
                     _headers = WebResponseHelper.GetHeadersDictionary(BaseResponse);
                 }

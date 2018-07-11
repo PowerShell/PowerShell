@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     [Alias("ral")]
     public class RemoveAliasCommand : PSCmdlet
     {
-         #region Parameters
+        #region Parameters
 
         /// <summary>
         /// The alias name to remove.
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            foreach(string aliasName in Name)
+            foreach (string aliasName in Name)
             {
                 AliasInfo existingAlias = null;
                 if (String.IsNullOrEmpty(Scope))
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     ItemNotFoundException notAliasFound = new ItemNotFoundException(StringUtil.Format(AliasCommandStrings.NoAliasFound, "name", aliasName));
-                    ErrorRecord error = new ErrorRecord(notAliasFound, "ItemNotFoundException",ErrorCategory.ObjectNotFound, aliasName);
+                    ErrorRecord error = new ErrorRecord(notAliasFound, "ItemNotFoundException", ErrorCategory.ObjectNotFound, aliasName);
                     WriteError(error);
                 }
             }

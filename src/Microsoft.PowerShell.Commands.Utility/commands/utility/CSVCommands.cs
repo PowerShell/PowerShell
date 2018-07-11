@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter()]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string LiteralPath
         {
@@ -544,7 +544,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
@@ -1265,10 +1265,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     values[0] = values[0].Substring(9);
                     Header = values;
-                } else if (values.Count != 0 && values[0].StartsWith("#"))
+                }
+                else if (values.Count != 0 && values[0].StartsWith("#"))
                 {
                     // Skip all lines starting with '#'
-                } else
+                }
+                else
                 {
                     // This is not W3C Extended Log File Format
                     // By default first line is Header
