@@ -44,8 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            //if (!this.MyInvocation.BoundParameters.ContainsKey("UseBrowser"))
-            if(!UseBrowser.IsPresent)
+            if (!UseBrowser.IsPresent)
             {
                 // Since UseBrowser is not bound, we use proxy to Out-Default
                 stepPipe = ScriptBlock.Create(@"Microsoft.PowerShell.Core\Out-Default @PSBoundParameters").GetSteppablePipeline(this.MyInvocation.CommandOrigin);
@@ -60,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         {
             object inpObj = InputObject.BaseObject;
 
-            if(inpObj is MarkdownInfo markdownInfo)
+            if (inpObj is MarkdownInfo markdownInfo)
             {
                 if (UseBrowser)
                 {

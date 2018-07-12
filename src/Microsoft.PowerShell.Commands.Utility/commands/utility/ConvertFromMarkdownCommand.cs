@@ -7,8 +7,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Threading.Tasks;
 using System.Security;
+using System.Threading.Tasks;
 using Microsoft.PowerShell.MarkdownRender;
 using Dbg = System.Management.Automation;
 
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
                     return mdContent;
                 }
             }
-            catch(FileNotFoundException fnfe)
+            catch (FileNotFoundException fnfe)
             {
                 errorRecord = new ErrorRecord(
                     fnfe,
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorCategory.ResourceUnavailable,
                     filePath);
             }
-            catch(SecurityException se)
+            catch (SecurityException se)
             {
                 errorRecord = new ErrorRecord(
                     se,
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorCategory.SecurityError,
                     filePath);
             }
-            catch(UnauthorizedAccessException uae)
+            catch (UnauthorizedAccessException uae)
             {
                 errorRecord = new ErrorRecord(
                     uae,

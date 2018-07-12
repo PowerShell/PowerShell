@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         {
             var propName = propertyName?.ToLower();
 
-            switch(propName)
+            switch (propName)
             {
                 case "header1":
                     return string.Concat(Esc, Header1, Header1, Esc, EndSequence);
@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         {
             var text = altText;
 
-            if(string.IsNullOrEmpty(altText))
+            if (string.IsNullOrEmpty(altText))
             {
                 text = "Image";
             }
