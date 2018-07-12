@@ -24,10 +24,15 @@ namespace Microsoft.PowerShell.Commands
     public sealed class TestModuleManifestCommand : ModuleCmdletBase
     {
         /// <summary>
-        /// Creates an instance of the Test-ModuleManifest command
+        /// Creates an instance of the Test-ModuleManifest command.
         /// </summary>
         public TestModuleManifestCommand()
         {
+            // Test-ModuleManifest reads a manifest with ModuleCmdletBase.LoadModuleManifest().
+            // This will error on an edition-incompatible manifest loaded from the System32 path,
+            // unless BaseSkipEditionCheck is true. Since Test-ModuleManifest shouldn't care about
+            // module edition (it just tests manifest validity), we always want to set this rather
+            // than provide it as a switch on the cmdlet.
             BaseSkipEditionCheck = true;
         }
 
