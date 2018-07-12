@@ -500,8 +500,6 @@ namespace System.Management.Automation
             }
             s_pathResolutionTracer.WriteLine("PROVIDER path: {0}", itemPath);
 
-            Collection<string> stringResult = new Collection<string>();
-
             // If the directory exists, just return it.
             // Otherwise fallback to previous behavior and let provider handle it.
             if (Directory.Exists(userPath))
@@ -509,6 +507,8 @@ namespace System.Management.Automation
                 result.Add(new PathInfo(drive, provider, userPath, _sessionState));
                 return result;
             }
+
+            Collection<string> stringResult = new Collection<string>();
 
             if (!context.SuppressWildcardExpansion)
             {

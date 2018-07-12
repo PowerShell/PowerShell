@@ -1561,7 +1561,7 @@ namespace Microsoft.PowerShell.Commands
                                 false);
                         }
                         else
-                            WriteItemObject((FileInfo)fsinfo, path, false);
+                            WriteItemObject(fsinfo, path, false);
                     }
                 }
             }
@@ -6140,14 +6140,7 @@ namespace Microsoft.PowerShell.Commands
             // Create a PSObject with either a DirectoryInfo or FileInfo object at its core.
             if (fsinfo != null)
             {
-                if (isDirectory)
-                {
-                    fileSystemInfoShell = PSObject.AsPSObject((DirectoryInfo)fsinfo);
-                }
-                else
-                {
-                    fileSystemInfoShell = PSObject.AsPSObject((FileInfo)fsinfo);
-                }
+                fileSystemInfoShell = PSObject.AsPSObject(fsinfo);
 
                 bool propertySet = false;
 
