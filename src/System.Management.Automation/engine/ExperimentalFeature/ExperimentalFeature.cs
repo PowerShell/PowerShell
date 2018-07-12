@@ -86,7 +86,7 @@ namespace System.Management.Automation
                 new ExperimentalFeature(name: "PSFileSystemProviderV2",
                                         description: "Replace the old FileSystemProvider with cleaner design and faster code",
                                         source: EngineSource,
-                                        isEnabled: false)),
+                                        isEnabled: false),
                 */
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

@@ -58,15 +58,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Engine features come before module features.
-        /// Within engine features and more features, features are ordered by name.
+        /// Within engine features and module features, features are ordered by name.
         /// </remarks>
-        private static string GetSortingString(ExperimentalFeature feature)
+        private static (int, string) GetSortingString(ExperimentalFeature feature)
         {
-            if (ExperimentalFeature.EngineSource.Equals(feature.Source))
-            {
-                return "0:" + feature.Name;
-            }
-            return "1:" + feature.Name;
+            return ExperimentalFeature.EngineSource.Equals(feature.Source, StringComparison.OrdinalIgnoreCase)
+                        ? (0, feature.Name)
+                        : (1, feature.Name);
         }
 
         /// <summary>
