@@ -3065,6 +3065,7 @@ namespace System.Management.Automation
                                 StringLiterals.PowerShellDataFileExtension,
                                 StringLiterals.PowerShellNgenAssemblyExtension,
                                 StringLiterals.PowerShellILAssemblyExtension,
+                                StringLiterals.PowerShellILExecutableExtension,
                                 StringLiterals.PowerShellCmdletizationFileExtension
                             };
                     var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, /* containerOnly: */ false, moduleExtensions));

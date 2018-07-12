@@ -268,7 +268,7 @@ namespace System.Management.Automation.Internal
                             yield return moduleFile;
 
                             // when finding the default modules we stop when the first
-                            // match is hit - searching in order .psd1, .psm1, .dll
+                            // match is hit - searching in order .psd1, .psm1, .dll, .exe
                             // if a file is found but is not readable then it is an
                             // error
                             break;

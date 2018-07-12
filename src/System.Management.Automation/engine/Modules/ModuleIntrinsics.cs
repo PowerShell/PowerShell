@@ -480,7 +480,9 @@ namespace System.Management.Automation
                             StringLiterals.PowerShellCmdletizationFileExtension,
                             StringLiterals.WorkflowFileExtension,
                             StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.PowerShellILAssemblyExtension};
+                            StringLiterals.PowerShellILAssemblyExtension,
+                            StringLiterals.PowerShellILExecutableExtension,
+                        };
 
         // A list of the extensions to check for implicit module loading and discovery, put the ni.dll in front of .dll to have higher priority to be loaded.
         internal static string[] PSModuleExtensions = new string[] {
@@ -489,7 +491,9 @@ namespace System.Management.Automation
                             StringLiterals.PowerShellCmdletizationFileExtension,
                             StringLiterals.WorkflowFileExtension,
                             StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.PowerShellILAssemblyExtension};
+                            StringLiterals.PowerShellILAssemblyExtension,
+                            StringLiterals.PowerShellILExecutableExtension,
+                        };
 
         /// <summary>
         /// Returns true if the extension is one of the module extensions...

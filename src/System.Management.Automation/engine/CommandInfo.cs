@@ -222,9 +222,10 @@ namespace System.Management.Automation
                                 // Manifest module (.psd1)
                                 Module.SetVersion(ModuleIntrinsics.GetManifestModuleVersion(Module.Path));
                             }
-                            else if (Module.Path.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+                            else if (Module.Path.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) ||
+                                     Module.Path.EndsWith(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                             {
-                                // Binary module (.dll)
+                                // Binary module (.dll or .exe)
                                 Module.SetVersion(AssemblyName.GetAssemblyName(Module.Path).Version);
                             }
                         }

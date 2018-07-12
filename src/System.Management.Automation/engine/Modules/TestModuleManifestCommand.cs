@@ -130,15 +130,16 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        //RootModule can be null, empty string or point to a valid .psm1, , .cdxml, .xaml or .dll.  Anything else is invalid.
+                        // RootModule can be null, empty string or point to a valid .psm1, , .cdxml, .xaml, .dll or .exe.  Anything else is invalid.
                         if (module.RootModule != null && module.RootModule != string.Empty)
                         {
                             string rootModuleExt = System.IO.Path.GetExtension(module.RootModule);
                             if ((!IsValidFilePath(module.RootModule, module, true) && !IsValidGacAssembly(module.RootModule)) ||
                                 (!rootModuleExt.Equals(StringLiterals.PowerShellModuleFileExtension, StringComparison.OrdinalIgnoreCase) &&
-                                !rootModuleExt.Equals(".dll", StringComparison.OrdinalIgnoreCase) &&
-                                !rootModuleExt.Equals(".cdxml", StringComparison.OrdinalIgnoreCase) &&
-                                !rootModuleExt.Equals(".xaml", StringComparison.OrdinalIgnoreCase))
+                                !rootModuleExt.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) &&
+                                !rootModuleExt.Equals(StringLiterals.PowerShellCmdletizationFileExtension, StringComparison.OrdinalIgnoreCase) &&
+                                !rootModuleExt.Equals(StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase) &&
+                                !rootModuleExt.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                             )
                             {
                                 string errorMsg = StringUtil.Format(Modules.InvalidModuleManifest, module.RootModule, filePath);
@@ -161,6 +162,7 @@ namespace Microsoft.PowerShell.Commands
                                 if (!IsValidFilePath(nestedModule.Name, module, true)
                                     && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellILAssemblyExtension, module, true)
                                     && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellNgenAssemblyExtension, module, true)
+                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellILExecutableExtension, module, true)
                                     && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellModuleFileExtension, module, true)
                                     && !IsValidGacAssembly(nestedModule.Name))
                                 {

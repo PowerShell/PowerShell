@@ -52,7 +52,8 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
     It "module manifest containing valid unprocessed rootmodule file type succeeds: <rootModuleValue>" -TestCases (
         @{rootModuleValue = "foo.psm1"},
-        @{rootModuleValue = "foo.dll"}
+        @{rootModuleValue = "foo.dll"},
+        @{rootModuleValue = "foo.exe"}
     ) {
 
         param($rootModuleValue)

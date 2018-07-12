@@ -135,6 +135,11 @@ namespace System.Management.Automation
         /// </summary>
         internal const string PowerShellNgenAssemblyExtension = ".ni.dll";
 
+        /// <summary>
+        /// The file extension (including the dot) of an executable file
+        /// </summary>
+        internal const string PowerShellILExecutableExtension = ".exe";
+
         internal const string PowerShellConsoleFileExtension = ".psc1";
 
         /// <summary>
