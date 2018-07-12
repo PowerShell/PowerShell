@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.MarkdownRender
                     // This specifically helps for parameters help content.
                     if (string.Equals(obj.Info, "yaml", StringComparison.OrdinalIgnoreCase))
                     {
-                        renderer.WriteLine("\t" + codeLine.ToString());
+                        renderer.Write("\t").WriteLine(codeLine.ToString());
                     }
                     else
                     {

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Threading.Tasks;
 using Microsoft.PowerShell.MarkdownRender;
 
@@ -154,7 +155,13 @@ namespace Microsoft.PowerShell.Commands
 
                     if (mdOptionInfo == null)
                     {
-                        throw new ArgumentException();
+                        var errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, baseObj.GetType());
+
+                        ErrorRecord errorRecord = new ErrorRecord(
+                            new ArgumentException(errorMessage),
+                            "InvalidObject",
+                            ErrorCategory.InvalidArgument,
+                            InputObject);
                     }
 
                     break;

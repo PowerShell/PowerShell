@@ -15,6 +15,7 @@ namespace Microsoft.PowerShell.MarkdownRender
     public sealed class MarkdownOptionInfo
     {
         private const char Esc = (char)0x1b;
+        private const string EndSequence = "[0m";
 
         /// <summary>
         /// Gets or sets current VT100 escape sequence for header 1.
@@ -79,16 +80,48 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <returns>Specified property name as escape sequence.</returns>
         public string AsEscapeSequence(string propertyName)
         {
-            var propertyValue = this.GetType().GetProperty(propertyName)?.GetValue(this) as string;
+            var propName = propertyName?.ToLower();
 
-            if (!string.IsNullOrEmpty(propertyValue))
+            switch(propName)
             {
-                return string.Concat(Esc, propertyValue, propertyValue, Esc, "[0m");
+                case "header1":
+                    return string.Concat(Esc, Header1, Header1, Esc, EndSequence);
+
+                case "header2":
+                    return string.Concat(Esc, Header2, Header2, Esc, EndSequence);
+
+                case "header3":
+                    return string.Concat(Esc, Header3, Header3, Esc, EndSequence);
+
+                case "header4":
+                    return string.Concat(Esc, Header4, Header4, Esc, EndSequence);
+
+                case "header5":
+                    return string.Concat(Esc, Header5, Header5, Esc, EndSequence);
+
+                case "header6":
+                    return string.Concat(Esc, Header6, Header6, Esc, EndSequence);
+
+                case "code":
+                    return string.Concat(Esc, Code, Code, Esc, EndSequence);
+
+                case "link":
+                    return string.Concat(Esc, Link, Link, Esc, EndSequence);
+
+                case "image":
+                    return string.Concat(Esc, Image, Image, Esc, EndSequence);
+
+                case "emphasisbold":
+                    return string.Concat(Esc, EmphasisBold, EmphasisBold, Esc, EndSequence);
+
+                case "emphasisitalics":
+                    return string.Concat(Esc, EmphasisItalics, EmphasisItalics, Esc, EndSequence);
+
+                default:
+                    break;
             }
-            else
-            {
-                throw new InvalidOperationException();
-            }
+
+            return null;
         }
 
         /// <summary>
@@ -99,22 +132,46 @@ namespace Microsoft.PowerShell.MarkdownRender
             SetDarkTheme();
         }
 
+        private const string Header1Dark = "[7m";
+        private const string Header2Dark = "[4;93m";
+        private const string Header3Dark = "[4;94m";
+        private const string Header4Dark = "[4;95m";
+        private const string Header5Dark = "[4;96m";
+        private const string Header6Dark = "[4;97m";
+        private const string CodeDark = "[48;2;155;155;155;38;2;30;30;30m";
+        private const string LinkDark = "[4;38;5;117m";
+        private const string ImageDark = "[33m";
+        private const string EmphasisBoldDark = "[1m";
+        private const string EmphasisItalicsDark = "[36m";
+
+        private const string Header1Light = "[7m";
+        private const string Header2Light = "[4;33m";
+        private const string Header3Light = "[4;34m";
+        private const string Header4Light = "[4;35m";
+        private const string Header5Light = "[4;36m";
+        private const string Header6Light = "[4;30m";
+        private const string CodeLight = "[48;2;155;155;155;38;2;30;30;30m";
+        private const string LinkLight = "[4;38;5;117m";
+        private const string ImageLight = "[33m";
+        private const string EmphasisBoldLight = "[1m";
+        private const string EmphasisItalicsLight = "[36m";
+
         /// <summary>
         /// Set all preference for dark theme.
         /// </summary>
         public void SetDarkTheme()
         {
-            Header1 = "[7m";
-            Header2 = "[4;93m";
-            Header3 = "[4;94m";
-            Header4 = "[4;95m";
-            Header5 = "[4;96m";
-            Header6 = "[4;97m";
-            Code = "[48;2;155;155;155;38;2;30;30;30m";
-            Link = "[4;38;5;117m";
-            Image = "[33m";
-            EmphasisBold = "[1m";
-            EmphasisItalics = "[36m";
+            Header1 = Header1Dark;
+            Header2 = Header2Dark;
+            Header3 = Header3Dark;
+            Header4 = Header4Dark;
+            Header5 = Header5Dark;
+            Header6 = Header6Dark;
+            Code = CodeDark;
+            Link = LinkDark;
+            Image = ImageDark;
+            EmphasisBold = EmphasisBoldDark;
+            EmphasisItalics = EmphasisItalicsDark;
         }
 
         /// <summary>
@@ -122,17 +179,17 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// </summary>
         public void SetLightTheme()
         {
-            Header1 = "[7m";
-            Header2 = "[4;33m";
-            Header3 = "[4;34m";
-            Header4 = "[4;35m";
-            Header5 = "[4;36m";
-            Header6 = "[4;30m";
-            Code = "[48;2;155;155;155;38;2;30;30;30m";
-            Link = "[4;38;5;117m";
-            Image = "[33m";
-            EmphasisBold = "[1m";
-            EmphasisItalics = "[36m";
+            Header1 = Header1Light;
+            Header2 = Header2Light;
+            Header3 = Header3Light;
+            Header4 = Header4Light;
+            Header5 = Header5Light;
+            Header6 = Header6Light;
+            Code = CodeLight;
+            Link = LinkLight;
+            Image = ImageLight;
+            EmphasisBold = EmphasisBoldLight;
+            EmphasisItalics = EmphasisItalicsLight;
         }
     }
 
@@ -142,9 +199,10 @@ namespace Microsoft.PowerShell.MarkdownRender
     public class VT100EscapeSequences
     {
         private const char Esc = (char)0x1B;
-
         private string endSequence = Esc + "[0m";
 
+        // For code blocks, [500@ make sure that the whole line has background color.
+        private const string LongBackgroundCodeBlock = "[500@";
         private MarkdownOptionInfo options;
 
         /// <summary>
@@ -235,8 +293,7 @@ namespace Microsoft.PowerShell.MarkdownRender
             }
             else
             {
-                // For code blocks, [500@ make sure that the whole line has background color.
-                return string.Concat(Esc, options.Code, codeText, Esc, "[500@", endSequence);
+                return string.Concat(Esc, options.Code, codeText, Esc, LongBackgroundCodeBlock, endSequence);
             }
         }
 
@@ -278,7 +335,14 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <returns>Formatted image string.</returns>
         public string FormatImage(string altText)
         {
-            return string.Concat(Esc, options.Image, "[", altText, "]", endSequence);
+            var text = altText;
+
+            if(string.IsNullOrEmpty(altText))
+            {
+                text = "Image";
+            }
+
+            return string.Concat(Esc, options.Image, "[", text, "]", endSequence);
         }
     }
 }

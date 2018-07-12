@@ -44,7 +44,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (!this.MyInvocation.BoundParameters.ContainsKey("UseBrowser"))
+            //if (!this.MyInvocation.BoundParameters.ContainsKey("UseBrowser"))
+            if(!UseBrowser.IsPresent)
             {
                 // Since UseBrowser is not bound, we use proxy to Out-Default
                 stepPipe = ScriptBlock.Create(@"Microsoft.PowerShell.Core\Out-Default @PSBoundParameters").GetSteppablePipeline(this.MyInvocation.CommandOrigin);
@@ -58,20 +59,8 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             object inpObj = InputObject.BaseObject;
-            var markdownInfo = inpObj as MarkdownInfo;
 
-            if (markdownInfo == null)
-            {
-                string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, inpObj.GetType());
-                var errorRecord = new ErrorRecord(
-                            new ArgumentException(errorMessage),
-                            "InvalidInputObject",
-                            ErrorCategory.InvalidArgument,
-                            InputObject);
-
-                WriteError(errorRecord);
-            }
-            else
+            if(inpObj is MarkdownInfo markdownInfo)
             {
                 if (UseBrowser)
                 {
@@ -80,21 +69,50 @@ namespace Microsoft.PowerShell.Commands
                     if (!string.IsNullOrEmpty(html))
                     {
                         string tmpFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".html");
-                        using (var writer = new StreamWriter(new FileStream(tmpFilePath, FileMode.Create, FileAccess.Write, FileShare.Write)))
+
+                        try
                         {
-                            writer.Write(html);
+                            using (var writer = new StreamWriter(new FileStream(tmpFilePath, FileMode.Create, FileAccess.Write, FileShare.Write)))
+                            {
+                                writer.Write(html);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            var errorRecord = new ErrorRecord(
+                                e,
+                                "ErrorWritingTempFile",
+                                ErrorCategory.WriteError,
+                                tmpFilePath);
+
+                            WriteError(errorRecord);
+                            return;
                         }
 
-                        if (outputBypassTestHook)
+                        if (InternalTestHooks.ShowMarkdownOutputBypass)
                         {
                             WriteObject(html);
                             return;
                         }
 
-                        ProcessStartInfo startInfo = new ProcessStartInfo();
-                        startInfo.FileName = tmpFilePath;
-                        startInfo.UseShellExecute = true;
-                        Process.Start(startInfo);
+                        try
+                        {
+                            ProcessStartInfo startInfo = new ProcessStartInfo();
+                            startInfo.FileName = tmpFilePath;
+                            startInfo.UseShellExecute = true;
+                            Process.Start(startInfo);
+                        }
+                        catch (Exception e)
+                        {
+                            var errorRecord = new ErrorRecord(
+                                e,
+                                "ErrorLaunchingDefaultApplication",
+                                ErrorCategory.InvalidOperation,
+                                targetObject : null);
+
+                            WriteError(errorRecord);
+                            return;
+                        }
                     }
                     else
                     {
@@ -114,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!string.IsNullOrEmpty(vt100String))
                     {
-                        if (outputBypassTestHook)
+                        if (InternalTestHooks.ShowMarkdownOutputBypass)
                         {
                             WriteObject(vt100String);
                             return;
@@ -138,6 +156,17 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+            else
+            {
+                string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, inpObj.GetType());
+                var errorRecord = new ErrorRecord(
+                            new ArgumentException(errorMessage),
+                            "InvalidInputObject",
+                            ErrorCategory.InvalidArgument,
+                            InputObject);
+
+                WriteError(errorRecord);
+            }
         }
 
         /// <summary>
@@ -149,18 +178,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 stepPipe.End();
             }
-        }
-
-        private static bool outputBypassTestHook = false;
-
-        /// <summary>
-        /// Test hook to enable or disable launching of browser.
-        /// When set, the converted output is returned.
-        /// </summary>
-        /// <param name="value">True to enable test hook, false to disable.</param>
-        public static void SetOutputBypassTestHook(bool value)
-        {
-            outputBypassTestHook = value;
         }
     }
 }

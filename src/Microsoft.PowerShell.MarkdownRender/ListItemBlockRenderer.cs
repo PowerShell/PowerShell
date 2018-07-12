@@ -17,9 +17,7 @@ namespace Microsoft.PowerShell.MarkdownRender
     {
         protected override void Write(VT100Renderer renderer, ListItemBlock obj)
         {
-            var parent = obj.Parent as ListBlock;
-
-            if (parent != null)
+            if (obj.Parent is ListBlock parent)
             {
                 if (!parent.IsOrdered)
                 {
@@ -36,17 +34,14 @@ namespace Microsoft.PowerShell.MarkdownRender
             // Indent left by 2 for each level on list.
             string indent = Padding(indentLevel * 2);
 
-            var paragraphBlock = block as ParagraphBlock;
-
-            if (paragraphBlock != null)
+            if (block is ParagraphBlock paragraphBlock)
             {
                 renderer.Write(indent).Write(listBullet).Write(" ").Write(paragraphBlock.Inline);
             }
             else
             {
                 // If there is a sublist, the block is a ListBlock instead of ParagraphBlock.
-                var subList = block as ListBlock;
-                if (subList != null)
+                if (block is ListBlock subList)
                 {
                     foreach (var subListItem in subList)
                     {

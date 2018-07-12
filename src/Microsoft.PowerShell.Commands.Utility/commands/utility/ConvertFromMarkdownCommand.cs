@@ -8,6 +8,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Threading.Tasks;
+using System.Security;
 using Microsoft.PowerShell.MarkdownRender;
 using Dbg = System.Management.Automation;
 
@@ -58,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         private MarkdownOptionInfo mdOption = null;
 
         /// <summary>
-        /// Override BeginProcessing.
+        /// Read the MarkdownOptionInfo set in SessionState.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -89,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteObject(
                             MarkdownConverter.Convert(
-                                ReadContentFromFile(fileInfo.FullName).Result,
+                                ReadContentFromFile(fileInfo.FullName)?.Result,
                                 conversionType,
                                 mdOption));
                     }
@@ -131,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteObject(
                             MarkdownConverter.Convert(
-                                ReadContentFromFile(resolvedPath).Result,
+                                ReadContentFromFile(resolvedPath)?.Result,
                                 conversionType,
                                 optionInfo));
                 }
@@ -140,13 +141,43 @@ namespace Microsoft.PowerShell.Commands
 
         private async Task<string> ReadContentFromFile(string filePath)
         {
-            Dbg.Diagnostics.Assert(File.Exists(filePath), "Caller should make sure the file exists.");
+            ErrorRecord errorRecord = null;
 
-            using (StreamReader reader = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
+            try
             {
-                string mdContent = await reader.ReadToEndAsync();
-                return mdContent;
+                using (StreamReader reader = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                {
+                    string mdContent = await reader.ReadToEndAsync();
+                    return mdContent;
+                }
             }
+            catch(FileNotFoundException fnfe)
+            {
+                errorRecord = new ErrorRecord(
+                    fnfe,
+                    "FileNotFound",
+                    ErrorCategory.ResourceUnavailable,
+                    filePath);
+            }
+            catch(SecurityException se)
+            {
+                errorRecord = new ErrorRecord(
+                    se,
+                    "FileSecurityError",
+                    ErrorCategory.SecurityError,
+                    filePath);
+            }
+            catch(UnauthorizedAccessException uae)
+            {
+                errorRecord = new ErrorRecord(
+                    uae,
+                    "FileUnauthorizedAccess",
+                    ErrorCategory.SecurityError,
+                    filePath);
+            }
+
+            WriteError(errorRecord);
+            return null;
         }
 
         private List<string> ResolvePath(string path, bool isLiteral)
@@ -168,7 +199,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (ItemNotFoundException infe)
             {
-                string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InputFileNotFound, path);
                 var errorRecord = new ErrorRecord(
                     infe,
                     "FileNotFound",

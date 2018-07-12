@@ -212,6 +212,10 @@ bool function()`n{`n}
         It "Gets an error if input object type is not correct" {
             { ConvertFrom-Markdown -InputObject 1 -ErrorAction Stop } | Should -Throw -ErrorId 'InvalidInputObject,Microsoft.PowerShell.Commands.ConvertFromMarkdownCommand'
         }
+
+        It "Gets an error if input file does not exist" {
+            { [System.IO.FileInfo]::new("IDoNoExist") | ConvertFrom-Markdown -ErrorAction Stop } | Should -Throw -ErrorId 'FileNotFound,Microsoft.PowerShell.Commands.ConvertFromMarkdownCommand'
+        }
     }
 
     Context "Get/Set-MarkdownOption tests" {
@@ -292,11 +296,11 @@ bool function()`n{`n}
 
     Context "Show-Markdown tests" {
         BeforeEach {
-            [Microsoft.PowerShell.Commands.ShowMarkdownCommand]::SetOutputBypassTestHook($true)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("ShowMarkdownOutputBypass", $true)
         }
 
         AfterEach {
-            [Microsoft.PowerShell.Commands.ShowMarkdownCommand]::SetOutputBypassTestHook($false)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("ShowMarkdownOutputBypass", $false)
         }
 
         It "can show VT100 converted from markdown" {
