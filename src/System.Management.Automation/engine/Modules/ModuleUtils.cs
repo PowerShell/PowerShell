@@ -111,6 +111,16 @@ namespace System.Management.Automation.Internal
             }
         }
 
+        /// <summary>
+        /// Checks a directory to see if it's the root of a Core-incompatible module on the
+        /// System32 module path.
+        /// </summary>
+        /// <param name="directoryPath">The path of the directory to check.</param>
+        /// <param name="skipEditionCheck">If true, skips the check and returns false.</param>
+        /// <returns>
+        /// If the directory is the root of a module on the System32 path and not marked as
+        /// Core-compatible, returns true, otherwise returns false.
+        /// </returns>
         internal static bool IsIncompatibleSystem32ModuleDir(string directoryPath, bool skipEditionCheck)
         {
             // Skip the check means assume compatible
