@@ -946,7 +946,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             var availableModuleFiles = all
-                                ? ModuleUtils.GetAllAvailableModuleFiles(resolvedModulePath)
+                                ? ModuleUtils.GetAllAvailableModuleFiles(resolvedModulePath, BaseSkipEditionCheck)
                                 : ModuleUtils.GetModuleFilesFromAbsolutePath(resolvedModulePath);
 
                             bool foundModule = false;
@@ -1048,7 +1048,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             IEnumerable<string> moduleFiles = all
-                ? ModuleUtils.GetAllAvailableModuleFiles(modulePath)
+                ? ModuleUtils.GetAllAvailableModuleFiles(modulePath, BaseSkipEditionCheck)
                 : ModuleUtils.GetDefaultAvailableModuleFiles(modulePath);
 
             foreach (string file in moduleFiles)

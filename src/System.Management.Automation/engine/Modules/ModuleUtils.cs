@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
@@ -68,9 +69,11 @@ namespace System.Management.Automation.Internal
         /// Get all module files by searching the given directory recursively.
         /// All sub-directories that could be a module folder will be searched.
         /// </summary>
-        internal static IEnumerable<string> GetAllAvailableModuleFiles(string topDirectoryToCheck)
+        internal static IEnumerable<string> GetAllAvailableModuleFiles(string topDirectoryToCheck, bool skipEditionCheck)
         {
             if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
+            
+            if (IsIncompatibleSystem32ModuleDir(topDirectoryToCheck, skipEditionCheck)) { yield break; }
 
             var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
             Queue<string> directoriesToCheck = new Queue<string>();
@@ -84,7 +87,7 @@ namespace System.Management.Automation.Internal
                     string[] subDirectories = Directory.GetDirectories(directoryToCheck, "*", options);
                     foreach (string toAdd in subDirectories)
                     {
-                        if (IsPossibleModuleDirectory(toAdd))
+                        if (IsPossibleModuleDirectory(toAdd) && !IsIncompatibleSystem32ModuleDir(toAdd, skipEditionCheck))
                         {
                             directoriesToCheck.Enqueue(toAdd);
                         }
@@ -106,6 +109,70 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
+        }
+
+        internal static bool IsIncompatibleSystem32ModuleDir(string directoryPath, bool skipEditionCheck)
+        {
+            // Skip the check means assume compatible
+            if (skipEditionCheck)
+            {
+                return false;
+            }
+
+            // Not on System32 path means assume compatible
+            if (!ModuleUtils.IsOnSystem32ModulePath(directoryPath))
+            {
+                return false;
+            }
+
+            Hashtable manifest;
+            try
+            {
+                string dirName = Path.GetFileName(directoryPath.TrimEnd('/', '\\'));
+                string manifestPath = Path.Join(directoryPath, dirName + ".psd1");
+                if (!File.Exists(manifestPath))
+                {
+                    // If there's no manifest, it might be an ordinary directory, so not incompatible
+                    return false;
+                }
+
+                manifest = PsUtils.GetModuleManifestProperties(manifestPath, new [] { "CompatiblePSEditions" });
+            }
+            catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)
+            {
+                // Take the safe option if we hit an exception
+                return false;
+            }
+
+            object psEditionsObj = manifest?["CompatiblePSEditions"];
+            if (psEditionsObj == null)
+            {
+                // If there is a manifest file but not "CompatiblePSEditions" key,
+                // the module is incompatible
+                return true;
+            }
+
+            string[] psEditions;
+            try
+            {
+                psEditions = LanguagePrimitives.ConvertTo<string[]>(psEditionsObj);
+            }
+            catch (PSInvalidCastException)
+            {
+                // If the "CompatiblePSEditions" key exists but isn't a string[],
+                // the module is bad
+                return true;
+            }
+
+            if (psEditions == null)
+            {
+                // If somehow the key was set but set as $null, that's the same as not setting it
+                // Meaning incompatible
+                return true;
+            }
+
+            // Finally check the edition flags of the module
+            return Utils.IsPSEditionSupported(psEditions);
         }
 
         internal static IEnumerable<string> GetDefaultAvailableModuleFiles(bool isForAutoDiscovery, ExecutionContext context)
@@ -349,7 +416,7 @@ namespace System.Management.Automation.Internal
         internal static bool IsOnSystem32ModulePath(string path)
         {
 #if UNIX
-            return true;
+            return false;
 #else
             Dbg.Assert(!String.IsNullOrEmpty(path), $"Caller to verify that {nameof(path)} is not null or empty");
 
