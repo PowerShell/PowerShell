@@ -847,10 +847,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Describes whether the module is compatible with the current PowerShell edition,
-        /// as determined by the module's CompatiblePSEditions field and the path is was loaded from.
+        /// Describes whether the module was considered compatible at load time.
+        /// Any module not on the System32 module path should have this as true.
+        /// Modules loaded from the System32 module path will have this as true if they
+        /// have declared edition compatibility with PowerShell Core.
         /// </summary>
-        internal bool IsCompatibleWithCurrentEdition { get; set; }
+        internal bool IsConsideredEditionCompatible { get; set; }
 
         /// <summary>
         /// ModuleList

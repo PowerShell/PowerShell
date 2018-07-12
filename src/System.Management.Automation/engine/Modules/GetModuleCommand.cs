@@ -507,7 +507,7 @@ namespace Microsoft.PowerShell.Commands
             // Edition check only applies to Windows System32 module path
             if (!SkipEditionCheck)
             {
-                modules = FilterModulesForIncompatibleOnEditionCheckedPath(modules);
+                modules = modules.Where(module => module.IsConsideredEditionCompatible);
             }
 #endif
 
@@ -522,31 +522,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return modules;
-        }
-
-        /// <summary>
-        /// Filter out all modules on the PowerShell-edition-checked path that are incompatible with
-        /// the current PowerShell edition from a given enumeration of modules.
-        /// </summary>
-        /// <param name="modules">The modules to filter incompatible examples from.</param>
-        /// <returns>All modules that are either not on the checked path or are compatible with the current PowerShell edition.</returns>
-        private IEnumerable<PSModuleInfo> FilterModulesForIncompatibleOnEditionCheckedPath(IEnumerable<PSModuleInfo> modules)
-        {
-            Dbg.Assert(!SkipEditionCheck, $"Caller to verify that {nameof(SkipEditionCheck)} is false");
-
-            foreach (PSModuleInfo module in modules)
-            {
-                if (!ModuleUtils.IsOnSystem32ModulePath(module.ModuleBase))
-                {
-                    yield return module;
-                    continue;
-                }
-
-                if (module.IsCompatibleWithCurrentEdition)
-                {
-                    yield return module;
-                }
-            }
         }
 
         /// <summary>
