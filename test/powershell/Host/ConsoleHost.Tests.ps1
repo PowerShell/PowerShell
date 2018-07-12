@@ -683,3 +683,27 @@ Describe "Pwsh exe resources tests" -Tag CI {
         $psversiontable.os | Should -MatchExactly "$($osversion.Major).$($osversion.Minor)"
     }
 }
+
+Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
+    BeforeAll {
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $dirnames = "[T]est","[Test","T][est","Test"
+        $testcases = @()
+        foreach ( $d in $dirnames ) {
+            $null = New-Item -type Directory -path "${TESTDRIVE}/$d"
+            $testcases += @{ Dirname = $d }
+        }
+    }
+
+    It "pwsh can startup in a directory named <dirname>" -testcases $testcases {
+        param ( $dirname )
+        try {
+            Push-Location -LiteralPath "${TESTDRIVE}/${dirname}"
+            $result = & $powershell -c '(Get-Item .).Name'
+            $result | Should -BeExactly $dirname
+        }
+        finally {
+            Pop-Location
+        }
+    }
+}

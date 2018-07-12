@@ -3229,6 +3229,7 @@ namespace System.Management.Automation.Runspaces
 
                         try
                         {
+                            providerContext.SuppressWildcardExpansion = true;
                             context.EngineSessionState.SetLocation(Directory.GetCurrentDirectory(), providerContext);
                         }
                         catch (ItemNotFoundException)
