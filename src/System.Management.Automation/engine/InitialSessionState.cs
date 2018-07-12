@@ -13,12 +13,13 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
 using System.Management.Automation.Language;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Microsoft.PowerShell.Commands;
-using Debug = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Host;
 using System.Text;
 using System.Threading.Tasks;
+using Debug = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Runspaces
 {
@@ -3753,7 +3754,7 @@ namespace System.Management.Automation.Runspaces
             {
                 s_PSSnapInTracer.WriteLine("Loading assembly for psSnapIn {0}", psSnapInInfo.Name);
 
-                assembly = PSSnapInHelpers.LoadPSSnapInAssembly(psSnapInInfo, out cmdlets, out providers);
+                assembly = PSSnapInHelpers.LoadPSSnapInAssembly(psSnapInInfo);
 
                 if (assembly == null)
                 {
@@ -3764,7 +3765,7 @@ namespace System.Management.Automation.Runspaces
 
                 s_PSSnapInTracer.WriteLine("Loading assembly for psSnapIn {0} succeeded", psSnapInInfo.Name);
 
-                PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, psSnapInInfo.Name, psSnapInInfo, null, true, out cmdlets, out aliases, out providers, out helpFile);
+                PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, psSnapInInfo.Name, psSnapInInfo, moduleInfo: null, out cmdlets, out aliases, out providers, out helpFile);
             }
 
             // We skip checking if the file exists when it's in $PSHOME because of magic
@@ -4053,8 +4054,7 @@ namespace System.Management.Automation.Runspaces
             Dictionary<string, SessionStateProviderEntry> providers = null;
 
             string assemblyPath = assembly.Location;
-            string throwAwayHelpFile = null;
-            PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, assemblyPath, null, module, true, out cmdlets, out aliases, out providers, out throwAwayHelpFile);
+            PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, assemblyPath, psSnapInInfo: null, module, out cmdlets, out aliases, out providers, helpFile: out _);
 
             // If this is an in-memory assembly, don't added it to the list of AssemblyEntries
             // since it can't be loaded by path or name
@@ -4898,13 +4898,9 @@ end
     internal static class PSSnapInHelpers
     {
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
-        internal static Assembly LoadPSSnapInAssembly(PSSnapInInfo psSnapInInfo,
-            out Dictionary<string, SessionStateCmdletEntry> cmdlets, out Dictionary<string, SessionStateProviderEntry> providers)
+        internal static Assembly LoadPSSnapInAssembly(PSSnapInInfo psSnapInInfo)
         {
             Assembly assembly = null;
-            cmdlets = null;
-            providers = null;
-
             s_PSSnapInTracer.WriteLine("Loading assembly from GAC. Assembly Name: {0}", psSnapInInfo.AssemblyName);
 
             try
@@ -4961,23 +4957,21 @@ end
             return assembly;
         }
 
-        private static T GetCustomAttribute<T>(Type decoratedType) where T : Attribute
+        private static bool TryGetCustomAttribute<T>(Type decoratedType, out T attribute) where T : Attribute
         {
-            var attributes = decoratedType.GetCustomAttributes<T>(false);
-            var customAttrs = attributes.ToArray();
-
-            Debug.Assert(customAttrs.Length <= 1, "CmdletAttribute and/or CmdletProviderAttribute cannot normally appear more than once");
-            return customAttrs.Length == 0 ? null : customAttrs[0];
+            var attributes = decoratedType.GetCustomAttributes<T>(inherit: false);
+            attribute = attributes.FirstOrDefault();
+            return attribute != null;
         }
 
-        internal static void AnalyzePSSnapInAssembly(Assembly assembly, string name, PSSnapInInfo psSnapInInfo, PSModuleInfo moduleInfo, bool isModuleLoad,
+        internal static void AnalyzePSSnapInAssembly(Assembly assembly, string name, PSSnapInInfo psSnapInInfo, PSModuleInfo moduleInfo,
                     out Dictionary<string, SessionStateCmdletEntry> cmdlets, out Dictionary<string, List<SessionStateAliasEntry>> aliases,
                     out Dictionary<string, SessionStateProviderEntry> providers, out string helpFile)
         {
             helpFile = null;
             if (assembly == null)
             {
-                throw new ArgumentNullException("assembly");
+                throw new ArgumentNullException(nameof(assembly));
             }
 
             cmdlets = null;
@@ -4989,8 +4983,8 @@ end
             Dictionary<string, Tuple<SessionStateCmdletEntry, List<SessionStateAliasEntry>>> cachedCmdlets;
             if (s_cmdletCache.Value.TryGetValue(assembly, out cachedCmdlets))
             {
-                cmdlets = new Dictionary<string, SessionStateCmdletEntry>(s_cmdletCache.Value.Count, StringComparer.OrdinalIgnoreCase);
-                aliases = new Dictionary<string, List<SessionStateAliasEntry>>(StringComparer.OrdinalIgnoreCase);
+                cmdlets = new Dictionary<string, SessionStateCmdletEntry>(cachedCmdlets.Count, StringComparer.OrdinalIgnoreCase);
+                aliases = new Dictionary<string, List<SessionStateAliasEntry>>(cachedCmdlets.Count, StringComparer.OrdinalIgnoreCase);
 
                 foreach (var pair in cachedCmdlets)
                 {
@@ -5052,7 +5046,6 @@ end
             }
 
             string assemblyPath = assembly.Location;
-            Type[] assemblyTypes;
             if (cmdlets != null || providers != null)
             {
                 if (!s_assembliesWithModuleInitializerCache.Value.ContainsKey(assembly))
@@ -5063,18 +5056,14 @@ end
                 else
                 {
                     s_PSSnapInTracer.WriteLine("Executing IModuleAssemblyInitializer.Import for {0}", assemblyPath);
-                    assemblyTypes = GetAssemblyTypes(assembly, name);
-                    ExecuteModuleInitializer(assembly, assemblyTypes, isModuleLoad);
+                    var assemblyTypes = GetAssemblyTypes(assembly, name);
+                    ExecuteModuleInitializer(assembly, assemblyTypes);
                     return;
                 }
             }
 
             s_PSSnapInTracer.WriteLine("Analyzing assembly {0} for cmdlet and providers", assemblyPath);
-
             helpFile = GetHelpFile(assemblyPath);
-
-            Type randomCmdletToCheckLinkDemand = null;
-            Type randomProviderToCheckLinkDemand = null;
 
             if (psSnapInInfo != null && psSnapInInfo.Name.Equals(InitialSessionState.CoreSnapin, StringComparison.OrdinalIgnoreCase))
             {
@@ -5087,13 +5076,10 @@ end
                 Dictionary<string, SessionStateCmdletEntry> cmdletsCheck = null;
                 Dictionary<string, SessionStateProviderEntry> providersCheck = null;
                 Dictionary<string, List<SessionStateAliasEntry>> aliasesCheck = null;
-                Type unused1 = null;
-                Type unused2 = null;
-                AnalyzeModuleAssemblyWithReflection(assembly, name, psSnapInInfo, moduleInfo, isModuleLoad,
-                    ref cmdletsCheck, ref aliasesCheck, ref providersCheck, helpFile, ref unused1, ref unused2);
+                AnalyzeModuleAssemblyWithReflection(assembly, name, psSnapInInfo, moduleInfo, helpFile, ref cmdletsCheck, ref aliasesCheck, ref providersCheck);
 
                 Diagnostics.Assert(aliasesCheck == null, "InitializeCoreCmdletsAndProviders assumes no aliases are defined in System.Management.Automation.dll");
-                Diagnostics.Assert(providersCheck.Keys.Count == providers.Keys.Count, "new Provider added to System.Management.Automation.dll - update InitializeCoreCmdletsAndProviders");
+                Diagnostics.Assert(providersCheck.Count == providers.Count, "new Provider added to System.Management.Automation.dll - update InitializeCoreCmdletsAndProviders");
                 foreach (var pair in providersCheck)
                 {
                     SessionStateProviderEntry other;
@@ -5111,7 +5097,7 @@ end
                         Diagnostics.Assert(false, "Missing provider: " + pair.Key);
                     }
                 }
-                Diagnostics.Assert(cmdletsCheck.Keys.Count == cmdlets.Keys.Count, "new Cmdlet added to System.Management.Automation.dll - update InitializeCoreCmdletsAndProviders");
+                Diagnostics.Assert(cmdletsCheck.Count == cmdlets.Count, "new Cmdlet added to System.Management.Automation.dll - update InitializeCoreCmdletsAndProviders");
 
                 foreach (var pair in cmdletsCheck)
                 {
@@ -5134,39 +5120,7 @@ end
             }
             else
             {
-                AnalyzeModuleAssemblyWithReflection(assembly, name, psSnapInInfo, moduleInfo, isModuleLoad,
-                    ref cmdlets, ref aliases, ref providers, helpFile, ref randomCmdletToCheckLinkDemand, ref randomProviderToCheckLinkDemand);
-            }
-
-            // force a LinkDemand check to get an explicit exception if
-            // Cmdlet[Provider]Attributes are silently swallowed by Type.GetCustomAttributes
-            // bug Win7:705573
-            if ((providers == null || providers.Count == 0) && (cmdlets == null || cmdlets.Count == 0))
-            {
-                try
-                {
-                    if (randomCmdletToCheckLinkDemand != null)
-                    {
-                        ConstructorInfo constructor = randomCmdletToCheckLinkDemand.GetConstructor(PSTypeExtensions.EmptyTypes);
-                        if (constructor != null)
-                        {
-                            constructor.Invoke(null); // this is how we artificially force a LinkDemand check
-                        }
-                    }
-
-                    if (randomProviderToCheckLinkDemand != null)
-                    {
-                        ConstructorInfo constructor = randomProviderToCheckLinkDemand.GetConstructor(PSTypeExtensions.EmptyTypes);
-                        if (constructor != null)
-                        {
-                            constructor.Invoke(null); // this is how we artificially force a LinkDemand check
-                        }
-                    }
-                }
-                catch (TargetInvocationException e)
-                {
-                    throw e.InnerException;
-                }
+                AnalyzeModuleAssemblyWithReflection(assembly, name, psSnapInInfo, moduleInfo, helpFile, ref cmdlets, ref aliases, ref providers);
             }
 
             // Cache the cmdlet and provider info for this assembly...
@@ -5209,122 +5163,86 @@ end
         }
 
         private static void AnalyzeModuleAssemblyWithReflection(Assembly assembly, string name, PSSnapInInfo psSnapInInfo,
-            PSModuleInfo moduleInfo, bool isModuleLoad,
+            PSModuleInfo moduleInfo, string helpFile,
             ref Dictionary<string, SessionStateCmdletEntry> cmdlets,
             ref Dictionary<string, List<SessionStateAliasEntry>> aliases,
-            ref Dictionary<string, SessionStateProviderEntry> providers,
-            string helpFile,
-            ref Type randomCmdletToCheckLinkDemand,
-            ref Type randomProviderToCheckLinkDemand)
+            ref Dictionary<string, SessionStateProviderEntry> providers)
         {
             var assemblyTypes = GetAssemblyTypes(assembly, name);
-
-            ExecuteModuleInitializer(assembly, assemblyTypes, isModuleLoad);
+            ExecuteModuleInitializer(assembly, assemblyTypes);
 
             foreach (Type type in assemblyTypes)
             {
-                if (!(type.IsPublic || type.IsNestedPublic) || type.IsAbstract)
-                    continue;
+                if (!HasDefaultConstructor(type)) { continue; }
 
                 // Check for cmdlets
-                if (IsCmdletClass(type) && HasDefaultConstructor(type))
+                if (IsCmdletClass(type) && TryGetCustomAttribute(type, out CmdletAttribute cmdletAttribute))
                 {
-                    randomCmdletToCheckLinkDemand = type;
-
-                    CmdletAttribute cmdletAttribute = GetCustomAttribute<CmdletAttribute>(type);
-                    if (cmdletAttribute == null)
+                    if (TryGetCustomAttribute(type, out ExperimentalAttribute expAttribute) && expAttribute.ToHide)
                     {
-                        continue;
-                    }
-                    string cmdletName = GetCmdletName(cmdletAttribute);
-                    if (string.IsNullOrEmpty(cmdletName))
-                    {
+                        // If 'ExperimentalAttribute' is specified on the cmdlet type and the
+                        // effective action at run time is 'Hide', then we ignore the type.
                         continue;
                     }
 
+                    string cmdletName = cmdletAttribute.VerbName + "-" + cmdletAttribute.NounName;
                     if (cmdlets != null && cmdlets.ContainsKey(cmdletName))
                     {
                         string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInDuplicateCmdlets, cmdletName, name);
-
                         s_PSSnapInTracer.TraceError(message);
-
                         throw new PSSnapInException(name, message);
                     }
 
                     SessionStateCmdletEntry cmdlet = new SessionStateCmdletEntry(cmdletName, type, helpFile);
-                    cmdlet.SetPSSnapIn(psSnapInInfo);
-                    if (cmdlets == null)
-                    {
-                        cmdlets = new Dictionary<string, SessionStateCmdletEntry>(StringComparer.OrdinalIgnoreCase);
-                    }
+                    if (psSnapInInfo != null) { cmdlet.SetPSSnapIn(psSnapInInfo); }
+                    if (moduleInfo != null) { cmdlet.SetModule(moduleInfo); }
+
+                    cmdlets = cmdlets ?? new Dictionary<string, SessionStateCmdletEntry>(StringComparer.OrdinalIgnoreCase);
                     cmdlets.Add(cmdletName, cmdlet);
 
-                    var aliasAttribute = GetCustomAttribute<AliasAttribute>(type);
-                    if (aliasAttribute != null)
+                    if (TryGetCustomAttribute(type, out AliasAttribute aliasAttribute))
                     {
-                        if (aliases == null)
-                        {
-                            aliases = new Dictionary<string, List<SessionStateAliasEntry>>(StringComparer.OrdinalIgnoreCase);
-                        }
+                        aliases = aliases ?? new Dictionary<string, List<SessionStateAliasEntry>>(StringComparer.OrdinalIgnoreCase);
 
                         var aliasList = new List<SessionStateAliasEntry>();
                         foreach (var alias in aliasAttribute.AliasNames)
                         {
-                            // Alias declared by AliasAttribute is set with the option 'ScopedItemOptions.None',
-                            // because we believe a user of the cmdlet, instead of the author of it,
-                            // should be the one to decide the option
-                            // ('ScopedItemOptions.ReadOnly' and/or 'ScopedItemOptions.AllScopes') of the alias usage."
-                            var aliasEntry = new SessionStateAliasEntry(alias, cmdletName, string.Empty, ScopedItemOptions.None);
-                            if (psSnapInInfo != null)
-                            {
-                                aliasEntry.SetPSSnapIn(psSnapInInfo);
-                            }
+                            // Alias declared by 'AliasAttribute' is set with the option 'ScopedItemOptions.None', because we believe
+                            // the users of the cmdlet, instead of the author, should have control of what options applied to an alias
+                            // ('ScopedItemOptions.ReadOnly' and/or 'ScopedItemOptions.AllScopes').
+                            var aliasEntry = new SessionStateAliasEntry(alias, cmdletName, description: string.Empty, ScopedItemOptions.None);
+                            if (psSnapInInfo != null) { aliasEntry.SetPSSnapIn(psSnapInInfo); }
+                            if (moduleInfo != null) { aliasEntry.SetModule(moduleInfo); }
                             aliasList.Add(aliasEntry);
                         }
                         aliases.Add(cmdletName, aliasList);
                     }
 
                     s_PSSnapInTracer.WriteLine("{0} from type {1} is added as a cmdlet. ", cmdletName, type.FullName);
-                    continue;
                 }
-
                 // Check for providers
-                if (IsProviderClass(type) && HasDefaultConstructor(type))
+                else if (IsProviderClass(type) && TryGetCustomAttribute(type, out CmdletProviderAttribute providerAttribute))
                 {
-                    randomProviderToCheckLinkDemand = type;
-
-                    CmdletProviderAttribute providerAttribute = GetCustomAttribute<CmdletProviderAttribute>(type);
-                    if (providerAttribute == null)
+                    if (TryGetCustomAttribute(type, out ExperimentalAttribute expAttribute) && expAttribute.ToHide)
                     {
-                        continue;
-                    }
-                    string providerName = GetProviderName(providerAttribute);
-                    if (string.IsNullOrEmpty(providerName))
-                    {
+                        // If 'ExperimentalAttribute' is specified on the provider type and
+                        // the effective action at run time is 'Hide', then we ignore the type.
                         continue;
                     }
 
+                    string providerName = providerAttribute.ProviderName;
                     if (providers != null && providers.ContainsKey(providerName))
                     {
                         string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInDuplicateProviders, providerName, psSnapInInfo.Name);
-
                         s_PSSnapInTracer.TraceError(message);
-
                         throw new PSSnapInException(psSnapInInfo.Name, message);
                     }
 
                     SessionStateProviderEntry provider = new SessionStateProviderEntry(providerName, type, helpFile);
-                    provider.SetPSSnapIn(psSnapInInfo);
+                    if (psSnapInInfo != null) { provider.SetPSSnapIn(psSnapInInfo); }
+                    if (moduleInfo != null) { provider.SetModule(moduleInfo); }
 
-                    // After converting core snapins to load as modules, the providers will have Module property populated
-                    if (moduleInfo != null)
-                    {
-                        provider.SetModule(moduleInfo);
-                    }
-                    if (providers == null)
-                    {
-                        providers = new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase);
-                    }
+                    providers = providers ?? new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase);
                     providers.Add(providerName, provider);
 
                     s_PSSnapInTracer.WriteLine("{0} from type {1} is added as a provider. ", providerName, type.FullName);
@@ -5368,6 +5286,7 @@ end
                 {"Export-ModuleMember",               new SessionStateCmdletEntry("Export-ModuleMember", typeof(ExportModuleMemberCommand), helpFile) },
                 {"ForEach-Object",                    new SessionStateCmdletEntry("ForEach-Object", typeof(ForEachObjectCommand), helpFile) },
                 {"Get-Command",                       new SessionStateCmdletEntry("Get-Command", typeof(GetCommandCommand), helpFile) },
+                {"Get-ExperimentalFeature",           new SessionStateCmdletEntry("Get-ExperimentalFeature", typeof(GetExperimentalFeatureCommand), helpFile) },
                 {"Get-Help",                          new SessionStateCmdletEntry("Get-Help", typeof(GetHelpCommand), helpFile) },
                 {"Get-History",                       new SessionStateCmdletEntry("Get-History", typeof(GetHistoryCommand), helpFile) },
                 {"Get-Job",                           new SessionStateCmdletEntry("Get-Job", typeof(GetJobCommand), helpFile) },
@@ -5432,39 +5351,29 @@ end
             }
         }
 
-        private static void ExecuteModuleInitializer(Assembly assembly, Type[] assemblyTypes, bool isModuleLoad)
+        private static void ExecuteModuleInitializer(Assembly assembly, IEnumerable<Type> assemblyTypes)
         {
-            for (int i = 0; i < assemblyTypes.Length; i++)
+            foreach (Type type in assemblyTypes)
             {
-                Type type = assemblyTypes[i];
-                if (!(type.IsPublic || type.IsNestedPublic) || type.IsAbstract) { continue; }
-
-                if (isModuleLoad && typeof(IModuleAssemblyInitializer).IsAssignableFrom(type) && type != typeof(IModuleAssemblyInitializer))
+                if (typeof(IModuleAssemblyInitializer).IsAssignableFrom(type))
                 {
                     s_assembliesWithModuleInitializerCache.Value[assembly] = true;
-                    IModuleAssemblyInitializer moduleInitializer = (IModuleAssemblyInitializer)Activator.CreateInstance(type, true);
+                    var moduleInitializer = (IModuleAssemblyInitializer)Activator.CreateInstance(type, true);
                     moduleInitializer.OnImport();
                 }
             }
         }
 
-        internal static Type[] GetAssemblyTypes(Assembly assembly, string name)
+        internal static IEnumerable<Type> GetAssemblyTypes(Assembly assembly, string name)
         {
-            Type[] assemblyTypes = null;
-
             try
             {
-                var exportedTypes = assembly.ExportedTypes;
-                assemblyTypes = exportedTypes as Type[] ?? exportedTypes.ToArray();
+                // Return types that are public, non-abstract, non-interface and non-valueType.
+                return assembly.ExportedTypes.Where(t => !t.IsAbstract && !t.IsInterface && !t.IsValueType);
             }
             catch (ReflectionTypeLoadException e)
             {
-                string message;
-
-                message = e.Message;
-
-                message += "\nLoader Exceptions: \n";
-
+                string message = e.Message + "\nLoader Exceptions: \n";
                 if (e.LoaderExceptions != null)
                 {
                     foreach (Exception exception in e.LoaderExceptions)
@@ -5474,10 +5383,8 @@ end
                 }
 
                 s_PSSnapInTracer.TraceError(message);
-
                 throw new PSSnapInException(name, message);
             }
-            return assemblyTypes;
         }
 
         // cmdletCache holds the list of cmdlets along with its aliases per each assembly.
@@ -5488,51 +5395,25 @@ end
         // Using a ConcurrentDictionary for this so that we can avoid having a private lock variable. We use only the keys for checking.
         private static Lazy<ConcurrentDictionary<Assembly, bool>> s_assembliesWithModuleInitializerCache = new Lazy<ConcurrentDictionary<Assembly, bool>>();
 
-        private static string GetCmdletName(CmdletAttribute cmdletAttribute)
-        {
-            string verb = cmdletAttribute.VerbName;
-
-            string noun = cmdletAttribute.NounName;
-
-            return verb + "-" + noun;
-        }
-
-        private static string GetProviderName(CmdletProviderAttribute providerAttribute)
-        {
-            return providerAttribute.ProviderName;
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsCmdletClass(Type type)
         {
-            if (type == null)
-                return false;
-
             return type.IsSubclassOf(typeof(System.Management.Automation.Cmdlet));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsProviderClass(Type type)
         {
-            if (type == null)
-                return false;
-
             return type.IsSubclassOf(typeof(System.Management.Automation.Provider.CmdletProvider));
         }
 
-        internal static bool IsModuleAssemblyInitializerClass(Type type)
-        {
-            if (type == null)
-            {
-                return false;
-            }
-
-            return type.IsSubclassOf(typeof(System.Management.Automation.IModuleAssemblyInitializer));
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool HasDefaultConstructor(Type type)
         {
             return !(type.GetConstructor(PSTypeExtensions.EmptyTypes) == null);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string GetHelpFile(string assemblyPath)
         {
             // Help files exist only for original module assemblies, not for generated Ngen binaries

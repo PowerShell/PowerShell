@@ -258,6 +258,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Get-EventLog",                                       ,                     $($FullCLR                               )
 "Cmdlet", "Get-EventSubscriber",                                ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Get-ExecutionPolicy",                                ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Get-ExperimentalFeature",                            ,                     $(             $CoreWindows -or $CoreUnix)
 "Cmdlet", "Get-FileHash",                                       ,                     $(             $CoreWindows -or $CoreUnix)
 "Cmdlet", "Get-FormatData",                                     ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Get-Help",                                           ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
