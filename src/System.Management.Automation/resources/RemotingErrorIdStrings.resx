@@ -794,7 +794,7 @@ Do you want to continue?</value>
     <value>The background process reported an error with the following message: {0}.</value>
   </data>
   <data name="IPCServerProcessExited" xml:space="preserve">
-    <value>The background process closed or ended abnormally.</value>
+    <value>The background process closed or ended abnormally: {0}.</value>
   </data>
   <data name="IPCErrorProcessingServerData" xml:space="preserve">
     <value>There is an error processing data from the background process. Error reported: {0}.</value>
@@ -1656,5 +1656,15 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="WSManClientDllNotAvailable" xml:space="preserve">
     <value>This parameter set requires WSMan, and no supported WSMan client library was found. WSMan is either not installed or unavailable for this system.</value>
+  </data>
+  <data name="ProcessExitInfo" xml:space="preserve">
+    <value>
+      Exit code: {0}
+      Stdout: '{1}'
+      Stderr: '{2}'
+    </value>
+  </data>
+  <data name="ProcessInfoNotRecoverable" xml:space="preserve">
+    <value>Information about the process could not be read: '{0}'.</value>
   </data>
 </root>
