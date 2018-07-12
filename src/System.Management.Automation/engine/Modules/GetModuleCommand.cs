@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!String.IsNullOrEmpty(PSEdition))
             {
-                modules = FilterModulesForEdition(modules);
+                modules = modules.Where(module => module.CompatiblePSEditions.Contains(PSEdition, StringComparer.OrdinalIgnoreCase));
             }
 
             if (moduleSpecificationTable != null && moduleSpecificationTable.Count > 0)
@@ -522,25 +522,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return modules;
-        }
-
-        /// <summary>
-        /// Filter an enumeration of modules based on what PowerShell editions they are compatible with.
-        /// If the PSEdition parameter has been given, filter modules based on that.
-        /// </summary>
-        /// <param name="modules">The modules to filter by edition.</param>
-        /// <returns>All modules meeting the PSEdition constraint.</returns>
-        private IEnumerable<PSModuleInfo> FilterModulesForEdition(IEnumerable<PSModuleInfo> modules)
-        {
-            Dbg.Assert(!String.IsNullOrEmpty(PSEdition), $"Caller to verify that {nameof(PSEdition)} is not null or empty");
-
-            foreach (PSModuleInfo module in modules)
-            {
-                if (module.CompatiblePSEditions.Contains(PSEdition, StringComparer.OrdinalIgnoreCase))
-                {
-                    yield return module;
-                }
-            }
         }
 
         /// <summary>
