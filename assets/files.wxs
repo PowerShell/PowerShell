@@ -1192,6 +1192,18 @@
             <Component Id="cmp51F2F26684B5C4D0FFFFFBD72174D1BC" Guid="{3383D3BD-2174-4FC4-BC14-4AB4309D3E88}">
                 <File Id="fil3EEF1D08102F0A83F48EFBB44396FCBA" KeyPath="yes" Source="$(env.ProductSourcePath)\api-ms-win-core-libraryloader-l1-1-1.dll" />
             </Component>
+            <Component Id="cmp09b8252b795440eca75bc6a0811a3f10" Guid="{1334ea0d-abb9-4f4d-948d-17d7602e63be}">
+                <File Id="fil0a4b944b312642a4a68181302623e0b5" KeyPath="yes" Source="$(env.ProductSourcePath)\Markdig.dll" />
+            </Component>
+            <Component Id="cmpf2a3c81eb19246b6be74af07e70a06f0" Guid="{678cb6a4-49e8-41be-a5cb-67a77c3cf612}">
+                <File Id="fil90f9e9f09d6744f68331100e6d7da03d" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.MarkdownRender.dll" />
+            </Component>
+            <Component Id="cmp918c5338524c41a2ac739a0ded94cc0d" Guid="{4f1ade18-360c-4510-ba4a-94f86f8d7f63}">
+                <File Id="fil2d5d94e7f192444584831a1a48d8d9dd" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.MarkdownRender.pdb" />
+            </Component>
+            <Component Id="cmp75c6b7b418bb4f439dd5519c570a14e0" Guid="{0043d5f4-4ea7-4193-8825-8a8f80e4224b}">
+                <File Id="fil1c8a95614a8348f9ac6982b3340a303c" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.MarkdownRender.xml" />
+            </Component>
             <Directory Id="dir23E9C47466D341314C603F5C7118348B" Name="ref">
                 <Component Id="cmp889E7B16C996100DE4B6402D1CD4F4F2" Guid="{81695AC9-25BB-48E1-AF84-45C9C496F1E3}">
                     <File Id="fil3F0371EFF48A0EFBA363818F8E2C7423" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\Microsoft.CSharp.dll" />
@@ -2318,6 +2330,10 @@
             <ComponentRef Id="cmp30357FCEAC7B88BDCF0B20D55C22F61F" />
             <ComponentRef Id="cmp557A49B03E72CD07149A6CD0595C9245" />
             <ComponentRef Id="cmp51F2F26684B5C4D0FFFFFBD72174D1BC" />
+            <ComponentRef Id="cmp09b8252b795440eca75bc6a0811a3f10" />
+            <ComponentRef Id="cmpf2a3c81eb19246b6be74af07e70a06f0" />
+            <ComponentRef Id="cmp918c5338524c41a2ac739a0ded94cc0d" />
+            <ComponentRef Id="cmp75c6b7b418bb4f439dd5519c570a14e0" />
             <ComponentRef Id="cmp889E7B16C996100DE4B6402D1CD4F4F2" />
             <ComponentRef Id="cmp4B013FDCB7F1B636E32467682F21EC3C" />
             <ComponentRef Id="cmp4B013FDCB7F1B636E32467682F21EC3D" />
