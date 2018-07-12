@@ -346,15 +346,17 @@ namespace System.Management.Automation.Internal
             return false;
         }
 
-#if !UNIX
         internal static bool IsOnSystem32ModulePath(string path)
         {
+#if UNIX
+            return true;
+#else
             Dbg.Assert(!String.IsNullOrEmpty(path), $"Caller to verify that {nameof(path)} is not null or empty");
 
             string windowsPowerShellPSHomePath = ModuleIntrinsics.GetWindowsPowerShellPSHomeModulePath();
             return path.StartsWith(windowsPowerShellPSHomePath, StringComparison.OrdinalIgnoreCase);
-        }
 #endif
+        }
 
         /// <summary>
         /// Gets a list of matching commands
