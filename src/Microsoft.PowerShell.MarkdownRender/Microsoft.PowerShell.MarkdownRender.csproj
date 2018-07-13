@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="..\..\PowerShell.Common.props" />
+
+  <PropertyGroup>
+    <Description>PowerShell Core's Markdown Rendering project</Description>
+    <AssemblyName>Microsoft.PowerShell.MarkdownRender</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+  <!-- Source: https://github.com/lunet-io/markdig/ -->
+    <PackageReference Include="Markdig.Signed" Version="0.15.1" />
+  </ItemGroup>
+
+</Project>
