@@ -5406,12 +5406,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     currentPath = MakePath(currentPath, childName);
 
-                    var fsinfo = new FileInfo(currentPath);
+                    var fsinfo = GetFileSystemInfo(currentPath, out bool _);
 
                     // Clean up the child name to proper casing and short-path
                     // expansion if required. Also verify that .NET hasn't over-normalized
                     // the path
-                    if ((int)fsinfo.Attributes != -1)
+                    if (fsinfo != null)
                     {
                         // This might happen if you've passed a child name of two or more dots,
                         // which the .NET APIs treat as the parent directory
