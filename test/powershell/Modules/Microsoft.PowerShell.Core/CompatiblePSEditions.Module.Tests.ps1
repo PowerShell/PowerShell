@@ -265,7 +265,7 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
         $errors | Should -Be $null
     }
 
-    It "Allows PowerShell Core 6 subprocesses to call core modules" {
+    It "Allows PowerShell Core 6 subprocesses to call core modules" -Skip:(-not $IsWindows) {
         $errors = pwsh.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
         $errors | Should -Be $null
     }
