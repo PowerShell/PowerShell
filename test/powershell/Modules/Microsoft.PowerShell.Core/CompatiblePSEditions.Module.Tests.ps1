@@ -332,16 +332,17 @@ Describe "Nested module behaviour" -Tag "Feature" {
         {
             New-Item -Path $basePath -ItemType Directory
         }
-
-        # Set up the test state
-        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $incompatiblePath)
     }
 
-    AfterAll {
-        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $null)
-    }
+    Context "Modules ON the System32 module path" {
+        BeforeAll {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $incompatiblePath)
+        }
 
-    Context "Get-Module -ListAvailable -All results OFF the System32 path" {
+        AfterAll {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $null)
+        }
+
         BeforeEach {
             # Create the module directory
             $guid = New-Guid
@@ -419,7 +420,7 @@ Describe "Nested module behaviour" -Tag "Feature" {
         }
     }
 
-    Context "Get-Module -ListAvailable -All results ON the System32 path" {
+    Context "Modules OFF the System32 test path" {
         BeforeEach {
             # Create the module directory
             $guid = New-Guid
