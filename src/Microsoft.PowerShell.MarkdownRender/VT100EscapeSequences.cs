@@ -10,6 +10,67 @@ using Markdig.Syntax;
 namespace Microsoft.PowerShell.MarkdownRender
 {
     /// <summary>
+    /// Enum to name all the properties of MarkdownOptionInfo.
+    /// </summary>
+    public enum MarkdownOptionInfoProperty
+    {
+        /// <summary>
+        /// Property name Header1.
+        /// </summary>
+        Header1,
+
+        /// <summary>
+        /// Property name Header2.
+        /// </summary>
+        Header2,
+
+        /// <summary>
+        /// Property name Header3.
+        /// </summary>
+        Header3,
+
+        /// <summary>
+        /// Property name Header4.
+        /// </summary>
+        Header4,
+
+        /// <summary>
+        /// Property name Header5.
+        /// </summary>
+        Header5,
+
+        /// <summary>
+        /// Property name Header6.
+        /// </summary>
+        Header6,
+
+        /// <summary>
+        /// Property name Code.
+        /// </summary>
+        Code,
+
+        /// <summary>
+        /// Property name Link.
+        /// </summary>
+        Link,
+
+        /// <summary>
+        /// Property name Image.
+        /// </summary>
+        Image,
+
+        /// <summary>
+        /// Property name EmphasisBold.
+        /// </summary>
+        EmphasisBold,
+
+        /// <summary>
+        /// Property name EmphasisItalics.
+        /// </summary>
+        EmphasisItalics
+    }
+
+    /// <summary>
     /// Class to represent color preference options for various Markdown elements.
     /// </summary>
     public sealed class MarkdownOptionInfo
@@ -78,43 +139,41 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// </summary>
         /// <param name="propertyName">Name of the property to get as escape sequence.</param>
         /// <returns>Specified property name as escape sequence.</returns>
-        public string AsEscapeSequence(string propertyName)
+        public string AsEscapeSequence(MarkdownOptionInfoProperty propertyName)
         {
-            var propName = propertyName?.ToLower();
-
-            switch (propName)
+            switch (propertyName)
             {
-                case "header1":
+                case MarkdownOptionInfoProperty.Header1:
                     return string.Concat(Esc, Header1, Header1, Esc, EndSequence);
 
-                case "header2":
+                case MarkdownOptionInfoProperty.Header2:
                     return string.Concat(Esc, Header2, Header2, Esc, EndSequence);
 
-                case "header3":
+                case MarkdownOptionInfoProperty.Header3:
                     return string.Concat(Esc, Header3, Header3, Esc, EndSequence);
 
-                case "header4":
+                case MarkdownOptionInfoProperty.Header4:
                     return string.Concat(Esc, Header4, Header4, Esc, EndSequence);
 
-                case "header5":
+                case MarkdownOptionInfoProperty.Header5:
                     return string.Concat(Esc, Header5, Header5, Esc, EndSequence);
 
-                case "header6":
+                case MarkdownOptionInfoProperty.Header6:
                     return string.Concat(Esc, Header6, Header6, Esc, EndSequence);
 
-                case "code":
+                case MarkdownOptionInfoProperty.Code:
                     return string.Concat(Esc, Code, Code, Esc, EndSequence);
 
-                case "link":
+                case MarkdownOptionInfoProperty.Link:
                     return string.Concat(Esc, Link, Link, Esc, EndSequence);
 
-                case "image":
+                case MarkdownOptionInfoProperty.Image:
                     return string.Concat(Esc, Image, Image, Esc, EndSequence);
 
-                case "emphasisbold":
+                case MarkdownOptionInfoProperty.EmphasisBold:
                     return string.Concat(Esc, EmphasisBold, EmphasisBold, Esc, EndSequence);
 
-                case "emphasisitalics":
+                case MarkdownOptionInfoProperty.EmphasisItalics:
                     return string.Concat(Esc, EmphasisItalics, EmphasisItalics, Esc, EndSequence);
 
                 default:

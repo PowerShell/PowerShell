@@ -8,7 +8,7 @@
 
   <ItemGroup>
   <!-- Source: https://github.com/lunet-io/markdig/ -->
-    <PackageReference Include="Markdig.Signed" Version="0.14.9" />
+    <PackageReference Include="Markdig.Signed" Version="0.15.1" />
   </ItemGroup>
 
 </Project>
