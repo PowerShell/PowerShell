@@ -6133,14 +6133,13 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
 
             PSObject results = new PSObject();
-            PSObject fileSystemInfoShell = null;
 
             var fsinfo = GetFileSystemInfo(path, out bool isDirectory);
 
             // Create a PSObject with either a DirectoryInfo or FileInfo object at its core.
             if (fsinfo != null)
             {
-                fileSystemInfoShell = PSObject.AsPSObject(fsinfo);
+                PSObject fileSystemInfoShell = PSObject.AsPSObject(fsinfo);
 
                 bool propertySet = false;
 
