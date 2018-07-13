@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Implements the cmdlet for getting the markdown options that are set.
+    /// Implements the cmdlet for getting the Markdown options that are set.
     /// </summary>
     [Cmdlet(
         VerbsCommon.Get, "MarkdownOption",

@@ -15,7 +15,7 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Converts a markdown string to a MarkdownInfo object.
+    /// Converts a Markdown string to a MarkdownInfo object.
     /// The conversion can be done into a HTML text or VT100 encoding string.
     /// </summary>
     [Cmdlet(
@@ -26,28 +26,28 @@ namespace Microsoft.PowerShell.Commands
     public class ConvertFromMarkdownCommand : PSCmdlet
     {
         /// <summary>
-        /// Gets or sets path to the file to convert from markdown to MarkdownInfo.
+        /// Gets or sets path to the file to convert from Markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = PathParameterSet, Mandatory = true)]
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Gets or sets the path to the file to convert from markdown to MarkdownInfo.
+        /// Gets or sets the path to the file to convert from Markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = LiteralPathParameterSet, Mandatory = true)]
         public string[] LiteralPath { get; set; }
 
         /// <summary>
-        /// Gets or sets the InputObject of type System.IO.FileInfo or string with content to convert from markdown to MarkdownInfo.
+        /// Gets or sets the InputObject of type System.IO.FileInfo or string with content to convert from Markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = InputObjParamSet, Mandatory = true, ValueFromPipeline = true)]
         public PSObject InputObject { get; set; }
 
         /// <summary>
-        /// Gets or sets if the markdown document should be converted to a VT100 encoded string.
+        /// Gets or sets if the Markdown document should be converted to a VT100 encoded string.
         /// </summary>
         [Parameter]
         public SwitchParameter AsVT100EncodedString { get; set; }

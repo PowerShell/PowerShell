@@ -10,7 +10,7 @@ using Markdig.Syntax;
 namespace Microsoft.PowerShell.MarkdownRender
 {
     /// <summary>
-    /// Class to represent color preference options for various markdown elements.
+    /// Class to represent color preference options for various Markdown elements.
     /// </summary>
     public sealed class MarkdownOptionInfo
     {

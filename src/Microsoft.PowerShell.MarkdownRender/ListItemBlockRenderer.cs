@@ -45,9 +45,7 @@ namespace Microsoft.PowerShell.MarkdownRender
                 {
                     foreach (var subListItem in subList)
                     {
-                        var subListItemBlock = subListItem as ListItemBlock;
-
-                        if (subListItemBlock != null)
+                        if (subListItem is ListItemBlock subListItemBlock)
                         {
                             foreach (var line in subListItemBlock)
                             {
