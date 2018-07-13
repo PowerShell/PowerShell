@@ -2422,7 +2422,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // If we're trying to load the module, return null so that caches
                     // are not polluted
-                    if (manifestProcessingFlags.HasFlag(ManifestProcessingFlags.LoadElements))
+                    if (importingModule)
                     {
                         return null;
                     }

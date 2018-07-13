@@ -482,7 +482,7 @@ namespace System.Management.Automation
 
             // Don't cache incompatible modules on the system32 module path even if loaded with
             // -SkipEditionCheck, since it will break subsequent sessions.
-            if (!module.IsConsideredEditionCompatible && ModuleUtils.IsOnSystem32ModulePath(module.ModuleBase))
+            if (!module.IsConsideredEditionCompatible)
             {
                 ModuleIntrinsics.Tracer.WriteLine($"Module '{module.Name}' not edition compatible and not cached.");
                 return;

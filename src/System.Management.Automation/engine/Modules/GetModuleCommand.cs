@@ -357,8 +357,8 @@ namespace Microsoft.PowerShell.Commands
             if (SkipEditionCheck && !ListAvailable)
             {
                 ErrorRecord error = new ErrorRecord(
-                    new InvalidOperationException("-SkipEditionCheck can only be used with -ListAvailable"),
-                    "SkipEditionCheckCannotBeSpecifiedWithoutListAvailable",
+                    new InvalidOperationException(Modules.SkipEditionCheckNotSupportedWithoutListAvailable),
+                    nameof(Modules.SkipEditionCheckNotSupportedWithoutListAvailable),
                     ErrorCategory.InvalidOperation,
                     targetObject: null);
 
