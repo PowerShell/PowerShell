@@ -68,6 +68,55 @@ function New-TestModules
     }
 }
 
+function New-TestNestedModule
+{
+    param(
+        [string]$ModuleBase,
+        [string]$ScriptModuleFilename,
+        [string]$ScriptModuleContent,
+        [string]$BinaryModuleFilename,
+        [string]$BinaryModuleDllPath,
+        [string]$RootModuleFilename,
+        [string]$RootModuleContent,
+        [string[]]$CompatiblePSEditions,
+        [bool]$UseRootModule,
+        [bool]$UseAbsolutePath
+    )
+
+    # Create script module
+    New-Item -Path (Join-Path $ModuleBase $ScriptModuleFileName) -Value $ScriptModuleContent
+
+    # Create binary module
+    Copy-Item -Path $BinaryModuleDllPath -Destination (Join-Path $ModuleBase $BinaryModuleFilename)
+
+    # Create the root module if there is one
+    if ($UseRootModule)
+    {
+        New-Item -Path (Join-Path $ModuleBase $RootModuleFilename) -Value $RootModuleContent
+    }
+
+    # Create the manifest command
+    $moduleName = Split-Path -Leaf $ModuleBase
+    $manifestPath = Join-Path $ModuleBase "$moduleName.psd1"
+
+    $nestedModules = $ScriptModuleFilename,$BinaryModuleFilename -join ','
+
+    $newManifestCmd = "New-ModuleManifest -Path $manifestPath -NestedModules $nestedModules "
+    if ($CompatiblePSEditions)
+    {
+        $compatibleModules = $CompatiblePSEditions -join ','
+        $newManifestCmd += "-CompatiblePSEditions $compatibleModules "
+    }
+    if ($UseRootModule)
+    {
+        $newManifestCmd += "-RootModule $RootModuleFilename "
+    }
+
+    # Create the manifest
+    [scriptblock]::Create($newManifestCmd).Invoke()
+}
+
+
 Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
 
     BeforeAll {
@@ -334,7 +383,7 @@ Describe "Nested module behaviour" -Tag "Feature" {
         }
     }
 
-    Context "Modules ON the System32 module path" {
+    Context "Modules OFF the System32 test path" {
         BeforeAll {
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $incompatiblePath)
         }
@@ -346,87 +395,10 @@ Describe "Nested module behaviour" -Tag "Feature" {
         BeforeEach {
             # Create the module directory
             $guid = New-Guid
-            $compatibilityDir = $compatibleDir
-            $containingDir = Join-Path $TestDrive $compatibilityDir $guid
-            $moduleBase = Join-Path $containingDir "CpseTestModule"
-            New-Item -Path $moduleBase -ItemType Directory
-            Add-ModulePath $containingDir
-        }
-
-        AfterEach {
-            Restore-ModulePath
-        }
-
-        It "Gets all compatible modules when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases -Skip:(-not $IsWindows){
-            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition)
-
-            # Add nested module bits
-            $nestedModules = [System.Collections.ArrayList]::new()
-            # Script module
-            New-Item -Path (Join-Path $moduleBase $scriptModuleFile) -Value $scriptModuleContent
-            # Binary module
-            Copy-Item -Path $binaryModuleSourcePath -Destination (Join-Path $moduleBase $binaryModuleFile)
-            # Root module
-            if ($UseRootModule)
-            {
-                New-Item -Path (Join-Path $moduleBase $rootModuleFile) -Value $rootModuleContent
-            }
-
-            $nestedModules = $scriptModuleFile,$binaryModuleFile
-            $nestedModuleNames = $nestedModules -join ','
-
-            # Create the manifest
-            $moduleName = Split-Path -Leaf $moduleBase
-            $manifestPath = Join-Path $moduleBase "$moduleName.psd1"
-            $compatibleEditions = if ($CompatiblePSEditions) { $CompatiblePSEditions -join "," }
-
-            $newManifestCmd = "New-ModuleManifest -Path $manifestPath -NestedModules $nestedModuleNames "
-            if ($compatibleEditions) { $newManifestCmd += "-CompatiblePSEditions $compatibleEditions " }
-            if ($UseRootModule) { $newManifestCmd += "-RootModule $rootModuleFile " }
-            [scriptblock]::Create($newManifestCmd).Invoke()
-
-            # Modules specified with an absolute path should only return themselves
-            if ($UseAbsolutePath)
-            {
-                $modules = Get-Module -ListAvailable -All $moduleBase
-
-                $modules.Count | Should -Be 1
-                $modules[0].Name  | Should -BeExactly $moduleName
-                return
-            }
-
-            $modules = if ($SkipEditionCheck)
-            {
-                Get-Module -ListAvailable -All -SkipEditionCheck | Where-Object { $_.Path.Contains($guid) }
-            }
-            else
-            {
-                Get-Module -ListAvailable -All | Where-Object { $_.Path.Contains($guid) }
-            }
-
-            if ($UseRootModule)
-            {
-                $modules.Count | Should -Be 4
-            }
-            else
-            {
-                $modules.Count | Should -Be 3
-            }
-
-            $names = $modules.Name
-            $names | Should -Contain $moduleName
-            $names | Should -Contain $scriptModuleName
-            $names | Should -Contain $binaryModuleName
-        }
-    }
-
-    Context "Modules OFF the System32 test path" {
-        BeforeEach {
-            # Create the module directory
-            $guid = New-Guid
             $compatibilityDir = $incompatibleDir
             $containingDir = Join-Path $TestDrive $compatibilityDir $guid
-            $moduleBase = Join-Path $containingDir "CpseTestModule"
+            $moduleName = "CpseTestModule"
+            $moduleBase = Join-Path $containingDir $moduleName
             New-Item -Path $moduleBase -ItemType Directory
             Add-ModulePath $containingDir
         }
@@ -435,33 +407,20 @@ Describe "Nested module behaviour" -Tag "Feature" {
             Restore-ModulePath
         }
 
-        It "Gets all compatible modules when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases -Skip:(-not $IsWindows){
+        It "Get-Module -ListAvailable -All gets all compatible modules when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases -Skip:(-not $IsWindows){
             param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition)
 
-            # Add nested module bits
-            $nestedModules = [System.Collections.ArrayList]::new()
-            # Script module
-            New-Item -Path (Join-Path $moduleBase $scriptModuleFile) -Value $scriptModuleContent
-            # Binary module
-            Copy-Item -Path $binaryModuleSourcePath -Destination (Join-Path $moduleBase $binaryModuleFile)
-            # Root module
-            if ($UseRootModule)
-            {
-                New-Item -Path (Join-Path $moduleBase $rootModuleFile) -Value $rootModuleContent
-            }
-
-            $nestedModules = $scriptModuleFile,$binaryModuleFile
-            $nestedModuleNames = $nestedModules -join ','
-
-            # Create the manifest
-            $moduleName = Split-Path -Leaf $moduleBase
-            $manifestPath = Join-Path $moduleBase "$moduleName.psd1"
-            $compatibleEditions = if ($MarkedEdition) { $MarkedEdition -join "," }
-
-            $newManifestCmd = "New-ModuleManifest -Path $manifestPath -NestedModules $nestedModuleNames "
-            if ($compatibleEditions) { $newManifestCmd += "-CompatiblePSEditions $compatibleEditions " }
-            if ($UseRootModule) { $newManifestCmd += "-RootModule $rootModuleFile " }
-            [scriptblock]::Create($newManifestCmd).Invoke()
+            New-TestNestedModule `
+                -ModuleBase $moduleBase `
+                -ScriptModuleFilename $scriptModuleFile `
+                -ScriptModuleContent $scriptModuleContent `
+                -BinaryModuleFilename $binaryModuleFile `
+                -BinaryModuleDllPath $binaryModuleSourcePath `
+                -RootModuleFilename $rootModuleFile `
+                -RootModuleContent $rootModuleContent `
+                -CompatiblePSEditions $MarkedEdition `
+                -UseRootModule $UseRootModule `
+                -UseAbsolutePath $UseAbsolutePath
 
             # Modules specified with an absolute path should only return themselves
             if ($UseAbsolutePath) {
@@ -498,6 +457,72 @@ Describe "Nested module behaviour" -Tag "Feature" {
             {
                 $modules.Count | Should -Be 0
                 return
+            }
+
+            if ($UseRootModule)
+            {
+                $modules.Count | Should -Be 4
+            }
+            else
+            {
+                $modules.Count | Should -Be 3
+            }
+
+            $names = $modules.Name
+            $names | Should -Contain $moduleName
+            $names | Should -Contain $scriptModuleName
+            $names | Should -Contain $binaryModuleName
+        }
+    }
+
+    Context "Modules OFF the System32 module path" {
+        BeforeEach {
+            # Create the module directory
+            $guid = New-Guid
+            $compatibilityDir = $compatibleDir
+            $containingDir = Join-Path $TestDrive $compatibilityDir $guid
+            $moduleName = "CpseTestModule"
+            $moduleBase = Join-Path $containingDir $moduleName
+            New-Item -Path $moduleBase -ItemType Directory
+            Add-ModulePath $containingDir
+        }
+
+        AfterEach {
+            Restore-ModulePath
+        }
+
+        It "Get-Module -ListAvailable -All gets all compatible modules when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases -Skip:(-not $IsWindows){
+            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition)
+
+            New-TestNestedModule `
+                -ModuleBase $moduleBase `
+                -ScriptModuleFilename $scriptModuleFile `
+                -ScriptModuleContent $scriptModuleContent `
+                -BinaryModuleFilename $binaryModuleFile `
+                -BinaryModuleDllPath $binaryModuleSourcePath `
+                -RootModuleFilename $rootModuleFile `
+                -RootModuleContent $rootModuleContent `
+                -CompatiblePSEditions $MarkedEdition `
+                -UseRootModule $UseRootModule `
+                -UseAbsolutePath $UseAbsolutePath
+
+            # Modules specified with an absolute path should only return themselves
+            if ($UseAbsolutePath)
+            {
+                $modules = Get-Module -ListAvailable -All $moduleBase
+
+                $modules.Count | Should -Be 1
+                $modules[0].Name  | Should -BeExactly $moduleName
+                return
+            }
+
+            $modules = if ($SkipEditionCheck)
+            {
+                Get-Module -ListAvailable -All -SkipEditionCheck | Where-Object { $_.Path.Contains($guid) }
+            }
+            else
+            {
+                Get-Module -ListAvailable -All | Where-Object { $_.Path.Contains($guid) }
             }
 
             if ($UseRootModule)
