@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Management.Automation.Provider;
 using System.Text;
 using Dbg = System.Management.Automation;
@@ -499,14 +498,6 @@ namespace System.Management.Automation
                 itemPath = GetProviderPath(path, context);
             }
             s_pathResolutionTracer.WriteLine("PROVIDER path: {0}", itemPath);
-
-            // If the directory exists, just return it.
-            // Otherwise fallback to previous behavior and let provider handle it.
-            if (Directory.Exists(userPath))
-            {
-                result.Add(new PathInfo(drive, provider, userPath, _sessionState));
-                return result;
-            }
 
             Collection<string> stringResult = new Collection<string>();
 
