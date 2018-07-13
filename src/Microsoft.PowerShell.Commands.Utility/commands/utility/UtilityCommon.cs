@@ -217,5 +217,4 @@ namespace Microsoft.PowerShell.Commands
             return result.ToString();
         }
     }
-} // namespace Microsoft.PowerShell.Commands
-
+}

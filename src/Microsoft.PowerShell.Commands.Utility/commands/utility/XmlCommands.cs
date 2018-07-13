@@ -796,7 +796,7 @@ namespace Microsoft.PowerShell.Commands
                 _deserializer.Stop();
             }
         }
-    } // ImportXmlHelper
+    }
 
     #region Select-Xml
     ///<summary>
@@ -1078,10 +1078,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 Dbg.Assert(false, "Unrecognized parameterset");
             }
-        }//End ProcessRecord()
-
+        }
         #endregion overrides
-    }//End Class
+    }
 
     /// <summary>
     /// The object returned by Select-Xml representing the result of a match.
@@ -1218,7 +1217,5 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     }
-
     #endregion Select-Xml
 }
-

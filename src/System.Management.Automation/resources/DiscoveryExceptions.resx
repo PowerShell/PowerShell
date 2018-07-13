@@ -218,4 +218,10 @@ The #requires statement must be in one of the following formats:
   <data name="GetCommandShowCommandInfoParamError" xml:space="preserve">
     <value>The ShowCommandInfo and Syntax parameters cannot be specified together.</value>
   </data>
+  <data name="ScriptDisabledWhenFeatureOn" xml:space="preserve">
+    <value>This script command is disabled when the experimental feature '{0}' has been turned on.</value>
+  </data>
+  <data name="ScriptDisabledWhenFeatureOff" xml:space="preserve">
+    <value>This script command is disabled when the experimental feature '{0}' has been turned off.</value>
+  </data>
 </root>

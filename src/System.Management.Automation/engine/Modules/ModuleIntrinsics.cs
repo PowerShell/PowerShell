@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation.Configuration;
@@ -419,62 +420,90 @@ namespace System.Management.Automation
 
         internal static Version GetManifestModuleVersion(string manifestPath)
         {
-            if (manifestPath != null &&
-                manifestPath.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
+            try
             {
-                try
-                {
-                    var dataFileSetting =
-                        PsUtils.GetModuleManifestProperties(
-                            manifestPath,
-                            PsUtils.ManifestModuleVersionPropertyName);
+                Hashtable dataFileSetting =
+                    PsUtils.GetModuleManifestProperties(
+                        manifestPath,
+                        PsUtils.ManifestModuleVersionPropertyName);
 
-                    var versionValue = dataFileSetting["ModuleVersion"];
-                    if (versionValue != null)
+                object versionValue = dataFileSetting["ModuleVersion"];
+                if (versionValue != null)
+                {
+                    Version moduleVersion;
+                    if (LanguagePrimitives.TryConvertTo(versionValue, out moduleVersion))
                     {
-                        Version moduleVersion;
-                        if (LanguagePrimitives.TryConvertTo(versionValue, out moduleVersion))
-                        {
-                            return moduleVersion;
-                        }
+                        return moduleVersion;
                     }
                 }
-                catch (PSInvalidOperationException)
-                {
-                }
             }
+            catch (PSInvalidOperationException) { }
 
             return new Version(0, 0);
         }
 
         internal static Guid GetManifestGuid(string manifestPath)
         {
-            if (manifestPath != null &&
-                manifestPath.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
+            try
             {
-                try
-                {
-                    var dataFileSetting =
-                        PsUtils.GetModuleManifestProperties(
-                            manifestPath,
-                            PsUtils.ManifestGuidPropertyName);
+                Hashtable dataFileSetting =
+                    PsUtils.GetModuleManifestProperties(
+                        manifestPath,
+                        PsUtils.ManifestGuidPropertyName);
 
-                    var guidValue = dataFileSetting["GUID"];
-                    if (guidValue != null)
+                object guidValue = dataFileSetting["GUID"];
+                if (guidValue != null)
+                {
+                    Guid guidID;
+                    if (LanguagePrimitives.TryConvertTo(guidValue, out guidID))
                     {
-                        Guid guidID;
-                        if (LanguagePrimitives.TryConvertTo(guidValue, out guidID))
-                        {
-                            return guidID;
-                        }
+                        return guidID;
                     }
                 }
-                catch (PSInvalidOperationException)
-                {
-                }
             }
+            catch (PSInvalidOperationException) { }
 
             return new Guid();
+        }
+
+        internal static ExperimentalFeature[] GetExperimentalFeature(string manifestPath)
+        {
+            try
+            {
+                Hashtable dataFileSetting =
+                    PsUtils.GetModuleManifestProperties(
+                        manifestPath,
+                        PsUtils.ManifestPrivateDataPropertyName);
+
+                object privateData = dataFileSetting["PrivateData"];
+                if (privateData is Hashtable hashData && hashData["PSData"] is Hashtable psData)
+                {
+                    object expFeatureValue = psData["ExperimentalFeatures"];
+                    if (expFeatureValue != null &&
+                        LanguagePrimitives.TryConvertTo(expFeatureValue, out Hashtable[] features) &&
+                        features.Length > 0)
+                    {
+                        string moduleName = ModuleIntrinsics.GetModuleName(manifestPath);
+                        var expFeatureList = new List<ExperimentalFeature>();
+                        foreach (Hashtable feature in features)
+                        {
+                            string featureName = feature["Name"] as string;
+                            if (String.IsNullOrEmpty(featureName)) { continue; }
+
+                            if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
+                            {
+                                string featureDescription = feature["Description"] as string;
+                                expFeatureList.Add(new ExperimentalFeature(featureName, featureDescription, manifestPath,
+                                                                           ExperimentalFeature.IsEnabled(featureName)));
+                            }
+                        }
+                        return expFeatureList.ToArray();
+                    }
+                }
+            }
+            catch (PSInvalidOperationException) { }
+
+            return Utils.EmptyArray<ExperimentalFeature>();
         }
 
         // The extensions of all of the files that can be processed with Import-Module, put the ni.dll in front of .dll to have higher priority to be loaded.

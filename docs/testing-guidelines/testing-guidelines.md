@@ -108,13 +108,10 @@ Currently, we have a minuscule number of tests which are run by using xUnit.
 When working on new features or fixes, it is natural to want to run those tests locally before making a PR.
 Three helper functions are part of the build.psm1 module to help with that:
 
-* `Restore-PSPester` will restore Pester, which is needed to run `Start-PSPester`
 * `Start-PSPester` will execute all Pester tests which are run by the CI system
 * `Start-PSxUnit` will execute the available xUnit tests run by the CI system
 
 Our CI system runs these as well; there should be no difference between running these on your dev system, versus in CI.
-
-Make sure that you run `Restore-PSPester` before running `Start-PSPester`, or it will fail to run.
 
 When running tests in this way, be sure that you have started PowerShell with `-noprofile` as some tests will fail if the
 environment is not the default or has any customization.
