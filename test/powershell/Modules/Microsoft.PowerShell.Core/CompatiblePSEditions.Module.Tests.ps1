@@ -71,6 +71,11 @@ function New-TestModules
 Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
 
     BeforeAll {
+        if (-not $IsWindows)
+        {
+            return
+        }
+
         $successCases = @(
             @{ Editions = "Core","Desktop"; ModuleName = "BothModule" },
             @{ Editions = "Core"; ModuleName = "CoreModule" }
@@ -273,6 +278,11 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
 
 Describe "Nested module behaviour" -Tag "Feature" {
     BeforeAll {
+        if (-not $IsWindows)
+        {
+            return
+        }
+
         $testConditions = @{
             SkipEditionCheck = @($true, $false)
             UseRootModule = @($true, $false)
