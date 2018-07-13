@@ -456,7 +456,7 @@ Describe "Nested module behaviour" -Tag "Feature" {
             if ($UseAbsolutePath) {
                 if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
                 {
-                    { Get-Module -ListAvailable -All $moduleBase } | Should -Throw -ErrorId "Modules_ModuleNotFoundForGetModule,Microsoft.PowerShell.Commands.GetModuleCommand"
+                    { Get-Module -ListAvailable -All $moduleBase -ErrorAction Stop } | Should -Throw -ErrorId "Modules_ModuleNotFoundForGetModule,Microsoft.PowerShell.Commands.GetModuleCommand"
                     return
                 }
 
