@@ -54,8 +54,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteDebug(Message);
             }
-        }//processrecord
-    }//WriteDebugCommand
+        }
+    }
     #endregion WriteDebugCommand
 
     #region WriteVerboseCommand
@@ -103,8 +103,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteVerbose(Message);
             }
-        }//processrecord
-    }//WriteVerboseCommand
+        }
+    }
     #endregion WriteVerboseCommand
 
     #region WriteWarningCommand
@@ -152,8 +152,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteWarning(Message);
             }
-        }//processrecord
-    }//WriteWarningCommand
+        }
+    }
     #endregion WriteWarningCommand
 
     #region WriteInformationCommand
@@ -205,8 +205,7 @@ namespace Microsoft.PowerShell.Commands
         {
             WriteInformation(MessageData, Tags);
         }
-
-    }//WriteInformationCommand
+    }
 
     #endregion WriteInformationCommand
 
@@ -388,8 +387,8 @@ namespace Microsoft.PowerShell.Commands
             /*
             }
             */
-        }//processrecord
-    }//WriteOrThrowErrorCommand
+        }
+    }
 
     /// <summary>
     /// This class implements Write-Error command
@@ -483,7 +482,6 @@ namespace Microsoft.PowerShell.Commands
         {
         }
         #endregion Serialization
-    } // WriteErrorException
+    }
     #endregion WriteErrorException
-} //namespace
-
+}

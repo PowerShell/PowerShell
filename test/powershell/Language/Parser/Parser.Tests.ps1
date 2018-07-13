@@ -457,6 +457,14 @@ foo``u{2195}abc
 		$result | Should -Be "Finally", "System.ArgumentException"
     }
 
+    It "Test that a break statement in a finally block results in a ParseException" {
+        { ExecuteCommand 'try {} finally { break }' } | Should -Throw -ErrorId ParseException
+    }
+
+    It "Test that a switch statement with a break in a finally doesn't trigger a parse error" {
+        ExecuteCommand 'try {"success"} finally {switch (1) {foo  {break}}}' | Should -BeExactly 'success'
+    }
+
 	It "Test that null can be passed to a method that expects a reference type. (line 1439)" {
         $result = ExecuteCommand '$test = "String";$test.CompareTo($())'
 		$result | Should -Be 1

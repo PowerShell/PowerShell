@@ -284,7 +284,7 @@ cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakeP
         $FilesToCopy = @('pwrshplugin.dll', 'pwrshplugin.pdb')
         $dstPath = "$PSScriptRoot\src\powershell-win-core"
         $FilesToCopy | ForEach-Object {
-            $srcPath = [IO.Path]::Combine((Get-Location), "bin", $Configuration, "CoreClr/$_")
+            $srcPath = [IO.Path]::Combine($PWD.Path, "bin", $Configuration, "CoreClr/$_")
 
             Write-Log "  Copying $srcPath to $dstPath"
             Copy-Item $srcPath $dstPath
@@ -306,8 +306,7 @@ cmd.exe /C cd /d "$location" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakePath" "$
 
         # Copy the binary to the packaging directory
         # NOTE: No PDB file; it's a resource-only DLL.
-        # VS2017 puts this in $HOME\source
-        $srcPath = [IO.Path]::Combine($HOME, "source", $Configuration, 'PowerShell.Core.Instrumentation.dll')
+        $srcPath = [IO.Path]::Combine($PWD.Path, $Configuration, 'PowerShell.Core.Instrumentation.dll')
         Copy-Item -Path $srcPath -Destination $dstPath
 
     } finally {
@@ -459,15 +458,11 @@ function Start-PSBuild {
     }
 
     if ($Clean) {
-        Write-Log "Cleaning your working directory. You can also do it with 'git clean -fdX'"
+        Write-Log "Cleaning your working directory. You can also do it with 'git clean -fdx --exclude .vs/PowerShell/v15/Server/sqlite3'"
         Push-Location $PSScriptRoot
         try {
-            git clean -fdX
-            # Extra cleaning is required to delete the CMake temporary files.
-            # These are not cleaned when using "X" and cause CMake to retain state, leading to
-            # mis-configured environment issues when switching between x86 and x64 compilation
-            # environments.
-            git clean -fdx .\src\powershell-native
+            # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
+            git clean -fdx --exclude .vs/PowerShell/v15/Server/sqlite3
         } finally {
             Pop-Location
         }
@@ -981,11 +976,12 @@ function Publish-PSTestTools {
 function Start-PSPester {
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
+        [Parameter(Position=0)]
+        [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
         [string[]]$ExcludeTag = 'Slow',
         [string[]]$Tag = @("CI","Feature"),
-        [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
         [string]$binDir = (Split-Path (Get-PSOptions -DefaultToNew).Output),
         [string]$powershell = (Join-Path $binDir 'pwsh'),
@@ -1001,24 +997,9 @@ function Start-PSPester {
         [switch]$IncludeFailingTest
     )
 
-    $getModuleResults = Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue
-    if (-not $getModuleResults)
+    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
     {
-        Write-Warning @"
-Pester module not found.
-Restore the module to '$Pester' by running:
-    Restore-PSPester
-"@
-        return;
-    }
-
-    if (-not ($getModuleResults | Where-Object { $_.Version -ge "4.2" } )) {
-        Write-Warning @"
-No Pester module of version 4.2 and higher.
-Restore the required module version to '$Pester' by running:
-    Restore-PSPester
-"@
-        return;
+          Restore-PSPester
     }
 
     if ($IncludeFailingTest.IsPresent)

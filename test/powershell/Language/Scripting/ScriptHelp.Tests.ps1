@@ -557,4 +557,18 @@ Describe 'get-help other tests' -Tags "CI" {
         It '$x.Parameters.parameter[1].defaultValue' { $x.Parameters.parameter[1].defaultValue | Should -BeExactly '42' }
         It '$x.Parameters.parameter[2].defaultValue' { $x.Parameters.parameter[2].defaultValue | Should -BeExactly 'parameter is mandatory' }
     }
+
+    Context 'get-help -Examples prompt string should have trailing space' {
+        function foo {
+            <#
+              .EXAMPLE
+              foo bar
+            #>
+              param()
+        }
+
+        It 'prompt should be exactly "PS > " with trailing space' {
+            (Get-Help foo -Examples).examples.example.introduction.Text | Should -BeExactly "PS > "
+        }
+    }
 }

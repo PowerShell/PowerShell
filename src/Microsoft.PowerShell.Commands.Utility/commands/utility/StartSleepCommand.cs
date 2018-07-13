@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Sleep(sleepTime);
-        } // EndProcessing
+        }
 
         /// <summary>
         /// stopprocessing override
@@ -129,6 +129,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-    } // StartSleepCommand
-} // namespace Microsoft.PowerShell.Commands
-
+    }
+}

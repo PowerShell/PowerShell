@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject(comObject);
             }
 #endif
-        }//protected override void BeginProcessing()
+        }
 
         #endregion Overrides
 
@@ -473,7 +473,7 @@ namespace Microsoft.PowerShell.Commands
         // HResult code '-2147417850' - Cannot change thread mode after it is set.
         private const int RPC_E_CHANGED_MODE = unchecked((int)0x80010106);
         private const string netSetName = "Net";
-    }//internal class NewObjectCommand: PSCmdlet
+    }
 
     /// <summary>
     /// Native methods for dealing with COM objects

@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
             outputObj.Properties.Add(note);
 
             WriteObject(outputObj);
-        } // EndProcessing
+        }
 
         #endregion
 
@@ -129,9 +129,8 @@ namespace Microsoft.PowerShell.Commands
 
             [DllImport(PinvokeDllNames.SetLocalTimeDllName, SetLastError = true)]
             public static extern bool SetLocalTime(ref SystemTime systime);
-        } // NativeMethods
+        }
 
         #endregion
-    } // SetDateCommand
-} // namespace Microsoft.PowerShell.Commands
-
+    }
+}

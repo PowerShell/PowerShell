@@ -122,9 +122,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             WriteObject(result);
-        } // EndProcessing
+        }
 
         #endregion
-    }  // NewTimeSpanCommand
-} // namespace Microsoft.PowerShell.Commands
-
+    }
+}

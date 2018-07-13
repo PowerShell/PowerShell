@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             WriteObject(_inputObjects, enumerate);
-        }//processrecord
-    }//WriteOutputCommand
+        }
+    }
     #endregion
 }
