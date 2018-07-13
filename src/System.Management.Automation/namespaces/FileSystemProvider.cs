@@ -1512,7 +1512,7 @@ namespace Microsoft.PowerShell.Commands
                         GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
                         if (fspDynamicParam != null && fspDynamicParam.FollowSymlink)
                         {
-                            tracker = new InodeTracker(((DirectoryInfo)fsinfo).FullName);
+                            tracker = new InodeTracker(fsinfo.FullName);
                         }
                     }
 
@@ -1556,8 +1556,8 @@ namespace Microsoft.PowerShell.Commands
                         if (nameOnly)
                         {
                             WriteItemObject(
-                                ((FileInfo)fsinfo).Name,
-                                ((FileInfo)fsinfo).FullName,
+                                fsinfo.Name,
+                                fsinfo.FullName,
                                 false);
                         }
                         else
