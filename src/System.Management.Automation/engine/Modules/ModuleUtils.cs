@@ -182,7 +182,7 @@ namespace System.Management.Automation.Internal
             }
 
             // Finally check the edition flags of the module
-            return Utils.IsPSEditionSupported(psEditions);
+            return !Utils.IsPSEditionSupported(psEditions);
         }
 
         internal static IEnumerable<string> GetDefaultAvailableModuleFiles(bool isForAutoDiscovery, ExecutionContext context)

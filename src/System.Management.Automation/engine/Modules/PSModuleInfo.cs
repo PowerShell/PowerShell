@@ -852,7 +852,7 @@ namespace System.Management.Automation
         /// Modules loaded from the System32 module path will have this as true if they
         /// have declared edition compatibility with PowerShell Core.
         /// </summary>
-        internal bool IsConsideredEditionCompatible { get; set; }
+        internal bool IsConsideredEditionCompatible { get; set; } = true;
 
         /// <summary>
         /// ModuleList
