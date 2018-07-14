@@ -83,11 +83,18 @@ function New-TestNestedModule
         [bool]$UseAbsolutePath
     )
 
+    $nestedModules = [System.Collections.ArrayList]::new()
+
     # Create script module
     New-Item -Path (Join-Path $ModuleBase $ScriptModuleFileName) -Value $ScriptModuleContent
+    $nestedModules.Add($ScriptModuleFilename)
 
-    # Create binary module
-    Copy-Item -Path $BinaryModuleDllPath -Destination (Join-Path $ModuleBase $BinaryModuleFilename)
+    if ($BinaryModuleFilename -and $BinaryModuleDllPath)
+    {
+        # Create binary module
+        Copy-Item -Path $BinaryModuleDllPath -Destination (Join-Path $ModuleBase $BinaryModuleFilename)
+        $nestedModules.Add($BinaryModuleFilename)
+    }
 
     # Create the root module if there is one
     if ($UseRootModule)
@@ -99,7 +106,7 @@ function New-TestNestedModule
     $moduleName = Split-Path -Leaf $ModuleBase
     $manifestPath = Join-Path $ModuleBase "$moduleName.psd1"
 
-    $nestedModules = $ScriptModuleFilename,$BinaryModuleFilename -join ','
+    $nestedModules = $nestedModules -join ','
 
     $newManifestCmd = "New-ModuleManifest -Path $manifestPath -NestedModules $nestedModules "
     if ($CompatiblePSEditions)
@@ -110,6 +117,11 @@ function New-TestNestedModule
     if ($UseRootModule)
     {
         $newManifestCmd += "-RootModule $RootModuleFilename "
+        $newManifestCmd += "-FunctionsToExport @('Test-RootModule') "
+    }
+    else
+    {
+        $newManifestCmd += "-FunctionsToExport @('Test-ScriptModule') "
     }
 
     # Create the manifest
@@ -329,13 +341,8 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
     }
 }
 
-Describe "Nested module behaviour" -Tag "Feature" {
+Describe "Get-Module nested module behaviour with Edition checking" -Tag "Feature" {
     BeforeAll {
-        if (-not $IsWindows)
-        {
-            return
-        }
-
         $testConditions = @{
             SkipEditionCheck = @($true, $false)
             UseRootModule = @($true, $false)
@@ -373,7 +380,7 @@ Describe "Nested module behaviour" -Tag "Feature" {
         # Define root module definition
         $rootModuleName = "RootModule"
         $rootModuleFile = "$rootModuleName.psm1"
-        $rootModuleContent = 'function Test-RootModule { Test-ScriptModule; [TestBinaryModuleClass]::Test() }'
+        $rootModuleContent = 'function Test-RootModule { Test-ScriptModule }'
 
         # Module directory structure: $TestDrive/$compatibility/$guid/$moduleName/{module parts}
         $compatibleDir = "Compatible"
@@ -647,6 +654,213 @@ Describe "Nested module behaviour" -Tag "Feature" {
             $names | Should -Contain $moduleName
             $names | Should -Contain $scriptModuleName
             $names | Should -Contain $binaryModuleName
+        }
+    }
+}
+
+Describe "Import-Module nested module behaviour with Edition checking" -Tag "Feature" {
+    BeforeAll {
+        $testConditions = @{
+            SkipEditionCheck = @($true, $false)
+            UseRootModule = @($true, $false)
+            UseAbsolutePath = @($true, $false)
+            MarkedEdition = @($null, "Desktop", "Core", @("Desktop","Core"))
+        }
+
+        # Combine all the test conditions into a list of test cases
+        $testCases = @(@{})
+        foreach ($condition in $testConditions.Keys)
+        {
+            $list = [System.Collections.Generic.List[hashtable]]::new()
+            foreach ($obj in $testCases)
+            {
+                foreach ($value in $testConditions[$condition])
+                {
+                    $list.Add($obj + @{ $condition = $value })
+                }
+            }
+            $testCases = $list
+        }
+
+        # Define nested script module
+        $scriptModuleName = "NestedScriptModule"
+        $scriptModuleFile = "$scriptModuleName.psm1"
+        $scriptModuleContent = 'function Test-ScriptModule { return $true }'
+
+        # Define root module definition
+        $rootModuleName = "RootModule"
+        $rootModuleFile = "$rootModuleName.psm1"
+        $rootModuleContent = 'function Test-RootModule { Test-ScriptModule }'
+
+        # Module directory structure: $TestDrive/$compatibility/$guid/$moduleName/{module parts}
+        $compatibleDir = "Compatible"
+        $incompatibleDir = "Incompatible"
+        $compatiblePath = Join-Path $TestDrive $compatibleDir
+        $incompatiblePath = Join-Path $TestDrive $incompatibleDir
+
+        foreach ($basePath in $compatiblePath,$incompatiblePath)
+        {
+            New-Item -Path $basePath -ItemType Directory
+        }
+    }
+
+    Context "Modules ON the System32 test path" {
+        BeforeAll {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $incompatiblePath)
+        }
+
+        AfterAll {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $null)
+        }
+
+        BeforeEach {
+            # Create the module directory
+            $guid = New-Guid
+            $compatibilityDir = $incompatibleDir
+            $containingDir = Join-Path $TestDrive $compatibilityDir $guid
+            $moduleName = "CpseTestModule"
+            $moduleBase = Join-Path $containingDir $moduleName
+            New-Item -Path $moduleBase -ItemType Directory
+            Add-ModulePath $containingDir
+        }
+
+        AfterEach {
+            Get-Module $moduleName | Remove-Module -Force
+            Restore-ModulePath
+        }
+
+        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases -Skip:(-not $IsWindows) {
+            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition)
+
+            New-TestNestedModule `
+                -ModuleBase $moduleBase `
+                -ScriptModuleFilename $scriptModuleFile `
+                -ScriptModuleContent $scriptModuleContent `
+                -RootModuleFilename $rootModuleFile `
+                -RootModuleContent $rootModuleContent `
+                -CompatiblePSEditions $MarkedEdition `
+                -UseRootModule $UseRootModule `
+                -UseAbsolutePath $UseAbsolutePath
+
+            if ($UseAbsolutePath)
+            {
+                if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
+                {
+                    {
+                        Import-Module $moduleBase -ErrorAction Stop
+                    } | Should -Throw -ErrorId "Modules_PSEditionNotSupported,Microsoft.PowerShell.Commands.ImportModuleCommand"
+                    return
+                }
+
+                if ($SkipEditionCheck)
+                {
+                    Import-Module $moduleBase -SkipEditionCheck
+                }
+                else
+                {
+                    Import-Module $moduleBase
+                }
+
+                if ($UseRootModule)
+                {
+                    Test-RootModule | Should -BeTrue
+                    { Test-ScriptModule } | Should -Throw -ErrorId "CommandNotFoundException"
+                    return
+                }
+
+                Test-ScriptModule | Should -BeTrue
+                { Test-RootModule } | Should -Throw -ErrorId "CommandNotFoundException"
+                return
+            }
+
+            if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
+            {
+                {
+                    Import-Module $moduleName -ErrorAction Stop
+                } | Should -Throw -ErrorId "Modules_PSEditionNotSupported,Microsoft.PowerShell.Commands.ImportModuleCommand"
+                return
+            }
+
+            if ($SkipEditionCheck)
+            {
+                Import-Module $moduleName -SkipEditionCheck
+            }
+            else
+            {
+                Import-Module $moduleName
+            }
+
+            if ($UseRootModule)
+            {
+                Test-RootModule | Should -BeTrue
+                { Test-ScriptModule } | Should -Throw -ErrorId "CommandNotFoundException"
+                return
+            }
+
+            Test-ScriptModule | Should -BeTrue
+            { Test-RootModule } | Should -Throw -ErrorId "CommandNotFoundException"
+        }
+    }
+
+    Context "Modules OFF the System32 module path" {
+        BeforeEach {
+            # Create the module directory
+            $guid = New-Guid
+            $compatibilityDir = $compatibleDir
+            $containingDir = Join-Path $TestDrive $compatibilityDir $guid
+            $moduleName = "CpseTestModule"
+            $moduleBase = Join-Path $containingDir $moduleName
+            New-Item -Path $moduleBase -ItemType Directory
+            Add-ModulePath $containingDir
+        }
+
+        AfterEach {
+            Get-Module $moduleName | Remove-Module -Force
+            Restore-ModulePath
+        }
+
+        It "Import-Module when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases {
+            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition)
+
+            New-TestNestedModule `
+                -ModuleBase $moduleBase `
+                -ScriptModuleFilename $scriptModuleFile `
+                -ScriptModuleContent $scriptModuleContent `
+                -RootModuleFilename $rootModuleFile `
+                -RootModuleContent $rootModuleContent `
+                -CompatiblePSEditions $MarkedEdition `
+                -UseRootModule $UseRootModule `
+                -UseAbsolutePath $UseAbsolutePath
+
+            if ($UseAbsolutePath)
+            {
+                if ($SkipEditionCheck)
+                {
+                    Import-Module $moduleBase -SkipEditionCheck
+                }
+                else
+                {
+                    Import-Module $moduleBase
+                }
+            }
+            elseif ($SkipEditionCheck)
+            {
+                Import-Module $moduleName -SkipEditionCheck
+            }
+            else
+            {
+                Import-Module $moduleName
+            }
+
+            if ($UseRootModule)
+            {
+                Test-RootModule | Should -BeTrue
+                { Test-ScriptModule } | Should -Throw -ErrorId "CommandNotFoundException"
+                return
+            }
+
+            Test-ScriptModule | Should -BeTrue
+            { Test-RootModule } | Should -Throw -ErrorId "CommandNotFoundException"
         }
     }
 }
