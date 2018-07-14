@@ -1472,6 +1472,8 @@ namespace System.Management.Automation.Internal
         // since we can't manipulate the System32 directory in a test
         internal static string TestWindowsPowerShellPSHomeLocation;
 
+        internal static bool ShowMarkdownOutputBypass;
+
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
         {

@@ -22,7 +22,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CodeAnalysis.VisualBasic;
 
 using PathType = System.IO.Path;
 
@@ -37,12 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The C# programming language.
         /// </summary>
-        CSharp,
-
-        /// <summary>
-        /// The Visual Basic programming language.
-        /// </summary>
-        VisualBasic
+        CSharp
     }
 
     /// <summary>
@@ -166,8 +160,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string path in pathValue)
                 {
                     // Try to resolve the path
-                    ProviderInfo provider = null;
-                    Collection<string> newPaths = SessionState.Path.GetResolvedProviderPathFromPSPath(path, out provider);
+                    Collection<string> newPaths = SessionState.Path.GetResolvedProviderPathFromPSPath(path, out ProviderInfo _);
 
                     // If it didn't resolve, add the original back
                     // for a better error message.
@@ -218,12 +211,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessPaths(List<string> resolvedPaths)
         {
-            // Now, get the file type. At the same time, make sure
-            // we aren't attempting to mix languages, as that is
-            // not supported by the Roslyn. While it
-            // would be possible to partition the files into
-            // languages, that would be much too complex to
-            // describe.
+            // Validate file extensions.
+            // Make sure we don't mix source files from different languages (if we support any other languages in future).
             string activeExtension = null;
             foreach (string path in resolvedPaths)
             {
@@ -233,10 +222,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     case ".CS":
                         Language = Language.CSharp;
-                        break;
-
-                    case ".VB":
-                        Language = Language.VisualBasic;
                         break;
 
                     case ".DLL":
@@ -253,7 +238,6 @@ namespace Microsoft.PowerShell.Commands
                             currentExtension);
 
                         ThrowTerminatingError(errorRecord);
-
                         break;
                 }
 
@@ -273,9 +257,9 @@ namespace Microsoft.PowerShell.Commands
 
                     ThrowTerminatingError(errorRecord);
                 }
-
-                _paths = resolvedPaths.ToArray();
             }
+
+            _paths = resolvedPaths.ToArray();
         }
 
         private string[] _paths;
@@ -425,15 +409,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Roslyn command line parameters.
         /// https://github.com/dotnet/roslyn/blob/master/docs/compilers/CSharp/CommandLine.md
-        /// https://github.com/dotnet/roslyn/blob/master/docs/compilers/Visual%20Basic/CommandLine.md
         ///
         /// Parser options:
         ///     langversion:string - language version from:
         ///                                 [enum]::GetNames([Microsoft.CodeAnalysis.CSharp.LanguageVersion])
-        ///                                 [enum]::GetNames([Microsoft.CodeAnalysis.VisualBasic.LanguageVersion])
         ///     define:symbol list - preprocessor symbols:
         ///                                 /define:UNIX,DEBUG      - CSharp
-        ///                                 /define:UNIX=1,DEBUG=1  - VisualBasic
         ///
         /// Compilation options:
         ///     optimize{+|-}            - optimization level
@@ -444,7 +425,6 @@ namespace Microsoft.PowerShell.Commands
         ///     nowarn                   - disable all warnings
         ///     nowarn:strings           - disable a list of individual warnings
         ///     usings:strings           - ';'-delimited usings for CSharp
-        ///     imports:strings          - ';'-delimited imports for VisualBasic
         ///
         /// Emit options:
         ///     platform:string          - limit which platforms this code can run on; must be x86, x64, Itanium, arm, AnyCPU32BitPreferred or anycpu (default)
@@ -497,18 +477,9 @@ namespace Microsoft.PowerShell.Commands
                         "    {{\n" +
                         "    {1}\n" +
                         "    }}\n";
-                case Language.VisualBasic:
-                    return
-                        "    public Class {0}\n" +
-                        "    \n" +
-                        "    {1}\n" +
-                        "    \n" +
-                        "    End Class\n";
             }
 
-            Diagnostics.Assert(false, "GetMethodTemplate: Unsupported language.");
-
-            return null;
+            throw PSTraceSource.NewNotSupportedException();
         }
 
         // Get the -FromMember namespace template for a given language
@@ -522,17 +493,9 @@ namespace Microsoft.PowerShell.Commands
                         "{{\n" +
                         "{1}\n" +
                         "}}\n";
-                case Language.VisualBasic:
-                    return
-                        "Namespace {0}\n" +
-                        "\n" +
-                        "{1}\n" +
-                        "End Namespace\n";
             }
 
-            Diagnostics.Assert(false, "GetNamespaceTemplate: Unsupported language.");
-
-            return null;
+            throw PSTraceSource.NewNotSupportedException();
         }
 
         // Get the -FromMember namespace template for a given language
@@ -546,17 +509,9 @@ namespace Microsoft.PowerShell.Commands
                         "using System.Runtime.InteropServices;\n" +
                         "{0}" +
                         "\n";
-                case Language.VisualBasic:
-                    return
-                        "Imports System\n" +
-                        "Imports System.Runtime.InteropServices\n" +
-                        "{0}" +
-                        "\n";
             }
 
-            Diagnostics.Assert(false, "GetUsingTemplate: Unsupported language.");
-
-            return null;
+            throw PSTraceSource.NewNotSupportedException();
         }
 
         // Generate the code for the using statements
@@ -572,15 +527,9 @@ namespace Microsoft.PowerShell.Commands
                         usingNamespaceSet.Append("using " + namespaceValue + ";\n");
                     }
                     break;
-                case Language.VisualBasic:
-                    foreach (string namespaceValue in UsingNamespace)
-                    {
-                        usingNamespaceSet.Append("Imports " + namespaceValue + "\n");
-                    }
-                    break;
+
                 default:
-                    Diagnostics.Assert(false, "GetUsingSet: Unsupported language.");
-                    break;
+                    throw PSTraceSource.NewNotSupportedException();
             }
 
             return usingNamespaceSet.ToString();
@@ -910,14 +859,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 case Language.CSharp:
                     return CSharpCommandLineParser.Default.Parse(args, baseDirectory, sdkDirectory, additionalReferenceDirectories);
-                case Language.VisualBasic:
-                    return VisualBasicCommandLineParser.Default.Parse(args, baseDirectory, sdkDirectory, additionalReferenceDirectories);
-                default:
-                    Diagnostics.Assert(false, "ParseCompilerOption: Unsupported language family.");
-                    break;
-            }
 
-            return null;
+                default:
+                    throw PSTraceSource.NewNotSupportedException();
+            }
         }
 
         private SyntaxTree ParseSourceText(SourceText sourceText, ParseOptions parseOptions, string path = "")
@@ -927,15 +872,9 @@ namespace Microsoft.PowerShell.Commands
                 case Language.CSharp:
                     return CSharpSyntaxTree.ParseText(sourceText, (CSharpParseOptions) parseOptions, path);
 
-                case Language.VisualBasic:
-                    return VisualBasicSyntaxTree.ParseText(sourceText, (VisualBasicParseOptions) parseOptions, path);
-
                 default:
-                    Diagnostics.Assert(false, "ParseSourceText: Unsupported language family.");
-                    break;
+                    throw PSTraceSource.NewNotSupportedException();
             }
-
-            return null;
         }
 
         private CompilationOptions GetDefaultCompilationOptions()
@@ -945,15 +884,9 @@ namespace Microsoft.PowerShell.Commands
                 case Language.CSharp:
                     return new CSharpCompilationOptions(OutputAssemblyTypeToOutputKind(OutputType));
 
-                case Language.VisualBasic:
-                    return new VisualBasicCompilationOptions(outputKind: OutputAssemblyTypeToOutputKind(OutputType));
-
                 default:
-                    Diagnostics.Assert(false, "GetDefaultCompilationOptions: Unsupported language family.");
-                    break;
+                    throw PSTraceSource.NewNotSupportedException();
             }
-
-            return null;
         }
 
         private bool isSourceCodeUpdated(List<SyntaxTree> syntaxTrees, out Assembly assembly)
@@ -1069,16 +1002,12 @@ namespace Microsoft.PowerShell.Commands
                         references: references,
                         options: (CSharpCompilationOptions)compilationOptions);
                     break;
-                case Language.VisualBasic:
-                    compilation = VisualBasicCompilation.Create(
-                        PathType.GetRandomFileName(),
-                        syntaxTrees: syntaxTrees,
-                        references: references,
-                        options: (VisualBasicCompilationOptions)compilationOptions);
-                    break;
+
+                default:
+                    throw PSTraceSource.NewNotSupportedException();
             }
 
-            DoEmitAndLoadAssemply(compilation, emitOptions);
+            DoEmitAndLoadAssembly(compilation, emitOptions);
         }
 
         private void CheckDuplicateTypes(Compilation compilation, out ConcurrentBag<String> newTypes)
@@ -1162,12 +1091,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CacheAssemply(Assembly assembly)
+        private void CacheAssembly(Assembly assembly)
         {
             s_sourceAssemblyCache.Add(_syntaxTreesHash, assembly);
         }
 
-        private void DoEmitAndLoadAssemply(Compilation compilation, EmitOptions emitOptions)
+        private void DoEmitAndLoadAssembly(Compilation compilation, EmitOptions emitOptions)
         {
             EmitResult emitResult;
 
@@ -1189,7 +1118,7 @@ namespace Microsoft.PowerShell.Commands
                         Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
 
                         CacheNewTypes(newTypes);
-                        CacheAssemply(assembly);
+                        CacheAssembly(assembly);
 
                         if (PassThru)
                         {
@@ -1212,7 +1141,7 @@ namespace Microsoft.PowerShell.Commands
                     Assembly assembly = Assembly.LoadFrom(_outputAssembly);
 
                     CacheNewTypes(newTypes);
-                    CacheAssemply(assembly);
+                    CacheAssembly(assembly);
 
                     WriteTypes(assembly);
                 }
