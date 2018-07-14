@@ -820,7 +820,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// CompatiblePSEditions
+        /// Lists the PowerShell editions this module is compatible with. This should
+        /// reflect the module manifest the module was loaded with, or if no manifest was given
+        /// or the key was not in the manifest, this should be an empty collection. This
+        /// property is never null.
         /// </summary>
         public IEnumerable<String> CompatiblePSEditions
         {
