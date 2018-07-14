@@ -265,7 +265,9 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
         It "Fails to import incompatible modules from the module path with PSEdition <Editions>" -TestCases $failCases -Skip:(-not $IsWindows) {
             param($Editions, $ModuleName, $Result)
 
-            { Import-Module $ModuleName -Force -ErrorAction 'Stop'; & "Test-$ModuleName" } | Should -Throw -ErrorId "Modules_PSEditionNotSupported,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            {
+                Import-Module $ModuleName -Force -ErrorAction 'Stop'; & "Test-$ModuleName"
+            } | Should -Throw -ErrorId "Modules_PSEditionNotSupported,Microsoft.PowerShell.Commands.ImportModuleCommand"
         }
 
         It "Imports an incompatible module from the module path with -SkipEditionCheck with PSEdition <Editions>" -TestCases ($successCases + $failCases) -Skip:(-not $IsWindows) {
@@ -291,7 +293,9 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 
             $path = Join-Path -Path $basePath -ChildPath $ModuleName
 
-            { Import-Module $path -Force -ErrorAction 'Stop'; & "Test-$ModuleName" } | Should -Throw -ErrorId "Modules_PSEditionNotSupported,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            {
+                Import-Module $path -Force -ErrorAction 'Stop'; & "Test-$ModuleName"
+            } | Should -Throw -ErrorId "Modules_PSEditionNotSupported,Microsoft.PowerShell.Commands.ImportModuleCommand"
         }
 
         It "Imports an incompatible module from an absolute path with -SkipEditionCheck with PSEdition <Editions>" -TestCases ($successCases + $failCases) -Skip:(-not $IsWindows) {
@@ -383,7 +387,7 @@ Describe "Nested module behaviour" -Tag "Feature" {
         }
     }
 
-    Context "Modules OFF the System32 test path" {
+    Context "Modules ON the System32 test path" {
         BeforeAll {
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellPSHomeLocation", $incompatiblePath)
         }
@@ -407,6 +411,64 @@ Describe "Nested module behaviour" -Tag "Feature" {
             Restore-ModulePath
         }
 
+        It "Get-Module -ListAvailable gets all compatible modules when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases -Skip:(-not $IsWindows) {
+            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition)
+
+            New-TestNestedModule `
+                -ModuleBase $moduleBase `
+                -ScriptModuleFilename $scriptModuleFile `
+                -ScriptModuleContent $scriptModuleContent `
+                -BinaryModuleFilename $binaryModuleFile `
+                -BinaryModuleDllPath $binaryModuleSourcePath `
+                -RootModuleFilename $rootModuleFile `
+                -RootModuleContent $rootModuleContent `
+                -CompatiblePSEditions $MarkedEdition `
+                -UseRootModule $UseRootModule `
+                -UseAbsolutePath $UseAbsolutePath
+
+            if ($UseAbsolutePath)
+            {
+                if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
+                {
+                    Get-Module -ListAvailable $moduleBase -ErrorAction Stop | Should -Be $null
+                    return
+                }
+
+                $modules = if ($SkipEditionCheck)
+                {
+                    Get-Module -ListAvailable $moduleBase -SkipEditionCheck
+                }
+                else
+                {
+                    Get-Module -ListAvailable $moduleBase
+                }
+
+                $modules.Count | Should -Be 1
+                $modules[0].Name | Should -Be $moduleName
+                return
+            }
+
+            $modules = if ($SkipEditionCheck)
+            {
+                Get-Module -ListAvailable -SkipEditionCheck
+            }
+            else
+            {
+                Get-Module -ListAvailable
+            }
+
+            $modules = $modules | Where-Object { $_.Path.Contains($guid) }
+
+            if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
+            {
+                $modules.Count | Should -Be 0
+                return
+            }
+
+            $modules.Count | Should -Be 1
+            $modules[0].Name | Should -Be $moduleName
+        }
+
         It "Get-Module -ListAvailable -All gets all compatible modules when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases -Skip:(-not $IsWindows){
             param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition)
 
@@ -426,7 +488,9 @@ Describe "Nested module behaviour" -Tag "Feature" {
             if ($UseAbsolutePath) {
                 if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
                 {
-                    { Get-Module -ListAvailable -All $moduleBase -ErrorAction Stop } | Should -Throw -ErrorId "Modules_ModuleNotFoundForGetModule,Microsoft.PowerShell.Commands.GetModuleCommand"
+                    {
+                        Get-Module -ListAvailable -All $moduleBase -ErrorAction Stop
+                    } | Should -Throw -ErrorId "Modules_ModuleNotFoundForGetModule,Microsoft.PowerShell.Commands.GetModuleCommand"
                     return
                 }
 
@@ -491,7 +555,52 @@ Describe "Nested module behaviour" -Tag "Feature" {
             Restore-ModulePath
         }
 
-        It "Get-Module -ListAvailable -All gets all compatible modules when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases -Skip:(-not $IsWindows){
+        It "Get-Module -ListAvailable gets all compatible modules when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases {
+            param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition)
+
+            New-TestNestedModule `
+                -ModuleBase $moduleBase `
+                -ScriptModuleFilename $scriptModuleFile `
+                -ScriptModuleContent $scriptModuleContent `
+                -BinaryModuleFilename $binaryModuleFile `
+                -BinaryModuleDllPath $binaryModuleSourcePath `
+                -RootModuleFilename $rootModuleFile `
+                -RootModuleContent $rootModuleContent `
+                -CompatiblePSEditions $MarkedEdition `
+                -UseRootModule $UseRootModule `
+                -UseAbsolutePath $UseAbsolutePath
+
+            if ($UseAbsolutePath)
+            {
+                $modules = if ($SkipEditionCheck)
+                {
+                    Get-Module -ListAvailable $moduleBase -SkipEditionCheck
+                }
+                else
+                {
+                    Get-Module -ListAvailable $moduleBase
+                }
+
+                $modules.Count | Should -Be 1
+                $modules[0].Name | Should -Be $moduleName
+                return
+            }
+
+            $modules = if ($SkipEditionCheck)
+            {
+                Get-Module -ListAvailable -SkipEditionCheck
+            }
+            else
+            {
+                Get-Module -ListAvailable
+            }
+
+            $modules = $modules | Where-Object { $_.Path.Contains($guid) }
+            $modules.Count | Should -Be 1
+            $modules[0].Name | Should -Be $moduleName
+        }
+
+        It "Get-Module -ListAvailable -All gets all compatible modules when SkipEditionCheck: <SkipEditionCheck>, using root module: <UseRootModule>, using absolute path: <UseAbsolutePath>, CompatiblePSEditions: <MarkedEdition>" -TestCases $testCases {
             param([bool]$SkipEditionCheck, [bool]$UseRootModule, [bool]$UseAbsolutePath, [string[]]$MarkedEdition)
 
             New-TestNestedModule `

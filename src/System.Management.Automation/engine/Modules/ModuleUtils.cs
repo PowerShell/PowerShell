@@ -132,6 +132,12 @@ namespace System.Management.Automation.Internal
             string dirName = Path.GetFileName(directoryPath.TrimEnd('/', '\\'));
             string manifestPath = Path.Join(directoryPath, dirName + ".psd1");
 
+            // No manifest means this is not a module directory
+            if (!File.Exists(manifestPath))
+            {
+                return false;
+            }
+
             // Check the manifest file for compatibility
             return !Utils.IsPSEditionSupported(ReadCompatiblePSEditionsFromManifest(manifestPath));
         }
@@ -144,18 +150,11 @@ namespace System.Management.Automation.Internal
         private static IEnumerable<string> ReadCompatiblePSEditionsFromManifest(string manifestPath)
         {
             Hashtable manifest;
-
-            if (!File.Exists(manifestPath))
-            {
-                // No manifest => no supported editions
-                yield break;
-            }
-
             try
             {
                 manifest = PsUtils.GetModuleManifestProperties(manifestPath, new [] { "CompatiblePSEditions" });
             }
-            catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)
+            catch (Exception e) when (e is IOException || e is UnauthorizedAccessException || e is FileNotFoundException)
             {
                 // If the file cannot be accessed, treat it as if it doesn't exist
                 yield break;
