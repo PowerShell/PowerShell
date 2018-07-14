@@ -73,7 +73,7 @@ namespace System.Management.Automation.Internal
         {
             if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
             
-            if (IsIncompatibleSystem32ModuleDir(topDirectoryToCheck, skipEditionCheck)) { yield break; }
+            if (!skipEditionCheck && IsIncompatibleSystem32ModuleDir(topDirectoryToCheck)) { yield break; }
 
             var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
             Queue<string> directoriesToCheck = new Queue<string>();
@@ -87,7 +87,7 @@ namespace System.Management.Automation.Internal
                     string[] subDirectories = Directory.GetDirectories(directoryToCheck, "*", options);
                     foreach (string toAdd in subDirectories)
                     {
-                        if (IsPossibleModuleDirectory(toAdd) && !IsIncompatibleSystem32ModuleDir(toAdd, skipEditionCheck))
+                        if (IsPossibleModuleDirectory(toAdd) && (skipEditionCheck || !IsIncompatibleSystem32ModuleDir(toAdd)))
                         {
                             directoriesToCheck.Enqueue(toAdd);
                         }
@@ -116,50 +116,56 @@ namespace System.Management.Automation.Internal
         /// System32 module path.
         /// </summary>
         /// <param name="directoryPath">The path of the directory to check.</param>
-        /// <param name="skipEditionCheck">If true, skips the check and returns false.</param>
         /// <returns>
         /// If the directory is the root of a module on the System32 path and not marked as
         /// Core-compatible, returns true, otherwise returns false.
         /// </returns>
-        internal static bool IsIncompatibleSystem32ModuleDir(string directoryPath, bool skipEditionCheck)
+        internal static bool IsIncompatibleSystem32ModuleDir(string directoryPath)
         {
-            // Skip the check means assume compatible
-            if (skipEditionCheck)
-            {
-                return false;
-            }
-
             // Not on System32 path means assume compatible
             if (!ModuleUtils.IsOnSystem32ModulePath(directoryPath))
             {
                 return false;
             }
 
+            // Work out the psd1 path
+            string dirName = Path.GetFileName(directoryPath.TrimEnd('/', '\\'));
+            string manifestPath = Path.Join(directoryPath, dirName + ".psd1");
+
+            // Check the manifest file for compatibility
+            return !Utils.IsPSEditionSupported(ReadCompatiblePSEditionsFromManifest(manifestPath));
+        }
+
+        /// <summary>
+        /// Try to read in the CompatiblePSEditions from a module file, lazily.
+        /// </summary>
+        /// <param name="manifestPath">The path to the module manifest to proces.</param>
+        /// <returns>All PSEditions listed as compatible by the manifest, if any.</returns>
+        private static IEnumerable<string> ReadCompatiblePSEditionsFromManifest(string manifestPath)
+        {
             Hashtable manifest;
+
+            if (!File.Exists(manifestPath))
+            {
+                // No manifest => no supported editions
+                yield break;
+            }
+
             try
             {
-                string dirName = Path.GetFileName(directoryPath.TrimEnd('/', '\\'));
-                string manifestPath = Path.Join(directoryPath, dirName + ".psd1");
-                if (!File.Exists(manifestPath))
-                {
-                    // If there's no manifest, it might be an ordinary directory, so not incompatible
-                    return false;
-                }
-
                 manifest = PsUtils.GetModuleManifestProperties(manifestPath, new [] { "CompatiblePSEditions" });
             }
             catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)
             {
-                // Take the safe option if we hit an exception
-                return false;
+                // If the file cannot be accessed, treat it as if it doesn't exist
+                yield break;
             }
 
             object psEditionsObj = manifest?["CompatiblePSEditions"];
             if (psEditionsObj == null)
             {
-                // If there is a manifest file but not "CompatiblePSEditions" key,
-                // the module is incompatible
-                return true;
+                // No compatibility field => no supported editions
+                yield break;
             }
 
             string[] psEditions;
@@ -169,21 +175,46 @@ namespace System.Management.Automation.Internal
             }
             catch (PSInvalidCastException)
             {
-                // If the "CompatiblePSEditions" key exists but isn't a string[],
-                // the module is bad
-                return true;
+                // If the field exists but can't be cast to a string array, ignore it
+                yield break;
             }
 
             if (psEditions == null)
             {
-                // If somehow the key was set but set as $null, that's the same as not setting it
-                // Meaning incompatible
+                // The field exists but is null => ignore it
+                yield break;
+            }
+
+            // Finally return the supported editions entry
+            foreach (string psEdition in psEditions)
+            {
+                yield return psEdition;
+            }
+        }
+
+        /// <summary>
+        /// Check if the CompatiblePSEditions field of a given module
+        /// declares compatibility with the running PowerShell edition.
+        /// </summary>
+        /// <param name="moduleManifestPath">The path to the module manifest being checked.</param>
+        /// <param name="compatiblePSEditions">The value of the CompatiblePSEditions field of the module manifest.</param>
+        /// <returns>True if the module is compatible with the running PowerShell edition, false otherwise.</returns>
+        internal static bool IsPSEditionCompatible(
+            string moduleManifestPath,
+            IEnumerable<string> compatiblePSEditions)
+        {
+#if UNIX
+            return true;
+#else
+            if (!ModuleUtils.IsOnSystem32ModulePath(moduleManifestPath))
+            {
                 return true;
             }
 
-            // Finally check the edition flags of the module
-            return !Utils.IsPSEditionSupported(psEditions);
+            return Utils.IsPSEditionSupported(compatiblePSEditions);
+#endif
         }
+
 
         internal static IEnumerable<string> GetDefaultAvailableModuleFiles(bool isForAutoDiscovery, ExecutionContext context)
         {
