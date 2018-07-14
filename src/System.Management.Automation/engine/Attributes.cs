@@ -620,11 +620,54 @@ namespace System.Management.Automation
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance that is associated with an experimental feature.
+        /// </summary>
+        public ParameterAttribute(string experimentName, ExperimentAction experimentAction)
+        {
+            ExperimentalAttribute.ValidateArguments(experimentName, experimentAction);
+            ExperimentName = experimentName;
+            ExperimentAction = experimentAction;
+        }
+
         private string _parameterSetName = ParameterAttribute.AllParameterSets;
 
         private string _helpMessage;
         private string _helpMessageBaseName;
         private string _helpMessageResourceId;
+
+        #region Experimental Feature Related Properties
+
+        /// <summary>
+        /// Get name of the experimental feature this attribute is associated with.
+        /// </summary>
+        public string ExperimentName { get; }
+
+        /// <summary>
+        /// Get action for engine to take when the experimental feature is enabled.
+        /// </summary>
+        public ExperimentAction ExperimentAction { get; }
+
+        internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
+        internal bool ToShow => EffectiveAction == ExperimentAction.Show;
+
+        /// <summary>
+        /// Get effective action to take at run time.
+        /// </summary>
+        private ExperimentAction EffectiveAction
+        {
+            get
+            {
+                if (_effectiveAction == ExperimentAction.None)
+                {
+                    _effectiveAction = ExperimentalFeature.GetActionToTake(ExperimentName, ExperimentAction);
+                }
+                return _effectiveAction;
+            }
+        }
+        private ExperimentAction _effectiveAction = default(ExperimentAction);
+
+        #endregion
 
         /// <summary>
         /// Gets and sets the parameter position. If not set, the parameter is named.

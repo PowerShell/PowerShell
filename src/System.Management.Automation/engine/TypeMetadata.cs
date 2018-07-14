@@ -1308,10 +1308,12 @@ namespace System.Management.Automation
             foreach (RuntimeDefinedParameter parameterDefinition in runtimeDefinedParameters.Values)
             {
                 // Create the compiled parameter and add it to the bindable parameters collection
-
-                // NTRAID#Windows Out Of Band Releases-926374-2005/12/22-JonN
-                if (parameterDefinition == null)
-                    continue;
+                if (processingDynamicParameters)
+                {
+                    // When processing dynamic parameters, parameter definitions come from the user,
+                    // Invalid data could be passed in, or the parameter could be actually disabled. 
+                    if (parameterDefinition == null || parameterDefinition.IsDisabled()) { continue; }
+                }
 
                 CompiledCommandParameter parameter = new CompiledCommandParameter(parameterDefinition, processingDynamicParameters);
                 AddParameter(parameter, checkNames);
@@ -1379,7 +1381,6 @@ namespace System.Management.Automation
             }
         }
 
-        // NTRAID#Windows Out Of Band Releases-906345-2005/06/30-JeffJon
         // This call verifies that the parameter is unique or
         // can be deemed unique. If not, an exception is thrown.
         // If it is unique (or deemed unique), then it is added
@@ -1458,7 +1459,6 @@ namespace System.Management.Automation
 
             foreach (string alias in parameter.Aliases)
             {
-                // NTRAID#Windows Out Of Band Releases-917356-JonN
                 if (AliasedParameters.ContainsKey(alias))
                 {
                     throw new MetadataException(
@@ -1501,16 +1501,22 @@ namespace System.Management.Automation
         ///
         private static bool IsMemberAParameter(MemberInfo member)
         {
-            bool result = false;
-
             try
             {
-                // MemberInfo.GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR
-                var attributes = member.GetCustomAttributes(typeof(ParameterAttribute), false);
-                if (attributes.Any())
+                var expAttribute = member.GetCustomAttributes<ExperimentalAttribute>(inherit: false).FirstOrDefault();
+                if (expAttribute != null && expAttribute.ToHide) { return false; }
+
+                var hasAnyVisibleParamAttributes = false;
+                var paramAttributes = member.GetCustomAttributes<ParameterAttribute>(inherit: false);
+                foreach (var paramAttribute in paramAttributes)
                 {
-                    result = true;
+                    if (!paramAttribute.ToHide)
+                    {
+                        hasAnyVisibleParamAttributes = true;
+                        break;
+                    }
                 }
+                return hasAnyVisibleParamAttributes;
             }
             catch (MetadataException metadataException)
             {
@@ -1530,8 +1536,6 @@ namespace System.Management.Automation
                     member.Name,
                     argumentException.Message);
             }
-
-            return result;
         } // IsMemberAParameter
 
         #endregion helper methods

@@ -301,49 +301,37 @@ namespace System.Management.Automation
             ProjectUri = null;
             IconUri = null;
 
-            var privateDataHashTable = _privateData as Hashtable;
-            if (privateDataHashTable != null)
+            if (_privateData is Hashtable hashData && hashData["PSData"] is Hashtable psData)
             {
-                var psData = privateDataHashTable["PSData"] as Hashtable;
-                if (psData != null)
+                var tagsValue = psData["Tags"];
+                if (tagsValue is object[] tags && tags.Length > 0)
                 {
-                    object tagsValue = psData["Tags"];
-                    if (tagsValue != null)
+                    foreach (var tagString in tags.OfType<string>())
                     {
-                        var tags = tagsValue as object[];
-                        if (tags != null && tags.Any())
-                        {
-                            foreach (var tagString in tags.OfType<string>())
-                            {
-                                AddToTags(tagString);
-                            }
-                        }
-                        else
-                        {
-                            AddToTags(tagsValue.ToString());
-                        }
+                        AddToTags(tagString);
                     }
-
-                    var licenseUri = psData["LicenseUri"] as string;
-                    if (licenseUri != null)
-                    {
-                        LicenseUri = GetUriFromString(licenseUri);
-                    }
-
-                    var projectUri = psData["ProjectUri"] as string;
-                    if (projectUri != null)
-                    {
-                        ProjectUri = GetUriFromString(projectUri);
-                    }
-
-                    var iconUri = psData["IconUri"] as string;
-                    if (iconUri != null)
-                    {
-                        IconUri = GetUriFromString(iconUri);
-                    }
-
-                    ReleaseNotes = psData["ReleaseNotes"] as string;
                 }
+                else if (tagsValue is string tag)
+                {
+                    AddToTags(tag);
+                }
+
+                if (psData["LicenseUri"] is string licenseUri)
+                {
+                    LicenseUri = GetUriFromString(licenseUri);
+                }
+
+                if (psData["ProjectUri"] is string projectUri)
+                {
+                    ProjectUri = GetUriFromString(projectUri);
+                }
+
+                if (psData["IconUri"] is string iconUri)
+                {
+                    IconUri = GetUriFromString(iconUri);
+                }
+
+                ReleaseNotes = psData["ReleaseNotes"] as string;
             }
         }
 
@@ -359,6 +347,11 @@ namespace System.Management.Automation
 
             return uri;
         }
+
+        /// <summary>
+        /// Get the experimental features declared in this module.
+        /// </summary>
+        public IEnumerable<ExperimentalFeature> ExperimentalFeatures { get; internal set; } = Utils.EmptyReadOnlyCollection<ExperimentalFeature>();
 
         /// <summary>
         /// Tags of this module.

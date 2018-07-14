@@ -668,6 +668,7 @@ namespace NativeMsh
     // NOTE: The names must not include the .dll extension because it will be added programmatically.
     static PCSTR trustedAssemblies[] =
     {
+        "Markdig",
         "Microsoft.ApplicationInsights",
         "Microsoft.CodeAnalysis.CSharp",
         "Microsoft.CodeAnalysis",
@@ -681,6 +682,7 @@ namespace NativeMsh
         "Microsoft.PowerShell.Commands.Utility",
         "Microsoft.PowerShell.ConsoleHost",
         "Microsoft.PowerShell.CoreCLR.Eventing",
+        "Microsoft.PowerShell.MarkdownRender",
         "Microsoft.PowerShell.SDK",
         "Microsoft.PowerShell.Security",
         "Microsoft.VisualBasic",

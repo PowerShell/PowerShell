@@ -164,7 +164,36 @@ namespace System.Management.Automation
         /// This can be any attribute that can be applied to a normal parameter.
         /// </remarks>
         public Collection<Attribute> Attributes { get; } = new Collection<Attribute>();
-    } // class RuntimeDefinedParameter
+
+        /// <summary>
+        /// Check if the parameter is disabled due to the associated experimental feature.
+        /// </summary>
+        internal bool IsDisabled()
+        {
+            bool hasParameterAttribute = false;
+            bool hasEnabledParamAttribute = false;
+            bool hasSeenExpAttribute = false;
+
+            foreach (Attribute attr in Attributes)
+            {
+                if (!hasSeenExpAttribute && attr is ExperimentalAttribute expAttribute)
+                {
+                    if (expAttribute.ToHide) { return true; }
+                    hasSeenExpAttribute = true;
+                }
+                else if (attr is ParameterAttribute paramAttribute)
+                {
+                    hasParameterAttribute = true;
+                    if (paramAttribute.ToHide) { continue; }
+                    hasEnabledParamAttribute = true;
+                }
+            }
+
+            // If one or more parameter attributes are declared but none is enabled,
+            // then we consider the parameter is disabled.
+            return hasParameterAttribute && !hasEnabledParamAttribute;
+        }
+    }
 
     /// <summary>
     /// Represents a collection of runtime-defined parameters that are keyed based on the name
