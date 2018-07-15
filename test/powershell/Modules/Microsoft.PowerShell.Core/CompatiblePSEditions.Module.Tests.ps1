@@ -323,10 +323,18 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
     BeforeAll {
+        if (-not $IsWindows)
+        {
+            return
+        }
         Add-ModulePath (Join-Path $env:windir "System32\WindowsPowerShell\v1.0\Modules") -Prepend
     }
 
     AfterAll {
+        if (-not $IsWindows)
+        {
+            return
+        }
         Restore-ModulePath
     }
 
