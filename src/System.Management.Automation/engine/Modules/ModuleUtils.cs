@@ -110,55 +110,6 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Try to read in the CompatiblePSEditions from a module file, lazily.
-        /// </summary>
-        /// <param name="manifestPath">The path to the module manifest to proces.</param>
-        /// <returns>All PSEditions listed as compatible by the manifest, if any.</returns>
-        private static IEnumerable<string> ReadCompatiblePSEditionsFromManifest(string manifestPath)
-        {
-            Hashtable manifest;
-            try
-            {
-                manifest = PsUtils.GetModuleManifestProperties(manifestPath, new [] { "CompatiblePSEditions" });
-            }
-            catch (Exception e) when (e is IOException || e is UnauthorizedAccessException || e is FileNotFoundException)
-            {
-                // If the file cannot be accessed, treat it as if it doesn't exist
-                yield break;
-            }
-
-            object psEditionsObj = manifest?["CompatiblePSEditions"];
-            if (psEditionsObj == null)
-            {
-                // No compatibility field => no supported editions
-                yield break;
-            }
-
-            string[] psEditions;
-            try
-            {
-                psEditions = LanguagePrimitives.ConvertTo<string[]>(psEditionsObj);
-            }
-            catch (PSInvalidCastException)
-            {
-                // If the field exists but can't be cast to a string array, ignore it
-                yield break;
-            }
-
-            if (psEditions == null)
-            {
-                // The field exists but is null => ignore it
-                yield break;
-            }
-
-            // Finally return the supported editions entry
-            foreach (string psEdition in psEditions)
-            {
-                yield return psEdition;
-            }
-        }
-
-        /// <summary>
         /// Check if the CompatiblePSEditions field of a given module
         /// declares compatibility with the running PowerShell edition.
         /// </summary>
@@ -180,7 +131,6 @@ namespace System.Management.Automation.Internal
             return Utils.IsPSEditionSupported(compatiblePSEditions);
 #endif
         }
-
 
         internal static IEnumerable<string> GetDefaultAvailableModuleFiles(bool isForAutoDiscovery, ExecutionContext context)
         {
