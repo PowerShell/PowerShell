@@ -1517,25 +1517,7 @@ else
         internal static string GetWinrmPluginShellName()
         {
             // PowerShell Core uses a versioned directory to hold the plugin
-            // TODO: This should be PSVersionInfo.PSVersionName once we get
-            // closer to release. Right now it doesn't support alpha versions.
-            string version = PSVersionInfo.GitCommitId;
-
-            // We want the resulting endpoint name to be: PowerShell.6
-            // However, the GitCommitId has a `v` like `v6.1.0`, so we need to remove
-            // the `v`
-            if (version.StartsWith("v"))
-            {
-                version = version.Substring(1);
-            }
-
-            string shellName = System.String.Concat("PowerShell.", version);
-            if (version.Contains("preview"))
-            {
-                shellName += "-Preview";
-            }
-
-            return shellName;
+            return System.String.Concat("PowerShell.", PSVersionInfo.GitCommitId);
         }
 
         /// <summary>
@@ -1545,8 +1527,6 @@ else
         internal static string GetWinrmPluginDllPath()
         {
             // PowerShell Core uses its versioned directory instead of system32
-            // TODO: This should be PSVersionInfo.PSVersionName once we get
-            // closer to release. Right now it doesn't support alpha versions.
             string pluginDllDirectory =  System.IO.Path.Combine("%windir%\\system32\\PowerShell", PSVersionInfo.GitCommitId);
             return System.IO.Path.Combine(pluginDllDirectory, RemotingConstants.PSPluginDLLName);
         }
@@ -4909,7 +4889,7 @@ param(
             # but instead creating a PowerShell.6-Preview endpoint
             if ($PSVersionTable.PSVersion.ToString().Contains(""preview""))
             {{
-                $powershellVersionMajor += ""-Preview""
+                $powershellVersionMajor += ""-preview""
             }}
             Register-EndpointIfNotPresent -Name (""PowerShell."" + $powershellVersionMajor) $Force $queryForRegisterDefault $captionForRegisterDefault
 
