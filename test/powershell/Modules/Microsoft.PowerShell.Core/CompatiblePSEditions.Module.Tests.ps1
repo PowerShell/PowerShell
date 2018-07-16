@@ -503,14 +503,6 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
 
             # Modules specified with an absolute path should only return themselves
             if ($UseAbsolutePath) {
-                if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
-                {
-                    {
-                        Get-Module -ListAvailable -All $moduleBase -ErrorAction Stop
-                    } | Should -Throw -ErrorId "Modules_ModuleNotFoundForGetModule,Microsoft.PowerShell.Commands.GetModuleCommand"
-                    return
-                }
-
                 $modules = if ($SkipEditionCheck)
                 {
                     Get-Module -ListAvailable -All -SkipEditionCheck $moduleBase
@@ -532,12 +524,6 @@ Describe "Get-Module nested module behaviour with Edition checking" -Tag "Featur
             else
             {
                 Get-Module -ListAvailable -All | Where-Object { $_.Path.Contains($guid) }
-            }
-
-            if ((-not $SkipEditionCheck) -and (-not ($MarkedEdition -contains "Core")))
-            {
-                $modules.Count | Should -Be 0
-                return
             }
 
             if ($UseRootModule)

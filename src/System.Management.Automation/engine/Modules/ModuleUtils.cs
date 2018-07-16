@@ -69,12 +69,10 @@ namespace System.Management.Automation.Internal
         /// Get all module files by searching the given directory recursively.
         /// All sub-directories that could be a module folder will be searched.
         /// </summary>
-        internal static IEnumerable<string> GetAllAvailableModuleFiles(string topDirectoryToCheck, bool skipEditionCheck)
+        internal static IEnumerable<string> GetAllAvailableModuleFiles(string topDirectoryToCheck)
         {
             if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
             
-            if (!skipEditionCheck && IsIncompatibleSystem32ModuleDir(topDirectoryToCheck)) { yield break; }
-
             var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
             Queue<string> directoriesToCheck = new Queue<string>();
             directoriesToCheck.Enqueue(topDirectoryToCheck);
@@ -87,7 +85,7 @@ namespace System.Management.Automation.Internal
                     string[] subDirectories = Directory.GetDirectories(directoryToCheck, "*", options);
                     foreach (string toAdd in subDirectories)
                     {
-                        if (IsPossibleModuleDirectory(toAdd) && (skipEditionCheck || !IsIncompatibleSystem32ModuleDir(toAdd)))
+                        if (IsPossibleModuleDirectory(toAdd))
                         {
                             directoriesToCheck.Enqueue(toAdd);
                         }
@@ -109,37 +107,6 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Checks a directory to see if it's the root of a Core-incompatible module on the
-        /// System32 module path.
-        /// </summary>
-        /// <param name="directoryPath">The path of the directory to check.</param>
-        /// <returns>
-        /// If the directory is the root of a module on the System32 path and not marked as
-        /// Core-compatible, returns true, otherwise returns false.
-        /// </returns>
-        internal static bool IsIncompatibleSystem32ModuleDir(string directoryPath)
-        {
-            // Not on System32 path means assume compatible
-            if (!ModuleUtils.IsOnSystem32ModulePath(directoryPath))
-            {
-                return false;
-            }
-
-            // Work out the psd1 path
-            string dirName = Path.GetFileName(directoryPath.TrimEnd('/', '\\'));
-            string manifestPath = Path.Join(directoryPath, dirName + ".psd1");
-
-            // No manifest means this is not a module directory
-            if (!File.Exists(manifestPath))
-            {
-                return false;
-            }
-
-            // Check the manifest file for compatibility
-            return !Utils.IsPSEditionSupported(ReadCompatiblePSEditionsFromManifest(manifestPath));
         }
 
         /// <summary>
