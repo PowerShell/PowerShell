@@ -2394,8 +2394,8 @@ namespace Microsoft.PowerShell.Commands
             // On Windows, we want to include any modules under %WINDIR%\System32\WindowsPowerShell\v1.0\Modules
             // that have declared compatibility with PS Core (or if the check is skipped)
             IEnumerable<string> inferredCompatiblePSEditions = compatiblePSEditions ?? DefaultCompatiblePSEditions;
-            bool isConsideredCompatible = BaseSkipEditionCheck || ModuleUtils.IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions);
-            if (!isConsideredCompatible)
+            bool isConsideredCompatible = ModuleUtils.IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions);
+            if (!BaseSkipEditionCheck && !isConsideredCompatible)
             {
                 containedErrors = true;
 
