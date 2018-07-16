@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
     #region Export-CSV Command
 
     /// <summary>
-    /// implementation for the export-csv command.
+    /// Implementation for the export-csv command.
     /// </summary>
     [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "Delimiter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113299")]
     public sealed class ExportCsvCommand : BaseCsvWritingCommand, IDisposable

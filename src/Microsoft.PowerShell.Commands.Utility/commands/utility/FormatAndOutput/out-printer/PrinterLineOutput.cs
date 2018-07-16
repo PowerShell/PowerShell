@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Flag for one time initialization of the interface (columns, etc.).
+        /// Flag for one-time initialization of the interface (columns, etc.).
         /// </summary>
         private bool _printingInitialized = false;
 

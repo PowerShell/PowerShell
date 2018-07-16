@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         private ExtendedTypeDefinition[] _typeDefinition;
 
         /// <summary>
-        /// type definition to include in export.
+        /// Type definition to include in export.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]

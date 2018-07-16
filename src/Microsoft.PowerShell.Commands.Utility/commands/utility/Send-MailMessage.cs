@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the delivery notifications options for the e-mail message. The various
-        /// option available for this parameter are None, OnSuccess, OnFailure, Delay and Never.
+        /// options available for this parameter are None, OnSuccess, OnFailure, Delay and Never.
         /// </summary>
         [Parameter()]
         [Alias("DNO")]

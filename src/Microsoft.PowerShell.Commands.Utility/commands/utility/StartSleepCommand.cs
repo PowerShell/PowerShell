@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Stopprocessing override.
+        /// StopProcessing override.
         /// </summary>
         protected override void StopProcessing()
         {

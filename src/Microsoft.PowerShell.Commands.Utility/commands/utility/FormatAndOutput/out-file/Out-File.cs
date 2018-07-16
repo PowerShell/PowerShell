@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// handle to file stream.
+        /// Handle to file stream.
         /// </summary>
         private FileStream _fs;
 

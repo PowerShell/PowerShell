@@ -410,7 +410,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Waits untill the window has been closed answering HelpNeeded events.
+        /// Waits until the window has been closed answering HelpNeeded events.
         /// </summary>
         private void WaitForWindowClosedOrHelpNeeded()
         {
