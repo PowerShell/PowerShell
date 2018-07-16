@@ -61,7 +61,7 @@ after_success:
 # which is expensive and unneeded for build agents.
 env:
   global:
-    - CACHE_VERSION=netcoreapp.2.1-sdk.2.1.300
+    - CACHE_VERSION=netcoreapp.2.1-sdk.2.1.302
     - POWERSHELL_TELEMETRY_OPTOUT=1
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 

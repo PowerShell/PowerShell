@@ -606,13 +606,14 @@ namespace System.Management.Automation
 
             int paraNodes = GetParaMamlNodeCount(xmlNode.ChildNodes);
             int count = 0;
-
+            // Don't trim the content if this is an "introduction" node.
+            bool trim = ! string.Equals(xmlNode.Name, "maml:introduction", StringComparison.OrdinalIgnoreCase);
             foreach (XmlNode childNode in xmlNode.ChildNodes)
             {
                 if (childNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
                 {
                     ++count;
-                    PSObject paraPSObject = GetParaPSObject(childNode, count != paraNodes);
+                    PSObject paraPSObject = GetParaPSObject(childNode, count != paraNodes, trim: trim);
                     if (paraPSObject != null)
                         mshObjects.Add(paraPSObject);
                     continue;
@@ -752,8 +753,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <param name="newLine"></param>
+        /// <param name="trim"></param>
         /// <returns></returns>
-        private static PSObject GetParaPSObject(XmlNode xmlNode, bool newLine)
+        private static PSObject GetParaPSObject(XmlNode xmlNode, bool newLine, bool trim = true)
         {
             if (xmlNode == null)
                 return null;
@@ -771,7 +773,12 @@ namespace System.Management.Automation
             }
             else
             {
-                sb.Append(xmlNode.InnerText.Trim());
+                var innerText = xmlNode.InnerText;
+                if (trim)
+                {
+                    innerText = innerText.Trim();
+                }
+                sb.Append(innerText);
             }
 
             mshObject.Properties.Add(new PSNoteProperty("Text", sb.ToString()));

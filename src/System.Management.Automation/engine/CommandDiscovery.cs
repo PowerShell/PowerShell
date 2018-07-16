@@ -1131,7 +1131,7 @@ namespace System.Management.Automation
                         // Get the available module files, preferring modules from $PSHOME so that user modules don't
                         // override system modules during auto-loading
                         if (etwEnabled) CommandDiscoveryEventSource.Log.SearchingForModuleFilesStart();
-                        var defaultAvailableModuleFiles = ModuleUtils.GetDefaultAvailableModuleFiles(true, true, context);
+                        var defaultAvailableModuleFiles = ModuleUtils.GetDefaultAvailableModuleFiles(isForAutoDiscovery: true, context);
                         if (etwEnabled) CommandDiscoveryEventSource.Log.SearchingForModuleFilesStop();
 
                         foreach (string modulePath in defaultAvailableModuleFiles)

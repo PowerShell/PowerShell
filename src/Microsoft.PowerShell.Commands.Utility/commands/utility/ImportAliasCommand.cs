@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         continue;
                     }
-                } // if (!Force)
+                }
 
                 // Set the alias in the specified scope or the
                 // current scope.
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(result);
                 }
             }
-        } // ProcessRecord
+        }
 
         private Dictionary<string, CommandTypes> _existingCommands;
         private Dictionary<string, CommandTypes> ExistingCommands

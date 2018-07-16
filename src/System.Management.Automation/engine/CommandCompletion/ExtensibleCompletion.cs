@@ -12,9 +12,11 @@ namespace System.Management.Automation
     /// <summary>
     /// This attribute is used to specify an argument completer for a parameter to a cmdlet or function.
     /// <example>
+    /// <code>
     ///     [Parameter()]
     ///     [ArgumentCompleter(typeof(NounArgumentCompleter))]
     ///     public string Noun { get; set; }
+    /// </code>
     /// </example>
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]

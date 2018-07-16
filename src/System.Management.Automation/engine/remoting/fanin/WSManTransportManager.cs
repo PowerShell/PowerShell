@@ -1529,7 +1529,7 @@ namespace System.Management.Automation.Remoting.Client
 
 #if UNIX
             // explicitly disallow Basic auth over HTTP on Unix.
-            if (connectionInfo.AuthenticationMechanism == AuthenticationMechanism.Basic && !isSSLSpecified)
+            if (connectionInfo.AuthenticationMechanism == AuthenticationMechanism.Basic && !isSSLSpecified && connectionUri.Scheme != Uri.UriSchemeHttps)
             {
                 throw new PSRemotingTransportException(PSRemotingErrorId.ConnectFailed, RemotingErrorIdStrings.BasicAuthOverHttpNotSupported);
             }

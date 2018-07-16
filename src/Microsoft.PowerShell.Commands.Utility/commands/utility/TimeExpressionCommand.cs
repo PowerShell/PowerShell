@@ -70,7 +70,6 @@ namespace Microsoft.PowerShell.Commands
 
             _stopWatch.Stop();
         }
-
         #endregion
     }
 }

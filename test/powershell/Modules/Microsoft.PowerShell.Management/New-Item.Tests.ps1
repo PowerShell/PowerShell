@@ -242,6 +242,8 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
 
         # Remove the link explicitly to avoid broken symlink issue
         Remove-Item $FullyQualifiedLink -Force
+        # Test a code path removing a symbolic link (reparse point)
+        Test-Path $FullyQualifiedLink | Should -BeFalse
     }
 
     It "New-Item -ItemType SymbolicLink should understand directory path ending with slash" {

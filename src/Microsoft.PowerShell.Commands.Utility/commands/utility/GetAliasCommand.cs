@@ -84,8 +84,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteMatches(aliasName, "Default");
                 }
-            }//parameterset else
-        } // ProcessRecord
+            }
+        }
         #endregion Command code
 
         private void WriteMatches(string value, string parametersetname)
@@ -199,6 +199,5 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(er);
             }
         }
-    } // class GetAliasCommand
-}//Microsoft.PowerShell.Commands
-
+    }
+}

@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
             outputObj.Properties.Add(note);
 
             WriteObject(outputObj);
-        } // EndProcessing
+        }
 
         #endregion
 

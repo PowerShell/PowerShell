@@ -17,10 +17,9 @@ namespace System.Management.Automation
     internal abstract class ScriptCommandProcessorBase : CommandProcessorBase
     {
         protected ScriptCommandProcessorBase(ScriptBlock scriptBlock, ExecutionContext context, bool useLocalScope, CommandOrigin origin, SessionStateInternal sessionState)
+            : base(new ScriptInfo(String.Empty, scriptBlock, context))
         {
             this._dontUseScopeCommandOrigin = false;
-            this.CommandInfo = new ScriptInfo(String.Empty, scriptBlock, context);
-
             this._fromScriptFile = false;
 
             CommonInitialization(scriptBlock, context, useLocalScope, origin, sessionState);

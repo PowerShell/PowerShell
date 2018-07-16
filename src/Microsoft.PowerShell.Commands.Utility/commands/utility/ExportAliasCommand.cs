@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
                             itemNotFound));
                 }
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// Writes the aliases to the file.

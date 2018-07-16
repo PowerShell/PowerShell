@@ -3,13 +3,13 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Text.RegularExpressions;
+
 using Microsoft.PowerShell.Commands;
 
 using CimClass = Microsoft.Management.Infrastructure.CimClass;
@@ -18,63 +18,65 @@ using CimInstance = Microsoft.Management.Infrastructure.CimInstance;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Enum describing permissions to use runtime evaluation during type inference
+    /// Enum describing permissions to use runtime evaluation during type inference.
     /// </summary>
-    public enum TypeInferenceRuntimePermissions {
+    public enum TypeInferenceRuntimePermissions
+    {
         /// <summary>
-        /// No runtime use is allowed
+        /// No runtime use is allowed.
         /// </summary>
         None = 0,
+
         /// <summary>
-        /// Use of SafeExprEvaluator visitor is allowed
+        /// Use of SafeExprEvaluator visitor is allowed.
         /// </summary>
         AllowSafeEval = 1,
     }
 
     /// <summary>
-    /// static class containing methods to work with type inference of abstract syntax trees
+    /// Static class containing methods to work with type inference of abstract syntax trees.
     /// </summary>
     internal static class AstTypeInference
     {
         /// <summary>
-        /// Infers the type that the result of executing a statement would have without using runtime safe eval
+        /// Infers the type that the result of executing a statement would have without using runtime safe eval.
         /// </summary>
-        /// <param name="ast">the ast to infer the type from</param>
-        /// <returns></returns>
+        /// <param name="ast">The ast to infer the type from.</param>
+        /// <returns>List of inferred typenames.</returns>
         public static IList<PSTypeName> InferTypeOf(Ast ast)
         {
             return InferTypeOf(ast, TypeInferenceRuntimePermissions.None);
         }
 
         /// <summary>
-        /// Infers the type that the result of executing a statement would have
+        /// Infers the type that the result of executing a statement would have.
         /// </summary>
-        /// <param name="ast">the ast to infer the type from</param>
-        /// <param name="evalPermissions">The runtime usage permissions allowed during type inference</param>
-        /// <returns></returns>
+        /// <param name="ast">The ast to infer the type from.</param>
+        /// <param name="evalPermissions">The runtime usage permissions allowed during type inference.</param>
+        /// <returns>List of inferred typenames.</returns>
         public static IList<PSTypeName> InferTypeOf(Ast ast, TypeInferenceRuntimePermissions evalPermissions)
         {
             return InferTypeOf(ast, PowerShell.Create(RunspaceMode.CurrentRunspace), evalPermissions);
         }
 
         /// <summary>
-        /// Infers the type that the result of executing a statement would have without using runtime safe eval
+        /// Infers the type that the result of executing a statement would have without using runtime safe eval.
         /// </summary>
-        /// <param name="ast">the ast to infer the type from</param>
-        /// <param name="powerShell">the instance of powershell to user for expression evalutaion needed for type inference</param>
-        /// <returns></returns>
+        /// <param name="ast">The ast to infer the type from.</param>
+        /// <param name="powerShell">The instance of powershell to use for expression evaluation needed for type inference.</param>
+        /// <returns>List of inferred typenames.</returns>
         public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell)
         {
             return InferTypeOf(ast, powerShell, TypeInferenceRuntimePermissions.None);
         }
 
         /// <summary>
-        /// Infers the type that the result of executing a statement would have
+        /// Infers the type that the result of executing a statement would have.
         /// </summary>
-        /// <param name="ast">the ast to infer the type from</param>
-        /// <param name="powerShell">the instance of powershell to user for expression evalutaion needed for type inference</param>
-        /// <param name="evalPersmissions">The runtime usage permissions allowed during type inference</param>
-        /// <returns></returns>
+        /// <param name="ast">The ast to infer the type from.</param>
+        /// <param name="powerShell">The instance of powershell to user for expression evaluation needed for type inference.</param>
+        /// <param name="evalPersmissions">The runtime usage permissions allowed during type inference.</param>
+        /// <returns>List of inferred typenames.</returns>
         public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell, TypeInferenceRuntimePermissions evalPersmissions)
         {
             var context = new TypeInferenceContext(powerShell);
@@ -82,13 +84,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Infers the type that the result of executing a statement would have
+        /// Infers the type that the result of executing a statement would have.
         /// </summary>
-        /// <param name="ast">the ast to infer the type from</param>
-        /// <param name="context">The current type inference context</param>
-        /// <param name="evalPersmissions">The runtime usage permissions allowed during type inference</param>
-        /// <returns></returns>
-        internal static IList<PSTypeName> InferTypeOf(Ast ast, TypeInferenceContext context, TypeInferenceRuntimePermissions evalPersmissions = TypeInferenceRuntimePermissions.None)
+        /// <param name="ast">The ast to infer the type from.</param>
+        /// <param name="context">The current type inference context.</param>
+        /// <param name="evalPersmissions">The runtime usage permissions allowed during type inference.</param>
+        /// <returns>List of inferred typenames.</returns>
+        internal static IList<PSTypeName> InferTypeOf(
+            Ast ast,
+            TypeInferenceContext context,
+            TypeInferenceRuntimePermissions evalPersmissions = TypeInferenceRuntimePermissions.None)
         {
             var originalRuntimePermissions = context.RuntimePermissions;
             try
@@ -121,15 +126,16 @@ namespace System.Management.Automation
         public static readonly PSTypeName[] EmptyPSTypeNameArray = Utils.EmptyArray<PSTypeName>();
         private readonly PowerShell _powerShell;
 
-        public TypeInferenceContext() : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
+        public TypeInferenceContext()
+        : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
         {
         }
 
         /// <summary>
-        /// Create a new Type Inference context.
-        /// The powerShell instance passed need to have a non null Runspace
+        ///  Initializes a new instance of the <see cref="TypeInferenceContext" /> class.
+        /// The powerShell instance passed need to have a non null Runspace.
         /// </summary>
-        /// <param name="powerShell"></param>
+        /// <param name="powerShell">The instance of powershell to use for expression evaluation needed for type inference.</param>
         public TypeInferenceContext(PowerShell powerShell)
         {
             Diagnostics.Assert(powerShell.Runspace != null, "Callers are required to ensure we have a runspace");
@@ -157,9 +163,9 @@ namespace System.Management.Automation
             {
                 return false;
             }
-            object value;
+
             return expression != null &&
-                   SafeExprEvaluator.TrySafeEval(expression, ExecutionContext, out value) &&
+                   SafeExprEvaluator.TrySafeEval(expression, ExecutionContext, out var value) &&
                    TryGetRepresentativeTypeNameFromValue(value, out typeName);
         }
 
@@ -204,6 +210,7 @@ namespace System.Management.Automation
                     filterToCall = o => !IsMemberHidden(o) && filter(o);
                 }
             }
+
             IEnumerable<Type> elementTypes;
             if (typename.Type.IsArray)
             {
@@ -211,9 +218,18 @@ namespace System.Management.Automation
             }
             else
             {
-                elementTypes = typename.Type.GetInterfaces().Where(
-                    t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+                var elementList = new List<Type>();
+                foreach (var t in typename.Type.GetInterfaces())
+                {
+                    if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    {
+                        elementList.Add(t);
+                    }
+                }
+
+                elementTypes = elementList;
             }
+
             foreach (var type in elementTypes.Prepend(typename.Type))
             {
                 // Look in the type table first.
@@ -224,35 +240,56 @@ namespace System.Management.Automation
                 }
 
                 var members = isStatic
-                    ? PSObject.dotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type)
-                    : PSObject.dotNetInstanceAdapter.GetPropertiesAndMethods(type, false);
-                results.AddRange(filterToCall != null ? members.Where(filterToCall) : members);
+                              ? PSObject.dotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type)
+                              : PSObject.dotNetInstanceAdapter.GetPropertiesAndMethods(type, false);
+
+                if (filterToCall != null)
+                {
+                    foreach (var member in members)
+                    {
+                        if (filterToCall(member))
+                        {
+                            results.Add(member);
+                        }
+                    }
+                }
+                else
+                {
+                    results.AddRange(members);
+                }
             }
         }
 
-        internal void AddMembersByInferredTypeDefinitionAst(PSTypeName typename, bool isStatic,
-            Func<object, bool> filter, Func<object, bool> filterToCall, List<object> results)
+        internal void AddMembersByInferredTypeDefinitionAst(
+            PSTypeName typename,
+            bool isStatic,
+            Func<object, bool> filter,
+            Func<object, bool> filterToCall,
+            List<object> results)
         {
             if (CurrentTypeDefinitionAst != typename.TypeDefinitionAst)
             {
                 if (filterToCall == null)
+                {
                     filterToCall = o => !IsMemberHidden(o);
+                }
                 else
+                {
                     filterToCall = o => !IsMemberHidden(o) && filter(o);
+                }
             }
 
             bool foundConstructor = false;
             foreach (var member in typename.TypeDefinitionAst.Members)
             {
                 bool add;
-                var propertyMember = member as PropertyMemberAst;
-                if (propertyMember != null)
+                if (member is PropertyMemberAst propertyMember)
                 {
                     add = propertyMember.IsStatic == isStatic;
                 }
                 else
                 {
-                    var functionMember = (FunctionMemberAst) member;
+                    var functionMember = (FunctionMemberAst)member;
                     add = functionMember.IsStatic == isStatic;
                     foundConstructor |= functionMember.IsConstructor;
                 }
@@ -268,11 +305,15 @@ namespace System.Management.Automation
                 }
             }
 
-            //iterate through bases/interfaces
+            // iterate through bases/interfaces
             foreach (var baseType in typename.TypeDefinitionAst.BaseTypes)
             {
                 var baseTypeName = baseType.TypeName as TypeName;
-                if (baseTypeName == null) continue;
+                if (baseTypeName == null)
+                {
+                    continue;
+                }
+
                 var baseTypeDefinitionAst = baseTypeName._typeDefinitionAst;
                 results.AddRange(GetMembersByInferredType(new PSTypeName(baseTypeDefinitionAst), isStatic, filterToCall));
             }
@@ -285,7 +326,6 @@ namespace System.Management.Automation
                 {
                     filterToCall = o => !IsConstructor(o);
                 }
-
                 else
                 {
                     filterToCall = o => !IsConstructor(o) && filter(o);
@@ -294,7 +334,9 @@ namespace System.Management.Automation
                 if (!foundConstructor)
                 {
                     results.Add(
-                        new CompilerGeneratedMemberFunctionAst(PositionUtilities.EmptyExtent, typename.TypeDefinitionAst,
+                        new CompilerGeneratedMemberFunctionAst(
+                            PositionUtilities.EmptyExtent,
+                            typename.TypeDefinitionAst,
                             SpecialMemberFunctionType.DefaultConstructor));
                 }
             }
@@ -303,22 +345,30 @@ namespace System.Management.Automation
                 // Reset the filter because the recursive call will add IsHidden back if necessary.
                 filterToCall = filter;
             }
+
             results.AddRange(GetMembersByInferredType(new PSTypeName(typeof(object)), isStatic, filterToCall));
         }
 
         internal void AddMembersByInferredTypeCimType(PSTypeName typename, List<object> results, Func<object, bool> filterToCall)
         {
-            string cimNamespace;
-            string className;
-            if (ParseCimCommandsTypeName(typename, out cimNamespace, out className))
+            if (ParseCimCommandsTypeName(typename, out var cimNamespace, out var className))
             {
                 var powerShellExecutionHelper = Helper;
-                powerShellExecutionHelper
-                    .AddCommandWithPreferenceSetting("CimCmdlets\\Get-CimClass")
-                    .AddParameter("Namespace", cimNamespace)
-                    .AddParameter("Class", className);
+                powerShellExecutionHelper.AddCommandWithPreferenceSetting("CimCmdlets\\Get-CimClass")
+                                         .AddParameter("Namespace", cimNamespace)
+                                         .AddParameter("Class", className);
+
                 var classes = powerShellExecutionHelper.ExecuteCurrentPowerShell(out _);
-                foreach (var cimClass in classes.Select(PSObject.Base).OfType<CimClass>())
+                var cimClasses = new List<CimClass>();
+                foreach (var c in classes)
+                {
+                    if (PSObject.Base(c) is CimClass cc)
+                    {
+                        cimClasses.Add(cc);
+                    }
+                }
+
+                foreach (var cimClass in cimClasses)
                 {
                     if (filterToCall == null)
                     {
@@ -350,11 +400,12 @@ namespace System.Management.Automation
             type = null;
             if (value != null)
             {
-                var list = value as IList;
-                if (list != null && list.Count > 0)
+                if (value is IList list
+                    && list.Count > 0)
                 {
                     value = list[0];
                 }
+
                 value = PSObject.Base(value);
                 if (value != null)
                 {
@@ -362,6 +413,7 @@ namespace System.Management.Automation
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -373,6 +425,7 @@ namespace System.Management.Automation
             {
                 return false;
             }
+
             if (typename.Type != null)
             {
                 return false;
@@ -401,7 +454,7 @@ namespace System.Management.Automation
                 case PSMemberInfo psMemberInfo:
                     return psMemberInfo.IsHidden;
                 case MemberInfo memberInfo:
-                    return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
+                    return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Length != 0;
                 case PropertyMemberAst propertyMember:
                     return propertyMember.IsHidden;
                 case FunctionMemberAst functionMember:
@@ -502,7 +555,9 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitVariableExpression(VariableExpressionAst ast)
         {
-            return InferTypeFrom(ast);
+            var inferredTypes = new List<PSTypeName>();
+            InferTypeFrom(ast, inferredTypes);
+            return inferredTypes;
         }
 
         object ICustomAstVisitor.VisitMergingRedirection(MergingRedirectionAst mergingRedirectionAst)
@@ -519,8 +574,8 @@ namespace System.Management.Automation
         {
             var tokenKind = unaryExpressionAst.TokenKind;
             return (tokenKind == TokenKind.Not || tokenKind == TokenKind.Exclaim)
-                ? BinaryExpressionAst.BoolTypeNameArray
-                : unaryExpressionAst.Child.Accept(this);
+                   ? BinaryExpressionAst.BoolTypeNameArray
+                   : unaryExpressionAst.Child.Accept(this);
         }
 
         object ICustomAstVisitor.VisitConvertExpression(ConvertExpressionAst convertExpressionAst)
@@ -548,12 +603,34 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitErrorStatement(ErrorStatementAst errorStatementAst)
         {
-            return errorStatementAst.Conditions.Concat(errorStatementAst.Bodies).Concat(errorStatementAst.NestedAst).SelectMany(InferTypes);
+            var inferredTypes = new List<PSTypeName>();
+            foreach (var ast in errorStatementAst.Conditions)
+            {
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            foreach (var ast in errorStatementAst.Bodies)
+            {
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            foreach (var ast in errorStatementAst.NestedAst)
+            {
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            return inferredTypes;
         }
 
         object ICustomAstVisitor.VisitErrorExpression(ErrorExpressionAst errorExpressionAst)
         {
-            return errorExpressionAst.NestedAst.SelectMany(InferTypes);
+            var inferredTypes = new List<PSTypeName>();
+            foreach (var ast in errorExpressionAst.NestedAst)
+            {
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            return inferredTypes;
         }
 
         object ICustomAstVisitor.VisitScriptBlock(ScriptBlockAst scriptBlockAst)
@@ -562,19 +639,23 @@ namespace System.Management.Automation
             var beginBlock = scriptBlockAst.BeginBlock;
             var processBlock = scriptBlockAst.ProcessBlock;
             var endBlock = scriptBlockAst.EndBlock;
+
             // The following is used when we don't find OutputType, which is checked elsewhere.
             if (beginBlock != null)
             {
                 res.AddRange(InferTypes(beginBlock));
             }
+
             if (processBlock != null)
             {
                 res.AddRange(InferTypes(processBlock));
             }
+
             if (endBlock != null)
             {
                 res.AddRange(InferTypes(endBlock));
             }
+
             return res;
         }
 
@@ -585,7 +666,14 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitNamedBlock(NamedBlockAst namedBlockAst)
         {
-            return namedBlockAst.Statements.SelectMany(InferTypes);
+            var inferredTypes = new List<PSTypeName>();
+            for (var index = 0; index < namedBlockAst.Statements.Count; index++)
+            {
+                var ast = namedBlockAst.Statements[index];
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            return inferredTypes;
         }
 
         object ICustomAstVisitor.VisitTypeConstraint(TypeConstraintAst typeConstraintAst)
@@ -607,24 +695,42 @@ namespace System.Management.Automation
         {
             var res = new List<PSTypeName>();
             var attributes = parameterAst.Attributes;
-            var typeConstraint = attributes.OfType<TypeConstraintAst>().FirstOrDefault();
-            if (typeConstraint != null)
+            bool typeConstraintAdded = false;
+            foreach (var attrib in attributes)
             {
-                res.Add(new PSTypeName(typeConstraint.TypeName));
-            }
-            foreach (var attributeAst in attributes.OfType<AttributeAst>())
-            {
-                PSTypeNameAttribute attribute = null;
-                try
+                switch (attrib)
                 {
-                    attribute = attributeAst.GetAttribute() as PSTypeNameAttribute;
-                }
-                catch (RuntimeException) { }
-                if (attribute != null)
-                {
-                    res.Add(new PSTypeName(attribute.PSTypeName));
+                    case TypeConstraintAst typeConstraint:
+                    {
+                        if (!typeConstraintAdded)
+                        {
+                            res.Add(new PSTypeName(typeConstraint.TypeName));
+                            typeConstraintAdded = true;
+                        }
+
+                        break;
+                    }
+                    case AttributeAst attributeAst:
+                    {
+                        PSTypeNameAttribute attribute = null;
+                        try
+                        {
+                            attribute = attributeAst.GetAttribute() as PSTypeNameAttribute;
+                        }
+                        catch (RuntimeException)
+                        {
+                        }
+
+                        if (attribute != null)
+                        {
+                            res.Add(new PSTypeName(attribute.PSTypeName));
+                        }
+
+                        break;
+                    }
                 }
             }
+
             return res;
         }
 
@@ -635,20 +741,30 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
-            return statementBlockAst.Statements.SelectMany(InferTypes);
+            var inferredTypes = new List<PSTypeName>();
+            foreach (var ast in statementBlockAst.Statements)
+            {
+                inferredTypes.AddRange(InferTypes(ast));
+            }
+
+            return inferredTypes;
         }
 
         object ICustomAstVisitor.VisitIfStatement(IfStatementAst ifStmtAst)
         {
             var res = new List<PSTypeName>();
 
-            res.AddRange(ifStmtAst.Clauses.SelectMany(clause => InferTypes(clause.Item2)));
+            foreach (var clause in ifStmtAst.Clauses)
+            {
+                res.AddRange(InferTypes(clause.Item2));
+            }
 
             var elseClause = ifStmtAst.ElseClause;
             if (elseClause != null)
             {
                 res.AddRange(InferTypes(elseClause));
             }
+
             return res;
         }
 
@@ -663,12 +779,16 @@ namespace System.Management.Automation
             var clauses = switchStatementAst.Clauses;
             var defaultStatement = switchStatementAst.Default;
 
-            res.AddRange(clauses.SelectMany(clause => InferTypes(clause.Item2)));
+            foreach (var clause in clauses)
+            {
+                res.AddRange(InferTypes(clause.Item2));
+            }
 
             if (defaultStatement != null)
             {
                 res.AddRange(InferTypes(defaultStatement));
             }
+
             return res;
         }
 
@@ -710,10 +830,12 @@ namespace System.Management.Automation
             {
                 res.AddRange(InferTypes(catchClauseAst));
             }
+
             if (tryStatementAst.Finally != null)
             {
                 res.AddRange(InferTypes(tryStatementAst.Finally));
             }
+
             return res;
         }
 
@@ -754,12 +876,15 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitPipeline(PipelineAst pipelineAst)
         {
-            return pipelineAst.PipelineElements.Last().Accept(this);
+            var pipelineAstPipelineElements = pipelineAst.PipelineElements;
+            return pipelineAstPipelineElements[pipelineAstPipelineElements.Count - 1].Accept(this);
         }
 
         object ICustomAstVisitor.VisitCommand(CommandAst commandAst)
         {
-            return InferTypesFrom(commandAst);
+            var inferredTypes = new List<PSTypeName>();
+            InferTypesFrom(commandAst, inferredTypes);
+            return inferredTypes;
         }
 
         object ICustomAstVisitor.VisitCommandExpression(CommandExpressionAst commandExpressionAst)
@@ -777,18 +902,18 @@ namespace System.Management.Automation
             return TypeInferenceContext.EmptyPSTypeNameArray;
         }
 
-        private IEnumerable<PSTypeName> InferTypesFrom(CommandAst commandAst)
+        private void InferTypesFrom(CommandAst commandAst, List<PSTypeName> inferredTypes)
         {
             PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
-                                    .DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ParameterCompletion);
+            .DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ParameterCompletion);
+
             if (pseudoBinding?.CommandInfo == null)
             {
-                yield break;
+                return;
             }
 
-            AstParameterArgumentPair pathArgument;
             string pathParameterName = "Path";
-            if (!pseudoBinding.BoundArguments.TryGetValue(pathParameterName, out pathArgument))
+            if (!pseudoBinding.BoundArguments.TryGetValue(pathParameterName, out var pathArgument))
             {
                 pathParameterName = "LiteralPath";
                 pseudoBinding.BoundArguments.TryGetValue(pathParameterName, out pathArgument);
@@ -799,28 +924,26 @@ namespace System.Management.Automation
             // If you specified - Path, the list of OutputType can be refined, but we have to make a copy of the CmdletInfo object this way to get that refinement.
             var commandInfo = pseudoBinding.CommandInfo;
             var pathArgumentPair = pathArgument as AstPair;
-            if (pathArgumentPair?.Argument is StringConstantExpressionAst)
+            if (pathArgumentPair?.Argument is StringConstantExpressionAst ast)
             {
-                var pathValue = ((StringConstantExpressionAst)pathArgumentPair.Argument).Value;
+                var pathValue = ast.Value;
                 try
                 {
                     commandInfo = commandInfo.CreateGetCommandCopy(new object[] { "-" + pathParameterName, pathValue });
                 }
-                catch (InvalidOperationException) { }
+                catch (InvalidOperationException)
+                {
+                }
             }
 
-            var cmdletInfo = commandInfo as CmdletInfo;
-            if (cmdletInfo != null)
+            if (commandInfo is CmdletInfo cmdletInfo)
             {
                 // Special cases
-                var inferTypesFromObjectCmdlets = InferTypesFromObjectCmdlets(commandAst, cmdletInfo, pseudoBinding).ToArray();
-                if (inferTypesFromObjectCmdlets.Length > 0)
+                var inferTypesFromObjectCmdlets = InferTypesFromObjectCmdlets(commandAst, cmdletInfo, pseudoBinding);
+                if (inferTypesFromObjectCmdlets.Count > 0)
                 {
-                    foreach (var objectCmdletTypes in inferTypesFromObjectCmdlets)
-                    {
-                        yield return objectCmdletTypes;
-                    }
-                    yield break;
+                    inferredTypes.AddRange(inferTypesFromObjectCmdlets);
+                    return;
                 }
             }
 
@@ -828,100 +951,98 @@ namespace System.Management.Automation
             // With psuedo-binding, we actually know the candidate parameter sets, so we could take
             // advantage of it here, but I opted for the simpler code because so few cmdlets use
             // ParameterSetName in OutputType and of the ones I know about, it isn't that useful.
-            foreach (var result in commandInfo.OutputType)
-            {
-                yield return result;
-            }
+            inferredTypes.AddRange(commandInfo.OutputType);
         }
 
         /// <summary>
-        /// Infer types from the well-known object cmdlets, like foreach-object, where-object, sort-object etc
+        /// Infer types from the well-known object cmdlets, like foreach-object, where-object, sort-object etc.
         /// </summary>
-        /// <param name="commandAst"></param>
-        /// <param name="cmdletInfo"></param>
-        /// <param name="pseudoBinding"></param>
-        /// <returns></returns>
-        private IEnumerable<PSTypeName> InferTypesFromObjectCmdlets(CommandAst commandAst, CmdletInfo cmdletInfo, PseudoBindingInfo pseudoBinding)
+        /// <param name="commandAst">The ast to infer types from.</param>
+        /// <param name="cmdletInfo">The cmdletInfo.</param>
+        /// <param name="pseudoBinding">Pseudo bindings of parameters.</param>
+        /// <returns>List of inferred typenames.</returns>
+        private List<PSTypeName> InferTypesFromObjectCmdlets(CommandAst commandAst, CmdletInfo cmdletInfo, PseudoBindingInfo pseudoBinding)
         {
-            // new-object - yields an instance of whatever -Type is bound to
+            var inferredTypes = new List<PSTypeName>(16);
+
             if (cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.NewObjectCommand"))
             {
+                // new - object - yields an instance of whatever -Type is bound to
                 var newObjectType = InferTypesFromNewObjectCommand(pseudoBinding);
                 if (newObjectType != null)
                 {
-                    yield return newObjectType;
+                    inferredTypes.Add(newObjectType);
                 }
-
-                yield break; // yield break;
             }
-
-            // Get-CimInstance/New-CimInstance - yields a CimInstance with ETS type based on its arguments for -Namespace and -ClassName parameters
-            if (
+            else if (
                 cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand") ||
                 cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.Management.Infrastructure.CimCmdlets.NewCimInstanceCommand"))
             {
-                foreach (var cimType in InferTypesFromCimCommand(pseudoBinding))
-                {
-                    yield return cimType;
-                }
-                yield break; // yield break;
+                // Get-CimInstance/New-CimInstance - adds a CimInstance with ETS type based on its arguments for -Namespace and -ClassName parameters
+                InferTypesFromCimCommand(pseudoBinding, inferredTypes);
             }
-
-            // where-object - yields whatever we saw before where-object in the pipeline.
-            // same for sort-object
-            if (cmdletInfo.ImplementingType == typeof(WhereObjectCommand)
-                ||
-                cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.SortObjectCommand"))
+            else if (cmdletInfo.ImplementingType == typeof(WhereObjectCommand) ||
+                     cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.SortObjectCommand"))
             {
-                foreach (var whereOrSortType in InferTypesFromWhereAndSortCommand(commandAst))
-                {
-                    yield return whereOrSortType;
-                }
-
-                // We could also check -InputObject, but that is rarely used.  But don't bother continuing.
-                yield break; // yield break;
+                // where-object - adds whatever we saw before where-object in the pipeline.
+                // same for sort-object
+                InferTypesFromWhereAndSortCommand(commandAst, inferredTypes);
             }
-
-            // foreach-object - yields the type of it's script block parameters
-            if (cmdletInfo.ImplementingType == typeof(ForEachObjectCommand))
+            else if (cmdletInfo.ImplementingType == typeof(ForEachObjectCommand))
             {
-                foreach (var foreachType in InferTypesFromForeachCommand(pseudoBinding, commandAst))
-                {
-                    yield return foreachType;
-                }
+                // foreach-object - adds the type of it's script block parameters
+                InferTypesFromForeachCommand(pseudoBinding, commandAst, inferredTypes);
             }
+            else if (cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.SelectObjectCommand"))
+            {
+                // Select-object - yields whatever we saw before where-object in the pipeline.
+                // unless -property or -excludeproperty
+                InferTypesFromSelectCommand(pseudoBinding, commandAst, inferredTypes);
+            }
+
+            return inferredTypes;
         }
 
-        private static IEnumerable<PSTypeName> InferTypesFromCimCommand(PseudoBindingInfo pseudoBinding)
+        private static void InferTypesFromCimCommand(PseudoBindingInfo pseudoBinding, List<PSTypeName> inferredTypes)
         {
             string pseudoboundNamespace =
-                CompletionCompleters.NativeCommandArgumentCompletion_ExtractSecondaryArgument(pseudoBinding.BoundArguments,
-                    "Namespace").FirstOrDefault();
+            CompletionCompleters.NativeCommandArgumentCompletion_ExtractSecondaryArgument(
+                                    pseudoBinding.BoundArguments,
+                                    "Namespace")
+                                .FirstOrDefault();
+
             string pseudoboundClassName =
-                CompletionCompleters.NativeCommandArgumentCompletion_ExtractSecondaryArgument(pseudoBinding.BoundArguments,
-                    "ClassName").FirstOrDefault();
+            CompletionCompleters.NativeCommandArgumentCompletion_ExtractSecondaryArgument(
+                                    pseudoBinding.BoundArguments,
+                                    "ClassName")
+                                .FirstOrDefault();
+
             if (!string.IsNullOrWhiteSpace(pseudoboundClassName))
             {
-                yield return new PSTypeName(string.Format(
-                    CultureInfo.InvariantCulture,
-                    "{0}#{1}/{2}",
-                    typeof(CimInstance).FullName,
-                    pseudoboundNamespace ?? "root/cimv2",
-                    pseudoboundClassName));
+                var typeName = new PSTypeName(
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "{0}#{1}/{2}",
+                        typeof(CimInstance).FullName,
+                        pseudoboundNamespace ?? "root/cimv2",
+                        pseudoboundClassName));
+
+                inferredTypes.Add(typeName);
             }
-            yield return new PSTypeName(typeof(CimInstance));
+
+            inferredTypes.Add(new PSTypeName(typeof(CimInstance)));
         }
 
-        private IEnumerable<PSTypeName> InferTypesFromForeachCommand(PseudoBindingInfo pseudoBinding, CommandAst commandAst)
+        private void InferTypesFromForeachCommand(PseudoBindingInfo pseudoBinding, CommandAst commandAst, List<PSTypeName> inferredTypes)
         {
-            AstParameterArgumentPair argument;
-            if (pseudoBinding.BoundArguments.TryGetValue("MemberName", out argument))
+            if (pseudoBinding.BoundArguments.TryGetValue("MemberName", out AstParameterArgumentPair argument))
             {
                 var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
                 if (previousPipelineElement == null)
                 {
-                    yield break;
+                    return;
                 }
+
                 foreach (var t in InferTypes(previousPipelineElement))
                 {
                     var memberName = (((AstPair)argument).Argument as StringConstantExpressionAst)?.Value;
@@ -930,72 +1051,97 @@ namespace System.Management.Automation
                     {
                         var members = _context.GetMembersByInferredType(t, false, null);
                         bool maybeWantDefaultCtor = false;
-                        foreach (var type in GetTypesOfMembers(t, memberName, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst: false))
-                        {
-                            yield return type;
-                        }
+                        GetTypesOfMembers(t, memberName, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst: false, inferredTypes);
                     }
                 }
             }
 
             if (pseudoBinding.BoundArguments.TryGetValue("Begin", out argument))
             {
-                foreach (var type in GetInferredTypeFromScriptBlockParameter(argument))
-                {
-                    yield return type;
-                }
+                GetInferredTypeFromScriptBlockParameter(argument, inferredTypes);
             }
 
             if (pseudoBinding.BoundArguments.TryGetValue("Process", out argument))
             {
-                foreach (var type in GetInferredTypeFromScriptBlockParameter(argument))
-                {
-                    yield return type;
-                }
+                GetInferredTypeFromScriptBlockParameter(argument, inferredTypes);
             }
 
             if (pseudoBinding.BoundArguments.TryGetValue("End", out argument))
             {
-                foreach (var type in GetInferredTypeFromScriptBlockParameter(argument))
-                {
-                    yield return type;
-                }
+                GetInferredTypeFromScriptBlockParameter(argument, inferredTypes);
             }
         }
 
-        private IEnumerable<PSTypeName> InferTypesFromWhereAndSortCommand(CommandAst commandAst)
+        private void InferTypesFromWhereAndSortCommand(CommandAst commandAst, List<PSTypeName> inferredTypes)
         {
-            var parentPipeline = commandAst.Parent as PipelineAst;
-            if (parentPipeline != null)
+            InferTypesFromPreviousCommand(commandAst, inferredTypes);
+        }
+
+        private void InferTypesFromPreviousCommand(CommandAst commandAst, List<PSTypeName> inferredTypes)
+        {
+            if (commandAst.Parent is PipelineAst parentPipeline)
             {
                 int i;
                 for (i = 0; i < parentPipeline.PipelineElements.Count; i++)
                 {
                     if (parentPipeline.PipelineElements[i] == commandAst)
+                    {
                         break;
+                    }
                 }
+
                 if (i > 0)
                 {
-                    foreach (var typename in InferTypes(parentPipeline.PipelineElements[i - 1]))
-                    {
-                        yield return typename;
-                    }
+                    inferredTypes.AddRange(InferTypes(parentPipeline.PipelineElements[i - 1]));
                 }
             }
         }
 
+        private void InferTypesFromSelectCommand(PseudoBindingInfo pseudoBinding, CommandAst commandAst, List<PSTypeName> inferredTypes)
+        {
+            if (pseudoBinding.BoundArguments.TryGetValue("Property", out _)
+                || pseudoBinding.BoundArguments.TryGetValue("ExcludeProperty", out _))
+            {
+                return;
+            }
+
+            var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
+            if (previousPipelineElement == null)
+            {
+                return;
+            }
+
+            if (pseudoBinding.BoundArguments.TryGetValue("ExpandProperty", out var expandedPropertyArgument))
+            {
+                foreach (var t in InferTypes(previousPipelineElement))
+                {
+                    var memberName = (((AstPair)expandedPropertyArgument).Argument as StringConstantExpressionAst)?.Value;
+
+                    if (memberName != null)
+                    {
+                        var members = _context.GetMembersByInferredType(t, false, null);
+                        bool maybeWantDefaultCtor = false;
+                        GetTypesOfMembers(t, memberName, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst: false, inferredTypes);
+                    }
+                }
+
+                return;
+            }
+
+            InferTypesFromPreviousCommand(commandAst, inferredTypes);
+        }
+
         private static PSTypeName InferTypesFromNewObjectCommand(PseudoBindingInfo pseudoBinding)
         {
-            AstParameterArgumentPair typeArgument;
-            if (pseudoBinding.BoundArguments.TryGetValue("TypeName", out typeArgument))
+            if (pseudoBinding.BoundArguments.TryGetValue("TypeName", out var typeArgument))
             {
                 var typeArgumentPair = typeArgument as AstPair;
-                var stringConstantExpr = typeArgumentPair?.Argument as StringConstantExpressionAst;
-                if (stringConstantExpr != null)
+                if (typeArgumentPair?.Argument is StringConstantExpressionAst stringConstantExpr)
                 {
-                     return new PSTypeName(stringConstantExpr.Value);
+                    return new PSTypeName(stringConstantExpr.Value);
                 }
             }
+
             return null;
         }
 
@@ -1008,7 +1154,9 @@ namespace System.Management.Automation
             // If the member name isn't simple, don't even try.
             var memberAsStringConst = memberCommandElement as StringConstantExpressionAst;
             if (memberAsStringConst == null)
+            {
                 return Utils.EmptyArray<PSTypeName>();
+            }
 
             var exprType = GetExpressionType(expression, isStatic);
             if (exprType == null || exprType.Length == 0)
@@ -1019,8 +1167,8 @@ namespace System.Management.Automation
             var res = new List<PSTypeName>(10);
             bool isInvokeMemberExpressionAst = memberExpressionAst is InvokeMemberExpressionAst;
             var maybeWantDefaultCtor = isStatic
-                && isInvokeMemberExpressionAst
-                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");
+                                       && isInvokeMemberExpressionAst
+                                       && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");
 
             // We use a list of member names because we might discover aliases properties
             // and if we do, we'll add to the list.
@@ -1031,6 +1179,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 var members = _context.GetMembersByInferredType(type, isStatic, filter: null);
 
                 AddTypesOfMembers(type, memberNameList, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, res);
@@ -1041,19 +1190,29 @@ namespace System.Management.Automation
                     res.Add(type);
                 }
             }
+
             return res;
         }
 
-        private List<PSTypeName> GetTypesOfMembers(PSTypeName thisType, string memberName, IList<object> members, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst)
+        private void GetTypesOfMembers(
+            PSTypeName thisType,
+            string memberName,
+            IList<object> members,
+            ref bool maybeWantDefaultCtor,
+            bool isInvokeMemberExpressionAst,
+            List<PSTypeName> inferredTypes)
         {
             var memberNamesToCheck = new List<string> { memberName };
-            var res = new List<PSTypeName>(10);
-
-            AddTypesOfMembers(thisType, memberNamesToCheck, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, res);
-            return res;
+            AddTypesOfMembers(thisType, memberNamesToCheck, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, inferredTypes);
         }
 
-        private void AddTypesOfMembers(PSTypeName currentType, List<string> memberNamesToCheck, IList<object> members, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst, List<PSTypeName> result)
+        private void AddTypesOfMembers(
+            PSTypeName currentType,
+            List<string> memberNamesToCheck,
+            IList<object> members,
+            ref bool maybeWantDefaultCtor,
+            bool isInvokeMemberExpressionAst,
+            List<PSTypeName> result)
         {
             for (int i = 0; i < memberNamesToCheck.Count; i++)
             {
@@ -1068,7 +1227,14 @@ namespace System.Management.Automation
             }
         }
 
-        private bool TryGetTypeFromMember(PSTypeName currentType, object member, string memberName, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst, List<PSTypeName> result, List<string> memberNamesToCheck)
+        private bool TryGetTypeFromMember(
+            PSTypeName currentType,
+            object member,
+            string memberName,
+            ref bool maybeWantDefaultCtor,
+            bool isInvokeMemberExpressionAst,
+            List<PSTypeName> result,
+            List<string> memberNamesToCheck)
         {
             switch (member)
             {
@@ -1079,15 +1245,17 @@ namespace System.Management.Automation
                         result.Add(new PSTypeName(propertyInfo.PropertyType));
                         return true;
                     }
+
                     return false;
                 }
-                case FieldInfo fieldInfo:       // .net field
+                case FieldInfo fieldInfo: // .net field
                 {
                     if (fieldInfo.Name.EqualsOrdinalIgnoreCase(memberName) && !isInvokeMemberExpressionAst)
                     {
                         result.Add(new PSTypeName(fieldInfo.FieldType));
                         return true;
                     }
+
                     return false;
                 }
                 case DotNetAdapter.MethodCacheEntry methodCacheEntry: // .net method
@@ -1097,20 +1265,22 @@ namespace System.Management.Automation
                         maybeWantDefaultCtor = false;
                         if (isInvokeMemberExpressionAst)
                         {
-                            var res = (from method in methodCacheEntry.methodInformationStructures
-                                select method.method as MethodInfo into methodInfo
-                                where methodInfo != null && !methodInfo.ReturnType.ContainsGenericParameters
-                                select new PSTypeName(methodInfo.ReturnType));
-                            result.AddRange(res);
+                            foreach (var method in methodCacheEntry.methodInformationStructures)
+                            {
+                                if (method.method is MethodInfo methodInfo && !methodInfo.ReturnType.ContainsGenericParameters)
+                                {
+                                    result.Add(new PSTypeName(methodInfo.ReturnType));
+                                }
+                            }
+
                             return true;
                         }
-                        else
-                        {
-                            // Accessing a method as a property, we'd return a wrapper over the method.
-                            result.Add(new PSTypeName(typeof(PSMethod)));
-                            return true;
-                        }
+
+                        // Accessing a method as a property, we'd return a wrapper over the method.
+                        result.Add(new PSTypeName(typeof(PSMethod)));
+                        return true;
                     }
+
                     return false;
                 }
                 case MemberAst memberAst: // this is for members defined by PowerShell classes
@@ -1129,9 +1299,11 @@ namespace System.Management.Automation
                         {
                             if (memberAst is PropertyMemberAst propertyMemberAst)
                             {
-                                result.Add(propertyMemberAst.PropertyType != null
+                                result.Add(
+                                    propertyMemberAst.PropertyType != null
                                     ? new PSTypeName(propertyMemberAst.PropertyType.TypeName)
                                     : new PSTypeName(typeof(object)));
+
                                 return true;
                             }
                             else
@@ -1142,6 +1314,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
+
                     return false;
                 }
                 case PSMemberInfo memberInfo:
@@ -1150,6 +1323,7 @@ namespace System.Management.Automation
                     {
                         return false;
                     }
+
                     ScriptBlock scriptBlock = null;
                     switch (memberInfo)
                     {
@@ -1174,6 +1348,7 @@ namespace System.Management.Automation
                             {
                                 result.Add(new PSTypeName(codeProperty.GetterCodeReference.ReturnType));
                             }
+
                             return true;
                         }
                         case PSScriptProperty scriptProperty:
@@ -1187,6 +1362,7 @@ namespace System.Management.Automation
                             break;
                         }
                     }
+
                     if (scriptBlock != null)
                     {
                         var thisToRestore = _context.CurrentThisType;
@@ -1201,7 +1377,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                result.AddRange(InferTypes(scriptBlock.Ast).ToArray());
+                                result.AddRange(InferTypes(scriptBlock.Ast));
                                 return true;
                             }
                         }
@@ -1211,8 +1387,10 @@ namespace System.Management.Automation
                         }
                     }
                 }
-                return false;
+
+                    return false;
             }
+
             return false;
         }
 
@@ -1223,19 +1401,24 @@ namespace System.Management.Automation
             {
                 var exprAsType = expression as TypeExpressionAst;
                 if (exprAsType == null)
+                {
                     return null;
+                }
+
                 var type = exprAsType.TypeName.GetReflectionType();
                 if (type == null)
                 {
                     var typeName = exprAsType.TypeName as TypeName;
                     if (typeName?._typeDefinitionAst == null)
+                    {
                         return null;
+                    }
 
-                    exprType = new[] {new PSTypeName(typeName._typeDefinitionAst)};
+                    exprType = new[] { new PSTypeName(typeName._typeDefinitionAst) };
                 }
                 else
                 {
-                    exprType = new[] {new PSTypeName(type)};
+                    exprType = new[] { new PSTypeName(type) };
                 }
             }
             else
@@ -1247,13 +1430,15 @@ namespace System.Management.Automation
                     {
                         return exprType;
                     }
+
                     return exprType;
                 }
             }
+
             return exprType;
         }
 
-        private IEnumerable<PSTypeName> InferTypeFrom(VariableExpressionAst variableExpressionAst)
+        private void InferTypeFrom(VariableExpressionAst variableExpressionAst, List<PSTypeName> inferredTypes)
         {
             // We don't need to handle drive qualified variables, we can usually get those values
             // without needing to "guess" at the type.
@@ -1262,7 +1447,7 @@ namespace System.Management.Automation
             {
                 // Not a variable - the caller should have already tried going to session state
                 // to get the item and hence it's type, but that must have failed.  Don't try again.
-                yield break;
+                return;
             }
 
             Ast parent = variableExpressionAst.Parent;
@@ -1274,7 +1459,10 @@ namespace System.Management.Automation
                 while (parent != null)
                 {
                     if (parent is ScriptBlockExpressionAst)
+                    {
                         break;
+                    }
+
                     parent = parent.Parent;
                 }
 
@@ -1293,18 +1481,22 @@ namespace System.Management.Automation
                             parent = parent.Parent.Parent.Parent.Parent;
                         }
                     }
+
                     if (parent.Parent is CommandParameterAst)
                     {
                         parent = parent.Parent;
                     }
 
-                    var commandAst = parent.Parent as CommandAst;
-                    if (commandAst != null)
+                    if (parent.Parent is CommandAst commandAst)
                     {
                         // We found a command, see if there is a previous command in the pipeline.
                         PipelineAst pipelineAst = (PipelineAst)commandAst.Parent;
                         var previousCommandIndex = pipelineAst.PipelineElements.IndexOf(commandAst) - 1;
-                        if (previousCommandIndex < 0) yield break;
+                        if (previousCommandIndex < 0)
+                        {
+                            return;
+                        }
+
                         foreach (var result in InferTypes(pipelineAst.PipelineElements[0]))
                         {
                             if (result.Type != null)
@@ -1315,27 +1507,30 @@ namespace System.Management.Automation
                                 // right more often than it's wrong.
                                 if (result.Type.IsArray)
                                 {
-                                    yield return new PSTypeName(result.Type.GetElementType());
+                                    inferredTypes.Add(new PSTypeName(result.Type.GetElementType()));
                                     continue;
                                 }
 
                                 if (typeof(IEnumerable).IsAssignableFrom(result.Type))
                                 {
                                     // We can't deduce much from IEnumerable, but we can if it's generic.
-                                    var enumerableInterfaces = result.Type.GetInterfaces().Where(
-                                        t =>
-                                            t.IsGenericType &&
-                                            t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-                                    foreach (var i in enumerableInterfaces)
+                                    var enumerableInterfaces = result.Type.GetInterfaces();
+                                    foreach (var t in enumerableInterfaces)
                                     {
-                                        yield return new PSTypeName(i.GetGenericArguments()[0]);
+                                        if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                                        {
+                                            inferredTypes.Add(new PSTypeName(t.GetGenericArguments()[0]));
+                                        }
                                     }
+
                                     continue;
                                 }
                             }
-                            yield return result;
+
+                            inferredTypes.Add(result);
                         }
-                        yield break;
+
+                        return;
                     }
                 }
             }
@@ -1349,58 +1544,63 @@ namespace System.Management.Automation
                     for (int i = 0; i < SpecialVariables.AutomaticVariables.Length; i++)
                     {
                         if (!astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.AutomaticVariables[i]))
+                        {
                             continue;
+                        }
+
                         var type = SpecialVariables.AutomaticVariableTypes[i];
                         if (type != typeof(object))
-                            yield return new PSTypeName(type);
+                        {
+                            inferredTypes.Add(new PSTypeName(type));
+                        }
+
                         break;
                     }
                 }
                 else
                 {
-                    yield return _context.CurrentThisType != null
-                        ? _context.CurrentThisType
-                        : new PSTypeName(_context.CurrentTypeDefinitionAst);
-                    yield break;
+                    var typeName = _context.CurrentThisType ?? new PSTypeName(_context.CurrentTypeDefinitionAst);
+                    inferredTypes.Add(typeName);
+                    return;
                 }
             }
-                else
-                {
-                    yield return new PSTypeName(_context.CurrentTypeDefinitionAst);
-                    yield break;
-                }
+            else
+            {
+                inferredTypes.Add(new PSTypeName(_context.CurrentTypeDefinitionAst));
+                return;
+            }
 
             // Look for our variable as a parameter or on the lhs of an assignment - hopefully we'll find either
             // a type constraint or at least we can use the rhs to infer the type.
-
-            while (parent.Parent != null)
+            while (parent?.Parent != null)
             {
                 parent = parent.Parent;
             }
 
-            if (parent.Parent is FunctionDefinitionAst)
+            if (parent?.Parent is FunctionDefinitionAst)
             {
                 parent = parent.Parent;
             }
 
             int startOffset = variableExpressionAst.Extent.StartOffset;
-            var targetAsts = (List<Ast>)AstSearcher.FindAll(parent,
+            var targetAsts = (List<Ast>)AstSearcher.FindAll(
+                parent,
                 ast => (ast is ParameterAst || ast is AssignmentStatementAst || ast is ForEachStatementAst || ast is CommandAst)
                        && variableExpressionAst.AstAssignsToSameVariable(ast)
                        && ast.Extent.EndOffset < startOffset,
                 searchNestedScriptBlocks: true);
 
-            var parameterAst = targetAsts.OfType<ParameterAst>().FirstOrDefault();
-            if (parameterAst != null)
+            foreach (var ast in targetAsts)
             {
-                var parameterTypes = InferTypes(parameterAst).ToArray();
-                if (parameterTypes.Length > 0)
+                if (ast is ParameterAst parameterAst)
                 {
-                    foreach (var parameterType in parameterTypes)
+                    var currentCount = inferredTypes.Count;
+                    inferredTypes.AddRange(InferTypes(parameterAst));
+
+                    if (inferredTypes.Count != currentCount)
                     {
-                        yield return parameterType;
+                        return;
                     }
-                    yield break;
                 }
             }
 
@@ -1410,32 +1610,25 @@ namespace System.Management.Automation
             // Otherwise, we use the rhs of the "nearest" assignment
             foreach (var assignAst in assignAsts)
             {
-                var lhsConvert = assignAst.Left as ConvertExpressionAst;
-                if (lhsConvert != null)
+                if (assignAst.Left is ConvertExpressionAst lhsConvert)
                 {
-                    yield return new PSTypeName(lhsConvert.Type.TypeName);
-                    yield break;
+                    inferredTypes.Add(new PSTypeName(lhsConvert.Type.TypeName));
+                    return;
                 }
             }
 
             var foreachAst = targetAsts.OfType<ForEachStatementAst>().FirstOrDefault();
             if (foreachAst != null)
             {
-                foreach (var typeName in InferTypes(foreachAst.Condition))
-                {
-                    yield return typeName;
-                }
-                yield break;
+                inferredTypes.AddRange(InferTypes(foreachAst.Condition));
+                return;
             }
 
             var commandCompletionAst = targetAsts.OfType<CommandAst>().FirstOrDefault();
             if (commandCompletionAst != null)
             {
-                foreach (var typeName in InferTypes(commandCompletionAst))
-                {
-                    yield return typeName;
-                }
-                yield break;
+                inferredTypes.AddRange(InferTypes(commandCompletionAst));
+                return;
             }
 
             int smallestDiff = int.MaxValue;
@@ -1452,18 +1645,13 @@ namespace System.Management.Automation
 
             if (closestAssignment != null)
             {
-                foreach (var type in InferTypes(closestAssignment.Right))
-                {
-                    yield return type;
-                }
+                inferredTypes.AddRange(InferTypes(closestAssignment.Right));
             }
 
-            PSTypeName evalTypeName;
-            if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out evalTypeName))
+            if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out var evalTypeName))
             {
-                yield return evalTypeName;
+                inferredTypes.Add(evalTypeName);
             }
-
         }
 
         private IEnumerable<PSTypeName> InferTypeFrom(IndexExpressionAst indexExpressionAst)
@@ -1478,6 +1666,7 @@ namespace System.Management.Automation
                     if (type.IsArray)
                     {
                         yield return new PSTypeName(type.GetElementType());
+
                         continue;
                     }
 
@@ -1527,15 +1716,16 @@ namespace System.Management.Automation
             }
         }
 
-        private IEnumerable<PSTypeName> GetInferredTypeFromScriptBlockParameter(AstParameterArgumentPair argument)
+        private void GetInferredTypeFromScriptBlockParameter(AstParameterArgumentPair argument, List<PSTypeName> inferredTypes)
         {
             var argumentPair = argument as AstPair;
             var scriptBlockExpressionAst = argumentPair?.Argument as ScriptBlockExpressionAst;
-            if (scriptBlockExpressionAst == null) yield break;
-            foreach (var type in InferTypes(scriptBlockExpressionAst.ScriptBlock))
+            if (scriptBlockExpressionAst == null)
             {
-                yield return type;
+                return;
             }
+
+            inferredTypes.AddRange(InferTypes(scriptBlockExpressionAst.ScriptBlock));
         }
 
         object ICustomAstVisitor2.VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst)
@@ -1591,15 +1781,19 @@ namespace System.Management.Automation
 
         public static IEnumerable<MethodInfo> GetGetterProperty(this Type type, string propertyName)
         {
-            return type.GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(
-                m =>
+            var res = new List<MethodInfo>();
+            foreach (var m in type.GetMethods(BindingFlags.Public | BindingFlags.Instance))
+            {
+                var name = m.Name;
+                if (name.Length == propertyName.Length + 4
+                    && name.StartsWith("get_")
+                    && propertyName.IndexOf(name, 4, StringComparison.Ordinal) == 4)
                 {
-                    var name = m.Name;
-                    // Equals without string allocation
-                    return name.Length == propertyName.Length + 4 &&
-                           name.StartsWith("get_") && propertyName.IndexOf(name, 4, StringComparison.Ordinal) == 4;
+                    res.Add(m);
                 }
-            );
+            }
+
+            return res;
         }
 
         public static bool AstAssignsToSameVariable(this VariableExpressionAst variableAst, Ast ast)
@@ -1612,17 +1806,15 @@ namespace System.Management.Automation
                        parameterAst.Name.VariablePath.UnqualifiedPath.Equals(variableAstVariablePath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase);
             }
 
-            var foreachAst = ast as ForEachStatementAst;
-            if (foreachAst != null)
+            if (ast is ForEachStatementAst foreachAst)
             {
                 return variableAstVariablePath.IsUnscopedVariable &&
                        foreachAst.Variable.VariablePath.UnqualifiedPath.Equals(variableAstVariablePath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase);
             }
 
-            var commandAst = ast as CommandAst;
-            if (commandAst != null)
+            if (ast is CommandAst commandAst)
             {
-                string[] variableParameters = new string[] { "PV", "PipelineVariable", "OV", "OutVariable" };
+                string[] variableParameters = { "PV", "PipelineVariable", "OV", "OutVariable" };
                 StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, false, variableParameters);
 
                 if (bindingResult != null)
@@ -1631,7 +1823,7 @@ namespace System.Management.Automation
                     {
                         if (bindingResult.BoundParameters.TryGetValue(commandVariableParameter, out ParameterBindingResult parameterBindingResult))
                         {
-                            if (String.Equals(variableAstVariablePath.UnqualifiedPath, (string)parameterBindingResult.ConstantValue, StringComparison.OrdinalIgnoreCase))
+                            if (string.Equals(variableAstVariablePath.UnqualifiedPath, (string)parameterBindingResult.ConstantValue, StringComparison.OrdinalIgnoreCase))
                             {
                                 return true;
                             }
@@ -1644,24 +1836,28 @@ namespace System.Management.Automation
 
             var assignmentAst = (AssignmentStatementAst)ast;
             var lhs = assignmentAst.Left;
-            var convertExpr = lhs as ConvertExpressionAst;
-            if (convertExpr != null)
+            if (lhs is ConvertExpressionAst convertExpr)
             {
                 lhs = convertExpr.Child;
             }
 
-            var varExpr = lhs as VariableExpressionAst;
-            if (varExpr == null)
+            if (!(lhs is VariableExpressionAst varExpr))
+            {
                 return false;
+            }
 
             var candidateVarPath = varExpr.VariablePath;
             if (candidateVarPath.UserPath.Equals(variableAstVariablePath.UserPath, StringComparison.OrdinalIgnoreCase))
+            {
                 return true;
+            }
 
             // The following condition is making an assumption that at script scope, we didn't use $script:, but in the local scope, we did
             // If we are searching anything other than script scope, this is wrong.
             if (variableAstVariablePath.IsScript && variableAstVariablePath.UnqualifiedPath.Equals(candidateVarPath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase))
+            {
                 return true;
+            }
 
             return false;
         }

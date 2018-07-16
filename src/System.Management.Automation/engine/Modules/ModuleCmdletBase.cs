@@ -418,7 +418,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Extra variables that are allowed to be referenced in module manifest file
         /// </summary>
-        private static readonly string[] s_extraAllowedVariables = new string[] { "PSScriptRoot", "PSEdition" };
+        private static readonly string[] s_extraAllowedVariables = new string[] { SpecialVariables.PSScriptRoot, SpecialVariables.PSEdition, SpecialVariables.EnabledExperimentalFeatures };
 
         /// <summary>
         /// Load and execute the manifest psd1 file or a localized manifest psd1 file.
@@ -869,37 +869,19 @@ namespace Microsoft.PowerShell.Commands
                         moduleNames.Add(n);
                     }
                 }
-                modulesToReturn.AddRange(GetModuleForRootedPaths(modulePaths.ToArray(), all, refresh));
+                modulesToReturn.AddRange(GetModuleForRootedPaths(modulePaths, all, refresh));
             }
 
             // If no names were passed to this function, then this API will return list of all available modules
             if (names == null || moduleNames.Count > 0)
             {
-                modulesToReturn.AddRange(GetModuleForNonRootedPaths(moduleNames.ToArray(), all, refresh));
+                modulesToReturn.AddRange(GetModuleForNames(moduleNames, all, refresh));
             }
 
             return modulesToReturn;
         }
 
-        private IEnumerable<PSModuleInfo> GetModuleForNonRootedPaths(string[] names, bool all, bool refresh)
-        {
-            const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
-            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(names, wildcardOptions);
-
-            Dictionary<String, List<PSModuleInfo>> availableModules = GetAvailableLocallyModulesCore(names, all, refresh);
-            foreach (var entry in availableModules)
-            {
-                foreach (PSModuleInfo module in entry.Value)
-                {
-                    if (SessionStateUtilities.MatchesAnyWildcardPattern(module.Name, patternList, true))
-                    {
-                        yield return module;
-                    }
-                }
-            }
-        }
-
-        private IEnumerable<PSModuleInfo> GetModuleForRootedPaths(string[] modulePaths, bool all, bool refresh)
+        private IEnumerable<PSModuleInfo> GetModuleForRootedPaths(List<string> modulePaths, bool all, bool refresh)
         {
             // This is to filter out duplicate modules
             var modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -950,7 +932,7 @@ namespace Microsoft.PowerShell.Commands
 
                             var availableModuleFiles = all
                                 ? ModuleUtils.GetAllAvailableModuleFiles(resolvedModulePath)
-                                : ModuleUtils.GetModuleVersionsFromAbsolutePath(resolvedModulePath);
+                                : ModuleUtils.GetModuleFilesFromAbsolutePath(resolvedModulePath);
 
                             bool foundModule = false;
                             foreach (string file in availableModuleFiles)
@@ -998,38 +980,31 @@ namespace Microsoft.PowerShell.Commands
             return er;
         }
 
-        private Dictionary<String, List<PSModuleInfo>> GetAvailableLocallyModulesCore(string[] names, bool all, bool refresh)
+        private IEnumerable<PSModuleInfo> GetModuleForNames(List<string> names, bool all, bool refresh)
         {
-            var modules = new Dictionary<string, List<PSModuleInfo>>(StringComparer.OrdinalIgnoreCase);
-            var modulePaths = ModuleIntrinsics.GetModulePath(false, Context);
-
+            IEnumerable<PSModuleInfo> allModules = null;
+            HashSet<string> modulePathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             bool cleanupModuleAnalysisAppDomain = Context.TakeResponsibilityForModuleAnalysisAppDomain();
 
             try
             {
                 foreach (string path in ModuleIntrinsics.GetModulePath(false, Context))
                 {
+                    string uniquePath = path.TrimEnd(Utils.Separators.Directory);
+
+                    // Ignore repeated module path.
+                    if (!modulePathSet.Add(uniquePath)) { continue; }
+
                     try
                     {
-                        var availableModules = all
-                            ? GetAllAvailableModules(path, refresh)
-                            : GetDefaultAvailableModules(names, path, refresh);
-
-                        // Add the path in $env:PSModulePath as the keys of the dictionary
-                        // If the paths are repeated, ignore the repetitions
-                        string uniquePath = path.TrimEnd(Utils.Separators.Directory);
-                        if (!modules.ContainsKey(uniquePath))
-                        {
-                            modules.Add(uniquePath, availableModules.OrderBy(m => m.Name).ToList());
-                        }
+                        IEnumerable<PSModuleInfo> modulesFound = GetModulesFromOneModulePath(
+                            names, uniquePath, all, refresh).OrderBy(m => m.Name);
+                        allModules = allModules == null ? modulesFound : allModules.Concat(modulesFound);
                     }
-                    catch (IOException)
+                    catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)
                     {
-                        continue; // ignore directories that can't be accessed
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                        continue; // ignore directories that can't be accessed
+                        // ignore directories that can't be accessed
+                        continue;
                     }
                 }
             }
@@ -1041,64 +1016,43 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return modules;
+            // Make sure we always return a non-null collection.
+            return allModules ?? Utils.EmptyArray<PSModuleInfo>();
         }
 
         /// <summary>
-        /// Get a list of all modules
-        /// which can be imported just by specifying a non rooted file name of the module
-        /// (Import-Module foo\bar.psm1;  but not Import-Module .\foo\bar.psm1)
+        /// Get modules based on the given names and module files.
         /// </summary>
-        private IEnumerable<PSModuleInfo> GetAllAvailableModules(string directory, bool refresh)
+        private IEnumerable<PSModuleInfo> GetModulesFromOneModulePath(List<string> names, string modulePath, bool all, bool refresh)
         {
-            var availableModuleFiles = ModuleUtils.GetAllAvailableModuleFiles(directory);
-
-            foreach (string file in availableModuleFiles)
+            const WildcardOptions options = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
+            IEnumerable<WildcardPattern> namePatterns = null;
+            if (names != null && names.Count > 0)
             {
-                PSModuleInfo module = CreateModuleInfoForGetModule(file, refresh);
-                if (module != null)
-                {
-                    yield return module;
-                }
+                namePatterns = SessionStateUtilities.CreateWildcardsFromStrings(names, options);
             }
-        }
 
-        /// <summary>
-        /// Get a list of the available modules
-        /// which can be imported just by specifying a non rooted directory name of the module
-        /// (Import-Module foo\bar;  but not Import-Module .\foo\bar or Import-Module .\foo\bar.psm1)
-        /// </summary>
-        private List<PSModuleInfo> GetDefaultAvailableModules(string[] name, string directory, bool refresh)
-        {
-            List<PSModuleInfo> availableModules = new List<PSModuleInfo>();
+            IEnumerable<string> moduleFiles = all
+                ? ModuleUtils.GetAllAvailableModuleFiles(modulePath)
+                : ModuleUtils.GetDefaultAvailableModuleFiles(modulePath);
 
-            const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
-            IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(name, wildcardOptions);
-
-            var availableModuleFiles = ModuleUtils.GetDefaultAvailableModuleFiles(directory);
-
-            foreach (string file in availableModuleFiles)
+            foreach (string file in moduleFiles)
             {
-                string actualModuleName = System.IO.Path.GetFileNameWithoutExtension(file);
-                if (SessionStateUtilities.MatchesAnyWildcardPattern(actualModuleName, patternList, true))
+                if (namePatterns == null ||
+                    SessionStateUtilities.MatchesAnyWildcardPattern(
+                        Path.GetFileNameWithoutExtension(file), namePatterns, defaultValue: true))
                 {
                     PSModuleInfo module = CreateModuleInfoForGetModule(file, refresh);
+                    if (module == null) { continue; }
 
-                    if (module != null)
+                    if (all || !ModuleUtils.IsModuleInVersionSubdirectory(file, out Version directoryVersion) || directoryVersion == module.Version)
                     {
-                        Version directoryVersion;
-                        if (!ModuleUtils.IsModuleInVersionSubdirectory(file, out directoryVersion)
-                            || directoryVersion == module.Version)
-                        {
-                            availableModules.Add(module);
-                        }
+                        yield return module;
                     }
                 }
             }
 
             ClearAnalysisCaches();
-
-            return availableModules;
         }
 
         /// <summary>
@@ -1191,10 +1145,10 @@ namespace Microsoft.PowerShell.Commands
                     moduleInfo = LoadModuleManifest(
                             scriptInfo,
                             flags /* - don't write errors, don't load elements */,
-                            null,
-                            null,
-                            null,
-                            null);
+                            minimumVersion: null,
+                            maximumVersion: null,
+                            requiredVersion: null,
+                            requiredModuleGuid: null);
                 }
                 else
                 {
@@ -1202,13 +1156,13 @@ namespace Microsoft.PowerShell.Commands
                     ImportModuleOptions options = new ImportModuleOptions();
                     bool found = false;
 
-                    moduleInfo = LoadModule(file, null, String.Empty, null, ref options, flags, out found);
+                    moduleInfo = LoadModule(file, moduleBase: null, prefix: String.Empty, ss: null, ref options, flags, out found);
                 }
 
                 // return fake PSModuleInfo if can't read the file for any reason
                 if (moduleInfo == null)
                 {
-                    moduleInfo = new PSModuleInfo(file, null, null);
+                    moduleInfo = new PSModuleInfo(file, context: null, sessionState: null);
                     moduleInfo.HadErrorsLoading = true;     // Prevent analysis cache from caching a bad module.
                 }
 
@@ -2073,12 +2027,73 @@ namespace Microsoft.PowerShell.Commands
                 Array.Clear(tmpNestedModules, 0, tmpNestedModules.Length);
             }
 
-            // Set the private data member for the module if the manifest contains
-            // this member
-            object privateData = null;
-            if (data.Contains("PrivateData"))
+            // Set the private data member for the module if the manifest contains this member
+            object privateData = data["PrivateData"];
+
+            // Validate the 'ExperimentalFeatures' member of the manifest
+            List<ExperimentalFeature> expFeatureList = null;
+            if (privateData is Hashtable hashData && hashData["PSData"] is Hashtable psData)
             {
-                privateData = data["PrivateData"];
+                if (!GetScalarFromData(psData, moduleManifestPath, "ExperimentalFeatures", manifestProcessingFlags, out Hashtable[] features))
+                {
+                    containedErrors = true;
+                    if (bailOnFirstError) return null;
+                }
+
+                if (features != null && features.Length > 0)
+                {
+                    bool nameMissingOrEmpty = false;
+                    var invalidNames = new List<string>();
+                    string moduleName = ModuleIntrinsics.GetModuleName(moduleManifestPath);
+                    expFeatureList = new List<ExperimentalFeature>(features.Length);
+
+                    foreach (Hashtable feature in features)
+                    {
+                        string featureName = feature["Name"] as string;
+                        if (string.IsNullOrEmpty(featureName))
+                        {
+                            nameMissingOrEmpty = true;
+                        }
+                        else if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
+                        {
+                            string featureDescription = feature["Description"] as string;
+                            expFeatureList.Add(new ExperimentalFeature(featureName, featureDescription, moduleManifestPath,
+                                                                       ExperimentalFeature.IsEnabled(featureName)));
+                        }
+                        else
+                        {
+                            invalidNames.Add(featureName);
+                        }
+                    }
+
+                    if (nameMissingOrEmpty)
+                    {
+                        if (writingErrors)
+                        {
+                            WriteError(new ErrorRecord(new ArgumentException(Modules.ExperimentalFeatureNameMissingOrEmpty),
+                                                       "Modules_ExperimentalFeatureNameMissingOrEmpty",
+                                                       ErrorCategory.InvalidData, null));
+                        }
+
+                        containedErrors = true;
+                        if (bailOnFirstError) { return null; }
+                    }
+
+                    if (invalidNames.Count > 0)
+                    {
+                        if (writingErrors)
+                        {
+                            string invalidNameStr = String.Join(", ", invalidNames);
+                            string errorMsg = StringUtil.Format(Modules.InvalidExperimentalFeatureName, invalidNameStr);
+                            WriteError(new ErrorRecord(new ArgumentException(errorMsg),
+                                                       "Modules_InvalidExperimentalFeatureName",
+                                                       ErrorCategory.InvalidData, null));
+                        }
+
+                        containedErrors = true;
+                        if (bailOnFirstError) { return null; }
+                    }
+                }
             }
 
             // Process all of the exports...
@@ -2459,6 +2474,12 @@ namespace Microsoft.PowerShell.Commands
             manifestInfo.PowerShellVersion = powerShellVersion;
             manifestInfo.ProcessorArchitecture = requiredProcessorArchitecture;
             manifestInfo.Prefix = resolvedCommandPrefix;
+
+            if (expFeatureList != null)
+            {
+                manifestInfo.ExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(expFeatureList);
+            }
+
             if (assemblyList != null)
             {
                 foreach (var a in assemblyList)
@@ -2677,9 +2698,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                var needToAnalyzeScriptModules = usedWildcard;
+                // We have to further analyze the module if any wildcard characters are used.
+                bool needToAnalyzeScriptModules = usedWildcard;
 
-                if (!needToAnalyzeScriptModules)
+                // We can skip further analysis if 'FunctionsToExport', 'CmdletsToExport' and 'AliasesToExport'
+                // are all declared and no wildcard character is used for them. But if any of 'FunctionsToExport',
+                // 'CmdletsToExport' or 'AliasesToExport' were not given, we must check to see if more analysis is needed.
+                if (!needToAnalyzeScriptModules && (!sawExportedCmdlets || !sawExportedFunctions || !sawExportedAliases))
                 {
                     foreach (var nestedModule in nestedModules)
                     {
@@ -3051,6 +3076,7 @@ namespace Microsoft.PowerShell.Commands
                 newManifestInfo.LicenseUri = manifestInfo.LicenseUri;
                 newManifestInfo.IconUri = manifestInfo.IconUri;
                 newManifestInfo.RepositorySourceLocation = manifestInfo.RepositorySourceLocation;
+                newManifestInfo.ExperimentalFeatures = manifestInfo.ExperimentalFeatures;
 
                 // If we are in module discovery, then fix the path.
                 if (ss == null)
@@ -3173,9 +3199,9 @@ namespace Microsoft.PowerShell.Commands
                     newManifestInfo.DeclaredCmdletExports = manifestInfo.DeclaredCmdletExports;
                 }
 
-                if (manifestInfo._detectedCmdletExports != null)
+                if (manifestInfo.DetectedCmdletExports != null)
                 {
-                    foreach (string detectedExport in manifestInfo._detectedCmdletExports)
+                    foreach (string detectedExport in manifestInfo.DetectedCmdletExports)
                     {
                         newManifestInfo.AddDetectedCmdletExport(detectedExport);
                     }
@@ -3187,9 +3213,9 @@ namespace Microsoft.PowerShell.Commands
                     newManifestInfo.DeclaredFunctionExports = manifestInfo.DeclaredFunctionExports;
                 }
 
-                if (manifestInfo._detectedFunctionExports != null)
+                if (manifestInfo.DetectedFunctionExports != null)
                 {
-                    foreach (string detectedExport in manifestInfo._detectedFunctionExports)
+                    foreach (string detectedExport in manifestInfo.DetectedFunctionExports)
                     {
                         newManifestInfo.AddDetectedFunctionExport(detectedExport);
                     }
@@ -3200,9 +3226,9 @@ namespace Microsoft.PowerShell.Commands
                     newManifestInfo.DeclaredAliasExports = manifestInfo.DeclaredAliasExports;
                 }
 
-                if (manifestInfo._detectedAliasExports != null)
+                if (manifestInfo.DetectedAliasExports != null)
                 {
-                    foreach (var pair in manifestInfo._detectedAliasExports)
+                    foreach (var pair in manifestInfo.DetectedAliasExports)
                     {
                         newManifestInfo.AddDetectedAliasExport(pair.Key, pair.Value);
                     }
@@ -3269,15 +3295,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            Collection<string> v = new Collection<string>();
-                            if (manifestInfo.DeclaredFunctionExports != null)
-                            {
-                                foreach (var f in manifestInfo.DeclaredFunctionExports)
-                                {
-                                    v.Add(f);
-                                }
-                            }
-                            UpdateCommandCollection(v, exportedFunctions);
+                            UpdateCommandCollection(manifestInfo.DeclaredFunctionExports, exportedFunctions);
                         }
                     }
 
@@ -4722,7 +4740,7 @@ namespace Microsoft.PowerShell.Commands
                         var exportedTypes = PSSnapInHelpers.GetAssemblyTypes(module.ImplementingAssembly, module.Name);
                         foreach (var type in exportedTypes)
                         {
-                            if (typeof(IModuleAssemblyCleanup).IsAssignableFrom(type) && type != typeof(IModuleAssemblyCleanup))
+                            if (typeof(IModuleAssemblyCleanup).IsAssignableFrom(type))
                             {
                                 var moduleCleanup = (IModuleAssemblyCleanup)Activator.CreateInstance(type, true);
                                 moduleCleanup.OnRemove(module);

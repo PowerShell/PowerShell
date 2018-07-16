@@ -653,8 +653,8 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-            }//if
-        }////ProcessRecord
+            }
+        }
     }
     #endregion Override Methods
 

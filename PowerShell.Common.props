@@ -94,6 +94,7 @@
     <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
 
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RuntimeFrameworkVersion>2.1.2</RuntimeFrameworkVersion>
     <LangVersion>Latest</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -117,7 +118,7 @@
   <PropertyGroup Condition=" '$(IsWindows)' != 'true' ">
     <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
   </PropertyGroup>
-  
+
   <!-- Define all OS, debug configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugType>portable</DebugType>

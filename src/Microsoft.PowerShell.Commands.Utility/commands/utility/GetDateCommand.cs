@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteObject(outputObj);
             }
-        } // EndProcessing
+        }
 
         private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -524,10 +524,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return StringUtil.Format(sb.ToString(), dateTime);
-        } // UFormatDateString
+        }
 
         #endregion
-    } // GetDateCommand
+    }
 
     #endregion
 

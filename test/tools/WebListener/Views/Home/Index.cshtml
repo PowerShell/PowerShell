@@ -19,4 +19,5 @@
     <li><a href="/Redirect/">/Redirect/{count}</a> - 302 redirect <i>count</i> times.</li>
     <li><a href="/Response/?statuscode=200&contenttype=application%2Fjson&body=%22Body%20text%22&headers=%7B%22x-header%22%3A%20%22Response%20Header%20Value%22%7D">/Response/?statuscode=&lt;StatusCode&gt;&amp;body=&lt;ResponseBody&gt;&amp;contenttype=&lt;ResponseContentType&gt;&amp;headers=&lt;JsonHeadersObject&gt;</a> - Returns the given response.</li>
     <li><a href="/ResponseHeaders/?key=val">/ResponseHeaders/?key=val</a> - Returns given response headers.</li>
+    <li><a href="/Retry/?sessionid=100&failureCode=599&failureCount=2">/Retry/?sessionid=100&failureCode=599&failureCount=2</a> - Returns HTTP status code <i>failureCode</i>, <i>failureCount</i> number of times.</li>
 </ul>

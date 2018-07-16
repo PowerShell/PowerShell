@@ -1698,7 +1698,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
             return false;
-        } // end doMatch
+        }
 
         /// Get a list or resolved file paths.
         private List<string> ResolveFilePaths(string[] filePaths, bool isLiteralPath)

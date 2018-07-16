@@ -71,7 +71,7 @@ Start-PSBuild
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
 
-`./src/powershell-unix/bin/Linux/netcoreapp2.0/linux-x64/publish/pwsh`.
+`./src/powershell-unix/bin/Debug/netcoreapp2.1/linux-x64/publish/pwsh`.
 
 You should now be running the PowerShell Core that you just built, if your run the above executable.
 You can run our cross-platform Pester tests with `Start-PSPester`, and our xUnit tests with `Start-PSxUnit`.
