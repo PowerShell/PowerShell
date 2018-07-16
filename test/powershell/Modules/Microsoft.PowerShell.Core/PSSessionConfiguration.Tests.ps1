@@ -17,7 +17,7 @@ try
     #
     if ($IsNotSkipped)
     {
-        $endpointName = "PowerShell.$($psversiontable.GitCommitId)".Replace("PowerShell.v","PowerShell.")
+        $endpointName = "PowerShell.$($psversiontable.GitCommitId)"
 
         $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
 
@@ -839,7 +839,7 @@ namespace PowershellTestConfigNamespace
         }
 
         It "Enable-PSSession Cmdlet creates a PSSession configuration with a name tied to PowerShell version." {
-            $endpointName = "PowerShell." + $PSVersionTable.GitCommitId.ToString().Substring(1) # Remove the v from the beginning
+            $endpointName = "PowerShell." + $PSVersionTable.GitCommitId.ToString()
             $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
             $matchedEndpoint | Should -Not -BeNullOrEmpty
         }
@@ -849,7 +849,7 @@ namespace PowershellTestConfigNamespace
             $endpointName = "PowerShell." + $PSVersionTable.PSVersion.ToString().Substring(0, $dotPos)
             if ($PSVersionTable.GitCommitId.Contains("preview"))
             {
-                $endpointName += "-Preview"
+                $endpointName += "-preview"
             }
             $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
             $matchedEndpoint | Should -Not -BeNullOrEmpty
