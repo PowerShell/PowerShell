@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Commands
         {
 #if !UNIX
             // Edition check only applies to Windows System32 module path
-            if (!SkipEditionCheck)
+            if (!SkipEditionCheck && ListAvailable)
             {
                 modules = modules.Where(module => module.IsConsideredEditionCompatible);
             }

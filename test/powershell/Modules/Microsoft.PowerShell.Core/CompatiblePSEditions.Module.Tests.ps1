@@ -124,6 +124,8 @@ function New-TestNestedModule
         $newManifestCmd += "-FunctionsToExport @('Test-ScriptModule') "
     }
 
+    $newManifestCmd += "-CmdletsToExport @() -VariablesToExport @() -AliasesToExport @() "
+
     # Create the manifest
     [scriptblock]::Create($newManifestCmd).Invoke()
 }
