@@ -606,10 +606,16 @@
   <data name="PrerequisiteForDesktopEditionOnly" xml:space="preserve">
     <value>This prerequisite is valid for the PowerShell Desktop edition only.</value>
   </data>
+  <data name="PSEditionNotSupported" xml:space="preserve">
+    <value>Module '{0}' does not support current PowerShell edition '{1}'. Its supported editions are '{2}'. Use 'Import-Module -SkipEditionCheck' to ignore the compatibility of this module.</value>
+  </data>
   <data name="ExperimentalFeatureNameMissingOrEmpty" xml:space="preserve">
     <value>A non-empty string value should be specified for an experimental feature declared in the module manifest.</value>
   </data>
   <data name="InvalidExperimentalFeatureName" xml:space="preserve">
     <value>One or more invalid experimental feature names found: {0}. A module experimental feature name should follow this convention: 'ModuleName.FeatureName'.</value>
+  </data>
+  <data name="SkipEditionCheckNotSupportedWithoutListAvailable" xml:space="preserve">
+    <value>The -SkipEditionCheck switch parameter cannot be used without the -ListAvailable switch parameter.</value>
   </data>
 </root>

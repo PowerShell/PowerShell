@@ -476,8 +476,18 @@ namespace System.Management.Automation
 
         internal static readonly string[] ManifestModuleVersionPropertyName = new[] { "ModuleVersion" };
         internal static readonly string[] ManifestGuidPropertyName = new[] { "GUID" };
-        internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[] { "AliasesToExport", "CmdletsToExport", "FunctionsToExport", "NestedModules", "RootModule", "ModuleToProcess", "ModuleVersion" };
         internal static readonly string[] ManifestPrivateDataPropertyName = new[] { "PrivateData" };
+        internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[]
+        { 
+            "AliasesToExport",
+            "CmdletsToExport",
+            "CompatiblePSEditions",
+            "FunctionsToExport",
+            "NestedModules",
+            "RootModule",
+            "ModuleToProcess",
+            "ModuleVersion"
+        };
 
         internal static Hashtable GetModuleManifestProperties(string psDataFilePath, string[] keys)
         {

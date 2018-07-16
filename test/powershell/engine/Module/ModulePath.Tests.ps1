@@ -23,6 +23,11 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         }
         $expectedSystemPath = Join-Path -Path $PSHOME -ChildPath 'Modules'
 
+        if ($IsWindows)
+        {
+            $expectedWindowsPowerShellPSHomePath = Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"
+        }
+
         ## Setup a fake PSHome
         $fakePSHome = Join-Path -Path $TestDrive -ChildPath 'FakePSHome'
         $fakePSHomeModuleDir = Join-Path -Path $fakePSHome -ChildPath 'Modules'
@@ -48,10 +53,22 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         $paths = $defaultModulePath -split [System.IO.Path]::PathSeparator
 
-        $paths.Count | Should -Be 3
+        if ($IsWindows)
+        {
+            $paths.Count | Should -Be 4
+        }
+        else
+        {
+            $paths.Count | Should -Be 3
+        }
+
         $paths[0].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedUserPath
         $paths[1].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedSharedPath
         $paths[2].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedSystemPath
+        if ($IsWindows)
+        {
+            $paths[3].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedWindowsPowerShellPSHomePath
+        }
     }
 
     It "ignore pshome module path derived from a different powershell core instance" -Skip:(!$IsCoreCLR) {
@@ -68,10 +85,22 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             $newModulePath = & $powershell -nopro -c '$env:PSModulePath'
             $paths = $newModulePath -split [System.IO.Path]::PathSeparator
 
-            $paths.Count | Should -Be 3
+            if ($IsWindows)
+            {
+                $paths.Count | Should -Be 4
+            }
+            else
+            {
+                $paths.Count | Should -Be 3
+            }
+
             $paths[0] | Should -Be $expectedUserPath
             $paths[1] | Should -Be $expectedSharedPath
             $paths[2] | Should -Be $expectedSystemPath
+            if ($IsWindows)
+            {
+                $paths[3].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedWindowsPowerShellPSHomePath
+            }
 
         } finally {
 
@@ -89,7 +118,14 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $newModulePath = & $powershell -nopro -c '$env:PSModulePath'
         $paths = $newModulePath -split [System.IO.Path]::PathSeparator
 
-        $paths.Count | Should -Be 5
+        if ($IsWindows)
+        {
+            $paths.Count | Should -Be 6
+        }
+        else
+        {
+            $paths.Count | Should -Be 5
+        }
         $paths -contains $fakePSHomeModuleDir | Should -BeTrue
         $paths -contains $customeModules | Should -BeTrue
     }

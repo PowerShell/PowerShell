@@ -105,6 +105,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal bool BaseGlobal { get; set; }
 
+        /// <summary>
+        /// If set, CompatiblePSEditions checking will be disabled for modules on the System32 path.
+        /// </summary>
+        internal bool BaseSkipEditionCheck { get; set; }
+
         internal SessionState TargetSessionState
         {
             get
@@ -254,6 +259,16 @@ namespace Microsoft.PowerShell.Commands
             "ModuleName",
             "GUID",
             "ModuleVersion"
+        };
+
+        /// <summary>
+        /// When module manifests lack a CompatiblePSEditions field,
+        /// they will be treated as if they have this value.
+        /// The PSModuleInfo will still reflect the lack of value.
+        /// </summary>
+        internal static IReadOnlyList<string> DefaultCompatiblePSEditions { get; } = new string[]
+        {
+            "Desktop"
         };
 
         private Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
@@ -2376,6 +2391,52 @@ namespace Microsoft.PowerShell.Commands
                 if (bailOnFirstError) return null;
             }
 
+            // On Windows, we want to include any modules under %WINDIR%\System32\WindowsPowerShell\v1.0\Modules
+            // that have declared compatibility with PS Core (or if the check is skipped)
+            IEnumerable<string> inferredCompatiblePSEditions = compatiblePSEditions ?? DefaultCompatiblePSEditions;
+            bool isConsideredCompatible = ModuleUtils.IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions);
+            if (!BaseSkipEditionCheck && !isConsideredCompatible)
+            {
+                containedErrors = true;
+
+                if (writingErrors)
+                {
+                    message = StringUtil.Format(
+                        Modules.PSEditionNotSupported,
+                        moduleManifestPath,
+                        PSVersionInfo.PSEdition,
+                        String.Join(',', inferredCompatiblePSEditions));
+
+                    InvalidOperationException ioe = new InvalidOperationException(message);
+
+                    ErrorRecord er = new ErrorRecord(
+                        ioe,
+                        nameof(Modules) + "_" + nameof(Modules.PSEditionNotSupported),
+                        ErrorCategory.ResourceUnavailable,
+                        moduleManifestPath);
+
+                    WriteError(er);
+                }
+
+                if (bailOnFirstError)
+                {
+                    // If we're trying to load the module, return null so that caches
+                    // are not polluted
+                    if (importingModule)
+                    {
+                        return null;
+                    }
+
+                    // If we return null with Get-Module, a fake module info will be created. Since
+                    // we want to suppress output of the module, we need to do that here.
+                    return new PSModuleInfo(moduleManifestPath, context: null, sessionState: null)
+                    {
+                        HadErrorsLoading = true,
+                        IsConsideredEditionCompatible = false,
+                    };
+                }
+            }
+
             // Process format.ps1xml / types.ps1.xml / RequiredAssemblies
             // as late as possible, but before ModuleToProcess, ScriptToProcess, NestedModules
             if (importingModule)
@@ -2475,6 +2536,10 @@ namespace Microsoft.PowerShell.Commands
             manifestInfo.ProcessorArchitecture = requiredProcessorArchitecture;
             manifestInfo.Prefix = resolvedCommandPrefix;
 
+            // A module is considered compatible if it's not on the System32 module path, or
+            // if it is and declared "Core" as a compatible PSEdition.
+            manifestInfo.IsConsideredEditionCompatible = isConsideredCompatible;
+
             if (expFeatureList != null)
             {
                 manifestInfo.ExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(expFeatureList);
@@ -2503,13 +2568,12 @@ namespace Microsoft.PowerShell.Commands
                     manifestInfo.AddToModuleList(m);
                 }
             }
+
             if (compatiblePSEditions != null)
             {
-                foreach (var psEdition in compatiblePSEditions)
-                {
-                    manifestInfo.AddToCompatiblePSEditions(psEdition);
-                }
+                manifestInfo.AddToCompatiblePSEditions(compatiblePSEditions);
             }
+
             if (scriptsToProcess != null)
             {
                 foreach (var s in scriptsToProcess)
@@ -3076,7 +3140,10 @@ namespace Microsoft.PowerShell.Commands
                 newManifestInfo.LicenseUri = manifestInfo.LicenseUri;
                 newManifestInfo.IconUri = manifestInfo.IconUri;
                 newManifestInfo.RepositorySourceLocation = manifestInfo.RepositorySourceLocation;
+                newManifestInfo.IsConsideredEditionCompatible = manifestInfo.IsConsideredEditionCompatible;
+
                 newManifestInfo.ExperimentalFeatures = manifestInfo.ExperimentalFeatures;
+
 
                 // If we are in module discovery, then fix the path.
                 if (ss == null)
@@ -3155,10 +3222,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (compatiblePSEditions != null)
                     {
-                        foreach (var psEdition in compatiblePSEditions)
-                        {
-                            newManifestInfo.AddToCompatiblePSEditions(psEdition);
-                        }
+                        newManifestInfo.AddToCompatiblePSEditions(compatiblePSEditions);
                     }
                 }
 
