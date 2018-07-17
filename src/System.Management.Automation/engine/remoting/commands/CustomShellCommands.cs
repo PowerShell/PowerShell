@@ -4886,8 +4886,8 @@ param(
                 $powershellVersionMajor = $powershellVersionMajor.Substring(0, $dotPos)
             }}
             # If we are running a Preview version, we don't want to clobber the generic PowerShell.6 endpoint
-            # but instead creating a PowerShell.6-Preview endpoint
-            if ($PSVersionTable.PSVersion.ToString().Contains(""preview""))
+            # but instead create a PowerShell.6-Preview endpoint
+            if ($PSVersionTable.PSVersion.PreReleaseLabel)
             {{
                 $powershellVersionMajor += ""-preview""
             }}
