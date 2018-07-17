@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation.Configuration;
@@ -29,6 +30,11 @@ namespace System.Management.Automation
         /// </summary>
         [TraceSource("Modules", "Module loading and analysis")]
         internal static PSTraceSource Tracer = PSTraceSource.GetTracer("Modules", "Module loading and analysis");
+
+        // The %WINDIR%\System32\WindowsPowerShell\v1.0\Modules module path,
+        // to load forward compatible Windows PowerShell modules from
+        private static readonly string s_windowsPowerShellPSHomeModulePath =
+            Path.Combine(System.Environment.SystemDirectory, "WindowsPowerShell", "v1.0", "Modules");
 
         internal ModuleIntrinsics(ExecutionContext context)
         {
@@ -414,62 +420,90 @@ namespace System.Management.Automation
 
         internal static Version GetManifestModuleVersion(string manifestPath)
         {
-            if (manifestPath != null &&
-                manifestPath.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
+            try
             {
-                try
-                {
-                    var dataFileSetting =
-                        PsUtils.GetModuleManifestProperties(
-                            manifestPath,
-                            PsUtils.ManifestModuleVersionPropertyName);
+                Hashtable dataFileSetting =
+                    PsUtils.GetModuleManifestProperties(
+                        manifestPath,
+                        PsUtils.ManifestModuleVersionPropertyName);
 
-                    var versionValue = dataFileSetting["ModuleVersion"];
-                    if (versionValue != null)
+                object versionValue = dataFileSetting["ModuleVersion"];
+                if (versionValue != null)
+                {
+                    Version moduleVersion;
+                    if (LanguagePrimitives.TryConvertTo(versionValue, out moduleVersion))
                     {
-                        Version moduleVersion;
-                        if (LanguagePrimitives.TryConvertTo(versionValue, out moduleVersion))
-                        {
-                            return moduleVersion;
-                        }
+                        return moduleVersion;
                     }
                 }
-                catch (PSInvalidOperationException)
-                {
-                }
             }
+            catch (PSInvalidOperationException) { }
 
             return new Version(0, 0);
         }
 
         internal static Guid GetManifestGuid(string manifestPath)
         {
-            if (manifestPath != null &&
-                manifestPath.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
+            try
             {
-                try
-                {
-                    var dataFileSetting =
-                        PsUtils.GetModuleManifestProperties(
-                            manifestPath,
-                            PsUtils.ManifestGuidPropertyName);
+                Hashtable dataFileSetting =
+                    PsUtils.GetModuleManifestProperties(
+                        manifestPath,
+                        PsUtils.ManifestGuidPropertyName);
 
-                    var guidValue = dataFileSetting["GUID"];
-                    if (guidValue != null)
+                object guidValue = dataFileSetting["GUID"];
+                if (guidValue != null)
+                {
+                    Guid guidID;
+                    if (LanguagePrimitives.TryConvertTo(guidValue, out guidID))
                     {
-                        Guid guidID;
-                        if (LanguagePrimitives.TryConvertTo(guidValue, out guidID))
-                        {
-                            return guidID;
-                        }
+                        return guidID;
                     }
                 }
-                catch (PSInvalidOperationException)
-                {
-                }
             }
+            catch (PSInvalidOperationException) { }
 
             return new Guid();
+        }
+
+        internal static ExperimentalFeature[] GetExperimentalFeature(string manifestPath)
+        {
+            try
+            {
+                Hashtable dataFileSetting =
+                    PsUtils.GetModuleManifestProperties(
+                        manifestPath,
+                        PsUtils.ManifestPrivateDataPropertyName);
+
+                object privateData = dataFileSetting["PrivateData"];
+                if (privateData is Hashtable hashData && hashData["PSData"] is Hashtable psData)
+                {
+                    object expFeatureValue = psData["ExperimentalFeatures"];
+                    if (expFeatureValue != null &&
+                        LanguagePrimitives.TryConvertTo(expFeatureValue, out Hashtable[] features) &&
+                        features.Length > 0)
+                    {
+                        string moduleName = ModuleIntrinsics.GetModuleName(manifestPath);
+                        var expFeatureList = new List<ExperimentalFeature>();
+                        foreach (Hashtable feature in features)
+                        {
+                            string featureName = feature["Name"] as string;
+                            if (String.IsNullOrEmpty(featureName)) { continue; }
+
+                            if (ExperimentalFeature.IsModuleFeatureName(featureName, moduleName))
+                            {
+                                string featureDescription = feature["Description"] as string;
+                                expFeatureList.Add(new ExperimentalFeature(featureName, featureDescription, manifestPath,
+                                                                           ExperimentalFeature.IsEnabled(featureName)));
+                            }
+                        }
+                        return expFeatureList.ToArray();
+                    }
+                }
+            }
+            catch (PSInvalidOperationException) { }
+
+            return Utils.EmptyArray<ExperimentalFeature>();
         }
 
         // The extensions of all of the files that can be processed with Import-Module, put the ni.dll in front of .dll to have higher priority to be loaded.
@@ -599,6 +633,23 @@ namespace System.Management.Automation
             return sharedModulePath;
 #endif
         }
+
+#if !UNIX
+        /// <summary>
+        /// Get the path to the Windows PowerShell module directory under the
+        /// System32 directory on Windows (the Windows PowerShell $PSHOME).
+        /// </summary>
+        /// <returns>The path of the Windows PowerShell system module directory.</returns>
+        internal static string GetWindowsPowerShellPSHomeModulePath()
+        {
+            if (!String.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellPSHomeLocation))
+            {
+                return InternalTestHooks.TestWindowsPowerShellPSHomeLocation;
+            }
+
+            return s_windowsPowerShellPSHomeModulePath;
+        }
+#endif
 
         /// <summary>
         /// Combine the PS system-wide module path and the DSC module path
@@ -894,6 +945,12 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(newModulePathString))
             {
+#if !UNIX
+                // If on Windows, we want to add the System32 Windows PowerShell module directory
+                // so that Windows modules are discoverable
+                newModulePathString += Path.PathSeparator + GetWindowsPowerShellPSHomeModulePath();
+#endif
+
                 // Set the environment variable...
                 Environment.SetEnvironmentVariable(Constants.PSModulePathEnvVar, newModulePathString);
             }

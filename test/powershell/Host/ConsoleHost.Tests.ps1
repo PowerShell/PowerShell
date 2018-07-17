@@ -674,12 +674,36 @@ Describe "Pwsh exe resources tests" -Tag CI {
     It "Resource strings are embedded in the executable" -Skip:(!$IsWindows) {
         $pwsh = Get-Item -Path "$PSHOME\pwsh.exe"
         $pwsh.VersionInfo.FileVersion | Should -BeExactly $PSVersionTable.PSVersion.ToString().Split("-")[0]
-        "v" + $pwsh.VersionInfo.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId
+        $pwsh.VersionInfo.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId
         $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell Core 6"
     }
 
     It "Manifest contains compatibility section" -Skip:(!$IsWindows) {
         $osversion = [System.Environment]::OSVersion.Version
         $psversiontable.os | Should -MatchExactly "$($osversion.Major).$($osversion.Minor)"
+    }
+}
+
+Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
+    BeforeAll {
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $dirnames = "[T]est","[Test","T][est","Test"
+        $testcases = @()
+        foreach ( $d in $dirnames ) {
+            $null = New-Item -type Directory -path "${TESTDRIVE}/$d"
+            $testcases += @{ Dirname = $d }
+        }
+    }
+
+    It "pwsh can startup in a directory named <dirname>" -testcases $testcases {
+        param ( $dirname )
+        try {
+            Push-Location -LiteralPath "${TESTDRIVE}/${dirname}"
+            $result = & $powershell -c '(Get-Item .).Name'
+            $result | Should -BeExactly $dirname
+        }
+        finally {
+            Pop-Location
+        }
     }
 }

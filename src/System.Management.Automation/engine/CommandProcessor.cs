@@ -18,7 +18,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class CommandProcessor : CommandProcessorBase
     {
-#region ctor
+        #region ctor
 
         static CommandProcessor()
         {
@@ -87,9 +87,10 @@ namespace System.Management.Automation
 
         // CommandProcessor
 
-#endregion ctor
+        #endregion ctor
 
-#region internal members
+        #region internal members
+
         /// <summary>
         /// Returns a CmdletParameterBinderController for the specified command
         /// </summary>
@@ -393,9 +394,9 @@ namespace System.Management.Automation
             }
         }
 
-#endregion public_methods
+        #endregion public_methods
 
-#region helper_methods
+        #region helper_methods
 
         /// <summary>
         /// Tells whether it is the first call to Read
@@ -849,7 +850,7 @@ namespace System.Management.Automation
             return base.IsHelpRequested(out helpTarget, out helpCategory);
         }
 
-#endregion helper_methods
+        #endregion helper_methods
     }
 }
 

@@ -398,7 +398,7 @@ namespace System.Management.Automation
 
         #region Module Names
 
-        internal static List<CompletionResult> CompleteModuleName(CompletionContext context, bool loadedModulesOnly)
+        internal static List<CompletionResult> CompleteModuleName(CompletionContext context, bool loadedModulesOnly, bool skipEditionCheck = false)
         {
             var moduleName = context.WordToComplete ?? string.Empty;
             var result = new List<CompletionResult>();
@@ -413,6 +413,12 @@ namespace System.Management.Automation
             if (!loadedModulesOnly)
             {
                 powershell.AddParameter("ListAvailable", true);
+
+                // -SkipEditionCheck should only be set or apply to -ListAvailable
+                if (skipEditionCheck)
+                {
+                    powershell.AddParameter("SkipEditionCheck", true);
+                }
             }
 
             Exception exceptionThrown;
@@ -1698,11 +1704,9 @@ namespace System.Management.Automation
 
             foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
             {
-                if (att is ValidateSetAttribute)
+                if (att is ValidateSetAttribute setAtt)
                 {
                     RemoveLastNullCompletionResult(result);
-
-                    var setAtt = (ValidateSetAttribute)att;
 
                     string wordToComplete = context.WordToComplete;
                     string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
@@ -1712,6 +1716,8 @@ namespace System.Management.Automation
 
                     foreach (string value in setAtt.ValidValues)
                     {
+                        if (value == string.Empty) { continue; }
+
                         if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
                         {
                             string completionText = quote == string.Empty ? value : quote + value + quote;
@@ -2101,17 +2107,19 @@ namespace System.Management.Automation
                 case "Get-Module":
                     {
                         bool loadedModulesOnly = boundArguments == null || !boundArguments.ContainsKey("ListAvailable");
-                        NativeCompletionModuleCommands(context, parameterName, loadedModulesOnly, /* isImportModule: */ false, result);
+                        bool skipEditionCheck = !loadedModulesOnly && boundArguments.ContainsKey("SkipEditionCheck");
+                        NativeCompletionModuleCommands(context, parameterName, result, loadedModulesOnly, skipEditionCheck: skipEditionCheck);
                         break;
                     }
                 case "Remove-Module":
                     {
-                        NativeCompletionModuleCommands(context, parameterName, /* loadedModulesOnly: */ true, /* isImportModule: */ false, result);
+                        NativeCompletionModuleCommands(context, parameterName, result, loadedModulesOnly: true);
                         break;
                     }
                 case "Import-Module":
                     {
-                        NativeCompletionModuleCommands(context, parameterName, /* loadedModulesOnly: */ false, /* isImportModule: */ true, result);
+                        bool skipEditionCheck = boundArguments != null && boundArguments.ContainsKey("SkipEditionCheck");
+                        NativeCompletionModuleCommands(context, parameterName, result, isImportModule: true, skipEditionCheck: skipEditionCheck);
                         break;
                     }
                 case "Debug-Process":
@@ -3046,7 +3054,13 @@ namespace System.Management.Automation
             }
         }
 
-        private static void NativeCompletionModuleCommands(CompletionContext context, string paramName, bool loadedModulesOnly, bool isImportModule, List<CompletionResult> result)
+        private static void NativeCompletionModuleCommands(
+            CompletionContext context,
+            string paramName,
+            List<CompletionResult> result,
+            bool loadedModulesOnly = false,
+            bool isImportModule = false,
+            bool skipEditionCheck = false)
         {
             if (string.IsNullOrEmpty(paramName))
             {
@@ -3067,7 +3081,7 @@ namespace System.Management.Automation
                                 StringLiterals.PowerShellILAssemblyExtension,
                                 StringLiterals.PowerShellCmdletizationFileExtension
                             };
-                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, /* containerOnly: */ false, moduleExtensions));
+                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, containerOnly: false, moduleExtensions));
                     if (moduleFilesResults.Count > 0)
                         result.AddRange(moduleFilesResults);
 
@@ -3079,7 +3093,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                var moduleResults = CompleteModuleName(context, loadedModulesOnly);
+                var moduleResults = CompleteModuleName(context, loadedModulesOnly, skipEditionCheck);
                 if (moduleResults != null && moduleResults.Count > 0)
                     result.AddRange(moduleResults);
 

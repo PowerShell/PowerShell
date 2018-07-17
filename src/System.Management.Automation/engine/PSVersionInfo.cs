@@ -78,11 +78,11 @@ namespace System.Management.Automation
 
             if (productVersion.Contains(" Commits: "))
             {
-                rawGitCommitId = "v" + productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
+                rawGitCommitId = productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
             }
             else
             {
-                rawGitCommitId = "v" + mainVersion;
+                rawGitCommitId = mainVersion;
             }
 
             s_psV6Version = new SemanticVersion(mainVersion);

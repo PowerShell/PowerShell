@@ -71,6 +71,18 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.DscResourceAttribute]
                 }
                 @{
+                    Accelerator = 'ExperimentAction'
+                    Type        = [System.Management.Automation.ExperimentAction]
+                }
+                @{
+                    Accelerator = 'Experimental'
+                    Type        = [System.Management.Automation.ExperimentalAttribute]
+                }
+                @{
+                    Accelerator = 'ExperimentalFeature'
+                    Type        = [System.Management.Automation.ExperimentalFeature]
+                }
+                @{
                     Accelerator = 'float'
                     Type        = [System.Single]
                 }
@@ -378,11 +390,11 @@ Describe "Type accelerators" -Tags "CI" {
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 91
+                $totalAccelerators = 94
             }
             else
             {
-                $totalAccelerators = 96
+                $totalAccelerators = 99
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{

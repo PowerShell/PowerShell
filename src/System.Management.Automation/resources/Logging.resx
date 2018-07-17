@@ -288,4 +288,13 @@ AdditionalInfo:
   <data name="UnknownUserName" xml:space="preserve">
     <value>UNKNOWN</value>
   </data>
+  <data name="EngineExperimentalFeatureNotFound" xml:space="preserve">
+    <value>The engine experimental feature '{0}' declared in the config file is not registered in the current PowerShell.</value>
+  </data>
+  <data name="InvalidExperimentalFeatureName" xml:space="preserve">
+    <value>The experimental feature '{0}' declared in the config file is invalid.
+The name of an experimental feature should follow the convention below: 
+    Engine Feature Name: 'PS[FeatureName]'
+    Module Feature Name: '[ModuleName].[FeatureName]'</value>
+  </data>
 </root>

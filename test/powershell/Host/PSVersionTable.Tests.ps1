@@ -7,19 +7,19 @@ Describe "PSVersionTable" -Tags "CI" {
         $formattedVersion = $sma.VersionInfo.ProductVersion
 
         $mainVersionPattern = "(\d+\.\d+\.\d+)(-.+)?"
-        $fullVersionPattern = "^v(\d+\.\d+\.\d+)(-.+)?-(\d+)-g(.+)$"
+        $fullVersionPattern = "^(\d+\.\d+\.\d+)(-.+)?-(\d+)-g(.+)$"
 
         $expectedPSVersion = ($formattedVersion -split " ")[0]
         $expectedVersionPattern = "^$mainVersionPattern$"
 
         if ($formattedVersion.Contains(" Commits: "))
         {
-            $rawGitCommitId = "v" + $formattedVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
+            $rawGitCommitId = $formattedVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
             $expectedGitCommitIdPattern = $fullVersionPattern
             $unexpectectGitCommitIdPattern = "qwerty"
         } else {
-            $rawGitCommitId = "v" + ($formattedVersion -split " SHA: ")[0]
-            $expectedGitCommitIdPattern = "^v$mainVersionPattern$"
+            $rawGitCommitId = ($formattedVersion -split " SHA: ")[0]
+            $expectedGitCommitIdPattern = "^$mainVersionPattern$"
             $unexpectectGitCommitIdPattern = $fullVersionPattern
         }
     }
