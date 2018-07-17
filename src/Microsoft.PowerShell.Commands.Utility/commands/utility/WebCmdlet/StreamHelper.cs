@@ -445,7 +445,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             string content = StreamToString(stream, encoding);
-            if (isDefaultEncoding) do
+            if (isDefaultEncoding)
+            {
+                do
                 {
                     // check for a charset attribute on the meta element to override the default.
                     Match match = s_metaexp.Match(content);
@@ -463,6 +465,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 } while (false);
+            }
 
             return content;
         }
