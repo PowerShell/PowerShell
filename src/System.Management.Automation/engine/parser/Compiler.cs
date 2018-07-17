@@ -733,6 +733,7 @@ namespace System.Management.Automation.Language
             }
 
             s_builtinAttributeGenerator.Add(typeof(CmdletBindingAttribute), NewCmdletBindingAttribute);
+            s_builtinAttributeGenerator.Add(typeof(ExperimentalAttribute), NewExperimentalAttribute);
             s_builtinAttributeGenerator.Add(typeof(ParameterAttribute), NewParameterAttribute);
             s_builtinAttributeGenerator.Add(typeof(OutputTypeAttribute), NewOutputTypeAttribute);
             s_builtinAttributeGenerator.Add(typeof(AliasAttribute), NewAliasAttribute);
@@ -1000,24 +1001,26 @@ namespace System.Management.Automation.Language
 
         internal static RuntimeDefinedParameterDictionary GetParameterMetaData(ReadOnlyCollection<ParameterAst> parameters, bool automaticPositions, ref bool usesCmdletBinding)
         {
-            var md = new RuntimeDefinedParameterDictionary();
-            var listMd = new List<RuntimeDefinedParameter>();
+            var runtimeDefinedParamDict = new RuntimeDefinedParameterDictionary();
+            var runtimeDefinedParamList = new List<RuntimeDefinedParameter>(parameters.Count);
             var customParameterSet = false;
             for (int index = 0; index < parameters.Count; index++)
             {
                 var param = parameters[index];
                 var rdp = GetRuntimeDefinedParameter(param, ref customParameterSet, ref usesCmdletBinding);
-
-                listMd.Add(rdp);
-                md.Add(param.Name.VariablePath.UserPath, rdp);
+                if (rdp != null)
+                {
+                    runtimeDefinedParamList.Add(rdp);
+                    runtimeDefinedParamDict.Add(param.Name.VariablePath.UserPath, rdp);
+                }
             }
 
             int pos = 0;
             if (automaticPositions && !customParameterSet)
             {
-                for (int index = 0; index < listMd.Count; index++)
+                for (int index = 0; index < runtimeDefinedParamList.Count; index++)
                 {
-                    var rdp = listMd[index];
+                    var rdp = runtimeDefinedParamList[index];
                     var paramAttribute = (ParameterAttribute)rdp.Attributes.First(attr => attr is ParameterAttribute);
                     if (!(rdp.ParameterType == typeof(SwitchParameter)))
                     {
@@ -1026,8 +1029,8 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            md.Data = listMd.ToArray();
-            return md;
+            runtimeDefinedParamDict.Data = runtimeDefinedParamList.ToArray();
+            return runtimeDefinedParamDict;
         }
 
         private static readonly Dictionary<CallInfo, Delegate> s_attributeGeneratorCache = new Dictionary<CallInfo, Delegate>();
@@ -1067,6 +1070,9 @@ namespace System.Management.Automation.Language
             CallSite<Func<CallSite, object, ConfirmImpact>>.Create(PSConvertBinder.Get(typeof(ConfirmImpact)));
         private static readonly CallSite<Func<CallSite, object, RemotingCapability>> s_attrArgToRemotingCapabilityConverter =
             CallSite<Func<CallSite, object, RemotingCapability>>.Create(PSConvertBinder.Get(typeof(RemotingCapability)));
+        private static readonly CallSite<Func<CallSite, object, ExperimentAction>> s_attrArgToExperimentActionConverter =
+            CallSite<Func<CallSite, object, ExperimentAction>>.Create(PSConvertBinder.Get(typeof(ExperimentAction)));
+        private static readonly ConstantValueVisitor s_cvv = new ConstantValueVisitor { AttributeArgument = true };
 
         private static void CheckNoPositionalArgs(AttributeAst ast)
         {
@@ -1101,17 +1107,25 @@ namespace System.Management.Automation.Language
             }
         }
 
+        private static (string, ExperimentAction) GetFeatureNameAndAction(AttributeAst ast)
+        {
+            var argValue0 = ast.PositionalArguments[0].Accept(s_cvv);
+            var argValue1 = ast.PositionalArguments[1].Accept(s_cvv);
+
+            var featureName = _attrArgToStringConverter.Target(_attrArgToStringConverter, argValue0);
+            var action = s_attrArgToExperimentActionConverter.Target(s_attrArgToExperimentActionConverter, argValue1);
+            return (featureName, action);
+        }
+
         private static Attribute NewCmdletBindingAttribute(AttributeAst ast)
         {
             CheckNoPositionalArgs(ast);
-
-            var cvv = new ConstantValueVisitor { AttributeArgument = true };
 
             var result = new CmdletBindingAttribute();
 
             foreach (var namedArg in ast.NamedArguments)
             {
-                var argValue = namedArg.Argument.Accept(cvv);
+                var argValue = namedArg.Argument.Accept(s_cvv);
                 var argumentName = namedArg.ArgumentName;
                 if (argumentName.Equals("DefaultParameterSetName", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1161,17 +1175,40 @@ namespace System.Management.Automation.Language
             return result;
         }
 
+        private static Attribute NewExperimentalAttribute(AttributeAst ast)
+        {
+            int positionalArgCount = ast.PositionalArguments.Count;
+            if (positionalArgCount != 2)
+            {
+                throw InterpreterError.NewInterpreterException(targetObject: null, typeof(MethodException), ast.Extent,
+                    "MethodCountCouldNotFindBest", ExtendedTypeSystem.MethodArgumentCountException, ".ctor", positionalArgCount);
+            }
+
+            (string name, ExperimentAction action) = GetFeatureNameAndAction(ast);
+            return new ExperimentalAttribute(name, action);
+        }
+
         private static Attribute NewParameterAttribute(AttributeAst ast)
         {
-            CheckNoPositionalArgs(ast);
-
-            var cvv = new ConstantValueVisitor { AttributeArgument = true };
-
-            var result = new ParameterAttribute();
+            ParameterAttribute result;
+            int positionalArgCount = ast.PositionalArguments.Count;
+            switch (positionalArgCount)
+            {
+                case 0:
+                    result = new ParameterAttribute();
+                    break;
+                case 2:
+                    (string name, ExperimentAction action) = GetFeatureNameAndAction(ast);
+                    result = new ParameterAttribute(name, action);
+                    break;
+                default:
+                    throw InterpreterError.NewInterpreterException(targetObject: null, typeof(MethodException), ast.Extent,
+                        "MethodCountCouldNotFindBest", ExtendedTypeSystem.MethodArgumentCountException, ".ctor", positionalArgCount);
+            }
 
             foreach (var namedArg in ast.NamedArguments)
             {
-                var argValue = namedArg.Argument.Accept(cvv);
+                var argValue = namedArg.Argument.Accept(s_cvv);
                 var argumentName = namedArg.ArgumentName;
 
                 if (argumentName.Equals("Position", StringComparison.OrdinalIgnoreCase))
@@ -1232,8 +1269,6 @@ namespace System.Management.Automation.Language
 
         private static Attribute NewOutputTypeAttribute(AttributeAst ast)
         {
-            var cvv = new ConstantValueVisitor { AttributeArgument = true };
-
             OutputTypeAttribute result;
             if (ast.PositionalArguments.Count == 0)
             {
@@ -1249,7 +1284,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    var argValue = ast.PositionalArguments[0].Accept(cvv);
+                    var argValue = ast.PositionalArguments[0].Accept(s_cvv);
                     result = new OutputTypeAttribute(_attrArgToStringConverter.Target(_attrArgToStringConverter, argValue));
                 }
             }
@@ -1262,7 +1297,7 @@ namespace System.Management.Automation.Language
                     var typeArg = positionalArgument as TypeExpressionAst;
                     args[i] = typeArg != null
                         ? TypeOps.ResolveTypeName(typeArg.TypeName, typeArg.Extent)
-                        : positionalArgument.Accept(cvv);
+                        : positionalArgument.Accept(s_cvv);
                 }
 
                 if (args[0] is Type)
@@ -1277,7 +1312,7 @@ namespace System.Management.Automation.Language
 
             foreach (var namedArg in ast.NamedArguments)
             {
-                var argValue = namedArg.Argument.Accept(cvv);
+                var argValue = namedArg.Argument.Accept(s_cvv);
                 var argumentName = namedArg.ArgumentName;
 
                 if (argumentName.Equals("ParameterSetName", StringComparison.OrdinalIgnoreCase))
@@ -1308,12 +1343,11 @@ namespace System.Management.Automation.Language
         {
             CheckNoNamedArgs(ast);
 
-            var cvv = new ConstantValueVisitor { AttributeArgument = true };
             var args = new string[ast.PositionalArguments.Count];
             for (int i = 0; i < ast.PositionalArguments.Count; i++)
             {
                 args[i] = _attrArgToStringConverter.Target(_attrArgToStringConverter,
-                    ast.PositionalArguments[i].Accept(cvv));
+                    ast.PositionalArguments[i].Accept(s_cvv));
             }
             return new AliasAttribute(args);
         }
@@ -1321,7 +1355,6 @@ namespace System.Management.Automation.Language
         private static Attribute NewValidateSetAttribute(AttributeAst ast)
         {
             ValidateSetAttribute result;
-            var cvv = new ConstantValueVisitor { AttributeArgument = true };
 
             // 'ValidateSet([CustomGeneratorType], IgnoreCase=$false)' is supported in scripts.
             if (ast.PositionalArguments.Count == 1 && ast.PositionalArguments[0] is TypeExpressionAst generatorTypeAst)
@@ -1345,7 +1378,7 @@ namespace System.Management.Automation.Language
                 for (int i = 0; i < ast.PositionalArguments.Count; i++)
                 {
                     args[i] = _attrArgToStringConverter.Target(_attrArgToStringConverter,
-                        ast.PositionalArguments[i].Accept(cvv));
+                        ast.PositionalArguments[i].Accept(s_cvv));
                 }
 
                 result = new ValidateSetAttribute(args);
@@ -1353,7 +1386,7 @@ namespace System.Management.Automation.Language
 
             foreach (var namedArg in ast.NamedArguments)
             {
-                var argValue = namedArg.Argument.Accept(cvv);
+                var argValue = namedArg.Argument.Accept(s_cvv);
                 var argumentName = namedArg.ArgumentName;
                 if (argumentName.Equals("IgnoreCase", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1418,17 +1451,16 @@ namespace System.Management.Automation.Language
             var delegateArgs = new object[totalArgCount + 1];
             delegateArgs[0] = attributeType;
 
-            var cvv = new ConstantValueVisitor { AttributeArgument = true };
             int i = 1;
             for (int index = 0; index < attributeAst.PositionalArguments.Count; index++)
             {
                 var posArg = attributeAst.PositionalArguments[index];
-                delegateArgs[i++] = posArg.Accept(cvv);
+                delegateArgs[i++] = posArg.Accept(s_cvv);
             }
             for (int index = 0; index < attributeAst.NamedArguments.Count; index++)
             {
                 var namedArg = attributeAst.NamedArguments[index];
-                delegateArgs[i++] = namedArg.Argument.Accept(cvv);
+                delegateArgs[i++] = namedArg.Argument.Accept(s_cvv);
             }
 
             try
@@ -1472,27 +1504,46 @@ namespace System.Management.Automation.Language
 
         private static RuntimeDefinedParameter GetRuntimeDefinedParameter(ParameterAst parameterAst, ref bool customParameterSet, ref bool usesCmdletBinding)
         {
-            List<Attribute> attributes = new List<Attribute>();
+            var attributes = new List<Attribute>(parameterAst.Attributes.Count);
             bool hasParameterAttribute = false;
+            bool hasEnabledParamAttribute = false;
+            bool hasSeenExpAttribute = false;
+
             for (int index = 0; index < parameterAst.Attributes.Count; index++)
             {
                 var attributeAst = parameterAst.Attributes[index];
                 var attribute = attributeAst.GetAttribute();
-                attributes.Add(attribute);
 
-                var parameterAttribute = attribute as ParameterAttribute;
-                if (parameterAttribute != null)
+                if (attribute is ExperimentalAttribute expAttribute)
+                {
+                    // Only honor the first seen experimental attribute, ignore the others. 
+                    if (!hasSeenExpAttribute && expAttribute.ToHide) { return null; }
+
+                    // Do not add experimental attributes to the attribute list.
+                    hasSeenExpAttribute = true;
+                    continue;
+                }
+                else if (attribute is ParameterAttribute paramAttribute)
                 {
                     hasParameterAttribute = true;
+                    if (paramAttribute.ToHide) { continue; }
+
+                    hasEnabledParamAttribute = true;
                     usesCmdletBinding = true;
-                    if (parameterAttribute.Position != int.MinValue ||
-                        !parameterAttribute.ParameterSetName.Equals(ParameterAttribute.AllParameterSets,
-                                                                    StringComparison.OrdinalIgnoreCase))
+                    if (paramAttribute.Position != int.MinValue ||
+                        !paramAttribute.ParameterSetName.Equals(ParameterAttribute.AllParameterSets,
+                                                                StringComparison.OrdinalIgnoreCase))
                     {
                         customParameterSet = true;
                     }
                 }
+
+                attributes.Add(attribute);
             }
+
+            // If all 'ParameterAttribute' declared for the parameter are hidden due to
+            // an experimental feature, then the parameter should be ignored.
+            if (hasParameterAttribute && !hasEnabledParamAttribute) { return null; }
 
             attributes.Reverse();
             if (!hasParameterAttribute)
@@ -1501,7 +1552,7 @@ namespace System.Management.Automation.Language
             }
 
             var result = new RuntimeDefinedParameter(parameterAst.Name.VariablePath.UserPath, parameterAst.StaticType,
-                                                     new Collection<Attribute>(attributes.ToArray()));
+                                                     new Collection<Attribute>(attributes));
 
             if (parameterAst.DefaultValue != null)
             {

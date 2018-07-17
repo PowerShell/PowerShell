@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// An identifier for this event subscription
+        /// An identifier for this event subscription.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName = "BySource")]
         [ValidateNotNullOrEmpty()]
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         private string _sourceIdentifier = null;
 
         /// <summary>
-        /// An identifier for this event subscription
+        /// An identifier for this event subscription.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName = "ById")]
         [Alias("Id")]
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         private WildcardPattern _matchPattern;
 
         /// <summary>
-        /// Get the requested events
+        /// Get the requested events.
         /// </summary>
         protected override void EndProcessing()
         {

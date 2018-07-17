@@ -451,7 +451,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks whether current monad session supports edition specified
+        /// Checks whether current PowerShell session supports edition specified
         /// by checkEdition.
         /// </summary>
         /// <param name="checkEdition">Edition to check</param>
@@ -462,7 +462,26 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks whether the specified edition values is allowed.
+        /// Check whether the current PowerShell session supports any of the specified editions.
+        /// </summary>
+        /// <param name="editions">The PowerShell editions to check compatibility with.</param>
+        /// <returns>True if the edition is supported by this runtime, false otherwise.</returns>
+        internal static bool IsPSEditionSupported(IEnumerable<string> editions)
+        {
+            string currentPSEdition = PSVersionInfo.PSEdition;
+            foreach (string edition in editions)
+            {
+                if (currentPSEdition.Equals(edition, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks whether the specified edition value is allowed.
         /// </summary>
         /// <param name="editionValue">Edition value to check</param>
         /// <returns>true if allowed, false otherwise</returns>
@@ -1448,6 +1467,12 @@ namespace System.Management.Automation.Internal
         // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
         internal static bool StopwatchIsNotHighResolution;
         internal static bool DisableGACLoading;
+
+        // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
+        // since we can't manipulate the System32 directory in a test
+        internal static string TestWindowsPowerShellPSHomeLocation;
+
+        internal static bool ShowMarkdownOutputBypass;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)

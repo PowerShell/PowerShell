@@ -25,14 +25,14 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Path of file(s) to process
+        /// Path of file(s) to process.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Path")]
         [ValidateNotNullOrEmpty()]
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Literal path of file to process
+        /// Literal path of file to process.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty()]
@@ -40,13 +40,13 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath { get; set; }
 
         /// <summary>
-        /// Ojbect to process
+        /// Ojbect to process.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ByInputObject", ValueFromPipeline = true)]
         public PSObject InputObject { get; set; }
 
         /// <summary>
-        /// Type of character encoding for InputObject
+        /// Type of character encoding for InputObject.
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
         [ArgumentToEncodingTransformationAttribute()]
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
-        /// This parameter is no-op
+        /// This parameter is no-op.
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
         public SwitchParameter Raw { get; set; }

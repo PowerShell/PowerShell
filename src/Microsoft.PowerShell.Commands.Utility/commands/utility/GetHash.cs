@@ -11,16 +11,16 @@ using System.IO;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements Get-FileHash
+    /// This class implements Get-FileHash.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "FileHash", DefaultParameterSetName = PathParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=517145")]
     [OutputType(typeof(FileHashInfo))]
     public class GetFileHashCommand : HashCmdletBase
     {
         /// <summary>
-        /// Path parameter
-        /// The paths of the files to calculate a hashs
-        /// Resolved wildcards
+        /// Path parameter.
+        /// The paths of the files to calculate a hashs.
+        /// Resolved wildcards.
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, ParameterSetName = PathParameterSet, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -37,9 +37,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// LiteralPath parameter
-        /// The literal paths of the files to calculate a hashs
-        /// Don't resolved wildcards
+        /// LiteralPath parameter.
+        /// The literal paths of the files to calculate a hashs.
+        /// Don't resolved wildcards.
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, ParameterSetName = LiteralPathParameterSet, Position = 0, ValueFromPipelineByPropertyName = true)]
@@ -59,16 +59,16 @@ namespace Microsoft.PowerShell.Commands
         private String[] _paths;
 
         /// <summary>
-        /// InputStream parameter
-        /// The stream of the file to calculate a hash
+        /// InputStream parameter.
+        /// The stream of the file to calculate a hash.
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, ParameterSetName = StreamParameterSet, Position = 0)]
         public Stream InputStream { get; set; }
 
         /// <summary>
-        /// BeginProcessing() override
-        /// This is for hash function init
+        /// BeginProcessing() override.
+        /// This is for hash function init.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -76,8 +76,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ProcessRecord() override
-        /// This is for paths collecting from pipe
+        /// ProcessRecord() override.
+        /// This is for paths collecting from pipe.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -150,8 +150,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Perform common error checks
-        /// Populate source code
+        /// Perform common error checks.
+        /// Populate source code.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Create FileHashInfo object and output it
+        /// Create FileHashInfo object and output it.
         /// </summary>
         private void WriteHashResult(string Algorithm, string hash, string path)
         {
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Parameter set names
+        /// Parameter set names.
         /// </summary>
         private const string PathParameterSet = "Path";
         private const string LiteralPathParameterSet = "LiteralPath";
@@ -189,13 +189,13 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Base Cmdlet for cmdlets which deal with crypto hashes
+    /// Base Cmdlet for cmdlets which deal with crypto hashes.
     /// </summary>
     public class HashCmdletBase : PSCmdlet
     {
         /// <summary>
-        /// Algorithm parameter
-        /// The hash algorithm name: "SHA1", "SHA256", "SHA384", "SHA512", "MD5"
+        /// Algorithm parameter.
+        /// The hash algorithm name: "SHA1", "SHA256", "SHA384", "SHA512", "MD5".
         /// </summary>
         /// <value></value>
         [Parameter(Position = 1)]
@@ -221,12 +221,12 @@ namespace Microsoft.PowerShell.Commands
         private String _Algorithm = HashAlgorithmNames.SHA256;
 
         /// <summary>
-        /// Hash algorithm is used
+        /// Hash algorithm is used.
         /// </summary>
         protected HashAlgorithm hasher;
 
         /// <summary>
-        /// Hash algorithm names
+        /// Hash algorithm names.
         /// </summary>
         internal static class HashAlgorithmNames
         {
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Init a hash algorithm
+        /// Init a hash algorithm.
         /// </summary>
         protected void InitHasher(String Algorithm)
         {
@@ -273,22 +273,22 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// FileHashInfo class contains information about a file hash
+    /// FileHashInfo class contains information about a file hash.
     /// </summary>
      public class FileHashInfo
      {
         /// <summary>
-        /// Hash algorithm name
+        /// Hash algorithm name.
         /// </summary>
         public string Algorithm { get; set;}
 
         /// <summary>
-        /// Hash value
+        /// Hash value.
         /// </summary>
         public string Hash { get; set;}
 
         /// <summary>
-        /// File path
+        /// File path.
         /// </summary>
         public string Path { get; set;}
      }

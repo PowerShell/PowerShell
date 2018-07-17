@@ -772,10 +772,18 @@ namespace System.Management.Automation
             {
                 return basePrompt;
             }
-            else
+
+            SSHConnectionInfo sshConnectionInfo = runspace.ConnectionInfo as SSHConnectionInfo;
+
+            // Usernames are case-sensitive on Unix systems
+            if (sshConnectionInfo != null &&
+                !string.IsNullOrEmpty(sshConnectionInfo.UserName) &&
+                !System.Environment.UserName.Equals(sshConnectionInfo.UserName, StringComparison.Ordinal))
             {
-                return string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", runspace.ConnectionInfo.ComputerName, basePrompt);
+                return string.Format(CultureInfo.InvariantCulture, "[{0}@{1}]: {2}", sshConnectionInfo.UserName, sshConnectionInfo.ComputerName, basePrompt);
             }
+
+            return string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", runspace.ConnectionInfo.ComputerName, basePrompt);
         }
 
         internal static bool IsProcessInteractive(InvocationInfo invocationInfo)

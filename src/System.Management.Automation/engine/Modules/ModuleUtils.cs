@@ -69,7 +69,7 @@ namespace System.Management.Automation.Internal
         internal static IEnumerable<string> GetAllAvailableModuleFiles(string topDirectoryToCheck)
         {
             if (!Directory.Exists(topDirectoryToCheck)) { yield break; }
-
+            
             var options = Utils.PathIsUnc(topDirectoryToCheck) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
             Queue<string> directoriesToCheck = new Queue<string>();
             directoriesToCheck.Enqueue(topDirectoryToCheck);
@@ -104,6 +104,29 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Check if the CompatiblePSEditions field of a given module
+        /// declares compatibility with the running PowerShell edition.
+        /// </summary>
+        /// <param name="moduleManifestPath">The path to the module manifest being checked.</param>
+        /// <param name="compatiblePSEditions">The value of the CompatiblePSEditions field of the module manifest.</param>
+        /// <returns>True if the module is compatible with the running PowerShell edition, false otherwise.</returns>
+        internal static bool IsPSEditionCompatible(
+            string moduleManifestPath,
+            IEnumerable<string> compatiblePSEditions)
+        {
+#if UNIX
+            return true;
+#else
+            if (!ModuleUtils.IsOnSystem32ModulePath(moduleManifestPath))
+            {
+                return true;
+            }
+
+            return Utils.IsPSEditionSupported(compatiblePSEditions);
+#endif
         }
 
         internal static IEnumerable<string> GetDefaultAvailableModuleFiles(bool isForAutoDiscovery, ExecutionContext context)
@@ -344,6 +367,18 @@ namespace System.Management.Automation.Internal
             return false;
         }
 
+        internal static bool IsOnSystem32ModulePath(string path)
+        {
+#if UNIX
+            return false;
+#else
+            Dbg.Assert(!String.IsNullOrEmpty(path), $"Caller to verify that {nameof(path)} is not null or empty");
+
+            string windowsPowerShellPSHomePath = ModuleIntrinsics.GetWindowsPowerShellPSHomeModulePath();
+            return path.StartsWith(windowsPowerShellPSHomePath, StringComparison.OrdinalIgnoreCase);
+#endif
+        }
+
         /// <summary>
         /// Gets a list of matching commands
         /// </summary>
@@ -371,7 +406,7 @@ namespace System.Management.Automation.Internal
                 {
                     // Skip modules that have already been loaded so that we don't expose private commands.
                     string moduleName = Path.GetFileNameWithoutExtension(modulePath);
-                    var modules = context.Modules.GetExactMatchModules(moduleName, all: false, exactMatch: true);
+                    List<PSModuleInfo> modules = context.Modules.GetExactMatchModules(moduleName, all: false, exactMatch: true);
                     PSModuleInfo tempModuleInfo = null;
 
                     if (modules.Count != 0)
@@ -387,10 +422,10 @@ namespace System.Management.Automation.Internal
                         if (modules.Count == 1)
                         {
                             PSModuleInfo psModule = modules[0];
-                            tempModuleInfo = new PSModuleInfo(psModule.Name, psModule.Path, null, null);
+                            tempModuleInfo = new PSModuleInfo(psModule.Name, psModule.Path, context: null, sessionState: null);
                             tempModuleInfo.SetModuleBase(psModule.ModuleBase);
 
-                            foreach (var entry in psModule.ExportedCommands)
+                            foreach (KeyValuePair<string, CommandInfo> entry in psModule.ExportedCommands)
                             {
                                 if (commandPattern.IsMatch(entry.Value.Name))
                                 {
@@ -398,7 +433,7 @@ namespace System.Management.Automation.Internal
                                     switch (entry.Value.CommandType)
                                     {
                                         case CommandTypes.Alias:
-                                            current = new AliasInfo(entry.Value.Name, null, context);
+                                            current = new AliasInfo(entry.Value.Name, definition: null, context);
                                             break;
                                         case CommandTypes.Function:
                                             current = new FunctionInfo(entry.Value.Name, ScriptBlock.EmptyScriptBlock, context);
@@ -410,7 +445,7 @@ namespace System.Management.Automation.Internal
                                             current = new ConfigurationInfo(entry.Value.Name, ScriptBlock.EmptyScriptBlock, context);
                                             break;
                                         case CommandTypes.Cmdlet:
-                                            current = new CmdletInfo(entry.Value.Name, null, null, null, context);
+                                            current = new CmdletInfo(entry.Value.Name, implementingType: null, helpFile: null, PSSnapin: null, context);
                                             break;
                                         default:
                                             Dbg.Assert(false, "cannot be hit");
@@ -427,11 +462,12 @@ namespace System.Management.Automation.Internal
                     }
 
                     string moduleShortName = System.IO.Path.GetFileNameWithoutExtension(modulePath);
-                    var exportedCommands = AnalysisCache.GetExportedCommands(modulePath, false, context);
+
+                    IDictionary<string, CommandTypes> exportedCommands = AnalysisCache.GetExportedCommands(modulePath, testOnly: false, context);
 
                     if (exportedCommands == null) { continue; }
 
-                    tempModuleInfo = new PSModuleInfo(moduleShortName, modulePath, null, null);
+                    tempModuleInfo = new PSModuleInfo(moduleShortName, modulePath, sessionState: null, context: null);
                     if (InitialSessionState.IsEngineModule(moduleShortName))
                     {
                         tempModuleInfo.SetModuleBase(Utils.DefaultPowerShellAppBase);
@@ -444,10 +480,10 @@ namespace System.Management.Automation.Internal
                         tempModuleInfo.SetGuid(ModuleIntrinsics.GetManifestGuid(modulePath));
                     }
 
-                    foreach (var pair in exportedCommands)
+                    foreach (KeyValuePair<string, CommandTypes> pair in exportedCommands)
                     {
-                        var commandName = pair.Key;
-                        var commandTypes = pair.Value;
+                        string commandName = pair.Key;
+                        CommandTypes commandTypes = pair.Value;
 
                         if (commandPattern.IsMatch(commandName))
                         {

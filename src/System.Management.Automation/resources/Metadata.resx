@@ -243,4 +243,10 @@
   <data name="ValidateDrivePathNoRoot" xml:space="preserve">
     <value>The path argument has no root drive.  Supply a full path argument with a root drive.</value>
   </data>
+  <data name="ArgumentNullOrEmpty" xml:space="preserve">
+    <value>The argument value for the parameter '{0}' cannot be null or an empty string.</value>
+  </data>
+  <data name="InvalidEnumArgument" xml:space="preserve">
+    <value>The Enum member '{0}' is not a valid value for the parameter '{1}'. Specify one of the following members and try again: {2}.</value>
+  </data>
 </root>

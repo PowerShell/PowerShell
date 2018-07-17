@@ -1756,13 +1756,15 @@ namespace System.Management.Automation
             {
                 PropertyInfo[] propertyInfos = attributeType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
                 List<CompletionResult> result = new List<CompletionResult>();
-                foreach (PropertyInfo pro in propertyInfos)
+                foreach (PropertyInfo property in propertyInfos)
                 {
-                    //Ignore TypeId (all attributes inherit it)
-                    if (pro.Name != "TypeId" && (pro.Name.StartsWith(argName, StringComparison.OrdinalIgnoreCase)))
+                    // Ignore getter-only properties, including 'TypeId' (all attributes inherit it).
+                    if (!property.CanWrite) { continue; }
+
+                    if (property.Name.StartsWith(argName, StringComparison.OrdinalIgnoreCase))
                     {
-                        result.Add(new CompletionResult(pro.Name, pro.Name, CompletionResultType.Property,
-                            pro.PropertyType.ToString() + " " + pro.Name));
+                        result.Add(new CompletionResult(property.Name, property.Name, CompletionResultType.Property,
+                            property.PropertyType.ToString() + " " + property.Name));
                     }
                 }
                 return result;

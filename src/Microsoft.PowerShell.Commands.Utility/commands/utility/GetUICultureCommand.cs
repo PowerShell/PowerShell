@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GetUICultureCommand : PSCmdlet
     {
         /// <summary>
-        /// Output the current UI Culture info object
+        /// Output the current UI Culture info object.
         /// </summary>
         protected override void BeginProcessing()
         {

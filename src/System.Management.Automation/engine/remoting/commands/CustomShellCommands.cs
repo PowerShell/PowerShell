@@ -1517,8 +1517,6 @@ else
         internal static string GetWinrmPluginShellName()
         {
             // PowerShell Core uses a versioned directory to hold the plugin
-            // TODO: This should be PSVersionInfo.PSVersionName once we get
-            // closer to release. Right now it doesn't support alpha versions.
             return System.String.Concat("PowerShell.", PSVersionInfo.GitCommitId);
         }
 
@@ -1529,8 +1527,6 @@ else
         internal static string GetWinrmPluginDllPath()
         {
             // PowerShell Core uses its versioned directory instead of system32
-            // TODO: This should be PSVersionInfo.PSVersionName once we get
-            // closer to release. Right now it doesn't support alpha versions.
             string pluginDllDirectory =  System.IO.Path.Combine("%windir%\\system32\\PowerShell", PSVersionInfo.GitCommitId);
             return System.IO.Path.Combine(pluginDllDirectory, RemotingConstants.PSPluginDLLName);
         }
@@ -4888,6 +4884,12 @@ param(
             $dotPos = $powershellVersionMajor.IndexOf(""."")
             if ($dotPos -ne -1) {{
                 $powershellVersionMajor = $powershellVersionMajor.Substring(0, $dotPos)
+            }}
+            # If we are running a Preview version, we don't want to clobber the generic PowerShell.6 endpoint
+            # but instead create a PowerShell.6-Preview endpoint
+            if ($PSVersionTable.PSVersion.PreReleaseLabel)
+            {{
+                $powershellVersionMajor += ""-preview""
             }}
             Register-EndpointIfNotPresent -Name (""PowerShell."" + $powershellVersionMajor) $Force $queryForRegisterDefault $captionForRegisterDefault
 

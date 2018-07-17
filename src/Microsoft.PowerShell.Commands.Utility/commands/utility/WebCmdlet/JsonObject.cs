@@ -19,7 +19,7 @@ using System.Reflection;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// JsonObject class
+    /// JsonObject class.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public static class JsonObject

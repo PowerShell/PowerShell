@@ -301,7 +301,7 @@ namespace System.Management.Automation
                     ExecutionContext.EngineHostInterface,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PSHostDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $HOME - indicate where a user's home directory is located in the file system.
             //    -- %USERPROFILE% on windows
@@ -311,28 +311,28 @@ namespace System.Management.Automation
                     home,
                     ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope,
                     RunspaceInit.HOMEDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $ExecutionContext
             v = new PSVariable(SpecialVariables.ExecutionContext,
                     ExecutionContext.EngineIntrinsics,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.ExecutionContextDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSVersionTable
             v = new PSVariable(SpecialVariables.PSVersionTable,
                     PSVersionInfo.GetPSVersionTable(),
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PSVersionTableDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSEdition
             v = new PSVariable(SpecialVariables.PSEdition,
                     PSVersionInfo.PSEditionValue,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PSEditionDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PID
             Process currentProcess = Process.GetCurrentProcess();
@@ -341,15 +341,15 @@ namespace System.Management.Automation
                     currentProcess.Id,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PIDDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSCulture
             v = new PSCultureVariable();
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSUICulture
             v = new PSUICultureVariable();
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $?
             v = new QuestionMarkVariable(this.ExecutionContext);
@@ -360,15 +360,21 @@ namespace System.Management.Automation
             v = new PSVariable(SpecialVariables.ShellId, shellId,
                    ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.MshShellIdDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSHOME
             string applicationBase = Utils.DefaultPowerShellAppBase;
             v = new PSVariable(SpecialVariables.PSHome, applicationBase,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PSHOMEDescription);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            // $EnabledExperimentalFeatures
+            v = new PSVariable(SpecialVariables.EnabledExperimentalFeatures,
+                               ExperimentalFeature.EnabledExperimentalFeatureNames,
+                               ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
+                               RunspaceInit.EnabledExperimentalFeatures);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
         }
 
         /// <summary>

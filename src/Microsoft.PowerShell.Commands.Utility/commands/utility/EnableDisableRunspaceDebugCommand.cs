@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     #region PSRunspaceDebug class
 
     /// <summary>
-    /// Runspace Debug Options class
+    /// Runspace Debug Options class.
     /// </summary>
     public sealed class PSRunspaceDebug
     {
@@ -98,27 +98,27 @@ namespace Microsoft.PowerShell.Commands
         #region Strings
 
         /// <summary>
-        /// RunspaceParameterSet
+        /// RunspaceParameterSet.
         /// </summary>
         protected const string RunspaceParameterSet = "RunspaceParameterSet";
 
         /// <summary>
-        /// RunspaceNameParameterSet
+        /// RunspaceNameParameterSet.
         /// </summary>
         protected const string RunspaceNameParameterSet = "RunspaceNameParameterSet";
 
         /// <summary>
-        /// RunspaceIdParameterSet
+        /// RunspaceIdParameterSet.
         /// </summary>
         protected const string RunspaceIdParameterSet = "RunspaceIdParameterSet";
 
         /// <summary>
-        /// RunspaceInstanceIdParameterSet
+        /// RunspaceInstanceIdParameterSet.
         /// </summary>
         protected const string RunspaceInstanceIdParameterSet = "RunspaceInstanceIdParameterSet";
 
         /// <summary>
-        /// ProcessNameParameterSet
+        /// ProcessNameParameterSet.
         /// </summary>
         protected const string ProcessNameParameterSet = "ProcessNameParameterSet";
 
@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Runspace Name
+        /// Runspace Name.
         /// </summary>
         [Parameter(Position = 0,
                    ParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet)]
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Runspace
+        /// Runspace.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Runspace Id
+        /// Runspace Id.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
         /// <summary>
-        /// RunspaceInstanceId
+        /// RunspaceInstanceId.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns Runspace Debugger
+        /// Returns Runspace Debugger.
         /// </summary>
         /// <param name="runspace">Runspace</param>
         /// <returns>Debugger</returns>
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Process Record
+        /// Process Record.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -434,7 +434,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Process Record
+        /// Process Record.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -491,7 +491,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Process Record
+        /// Process Record.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -529,7 +529,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// EndProcessing
+        /// EndProcessing.
         /// </summary>
         protected override void EndProcessing()
         {
