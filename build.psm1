@@ -1858,16 +1858,25 @@ function Publish-NuGetFeed
 }
 
 function Start-DevPowerShell {
+    [CmdletBinding(DefaultParameterSetName='ConfigurationParamSet')]
     param(
-        [string[]]$ArgumentList = '',
+        [string[]]$ArgumentList = @(),
         [switch]$LoadProfile,
-        [string]$binDir = (Split-Path (New-PSOptions).Output),
+        [Parameter(ParameterSetName='ConfigurationParamSet')]
+        [ValidateSet("Debug", "Release", "CodeCoverage", '')] # should match New-PSOptions -Configuration values
+        [string]$Configuration,
+        [Parameter(ParameterSetName='BinDirParamSet')]
+        [string]$binDir,
         [switch]$NoNewWindow,
         [string]$Command,
         [switch]$KeepPSModulePath
     )
 
     try {
+        if (-not $binDir) {
+            $binDir = Split-Path (New-PSOptions -Configuration $Configuration).Output
+        }
+
         if ((-not $NoNewWindow) -and ($Environment.IsCoreCLR)) {
             Write-Warning "Start-DevPowerShell -NoNewWindow is currently implied in PowerShellCore edition https://github.com/PowerShell/PowerShell/issues/1543"
             $NoNewWindow = $true
@@ -1890,10 +1899,14 @@ function Start-DevPowerShell {
 
         $env:DEVPATH = $binDir
 
+
         # splatting for the win
         $startProcessArgs = @{
             FilePath = "$binDir\pwsh"
-            ArgumentList = "$ArgumentList"
+        }
+
+        if ($ArgumentList) {
+            $startProcessArgs.ArgumentList = $ArgumentList
         }
 
         if ($NoNewWindow) {
