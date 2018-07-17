@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// One time initialization: acquire a screen host interface
+        /// One-time initialization: acquire a screen host interface
         /// by creating one on top of a stream.
         /// </summary>
         private LineOutput InstantiateLineOutputInterface()
