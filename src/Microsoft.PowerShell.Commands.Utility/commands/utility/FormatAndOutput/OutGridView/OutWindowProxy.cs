@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Implements IDisposable logic
+        /// Implements IDisposable logic.
         /// </summary>
         /// <param name="isDisposing">true if being called from Dispose</param>
         private void Dispose(bool isDisposing)
@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose method in IDisposable
+        /// Dispose method in IDisposable.
         /// </summary>
         public void Dispose()
         {
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         /// Return the selected item of the OutGridView.
         /// </summary>
         /// <returns>
-        /// The selected item
+        /// The selected item.
         /// </returns>
         internal List<PSObject> GetSelectedItems()
         {

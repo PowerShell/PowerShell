@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the delimiter that separates the values
+        /// Gets or sets the delimiter that separates the values.
         /// </summary>
         ///
         internal char Delimiter { get; } = ',';
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         /// <param name="csv">
-        /// String to be parsed
+        /// String to be parsed.
         /// </param>
         ///
         internal Collection<string> ParseCsv(string csv)

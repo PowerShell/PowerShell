@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GetCultureCommand : PSCmdlet
     {
         /// <summary>
-        /// Output the current Culture info object
+        /// Output the current Culture info object.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -21,4 +21,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

@@ -20,13 +20,13 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// implementation for the out-file command
+    /// Implementation for the out-file command.
     /// </summary>
     [Cmdlet(VerbsData.Out, "File", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113363")]
     public class OutFileCommand : FrontEndCommandBase
     {
         /// <summary>
-        /// set inner command
+        /// Set inner command.
         /// </summary>
         public OutFileCommand()
         {
@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Parameters
 
         /// <summary>
-        /// mandatory file name to write to
+        /// Mandatory file name to write to.
         /// </summary>
         [Alias("Path")]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         private string _fileName;
 
         /// <summary>
-        /// mandatory file name to write to
+        /// Mandatory file name to write to.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
         [Alias("PSPath","LP")]
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Encoding optional flag
+        /// Encoding optional flag.
         /// </summary>
         ///
         [Parameter(Position = 1)]
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _noclobber;
 
         /// <summary>
-        /// optional, number of columns to use when writing to device
+        /// Optional, number of columns to use when writing to device.
         /// </summary>
         [ValidateRangeAttribute(2, int.MaxValue)]
         [Parameter]
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
-        /// read command line parameters
+        /// Read command line parameters.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -176,11 +176,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// one time initialization: acquire a screen host interface
-        /// by creating one on top of a file
+        /// One-time initialization: acquire a screen host interface
+        /// by creating one on top of a file.
         /// NOTICE: we assume that at this time the file name is
         /// available in the CRO. JonN recommends: file name has to be
-        /// a MANDATORY parameter on the command line
+        /// a MANDATORY parameter on the command line.
         /// </summary>
         private LineOutput InstantiateLineOutputInterface()
         {
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// execution entry point
+        /// Execution entry point.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// execution entry point
+        /// Execution entry point.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
+        /// InternalDispose.
         /// </summary>
         protected override void InternalDispose()
         {
@@ -293,12 +293,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// handle to file stream
+        /// Handle to file stream.
         /// </summary>
         private FileStream _fs;
 
         /// <summary>
-        /// stream writer used to write to file
+        /// Stream writer used to write to file.
         /// </summary>
         private StreamWriter _sw = null;
 
@@ -314,9 +314,8 @@ namespace Microsoft.PowerShell.Commands
         private bool _processRecordExecuted = false;
 
         /// <summary>
-        /// FileInfo of file to clear read-only flag when operation is complete
+        /// FileInfo of file to clear read-only flag when operation is complete.
         /// </summary>
         private FileInfo _readOnlyFileInfo = null;
     }
 }
-

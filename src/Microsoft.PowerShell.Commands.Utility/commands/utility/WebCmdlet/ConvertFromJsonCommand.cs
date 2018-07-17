@@ -9,8 +9,8 @@ using System.Reflection;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The ConvertFrom-Json command
-    /// This command convert a Json string representation to a JsonObject
+    /// The ConvertFrom-Json command.
+    /// This command converts a Json string representation to a JsonObject.
     /// </summary>
     [Cmdlet(VerbsData.ConvertFrom, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217031", RemotingCapability = RemotingCapability.None)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]

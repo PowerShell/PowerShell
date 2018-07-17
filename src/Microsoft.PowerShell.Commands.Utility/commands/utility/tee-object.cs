@@ -8,13 +8,13 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Class for Tee-object implementation
+    /// Class for Tee-object implementation.
     /// </summary>
     [Cmdlet("Tee", "Object", DefaultParameterSetName = "File", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113417")]
     public sealed class TeeObjectCommand : PSCmdlet, IDisposable
     {
         /// <summary>
-        /// object to process
+        /// Object to process.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject
@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         private PSObject _inputObject;
 
         /// <summary>
-        /// FilePath parameter
+        /// FilePath parameter.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "File")]
         [Alias("Path")]
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         private string _fileName;
 
         /// <summary>
-        /// Literal FilePath parameter
+        /// Literal FilePath parameter.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralFile")]
         [Alias("PSPath","LP")]
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Append switch
+        /// Append switch.
         /// </summary>
         [Parameter(ParameterSetName = "File")]
         public SwitchParameter Append
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _append;
 
         /// <summary>
-        /// Variable parameter
+        /// Variable parameter.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Variable")]
         public string Variable
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose method in IDisposable
+        /// Dispose method in IDisposable.
         /// </summary>
         public void Dispose()
         {
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Finalizer
+        /// Finalizer.
         /// </summary>
         ~TeeObjectCommand()
         {
@@ -154,4 +154,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion private
     }
 }
-

@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Sort unsorted OrderByPropertyEntry data using a full sort
+        /// Sort unsorted OrderByPropertyEntry data using a full sort.
         /// </summary>
         private int FullSort(List<OrderByPropertyEntry> dataToSort, OrderByPropertyComparer comparer)
         {
@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Sort unsorted OrderByPropertyEntry data using an indexed min-/max-heap sort
+        /// Sort unsorted OrderByPropertyEntry data using an indexed min-/max-heap sort.
         /// </summary>
         private int Heapify(List<OrderByPropertyEntry> dataToSort, OrderByPropertyComparer orderByPropertyComparer)
         {

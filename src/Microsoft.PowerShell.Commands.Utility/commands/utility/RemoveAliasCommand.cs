@@ -24,8 +24,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name { get; set; }
 
         /// <summary>
-        /// The scope parameter for the command determines
-        /// which scope the alias is removed from.
+        /// The scope parameter for the command determines which scope the alias is removed from.
         /// </summary>
         [Parameter]
         public string Scope { get; set; }
