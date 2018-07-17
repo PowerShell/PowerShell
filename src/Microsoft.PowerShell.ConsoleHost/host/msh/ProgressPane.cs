@@ -101,8 +101,6 @@ namespace Microsoft.PowerShell
                 int scrollRows = rows - ((_rawui.BufferSize.Height - 1) - _location.Y);
                 if (scrollRows > 0)
                 {
-                    // The following can be possibly replaced by Console.Write ("\x1b[" + scrollRows + "S");
-                    // For details, see https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
                     // Scroll the console screen up by 'scrollRows'
                     var bottomLocation = _location;
                     bottomLocation.Y = _rawui.BufferSize.Height;
