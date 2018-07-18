@@ -73,7 +73,14 @@ namespace Microsoft.PowerShell.Commands
                     // we just continue the deserialization.
                 }
 
-                obj = JsonConvert.DeserializeObject(input, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 });
+                obj = JsonConvert.DeserializeObject(
+                    input,
+                    new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.None,
+                        MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+                        MaxDepth = 1024
+                    });
 
                 // JObject is a IDictionary
                 var dictionary = obj as JObject;
