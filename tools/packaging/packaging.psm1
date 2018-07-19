@@ -1412,8 +1412,8 @@ function New-UnifiedNugetPackage
         [Parameter(Mandatory = $true)]
         [string] $LinuxArm32BinPath,
 
-        [Parameter(Mandatory = $true)]
-        [string] $LinuxMuslPath,
+        [Parameter(Mandatory = $false)]
+        [string] $LinuxMuslBinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $LinuxBinPath,
@@ -1480,7 +1480,12 @@ function New-UnifiedNugetPackage
             if ($linuxExceptionList -notcontains $file )
             {
                 CreateNugetPlatformFolder -Platform 'linux-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxArm32BinPath
-                CreateNugetPlatformFolder -Platform 'linux-musl-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxMuslBinPath
+
+                if($linuxMuslBinPath)
+                {
+                    CreateNugetPlatformFolder -Platform 'linux-musl-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxMuslBinPath
+                }
+
                 CreateNugetPlatformFolder -Platform 'linux-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxBinPath
                 CreateNugetPlatformFolder -Platform 'osx' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $osxBinPath
             }
