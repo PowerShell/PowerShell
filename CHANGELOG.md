@@ -1,5 +1,25 @@
 # Changelog
 
+## v6.0.3 - 2018-07-19
+
+### Build and Packaging Improvements
+
+- Remove `PackageManagement` installed by `PowerShellGet` and pin `PackageManagement` to `1.1.7.0` to maintain the ability to patch
+- Pin `PowerShellGet` to `1.6.0` to maintain the ability to patch MSI installs
+- Update NuGet package references to the latest and get fix for CVE-2018-8356
+- Enable NuGet Package Registration for compliance (#7053)
+    - Restore when building test projects
+- Update to DotNet Runtime Framework `2.0.8`
+- Specify the runtime when running 'dotnet restore' in 'Start-PSBuild' (#6345)
+- Update version of `fpm` to resolve issues installing
+- MSI: Update path with proper value (#6441)
+- MSI: Remove the version from the product name (#6415)
+- Migrate the macOS official binary build to VSTS mac hosted preview (#6363)
+
+### Test
+
+- Get newer xUnit Skippable Fact Package
+
 ## v6.0.2 - 2018-03-15
 
 ### Engine updates and fixes
