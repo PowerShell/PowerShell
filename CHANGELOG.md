@@ -1,5 +1,123 @@
 # Changelog
 
+## v6.1.0-preview.4 - 2018-07-19
+
+### Breaking Changes
+
+- Remove the `VisualBasic` support from Add-Type (#7284)
+- Update PowerShell Direct to try `pwsh` then fallback to `powershell` (#7241)
+- Make pwsh able to start in a directory with wildcards in the name (#7240)
+- Update `Enable-PSRemoting` so configuration name is unique for Preview releases (#7202)
+- Enforce the `CompatiblePSEditions` check for modules from the legacy `System32` module path (#7183)
+
+### Engine Updates and Fixes
+
+- Add support to experimental features (#7242)
+- Fix error when using `Get-ChildItem c:` (#7033) (Thanks @sethvs!)
+- Add location history for `Set-Location` to enable `cd -` scenario (issue #2188) (#5051) (Thanks @bergmeister!)
+- Fix padding for right aligned column in table formatting (#7136)
+- Fix a performance regression to the `-replace` operator after adding `ScriptBlock` support (#7135)
+- Fix tab expansion for `Get-Process` on macOS (#7176)
+- When using PSRP, if we receive text instead of XML, output it as error to help troubleshoot (#7168)
+- Fix trimming of whitespace when table is wrapped (#7184)
+- Modified the `Group-Object -AsHashTable` to use the base object of `PSObject` as the key for the `Hashtable` (#7123)
+- Add back ADSI and WMI type accelerators (#7085)
+- Add `CompatiblePSEditions` to PowerShell Core built-in modules (#7083)
+- Make `Start-Process -ArgumentList` to accept `@()` or `$null` (#6597)
+- Avoid calling native APIs to check for existence of FileSystem items (#6929) (Thanks @iSazonov!)
+- Add copy environment variables from `ProcessStartInfo` to key/pair array used in creating SSH process (#7070)
+- Add markdown rendering feature assemblies to the trusted assembly list (#7280)
+- Don't fail if `SaferPolicy` API is not available on Windows 10 IoT or NanoServer (#7075)
+- Fix conditions for transcription of `Write-Information` command. (#6917) (Thanks @hubuk!)
+- Fix a parsing error when `break` and `continue` are used in a switch statement in a finally block (#7273)
+- Fix prompt string to be platform agnostic and keep its trailing spaces (#7255)
+- Make progress panel display correctly on UNIX when the user is typing. (#6972)
+- Revert change to have `SetLocation()` treat wildcarded path as literal if it exists (#7101)
+- Make `Select-Object`/`ForEach-Object`/`Where-Object` see dynamic properties (#6898) (Thanks @jazzdelightsme!)
+- Fix class searcher to ignore hidden properties (#7188)
+- Update remote prompt when using SSH to show username if different (#7191)
+- Remove `SemanticVersion` from `knowntypes` list in serialization code to enable interop between Windows PowerShell and PowerShell Core (#7016)
+- Add more information to job process failure error (#7251)
+- Use .Net Core `File.Delete()` method to remove symbolic links and alternate streams (#7017) (Thanks @iSazonov!)
+- Enable `UseShellExecute` on all platforms (#7198)
+- Methods with return type `[object]` should return `null` for an empty result (#7138)
+
+### General Cmdlet Updates and Fixes
+
+- Add Markdown rendering cmdlets (#6926)
+- `Send-MailMessage`: Update all parameters to support `ValueFromPipelineByPropertyName`. (#6911) (Thanks @sethvs!)
+- Allow Basic Auth over HTTPS (#6890)
+- Add `ThreadJob` module package and tests (#7169)
+- Fix Windows Event Log channel isolation semantics (#6956) (Thanks @Robo210!)
+- Make `Measure-Object` handle `scriptblock` properties. (#6934)
+- Added functionality to retry in `Invoke-RestMethod` and `Invoke-WebRequest`. (#5760)
+- Add type inference for `Select-Object` command (#7171) (Thanks @powercode!)
+- Add `-AllStats` Switch parameter for `Measure-Object` cmdlet (#7220) (Thanks @kvprasoon!)
+
+### Code Cleanup
+
+- Remove unneeded code that forces ARM platforms to run PowerShell in CL mode (#7046)
+- Bulk update code base to put `null` on the right-hand-side of a comparison expression (#6949) (Thanks @iSazonov!)
+- Remove `MapSecurityZoneWithUrlmon` method and related code (#7103)
+- Cleanup: remove the unneeded type `RemotingCommandUtils` (#7029)
+- Remove unneeded "Windows-Full" modules (#7030)
+- CodeFactor code style cleanup: replace literal empty strings with `string.Empty` (#6950) (Thanks @iSazonov!)
+- Remove dummy comments in Utility module files (#7224) (Thanks @iSazonov!)
+- Use empty array for Functions/Cmdlets/`AliasesToExport` to follow the best practice (#7108)
+- Refactor module code related to `Get-Module -ListAvailable` (#7145)
+- Refactor module specification logic (#7126)
+
+### Test
+
+- Add tests for module specifications (#7140)
+- Update test string for better clarity in `Send-MailMessage.Tests.ps1` (#7195) (Thanks @sethvs!)
+- Add test to verify filesystem provider isn't used when accessing root path in `PSDrive` (#7173)
+- Fix to address `ThreadJob` tests reliability and speed (#7270)
+- Add additional checks for test that passes inconsistently (#7051)
+
+### Build and Packaging Improvements
+
+- `install-powershell.sh` filter pre-releases (when available), `params` documentation (#6849) (Thanks @DarwinJS!)
+- Fedora 28 was released, Fedora 26 and 25 went end of life. (#7079) (Thanks @adelton!)
+- Disambiguate icon on Windows for preview builds/installers to use `Powershell_av_colors` and
+  make daily build use `Powershell_avatar` instead (#7086) (Thanks @bergmeister!)
+- Update to build for Alpine (#7139)
+- Update build and packaging modules for Alpine (#7149)
+- Add ability to install previews side-by-side with production releases (#7194) (Thanks @DarwinJS!)
+- Enable NuGet Package Registration for compliance (#7053)
+- Fix the preview macOS package link (#7061)
+- Remove PSReadLine from then `PowerShell.sln` file (#7137)
+- Fix the file `PowerShell.sln` that was corrupted by accident (#7288)
+- Fix the encoding of `PowerShell.sln` to be `utf-8` (#7289)
+- Make sure all references to the Package ID for previews packages is powershell-preview (#7066)
+- Update `internals.md` with the latest build changes (#7058)
+- When installing using MSI, set the working directory of the shortcut to the user home directory (#7072)
+- Move to dotnet core 2.1.1 (#7161) (Thanks @iSazonov!)
+- Update to latest package references, runtime framework, and SDK (#7272)
+- AppVeyor build matrix: more efficient build job split to reduce total time by another 5 minutes (#7021) (Thanks @bergmeister!)
+- Build: Fix the source location of `PowerShell.Core.Instrumentation.dll` (#7226)
+- Add Andrew to the default reviewers of the build related files (#7019)
+- Build: Fix a check to avoid null argument in case `vcvarsall.bat` is absent (#7218) (Thanks @PetSerAl!)
+- Update `releaseTag` in `tools/metadata.json` (#7214)
+- Update `Start-PSPester` to make it more user friendly (#7210) (Thanks @bergmeister!)
+- Make `Start-PSBuild -Clean` not prompt due to locked files when Visual Studio is open by excluding `sqlite3` folder and use `-x` instead of `-X` option on `git clean` (#7235) (Thanks @bergmeister!)
+
+### Documentation and Help Content
+
+- Fix typos in `DOCSMIGRATION.md` (#7094) (Thanks @alexandair!)
+- Add instructions to update Homebrew formula for the preview version PowerShell (#7067) (Thanks @vors!)
+- Merge Third Party Notices and License updates (#7203)
+- Update third party notices (#7042)
+- Fix Markdown and spelling errors in `CHANGELOG.md` (#7064)
+- Fix `New-TemporaryFile` online help URI (#6608)
+- Fix links to PowerShell install docs (#7001) (Thanks @jokajak!)
+- Update links that contain `en-us` culture (#7013) (Thanks @bergmeister!)
+- Update docs for `ArgumentCompleterAttribute` class (#7227) (Thanks @Meir017!)
+- Fix the name of a `Register-EngineEvent` test (#7222) (Thanks @alexjordan6!)
+- Update README files for native code for migration (#7248)
+- Comment about dynamic members for the `DotNetAdapter`, `GetMember` and `GetMembers` (#7087)
+- Update the PowerShell executable location in building guide docs (#7205) (Thanks @louistio!)
+
 ## v6.1.0-preview.3 - 2018-06-07
 
 ### Breaking Changes
