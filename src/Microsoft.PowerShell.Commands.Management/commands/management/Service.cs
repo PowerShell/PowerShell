@@ -1533,15 +1533,6 @@ namespace Microsoft.PowerShell.Commands
         internal string serviceStatus = null;
 
         /// <summary>
-        /// The following is the definition of the input parameter "Force".
-        /// This parameter is useful only when parameter "Stop" is enabled.
-        /// If "Force" is enabled, it will also stop the dependent services.
-        /// If not, it will send an error when this service has dependent ones.
-        /// </summary>
-        [Parameter]
-        public SwitchParameter Force { get; set; }
-
-        /// <summary>
         /// This is not a parameter for this cmdlet.
         /// </summary>
         //This has been shadowed from base class and removed parameter tag to fix gcm "Set-Service" -syntax
@@ -1791,14 +1782,14 @@ namespace Microsoft.PowerShell.Commands
                                 // Check for the dependent services
                                 ServiceController[] dependentServices = service.DependentServices;
 
-                                if ((!Force) && (dependentServices != null) && (dependentServices.Length > 0))
+                                if ((dependentServices != null) && (dependentServices.Length > 0))
                                 {
                                     WriteNonTerminatingError(service, null, "ServiceHasDependentServicesNoForce", ServiceResources.ServiceHasDependentServicesNoForce, ErrorCategory.InvalidOperation);
                                     return;
                                 }
 
                                 // Stop service, pass 'true' to the force parameter as we have already checked for the dependent services.
-                                DoStopService(service, Force, waitForServiceToStop: true);
+                                DoStopService(service, force: true, waitForServiceToStop: true);
                             }
                         }
                         else if (Status.Equals("Paused", StringComparison.CurrentCultureIgnoreCase))
