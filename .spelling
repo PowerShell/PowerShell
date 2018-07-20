@@ -962,6 +962,7 @@ opencode
 pkg
 tgz
 UserVoice
+Snapcraft
 #endregion
 
 #region src/libpsl-native/README.md Overrides
