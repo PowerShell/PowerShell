@@ -1,5 +1,10 @@
 # Maintainer Best Practices
 
+## PR Types
+
+- Feature-work PR: A PR that implements an RFC, which usually involves relatively large set of changes.
+- Regular PR: A bug fix or an enhancement change that are not backed by an RFC.
+
 ## Review PRs
 
 - Ask the author to reword the PR title based on guidelines in [Contributing](../../.github/CONTRIBUTING.md).
@@ -11,10 +16,17 @@
 ## Merge PRs
 
 - Use `Squash and merge` by default to keep clean commit history in Master branch.
-- Use `Create a merge commit` for feature PRs **only if** the commit history of the PR is reasonably clean.
+
+  ![Squash-Merge](./Images/Squash-Merge.JPG) ![Squash-Confirm](./Images/Squash-Confirm.JPG)
+
+- Use `Create a merge commit` for feature-work PRs **only if** the commit history of the PR is reasonably clean.
   After using this option, Github will make it your default option for merging a PR.
   So, do remember to change the default back to `Squash and merge`.
+
+  ![Merge-Commit](./Images/Merge-Commit.JPG) ![Merge-Commit-Confirm](./Images/Merge-Commit-Confirm.JPG)
+
 - Avoid `Rebase and merge` unless you have a strong argument for using it.
+
 - Before clicking `Confirm squash and merge` or `Confirm merge`,
   make sure you run through the following steps:
   1. The commit title should be a concise summary of the PR.
@@ -24,7 +36,7 @@
      - When merging with the `Squash and merge` option,
        the PR title will be used as the commit title by default.
        **Reword the title as needed** to make sure it makes sense (can be used without change in `CHANGELOG.md`).
-  1. The commit description is required for feature PRs or PRs with breaking changes.
+  1. The commit description is required for feature-work PRs or regular PRs with breaking changes.
      For other PRs, it's not required but good to have based on the judgement of the maintainer.
      - If a PR introduces breaking changes,
        make sure you put the tag `[breaking change]` at the first line of the description,

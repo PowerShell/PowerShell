@@ -15,7 +15,7 @@ They have [write access](https://help.github.com/articles/repository-permission-
 - [Repository Maintainer Responsibilities](#repository-maintainer-responsibilities)
 - [Issue Management Process](#issue-management-process)
 - [Pull Request Workflow](#pull-request-workflow)
-  - [Abandoned Pull Requests](#abandoned-pull-requests)
+   - [Abandoned Pull Requests](#abandoned-pull-requests)
 - [Becoming a Repository Maintainer](#becoming-a-repository-maintainer)
 
 ## Current Repository Maintainers
