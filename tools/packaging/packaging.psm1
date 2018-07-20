@@ -1178,7 +1178,7 @@ function New-MacOSLauncher
 
     # Define folder for launcher application.
     $suffix = if ($IsPreview) { "-preview" }
-    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell$suffix.app"
+    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/PowerShell$suffix.app"
 
     # Create folder structure for launcher application.
     New-Item -Force -ItemType Directory -Path "$macosapp/Contents/MacOS" | Out-Null
