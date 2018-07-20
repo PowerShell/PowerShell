@@ -1779,7 +1779,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (!service.Status.Equals(ServiceControllerStatus.Stopped))
                             {
-                                // Check for the dependent services
+                                // Check for the dependent services as set-service dont have force parameter
                                 ServiceController[] dependentServices = service.DependentServices;
 
                                 if ((dependentServices != null) && (dependentServices.Length > 0))
