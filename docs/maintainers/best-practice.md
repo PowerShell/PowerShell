@@ -9,7 +9,7 @@
 
 - Ask the author to reword the PR title based on guidelines in [Contributing](../../.github/CONTRIBUTING.md).
 - Ask the author to apply `[Feature]` tag to trigger full test builds if it's necessary.
-- Label the PR with `Breaking-Change` and/or `Documentation Needed` as appropriate.
+- Label the PR with `Breaking-Change`, `Documentation Needed` and `Area-XXX` as appropriate.
 - When labelling a PR with `Review-Committee`, leave a detailed comment to summarize the issue you want the committee to look into.
   It's recommended to include examples to explain/demonstrate behaviors.
 
