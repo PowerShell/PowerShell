@@ -38,7 +38,7 @@ namespace mvc.Controllers
             }
             else if (type.ToUpper() == "NOWHITESPACE")
             {
-                whitespace = "";
+                whitespace = string.Empty;
             }
 
             var linkList = new List<String>();
@@ -108,7 +108,7 @@ namespace mvc.Controllers
 
         private string GetLink(string baseUri, int maxLinks, int linkNumber, string whitespace, string type, string rel)
         {
-            return String.Format(Constants.LinkUriTemplate, baseUri, maxLinks, linkNumber, type, whitespace, rel);
+            return string.Format(Constants.LinkUriTemplate, baseUri, maxLinks, linkNumber, type, whitespace, rel);
         }
     }
 }
