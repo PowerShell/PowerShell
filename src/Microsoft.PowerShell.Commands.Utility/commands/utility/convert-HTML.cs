@@ -417,7 +417,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!_fragment)
             {
-                if(!_transitional)
+                if (!_transitional)
                 {
                     WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
                 }
@@ -427,17 +427,19 @@ namespace Microsoft.PowerShell.Commands
                 }
                 WriteObject("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
                 WriteObject("<head>");
-                if(_charsetSpecified)
+                if (_charsetSpecified)
                 {
                     WriteObject("<meta charset=\"" + _charset + "\">");
                 }
-                if(_metaSpecified)
+                if (_metaSpecified)
                 {
                     List<string> useditems = new List<string>();
-                    foreach(string s in _meta.Keys)
+                    foreach (string s in _meta.Keys)
                     {
-                        if(!useditems.Contains(s)){
-                            switch(s.ToLower()){
+                        if (!useditems.Contains(s))
+                        {
+                            switch (s.ToLower())
+                            {
                                 case "content-type":
                                 case "default-style":
                                 case "x-ua-compatible":

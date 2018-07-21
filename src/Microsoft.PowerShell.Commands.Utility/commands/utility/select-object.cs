@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             private int _streamedObjectCount;
-            private int _first,_last,_skip,_skipLast;
+            private int _first, _last, _skip, _skipLast;
             private bool _firstOrLastSpecified;
         }
 
@@ -332,7 +332,7 @@ namespace Microsoft.PowerShell.Commands
                 // ExcludeProperty implies -Property * for better UX
                 if ((Property == null) || (Property.Length == 0))
                 {
-                    Property = new Object[]{"*"};
+                    Property = new Object[] { "*" };
                     _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
                 }
             }

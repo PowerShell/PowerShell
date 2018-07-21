@@ -710,6 +710,6 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        OrderByPropertyComparer _orderByPropertyComparer = null;
+        private OrderByPropertyComparer _orderByPropertyComparer = null;
     }
 }

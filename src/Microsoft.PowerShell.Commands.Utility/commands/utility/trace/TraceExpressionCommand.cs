@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter]
-        [Alias("PSPath","Path")]
+        [Alias("PSPath", "Path")]
         public string FilePath
         {
             get { return base.FileListener; }

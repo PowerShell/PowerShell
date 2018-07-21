@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         /// Mandatory file name to write to.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public string LiteralPath
         {
             get
@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
         /// Mandatory file name to read from.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] LiteralPath
         {
@@ -822,7 +822,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public String[] LiteralPath
         {
             get { return Path; }

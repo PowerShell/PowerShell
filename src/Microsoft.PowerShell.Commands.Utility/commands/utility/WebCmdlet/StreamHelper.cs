@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
         internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet)
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
-            if(cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume)
+            if (cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume)
             {
                 using (FileStream output = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
                 {
@@ -432,7 +432,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        static readonly Regex s_metaexp = new Regex(@"<meta\s[.\n]*[^><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]");
+        private static readonly Regex s_metaexp = new Regex(@"<meta\s[.\n]*[^><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]");
 
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
@@ -444,25 +444,28 @@ namespace Microsoft.PowerShell.Commands
                 isDefaultEncoding = true;
             }
 
-            string content = StreamToString (stream, encoding);
-            if (isDefaultEncoding) do
+            string content = StreamToString(stream, encoding);
+            if (isDefaultEncoding)
             {
-                // check for a charset attribute on the meta element to override the default.
-                Match match = s_metaexp.Match(content);
-                if (match.Success)
+                do
                 {
-                    Encoding localEncoding = null;
-                    string characterSet = match.Groups["charset"].Value;
-
-                    if (TryGetEncoding(characterSet, out localEncoding))
+                    // check for a charset attribute on the meta element to override the default.
+                    Match match = s_metaexp.Match(content);
+                    if (match.Success)
                     {
-                        stream.Seek(0, SeekOrigin.Begin);
-                        content = StreamToString(stream, localEncoding);
-                        // report the encoding used.
-                        encoding = localEncoding;
+                        Encoding localEncoding = null;
+                        string characterSet = match.Groups["charset"].Value;
+
+                        if (TryGetEncoding(characterSet, out localEncoding))
+                        {
+                            stream.Seek(0, SeekOrigin.Begin);
+                            content = StreamToString(stream, localEncoding);
+                            // report the encoding used.
+                            encoding = localEncoding;
+                        }
                     }
-                }
-            } while (false);
+                } while (false);
+            }
 
             return content;
         }

@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         /// Literal FilePath parameter.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralFile")]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public string LiteralPath
         {
             get

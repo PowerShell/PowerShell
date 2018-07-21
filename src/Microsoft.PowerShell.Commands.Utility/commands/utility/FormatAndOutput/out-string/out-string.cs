@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         /// FALSE: accumulate all the data, then write a single string.
         /// TRUE: write one line at the time.
         /// </summary>
-        [Parameter(ParameterSetName="StreamFormatting")]
+        [Parameter(ParameterSetName = "StreamFormatting")]
         public SwitchParameter Stream
         {
             get { return _stream; }
@@ -47,11 +47,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// False to add a newline to the end of the output string, true if not.
         /// </summary>
-        [Parameter(ParameterSetName="NoNewLineFormatting")]
+        [Parameter(ParameterSetName = "NoNewLineFormatting")]
         public SwitchParameter NoNewline
         {
             get { return _noNewLine; }
-            set { _noNewLine = value;}
+            set { _noNewLine = value; }
         }
 
         private bool _noNewLine = false;
