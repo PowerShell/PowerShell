@@ -20,14 +20,10 @@ They have [write access](https://help.github.com/articles/repository-permission-
 
 ## Current Repository Maintainers
 
-* Sergei Vorobev ([vors](https://github.com/vors))
-* Jason Shirk ([lzybkr](https://github.com/lzybkr))
-* Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
-* Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
-* Mike Richmond ([mirichmo](https://github.com/mirichmo))
-* Andy Schwartzmeyer ([andschwa](https://github.com/andschwa))
-* Aditya Patwardhan ([adityapatwardhan](https://github.com/adityapatwardhan))
-* Ilya Sazonov ([iSazonov](https://github.com/iSazonov))
+- Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
+- Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
+- Aditya Patwardhan ([adityapatwardhan](https://github.com/adityapatwardhan))
+- Ilya Sazonov ([iSazonov](https://github.com/iSazonov))
 
 ## Repository Maintainer Responsibilities
 
@@ -73,6 +69,10 @@ Please see [Issue Management][issue-management]
 
 Please see [Contributing][CONTRIBUTING]
 
+## Maintainer Best Practices
+
+Please see [Best Practices][best-practice]
+
 ## Becoming a Repository Maintainer
 
 Repository Maintainers currently consist mostly of Microsoft employees.
@@ -89,3 +89,4 @@ the [Current Repository Maintainers](#Current-Repository-Maintainers) with justi
 [ci-system]: ../testing-guidelines/testing-guidelines.md#ci-system
 [issue-management]: issue-management.md
 [CONTRIBUTING]: ../../.github/CONTRIBUTING.md
+[best-practice]: best-practice.md
