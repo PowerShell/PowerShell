@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         public string EmphasisItalics { get; set; }
 
         /// <summary>
-        /// Gets or set whether VT100 escape sequences should be added. Default it true.
+        /// Gets or sets whether VT100 escape sequences should be added. Default it true.
         /// </summary>
         public bool EnableVT100Encoding { get; set; }
 
