@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(
         VerbsData.ConvertFrom, "Markdown",
         DefaultParameterSetName = PathParameterSet,
-        HelpUri = "TBD")]
+        HelpUri = "https://go.microsoft.com/fwlink/?linkid=2006503")]
     [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.MarkdownInfo))]
     public class ConvertFromMarkdownCommand : PSCmdlet
     {
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets path to the file to convert from Markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
-        [Parameter(ParameterSetName = PathParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = PathParameterSet, Mandatory = true, Position = 0)]
         public string[] Path { get; set; }
 
         /// <summary>
@@ -64,6 +64,11 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             mdOption = SessionState.PSVariable.GetValue("MarkdownOptionInfo", new MarkdownOptionInfo()) as MarkdownOptionInfo;
+
+            if (!this.Host.UI.SupportsVirtualTerminal)
+            {
+                mdOption.EnableVT100Encoding = false;
+            }
 
             if (mdOption == null)
             {

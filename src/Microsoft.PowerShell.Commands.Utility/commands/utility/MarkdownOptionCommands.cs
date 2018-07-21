@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(
         VerbsCommon.Set, "MarkdownOption",
         DefaultParameterSetName = IndividualSetting,
-        HelpUri = "TBD")]
+        HelpUri = "https://go.microsoft.com/fwlink/?linkid=2006265")]
     [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.MarkdownOptionInfo))]
     public class SetMarkdownOptionCommand : PSCmdlet
     {
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets InputObject.
         /// </summary>
         [ValidateNotNullOrEmpty]
-        [Parameter(ParameterSetName = InputObjectParamSet, Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(ParameterSetName = InputObjectParamSet, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         public PSObject InputObject { get; set; }
 
         private const string IndividualSetting = "IndividualSetting";
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(
         VerbsCommon.Get, "MarkdownOption",
-        HelpUri = "TBD")]
+        HelpUri = "https://go.microsoft.com/fwlink/?linkid=2006371")]
     [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.MarkdownOptionInfo))]
     public class GetMarkdownOptionCommand : PSCmdlet
     {
