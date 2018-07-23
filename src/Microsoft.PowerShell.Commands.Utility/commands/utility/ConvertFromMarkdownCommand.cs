@@ -36,6 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the path to the file to convert from Markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
+        [Alias("PSPath", "LP")]
         [Parameter(ParameterSetName = LiteralPathParameterSet, Mandatory = true)]
         public string[] LiteralPath { get; set; }
 
