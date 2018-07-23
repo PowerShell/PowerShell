@@ -820,7 +820,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// CompatiblePSEditions
+        /// Lists the PowerShell editions this module is compatible with. This should
+        /// reflect the module manifest the module was loaded with, or if no manifest was given
+        /// or the key was not in the manifest, this should be an empty collection. This
+        /// property is never null.
         /// </summary>
         public IEnumerable<String> CompatiblePSEditions
         {
@@ -833,6 +836,22 @@ namespace System.Management.Automation
         {
             _compatiblePSEditions.Add(psEdition);
         }
+
+        internal void AddToCompatiblePSEditions(IEnumerable<string> psEditions)
+        {
+            _compatiblePSEditions.AddRange(psEditions);
+        }
+
+        /// <summary>
+        /// Describes whether the module was considered compatible at load time.
+        /// Any module not on the System32 module path should have this as true.
+        /// Modules loaded from the System32 module path will have this as true if they
+        /// have declared edition compatibility with PowerShell Core. Currently, this field
+        /// is true for all non-psd1 module files, when it should not be. Being able to
+        /// load psm1/dll modules from the System32 module path without needing to skip
+        /// the edition check is considered a bug and should be fixed.
+        /// </summary>
+        internal bool IsConsideredEditionCompatible { get; set; } = true;
 
         /// <summary>
         /// ModuleList
@@ -1585,4 +1604,4 @@ namespace System.Management.Automation
             }
         }
     }
-} // System.Management.Automation
+}

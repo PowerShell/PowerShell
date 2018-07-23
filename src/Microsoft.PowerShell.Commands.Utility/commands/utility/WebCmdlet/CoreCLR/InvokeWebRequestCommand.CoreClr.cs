@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         #region Virtual Method Overrides
 
         /// <summary>
-        /// Default constructor for InvokeWebRequestCommand
+        /// Default constructor for InvokeWebRequestCommand.
         /// </summary>
         public InvokeWebRequestCommand() : base()
         {

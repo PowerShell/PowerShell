@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Emitted by Group-Object when the NoElement option is true
+    /// Emitted by Group-Object when the NoElement option is true.
     /// </summary>
     public sealed class GroupInfoNoElement : GroupInfo
     {
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Emitted by Group-Object
+    /// Emitted by Group-Object.
     /// </summary>
     public class GroupInfo
     {
@@ -139,9 +139,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
-        /// Values of the group
-        ///
+        /// Values of the group.
         /// </summary>
         public ArrayList Values
         {
@@ -157,38 +155,28 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
-        /// Number of objects in the group
-        ///
+        /// Number of objects in the group.
         /// </summary>
         public int Count { get; internal set; }
 
         /// <summary>
-        ///
-        /// The list of objects in this group
-        ///
+        /// The list of objects in this group.
         /// </summary>
         public Collection<PSObject> Group { get; } = null;
 
         /// <summary>
-        ///
-        /// The name of the group
-        ///
+        /// The name of the group.
         /// </summary>
         public string Name { get; } = null;
 
         /// <summary>
-        ///
-        /// The OrderByPropertyEntry used to build this group object
-        ///
+        /// The OrderByPropertyEntry used to build this group object.
         /// </summary>
         internal OrderByPropertyEntry GroupValue { get; } = null;
     }
 
     /// <summary>
-    ///
-    /// Group-Object implementation
-    ///
+    /// Group-Object implementation.
     /// </summary>
     [Cmdlet(VerbsData.Group, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113338", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(Hashtable), typeof(GroupInfo))]
@@ -197,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
         #region tracer
 
         /// <summary>
-        /// An instance of the PSTraceSource class used for trace output
+        /// An instance of the PSTraceSource class used for trace output.
         /// </summary>
         [TraceSourceAttribute(
              "GroupObjectCommand",
@@ -211,9 +199,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Switches
 
         /// <summary>
-        ///
-        /// Flatten the groups
-        ///
+        /// Flatten the groups.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -224,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _noElement;
         /// <summary>
-        /// the AsHashTable parameter
+        /// the AsHashTable parameter.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "HashTable")]
@@ -403,4 +389,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

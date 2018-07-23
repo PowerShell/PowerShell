@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     public class GetPSCallStackCommand : PSCmdlet
     {
         /// <summary>
-        /// Get the call stack
+        /// Get the call stack.
         /// </summary>
         protected override void ProcessRecord()
         {

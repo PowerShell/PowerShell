@@ -9,52 +9,52 @@ namespace Microsoft.PowerShell.Commands
     public enum WebRequestMethod
     {
         /// <summary>
-        /// Default method
+        /// Default method.
         /// </summary>
         Default,
 
         /// <summary>
-        /// GET method
+        /// GET method.
         /// </summary>
         Get,
 
         /// <summary>
-        /// HEAD method
+        /// HEAD method.
         /// </summary>
         Head,
 
         /// <summary>
-        /// POST method
+        /// POST method.
         /// </summary>
         Post,
 
         /// <summary>
-        /// PUT method
+        /// PUT method.
         /// </summary>
         Put,
 
         /// <summary>
-        /// DELETE method
+        /// DELETE method.
         /// </summary>
         Delete,
 
         /// <summary>
-        /// TRACE method
+        /// TRACE method.
         /// </summary>
         Trace,
 
         /// <summary>
-        /// OPTIONS method
+        /// OPTIONS method.
         /// </summary>
         Options,
 
         /// <summary>
-        /// MERGE method
+        /// MERGE method.
         /// </summary>
         Merge,
 
         /// <summary>
-        /// PATCH method
+        /// PATCH method.
         /// </summary>
         Patch,
     }

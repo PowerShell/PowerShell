@@ -9,19 +9,19 @@ using System.Drawing.Printing;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// Implementation of the LineOutput interface for printer
+    /// Implementation of the LineOutput interface for printer.
     /// </summary>
     internal sealed class PrinterLineOutput : LineOutput
     {
         #region LineOutput implementation
 
         /// <summary>
-        /// full buffering for printer
+        /// Full buffering for printer.
         /// </summary>
         internal override bool RequiresBuffering { get { return true; } }
 
         /// <summary>
-        /// do the printing on playback
+        /// Do the printing on playback.
         /// </summary>
         internal override void ExecuteBufferPlayBack(DoPlayBackCall playback)
         {
@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// the # of columns for the printer
+        /// The # of columns for the printer.
         /// </summary>
         /// <value></value>
         internal override int ColumnNumber
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// the # of rows for the printer
+        /// The # of rows for the printer.
         /// </summary>
         /// <value></value>
         internal override int RowNumber
@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// write a line to the output device
+        /// Write a line to the output device.
         /// </summary>
         /// <param name="s">line to write</param>
         internal override void WriteLine(string s)
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
-        /// Used for static initializations like DefaultPrintFontName
+        /// Used for static initializations like DefaultPrintFontName.
         /// </summary>
         static PrinterLineOutput()
         {
@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// constructor for the class
+        /// Constructor for the class.
         /// </summary>
         /// <param name="printerName">name of printer, if null use default printer</param>
         internal PrinterLineOutput(string printerName)
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback to be called when IConsole.WriteLine() is called by WriteLineHelper
+        /// Callback to be called when IConsole.WriteLine() is called by WriteLineHelper.
         /// </summary>
         /// <param name="s">string to write</param>
         private void OnWriteLine(string s)
@@ -105,9 +105,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback to be called when Console.Write() is called by WriteLineHelper
+        /// Callback to be called when Console.Write() is called by WriteLineHelper.
         /// This is called when the WriteLineHelper needs to write a line whose length
-        /// is the same as the width of the screen buffer
+        /// is the same as the width of the screen buffer.
         /// </summary>
         /// <param name="s">string to write</param>
         private void OnWrite(string s)
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// do the printing
+        /// Do the printing.
         /// </summary>
         private void DoPrint()
         {
@@ -148,9 +148,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper to create a font.
+        /// Helper to create a font.
         /// If the font object exists, it does nothing.
-        /// Else, the a new object is created and verified
+        /// Else, the a new object is created and verified.
         /// </summary>
         /// <param name="g">GDI+ graphics object needed for verification</param>
         private void CreateFont(Graphics g)
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// internal helper to verify that the font is fixed pitch. If the test fails,
-        /// it reverts to the default font
+        /// it reverts to the default font.
         /// </summary>
         /// <param name="g">GDI+ graphics object needed for verification</param>
         private void VerifyFont(Graphics g)
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Event fired for each page to print
+        /// Event fired for each page to print.
         /// </summary>
         /// <param name="sender">sender, not used</param>
         /// <param name="ev">print page event</param>
@@ -264,32 +264,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// flag for one time initialization of the interface (columns, etc.)
+        /// Flag for one-time initialization of the interface (columns, etc.).
         /// </summary>
         private bool _printingInitialized = false;
 
         /// <summary>
-        /// callback to ask the outputter to playback its cache
+        /// Callback to ask the outputter to playback its cache.
         /// </summary>
         private DoPlayBackCall _playbackCall;
 
         /// <summary>
-        /// name of the printer to print to. Null means default printer
+        /// Name of the printer to print to. Null means default printer.
         /// </summary>
         private string _printerName = null;
 
         /// <summary>
-        /// name of the font to use, if null the default is used
+        /// Name of the font to use, if null the default is used.
         /// </summary>
         private string _printFontName = null;
 
         /// <summary>
-        /// font size
+        /// Font size.
         /// </summary>
         private int _printFontSize = 0;
 
         /// <summary>
-        /// default font, used if the printFont is not specified or if the
+        /// Default font, used if the printFont is not specified or if the
         /// printFont is not fixed pitch.
         /// </summary>
         /// <remarks>
@@ -300,12 +300,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static readonly string s_defaultPrintFontName;
 
         /// <summary>
-        /// default size for the default font
+        /// Default size for the default font.
         /// </summary>
         private const int DefaultPrintFontSize = 8;
 
         /// <summary>
-        /// number of columns on the sheet
+        /// Number of columns on the sheet.
         /// </summary>
         private int _deviceColumns = 80;
 
@@ -313,12 +313,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private int _deviceRows = 40;
 
         /// <summary>
-        /// text lines ready to print (after output cache playback)
+        /// Text lines ready to print (after output cache playback).
         /// </summary>
         private Queue<string> _lines = new Queue<string>();
 
         /// <summary>
-        /// cached font object
+        /// Cached font object.
         /// </summary>
         private Font _printFont = null;
 

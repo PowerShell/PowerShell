@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The implementation of the "import-localizeddata" cmdlet
+    /// The implementation of the "import-localizeddata" cmdlet.
     /// </summary>
     ///
     [Cmdlet(VerbsData.Import, "LocalizedData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113342")]
@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// The path from which to import the aliases
+        /// The path from which to import the aliases.
         /// </summary>
         ///
         [Parameter(Position = 0)]
@@ -98,8 +98,7 @@ namespace Microsoft.PowerShell.Commands
         private string _fileName;
 
         /// <summary>
-        /// The command allowed in the data file.  If unspecified, then ConvertFrom-StringData
-        /// is allowed.
+        /// The command allowed in the data file.  If unspecified, then ConvertFrom-StringData is allowed.
         /// </summary>
         [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
