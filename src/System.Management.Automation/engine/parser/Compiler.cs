@@ -2969,12 +2969,12 @@ namespace System.Management.Automation.Language
         {
             int clauseCount = ifStmtAst.Clauses.Count;
 
-            var exprs = new Tuple<BlockExpression, Expression>[clauseCount];
+            var exprs = new Tuple<Expression, Expression>[clauseCount];
             for (int i = 0; i < clauseCount; ++i)
             {
                 IfClause ifClause = ifStmtAst.Clauses[i];
-                var cond = Expression.Block(
-                    UpdatePosition(ifClause.Item1),
+                var cond = UpdatePositionForInitializerOrCondition(
+                    ifClause.Item1,
                     CaptureStatementResults(ifClause.Item1, CaptureAstContext.Condition).Convert(typeof(bool)));
                 var body = Compile(ifClause.Item2);
                 exprs[i] = Tuple.Create(cond, body);
@@ -4191,7 +4191,7 @@ namespace System.Management.Automation.Language
             _loopTargets.Add(new LoopGotoTargets(loopLabel ?? string.Empty, breakLabel, continueLabel));
             _generatingWhileOrDoLoop = true;
             var loopBodyExprs = new List<Expression>
-                                    {
+                                {
                                     s_callCheckForInterrupts,
                                     Compile(loopStatement.Body),
                                     ExpressionCache.Empty
@@ -4207,6 +4207,7 @@ namespace System.Management.Automation.Language
             {
                 test = Expression.Not(test);
             }
+            test = UpdatePositionForInitializerOrCondition(loopStatement.Condition, test);
             exprs.Add(Expression.IfThen(test, Expression.Goto(repeatLabel)));
             exprs.Add(Expression.Label(breakLabel));
 
@@ -4387,6 +4388,19 @@ namespace System.Management.Automation.Language
             return null;
         }
 
+        private Expression UpdatePositionForInitializerOrCondition(PipelineBaseAst pipelineBaseAst, Expression initializerOrCondition)
+        {
+            if (pipelineBaseAst is PipelineAst pipelineAst && !pipelineAst.Background && pipelineAst.GetPureExpression() != null)
+            {
+                // If the initializer or condition is a pure expression (CommandExpressionAst without redirection),
+                // then we need to add a sequence point. If it's an AssignmentStatementAst, we don't need to add
+                // sequence point here because one will be added when processing the AssignmentStatementAst.
+                initializerOrCondition = Expression.Block(UpdatePosition(pipelineBaseAst), initializerOrCondition);
+            }
+
+            return initializerOrCondition;
+        }
+
         public object VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst)
         {
             return GenerateDoLoop(doWhileStatementAst);
@@ -4405,20 +4419,12 @@ namespace System.Management.Automation.Language
             if (initializer != null)
             {
                 init = CaptureStatementResults(initializer, CaptureAstContext.AssignmentWithoutResultPreservation);
-                if (initializer is PipelineAst pipelineAst && !pipelineAst.Background && pipelineAst.GetPureExpression() != null)
-                {
-                    // If the initializer is a pure expression (CommandExpressionAst without redirection),
-                    // then we need to add a sequence point. If it's an AssignmentStatementAst, we don't
-                    // need to add sequence point here because a sequence point will be added when processing
-                    // the AssignmentStatementAst.
-                    init = Expression.Block(UpdatePosition(initializer), init);
-                }
+                init = UpdatePositionForInitializerOrCondition(initializer, init);
             }
 
             PipelineBaseAst condition = forStatementAst.Condition;
             var generateCondition = condition != null
-                ? () => Expression.Block(UpdatePosition(condition),
-                                         CaptureStatementResults(condition, CaptureAstContext.Condition))
+                ? () => UpdatePositionForInitializerOrCondition(condition, CaptureStatementResults(condition, CaptureAstContext.Condition))
                 : (Func<Expression>)null;
 
             var loop = GenerateWhileLoop(forStatementAst.Label, generateCondition,
@@ -4434,9 +4440,9 @@ namespace System.Management.Automation.Language
 
         public object VisitWhileStatement(WhileStatementAst whileStatementAst)
         {
+            PipelineBaseAst condition = whileStatementAst.Condition;
             return GenerateWhileLoop(whileStatementAst.Label,
-                                     () => Expression.Block(UpdatePosition(whileStatementAst.Condition),
-                                                            CaptureStatementResults(whileStatementAst.Condition, CaptureAstContext.Condition)),
+                                     () => UpdatePositionForInitializerOrCondition(condition, CaptureStatementResults(condition, CaptureAstContext.Condition)),
                                      (loopBody, breakTarget, continueTarget) => loopBody.Add(Compile(whileStatementAst.Body)));
         }
 
