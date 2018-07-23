@@ -387,7 +387,7 @@ namespace System.Management.Automation.Language
                     // The 'base' is a COM object, so bake that in the rule.
                     restrictions = restrictions
                         .Merge(arg.GetSimpleTypeRestriction())
-                        .Merge(BindingRestrictions.GetExpressionRestriction(Expression.Call(CachedReflectionInfo.Marshal_IsComObject, expr)));
+                        .Merge(BindingRestrictions.GetExpressionRestriction(Expression.Call(CachedReflectionInfo.Utils_IsComObject, expr)));
                 }
                 else
                 {
@@ -632,7 +632,7 @@ namespace System.Management.Automation.Language
                 // EnumerableOps.NonEnumerableObjectEnumerator for more comments on how this works.
 
                 var bindingRestrictions = BindingRestrictions.GetExpressionRestriction(
-                    Expression.Call(CachedReflectionInfo.Marshal_IsComObject,
+                    Expression.Call(CachedReflectionInfo.Utils_IsComObject,
                                     Expression.Call(CachedReflectionInfo.PSObject_Base, target.Expression)));
                 return new DynamicMetaObject(
                     Expression.Call(CachedReflectionInfo.EnumerableOps_GetCOMEnumerator, target.Expression), bindingRestrictions).WriteToDebugLog(this);
@@ -716,6 +716,11 @@ namespace System.Management.Automation.Language
 
         private static IEnumerator NotEnumerableRule(CallSite site, object obj)
         {
+            if (obj == null)
+            {
+                return null;
+            }
+
             if (!(obj is PSObject) && !(obj is IEnumerable) && !(obj is IEnumerator) && !(obj is DataTable) && !Marshal.IsComObject(obj))
             {
                 return null;

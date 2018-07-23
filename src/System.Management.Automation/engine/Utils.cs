@@ -1399,6 +1399,29 @@ namespace System.Management.Automation
             // String.WhitespaceChars will trim aggressively than what the underlying FS does (for ex, NTFS, FAT).
             internal static readonly char[] PathSearchTrimEnd = { (char)0x9, (char)0xA, (char)0xB, (char)0xC, (char)0xD, (char)0x20, (char)0x85, (char)0xA0 };
         }
+
+        /// <summary>
+        /// A COM object could be directly of the type 'System.__ComObject', or it could be a strongly typed RWC,
+        /// whose specific type derives from 'System.__ComObject'.
+        /// A strongly typed RWC can be created via the 'new' operation with a Primary Interop Assembly (PIA).
+        /// For example, with the PIA 'Microsoft.Office.Interop.Excel', you can write the following code:
+        ///    var excelApp = new Microsoft.Office.Interop.Excel.Application();
+        ///    Type type = excelApp.GetType();
+        ///    Type comObjectType = typeof(object).Assembly.GetType("System.__ComObject");
+        ///    Console.WriteLine("excelApp type: {0}", type.FullName);
+        ///    Console.WriteLine("Is __ComObject assignable from? {0}", comObjectType.IsAssignableFrom(type));
+        /// and the results are:
+        ///    excelApp type: Microsoft.Office.Interop.Excel.ApplicationClass
+        ///    Is __ComObject assignable from? True
+        /// </summary>
+        internal static bool IsComObject(object obj)
+        {
+#if UNIX
+            return false;
+#else
+            return obj != null && Marshal.IsComObject(obj);
+#endif
+        }
     }
 }
 
