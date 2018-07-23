@@ -668,7 +668,7 @@ function Invoke-OpenCover
     $updatedEnvPath = "${PowerShellExeDirectory}\Modules;$TestToolsModulesPath"
     $testToolsExePath = (Resolve-Path(Join-Path $TestPath -ChildPath "..\tools\TestExe\bin")).Path
     $testServiceExePath = (Resolve-Path(Join-Path $TestPath -ChildPath "..\tools\TestService\bin")).Path
-    $updatedProcessEnvPath = "$testServiceExePath;${testToolsExePath};${env:PATH}"
+    $updatedProcessEnvPath = "${testServiceExePath};${testToolsExePath};${env:PATH}"
 
     $startupArgs =  "Set-ExecutionPolicy Bypass -Force -Scope Process; `$env:PSModulePath = '${updatedEnvPath}'; `$env:Path = '${updatedProcessEnvPath}';"
     $targetArgs = "${startupArgs}", "Invoke-Pester","${TestPath}","-OutputFormat $PesterLogFormat"
