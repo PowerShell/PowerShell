@@ -21,7 +21,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $svcfullpath = $svccmd.Path
             $testservice1 = New-Service -BinaryPathName $svcfullpath -Name $testservicename1
             $testservice1 | Should -Not -BeNullOrEmpty
-            $testservice2 = New-Service -BinaryPathName $svcfullpath -Name $testservicename2 -DependsOn $testservicename2
+            $testservice2 = New-Service -BinaryPathName $svcfullpath -Name $testservicename2 -DependsOn $testservicename1
             $testservice2 | Should -Not -BeNullOrEmpty
         }
     }
