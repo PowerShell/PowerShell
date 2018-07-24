@@ -32,8 +32,8 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
 
             Stop-Service $testservicename2
             Stop-Service $testservicename1
-            Remove-Service $testservicename1
             Remove-Service $testservicename2
+            Remove-Service $testservicename1
         }
     }
 
