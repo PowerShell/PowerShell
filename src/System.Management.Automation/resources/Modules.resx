@@ -165,6 +165,9 @@
   <data name="InvalidModuleSpecificationMember" xml:space="preserve">
     <value>The hashtable describing a module contains one or more members that are not valid.  The valid members are ({0}). Remove the members that are not valid ({1}), then try again.</value>
   </data>
+  <data name="ModuleSpecificationMemberIsLessThanOther" xml:space="preserve">
+    <value>The member '{0}' cannot be less than '{1}'.</value>
+  </data>
   <data name="ModuleTooDeeplyNested" xml:space="preserve">
     <value>Cannot load the module '{0}' because the module nesting limit has been exceeded. Modules can only be nested to {1} levels. Evaluate and change the order in which you are loading modules to prevent exceeding the nesting limit, and then try running your script again.</value>
   </data>

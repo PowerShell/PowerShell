@@ -56,6 +56,10 @@ Describe "Import-Module" -Tags "CI" {
         Import-Module TestModule -RequiredVersion 1.1
         (Get-Module TestModule).Version | Should -BeIn "1.1"
     }
+
+    It "should throw if 'MaximumVersion' is less than 'Version' when using -FullyQualifiedName parameter" {
+        { Import-Module -FullyQualifiedName @{ModuleName = $moduleName; Version = '2.0'; MaximumVersion = '1.0'} } | Should -Throw -ExceptionType 'System.Management.Automation.ParameterBindingException'
+    }
 }
 
 Describe "Import-Module with ScriptsToProcess" -Tags "CI" {

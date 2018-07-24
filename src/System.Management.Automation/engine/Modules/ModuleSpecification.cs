@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
             string message;
             if (badKeys.Length != 0)
             {
-                message = StringUtil.Format(Modules.InvalidModuleSpecificationMember, "ModuleName, ModuleVersion, RequiredVersion, GUID", badKeys);
+                message = StringUtil.Format(Modules.InvalidModuleSpecificationMember, "ModuleName, ModuleVersion, MaximumVersion, RequiredVersion, GUID", badKeys);
                 return new ArgumentException(message);
             }
 
@@ -161,6 +161,12 @@ namespace Microsoft.PowerShell.Commands
             if (moduleSpecification.RequiredVersion != null && moduleSpecification.MaximumVersion != null)
             {
                 message = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "MaximumVersion", "RequiredVersion");
+                return new ArgumentException(message);
+            }
+
+            if (moduleSpecification.Version > ModuleCmdletBase.GetMaximumVersion(moduleSpecification.MaximumVersion))
+            {
+                message = StringUtil.Format(Modules.ModuleSpecificationMemberIsLessThanOther, "MaximumVersion", "Version");
                 return new ArgumentException(message);
             }
             return null;
