@@ -642,7 +642,8 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         ProcessModule mainModule = PsUtils.GetMainModule(process);
-                        if (mainModule != null) {
+                        if (mainModule != null)
+                        {
                             WriteObject(mainModule.FileVersionInfo, true);
                         }
                     }
@@ -1269,7 +1270,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Boolean variables to display the warning using ShouldContinue.
         /// </summary>
-        private bool _yesToAll,_noToAll;
+        private bool _yesToAll, _noToAll;
 
         /// <summary>
         /// Current windows user name.
@@ -1587,7 +1588,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath","Path")]
+        [Alias("PSPath", "Path")]
         public string FilePath { get; set; }
 
         /// <summary>
