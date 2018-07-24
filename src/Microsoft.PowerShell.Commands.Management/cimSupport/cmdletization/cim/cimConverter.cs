@@ -58,9 +58,11 @@ namespace Microsoft.PowerShell.Cim
                 }
 
                 fixed (char* target = _string)
-                for (int i = 0; i < charsToCopy; i++)
                 {
-                    target[offset + i] = source[i];
+                    for (int i = 0; i < charsToCopy; i++)
+                    {
+                        target[offset + i] = source[i];
+                    }
                 }
             }
 
