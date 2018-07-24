@@ -347,7 +347,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
 
     It "Set-Service can run -Status Stopped to stop a service with dependencies, and can use -Force to stop a service with running dependent services" {
-        # test to stop a service with dependency
+        # stop a service with dependency
         Set-Service -Status Running $testservicename2 | Should -Not -Throw
         (Get-Service $testservicename1).Status | Should -BeExactly "Running"
         (Get-Service $testservicename2).Status | Should -BeExactly "Running"
@@ -355,7 +355,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         { & $script } | Should -Not -Throw
         (Get-Service $testservicename2).Status | Should -BeExactly "Stopped"
 
-        # test to stop a service with running dependent service
+        # stop a service with running dependent service
         Set-Service -Status Running $testservicename2 | Should -Not -Throw
         (Get-Service $testservicename1).Status | Should -BeExactly "Running"
         (Get-Service $testservicename2).Status | Should -BeExactly "Running"
@@ -364,7 +364,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         (Get-Service $testservicename1).Status | Should -BeExactly "Running"
         (Get-Service $testservicename2).Status | Should -BeExactly "Running"
 
-        # test to stop a service with running dependent service by -Force
+        # stop a service with running dependent service by -Force
         $script = { Set-Service -Status Stopped -Force $testservicename1 }
         { & $script } | Should -Not -Throw
         (Get-Service $testservicename1).Status | Should -BeExactly "Stopped"
