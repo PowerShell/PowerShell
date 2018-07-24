@@ -1649,10 +1649,7 @@ namespace System.Management.Automation.Help
                 // Get the list of files in the directory.
                 FileInfo[] fileList = dirInfo.GetFiles(searchPattern: fileName, new System.IO.EnumerationOptions { MatchCasing = MatchCasing.CaseInsensitive });
 
-                // We use 'FileInfo.Attributes' (not 'FileInfo.Exist')
-                // because we want to get exceptions
-                // like UnauthorizedAccessException or IOException.
-                if (fileList.Length > 0 && (int)fileList[0].Attributes != -1)
+                if (fileList.Length > 0)
                 {
                     return fileList[0].FullName;
                 }
