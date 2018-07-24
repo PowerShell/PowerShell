@@ -236,9 +236,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual string[] Exclude
         {
             get;
-            // get
             set;
-            // set
         } = new string[0];
 
         // Exclude
