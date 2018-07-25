@@ -234,7 +234,6 @@ namespace System.Management.Automation.Interpreter
     /// a value and jumps right after the first argument (the carried value will be used as the first argument).
     /// Goto can jump into an arbitrary child of a BlockExpression since the block doesn't accumulate values
     /// on evaluation stack as its child expressions are being evaluated.
-    ///
     /// Goto needs to execute any finally blocks on the way to the target label.
     /// <example>
     /// {
@@ -246,7 +245,6 @@ namespace System.Management.Automation.Interpreter
     /// The jump needs to execute both finally blocks, the first one on stack level 4 the
     /// second one on stack level 2. So, it needs to jump the first finally block, pop 2 items from the stack,
     /// run second finally block and pop another 2 items from the stack and set instruction pointer to label L.
-    ///
     /// Goto also needs to rethrow ThreadAbortException iff it jumps out of a catch handler and
     /// the current thread is in "abort requested" state.
     /// </summary>

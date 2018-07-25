@@ -44,16 +44,13 @@ namespace System.Management.Automation
         /// These attributes include <see cref="ParameterAttribute"/>,
         /// <see cref="AliasAttribute"/>, argument transformation and
         /// validation attributes, etc.
-        ///
         /// Alternately, it can return a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>
         /// instead.
-        ///
         /// The <see cref="Cmdlet"/> or <see cref="Provider.CmdletProvider"/>
         /// should hold on to a reference to the object which it returns from
         /// this method, since the argument values for the dynamic parameters
         /// specified by that object will be set in that object.
-        ///
         /// This method will be called after all formal (command-line)
         /// parameters are set, but before <see cref="Cmdlet.BeginProcessing"/>
         /// is called and before any incoming pipeline objects are read.
@@ -283,7 +280,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="type"></param>
@@ -689,7 +685,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sessionState"></param>
         /// <param name="scriptBlock"></param>

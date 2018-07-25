@@ -40,7 +40,6 @@ namespace System.Management.Automation
     /// There are two ways of associating the PSTypeConverter with its target class:
     ///     - Through the type configuration file.
     ///     - By applying a TypeConverterAttribute to the target class.
-    ///
     /// Unlike System.ComponentModel.TypeConverter, PSTypeConverter can be applied to a family of types (like all types derived from System.Enum).
     /// PSTypeConverter has two main differences from TypeConverter:
     ///     - It can be applied to a family of types and not only the one type as in TypeConverter. In order to do that
@@ -232,7 +231,6 @@ namespace System.Management.Automation
     /// <summary>
     /// The ranking of versions for comparison purposes (used in overload resolution.)
     /// A larger value means the conversion is better.
-    ///
     /// Note that the lower nibble is all ones for named conversion ranks.  This allows for
     /// conversions with rankings in between the named values.  For example, int=>string[]
     /// is value dependent, if the conversion from int=>string succeeds, then an array is
@@ -1265,10 +1263,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Do the necessary conversions when using property or array assignment to a generic dictionary:
-        ///
         ///     $dict.Prop = value
         ///     $dict[$Prop] = value
-        ///
         /// The property typically won't need conversion, but it could.  The value is more likely in
         /// need of conversion.
         /// </summary>
@@ -1422,7 +1418,6 @@ namespace System.Management.Automation
         /// <summary>
         /// BUGBUG - brucepay Mar. 2013 - I don't think this is general enough for dynamic keywords to support arbitrary target
         /// languages with arbitrary type representations so we may need an extension point here...
-        ///
         /// Maps a .NET or CIM type name string (e.g. SInt32) to the form expected by PowerShell users, namely "[typename]"
         /// If there is no mapping, then it returns null.
         /// If the string to convert is null or empty then the function returns "[object]" as the default typeless type.
@@ -1508,7 +1503,6 @@ namespace System.Management.Automation
         ///     PSObject       -   returns new PSObject())
         ///     array           -   returns an array with null in array[0]
         ///     non value types -   returns null
-        ///
         /// The following conversions are considered language standard and cannot be customized:
         ///     - from derived to base class            -   returns valueToConvert intact
         ///     - to PSObject                          -   returns PSObject.AsPSObject(valueToConvert)
@@ -1540,15 +1534,12 @@ namespace System.Management.Automation
         ///                                                 string representation of valueToConvert.
         ///     - to ADSISearcher                       -   return DirectorySearcher represented by the
         ///                                                 string representation of valueToConvert.
-        ///
         /// If none of the cases above is true, the following is considered in order:
-        ///
         ///    1) TypeConverter and PSTypeConverter
         ///    2) the Parse methods if the valueToConvert is a string
         ///    3) Constructors in resultType that take one parameter with type valueToConvert.GetType()
         ///    4) Implicit and explicit cast operators
         ///    5) IConvertible
-        ///
         ///  If any operation above throws an exception, this exception will be wrapped into a
         ///  PSInvalidCastException and thrown resulting in no further conversion attempt.
         /// </remarks>
@@ -1574,7 +1565,6 @@ namespace System.Management.Automation
         ///     PSObject       -   returns new PSObject())
         ///     array           -   returns an array with null in array[0]
         ///     non value types -   returns null
-        ///
         /// The following conversions are considered language standard and cannot be customized:
         ///     - from derived to base class            -   returns valueToConvert intact
         ///     - to PSObject                          -   returns PSObject.AsPSObject(valueToConvert)
@@ -1595,15 +1585,12 @@ namespace System.Management.Automation
         ///     - from string to numeric                -   returns a culture invariant conversion
         ///     - from ScriptBlock to Delegate          -   returns a delegate wrapping that scriptblock.
         ///     - from Integer to Enumeration           -   Uses Enum.ToObject
-        ///
         /// If none of the cases above is true, the following is considered in order:
-        ///
         ///    1) TypeConverter and PSTypeConverter
         ///    2) the Parse methods if the valueToConvert is a string
         ///    3) Constructors in resultType that take one parameter with type valueToConvert.GetType()
         ///    4) Implicit and explicit cast operators
         ///    5) IConvertible
-        ///
         ///  If any operation above throws an exception, this exception will be wrapped into a
         ///  PSInvalidCastException and thrown resulting in no further conversion attempt.
         /// </remarks>
@@ -2704,7 +2691,6 @@ namespace System.Management.Automation
         /// declared: [TypeConverter(typeof(UriTypeConverter))], so the conversion from 'string' to 'Uri' is
         /// actually taken care of by 'UriTypeConverter'. However, the type 'UriTypeConverter' is not available
         /// in CoreCLR, and thus the conversion from 'string' to 'Uri' would show a different behavior.
-        ///
         /// Therefore, we just add this built-in string-to-uri converter using the same logic 'UriTypeConverter'
         /// is using in FullCLR, so the conversion behavior will be the same on desktop powershell and powershell core.
         /// </summary>
@@ -4536,7 +4522,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert">the same as in the public version</param>
         /// <param name="resultType">the same as in the public version</param>
