@@ -226,7 +226,6 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_powerShell != null)
             {
-                _powerShell.Stop();
                 _powerShell.Dispose();
             }
         }
