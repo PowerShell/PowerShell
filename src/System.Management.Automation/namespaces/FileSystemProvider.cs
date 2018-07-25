@@ -8136,15 +8136,12 @@ namespace Microsoft.PowerShell.Commands
             BY_HANDLE_FILE_INFORMATION handleInfo;
             bool succeeded = InternalSymbolicLinkLinkCodeMethods.GetFileInformationByHandle(handle, out handleInfo);
 
-            if (!succeeded)
+            if (succeeded)
             {
-                int lastError = Marshal.GetLastWin32Error();
-                throw new Win32Exception(lastError);
-            }
-
-            if (handleInfo.NumberOfLinks > 1)
-            {
-                return true;
+                if (handleInfo.NumberOfLinks > 1)
+                {
+                    return true;
+                }
             }
 
             return false;
