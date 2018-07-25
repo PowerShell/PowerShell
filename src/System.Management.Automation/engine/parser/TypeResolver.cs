@@ -502,11 +502,9 @@ namespace System.Management.Automation.Language
     /// The idea behind this class is: I should be able to re-use expensive
     /// type resolution operation result in the same context.
     /// Hence, this class is a key for TypeCache dictionary.
-    ///
     /// Every SessionStateScope has TypeResolutionState.
     /// typesDefined contains PowerShell types names defined in the current scope and all scopes above.
     /// Same for namespaces.
-    ///
     /// If TypeResolutionState doesn't add anything new compare to it's parent, we represent it as null.
     /// So, when we do lookup, we need to find first non-null TypeResolutionState.
     /// </summary>

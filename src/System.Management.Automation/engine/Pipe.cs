@@ -277,7 +277,6 @@ namespace System.Management.Automation.Internal
         /// When a temporary pipe is used in the middle of execution, then we need to pass along
         /// the error and warning variable list to hold the errors and warnings get written out
         /// while the temporary pipe is being used.
-        ///
         /// We don't need to pass along the out variable list because we don't care about the output
         /// generated in the middle of execution.
         /// </summary>

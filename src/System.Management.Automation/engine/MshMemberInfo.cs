@@ -2359,7 +2359,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="script"></param>
@@ -4640,7 +4639,6 @@ namespace System.Management.Automation
         /// Method which checks if the <paramref name="name"/> is reserved and if so
         /// it will ensure that the particular reserved member is loaded into the
         /// objects member collection.
-        ///
         /// Caller should ensure that name is not null or empty.
         /// </summary>
         /// <param name="name">
