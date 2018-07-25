@@ -8135,16 +8135,7 @@ namespace Microsoft.PowerShell.Commands
         {
             BY_HANDLE_FILE_INFORMATION handleInfo;
             bool succeeded = InternalSymbolicLinkLinkCodeMethods.GetFileInformationByHandle(handle, out handleInfo);
-
-            if (succeeded)
-            {
-                if (handleInfo.NumberOfLinks > 1)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return succeeded && (handleInfo.NumberOfLinks > 1);
         }
 
         private static string InternalGetTarget(SafeFileHandle handle)
