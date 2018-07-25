@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Creates an instance of the ShowCommandParameterType class based on a Type object.
         /// </summary>
-        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>
@@ -45,7 +44,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Creates an instance of the ShowCommandParameterType class based on a Type object.
         /// </summary>
-        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>
