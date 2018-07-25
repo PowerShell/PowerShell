@@ -294,7 +294,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 '@
 
         $result = & "$PSHOME/pwsh" -c $script
-        $result | Should Be "True"
+        $result | Should -BeExactly "True"
     }
 
     It 'ThreadJob Runspaces should be cleaned up after job removal' {
@@ -331,7 +331,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 '@
 
         $result = & "$PSHOME/pwsh" -c $script
-        $result | Should Be "True","True","True"
+        $result | Should -BeExactly "True","True","True"
     }
 
     It 'ThreadJob jobs should work with Receive-Job -AutoRemoveJob' {
