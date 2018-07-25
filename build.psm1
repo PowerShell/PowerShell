@@ -1866,15 +1866,15 @@ function Start-DevPowerShell {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')] # should match New-PSOptions -Configuration values
         [string]$Configuration,
         [Parameter(ParameterSetName='BinDirParamSet')]
-        [string]$binDir,
+        [string]$BinDir,
         [switch]$NoNewWindow,
         [string]$Command,
         [switch]$KeepPSModulePath
     )
 
     try {
-        if (-not $binDir) {
-            $binDir = Split-Path (New-PSOptions -Configuration $Configuration).Output
+        if (-not $BinDir) {
+            $BinDir = Split-Path (New-PSOptions -Configuration $Configuration).Output
         }
 
         if ((-not $NoNewWindow) -and ($Environment.IsCoreCLR)) {
@@ -1897,12 +1897,12 @@ function Start-DevPowerShell {
             $ArgumentList = $ArgumentList + @("-command $Command")
         }
 
-        $env:DEVPATH = $binDir
+        $env:DEVPATH = $BinDir
 
 
         # splatting for the win
         $startProcessArgs = @{
-            FilePath = "$binDir\pwsh"
+            FilePath = "$BinDir\pwsh"
         }
 
         if ($ArgumentList) {
