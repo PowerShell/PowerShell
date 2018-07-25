@@ -20,7 +20,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Default constructor
         /// </summary>
-        ///
 
         internal CommandProcessorBase()
         {
@@ -29,11 +28,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes the base command processor class with the command metadata
         /// </summary>
-        ///
         /// <param name="commandInfo">
         /// The metadata about the command to run.
         /// </param>
-        ///
         internal CommandProcessorBase(CommandInfo commandInfo)
         {
             if (commandInfo == null)
@@ -95,12 +92,10 @@ namespace System.Management.Automation
         /// <remarks>
         /// Script command processor created from a script file is special
         /// in following two perspectives,
-        ///
         ///     1. New scope created needs to be a 'script' scope in the
         ///        sense that it needs to handle $script: variables.
         ///        For normal functions or scriptblocks, script scope
         ///        variables are not supported.
-        ///
         ///     2. ExitException will be handled by setting lastExitCode.
         ///        For normal functions or scriptblocks, exit command will
         ///        kill current powershell session.
@@ -111,7 +106,6 @@ namespace System.Management.Automation
         /// <summary>
         /// If this flag is true, the commands in this Pipeline will redirect
         /// the global error output pipe to the command's error output pipe.
-        ///
         /// (see the comment in Pipeline.RedirectShellErrorOutputPipe for an
         /// explanation of why this flag is needed)
         /// </summary>
@@ -352,7 +346,6 @@ namespace System.Management.Automation
         /// Restores the current session state scope to the scope which was active when SetCurrentScopeToExecutionScope
         /// was called.
         /// </summary>
-        ///
         internal void RestorePreviousScope()
         {
             OnRestorePreviousScope();
@@ -376,7 +369,6 @@ namespace System.Management.Automation
         /// host interfaces. These will be sent to the parameter binder controller
         /// for processing.
         /// </summary>
-        ///
         internal Collection<CommandParameterInternal> arguments = new Collection<CommandParameterInternal>();
 
         /// <summary>
@@ -543,7 +535,6 @@ namespace System.Management.Automation
         /// the ProcessRecord abstract method that derived command processors
         /// override.
         /// </summary>
-        ///
         internal void DoExecute()
         {
             ExecutionContext.CheckStackDepth();
@@ -598,7 +589,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Calls the virtual Complete method after setting the appropriate session state scope
         /// </summary>
-        ///
         internal void DoComplete()
         {
             Pipe oldErrorOutputPipe = _context.ShellFunctionErrorOutputPipe;
@@ -678,15 +668,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Entry point used by the engine to reads the input pipeline object
         /// and binds the parameters.
-        ///
         /// This default implementation reads the next pipeline object and sets
         /// it as the CurrentPipelineObject in the InternalCommand.
         /// </summary>
-        ///
         /// <returns>
         /// True if read succeeds.
         /// </returns>
-        ///
         /// does not throw
         internal virtual bool Read()
         {
@@ -721,33 +708,27 @@ namespace System.Management.Automation
         /// PipelineProcessor.SynchronousExecute, and writes it to
         /// the error variable.
         /// </summary>
-        ///
         /// <param name="e">
         /// The exception to wrap in a CmdletInvocationException or
         /// CmdletProviderInvocationException.
         /// </param>
-        ///
         /// <returns>
         /// Always returns PipelineStoppedException.  The caller should
         /// throw this exception.
         /// </returns>
-        ///
         /// <remarks>
         /// Almost all exceptions which occur during pipeline invocation
         /// are wrapped in CmdletInvocationException before they are stored
         /// in the pipeline.  However, there are several exceptions:
-        ///
         /// AccessViolationException, StackOverflowException:
         /// These are considered to be such severe errors that we
         /// FailFast the process immediately.
-        ///
         /// ProviderInvocationException: In this case, we assume that the
         /// cmdlet is get-item or the like, a thin wrapper around the
         /// provider API.  We discard the original ProviderInvocationException
         /// and re-wrap its InnerException (the real error) in
         /// CmdletProviderInvocationException. This makes it easier to reach
         /// the real error.
-        ///
         /// CmdletInvocationException, ActionPreferenceStopException:
         /// This indicates that the cmdlet itself ran a command which failed.
         /// We could go ahead and wrap the original exception in multiple
@@ -755,7 +736,6 @@ namespace System.Management.Automation
         /// for the caller to access the root problem, plus the serialization
         /// layer might not communicate properties beyond some fixed depth.
         /// Instead, we choose to not re-wrap the exception.
-        ///
         /// PipelineStoppedException: This could mean one of two things.
         /// It usually means that this pipeline has already stopped,
         /// in which case the pipeline already stores the original error.
@@ -878,11 +858,9 @@ namespace System.Management.Automation
         /// PipelineProcessor.SynchronousExecute, and writes it to
         /// the error variable.
         /// </summary>
-        ///
         /// <param name="e">
         /// The exception which occurred during script execution
         /// </param>
-        ///
         /// <exception cref="PipelineStoppedException">
         /// ManageScriptException throws PipelineStoppedException if-and-only-if
         /// the exception is a RuntimeException, otherwise it returns.

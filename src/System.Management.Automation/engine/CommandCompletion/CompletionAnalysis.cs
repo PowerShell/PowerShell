@@ -1306,7 +1306,6 @@ namespace System.Management.Automation
         /// Generate auto complete results for identifier within configuration.
         /// Results are generated based on DynamicKeywords matches given identifier.
         /// For example, following "Fi" matches "File", and "Us" matches "User"
-        ///
         ///     Configuration
         ///     {
         ///         Fi^
@@ -1315,7 +1314,6 @@ namespace System.Management.Automation
         ///             Us^
         ///         }
         ///     }
-        ///
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="configureAst"></param>

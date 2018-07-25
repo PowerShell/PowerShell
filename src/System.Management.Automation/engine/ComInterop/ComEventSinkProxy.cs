@@ -17,14 +17,12 @@ namespace System.Management.Automation.ComInterop
     /// <summary>
     /// ComEventSinkProxy class is responsible for handling QIs for sourceIid
     /// on instances of ComEventSink.
-    ///
     /// Background: When a COM even sink advises to a connection point it is
     /// supposed to hand over the dispinterface. Now, some hosts will trust
     /// the COM client to pass the correct pointer, but some will not.
     /// E.g. Excel's implementation of Connection Points will not cause a
     /// QI on the pointer that has been passed, however Word will QI the
     /// pointer to return the required interface.
-    ///
     /// ComEventSink does not, strongly speaking, implements the interface
     /// that it claims to implement - it is just "faking" it by using IReflect.
     /// Thus, Word's QIs on the pointer passed to ICP::Advise would fail. To

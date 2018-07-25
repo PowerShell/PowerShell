@@ -31,7 +31,6 @@ namespace System.Management.Automation.Internal
     /// <!--
     /// These are the Cmdlet members which are also used by other
     /// non-public command types.
-    ///
     /// Ideally this would be an internal class, but C# does not support
     /// public classes deriving from internal classes.
     /// -->
@@ -107,7 +106,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Internal helper to get to SessionState
         /// </summary>
-        ///
         internal SessionState InternalState
         {
             get { return _state; }
