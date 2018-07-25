@@ -28,7 +28,6 @@ namespace Microsoft.PowerShell.Commands
     ///          object before transmitting it to the remote end
     ///          so that it can be run on constrained runspaces in
     ///          the no language mode
-    ///
     /// In general, the command script block is executed as if
     /// the user had typed it at the command line. The output of the
     /// command is the output of the cmdlet. However, since
@@ -37,68 +36,51 @@ namespace Microsoft.PowerShell.Commands
     ///     will output $null
     ///     - if the command outputs a single-element array, invoke-command
     ///     will output that single element.
-    ///
     ///     Additionally, the command will be run on a remote system.
-    ///
     /// This cmdlet can be called in the following different ways:
-    ///
     /// Execute a command in a remote machine by specifying the command
     /// and machine name
     ///     invoke-command -Command {get-process} -computername "server1"
-    ///
     /// Execute a command in a set of remote machines by specifying the
     /// command and the list of machines
     ///     $servers = 1..10 | ForEach-Object {"Server${_}"}
     ///     invoke-command -command {get-process} -computername $servers
-    ///
     /// Create a new runspace and use it to execute a command on a remote machine
     ///     $runspace = New-PSSession -computername "Server1"
     ///     $credential = get-credential "user01"
     ///     invoke-command -command {get-process} -Session $runspace -credential $credential
-    ///
     /// Execute a command in a set of remote machines by specifying the
     /// complete uri for the machines
     ///     $uri = "http://hostedservices.microsoft.com/someservice"
     ///     invoke-command -command { get-mail } - uri $uri
-    ///
     /// Create a collection of runspaces and use it to execute a command on a set
     /// of remote machines
-    ///
     ///     $serveruris = 1..8 | ForEach-Object {"http://Server${_}/"}
     ///     $runspaces = New-PSSession -URI $serveruris
     ///     invoke-command -command {get-process} -Session $runspaces
-    ///
     /// The cmdlet can also be invoked in the asynchronous mode.
-    ///
     ///     invoke-command -command {get-process} -computername $servers -asjob
-    ///
     /// When the -AsJob switch is used, the cmdlet will emit an PSJob Object.
     /// The user can then use the other job cmdlets to work with this object
-    ///
     /// Note there are two types of errors:
     ///     1. Remote invocation errors
     ///     2. Local errors.
-    ///
     /// Both types of errors will be available when the user invokes
     /// a receive operation.
-    ///
     /// The PSJob object has its own throttling mechanism.
     /// The result object will be stored in a global cache. If a user wants to
     /// retrieve data from the result object the user should be able to do so
     /// using the Receive-PSJob cmdlet
-    ///
     /// The following needs to be noted about exception/error reporting in this
     /// cmdlet:
     ///     The exception objects that are thrown by underlying layers will be
     ///     written as errors, to avoid stopping the entire cmdlet in case of
     ///     multi-computername or multi-Session usage (for consistency, this
     ///     is true even when done using one computername or runspace)
-    ///
     /// Only one expression may be executed at a time in any single runspace.
     /// Attempts to invoke an expression on a runspace that is already executing
     /// an expression shall return an error with ErrorCategory ResourceNotAvailable
     /// and notify the user that the runspace is currently busy.
-    ///
     /// Some additional notes:
     /// - invoke-command issues a single scriptblock to the computer or
     /// runspace. If a runspace is specified and a command is already running
@@ -155,7 +137,6 @@ namespace Microsoft.PowerShell.Commands
         ///      (a) Computer name
         ///      (b) IPv4 address : 132.3.4.5
         ///      (c) IPv6 address: 3ffe:8311:ffff:f70f:0:5efe:172.30.162.18
-        ///
         /// </summary>
         [Parameter(Position = 0,
                    ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
@@ -263,7 +244,6 @@ namespace Microsoft.PowerShell.Commands
         /// If this parameter is not specified then the value specified in
         /// the environment variable DEFAULTREMOTESHELLNAME will be used. If
         /// this is not set as well, then Microsoft.PowerShell is used.
-        ///
         /// For VM/Container sessions:
         /// If this parameter is not specified then no configuration is used.
         /// </summary>
@@ -1859,9 +1839,7 @@ namespace Microsoft.PowerShell.Commands
         ///     1. A single computer name
         ///     2. A single session
         ///     3. A single uri
-        ///
         /// It can be used in conjunction with a filepath or a script block parameter
-        ///
         /// It doesn't take effect with the -AsJob parameter
         /// </remarks>
         private void DetermineThrowStatementBehavior()

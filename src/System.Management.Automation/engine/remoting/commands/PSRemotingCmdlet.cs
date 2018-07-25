@@ -22,7 +22,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class defines most of the common functionality used
     /// across remoting cmdlets.
-    ///
     /// It contains tons of utility functions which are used all
     /// across the remoting cmdlets
     /// </summary>
@@ -121,7 +120,6 @@ namespace Microsoft.PowerShell.Commands
         }// GetMessage
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="resourceString"></param>
         /// <param name="args"></param>
@@ -463,7 +461,6 @@ namespace Microsoft.PowerShell.Commands
         ///      (a) Computer name
         ///      (b) IPv4 address : 132.3.4.5
         ///      (c) IPv6 address: 3ffe:8311:ffff:f70f:0:5efe:172.30.162.18
-        ///
         /// </summary>
         [Parameter(Position = 0,
                    ValueFromPipelineByPropertyName = true,
@@ -785,7 +782,6 @@ namespace Microsoft.PowerShell.Commands
         /// User has the following options:
         /// 1. AuthMechanism + Credential
         /// 2. CertificateThumbPrint
-        ///
         /// All the above are mutually exclusive.
         /// </summary>
         /// <exception cref="InvalidOperationException">
@@ -1230,7 +1226,6 @@ namespace Microsoft.PowerShell.Commands
         /// Indicates that if a job/command is invoked remotely the connection should be severed
         /// right have invocation of job/command.
         /// </summary>
-        ///
         protected bool InvokeAndDisconnect { get; set; } = false;
 
         /// <summary>
@@ -1295,7 +1290,6 @@ namespace Microsoft.PowerShell.Commands
         /// If this parameter is not specified then the value specified in
         /// the environment variable DEFAULTREMOTESHELLNAME will be used. If
         /// this is not set as well, then Microsoft.PowerShell is used.
-        ///
         /// For VM/Container sessions:
         /// If this parameter is not specified then no configuration is used.
         /// </summary>
@@ -2105,7 +2099,6 @@ namespace Microsoft.PowerShell.Commands
         /// error, the error message will show the altered script, and that could be confusing to the user. So if the remote
         /// server is PSv3 or later version, we will use a different approach to handle UsingExpression so that we can keep
         /// the script unchanged.
-        ///
         /// However, on PSv3 and PSv4 remote server, it's not well supported if UsingExpressions are used in different scopes (fixed in PSv5).
         /// If the remote end is PSv3 or PSv4, and there are UsingExpressions in different scopes, then we have to revert back to the approach
         /// used for PSv2 remote server.
@@ -2169,12 +2162,10 @@ namespace Microsoft.PowerShell.Commands
         /// from the special array. There is a limitation in that approach -- $using cannot be used in different scopes with Invoke-Command/Start-Job
         /// (see WinBlue#475223), because the variable analysis process can only index using expressions within the same scope (this is by design), and a
         /// using expression from a different scope may be assigned with an index that conflicts with other using expressions.
-        ///
         /// To fix the limitation described above, we changed to pass a dictionary with key/value pairs for the using expressions on the client side. The key
         /// is an unique base64 encoded string generated based on the text of the using expression. On the remote end, it can always get the unique key of a
         /// using expression because the text passed to the server side is the same, and thus the value of the using expression can be retrieved from the special
         /// dictionary. With this approach, $using in different scopes can be supported for Invoke-Command/Start-Job.
-        ///
         /// This fix involved changes on the server side, so the fix will work only if the remote end is PSv5 or later. In order to avoid possible breaking
         /// change in 'PSv5 client - PSv3 server' and 'PSv5 client - PSv4 server' scenarios, we should keep sending the array-form using values if the remote
         /// end is PSv3 or PSv4 as long as no UsingExpression is in a different scope. If the remote end is PSv3 or PSv4 and we do have UsingExpressions
@@ -3671,27 +3662,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Resolves the specified path to PathInfo objects
         /// </summary>
-        ///
         /// <param name="pathToResolve">
         /// The path to be resolved. Each path may contain glob characters.
         /// </param>
-        ///
         /// <param name="isLiteralPath">
         /// True if wildcard expansion should be suppressed for pathToResolve.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, resolves the path even if it doesn't exist.
         /// </param>
-        ///
         /// <param name="cmdlet">
         /// Calling cmdlet
         /// </param>
-        ///
         /// <returns>
         /// A string representing the resolved path.
         /// </returns>
-        ///
         private static PathInfo ResolvePath(
             string pathToResolve,
             bool isLiteralPath,
@@ -4298,7 +4283,6 @@ namespace System.Management.Automation.Remoting
         /// protocol) for establishing a remote connection.
         /// - Basic:  Use basic authentication for establishing a remote connection
         /// - Digest: Use Digest authentication for establishing a remote connection
-        ///
         /// Default is Negotiate.
         /// </summary>
         public AuthenticationMechanism ProxyAuthentication
@@ -4358,7 +4342,6 @@ namespace System.Management.Automation.Remoting
         /// for any operation. The user would like to tweak this timeout
         /// depending on whether he/she is connecting to a machine in the data
         /// center or across a slow WAN.
-        ///
         /// Default: 3*60*1000 == 3minutes
         /// </summary>
         public TimeSpan OperationTimeout { get; set; } = TimeSpan.FromMilliseconds(BaseTransportManager.ClientDefaultOperationTimeoutMs);
@@ -4431,7 +4414,6 @@ namespace System.Management.Automation.Remoting
         /// Simply put, the timeout for a remote runspace creation.
         /// The user would like to tweak this timeout depending on whether
         /// he/she is connecting to a machine in the data center or across a slow WAN.
-        ///
         /// Default: 3 * 60 * 1000 = 3 minutes
         /// </summary>
         public TimeSpan OpenTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultOpenTimeout);
@@ -4442,7 +4424,6 @@ namespace System.Management.Automation.Remoting
         /// New-PSSession cmdlet tries to call a stop on all remote runspaces which are in the Opening state.
         /// The user wouldn't mind waiting for 15 seconds, but this should be time bound and of a shorter duration.
         /// A high timeout here like 3 minutes will give the user a feeling that the PowerShell client is not responding.
-        ///
         /// Default: 60 * 1000 = 1 minute
         /// </summary>
         public TimeSpan CancelTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.defaultCancelTimeout);
@@ -4451,7 +4432,6 @@ namespace System.Management.Automation.Remoting
         /// The duration for which a Runspace on server needs to wait before it declares the client dead and closes itself down.
         /// This is especially important as these values may have to be configured differently for enterprise administration
         /// and exchange scenarios.
-        ///
         /// Default: -1 -> Use current server value for IdleTimeout.
         /// </summary>
         public TimeSpan IdleTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultIdleTimeout);

@@ -34,9 +34,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// We can't depend on assembly version for PowerShell version.
-        ///
         /// This is why we hard code the PowerShell version here.
-        ///
         /// For each later release of PowerShell, this constant needs to
         /// be updated to reflect the right version.
         /// </remarks>
@@ -192,7 +190,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks>
         /// For 2.0 PowerShell, we still use "1" as the registry version key.
@@ -208,7 +205,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks>
         /// For 3.0 PowerShell, we use "3" as the registry version key only for Engine
@@ -377,7 +373,6 @@ namespace System.Management.Automation
     /// <summary>
     /// An implementation of semantic versioning (http://semver.org)
     /// that can be converted to/from <see cref="System.Version"/>.
-    ///
     /// When converting to <see cref="Version"/>, a PSNoteProperty is
     /// added to the instance to store the semantic version label so
     /// that it can be recovered when creating a new SemanticVersion.

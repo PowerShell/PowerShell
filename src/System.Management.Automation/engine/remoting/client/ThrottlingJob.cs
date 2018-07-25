@@ -259,7 +259,6 @@ namespace System.Management.Automation
         /// <param name="cmdletMode">
         /// <c>true</c> if this <see cref="ThrottlingJob" /> is used from a cmdlet invoked without -AsJob switch.
         /// <c>false</c> if this <see cref="ThrottlingJob" /> is used from a cmdlet invoked with -AsJob switch.
-        ///
         /// If <paramref name="cmdletMode"/> is <c>true</c>, then
         /// memory can be managed more aggressively (for example ChildJobs can be discarded as soon as they complete)
         /// because the <see cref="ThrottlingJob" /> is not exposed to the end user.

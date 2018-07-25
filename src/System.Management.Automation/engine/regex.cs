@@ -141,11 +141,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Instantiate internal regex member if not already done.
         /// </summary>
-        ///
         /// <returns> true on success, false otherwise </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         private void Init()
         {
             if (_isMatch == null)
@@ -694,14 +691,12 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>
     /// A list of glob patterns and their equivalent regexes
-    ///
     ///  glob pattern      regex
     /// -------------     -------
     /// *foo*              foo
     /// foo                ^foo$
     /// foo*bar            ^foo.*bar$
     /// foo`*bar           ^foo\*bar$
-    ///
     /// for a more cases see the unit-test file RegexTest.cs
     /// </remarks>
     internal class WildcardPatternToRegexParser : WildcardPatternParser

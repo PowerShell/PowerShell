@@ -168,7 +168,6 @@ namespace Microsoft.PowerShell.Commands
         /// If this parameter is not specified then the value specified in
         /// the environment variable DEFAULTREMOTESHELLNAME will be used. If
         /// this is not set as well, then Microsoft.PowerShell is used.
-        ///
         /// For VM/Container sessions:
         /// If this parameter is not specified then no configuration is used.
         /// </summary>
@@ -530,7 +529,6 @@ namespace Microsoft.PowerShell.Commands
         }// EndProcessing()
 
         /// <summary>
-        ///
         /// </summary>
         protected override void StopProcessing()
         {

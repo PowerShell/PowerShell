@@ -416,7 +416,6 @@ namespace System.Management.Automation
         /// <remarks>Caller of synchronous exectute should not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
-        ///
         /// On Synchronous Invoke if output is throttled and no one is reading from
         /// output pipe, Execution will block after buffer is full.
         /// </remarks>

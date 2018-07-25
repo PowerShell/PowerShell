@@ -16,30 +16,21 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet is used to retrieve runspaces from the global cache
     /// and write it to the pipeline. The runspaces are wrapped and
     /// returned as PSSession objects.
-    ///
     /// The cmdlet can be used in the following ways:
-    ///
     /// List all the available runspaces
     ///     get-pssession
-    ///
     /// Get the PSSession from session name
     ///     get-pssession -Name sessionName
-    ///
     /// Get the PSSession for the specified ID
     ///     get-pssession -Id sessionId
-    ///
     /// Get the PSSession for the specified instance Guid
     ///     get-pssession -InstanceId sessionGuid
-    ///
     /// Get PSSessions from remote computer.  Optionally filter on state, session instanceid or session name.
     ///     get-psession -ComputerName computerName -StateFilter Disconnected
-    ///
     /// Get PSSessions from virtual machine. Optionally filter on state, session instanceid or session name.
     ///     get-psession -VMName vmName -Name sessionName
-    ///
     /// Get PSSessions from container. Optionally filter on state, session instanceid or session name.
     ///     get-psession -ContainerId containerId -InstanceId instanceId
-    ///
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSSession", DefaultParameterSetName = PSRunspaceCmdlet.NameParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135219", RemotingCapability = RemotingCapability.OwnedByCommand)]
@@ -106,7 +97,6 @@ namespace Microsoft.PowerShell.Commands
         /// If this parameter is not specified then the value specified in
         /// the environment variable DEFAULTREMOTESHELLNAME will be used. If
         /// this is not set as well, then Microsoft.PowerShell is used.
-        ///
         /// For VM/Container sessions:
         /// If this parameter is not specified then all sessions that match other filters are returned.
         /// </summary>

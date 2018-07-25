@@ -10,19 +10,15 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This class implements a Finite State Machine (FSM) to control the remote connection on the client side.
     /// There is a similar but not identical FSM on the server side for this connection.
-    ///
     /// The FSM's states and events are defined to be the same for both the client FSM and the server FSM.
     /// This design allows the client and server FSM's to
     /// be as similar as possible, so that the complexity of maintaining them is minimized.
-    ///
     /// This FSM only controls the remote connection state. States related to runspace and pipeline are managed by runspace
     /// pipeline themselves.
-    ///
     /// This FSM defines an event handling matrix, which is filled by the event handlers.
     /// The state transitions can only be performed by these event handlers, which are private
     /// to this class. The event handling is done by a single thread, which makes this
     /// implementation solid and thread safe.
-    ///
     /// This implementation of the FSM does not allow the remote session to be reused for a connection
     /// after it is been closed. This design decision is made to simplify the implementation.
     /// However, the design can be easily modified to allow the reuse of the remote session
@@ -496,7 +492,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="clearQueuedEvents">
         /// optional bool indicating whether to clear currently queued events
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -533,7 +528,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// The parameter contains the actual FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -583,7 +577,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="PSArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -617,7 +610,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="PSArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -647,7 +639,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -699,7 +690,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>

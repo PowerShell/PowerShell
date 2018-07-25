@@ -641,7 +641,6 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Private data to be used by applications built on top of PowerShell.
-        ///
         /// Remote runspace pool gets its application private data from the server (when creating the remote runspace pool)
         /// - calling this method on a remote runspace will block until the data is received from the server.
         /// - unless the runspace is disconnected and data hasn't been received in which case it returns null immediately.
@@ -706,7 +705,6 @@ namespace System.Management.Automation.Runspaces.Internal
         internal event EventHandler<CreateCompleteEventArgs> SessionCreateCompleted;
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="shell"></param>
         internal void CreatePowerShellOnServerAndInvoke(ClientRemotePowerShell shell)

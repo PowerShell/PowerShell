@@ -20,37 +20,27 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet establishes a new Runspace either on the local machine or
     /// on the specified remote machine(s). The runspace established can be used
     /// to invoke expressions remotely.
-    ///
     /// The cmdlet can be used in the following ways:
-    ///
     /// Open a local runspace
     /// $rs = New-PSSession
-    ///
     /// Open a runspace to a remote system.
     /// $rs = New-PSSession -Machine PowerShellWorld
-    ///
     /// Create a runspace specifying that it is globally scoped.
     /// $global:rs = New-PSSession -Machine PowerShellWorld
-    ///
     /// Create a collection of runspaces
     /// $runspaces = New-PSSession -Machine PowerShellWorld,PowerShellPublish,PowerShellRepo
-    ///
     /// Create a set of Runspaces using the Secure Socket Layer by specifying the URI form.
     /// This assumes that an shell by the name of E12 exists on the remote server.
     ///     $serverURIs = 1..8 | ForEach-Object { "SSL://server${_}:443/E12" }
     ///     $rs = New-PSSession -URI $serverURIs
-    ///
     /// Create a runspace by connecting to port 8081 on servers s1, s2 and s3
     /// $rs = New-PSSession -computername s1,s2,s3 -port 8081
-    ///
     /// Create a runspace by connecting to port 443 using ssl on servers s1, s2 and s3
     /// $rs = New-PSSession -computername s1,s2,s3 -port 443 -useSSL
-    ///
     /// Create a runspace by connecting to port 8081 on server s1 and run shell named E12.
     /// This assumes that a shell by the name E12 exists on the remote server
     /// $rs = New-PSSession -computername s1 -port 8061 -ShellName E12
     /// </summary>
-    ///
     [Cmdlet(VerbsCommon.New, "PSSession", DefaultParameterSetName = "ComputerName",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135237", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
@@ -64,7 +54,6 @@ namespace Microsoft.PowerShell.Commands
         ///      (a) Computer name
         ///      (b) IPv4 address : 132.3.4.5
         ///      (c) IPv6 address: 3ffe:8311:ffff:f70f:0:5efe:172.30.162.18
-        ///
         /// </summary>
         [Parameter(Position = 0,
                    ValueFromPipeline = true,
@@ -144,7 +133,6 @@ namespace Microsoft.PowerShell.Commands
         /// If this parameter is not specified then the value specified in
         /// the environment variable DEFAULTREMOTESHELLNAME will be used. If
         /// this is not set as well, then Microsoft.PowerShell is used.
-        ///
         /// For VM/Container sessions:
         /// If this parameter is not specified then no configuration is used.
         /// </summary>
