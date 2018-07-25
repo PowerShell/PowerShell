@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            _powerShell = System.Management.Automation.PowerShell.Create();
+            _powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
         }
 
         /// <summary>
@@ -77,9 +77,9 @@ namespace Microsoft.PowerShell.Commands
             switch (ParameterSetName)
             {
                 case "InputObject":
-                    if (InputObject.BaseObject is MarkdownInfo)
+                    if (InputObject.BaseObject is MarkdownInfo markdownInfo)
                     {
-                        ProcessMarkdownInfo(InputObject.BaseObject);
+                        ProcessMarkdownInfo(markdownInfo);
                     }
                     else
                     {
@@ -94,8 +94,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    Debug.Assert(false, string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
-                    break;
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
             }
         }
 
@@ -112,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
                 _powerShell.AddParameter("AsVT100EncodedString");
             }
 
-            Collection<PSObject> output = _powerShell.Invoke();
+            Collection<MarkdownInfo> output = _powerShell.Invoke<MarkdownInfo>();
 
             if (_powerShell.HadErrors)
             {
@@ -122,115 +121,101 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            foreach (PSObject result in output)
+            foreach (MarkdownInfo result in output)
             {
-                ProcessMarkdownInfo(result.BaseObject);
+                ProcessMarkdownInfo(result);
             }
         }
 
         /// <summary>
         /// Process markdown as input objects.
         /// </summary>
-        /// <param name="inputObject">Markdown object to process.</param>
-        private void ProcessMarkdownInfo(object inputObject)
+        /// <param name="markdownInfo">Markdown object to process.</param>
+        private void ProcessMarkdownInfo(MarkdownInfo markdownInfo)
         {
-            if (inputObject is MarkdownInfo markdownInfo)
+            if (UseBrowser)
             {
-                if (UseBrowser)
+                var html = markdownInfo.Html;
+
+                if (!string.IsNullOrEmpty(html))
                 {
-                    var html = markdownInfo.Html;
+                    string tmpFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString() + ".html");
 
-                    if (!string.IsNullOrEmpty(html))
+                    try
                     {
-                        string tmpFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString() + ".html");
-
-                        try
+                        using (var writer = new StreamWriter(new FileStream(tmpFilePath, FileMode.Create, FileAccess.Write, FileShare.Write)))
                         {
-                            using (var writer = new StreamWriter(new FileStream(tmpFilePath, FileMode.Create, FileAccess.Write, FileShare.Write)))
-                            {
-                                writer.Write(html);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            var errorRecord = new ErrorRecord(
-                                e,
-                                "ErrorWritingTempFile",
-                                ErrorCategory.WriteError,
-                                tmpFilePath);
-
-                            WriteError(errorRecord);
-                            return;
-                        }
-
-                        if (InternalTestHooks.ShowMarkdownOutputBypass)
-                        {
-                            WriteObject(html);
-                            return;
-                        }
-
-                        try
-                        {
-                            ProcessStartInfo startInfo = new ProcessStartInfo();
-                            startInfo.FileName = tmpFilePath;
-                            startInfo.UseShellExecute = true;
-                            Process.Start(startInfo);
-                        }
-                        catch (Exception e)
-                        {
-                            var errorRecord = new ErrorRecord(
-                                e,
-                                "ErrorLaunchingDefaultApplication",
-                                ErrorCategory.InvalidOperation,
-                                targetObject: null);
-
-                            WriteError(errorRecord);
-                            return;
+                            writer.Write(html);
                         }
                     }
-                    else
+                    catch (Exception e)
                     {
-                        string errorMessage = StringUtil.Format(ConvertMarkdownStrings.MarkdownInfoInvalid, "Html");
                         var errorRecord = new ErrorRecord(
-                            new InvalidDataException(errorMessage),
-                            "HtmlIsNullOrEmpty",
-                            ErrorCategory.InvalidData,
-                            html);
+                            e,
+                            "ErrorWritingTempFile",
+                            ErrorCategory.WriteError,
+                            tmpFilePath);
 
                         WriteError(errorRecord);
+                        return;
+                    }
+
+                    if (InternalTestHooks.ShowMarkdownOutputBypass)
+                    {
+                        WriteObject(html);
+                        return;
+                    }
+
+                    try
+                    {
+                        ProcessStartInfo startInfo = new ProcessStartInfo();
+                        startInfo.FileName = tmpFilePath;
+                        startInfo.UseShellExecute = true;
+                        Process.Start(startInfo);
+                    }
+                    catch (Exception e)
+                    {
+                        var errorRecord = new ErrorRecord(
+                            e,
+                            "ErrorLaunchingDefaultApplication",
+                            ErrorCategory.InvalidOperation,
+                            targetObject: null);
+
+                        WriteError(errorRecord);
+                        return;
                     }
                 }
                 else
                 {
-                    var vt100String = markdownInfo.VT100EncodedString;
+                    string errorMessage = StringUtil.Format(ConvertMarkdownStrings.MarkdownInfoInvalid, "Html");
+                    var errorRecord = new ErrorRecord(
+                        new InvalidDataException(errorMessage),
+                        "HtmlIsNullOrEmpty",
+                        ErrorCategory.InvalidData,
+                        html);
 
-                    if (!string.IsNullOrEmpty(vt100String))
-                    {
-                        WriteObject(vt100String);
-                    }
-                    else
-                    {
-                        string errorMessage = StringUtil.Format(ConvertMarkdownStrings.MarkdownInfoInvalid, "VT100EncodedString");
-                        var errorRecord = new ErrorRecord(
-                            new InvalidDataException(errorMessage),
-                            "VT100EncodedStringIsNullOrEmpty",
-                            ErrorCategory.InvalidData,
-                            vt100String);
-
-                        WriteError(errorRecord);
-                    }
+                    WriteError(errorRecord);
                 }
             }
             else
             {
-                string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, inputObject.GetType());
-                var errorRecord = new ErrorRecord(
-                            new ArgumentException(errorMessage),
-                            "InvalidInputObject",
-                            ErrorCategory.InvalidArgument,
-                            inputObject);
+                var vt100String = markdownInfo.VT100EncodedString;
 
-                WriteError(errorRecord);
+                if (!string.IsNullOrEmpty(vt100String))
+                {
+                    WriteObject(vt100String);
+                }
+                else
+                {
+                    string errorMessage = StringUtil.Format(ConvertMarkdownStrings.MarkdownInfoInvalid, "VT100EncodedString");
+                    var errorRecord = new ErrorRecord(
+                        new InvalidDataException(errorMessage),
+                        "VT100EncodedStringIsNullOrEmpty",
+                        ErrorCategory.InvalidData,
+                        vt100String);
+
+                    WriteError(errorRecord);
+                }
             }
         }
 
