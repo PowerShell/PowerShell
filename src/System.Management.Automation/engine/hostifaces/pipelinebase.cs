@@ -251,7 +251,6 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Is this pipeline a child pipeline?
-        ///
         /// IsChild flag makes it possible for the pipeline to differentiate between
         /// a true v1 nested pipeline and the cmdlets calling cmdlets case. See bug
         /// 211462.
@@ -368,7 +367,6 @@ namespace System.Management.Automation.Runspaces
         /// <remarks>Caller of synchronous exectute should not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
-        ///
         /// On Synchronous Invoke if output is throttled and no one is reading from
         /// output pipe, Execution will block after buffer is full.
         /// </remarks>

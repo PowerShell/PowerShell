@@ -556,14 +556,12 @@ namespace System.Management.Automation
     /// Runspace(Pool) if provided, otherwise execute using a default
     /// Runspace. Provides access to different result buffers
     /// like output, error, debug, verbose, progress, warning, and information.
-    ///
     /// Provides a simple interface to execute a powershell command:
     /// <code>
     ///    Powershell.Create("get-process").Invoke();
     /// </code>
     /// The above statement creates a local runspace using default
     /// configuration, executes the command and then closes the runspace.
-    ///
     /// Using RunspacePool property, the caller can provide the runspace
     /// where the command / script is executed.
     /// </summary>
@@ -665,7 +663,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="inputstream"></param>
         /// <param name="outputstream"></param>
@@ -865,12 +862,10 @@ namespace System.Management.Automation
         /// Creates a nested powershell within the current instance.
         /// Nested PowerShell is used to do simple operations like checking state
         /// of a variable while another command is using the runspace.
-        ///
         /// Nested PowerShell should be invoked from the same thread as the parent
         /// PowerShell invocation thread. So effectively the parent Powershell
         /// invocation thread is blocked until nested invoke() operation is
         /// complete.
-        ///
         /// Implement PSHost.EnterNestedPrompt to perform invoke() operation on the
         /// nested powershell.
         /// </summary>
@@ -1331,7 +1326,6 @@ namespace System.Management.Automation
         ///         PowerShell shell = PowerShell.Create("get-process").
         ///                                     AddCommand("select-object").AddParameter("name");
         ///     </code>
-        ///
         /// This will add the value "name" to the positional parameter list of "select-object"
         /// cmdlet. When the command is invoked, this value will get bound to positional parameter 0
         /// of the "select-object" cmdlet which is "Property".
@@ -1363,12 +1357,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Adds an additional statement for execution
-        ///
         /// For example,
         ///     <code>
         ///         Runspace rs = RunspaceFactory.CreateRunspace();
         ///         PowerShell ps = PowerShell.Create();
-        ///
         ///         ps.Runspace = rs;
         ///         ps.AddCommand("Get-Process").AddArgument("idle");
         ///         ps.AddStatement().AddCommand("Get-Service").AddArgument("audiosrv");
@@ -1658,7 +1650,6 @@ namespace System.Management.Automation
         /// <summary>
         /// If this flag is true, the commands in this Pipeline will redirect
         /// the global error output pipe to the command's error output pipe.
-        ///
         /// (see the comment in Pipeline.RedirectShellErrorOutputPipe for an
         /// explanation of why this flag is needed)
         /// </summary>
@@ -1684,11 +1675,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the property which indicates if this PowerShell instance
         /// is a child instance.
-        ///
         /// IsChild flag makes it possible for the pipeline to differentiate between
         /// a true v1 nested pipeline and the cmdlets calling cmdlets case. See bug
         /// 211462.
-        ///
         /// </summary>
         internal bool IsChild { get; private set; } = false;
 
@@ -1815,7 +1804,6 @@ namespace System.Management.Automation
         /// Sets an associated RunspacePool for this PowerShell instance.
         /// A Runspace from this pool is used whenever Invoke* method
         /// is called.
-        ///
         /// This can be null in which case a new runspace is created
         /// whenever Invoke* method is called.
         /// </summary>
@@ -2804,7 +2792,6 @@ namespace System.Management.Automation
         /// close the input buffer after all input has been written to
         /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        ///
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
         /// be sure to call Close() before calling BeginInvoke().  Otherwise,
@@ -2842,7 +2829,6 @@ namespace System.Management.Automation
         /// close the input buffer after all input has been written to
         /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        ///
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
         /// be sure to call Close() before calling BeginInvoke().  Otherwise,
@@ -2912,7 +2898,6 @@ namespace System.Management.Automation
         /// close the input buffer after all input has been written to
         /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        ///
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
         /// be sure to call Close() before calling BeginInvoke().  Otherwise,
@@ -2957,7 +2942,6 @@ namespace System.Management.Automation
         /// close the input buffer after all input has been written to
         /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        ///
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
         /// be sure to call Close() before calling BeginInvoke().  Otherwise,
@@ -3287,7 +3271,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         private void DetermineIsBatching()
         {
@@ -3457,7 +3440,6 @@ namespace System.Management.Automation
         /// Stop the currently running command asynchronously. If the command is not started,
         /// the state of PowerShell instance is changed to Stopped and corresponding events
         /// will be raised.
-        ///
         /// The returned IAsyncResult object can be used to wait for the stop operation
         /// to complete.
         /// </summary>
@@ -3567,17 +3549,14 @@ namespace System.Management.Automation
         /// <summary>
         /// This has been added as a work around for Windows8 bug 803461.
         /// It should be used only for the PSJobProxy API.
-        ///
         /// Resets the instance ID of the command to a new guid.
         /// If this is not done, then there is a race condition on the server
         /// in the following circumstances:
-        ///
         ///   ps.BeginInvoke(...);
         ///   ps.Stop()
         ///   ps.Commands.Clear();
         ///   ps.AddCommand("Foo");
         ///   ps.Invoke();
-        ///
         /// In these conditions, stop returns before the server is done cleaning up.
         /// The subsequent invoke will cause an error because the guid already
         /// identifies a command in progress.
@@ -4658,7 +4637,6 @@ namespace System.Management.Automation
 #endif
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="TInput">Type for the input collection</typeparam>
         /// <typeparam name="TOutput">Type for the output collection</typeparam>
@@ -5030,7 +5008,6 @@ namespace System.Management.Automation
             private object _syncObject = new object();
 
             /// <summary>
-            ///
             /// </summary>
             /// <param name="inputStream"></param>
             /// <param name="outputStream"></param>

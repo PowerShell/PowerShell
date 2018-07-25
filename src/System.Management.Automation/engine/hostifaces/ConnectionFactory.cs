@@ -384,7 +384,6 @@ namespace System.Management.Automation.Runspaces
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
-        ///
         /// If <paramref name="typeTable"/> is null no custom serialization/deserialization
         /// can be done. Default PowerShell behavior will be used in this case.
         /// </param>
@@ -431,7 +430,6 @@ namespace System.Management.Automation.Runspaces
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
-        ///
         /// If <paramref name="typeTable"/> is null no custom serialization/deserialization
         /// can be done. Default PowerShell behavior will be used in this case.
         /// </param>
@@ -475,7 +473,6 @@ namespace System.Management.Automation.Runspaces
         #region Runspace - Remote Factory
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
@@ -496,7 +493,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
@@ -520,7 +516,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="connectionInfo"></param>
         /// <param name="host"></param>
@@ -560,7 +555,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="host"></param>
         /// <param name="connectionInfo"></param>
@@ -571,7 +565,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="connectionInfo"></param>
         /// <returns></returns>
@@ -585,7 +578,6 @@ namespace System.Management.Automation.Runspaces
         #region V3 Extensions
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeTable"></param>
         /// <returns></returns>
@@ -597,7 +589,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeTable"></param>
         /// <param name="processInstance"></param>

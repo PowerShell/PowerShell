@@ -258,7 +258,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="stateInfo"></param>
         internal RunspacePoolStateChangedEventArgs(RunspacePoolStateInfo stateInfo)
@@ -1212,13 +1211,10 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Private data to be used by applications built on top of PowerShell.
-        ///
         /// Local runspace pool is created with application private data set to an empty <see cref="PSPrimitiveDictionary"/>.
-        ///
         /// Remote runspace pool gets its application private data from the server (when creating the remote runspace pool)
         /// Calling this method on a remote runspace pool will block until the data is received from the server.
         /// The server will send application private data before reaching <see cref="RunspacePoolState.Opened"/> state.
-        ///
         /// Runspaces that are part of a <see cref="RunspacePool"/> inherit application private data from the pool.
         /// </summary>
         public PSPrimitiveDictionary GetApplicationPrivateData()

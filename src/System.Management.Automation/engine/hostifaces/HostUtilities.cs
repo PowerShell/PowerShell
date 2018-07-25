@@ -868,9 +868,7 @@ namespace System.Management.Automation
         ///   1. Local runspace.  If the local runspace is busy it will invoke as a nested command.
         ///   2. Remote runspace.
         ///   3. Runspace that is stopped in the debugger at a breakpoint.
-        ///
         /// Error and information streams are ignored and only the command result output is returned.
-        ///
         /// This method is NOT thread safe.  It does not support running commands from different threads on the
         /// provided runspace.  It assumes the thread invoking this method is the same that runs all other
         /// commands on the provided runspace.
