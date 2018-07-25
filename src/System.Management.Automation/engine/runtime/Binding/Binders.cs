@@ -492,7 +492,6 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Some classes that implement IEnumerable are not considered as enumerable from the perspective of pipelines,
     /// this binder implements those semantics.
-    ///
     /// The standard interop ConvertBinder is used to allow third party dynamic objects to get the first chance
     /// at the conversion in case they do support enumeration, but do not implement IEnumerable directly.
     /// </summary>
@@ -1013,7 +1012,6 @@ namespace System.Management.Automation.Language
 
     /// <summary>
     /// This binder is used to convert objects to string in specific circumstances, including:
-    ///
     ///     * The LHS of a format expression.  The arguments (the RHS objects) of the format
     ///       expression are not converted to string here, that is defered to String.Format which
     ///       may have some custom formatting to apply.

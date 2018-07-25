@@ -56,7 +56,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// Exit command can be executed in any of begin/process/end blocks.
-        ///
         /// If exit is called in one block (for example, begin), any subsequent
         /// blocks (for example, process and end) should not be executed.
         /// </remarks>
@@ -162,71 +161,43 @@ namespace System.Management.Automation
     /// This class implements a command processor for script related commands.
     /// </summary>
     /// <remarks>
-    ///
     /// 1. Usage scenarios
-    ///
     /// ScriptCommandProcessor is used for four kinds of commands.
-    ///
     /// a. Functions and filters
-    ///
     /// For example,
-    ///
     ///     function foo($a) {$a}
     ///     foo "my text"
-    ///
     /// Second command is an example of a function invocation.
-    ///
     /// In this case, a FunctionInfo object is provided while constructing
     /// command processor.
-    ///
     /// b. Script File
-    ///
     /// For example,
-    ///
     ///     . .\my.ps1
-    ///
     /// In this case, a ExternalScriptInfo or ScriptInfo object is provided
     /// while constructing command processor.
-    ///
     /// c. ScriptBlock
-    ///
     /// For example,
-    ///
     ///     . {$a = 5}
-    ///
     /// In this case, a ScriptBlock object is provided while constructing command
     /// processor.
-    ///
     /// d. Script Text
-    ///
     /// This is used internally for directly running a text stream of script.
-    ///
     /// 2. Design
-    ///
     /// a. Script block
-    ///
     /// No matter how a script command processor is created, core piece of information
     /// is always a ScriptBlock object, which can come from either a FunctionInfo object,
     /// a ScriptInfo object, or directly parsed from script text.
-    ///
     /// b. Script scope
-    ///
     /// A script block can be executed either in current scope or in a new scope.
-    ///
     /// New scope created should be a scope supporting $script: in case the command
     /// processor is created from a script file.
-    ///
     /// c. Begin/Process/End blocks
-    ///
     /// Each script block can have one block of script for begin/process/end. These map
     /// to BeginProcessing, ProcessingRecord, and EndProcessing of cmdlet api.
-    ///
     /// d. ExitException handling
-    ///
     /// If the command processor is created based on a script file, its exit exception
     /// handling is different in the sense that it indicates an exitcode instead of killing
     /// current powershell session.
-    ///
     /// </remarks>
     internal sealed class DlrScriptCommandProcessor : ScriptCommandProcessorBase
     {

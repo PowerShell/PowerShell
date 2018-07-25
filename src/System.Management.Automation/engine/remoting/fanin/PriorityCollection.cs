@@ -9,7 +9,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    ///
     /// </summary>
     internal enum DataPriorityType : int
     {
@@ -137,7 +136,6 @@ namespace System.Management.Automation.Remoting
         /// Adds data to this collection. The data is fragmented in this method
         /// before being stored into the collection. So the calling thread
         /// will get affected, if it tries to add a huge object.
-        ///
         /// The data is added with Default priority.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -189,7 +187,6 @@ namespace System.Management.Automation.Remoting
         /// Gets the fragment or if no fragment is available registers the callback which
         /// gets called once a fragment is available. These 2 steps are performed in a
         /// synchronized way.
-        ///
         /// While getting a fragment the following algorithm is used:
         /// 1. If this is the first time or if the last fragment read is an EndFragment,
         ///    then a new set of fragments is chosen based on the implicit priority.
@@ -345,7 +342,6 @@ namespace System.Management.Automation.Remoting
 
         #region Constructor
         /// <summary>
-        ///
         /// </summary>
         /// <param name="defragmentor">
         /// Defragmentor used to deserialize an object.

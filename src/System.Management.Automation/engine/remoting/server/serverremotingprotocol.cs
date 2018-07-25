@@ -13,7 +13,6 @@ namespace System.Management.Automation.Remoting
     /// There are two other data structure handler levels:
     /// 1) at the runspace level,
     /// 2) at the pipeline level.
-    ///
     /// This session level data structure handler defines what can be done at the session level.
     /// </summary>
     internal abstract class ServerRemoteSessionDataStructureHandler : BaseSessionDataStructureHandler

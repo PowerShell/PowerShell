@@ -20,7 +20,6 @@ namespace System.Management.Automation.Remoting
     /// When a thread tries to do a get on a hashtable key (callId) that has not been
     /// set it is blocked. Once the key's value is set the thread is released. This is
     /// used to synchronize server calls with their responses.
-    ///
     /// This code needs to be thread-safe. The locking convention is that only the
     /// internal or public methods use locks and are thread-safe. The private methods
     /// do not use locks and are not thread-safe (unless called by the internal and

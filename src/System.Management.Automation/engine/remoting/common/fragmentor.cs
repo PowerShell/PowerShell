@@ -15,12 +15,10 @@ namespace System.Management.Automation.Remoting
 {
     /// <summary>
     /// This class is used to hold a fragment of remoting PSObject for transporting to remote computer.
-    ///
     /// A large remoting PSObject will be broken into fragments. Each fragment has a ObjectId and a FragmentId.
     /// The first fragment has a StartFragment marker. The last fragment also an EndFragment marker.
     /// These fragments can be reassembled on the receiving
     /// end by sequencing the fragment ids.
-    ///
     /// Currently control objects (Control-C for stopping a pipeline execution) is not
     /// really fragmented. These objects are small. They are just wrapped into a single
     /// fragment.
@@ -172,13 +170,11 @@ namespace System.Management.Automation.Remoting
         ///       0x1 if IsStartOfFragment is true: This is called S-flag.
         ///       0x2 if IsEndOfFragment is true: This is called the E-flag.
         ///       0x4 if IsControl is true: This is called the C-flag.
-        ///
         ///       The other bits are reserved for future use.
         ///       Now they must be zero when sending,
         ///       and they are ignored when receiving.
         /// BlobLength: 4 bytes as int, byte order is big-endian. this value can only be non-negative.
         /// Blob: BlobLength number of bytes.
-        ///
         ///     0                   1                   2                   3
         ///     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -196,7 +192,6 @@ namespace System.Management.Automation.Remoting
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         ///     |     Blob ...
         ///     +-+-+-+-+-+-+-+-
-        ///
         /// </summary>
         /// <returns>
         /// The binary encoded FragmentedRemoteObject to be ready to pass to WinRS Send API.
@@ -664,7 +659,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -882,15 +876,12 @@ namespace System.Management.Automation.Remoting
         #region Stream Overrides
 
         /// <summary>
-        ///
         /// </summary>
         public override bool CanRead { get { return true; } }
         /// <summary>
-        ///
         /// </summary>
         public override bool CanSeek { get { return false; } }
         /// <summary>
-        ///
         /// </summary>
         public override bool CanWrite { get { return true; } }
         /// <summary>
@@ -898,7 +889,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override long Length { get { return _length; } }
         /// <summary>
-        ///
         /// </summary>
         public override long Position
         {
@@ -913,7 +903,6 @@ namespace System.Management.Automation.Remoting
         {
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="offset"></param>
         /// <param name="origin"></param>
@@ -923,7 +912,6 @@ namespace System.Management.Automation.Remoting
             throw new NotSupportedException();
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="value"></param>
         public override void SetLength(long value)

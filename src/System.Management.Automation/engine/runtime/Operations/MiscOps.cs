@@ -2151,19 +2151,14 @@ namespace System.Management.Automation
         /// Add types to the current scope.
         /// This method called at runtime after types are created at compile time.
         /// This method should be called for every ScriptBlockAst that defines types.
-        ///
         /// I.e.
-        ///
         /// class C1 {}
         /// function foo { class C2 {} }
         /// 1..10 | ForEach-Object { foo }
-        ///
         /// DefinePowerShellTypes() would be called for two TypeDefinitionAsts at the same time and Types for C1 and C2 would be created at the same assembly.
         /// AddPowerShellTypesToTheScope() would be called for root script first and then for foo\C2, once we call function foo.
         /// Note that AddPowerShellTypesToTheScope() would be call on every foo call, 10 times.
-        ///
         /// This method also should be called for 'using module' statements. Then added types would have a different name.
-        ///
         /// </summary>
         /// <param name="types"></param>
         /// <param name="context"></param>

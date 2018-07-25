@@ -24,43 +24,33 @@ namespace Microsoft.PowerShell.Commands
     /// b) To a job object.  This is the asynchronous mode of the cmdlet which will
     ///    return immediately providing the job object that is collecting the
     ///    running command output data.
-    ///
     /// The running command becomes disconnected when the associated runspace is
     /// disconnected (via the Disconnect-PSSession cmdlet).
-    ///
     /// The associated runspace object must be in the Opened state (connected) before
     /// the running command can be connected.  If the associated runspace object is
     /// in the disconnected state, it will first be connected before the running
     /// command is connected.
-    ///
     /// The user can specify how command output data is returned by using the public
     /// OutTarget enumeration (Host, Job).
     /// The default actions of this cmdlet is to always direct ouput to host unless
     /// a job object already exists on the client that is associated with the running
     /// command.  In this case the existing job object is connected to the running
     /// command and returned.
-    ///
     /// The cmdlet can be used in the following ways:
-    ///
     /// Receive PS session data by session object
     /// > $session = New-PSSession serverName
     /// > $job1 = Invoke-Command $session { [script] } -asjob
     /// > Disconnect-PSSession $session
     /// > Connect-PSSession $session
     /// > Receive-PSSession $session    // command output continues collecting at job object.
-    ///
     /// Receive PS session data by session Id
     /// > Receive-PSSession $session.Id
-    ///
     /// Receive PS session data by session instance Id
     /// > Receive-PSSession $session.InstanceId
-    ///
     /// Receive PS session data by session Name.  Direct output to job
     /// > Receive-PSSession $session.Name
-    ///
     /// Receive a running command from a computer.
     /// > $job = Receive-PSSession -ComputerName ServerOne -Name SessionName -OutTarget Job
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Receive, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ReceivePSSessionCommand.SessionParameterSet,
