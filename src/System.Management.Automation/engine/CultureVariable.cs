@@ -20,7 +20,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the value of the variable.
         /// </summary>
-        ///
         public override object Value
         {
             get
@@ -48,7 +47,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the value of the variable.
         /// </summary>
-        ///
         public override object Value
         {
             get
