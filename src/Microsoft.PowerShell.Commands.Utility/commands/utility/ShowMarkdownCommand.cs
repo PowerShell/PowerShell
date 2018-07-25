@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public string[] LiteralPath
         {
             get { return Path; }
@@ -85,6 +85,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ConvertFromMarkdown("InputObject", InputObject.BaseObject);
                     }
+
                     break;
 
                 case "Path":
@@ -101,6 +102,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Process markdown as path.
         /// </summary>
+        /// <param name="parameter">Name of parameter to pass to `ConvertFrom-Markdown`.</param>
+        /// <param name="input">Value of parameter.</param>
         private void ConvertFromMarkdown(string parameter, object input)
         {
             _powerShell.AddCommand("Microsoft.PowerShell.Utility\\ConvertFrom-Markdown").AddParameter(parameter, input);
@@ -108,6 +111,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _powerShell.AddParameter("AsVT100EncodedString");
             }
+
             Collection<PSObject> output = _powerShell.Invoke();
 
             if (_powerShell.HadErrors)
@@ -127,6 +131,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Process markdown as input objects.
         /// </summary>
+        /// <param name="inputObject">Markdown object to process.</param>
         private void ProcessMarkdownInfo(object inputObject)
         {
             if (inputObject is MarkdownInfo markdownInfo)
@@ -177,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
                                 e,
                                 "ErrorLaunchingDefaultApplication",
                                 ErrorCategory.InvalidOperation,
-                                targetObject : null);
+                                targetObject: null);
 
                             WriteError(errorRecord);
                             return;
