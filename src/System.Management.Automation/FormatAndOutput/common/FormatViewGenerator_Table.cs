@@ -125,7 +125,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Method to filter resolved expressions as per table view needs.
         /// For v1.0, table view supports only 10 properties.
-        ///
         /// This method filters and updates "activeAssociationList" instance property.
         /// </summary>
         /// <returns>None.</returns>

@@ -13,10 +13,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// Base class providing support for string manipulation.
     /// This class is a tear off class provided by the LineOutput class
-    ///
     /// Assumptions (in addition to the assumptions made for LineOutput):
     /// - characters map to one or more character cells
-    ///
     /// NOTE: we provide a base class that is valid for devices that have a
     /// 1:1 mapping between a UNICODE character and a display cell
     /// </summary>
@@ -127,7 +125,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// *   File: it layers on top of a TextWriter
     /// *   In Memory text stream: it layers on top of an in memory buffer
     /// *   Printer: it layers on top of a memory buffer then sent to a printer device
-    ///
     /// Assumptions:
     /// - Fixed pitch font: layout done in terms of character cells
     /// - character cell layout not affected by bold, reverse screen, color, etc.
@@ -153,8 +150,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// start the playback
         /// </summary>
         internal virtual void ExecuteBufferPlayBack(DoPlayBackCall playback) { }
-
-        ///
         /// <summary>
         /// The number of columns the current device has
         /// </summary>

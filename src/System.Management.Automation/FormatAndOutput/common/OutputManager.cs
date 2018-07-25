@@ -13,7 +13,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// inner command class used to manage the sub pipelines
     /// it determines which command should process the incoming objects
     /// based on the object type
-    ///
     /// This class is the implementation class for out-console and out-file
     /// </summary>
     internal sealed class OutputManagerInner : ImplementationCommandBase
@@ -155,7 +154,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal CommandWrapper command = new CommandWrapper();
 
             /// <summary>
-            ///
             /// </summary>
             /// <param name="typeName">ETS type name of the object to process</param>
             /// <returns>true if there is a match</returns>

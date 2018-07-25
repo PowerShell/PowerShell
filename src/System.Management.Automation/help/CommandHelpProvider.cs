@@ -21,7 +21,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Class CommandHelpProvider implement the help provider for commands.
     /// </summary>
-    ///
     /// <remarks>
     /// Command Help information are stored in 'help.xml' files. Location of these files
     /// can be found from through the engine execution context.
@@ -37,7 +36,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         static CommandHelpProvider()
         {
@@ -403,7 +401,6 @@ namespace System.Management.Automation
         /// <summary>
         /// ExactMatchHelp implementation for this help provider.
         /// </summary>
-        ///
         /// <remarks>
         /// ExactMatchHelp is overridden instead of DoExactMatchHelp to make sure
         /// all help item retrieval will go through command discovery. Because each
@@ -476,11 +473,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a hashtable to track which help files are loaded already.
-        ///
         /// This will avoid one help file getting loaded again and again.
         /// (Which should not happen unless some commandlet is pointing
         /// to a help file that actually doesn't contain the help for it).
-        ///
         /// </summary>
         private readonly Hashtable _helpFiles = new Hashtable();
 
@@ -875,7 +870,6 @@ namespace System.Management.Automation
         /// Import-Module and Import-PSSession supports changing the name of a command
         /// by suppling a custom prefix. In those cases, the help content is stored by using the
         /// original command name (without prefix) as the key.
-        ///
         /// This method retrieves the help content by suppressing the prefix and then making a copy
         /// of the help content + change the name and then returns the copied help content.
         /// </summary>
@@ -959,13 +953,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Check whether a HelpItems node indicates that the help content is
         /// authored using maml schema.
-        ///
         /// This covers two cases:
         ///     a. If the help file has an extension .maml.
         ///     b. If HelpItems node (which should be the top node of any command help file)
         ///        has an attribute "schema" with value "maml", its content is in maml
         ///        schema
-        ///
         /// </summary>
         /// <param name="helpFile"></param>
         /// <param name="helpItemsNode"></param>
@@ -1347,7 +1339,6 @@ namespace System.Management.Automation
     /// <summary>
     /// This is the class to track the user-defined Help Data which is separate from the
     /// commandHelp itself.
-    ///
     /// Legally, user-defined Help Data should be within the same file as the corresponding
     /// commandHelp and it should appear after the commandHelp.
     /// </summary>

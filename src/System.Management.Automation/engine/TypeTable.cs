@@ -2751,7 +2751,6 @@ namespace System.Management.Automation.Runspaces
         ///     - DefaultDisplayPropertySet is not an PSPropertySet
         ///     - DefaultDisplayProperty is not an PSPropertyInfo
         ///     - DefaultKeyPropertySet is not an PSPropertySet
-        ///
         /// SerializationMethod       InheritPropertySerializationSet   PropertySerializationSet   SerializationDepth     StringSerializationSource
         /// ---------------------     -------------------------------   ------------------------   -------------------    ---------------------------
         /// String                    must NOT be present               must NOT be present        must NOT be present    optional
@@ -3383,7 +3382,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         internal TypeTable() : this(isShared: false)
         {

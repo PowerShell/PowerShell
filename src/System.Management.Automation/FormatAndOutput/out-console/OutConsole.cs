@@ -10,23 +10,21 @@ namespace Microsoft.PowerShell.Commands
     using System.Management.Automation.Internal;
     using Microsoft.PowerShell.Commands.Internal.Format;
 
-    ///
     /// <summary>
-    /// Null sink to absorb pipeline output
+    /// Null sink to absorb pipeline output.
     /// </summary>
     [CmdletAttribute("Out", "Null", SupportsShouldProcess = false,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113366", RemotingCapability = RemotingCapability.None)]
     public class OutNullCommand : PSCmdlet
     {
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
-        ///
         /// <summary>
-        /// Do nothing
+        /// Do nothing.
         /// </summary>
         protected override void ProcessRecord()
         {
