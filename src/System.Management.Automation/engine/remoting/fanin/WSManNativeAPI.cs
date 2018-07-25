@@ -1911,8 +1911,8 @@ namespace System.Management.Automation.Remoting.Client
             /// <summary>
             /// Constructs a WSManReceiveDataResult from the unmanaged pointer.
             /// This involves copying data from unmanaged memory to managed heap.
-            /// Currently PowerShell supports only text data on the wire, so this
-            /// method asserts if the data is not text.
+            /// Currently PowerShell supports only binary data on the wire, so this
+            /// method asserts if the data is not binary.
             /// </summary>
             /// <param name="unmanagedData">
             /// Pointer to unmanaged data.
@@ -1935,7 +1935,7 @@ namespace System.Management.Automation.Remoting.Client
                         result1.data.binaryData.bufferLength);
                 }
                 Dbg.Assert(result1.data.type == (uint)WSManDataType.WSMAN_DATA_TYPE_BINARY,
-                    "ReceiveDataResult can receive only text data");
+                    "ReceiveDataResult can receive only binary data");
 
                 WSManReceiveDataResult result = new WSManReceiveDataResult();
                 result.data = dataRecvd;
