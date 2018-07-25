@@ -7,11 +7,9 @@ using System.Collections.Generic;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpProviderWithCache provides a pseudo implementation of HelpProvider
     /// at which results are cached in a hashtable so that later retrieval can be
     /// faster.
-    ///
     /// </summary>
     internal abstract class HelpProviderWithCache : HelpProvider
     {
@@ -108,7 +106,6 @@ namespace System.Management.Automation
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
-        ///
         /// If false, searches for pattern in the command names.
         /// </param>
         /// <returns>a collection of help info objects</returns>
@@ -153,12 +150,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Create a wildcard pattern based on a target.
-        ///
         /// Here we provide the default implementation of this, covering following
         /// two cases
         ///     a. if target has wildcard pattern, return as it is.
         ///     b. if target doesn't have wildcard pattern, postfix it with *
-        ///
         /// Child class of this one may choose to override this function.
         /// </summary>
         /// <param name="target">target string</param>
@@ -207,10 +202,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Is cached fully loaded?
-        ///
         /// If cache is fully loaded, search/exactmatch Help can short cut the logic
         /// in various help providers to get help directly from cache.
-        ///
         /// This indicator is usually set by help providers derived from this class.
         /// </summary>
         /// <value></value>

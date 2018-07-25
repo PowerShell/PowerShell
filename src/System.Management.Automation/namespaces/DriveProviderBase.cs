@@ -12,7 +12,6 @@ namespace System.Management.Automation.Provider
     /// <summary>
     /// The base class for Cmdlet providers that can be exposed through MSH drives.
     /// </summary>
-    ///
     /// <remarks>
     /// Although it is possible to derive from this base class to implement a Cmdlet Provider, in most
     /// cases one should derive from <see cref="System.Management.Automation.Provider.ItemCmdletProvider"/>,
@@ -30,19 +29,15 @@ namespace System.Management.Automation.Provider
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        ///
         /// <param name="drive">
         /// The PSDriveInfo object the represents the drive to be mounted.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// The drive that was returned from the protected NewDrive method.
         /// </returns>
-        ///
         internal PSDriveInfo NewDrive(PSDriveInfo drive, CmdletProviderContext context)
         {
             Context = context;
@@ -65,16 +60,13 @@ namespace System.Management.Automation.Provider
         /// Gives the provider to attach additional parameters to
         /// the New-PSDrive cmdlet.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         internal object NewDriveDynamicParameters(CmdletProviderContext context)
         {
             Context = context;
@@ -86,19 +78,15 @@ namespace System.Management.Automation.Provider
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        ///
         /// <param name="drive">
         /// The PSDriveInfo object the represents the mounted drive.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// The drive that was returned from the protected RemoveDrive method.
         /// </returns>
-        ///
         internal PSDriveInfo RemoveDrive(PSDriveInfo drive, CmdletProviderContext context)
         {
             Context = context;
@@ -110,15 +98,12 @@ namespace System.Management.Automation.Provider
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        ///
         /// <returns>
         /// An array of drives returned from the protected InitializeDefaultDrives method.
         /// </returns>
-        ///
         internal Collection<PSDriveInfo> InitializeDefaultDrives(CmdletProviderContext context)
         {
             Context = context;
@@ -140,19 +125,15 @@ namespace System.Management.Automation.Provider
         /// reliability reasons or to provide extra data to all calls using
         /// the Drive.
         /// </summary>
-        ///
         /// <param name="drive">
         /// The proposed new drive.
         /// </param>
-        ///
         /// <returns>
         /// The new drive that is to be added to the MSH namespace. This
         /// can either be the same <paramref name="drive"/> object that
         /// was passed in or a modified version of it.
-        ///
         /// The default implementation returns the drive that was passed.
         /// </returns>
-        ///
         /// <remarks>
         /// This method gives the provider an opportunity to associate
         /// provider specific data with a drive. This is done by deriving
@@ -163,7 +144,6 @@ namespace System.Management.Automation.Provider
         /// PSDriveInfo should then be returned. Each subsequent call into the provider
         /// that uses this drive will have access to the derived PSDriveInfo via the
         /// PSDriveInfo property provided by the base class.
-        ///
         /// Any failures should be sent to the <see cref="System.Management.Automation.Provider.CmdletProvider.WriteError(ErrorRecord)"/>
         /// method and null should be returned.
         /// </remarks>
@@ -179,12 +159,10 @@ namespace System.Management.Automation.Provider
         /// Gives the provider an opportunity to attach additional parameters to
         /// the New-PSDrive cmdlet.
         /// </summary>
-        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
-        ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object NewDriveDynamicParameters()
@@ -199,19 +177,15 @@ namespace System.Management.Automation.Provider
         /// Gives the provider an opportunity to clean up any provider specific data
         /// for the drive that is going to be removed.
         /// </summary>
-        ///
         /// <param name="drive">
         /// The Drive object the represents the mounted drive.
         /// </param>
-        ///
         /// <returns>
         /// If the drive can be removed it should return the drive that was passed
         /// in. If the drive cannot be removed, null should be returned or an exception
         /// should be thrown.
-        ///
         /// The default implementation returns the drive that was passed.
         /// </returns>
-        ///
         /// <remarks>
         /// A provider should override this method to free any resources that may be associated with
         /// the drive being removed.
@@ -227,20 +201,16 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Gives the provider the ability to map drives after initialization.
         /// </summary>
-        ///
         /// <returns>
         /// A collection of the drives the provider wants to be added to the session upon initialization.
-        ///
         /// The default implementation returns an empty <see cref="System.Management.Automation.PSDriveInfo"/> collection.
         /// </returns>
-        ///
         /// <remarks>
         /// After the Start method is called on a provider, the InitializeDefaultDrives
         /// method is called. This is an opportunity for the provider to
         /// mount drives that are important to it. For instance, the Active Directory
         /// provider might mount a drive for the defaultNamingContext if the
         /// machine is joined to a domain.
-        ///
         /// All providers should mount a root drive to help the user with discoverability.
         /// This root drive might contain a listing of a set of locations that would be
         /// interesting as roots for other mounted drives. For instance, the Active

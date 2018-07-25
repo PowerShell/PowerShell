@@ -8,16 +8,13 @@ using System.Text;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class MamlCommandHelpInfo keeps track of help information to be returned by
     /// command help provider.
-    ///
     /// </summary>
     internal class MamlCommandHelpInfo : BaseCommandHelpInfo
     {
         /// <summary>
         /// Constructor for custom HelpInfo object construction
-        ///
         /// This is used by the CommandHelpProvider class to generate the
         /// default help UX when no help content is present.
         /// </summary>
@@ -273,7 +270,6 @@ namespace System.Management.Automation
 #if V2
         /// <summary>
         /// Merge the provider specific help with current command help.
-        ///
         /// The cmdletHelp and dynamicParameterHelp is normally retrieved from ProviderHelpProvider.
         /// </summary>
         /// <remarks>

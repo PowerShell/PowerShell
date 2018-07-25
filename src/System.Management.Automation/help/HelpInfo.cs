@@ -6,22 +6,16 @@ using System.Collections.ObjectModel;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpInfo keeps track of help information to be returned by help system.
-    ///
     /// HelpInfo includes information in following aspect,
-    ///
     ///     a. Name: the target name for help
     ///     b. Category: what category the help belongs to
     /// This class will be derived to track help info for different help categories like,
     ///     AliasHelpInfo
     ///     CommandHelpInfo
     ///     ProviderHelpInfo
-    ///
     /// etc.
-    ///
     /// In general, there will be a specific helpInfo child class for each kind of help provider.
-    ///
     /// </summary>
     internal abstract class HelpInfo
     {
@@ -100,7 +94,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Target object in forward-help-provider that should process this HelpInfo.
         /// This will serve as auxiliary information to be passed to forward help provider.
-        ///
         /// In the case of AliasHelpInfo, for example, it needs to be forwarded to
         /// CommandHelpProvider to fill in detailed helpInfo. In that case, ForwardHelpCategory
         /// will be HelpCategory.Command and the help target is the cmdlet name that matches this
@@ -184,17 +177,14 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add common help properties to the helpObject which is in PSObject format.
-        ///
         /// Intrinsic help properties include properties like,
         ///     Name,
         ///     Synopsis
         ///     HelpCategory
         /// etc.
-        ///
         /// Since help object from different help category has different format, it is
         /// needed that we generate these basic information uniformly in the help object
         /// itself.
-        ///
         /// This function is normally called at the end of each child class constructor.
         /// </summary>
         /// <returns></returns>

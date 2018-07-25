@@ -1807,7 +1807,6 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
