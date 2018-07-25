@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -20,6 +21,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(
         VerbsCommon.Show, "Markdown",
+        DefaultParameterSetName = "Path",
         HelpUri = "https://go.microsoft.com/fwlink/?linkid=2006266")]
     [OutputType(typeof(string))]
     public class ShowMarkdownCommand : PSCmdlet
@@ -28,8 +30,28 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets InputObject of type Microsoft.PowerShell.MarkdownRender.MarkdownInfo to display.
         /// </summary>
         [ValidateNotNullOrEmpty]
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "InputObject")]
         public PSObject InputObject { get; set; }
+
+        /// <summary>
+        /// Gets or sets path to markdown file(s) to display.
+        /// </summary>
+        [ValidateNotNullOrEmpty]
+        [Parameter(Position = 0, Mandatory = true,
+                   ValueFromPipelineByPropertyName = true, ParameterSetName = "Path")]
+        public string[] Path { get; set; }
+
+        /// <summary>
+        /// Gets or sets the literal path parameter to markdown files(s) to display.
+        /// </summary>
+        [Parameter(ParameterSetName = "LiteralPath",
+                   Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
+        [Alias("PSPath","LP")]
+        public string[] LiteralPath
+        {
+            get { return Path; }
+            set { Path = value; }
+        }
 
         /// <summary>
         /// Gets or sets the switch to view Html in default browser.
@@ -37,19 +59,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter UseBrowser { get; set; }
 
-        private SteppablePipeline stepPipe;
+        private System.Management.Automation.PowerShell _powerShell;
 
         /// <summary>
         /// Override BeginProcessing.
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (!UseBrowser.IsPresent)
-            {
-                // Since UseBrowser is not bound, we use proxy to Out-Default
-                stepPipe = ScriptBlock.Create(@"Microsoft.PowerShell.Core\Out-Default @PSBoundParameters").GetSteppablePipeline(this.MyInvocation.CommandOrigin);
-                stepPipe.Begin(this);
-            }
+            _powerShell = System.Management.Automation.PowerShell.Create();
         }
 
         /// <summary>
@@ -57,9 +74,62 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            object inpObj = InputObject.BaseObject;
+            switch (ParameterSetName)
+            {
+                case "InputObject":
+                    if (InputObject.BaseObject is MarkdownInfo)
+                    {
+                        ProcessMarkdownInfo(InputObject.BaseObject);
+                    }
+                    else
+                    {
+                        ConvertFromMarkdown("InputObject", InputObject.BaseObject);
+                    }
+                    break;
 
-            if (inpObj is MarkdownInfo markdownInfo)
+                case "Path":
+                case "LiteralPath":
+                    ConvertFromMarkdown(ParameterSetName, Path);
+                    break;
+
+                default:
+                    Debug.Assert(false, string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Process markdown as path.
+        /// </summary>
+        private void ConvertFromMarkdown(string parameter, object input)
+        {
+            _powerShell.AddCommand("Microsoft.PowerShell.Utility\\ConvertFrom-Markdown").AddParameter(parameter, input);
+            if (!UseBrowser)
+            {
+                _powerShell.AddParameter("AsVT100EncodedString");
+            }
+            Collection<PSObject> output = _powerShell.Invoke();
+
+            if (_powerShell.HadErrors)
+            {
+                foreach (ErrorRecord errorRecord in _powerShell.Streams.Error)
+                {
+                    WriteError(errorRecord);
+                }
+            }
+
+            foreach (PSObject result in output)
+            {
+                ProcessMarkdownInfo(result.BaseObject);
+            }
+        }
+
+        /// <summary>
+        /// Process markdown as input objects.
+        /// </summary>
+        private void ProcessMarkdownInfo(object inputObject)
+        {
+            if (inputObject is MarkdownInfo markdownInfo)
             {
                 if (UseBrowser)
                 {
@@ -67,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!string.IsNullOrEmpty(html))
                     {
-                        string tmpFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".html");
+                        string tmpFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString() + ".html");
 
                         try
                         {
@@ -131,16 +201,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!string.IsNullOrEmpty(vt100String))
                     {
-                        if (InternalTestHooks.ShowMarkdownOutputBypass)
-                        {
-                            WriteObject(vt100String);
-                            return;
-                        }
-
-                        if (stepPipe != null)
-                        {
-                            stepPipe.Process(vt100String);
-                        }
+                        WriteObject(vt100String);
                     }
                     else
                     {
@@ -157,12 +218,12 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, inpObj.GetType());
+                string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, inputObject.GetType());
                 var errorRecord = new ErrorRecord(
                             new ArgumentException(errorMessage),
                             "InvalidInputObject",
                             ErrorCategory.InvalidArgument,
-                            InputObject);
+                            inputObject);
 
                 WriteError(errorRecord);
             }
@@ -173,9 +234,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (stepPipe != null)
+            if (_powerShell != null)
             {
-                stepPipe.End();
+                _powerShell.Stop();
+                _powerShell.Dispose();
             }
         }
     }
