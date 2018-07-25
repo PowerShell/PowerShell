@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell.Cmdletization
         /// Default behavior is to be consistent with the built-in cmdlets:
         /// - When a wildcard is specified, then no errors are reported (i.e. Get-Process -Name noSuchProcess*)
         /// - When no wildcard is specified, then errors are reported (i.e. Get-Process -Name noSuchProcess)
-        ///
         /// Note that the following conventions are adopted:
         /// - Min/max queries
         ///   (<see cref="QueryBuilder.FilterByMinPropertyValue(string,object,BehaviorOnNoMatch)"/> and

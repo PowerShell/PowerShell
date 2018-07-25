@@ -602,7 +602,6 @@ namespace Microsoft.WSMan.Management
         /// User has the following options:
         /// 1. AuthMechanism + Credential
         /// 2. CertificateThumbPrint
-        ///
         /// All the above are mutually exclusive.
         /// </summary>
         /// <exception cref="InvalidOperationException">
@@ -1115,7 +1114,6 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        ///
         /// </summary>
         private static Dictionary<string, string> ResourceValueCache = new Dictionary<string, string>();
 
