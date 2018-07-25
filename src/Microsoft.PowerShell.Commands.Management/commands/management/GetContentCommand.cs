@@ -26,7 +26,6 @@ namespace Microsoft.PowerShell.Commands
         /// at a time.  To read all blocks at once, set this value
         /// to a negative number.
         /// </summary>
-        ///
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public long ReadCount { get; set; } = 1;
 
@@ -34,7 +33,6 @@ namespace Microsoft.PowerShell.Commands
         /// The number of content items to retrieve. By default this
         /// value is -1 which means read all the content
         /// </summary>
-        ///
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("First", "Head")]
         public long TotalCount
@@ -74,16 +72,13 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)

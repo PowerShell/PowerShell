@@ -29,7 +29,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// can subsequently use to create one or more CimSession connections. The
     /// options object holds the CIM Session information that is less commonly set
     /// and used by the IT Pro, and most commonly defaulted.
-    ///
     /// The Cmdlet has two parameter sets, one for WMMan options and one for DCOM
     /// options. Depending on the arguments the Cmdlet will return an instance of
     /// DComSessionOptions or WSManSessionOptions, which derive from
