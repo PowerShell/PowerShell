@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Management.Automation;
 using Markdig;
 using Markdig.Renderers;
 using Markdig.Syntax;
@@ -10,7 +11,7 @@ using Markdig.Syntax;
 namespace Microsoft.PowerShell.MarkdownRender
 {
     /// <summary>
-    /// Enum to name all the properties of MarkdownOptionInfo.
+    /// Enum to name all the properties of PSMarkdownOptionInfo.
     /// </summary>
     public enum MarkdownOptionInfoProperty
     {
@@ -73,7 +74,7 @@ namespace Microsoft.PowerShell.MarkdownRender
     /// <summary>
     /// Class to represent color preference options for various Markdown elements.
     /// </summary>
-    public sealed class MarkdownOptionInfo
+    public sealed class PSMarkdownOptionInfo
     {
         private const char Esc = (char)0x1b;
         private const string EndSequence = "[0m";
@@ -189,9 +190,9 @@ namespace Microsoft.PowerShell.MarkdownRender
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="MarkdownOptionInfo"/> class and sets dark as the default theme.
+        /// Initializes a new instance of <see cref="PSMarkdownOptionInfo"/> class and sets dark as the default theme.
         /// </summary>
-        public MarkdownOptionInfo()
+        public PSMarkdownOptionInfo()
         {
             SetDarkTheme();
             EnableVT100Encoding = true;
@@ -204,6 +205,8 @@ namespace Microsoft.PowerShell.MarkdownRender
         private const string Header5Dark = "[4;96m";
         private const string Header6Dark = "[4;97m";
         private const string CodeDark = "[48;2;155;155;155;38;2;30;30;30m";
+
+        private const string CodeMacOS = "[107;95m";
         private const string LinkDark = "[4;38;5;117m";
         private const string ImageDark = "[33m";
         private const string EmphasisBoldDark = "[1m";
@@ -232,11 +235,11 @@ namespace Microsoft.PowerShell.MarkdownRender
             Header4 = Header4Dark;
             Header5 = Header5Dark;
             Header6 = Header6Dark;
-            Code = CodeDark;
             Link = LinkDark;
             Image = ImageDark;
             EmphasisBold = EmphasisBoldDark;
             EmphasisItalics = EmphasisItalicsDark;
+            SetCodeColor(isDarkTheme: true);
         }
 
         /// <summary>
@@ -250,11 +253,16 @@ namespace Microsoft.PowerShell.MarkdownRender
             Header4 = Header4Light;
             Header5 = Header5Light;
             Header6 = Header6Light;
-            Code = CodeLight;
             Link = LinkLight;
             Image = ImageLight;
             EmphasisBold = EmphasisBoldLight;
             EmphasisItalics = EmphasisItalicsLight;
+            SetCodeColor(isDarkTheme: false);
+        }
+
+        private void SetCodeColor(bool isDarkTheme)
+        {
+            Code = Platform.IsMacOS ? CodeMacOS : isDarkTheme ? CodeDark : CodeLight;
         }
     }
 
@@ -268,13 +276,13 @@ namespace Microsoft.PowerShell.MarkdownRender
 
         // For code blocks, [500@ make sure that the whole line has background color.
         private const string LongBackgroundCodeBlock = "[500@";
-        private MarkdownOptionInfo options;
+        private PSMarkdownOptionInfo options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VT100EscapeSequences"/> class.
         /// </summary>
-        /// <param name="optionInfo">MarkdownOptionInfo object to initialize with.</param>
-        public VT100EscapeSequences(MarkdownOptionInfo optionInfo)
+        /// <param name="optionInfo">PSMarkdownOptionInfo object to initialize with.</param>
+        public VT100EscapeSequences(PSMarkdownOptionInfo optionInfo)
         {
             if (optionInfo == null)
             {

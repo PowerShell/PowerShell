@@ -36,11 +36,36 @@ Describe 'ConvertFrom-Markdown tests' -Tags 'CI' {
                 "Header5" { if($VT100Support) {"$esc[4;96m$text$esc[0m`n`n" } else {"$text`n`n"} }
                 "Header6" { if($VT100Support) {"$esc[4;97m$text$esc[0m`n`n" } else {"$text`n`n"} }
 
-                "Code" { if($VT100Support) { ($CodeFormatString -f "$esc[48;2;155;155;155;38;2;30;30;30m$CodeText$esc[0m") + "`n`n" } else { $CodeFormatString -f "$CodeText" + "`n`n" } }
+                "Code" {
+                    if($VT100Support) {
+                        if($IsMacOS)
+                        {
+                            ($CodeFormatString -f "$esc[107;95m$CodeText$esc[0m") + "`n`n"
+                        }
+                        else
+                        {
+                            ($CodeFormatString -f "$esc[48;2;155;155;155;38;2;30;30;30m$CodeText$esc[0m") + "`n`n"
+                        }
+                    }
+                    else {
+                        $CodeFormatString -f "$CodeText" + "`n`n"
+                    }
+                }
                 "CodeBlock" {
                     $expectedString = @()
                     $CodeText -split "`n" | ForEach-Object {
-                        if($VT100Support) { $expectedString += "$esc[48;2;155;155;155;38;2;30;30;30m$_$esc[500@$esc[0m" } else { $expectedString += $_ }
+                        if($VT100Support) {
+                            if($IsMacOS) {
+                                $expectedString += "$esc[107;95m$_$esc[500@$esc[0m"
+                            }
+                            else {
+                                $expectedString += "$esc[48;2;155;155;155;38;2;30;30;30m$_$esc[500@$esc[0m"
+                            }
+
+                        }
+                        else {
+                            $expectedString += $_
+                        }
                     }
                     $returnString = $expectedString -join "`n"
                     "$returnString`n`n"
@@ -339,7 +364,17 @@ bool function()`n{`n}
             $options.Header4 | Should -BeExactly "[4;95m"
             $options.Header5 | Should -BeExactly "[4;96m"
             $options.Header6 | Should -BeExactly "[4;97m"
-            $options.Code | Should -BeExactly "[48;2;155;155;155;38;2;30;30;30m"
+
+            if($IsMacOS)
+            {
+                $options.Code | Should -BeExactly "[107;95m"
+            }
+            else
+            {
+                $options.Code | Should -BeExactly "[48;2;155;155;155;38;2;30;30;30m"
+            }
+
+
             $options.Link | Should -BeExactly "[4;38;5;117m"
             $options.Image | Should -BeExactly "[33m"
             $options.EmphasisBold | Should -BeExactly "[1m"

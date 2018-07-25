@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         VerbsCommon.Set, "MarkdownOption",
         DefaultParameterSetName = IndividualSetting,
         HelpUri = "https://go.microsoft.com/fwlink/?linkid=2006265")]
-    [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.MarkdownOptionInfo))]
+    [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo))]
     public class SetMarkdownOptionCommand : PSCmdlet
     {
         /// <summary>
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
         private const string IndividualSetting = "IndividualSetting";
         private const string InputObjectParamSet = "InputObject";
         private const string ThemeParamSet = "Theme";
-        private const string MarkdownOptionInfoVariableName = "MarkdownOptionInfo";
+        private const string MarkdownOptionInfoVariableName = "PSMarkdownOptionInfo";
         private const string LightThemeName = "Light";
         private const string DarkThemeName = "Dark";
 
@@ -132,12 +132,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            MarkdownOptionInfo mdOptionInfo = null;
+            PSMarkdownOptionInfo mdOptionInfo = null;
 
             switch (ParameterSetName)
             {
                 case ThemeParamSet:
-                    mdOptionInfo = new MarkdownOptionInfo();
+                    mdOptionInfo = new PSMarkdownOptionInfo();
                     if (string.Equals(Theme, LightThemeName, StringComparison.OrdinalIgnoreCase))
                     {
                         mdOptionInfo.SetLightTheme();
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
 
                 case InputObjectParamSet:
                     object baseObj = InputObject.BaseObject;
-                    mdOptionInfo = baseObj as MarkdownOptionInfo;
+                    mdOptionInfo = baseObj as PSMarkdownOptionInfo;
 
                     if (mdOptionInfo == null)
                     {
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case IndividualSetting:
-                    mdOptionInfo = new MarkdownOptionInfo();
+                    mdOptionInfo = new PSMarkdownOptionInfo();
                     SetOptions(mdOptionInfo);
                     break;
             }
@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void SetOptions(MarkdownOptionInfo mdOptionInfo)
+        private void SetOptions(PSMarkdownOptionInfo mdOptionInfo)
         {
             if (!string.IsNullOrEmpty(Header1Color))
             {
@@ -246,17 +246,17 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(
         VerbsCommon.Get, "MarkdownOption",
         HelpUri = "https://go.microsoft.com/fwlink/?linkid=2006371")]
-    [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.MarkdownOptionInfo))]
+    [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo))]
     public class GetMarkdownOptionCommand : PSCmdlet
     {
-        private const string MarkdownOptionInfoVariableName = "MarkdownOptionInfo";
+        private const string MarkdownOptionInfoVariableName = "PSMarkdownOptionInfo";
 
         /// <summary>
         /// Override EndProcessing.
         /// </summary>
         protected override void EndProcessing()
         {
-            WriteObject(SessionState.PSVariable.GetValue(MarkdownOptionInfoVariableName, new MarkdownOptionInfo()));
+            WriteObject(SessionState.PSVariable.GetValue(MarkdownOptionInfoVariableName, new PSMarkdownOptionInfo()));
         }
     }
 }

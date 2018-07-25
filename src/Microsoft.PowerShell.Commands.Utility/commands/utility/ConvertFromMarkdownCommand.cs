@@ -57,23 +57,24 @@ namespace Microsoft.PowerShell.Commands
         private const string LiteralPathParameterSet = "LiteralParamSet";
         private const string InputObjParamSet = "InputObjParamSet";
         private MarkdownConversionType conversionType = MarkdownConversionType.HTML;
-        private MarkdownOptionInfo mdOption = null;
+        private PSMarkdownOptionInfo mdOption = null;
 
         /// <summary>
-        /// Read the MarkdownOptionInfo set in SessionState.
+        /// Read the PSMarkdownOptionInfo set in SessionState.
         /// </summary>
         protected override void BeginProcessing()
         {
-            mdOption = SessionState.PSVariable.GetValue("MarkdownOptionInfo", new MarkdownOptionInfo()) as MarkdownOptionInfo;
-
-            if (!this.Host.UI.SupportsVirtualTerminal)
-            {
-                mdOption.EnableVT100Encoding = false;
-            }
+            mdOption = SessionState.PSVariable.GetValue("PSMarkdownOptionInfo", new PSMarkdownOptionInfo()) as PSMarkdownOptionInfo;
 
             if (mdOption == null)
             {
                 throw new InvalidOperationException();
+            }
+
+            if (this.Host != null && this.Host.UI.SupportsVirtualTerminal)
+            {
+                // If EnableVT100Encoding is true and SupportsVirtualTerminal is true then enable, else disable.
+                mdOption.EnableVT100Encoding = mdOption.EnableVT100Encoding && this.Host.UI.SupportsVirtualTerminal;
             }
 
             if (AsVT100EncodedString)
@@ -128,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void ConvertEachFile(IEnumerable<string> paths, MarkdownConversionType conversionType, bool isLiteral, MarkdownOptionInfo optionInfo)
+        private void ConvertEachFile(IEnumerable<string> paths, MarkdownConversionType conversionType, bool isLiteral, PSMarkdownOptionInfo optionInfo)
         {
             foreach (var path in paths)
             {

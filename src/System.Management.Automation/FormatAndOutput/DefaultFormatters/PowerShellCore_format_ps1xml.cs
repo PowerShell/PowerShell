@@ -252,7 +252,7 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_Microsoft_PowerShell_Commands_PSRunspaceDebug());
 
             yield return new ExtendedTypeDefinition(
-                "Microsoft.PowerShell.MarkdownRender.MarkdownOptionInfo",
+                "Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo",
                 ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo());
         }
 
@@ -1372,7 +1372,7 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo()
         {
-            yield return new FormatViewDefinition("Microsoft.PowerShell.MarkdownRender.MarkdownOptionInfo",
+            yield return new FormatViewDefinition("Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo",
                 ListControl.Create()
                     .StartEntry()
                         .AddItemScriptBlock(@"$_.AsEscapeSequence('Header1')", label: "Header1")
