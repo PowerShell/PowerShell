@@ -221,8 +221,6 @@ namespace Microsoft.PowerShell.Commands
             set;
         } = new string[0];
 
-        // Include
-
         /// <summary>
         /// Gets or sets the exclude property
         /// </summary>
@@ -238,8 +236,6 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         } = new string[0];
-
-        // Exclude
 
         /// <summary>
         /// Gets or sets the force property
