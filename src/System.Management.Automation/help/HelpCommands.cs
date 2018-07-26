@@ -68,27 +68,6 @@ namespace Microsoft.PowerShell.Commands
              IgnoreCase = true)]
         public string[] Category { get; set; }
 
-        /// <summary>
-        /// List of Component's to search on.
-        /// </summary>
-        /// <value></value>
-        [Parameter]
-        public string[] Component { get; set; } = null;
-
-        /// <summary>
-        /// List of Functionality's to search on.
-        /// </summary>
-        /// <value></value>
-        [Parameter]
-        public string[] Functionality { get; set; } = null;
-
-        /// <summary>
-        /// List of Role's to search on.
-        /// </summary>
-        /// <value></value>
-        [Parameter]
-        public string[] Role { get; set; } = null;
-
         private string _provider = string.Empty;
 
         /// <summary>
@@ -180,6 +159,27 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Parameters", Mandatory = true)]
         public string Parameter { set; get; }
 
+        /// <summary>
+        /// List of Component's to search on.
+        /// </summary>
+        /// <value></value>
+        [Parameter]
+        public string[] Component { get; set; } = null;
+
+        /// <summary>
+        /// List of Functionality's to search on.
+        /// </summary>
+        /// <value></value>
+        [Parameter]
+        public string[] Functionality { get; set; } = null;
+
+        /// <summary>
+        /// List of Role's to search on.
+        /// </summary>
+        /// <value></value>
+        [Parameter]
+        public string[] Role { get; set; } = null;
+        
         /// <summary>
         /// This parameter,if true, will direct get-help cmdlet to
         /// navigate to a URL (stored in the command MAML file under
