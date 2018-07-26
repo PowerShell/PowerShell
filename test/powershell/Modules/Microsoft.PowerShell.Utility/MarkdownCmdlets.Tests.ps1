@@ -303,7 +303,16 @@ bool function()`n{`n}
             $options.AsEscapeSequence("Header4") | Should -BeExactly "$esc[4;95m[4;95m$esc[0m"
             $options.AsEscapeSequence("Header5") | Should -BeExactly "$esc[4;96m[4;96m$esc[0m"
             $options.AsEscapeSequence("Header6") | Should -BeExactly "$esc[4;97m[4;97m$esc[0m"
-            $options.AsEscapeSequence("Code") | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
+
+            if($IsMacOS)
+            {
+                $options.AsEscapeSequence("Code") | Should -BeExactly "$esc[107;95m[107;95m$esc[0m"
+            }
+            else
+            {
+                $options.AsEscapeSequence("Code") | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
+            }
+
             $options.AsEscapeSequence("Link") | Should -BeExactly "$esc[4;38;5;117m[4;38;5;117m$esc[0m"
             $options.AsEscapeSequence("Image") | Should -BeExactly "$esc[33m[33m$esc[0m"
             $options.AsEscapeSequence("EmphasisBold") | Should -BeExactly "$esc[1m[1m$esc[0m"
@@ -331,7 +340,16 @@ bool function()`n{`n}
             $newOptions.AsEscapeSequence("Header4") | Should -BeExactly "$esc[95m[95m$esc[0m"
             $newOptions.AsEscapeSequence("Header5") | Should -BeExactly "$esc[96m[96m$esc[0m"
             $newOptions.AsEscapeSequence("Header6") | Should -BeExactly "$esc[97m[97m$esc[0m"
-            $newOptions.AsEscapeSequence("Code") | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
+
+            if($IsMacOS)
+            {
+                $newOptions.AsEscapeSequence("Code") | Should -BeExactly "$esc[107;95m[107;95m$esc[0m"
+            }
+            else
+            {
+                $newOptions.AsEscapeSequence("Code") | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
+            }
+
             $newOptions.AsEscapeSequence("Link") | Should -BeExactly "$esc[4;38;5;88m[4;38;5;88m$esc[0m"
             $newOptions.AsEscapeSequence("Image") | Should -BeExactly "$esc[34m[34m$esc[0m"
             $newOptions.AsEscapeSequence("EmphasisBold") | Should -BeExactly "$esc[32m[32m$esc[0m"

@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
 
             // supportsVT100 == null if the host is null.
             // supportsVT100 == false if host does not support VT100.
-            if (supportsVT100 == null || supportsVT100 == false)
+            if (supportsVT100 != true)
             {
                 mdOption.EnableVT100Encoding = false;
             }
