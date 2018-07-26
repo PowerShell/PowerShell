@@ -380,6 +380,34 @@ bool function()`n{`n}
             $options.EmphasisBold | Should -BeExactly "[1m"
             $options.EmphasisItalics | Should -BeExactly "[36m"
         }
+
+        It "Verify PSMarkdownOptionInfo is defined in module scope" {
+
+            $mod = Get-Module Microsoft.PowerShell.Utility
+            $options =  & $mod { $PSMarkdownOptionInfo }
+
+            $options.Header1 | Should -BeExactly "[7m"
+            $options.Header2 | Should -BeExactly "[4;93m"
+            $options.Header3 | Should -BeExactly "[4;94m"
+            $options.Header4 | Should -BeExactly "[4;95m"
+            $options.Header5 | Should -BeExactly "[4;96m"
+            $options.Header6 | Should -BeExactly "[4;97m"
+
+            if($IsMacOS)
+            {
+                $options.Code | Should -BeExactly "[107;95m"
+            }
+            else
+            {
+                $options.Code | Should -BeExactly "[48;2;155;155;155;38;2;30;30;30m"
+            }
+
+
+            $options.Link | Should -BeExactly "[4;38;5;117m"
+            $options.Image | Should -BeExactly "[33m"
+            $options.EmphasisBold | Should -BeExactly "[1m"
+            $options.EmphasisItalics | Should -BeExactly "[36m"
+        }
     }
 
     Context "Show-Markdown tests" {

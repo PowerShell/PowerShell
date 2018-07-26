@@ -172,8 +172,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            var sessionVar = SessionState.PSVariable;
-            sessionVar.Set(MarkdownOptionInfoVariableName, mdOptionInfo);
+            this.CommandInfo.Module.SessionState.PSVariable.Set(MarkdownOptionInfoVariableName, mdOptionInfo);
 
             if(PassThru.IsPresent)
             {
@@ -256,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            WriteObject(SessionState.PSVariable.GetValue(MarkdownOptionInfoVariableName, new PSMarkdownOptionInfo()));
+            WriteObject(this.CommandInfo.Module.SessionState.PSVariable.GetValue(MarkdownOptionInfoVariableName, new PSMarkdownOptionInfo()));
         }
     }
 }
