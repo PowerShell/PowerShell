@@ -76,14 +76,22 @@ Describe "Get-ChildItem" -Tags "CI" {
             Pop-Location
         }
 
-        It "Should have a the proper fields and be populated" {
+        It "Should have all the proper fields and be populated" {
             $var = Get-Childitem .
 
             $var.Name.Length   | Should -BeGreaterThan 0
             $var.Mode.Length   | Should -BeGreaterThan 0
             $var.LastWriteTime | Should -BeGreaterThan 0
             $var.Length.Length | Should -BeGreaterThan 0
+        }
 
+        It "Should have mode property populated for protected files on Windows" -Skip:(!$IsWindows) {
+            $files = Get-Childitem -Force ~\NT*
+            $files.Count | Should -BeGreaterThan 0
+            foreach ($file in $files)
+            {
+                $file.Mode | Should -Not -BeNullOrEmpty
+            }
         }
 
         It "Should list files in sorted order" {
@@ -153,11 +161,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem -Path $searchRoot -Directory -Recurse).Count | Should -Be 1
         }
 
-        It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Pending:$true {
-        # Enable the test after move to .Net Core 2.1.1
-        # The tracking issue https://github.com/dotnet/corefx/issues/29782
-        #
-        #It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Skip:(!$IsWindows){
+        It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Skip:(!$IsWindows) {
             # Don't remove!!! It is special test for hidden and opened file with exclusive lock.
             $file = Get-ChildItem -path "$env:SystemDrive\\pagefile.sys" -Hidden
             $file | Should not be $null
