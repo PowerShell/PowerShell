@@ -5,7 +5,7 @@
     Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
     ModuleVersion="6.1.0.0"
     CompatiblePSEditions = @("Core")
-    PowerShellVersion="6.1"
+    PowerShellVersion="3.0"
     ModuleToProcess="PSDiagnostics.psm1"
     FunctionsToExport="Disable-PSTrace","Disable-PSWSManCombinedTrace","Disable-WSManTrace","Enable-PSTrace","Enable-PSWSManCombinedTrace","Enable-WSManTrace","Get-LogProperties","Set-LogProperties","Start-Trace","Stop-Trace"
     CmdletsToExport = @()
