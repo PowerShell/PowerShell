@@ -205,7 +205,6 @@ namespace Microsoft.PowerShell.MarkdownRender
         private const string Header5Dark = "[4;96m";
         private const string Header6Dark = "[4;97m";
         private const string CodeDark = "[48;2;155;155;155;38;2;30;30;30m";
-
         private const string CodeMacOS = "[107;95m";
         private const string LinkDark = "[4;38;5;117m";
         private const string ImageDark = "[33m";
@@ -262,6 +261,7 @@ namespace Microsoft.PowerShell.MarkdownRender
 
         private void SetCodeColor(bool isDarkTheme)
         {
+            // MacOS terminal app does not support extended colors for VT100, so we special case for it.
             Code = Platform.IsMacOS ? CodeMacOS : isDarkTheme ? CodeDark : CodeLight;
         }
     }

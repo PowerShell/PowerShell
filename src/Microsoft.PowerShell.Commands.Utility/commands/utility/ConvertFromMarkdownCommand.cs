@@ -71,10 +71,13 @@ namespace Microsoft.PowerShell.Commands
                 throw new InvalidOperationException();
             }
 
-            if (this.Host != null && this.Host.UI.SupportsVirtualTerminal)
+            bool? supportsVT100 = this.Host?.UI.SupportsVirtualTerminal;
+
+            // supportsVT100 == null if the host is null.
+            // supportsVT100 == false if host does not support VT100.
+            if (supportsVT100 == null || supportsVT100 == false)
             {
-                // If EnableVT100Encoding is true and SupportsVirtualTerminal is true then enable, else disable.
-                mdOption.EnableVT100Encoding = mdOption.EnableVT100Encoding && this.Host.UI.SupportsVirtualTerminal;
+                mdOption.EnableVT100Encoding = false;
             }
 
             if (AsVT100EncodedString)
