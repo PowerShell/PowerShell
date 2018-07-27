@@ -410,6 +410,8 @@ bool function()`n{`n}
 
         It "Verify PSMarkdownOptionInfo is defined in module scope" {
 
+            $PSMarkdownOptionInfo | Should -BeNullOrEmpty
+
             $mod = Get-Module Microsoft.PowerShell.Utility
             $options =  & $mod { $PSMarkdownOptionInfo }
 
