@@ -128,16 +128,16 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -Be 'namespace'
     }
 
-    It 'Should first suggest -Full and then -Functionalty when using Get-Help -Fu<tab>' -skip {
+    It 'Should first suggest -Full and then -Functionality when using Get-Help -Fu<tab>' -skip {
         $res = TabExpansion2 -inputScript 'Get-Help -Fu' -cursorColumn 'Get-Help -Fu'.Length
-        $res.CompletionMatches[0].CompletionText | Should -Be '-Full'
-        $res.CompletionMatches[1].CompletionText | Should -Be '-Functionality'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Full'
+        $res.CompletionMatches[1].CompletionText | Should -BeExactly '-Functionality'
     }
 
-    It 'Should first suggest -Full and then -Functionalty when using help -Fu<tab>' -skip {
+    It 'Should first suggest -Full and then -Functionality when using help -Fu<tab>' -skip {
         $res = TabExpansion2 -inputScript 'help -Fu' -cursorColumn 'help -Fu'.Length
-        $res.CompletionMatches[0].CompletionText | Should -Be '-Full'
-        $res.CompletionMatches[1].CompletionText | Should -Be '-Functionality'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Full'
+        $res.CompletionMatches[1].CompletionText | Should -BeExactly '-Functionality'
     }
 
     Context NativeCommand {

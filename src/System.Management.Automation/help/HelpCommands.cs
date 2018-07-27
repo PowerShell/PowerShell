@@ -160,25 +160,22 @@ namespace Microsoft.PowerShell.Commands
         public string Parameter { set; get; }
 
         /// <summary>
-        /// List of Component's to search on.
+        /// Gets and sets list of Component's to search on.
         /// </summary>
-        /// <value></value>
         [Parameter]
-        public string[] Component { get; set; } = null;
+        public string[] Component { get; set; }
 
         /// <summary>
-        /// List of Functionality's to search on.
+        /// Gets and sets list of Functionality's to search on.
         /// </summary>
-        /// <value></value>
         [Parameter]
-        public string[] Functionality { get; set; } = null;
+        public string[] Functionality { get; set; }
 
         /// <summary>
-        /// List of Role's to search on.
+        /// Gets and sets list of Role's to search on.
         /// </summary>
-        /// <value></value>
         [Parameter]
-        public string[] Role { get; set; } = null;
+        public string[] Role { get; set; }
         
         /// <summary>
         /// This parameter,if true, will direct get-help cmdlet to
