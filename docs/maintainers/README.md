@@ -50,7 +50,7 @@ If you are a Repository Maintainer, you:
   However, they should be reminded to create an issue in the future to frontload any potential problems with the work and to minimize duplication of efforts.
 1. **SHOULD** encourage contributors to create meaningful titles for all PRs.
   Edit the title if necessary to provide clarity on the problem
-1. **SHOULD** encourage contributes to write meaningful, descriptive git commits
+1. **SHOULD** encourage contributors to write meaningful, descriptive git commits
 1. **SHOULD NOT** merge pull requests with a failed CI build
   (unless, for instance, the pull request is being submitted to fix broken CI)
 1. **SHOULD NOT** merge pull requests without the label `cla-signed` or `cla-not-required` from the Microsoft CLA bot
@@ -82,7 +82,7 @@ Eligibility is heavily dependent on the level of contribution and expertise: ind
 At any point in time, the existing Repository Maintainers can unanimously nominate a strong community member to become a Repository Maintainer.
 Nominations are brought to the PowerShell Committee to understand the reasons and justification.
 A simple majority of the PowerShell Committee is required to veto the nomination.
-Once a nominee has been approved, a PR will be submitted by a current Maintainer to update this document to add the nominee's name to
+When a nominee has been approved, a PR will be submitted by a current Maintainer to update this document to add the nominee's name to
 the [Current Repository Maintainers](#Current-Repository-Maintainers) with justification as the description of the PR to serve as the public announcement.
 
 [RFC-repo]: https://github.com/PowerShell/PowerShell-RFC
