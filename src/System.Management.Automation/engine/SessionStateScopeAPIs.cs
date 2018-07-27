@@ -92,18 +92,18 @@ namespace System.Management.Automation
 
                         if (scopeNumericID < 0)
                         {
-                            throw PSTraceSource.NewArgumentOutOfRangeException("scopeID", scopeID);
+                            throw PSTraceSource.NewArgumentOutOfRangeException("Scope", scopeID);
                         }
 
                         result = GetScopeByID(scopeNumericID) ?? _currentScope;
                     }
                     catch (FormatException)
                     {
-                        throw PSTraceSource.NewArgumentException("scopeID", AutomationExceptions.InvalidScopeIdArgument, "scopeID");
+                        throw PSTraceSource.NewArgumentException("Scope", AutomationExceptions.InvalidScopeIdArgument, "Scope");
                     }
                     catch (OverflowException)
                     {
-                        throw PSTraceSource.NewArgumentOutOfRangeException("scopeID", scopeID);
+                        throw PSTraceSource.NewArgumentOutOfRangeException("Scope", scopeID);
                     }
                 }
             }
@@ -144,7 +144,7 @@ namespace System.Management.Automation
             {
                 ArgumentOutOfRangeException outOfRange =
                     PSTraceSource.NewArgumentOutOfRangeException(
-                        "scopeID",
+                        "Scope",
                         originalID,
                         SessionStateStrings.ScopeIDExceedsAvailableScopes,
                         originalID);
