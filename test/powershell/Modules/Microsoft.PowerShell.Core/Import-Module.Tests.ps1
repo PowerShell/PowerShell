@@ -137,7 +137,7 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
 
     BeforeAll {
         $src = @"
-            using System.Management.Automation;           // Windows PowerShell namespace.
+            using System.Management.Automation;
             namespace ModuleCmdlets
             {
                 [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]
@@ -145,7 +145,7 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
                 {
                     protected override void BeginProcessing()
                     {
-                    WriteObject("BinaryModuleCmdlet1 exported by the ModuleCmdlets module.");
+                        WriteObject("BinaryModuleCmdlet1 exported by the ModuleCmdlets module.");
                     }
                 }
             }
