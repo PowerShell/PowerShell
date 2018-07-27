@@ -9,7 +9,6 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// MshUtilityMshSnapin (or MshUtilityMshSnapinInstaller) is a class for facilitating registry
     /// of necessary information for monad utility mshsnapin.
-    /// This class will be built with monad utility dll
     /// </summary>
     [RunInstaller(true)]
     public sealed class PSUtilityPSSnapIn : PSSnapIn

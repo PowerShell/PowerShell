@@ -54,10 +54,8 @@ namespace Microsoft.PowerShell
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
 
-        // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
-        // Removed HandleUnexpectedExceptions infrastructure
         /// <summary>
-        /// internal Entry point in msh console host implementation
+        /// Internal Entry point in msh console host implementation.
         /// </summary>
         /// <param name="bannerText">
         /// Banner text to be displayed by ConsoleHost
@@ -70,8 +68,8 @@ namespace Microsoft.PowerShell
         /// </param>
         /// <returns>
         /// The exit code for the shell.
-        /// NTRAID#Windows OS Bugs-1036968-2005/01/20-sburns The behavior here is related to monitor work.  The low word of the
-        /// exit code is available for the user.  The high word is reserved for the shell and monitor.
+        /// The behavior here is related to monitor work. The low word of the exit code is available for the user.
+        /// The high word is reserved for the shell and monitor.
         /// The shell process needs to return:
         /// - if the shell.exe fails init, 0xFFFF0000
         /// - if the exit keyword is called with no parameter at the point of top-level prompt, 0x80000000 (e.g. 0 with the high
@@ -303,7 +301,6 @@ namespace Microsoft.PowerShell
         /// The break handler for the program.  Dispatches a break event to the current Executor.
         /// </summary>
         /// <param name="signal"></param>
-        /// <returns></returns>
         private static bool MyBreakHandler(ConsoleControl.ConsoleBreakSignal signal)
         {
             switch (signal)
@@ -311,7 +308,7 @@ namespace Microsoft.PowerShell
                 case ConsoleControl.ConsoleBreakSignal.CtrlBreak:
                     if (s_cpp.NonInteractive)
                     {
-                        //ControlBreak mimics ControlC in Noninteractive shells
+                        // ControlBreak mimics ControlC in Noninteractive shells
                         SpinUpBreakHandlerThread(shouldEndSession: true);
                     }
                     else
@@ -396,7 +393,6 @@ namespace Microsoft.PowerShell
                 // otherwise the code in Run method can get instance of the breakhandlerThread
                 // after it is created and before started and call join on it. This will result
                 // in ThreadStateException.
-                // NTRAID#Windows OutofBand Bugs-938289-2006/07/27-hiteshr
                 if (bht == null)
                 {
                     // we're not already running HandleBreak on a separate thread, so run it now.
@@ -505,11 +501,9 @@ namespace Microsoft.PowerShell
         #region overrides
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
-        /// <value></value>
         /// <exception/>
-
         public override string Name
         {
             get
@@ -522,11 +516,9 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
-        /// <value></value>
         /// <exception/>
-
         public override System.Version Version
         {
             get
@@ -537,17 +529,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
-        /// <value></value>
         /// <exception/>
-
         public override System.Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
-        /// <value></value>
         /// <exception/>
         public override PSHostUserInterface UI
         {
@@ -602,8 +591,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Handles state changed event of the remote runspace. If the remote runspace
-        /// gets into a broken or closed state, writes a message and pops out the
-        /// runspace
+        /// gets into a broken or closed state, writes a message and pops out the runspace.
         /// </summary>
         /// <param name="sender">not sure</param>
         /// <param name="eventArgs">arguments describing this event</param>
@@ -837,11 +825,9 @@ namespace Microsoft.PowerShell
         private PSObject _consoleColorProxy;
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
-        /// <value></value>
         /// <exception/>
-
         public override System.Globalization.CultureInfo CurrentCulture
         {
             get
@@ -854,11 +840,9 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
-        /// <value></value>
         /// <exception/>
-
         public override System.Globalization.CultureInfo CurrentUICulture
         {
             get
@@ -872,8 +856,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// </summary>
-        /// <exception/>
-
         public override void SetShouldExit(int exitCode)
         {
             lock (hostGlobalLock)
@@ -928,7 +910,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// If there is no nested prompt.
@@ -942,7 +924,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// </summary>
         public override void NotifyBeginApplication()
         {
@@ -967,7 +949,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// <seealso cref="NotifyBeginApplication"/>
         /// </summary>
         public override void NotifyEndApplication()
@@ -1014,7 +996,7 @@ namespace Microsoft.PowerShell
         #region non-overrides
 
         /// <summary>
-        /// Constructs a new instance
+        /// Constructs a new instance.
         /// </summary>
         internal ConsoleHost()
         {
@@ -1084,7 +1066,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Finalizes the instance
+        /// Finalizes the instance.
         /// </summary>
         ~ConsoleHost()
         {
@@ -1092,7 +1074,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Disposes of this instance, per the IDisposable pattern
+        /// Disposes of this instance, per the IDisposable pattern.
         /// </summary>
         public void Dispose()
         {
@@ -1129,7 +1111,6 @@ namespace Microsoft.PowerShell
                     }
                     if (_runspaceRef != null)
                     {
-                        // NTRAID#Windows Out Of Band Releases-925297-2005/12/14
                         try
                         {
                             _runspaceRef.Runspace.Dispose();
@@ -1288,7 +1269,6 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The process exit code to be returned by Main.
         /// </returns>
-
         private uint Run(CommandLineParameterParser cpp, bool isPrestartWarned)
         {
             Dbg.Assert(cpp != null, "CommandLine parameter parser cannot be null.");
@@ -1334,8 +1314,6 @@ namespace Microsoft.PowerShell
                 }
 #endif
 
-                // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
-                // Removed HandleUnexpectedExceptions infrastructure
 #if STAMODE
                 exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ConfigurationName);
 #else
@@ -1497,7 +1475,6 @@ namespace Microsoft.PowerShell
         /// Opens and Initializes the Host's sole Runspace.  Processes the startup scripts and runs any command passed on the
         /// command line.
         /// </summary>
-
         private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, Collection<CommandParameter> initialCommandArgs)
         {
             Dbg.Assert(_runspaceRef == null, "runspace should be null");
@@ -1877,11 +1854,9 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Escapes backtick and tick characters with a backtick, returns the result
+        /// Escapes backtick and tick characters with a backtick, returns the result.
         /// </summary>
         /// <param name="str"></param>
-        /// <returns></returns>
-
         internal static string EscapeSingleQuotes(string str)
         {
             // worst case we have to escape every character, so capacity is twice as large as input length
@@ -1910,23 +1885,16 @@ namespace Microsoft.PowerShell
             UI.WriteLine(fg, bg, line);
         }
 
-        // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
-        // Removed HandleUnexpectedExceptions infrastructure
         private void ReportException(Exception e, Executor exec)
         {
             Dbg.Assert(e != null, "must supply an Exception");
             Dbg.Assert(exec != null, "must supply an Executor");
-
-            // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
-            // Removed HandleUnexpectedExceptions infrastructure
 
             // Attempt to write the exception into the error stream so that the normal F&O machinery will
             // display it according to preferences.
 
             object error = null;
             Pipeline tempPipeline = exec.CreatePipeline();
-
-            // NTRAID#Windows OS Bugs-1143621-2005/04/08-sburns
 
             IContainsErrorRecord icer = e as IContainsErrorRecord;
 
@@ -2010,12 +1978,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// raised when the host pops a runspace
+        /// Raised when the host pops a runspace.
         /// </summary>
         internal event EventHandler RunspacePopped;
 
         /// <summary>
-        /// raised when the host pushes a runspace
+        /// Raised when the host pushes a runspace.
         /// </summary>
         internal event EventHandler RunspacePushed;
 
@@ -2024,7 +1992,7 @@ namespace Microsoft.PowerShell
         #region debugger
 
         /// <summary>
-        /// Handler for debugger events
+        /// Handler for debugger events.
         /// </summary>
         private void OnExecutionSuspended(object sender, DebuggerStopEventArgs e)
         {
@@ -2098,13 +2066,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Returns true if the host is in debug mode
+        /// Returns true if the host is in debug mode.
         /// </summary>
         private bool InDebugMode { get; set; }
 
         /// <summary>
-        /// True when debugger command is user and available
-        /// for stopping.
+        /// True when debugger command is user and available for stopping.
         /// </summary>
         internal bool DebuggerCanStopCommand
         {
@@ -2166,7 +2133,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Writes a line using the debugger colors
+        /// Writes a line using the debugger colors.
         /// </summary>
         private void WriteDebuggerMessage(string line)
         {
@@ -2216,7 +2183,6 @@ namespace Microsoft.PowerShell
             /// <exception cref="InvalidOperationException">
             ///  when there is no instanceStack.Count == 0
             /// </exception>
-
             internal static bool ExitCurrentLoop()
             {
                 if (s_instanceStack.Count == 0)
@@ -2271,8 +2237,7 @@ namespace Microsoft.PowerShell
             }
 
             /// <summary>
-            /// When a runspace is popped, we need to reevaluate the
-            /// prompt
+            /// When a runspace is popped, we need to reevaluate the prompt.
             /// </summary>
             /// <param name="sender">sender of this event, unused</param>
             /// <param name="eventArgs">arguments describing this event, unused</param>
@@ -2285,8 +2250,6 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
-            // Removed HandleUnexpectedExceptions infrastructure
             /// <summary>
             /// Evaluates the prompt, displays it, gets a command from the console, and executes it.  Repeats until the command
             /// is "exit", or until the shutdown flag is set.
@@ -2491,13 +2454,11 @@ namespace Microsoft.PowerShell
                                 s_theConsoleHost._interactiveCommandCount += 1;
                         }
                     }
-                    // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
-                    // Removed HandleUnexpectedExceptions infrastructure
                     finally
                     {
                         _parent._isRunningPromptLoop = false;
                     }
-                } // end while
+                }
             }
 
             internal void BlockCommandOutput()
@@ -2833,15 +2794,15 @@ namespace Microsoft.PowerShell
         [TraceSource("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace")]
         private static PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("ConsoleHostRunspaceInit", "Initialization code for ConsoleHost's Runspace", false);
-    } // ConsoleHost
+    }
 
     /// <summary>
-    /// Defines arguments passed to ConsoleHost.CreateRunspace
+    /// Defines arguments passed to ConsoleHost.CreateRunspace.
     /// </summary>
     internal sealed class RunspaceCreationEventArgs : EventArgs
     {
         /// <summary>
-        /// Constructs RunspaceCreationEventArgs
+        /// Constructs RunspaceCreationEventArgs.
         /// </summary>
         /// <param name="initialCommand"> </param>
         /// <param name="skipProfiles"></param>
@@ -2871,5 +2832,4 @@ namespace Microsoft.PowerShell
         internal string ConfigurationName { get; set; }
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }
-}   // namespace
-
+}
