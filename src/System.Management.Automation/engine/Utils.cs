@@ -900,61 +900,6 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static bool ItemExists(string path)
-        {
-            try
-            {
-                return ItemExists(path, out bool _);
-            }
-            catch
-            {
-            }
-
-            return false;
-        }
-
-        internal static bool ItemExists(string path, out bool isDirectory)
-        {
-            isDirectory = false;
-
-            if (String.IsNullOrEmpty(path))
-            {
-                return false;
-            }
-
-            if (IsReservedDeviceName(path))
-            {
-                return false;
-            }
-
-            try
-            {
-                // Use 'File.GetAttributes()' because we want to get access exceptions.
-                FileAttributes attributes = File.GetAttributes(path);
-                isDirectory = attributes.HasFlag(FileAttributes.Directory);
-
-                return (int)attributes != -1;
-            }
-            catch (IOException)
-            {
-                return false;
-            }
-        }
-
-        internal static bool FileExists(string path)
-        {
-            bool itemExists = ItemExists(path, out bool isDirectory);
-
-            return (itemExists && (!isDirectory));
-        }
-
-        internal static bool DirectoryExists(string path)
-        {
-            bool itemExists = ItemExists(path, out bool isDirectory);
-
-            return (itemExists && isDirectory);
-        }
-
         internal static void NativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
         {
             IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
@@ -1392,43 +1337,26 @@ namespace System.Management.Automation
             internal static readonly char[] PathSearchTrimEnd = { (char)0x9, (char)0xA, (char)0xB, (char)0xC, (char)0xD, (char)0x20, (char)0x85, (char)0xA0 };
         }
 
-#if !UNIX
-        // This is to reduce the runtime overhead of the feature query
-        private static readonly Type ComObjectType = typeof(object).Assembly.GetType("System.__ComObject");
-#endif
-
-        internal static bool IsComObject(PSObject psObject)
-        {
-#if UNIX
-            return false;
-#else
-            if (psObject == null) { return false; }
-
-            object obj = PSObject.Base(psObject);
-            return IsComObject(obj);
-#endif
-        }
-
+        /// <summary>
+        /// A COM object could be directly of the type 'System.__ComObject', or it could be a strongly typed RWC,
+        /// whose specific type derives from 'System.__ComObject'.
+        /// A strongly typed RWC can be created via the 'new' operation with a Primary Interop Assembly (PIA).
+        /// For example, with the PIA 'Microsoft.Office.Interop.Excel', you can write the following code:
+        ///    var excelApp = new Microsoft.Office.Interop.Excel.Application();
+        ///    Type type = excelApp.GetType();
+        ///    Type comObjectType = typeof(object).Assembly.GetType("System.__ComObject");
+        ///    Console.WriteLine("excelApp type: {0}", type.FullName);
+        ///    Console.WriteLine("Is __ComObject assignable from? {0}", comObjectType.IsAssignableFrom(type));
+        /// and the results are:
+        ///    excelApp type: Microsoft.Office.Interop.Excel.ApplicationClass
+        ///    Is __ComObject assignable from? True
+        /// </summary>
         internal static bool IsComObject(object obj)
         {
 #if UNIX
             return false;
 #else
-            // We can't use System.Runtime.InteropServices.Marshal.IsComObject(obj) since it doesn't work in partial trust.
-            //
-            // There could be strongly typed RWCs whose type is not 'System.__ComObject', but the more specific type should
-            // derive from 'System.__ComObject'. The strongly typed RWCs can be created with 'new' operation via the Primay
-            // Interop Assembly (PIA).
-            // For example, with the PIA 'Microsoft.Office.Interop.Excel', you can write the following code:
-            //    var excelApp = new Microsoft.Office.Interop.Excel.Application();
-            //    Type type = excelApp.GetType();
-            //    Type comObjectType = typeof(object).Assembly.GetType("System.__ComObject");
-            //    Console.WriteLine("excelApp type: {0}", type.FullName);
-            //    Console.WriteLine("Is __ComObject assignable from? {0}", comObjectType.IsAssignableFrom(type));
-            // and the results are:
-            //    excelApp type: Microsoft.Office.Interop.Excel.ApplicationClass
-            //    Is __ComObject assignable from? True
-            return obj != null && ComObjectType.IsAssignableFrom(obj.GetType());
+            return obj != null && Marshal.IsComObject(obj);
 #endif
         }
     }

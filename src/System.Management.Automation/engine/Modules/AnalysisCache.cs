@@ -688,10 +688,9 @@ namespace System.Management.Automation
             var keys = Entries.Keys;
             foreach (var key in keys)
             {
-                if (!Utils.FileExists(key))
+                if (!File.Exists(key))
                 {
-                    ModuleCacheEntry unused;
-                    removedSomething |= Entries.TryRemove(key, out unused);
+                    removedSomething |= Entries.TryRemove(key, out ModuleCacheEntry _);
                 }
             }
 
@@ -728,7 +727,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (Utils.FileExists(filename))
+                if (File.Exists(filename))
                 {
                     var fileLastWriteTime = new FileInfo(filename).LastWriteTime;
                     if (fileLastWriteTime > this.LastReadTime)
@@ -1025,7 +1024,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if (Utils.FileExists(s_cacheStoreLocation))
+                    if (File.Exists(s_cacheStoreLocation))
                     {
                         return Deserialize(s_cacheStoreLocation);
                     }
