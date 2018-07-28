@@ -250,6 +250,10 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.PSRunspaceDebug",
                 ViewsOf_Microsoft_PowerShell_Commands_PSRunspaceDebug());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo",
+                ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
@@ -1364,6 +1368,26 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("BreakAll")
                     .EndRowDefinition()
                 .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo()
+        {
+            yield return new FormatViewDefinition("Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header1')", label: "Header1")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header2')", label: "Header2")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header3')", label: "Header3")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header4')", label: "Header4")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header5')", label: "Header5")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header6')", label: "Header6")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Code')", label: "Code")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Link')", label: "Link")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Image')", label: "Image")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('EmphasisBold')", label: "EmphasisBold")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('EmphasisItalics')", label: "EmphasisItalics")
+                    .EndEntry()
+                .EndList());
         }
     }
 }

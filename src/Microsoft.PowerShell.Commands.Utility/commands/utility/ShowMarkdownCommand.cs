@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(
         VerbsCommon.Show, "Markdown",
-        HelpUri = "TBD")]
+        HelpUri = "https://go.microsoft.com/fwlink/?linkid=2006266")]
     [OutputType(typeof(string))]
     public class ShowMarkdownCommand : PSCmdlet
     {
