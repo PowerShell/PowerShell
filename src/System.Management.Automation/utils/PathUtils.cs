@@ -293,7 +293,8 @@ namespace System.Management.Automation
                 PSDriveInfo drive = null;
                 path =
                     command.SessionState.Path.GetUnresolvedProviderPathFromPSPath(
-                        filePath, cmdletProviderContext, out provider, out drive);
+                        isLiteralPath ? filePath : WildcardPattern.Unescape(filePath),
+                        cmdletProviderContext, out provider, out drive);
                 cmdletProviderContext.ThrowFirstErrorOrDoNothing();
                 if (!provider.NameEquals(command.Context.ProviderNames.FileSystem))
                 {

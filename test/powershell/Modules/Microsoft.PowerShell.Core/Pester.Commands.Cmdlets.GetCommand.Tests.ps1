@@ -7,11 +7,13 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
         # Create temporary EXE command files
         $file1 = Setup -f WildCardCommandA.exe -pass
         $file2 = Setup -f WildCardCommand[B].exe -pass
+        $file3 = Setup -f [.exe -pass
         #$null = New-Item -ItemType File -Path (Join-Path $TestDrive WildCardCommandA.exe) -ErrorAction Ignore
         #$null = New-Item -ItemType File -Path (Join-Path $TestDRive WildCardCommand[B].exe) -ErrorAction Ignore
         if ( $IsLinux -or $IsMacOS ) {
             /bin/chmod 777 "$file1"
             /bin/chmod 777 "$file2"
+            /bin/chmod 777 "$file3"
         }
         $commandInfo = Get-Command Get-Date -ShowCommandInfo
     }
@@ -45,6 +47,11 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
         $result = Get-Command -Name .\WildCardCommand[B].exe
         $result | Should -Not -BeNullOrEmpty
         $result | Should -Be WildCardCommand[B].exe
+
+        # This should find the file [.exe
+        $result = Get-Command -Name .\[.exe -Type Application
+        $result | Should -Not -BeNullOrEmpty
+        $result | Should -BeExactly [.exe
 
         Pop-Location
     }

@@ -104,7 +104,7 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
         }
 
         It "Fails to rename not existing function" {
-            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RenameItemCommand"
+            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.RenameItemCommand"
         }
 
         It "Fails to rename function which is Constant" {
@@ -113,8 +113,8 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
         }
 
         It "Fails to rename function which is ReadOnly" {
-            Set-Item $nonExistingFunction -Options "ReadOnly"
-            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RenameItemCommand"
+            Set-Item $nonExistingFunction -Options "ReadOnly" -Value $functionValue
+            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | Should -Throw -ErrorId "CannotRenameFunction,Microsoft.PowerShell.Commands.RenameItemCommand"
         }
 
         It "Renames ReadOnly function when -Force parameter is on" {

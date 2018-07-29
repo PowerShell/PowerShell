@@ -458,84 +458,19 @@ namespace System.Management.Automation
         {
             CommandInfo result = null;
 
-            do // false loop
+            CommandDiscovery.discoveryTracer.WriteLine(
+                "The name appears to be a qualified path: {0}",
+                _commandName);
+
+            CommandDiscovery.discoveryTracer.WriteLine(
+                "Trying to resolve the path as an PSPath");
+
+            string resolvedPath = ResolvePSPath(_commandName);
+
+            if (resolvedPath != null && File.Exists(resolvedPath))
             {
-                CommandDiscovery.discoveryTracer.WriteLine(
-                    "The name appears to be a qualified path: {0}",
-                    _commandName);
-
-                CommandDiscovery.discoveryTracer.WriteLine(
-                    "Trying to resolve the path as an PSPath");
-
-                // Find the match if it is.
-
-                Collection<string> resolvedPaths = new Collection<string>();
-
-                try
-                {
-                    Provider.CmdletProvider providerInstance;
-                    ProviderInfo provider;
-                    resolvedPaths =
-                        _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(_commandName, false, out provider, out providerInstance);
-                }
-                catch (ItemNotFoundException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The path could not be found: {0}",
-                        _commandName);
-                }
-                catch (DriveNotFoundException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "A drive could not be found for the path: {0}",
-                        _commandName);
-                }
-                catch (ProviderNotFoundException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "A provider could not be found for the path: {0}",
-                        _commandName);
-                }
-                catch (InvalidOperationException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The path specified a home directory, but the provider home directory was not set. {0}",
-                        _commandName);
-                }
-                catch (ProviderInvocationException providerException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The provider associated with the path '{0}' encountered an error: {1}",
-                        _commandName,
-                        providerException.Message);
-                }
-                catch (PSNotSupportedException)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
-                        _commandName);
-                }
-
-                if (resolvedPaths.Count > 1)
-                {
-                    CommandDiscovery.discoveryTracer.TraceError(
-                        "The path resolved to more than one result so this path cannot be used.");
-                    break;
-                }
-
-                // If the path was resolved, and it exists
-                if (resolvedPaths.Count == 1 &&
-                    File.Exists(resolvedPaths[0]))
-                {
-                    string path = resolvedPaths[0];
-
-                    CommandDiscovery.discoveryTracer.WriteLine(
-                        "Path resolved to: {0}",
-                        path);
-
-                    result = GetInfoFromPath(path);
-                }
-            } while (false);
+                result = GetInfoFromPath(resolvedPath);
+            }
 
             return result;
         }
@@ -1092,7 +1027,7 @@ namespace System.Management.Automation
             {
                 ProviderInfo provider = null;
                 string resolvedPath = null;
-                if (WildcardPattern.ContainsWildcardCharacters(path))
+                if (WildcardPattern.MayBeWildcardPattern(path))
                 {
                     // Let PowerShell resolve relative path with wildcards.
                     Provider.CmdletProvider providerInstance;
@@ -1104,16 +1039,12 @@ namespace System.Management.Automation
 
                     if (resolvedPaths.Count == 0)
                     {
-                        resolvedPath = null;
-
                         CommandDiscovery.discoveryTracer.TraceError(
                            "The relative path with wildcard did not resolve to valid path. {0}",
                            path);
                     }
                     else if (resolvedPaths.Count > 1)
                     {
-                        resolvedPath = null;
-
                         CommandDiscovery.discoveryTracer.TraceError(
                         "The relative path with wildcard resolved to multiple paths. {0}",
                         path);
@@ -1171,6 +1102,18 @@ namespace System.Management.Automation
                 CommandDiscovery.discoveryTracer.TraceError(
                     "The drive does not exist: {0}",
                     driveNotFound.ItemName);
+            }
+            catch (ProviderNotFoundException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "A provider could not be found for the path: {0}",
+                    path);
+            }
+            catch (PSNotSupportedException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The provider associated with the path '{0}' does not implement ContainerCmdletProvider",
+                    path);
             }
 
             return result;

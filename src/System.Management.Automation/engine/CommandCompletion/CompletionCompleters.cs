@@ -4303,6 +4303,12 @@ namespace System.Management.Automation
                         if (CompletionRequiresQuotes(completionText, !useLiteralPath))
                         {
                             var quoteInUse = quote == string.Empty ? "'" : quote;
+
+                            if (!useLiteralPath)
+                            {
+                                completionText = WildcardPattern.Escape(completionText);
+                            }
+
                             if (quoteInUse == "'")
                             {
                                 completionText = completionText.Replace("'", "''");
@@ -4313,20 +4319,6 @@ namespace System.Management.Automation
                                 //   Get-Content -LiteralPath ".\a``g.txt"
                                 completionText = completionText.Replace("`", "``");
                                 completionText = completionText.Replace("$", "`$");
-                            }
-
-                            if (!useLiteralPath)
-                            {
-                                if (quoteInUse == "'")
-                                {
-                                    completionText = completionText.Replace("[", "`[");
-                                    completionText = completionText.Replace("]", "`]");
-                                }
-                                else
-                                {
-                                    completionText = completionText.Replace("[", "``[");
-                                    completionText = completionText.Replace("]", "``]");
-                                }
                             }
 
                             completionText = quoteInUse + completionText + quoteInUse;
