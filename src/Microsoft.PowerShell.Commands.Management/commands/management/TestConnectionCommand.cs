@@ -506,7 +506,6 @@ namespace Microsoft.PowerShell.Commands
             public string DestinationHost { get; }
 
             /// <summary>
-            ///
             /// </summary>
             public List<TraceRouteReply> Replies { get; }
         }

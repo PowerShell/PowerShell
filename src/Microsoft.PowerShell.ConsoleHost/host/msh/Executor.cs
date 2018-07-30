@@ -13,7 +13,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    ///
     /// Executor wraps a Pipeline instance, and provides helper methods for executing commands in that pipeline.  It is used to
     /// provide bookkeeping and structure to the use of pipeline in such a way that they can be interrupted and cancelled by a
     /// break event handler, and track nesting of pipelines (which happens with interrupted input loops (aka subshells) and use
@@ -37,22 +36,18 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Constructs a new instance
         ///
         /// </summary>
         /// <param name="parent">
-        ///
         /// A reference to the parent ConsoleHost that created this instance.
         ///
         /// </param>
         /// <param name="useNestedPipelines">
-        ///
         /// true if the executor is supposed to use nested pipelines; false if not.
         ///
         /// </param>
         /// <param name="isPromptFunctionExecutor">
-        ///
         /// True if the instance will be used to execute the prompt function, which will delay stopping the pipeline by some
         /// milliseconds.  This we prevent us from stopping the pipeline so quickly that when the user leans on the ctrl-c key
         /// that the prompt "stops working" (because it is being stopped faster than it can run to completion).
@@ -286,7 +281,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// All calls to the Runspace to execute a command line must be done with this function, which properly synchronizes
         /// access to the running pipeline between the main thread and the break handler thread.  This synchronization is
         /// necessary so that executions can be aborted with Ctrl-C (including evaluation of the prompt and collection of
@@ -297,23 +291,19 @@ namespace Microsoft.PowerShell
         ///
         /// </summary>
         /// <param name="command">
-        ///
         /// The command line to be executed.  Must be non-null.
         ///
         /// </param>
         /// <param name="exceptionThrown">
-        ///
         /// Receives the Exception thrown by the execution of the command, if any. If no exception is thrown, then set to null.
         /// Can be tested to see if the execution was successful or not.
         ///
         /// </param>
         /// <param name="options">
-        ///
         /// options to govern the execution
         ///
         /// </param>
         /// <returns>
-        ///
         /// the object stream resulting from the execution.  May be null.
         ///
         /// </returns>
@@ -444,24 +434,20 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Executes a command (by calling this.ExecuteCommand), and coerces the first result object to a string.  Any Exception
         /// thrown in the course of execution is returned thru the exceptionThrown parameter.
         ///
         /// </summary>
         /// <param name="command">
-        ///
         /// The command to execute.  May be any valid monad command.
         ///
         /// </param>
         /// <param name="exceptionThrown">
-        ///
         /// Receives the Exception thrown by the execution of the command, if any. If no exception is thrown, then set to null.
         /// Can be tested to see if the execution was successful or not.
         ///
         /// </param>
         /// <returns>
-        ///
         /// The string representation of the first result object returned, or null if an exception was thrown or no objects were
         /// returned by the command.
         ///
@@ -505,18 +491,15 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Executes a command (by calling this.ExecuteCommand), and coerces the first result object to a bool.  Any Exception
         /// thrown in the course of execution is caught and ignored.
         ///
         /// </summary>
         /// <param name="command">
-        ///
         /// The command to execute.  May be any valid monad command.
         ///
         /// </param>
         /// <returns>
-        ///
         /// The Nullable`bool representation of the first result object returned, or null if an exception was thrown or no
         /// objects were returned by the command.
         ///
@@ -532,24 +515,20 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Executes a command (by calling this.ExecuteCommand), and coerces the first result object to a bool.  Any Exception
         /// thrown in the course of execution is returned thru the exceptionThrown parameter.
         ///
         /// </summary>
         /// <param name="command">
-        ///
         /// The command to execute.  May be any valid monad command.
         ///
         /// </param>
         /// <param name="exceptionThrown">
-        ///
         /// Receives the Exception thrown by the execution of the command, if any. If no exception is thrown, then set to null.
         /// Can be tested to see if the execution was successful or not.
         ///
         /// </param>
         /// <returns>
-        ///
         /// The Nullable`bool representation of the first result object returned, or null if an exception was thrown or no
         /// objects were returned by the command.
         ///
@@ -586,7 +565,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Cancels execution of the current instance.  If the current instance is not running, then does nothing.  Called in
         /// response to a break handler, by the static Executor.Cancel method.
         ///
@@ -635,7 +613,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Resets the instance to its post-ctor state.  Does not cancel execution.
         ///
         /// </summary>
@@ -649,18 +626,15 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Makes the given instance the "current" instance, that is, the instance that will receive a Cancel call if the break
         /// handler is triggered and calls the static Cancel method.
         ///
         /// </summary>
         /// <value>
-        ///
         /// The instance to make current.  Null is allowed.
         ///
         /// </value>
         /// <remarks>
-        ///
         /// Here are some state-transition cases to illustrate the use of CurrentExecutor
         ///
         /// null is current
@@ -720,7 +694,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Cancels the execution of the current instance (the instance last passed to PushCurrentExecutor), if any.  If no
         /// instance is Current, then does nothing.
         ///

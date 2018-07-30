@@ -22,7 +22,6 @@ namespace Microsoft.PowerShell
     using PowerShell = System.Management.Automation.PowerShell;
 
     /// <summary>
-    ///
     /// ConsoleHostUserInterface implements console-mode user interface for powershell
     ///
     /// </summary>
@@ -45,7 +44,6 @@ namespace Microsoft.PowerShell
         public override bool SupportsVirtualTerminal { get; }
 
         /// <summary>
-        ///
         /// Constructs an instance
         ///
         /// </summary>
@@ -86,7 +84,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Supplies an implementation of PSHostRawUserInterface that provides low-level console mode UI facilities.
         ///
         /// </summary>
@@ -128,7 +125,6 @@ namespace Microsoft.PowerShell
         //}
 
         /// <summary>
-        ///
         /// true if command completion is currently running
         ///
         /// </summary>
@@ -143,7 +139,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// true if the Read* functions should read from the stdin stream instead of from the win32 console.
         ///
         /// </summary>
@@ -151,7 +146,6 @@ namespace Microsoft.PowerShell
         internal bool ReadFromStdin { get; set; }
 
         /// <summary>
-        ///
         /// true if the host shouldn't write out prompts.
         ///
         /// </summary>
@@ -161,13 +155,11 @@ namespace Microsoft.PowerShell
         #region Line-oriented interaction
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
-        ///
         /// If Win32's SetConsoleMode fails
         ///    OR
         ///    Win32's ReadConsole fails
@@ -189,13 +181,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
-        ///
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
         ///    Win32's setting input buffer mode to disregard window and mouse input failed
@@ -205,7 +195,6 @@ namespace Microsoft.PowerShell
         ///
         /// </exception>
         /// <exception cref="PipelineStoppedException">
-        ///
         /// If Ctrl-C is entered by user
         ///
         /// </exception>
@@ -230,7 +219,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Implementation based on NT CredUI's GetPasswdStr.
         /// Use Win32.ReadConsole to construct a SecureString. The advantage of ReadConsole over ReadKey is
         /// Alt-ddd where d is {0-9} is allowed.
@@ -244,18 +232,15 @@ namespace Microsoft.PowerShell
         ///
         /// </summary>
         ///<param name="isSecureString">
-        ///
         /// True to specify reading a SecureString; false reading a string
         ///
         /// </param>
         /// <param name="printToken">
-        ///
         /// string for output echo
         ///
         /// </param>
         /// <returns></returns>
         /// <exception cref="HostException">
-        ///
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
         ///    Win32's setting input buffer mode to disregard window and mouse input failed
@@ -268,7 +253,6 @@ namespace Microsoft.PowerShell
         ///
         /// </exception>
         /// <exception cref="PipelineStoppedException">
-        ///
         /// If Ctrl-C is entered by user
         ///
         /// </exception>
@@ -450,22 +434,18 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Handle writing print token with proper cursor adjustment for ReadLineSafe
         ///
         /// </summary>
         /// <param name="printToken">
-        ///
         /// token output for each char input. It must be a one-char string
         ///
         /// </param>
         /// <param name="originalCursorPosition">
-        ///
         /// it is the cursor position where ReadLineSafe begins
         ///
         /// </param>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleCursorPosition failed
@@ -497,17 +477,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Handle backspace with proper cursor adjustment for ReadLineSafe
         ///
         /// </summary>
         /// <param name="originalCursorPosition">
-        ///
         /// it is the cursor position where ReadLineSafe begins
         ///
         /// </param>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleCursorPosition failed
@@ -555,20 +532,16 @@ namespace Microsoft.PowerShell
 
 #if !UNIX
         /// <summary>
-        ///
         /// If <paramref name="m"/> is set on <paramref name="flagToUnset"/>, unset it and return true;
         /// otherwise return false
         ///
         /// </summary>
         /// <param name="flagToUnset">
-        ///
         /// a flag in ConsoleControl.ConsoleModes to be unset in <paramref name="m"/>
-        ///
         /// </param>
         /// <param name="m">
         /// </param>
         /// <returns>
-        ///
         /// true if <paramref name="m"/> is set on <paramref name="flagToUnset"/>
         /// false otherwise
         ///
@@ -667,13 +640,11 @@ namespace Microsoft.PowerShell
         #endregion WriteToConsole
 
         /// <summary>
-        ///
         /// See base class.
         ///
         /// </summary>
         /// <param name="value"></param>
         /// <exception cref="HostException">
-        ///
         /// If Win32's CreateFile fails
         ///    OR
         ///    Win32's GetConsoleMode fails
@@ -711,7 +682,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -719,7 +689,6 @@ namespace Microsoft.PowerShell
         /// <param name="backgroundColor"></param>
         /// <param name="value"></param>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleTextAttribute
@@ -759,13 +728,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <param name="value"></param>
         /// <exception cref="HostException">
-        ///
         ///    Win32's CreateFile fails
         ///    OR
         ///    Win32's GetConsoleMode fails
@@ -790,7 +757,6 @@ namespace Microsoft.PowerShell
         #region Word Wrapping
 
         /// <summary>
-        ///
         /// This is a poor-man's word-wrapping routine.  It breaks a single string into segments small enough to fit within a
         /// given number of cells.  A break is determined by the last occurrence of whitespace that allows all prior characters
         /// on a line to be written within a given number of cells.  If there is no whitespace found within that span, then the
@@ -802,19 +768,16 @@ namespace Microsoft.PowerShell
         ///
         /// </summary>
         /// <param name="text">
-        ///
         /// Text to be emitted.
         /// Each tab character in the text is replaced with a space in the results.
         ///
         /// </param>
         /// <param name="maxWidthInBufferCells">
-        ///
         /// Max width, in buffer cells, of a single line.  Note that a single character may consume more than one cell.  The
         /// number of cells consumed is determined by calling ConsoleHostRawUserInterface.LengthInBufferCells.
         ///
         /// </param>
         /// <returns>
-        ///
         /// A list of strings representing the text broken into "lines" each of which are guaranteed not to exceed
         /// maxWidthInBufferCells.
         ///
@@ -908,7 +871,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Struct used by WrapText
         ///
         /// </summary>
@@ -928,7 +890,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Chops text into "words," where a word is defined to be a sequence of whitespace characters, or a sequence of
         /// non-whitespace characters, each sequence being no longer than a given maximum.  Therefore, in the text "this is a
         /// string" there are 7 words: 4 sequences of non-whitespace characters and 3 sequences of whitespace characters.
@@ -937,22 +898,18 @@ namespace Microsoft.PowerShell
         ///
         /// </summary>
         /// <param name="text">
-        ///
         /// The text to be chopped up.
         ///
         /// </param>
         /// <param name="maxWidthInBufferCells">
-        ///
         /// The maximum number of buffer cells that each word may consume.
         ///
         /// </param>
         /// <returns>
-        ///
         /// A list of words, in the same order they appear in the source text.
         ///
         /// </returns>
         /// <remarks>
-        ///
         /// This can be made faster by, instead of creating little strings for each word, creating indices of the start and end
         /// range of a word.  That would reduce the string allocations.
         ///
@@ -1041,38 +998,31 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Helper for ChopTextIntoWords.  Takes a span of characters in a string and adds it to the word list, further
         /// subdividing the span as needed so that each subdivision fits within the limit.
         ///
         /// </summary>
         /// <param name="text">
-        ///
         /// The string of characters in which the span is to be extracted.
         ///
         /// </param>
         /// <param name="startIndex">
-        ///
         /// index into text of the start of the word to be added.
         ///
         /// </param>
         /// <param name="endIndex">
-        ///
         /// index of the char after the last char to be included in the word.
         ///
         /// </param>
         /// <param name="maxWidthInBufferCells">
-        ///
         /// The maximum number of buffer cells that each word may consume.
         ///
         /// </param>
         /// <param name="isWhitespace">
-        ///
         /// true if the span is whitespace, false if not.
         ///
         /// </param>
         /// <param name="result">
-        ///
         /// The list into which the words will be added.
         ///
         /// </param>
@@ -1144,13 +1094,11 @@ namespace Microsoft.PowerShell
 #endregion Word Wrapping
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <param name="message"></param>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleTextAttribute
@@ -1186,7 +1134,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -1205,13 +1152,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <param name="message"></param>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleTextAttribute
@@ -1247,13 +1192,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <param name="message"></param>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleTextAttribute
@@ -1289,7 +1232,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Invoked by CommandBase.WriteProgress to display a progress record.
         ///
         /// </summary>
@@ -1395,48 +1337,39 @@ namespace Microsoft.PowerShell
         private const int maxInputLineLength = 8192;
 
         /// <summary>
-        ///
         /// Reads a line of input from the console.  Returns when the user hits enter, a break key, a break event occurs.  In
         /// the case that stdin has been redirected, reads from the stdin stream instead of the console.
         ///
         /// </summary>
         /// <param name="endOnTab">
-        ///
         /// true to end input when the user hits the tab or shift-tab keys, false to only end on the enter key (or a break
         /// event). Ignored if not reading from the console device.
         ///
         /// </param>
         /// <param name="initialContent">
-        ///
         /// The initial contents of the input buffer.  Nice if you want to have a default result. Ignored if not reading from the
         /// console device.
         ///
         /// </param>
         /// <param name="result">
-        ///
         /// Receives an enum value indicating how input was ended.
         ///
         /// </param>
         /// <param name="calledFromPipeline">
-        ///
         /// TBD
         ///
         /// </param>
         /// <param name="transcribeResult">
-        ///
         /// true to include the results in any transcription that might be happening.
         ///
         /// </param>
-        ///
         /// <returns>
-        ///
         /// The string read from either the console or the stdin stream.  null if:
         /// - stdin was read and EOF was reached on the stream, or
         /// - the console was read, and input was terminated with Ctrl-C, Ctrl-Break, or Close.
         ///
         /// </returns>
         /// <exception cref="HostException">
-        ///
         /// If Win32's SetConsoleMode fails
         ///    OR
         ///    Win32's ReadConsole fails
@@ -1878,18 +1811,14 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Reads a line, and completes the input for the user if they hit tab.
         ///
         /// </summary>
         /// <param name="exec">
-        ///
         /// The Executor instance on which to run any pipelines that are needed to find matches
         ///
         /// </param>
-        ///
         /// <returns>
-        ///
         /// null on a break event
         /// the completed line otherwise
         ///

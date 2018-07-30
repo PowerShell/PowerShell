@@ -8,7 +8,6 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
     /// Base class for a variety of commandlets that take color parameters.
     ///
     /// </summary>
@@ -25,7 +24,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// The -ForegroundColor parameter.
         ///
         /// </summary>
@@ -61,7 +59,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
 

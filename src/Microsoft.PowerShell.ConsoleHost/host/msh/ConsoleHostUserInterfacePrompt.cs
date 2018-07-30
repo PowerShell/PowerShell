@@ -58,7 +58,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -67,14 +66,12 @@ namespace Microsoft.PowerShell
         /// <param name="descriptions"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">
-        ///
         /// If <paramref name="descriptions"/> is null
         ///    OR
         ///    at least one FieldDescription in <paramref name="descriptions"/> is null
         ///
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///
         /// If <paramref name="descriptions"/> count is less than 1
         ///    OR
         ///    at least one FieldDescription.AssemblyFullName in <paramref name="descriptions"/> is
@@ -82,7 +79,6 @@ namespace Microsoft.PowerShell
         ///
         /// </exception>
         /// <exception cref="PromptingException">
-        ///
         /// If a FieldDescription in <paramref name="descriptions"/> specifies one of SecureString or
         ///     PSCredential and the type can not be loaded.
         ///    OR
@@ -91,7 +87,6 @@ namespace Microsoft.PowerShell
         ///
         /// </exception>
         /// <exception cref="PSInvalidCastException">
-        ///
         /// If the converting the user input to the prompt field type fails unless it is caused by
         ///     OverflowException or FormatException
         ///

@@ -20,7 +20,6 @@ using DWORD = System.UInt32;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    ///
     /// implementation of RawConsole for powershell
     ///
     /// </summary>
@@ -29,10 +28,8 @@ namespace Microsoft.PowerShell
     class ConsoleHostRawUserInterface : System.Management.Automation.Host.PSHostRawUserInterface
     {
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="HostException">
-        ///
         /// If obtaining the buffer's foreground and background color failed
         ///
         /// </exception>
@@ -72,18 +69,15 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentException">
-        ///
         /// If set to an invalid ConsoleColor
         ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleTextAttribute
@@ -128,18 +122,15 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentException">
-        ///
         /// If set to an invalid ConsoleColor
         ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleTextAttribute
@@ -184,18 +175,15 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
-        ///
         /// If set to outside of the buffer
         ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleCursorPosition failed
@@ -227,22 +215,18 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value>
-        ///
         /// Cursor size
         ///
         /// </value>
         /// <exception cref="ArgumentOutOfRangeException">
-        ///
         /// If set to under 0 or over 100
         ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
         ///    Win32's GetConsoleCursorInfo failed
@@ -294,18 +278,15 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
-        ///
         /// If set outside of the buffer
         ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleWindowInfo failed
@@ -364,18 +345,15 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
-        ///
         /// If setting to an invalid size
         ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
         ///    obtaining information about the buffer failed
@@ -423,19 +401,16 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentOutOfRangeException">
-        ///
         /// If setting width or height to less than 1, larger than the screen buffer,
         ///  over the maximum window size allowed
         ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleWindowInfo failed
@@ -555,13 +530,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
-        ///
         /// If obtaining information about the buffer failed
         ///
         /// </exception>
@@ -581,13 +554,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
-        ///
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
         ///    Win32's GetLargestConsoleWindowSize failed
@@ -630,7 +601,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         /// This method unwraps the repeat count in KEY_EVENT_RECORD by caching repeated keystrokes
         /// in a logical queue. The implications are:
@@ -645,12 +615,9 @@ namespace Microsoft.PowerShell
         /// <param name="options"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">
-        ///
         /// If neither IncludeKeyDown or IncludeKeyUp is set in <paramref name="options"/>
-        ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
         ///    Win32's setting input buffer mode to disregard window and mouse input failed
@@ -780,12 +747,10 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <exception cref="HostException">
-        ///
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
         ///    Win32's FlushConsoleInputBuffer failed
@@ -803,13 +768,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
-        ///
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
         ///    Win32's GetNumberOfConsoleInputEvents failed
@@ -859,23 +822,19 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="ArgumentNullException">
-        ///
         /// If set to null
         ///
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///
         /// If set to a string whose length is not between 1 to 1023
         ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If Win32's GetConsoleWindowTitle failed
         ///    OR
         ///    Win32's SetConsoleWindowTitle failed
@@ -921,24 +880,20 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class.
         ///
         ///
         /// </summary>
         /// <param name="origin">
-        ///
         /// location on screen buffer where contents will be written
         ///
         /// </param>
         /// <param name="contents">
-        ///
         /// array of info to be written
         ///
         /// </param>
         /// <remarks></remarks>
         /// <exception cref="ArgumentOutOfRangeException">
-        ///
         /// If <paramref name="origin"/> is outside of the screen buffer.
         ///    OR
         ///    <paramref name="contents"/> is an ill-formed BufferCell array
@@ -947,7 +902,6 @@ namespace Microsoft.PowerShell
         ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
         ///    obtaining information about the buffer failed
@@ -978,22 +932,18 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// If <paramref name="region"/> is completely outside of the screen buffer, it's a no-op.
         ///
         /// </summary>
         /// <param name="region">
-        ///
         /// region with all elements = -1 means "entire screen buffer"
         ///
         /// </param>
         /// <param name="fill">
-        ///
         /// character and attribute to fill the screen buffer
         ///
         /// </param>
         /// <remarks>
-        ///
         /// Provided for clearing regions -- less chatty than passing an array of cells.
         /// Clear screen is:
         ///    SetBufferContents(new Rectangle(-1, -1, -1, -1), ' ', ForegroundColor, BackgroundColor);
@@ -1003,14 +953,11 @@ namespace Microsoft.PowerShell
         ///
         /// </remarks>
         /// <exception cref="ArgumentException">
-        ///
         /// If <paramref name="region"/>'s Left exceeds Right or Bottom exceeds Top
         ///    OR
         ///    it is illegal to set <paramref name="region"/> in the buffer with <paramref name="fill"/>
-        ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If Win32's CreateFile fails
         ///    OR
         ///    Win32's GetConsoleScreenBufferInfo fails
@@ -1157,28 +1104,23 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class.
         /// If the rectangle is invalid, ie, Right exceeds Left OR Bottom exceeds Top,
         ///
         /// </summary>
         /// <param name="region">
-        ///
         /// area on screen buffer to be read
         ///
         /// </param>
         /// <returns>
-        ///
         /// an array of BufferCell containing screen buffer contents
         ///
         /// </returns>
         /// <exception cref="ArgumentException">
-        ///
         /// If <paramref name="region"/>'s Left exceeds Right or Bottom exceeds Top.
         ///
         /// </exception>
         /// <exception cref="HostException">
-        ///
         /// If obtaining a handle to the active screen buffer failed
         ///    OR
         ///    obtaining information about the buffer failed
@@ -1241,32 +1183,26 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <param name="source">
-        ///
         /// area to be moved
         ///
         /// </param>
         /// <param name="destination">
-        ///
         /// top left corner to which source to be moved
         ///
         /// </param>
         /// <param name="clip">
-        ///
         /// area to be updated caused by the move
         ///
         /// </param>
         /// <param name="fill">
-        ///
         /// character and attribute to fill the area vacated by the move
         ///
         /// </param>
         /// <exception cref="HostException">
-        ///
         /// If obtaining the active screen buffer failed
         ///    OR
         ///    Call to Win32's ScrollConsoleScreenBuffer failed
@@ -1320,7 +1256,6 @@ namespace Microsoft.PowerShell
         /// <param name="s"></param>
         /// <returns></returns>
         /// <exception cref="HostException">
-        ///
         /// If Win32's WideCharToMultiByte fails
         ///
         /// </exception>
@@ -1338,7 +1273,6 @@ namespace Microsoft.PowerShell
         /// <param name="offset"></param>
         /// <returns></returns>
         /// <exception cref="HostException">
-        ///
         /// If Win32's WideCharToMultiByte fails
         ///
         /// </exception>
@@ -1354,14 +1288,12 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
         /// <exception cref="HostException">
-        ///
         /// If Win32's WideCharToMultiByte fails
         ///
         /// </exception>
@@ -1375,7 +1307,6 @@ namespace Microsoft.PowerShell
 #region internal
 
         /// <summary>
-        ///
         /// Clear the ReadKey cache
         ///
         /// </summary>
@@ -1391,7 +1322,6 @@ namespace Microsoft.PowerShell
 
         // pass-by-ref for speed.
         /// <summary>
-        ///
         /// </summary>
         /// <param name="c"></param>
         /// <param name="bufferInfo"></param>
