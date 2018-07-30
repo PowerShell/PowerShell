@@ -162,7 +162,6 @@ namespace System.Management.Automation
     /// This class implements a command processor for script related commands.
     /// </summary>
     /// <remarks>
-    ///
     /// 1. Usage scenarios
     ///
     /// ScriptCommandProcessor is used for four kinds of commands.
