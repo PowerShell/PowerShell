@@ -24,7 +24,6 @@ namespace Microsoft.PowerShell.Commands
         /// An instance of the PSTraceSource class used for trace output
         /// using "NavigationCommands" as the category.
         /// </summary>
-        ///
         [Dbg.TraceSourceAttribute("NavigationCommands", "The namespace navigation tracer")]
         internal static Dbg.PSTraceSource tracer = Dbg.PSTraceSource.GetTracer("NavigationCommands", "The namespace navigation tracer");
 
@@ -76,16 +75,13 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal virtual object GetDynamicParameters(CmdletProviderContext context)
         {
             return null;
@@ -110,11 +106,9 @@ namespace Microsoft.PowerShell.Commands
         /// A helper for derived classes to call to determine if the paths specified
         /// are for a provider that supports ShouldProcess
         /// </summary>
-        ///
         /// <param name="paths">
         /// The paths to check to see if the providers support ShouldProcess.
         /// </param>
-        ///
         /// <returns>
         /// If the paths are to different providers, and any don't support
         /// ShouldProcess, then the return value is false. If they all
@@ -158,7 +152,6 @@ namespace Microsoft.PowerShell.Commands
         /// The dynamic parameters which have already been retrieved from the provider
         /// and bound by the command processor.
         /// </summary>
-        ///
         protected internal object RetrievedDynamicParameters
         {
             get
@@ -170,7 +163,6 @@ namespace Microsoft.PowerShell.Commands
         /// The dynamic parameters for the command. They are retrieved using the
         /// GetDynamicParameters virtual method.
         /// </summary>
-        ///
         private object _dynamicParameters;
 
         #endregion Protected members
@@ -182,7 +174,6 @@ namespace Microsoft.PowerShell.Commands
         /// CmdletProviderContext to tunnel the stop message to
         /// the provider instance.
         /// </summary>
-        ///
         protected override void StopProcessing()
         {
             foreach (CmdletProviderContext stopContext in stopContextCollection)
@@ -196,25 +187,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the filter property
         /// </summary>
-        ///
         /// <remarks>
         /// This is meant to be overridden by derived classes if
         /// they support the Filter parameter. This property is on
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
-        ///
         public virtual string Filter { get; set; }
 
         /// <summary>
         /// Gets or sets the include property
         /// </summary>
-        ///
         /// <remarks>
         /// This is meant to be overridden by derived classes if
         /// they support the Include parameter. This property is on
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
-        ///
         public virtual string[] Include { get;
 // get
             set;
@@ -226,13 +213,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the exclude property
         /// </summary>
-        ///
         /// <remarks>
         /// This is meant to be overridden by derived classes if
         /// they support the Exclude parameter. This property is on
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
-        ///
         public virtual string[] Exclude { get;
 // get
             set;
@@ -244,7 +229,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the force property
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -258,7 +242,6 @@ namespace Microsoft.PowerShell.Commands
         /// they support the Force parameter. This property is on
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
-        ///
         public virtual SwitchParameter Force
         {
             get
@@ -276,7 +259,6 @@ namespace Microsoft.PowerShell.Commands
         /// Retrieves the dynamic parameters for the command from
         /// the provider.
         /// </summary>
-        ///
         public object GetDynamicParameters()
         {
             // Don't stream errors or Write* to the pipeline.
@@ -306,7 +288,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Determines if the cmdlet and CmdletProvider supports ShouldProcess
         /// </summary>
-        ///
         public bool SupportsShouldProcess
         {
             get
@@ -333,7 +314,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the credential parameter
         /// </summary>
-        ///
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Credential()]
         public PSCredential Credential { get; set; }
@@ -383,10 +363,8 @@ namespace Microsoft.PowerShell.Commands
     /// This command does things like list the contents of a container, get
     /// an item at a given path, get the current working directory, etc.
     /// </summary>
-    ///
     /// <remarks>
     /// </remarks>
-    ///
     [Cmdlet(VerbsCommon.Get, "Location", DefaultParameterSetName = "Location", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113321")]
     [OutputType(typeof(PathInfo), ParameterSetName = new string[] { "locationSet" })]
     [OutputType(typeof(PathInfoStack), ParameterSetName = new string[] { "Stack" })]
@@ -417,7 +395,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the provider from which to get the current location.
         /// </summary>
-        ///
         [Parameter(ParameterSetName = locationSet, ValueFromPipelineByPropertyName = true)]
         public string[] PSProvider
         {
@@ -428,7 +405,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the drive from which to get the current location.
         /// </summary>
-        ///
         [Parameter(ParameterSetName = locationSet, ValueFromPipelineByPropertyName = true)]
         public string[] PSDrive { get; set; }
 
@@ -459,7 +435,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the stack ID for the location stack that will
         /// be retrieved.
         /// </summary>
-        ///
         [Parameter(ParameterSetName = stackSet, ValueFromPipelineByPropertyName = true)]
         public string[] StackName
         {
@@ -1218,7 +1193,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the name of the drive
         /// </summary>
-        ///
         [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string Name
         {
@@ -1237,7 +1211,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the provider ID
         /// </summary>
-        ///
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string PSProvider
         {
@@ -1257,7 +1230,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the root of the drive. This path should be
         /// a namespace specific path.
         /// </summary>
-        ///
         [Parameter(Position = 2, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowEmptyString]
         public string Root
@@ -1314,16 +1286,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the new-psdrive cmdlet.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             return SessionState.Drive.NewDriveDynamicParameters(PSProvider, context);
@@ -1493,37 +1462,29 @@ namespace Microsoft.PowerShell.Commands
         /// Globs on both the drive name and the provider name to get a list of Drives
         /// that match the glob filters.
         /// </summary>
-        ///
         /// <param name="driveName">
         /// The name of the drive(s) to returned. The name can contain glob characters.
         /// </param>
-        ///
         /// <param name="providerNames">
         /// The name of the provider(s) to return. The name can contain glob characters.
         /// </param>
-        ///
         /// <param name="scope">
         /// The scope to get the drives from. If this parameter is null or empty all drives
         /// will be retrieved.
         /// </param>
-        ///
         /// <returns>
         /// A collection of the drives that match the filters.
         /// </returns>
-        ///
         /// <exception cref="DriveNotFoundException"></exception>
         /// <exception cref="ProviderNotFoundException"></exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="scope"/> is less than zero, or not
         /// a number and not "script", "global", "local", or "private"
         /// </exception>
-        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scope"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        ///
         internal List<PSDriveInfo> GetMatchingDrives(
              string driveName,
             string[] providerNames,
@@ -1713,7 +1674,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the force property which determines if the drive
         /// should be removed even if there were errors.
         /// </summary>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -1843,7 +1803,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the drive name the user is looking for.
         /// </summary>
-        ///
         /// <remarks>
         /// If the drive name is left empty, all drives will be
         /// returned. A globing or regular expression can also be
@@ -1883,7 +1842,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the scope parameter to the command.
         /// </summary>
-        ///
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string Scope { get; set; }
 
@@ -1891,7 +1849,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the provider name for the
         /// drives that should be retrieved.
         /// </summary>
-        ///
         /// <remarks>
         /// If the provider is left empty, all drives will be
         /// returned. A globing or regular expression can also be
@@ -2127,7 +2084,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the force property
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -2137,7 +2093,6 @@ namespace Microsoft.PowerShell.Commands
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -2154,16 +2109,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the get-item cmdlet.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -2278,7 +2230,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the force property
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -2288,7 +2239,6 @@ namespace Microsoft.PowerShell.Commands
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -2299,16 +2249,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the new-item cmdlet.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -2446,7 +2393,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the force property
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -2456,7 +2402,6 @@ namespace Microsoft.PowerShell.Commands
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -2469,7 +2414,6 @@ namespace Microsoft.PowerShell.Commands
         /// if the object that is set should be written to the pipeline.
         /// Defaults to false.
         /// </summary>
-        ///
         [Parameter]
         public SwitchParameter PassThru
         {
@@ -2510,16 +2454,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the set-item cmdlet.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -2727,7 +2668,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the force property
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -2737,7 +2677,6 @@ namespace Microsoft.PowerShell.Commands
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -2754,16 +2693,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the remove-item cmdlet.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -3137,7 +3073,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the force property
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -3147,7 +3082,6 @@ namespace Microsoft.PowerShell.Commands
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -3190,7 +3124,6 @@ namespace Microsoft.PowerShell.Commands
         /// if the object that is set should be written to the pipeline.
         /// Defaults to false.
         /// </summary>
-        ///
         [Parameter]
         public SwitchParameter PassThru
         {
@@ -3201,16 +3134,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the move-item cmdlet.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -3527,7 +3457,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the force property
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -3537,7 +3466,6 @@ namespace Microsoft.PowerShell.Commands
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -3550,7 +3478,6 @@ namespace Microsoft.PowerShell.Commands
         /// if the object that is set should be written to the pipeline.
         /// Defaults to false.
         /// </summary>
-        ///
         [Parameter]
         public SwitchParameter PassThru
         {
@@ -3561,16 +3488,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the rename-item cmdlet.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             return InvokeProvider.Item.RenameItemDynamicParameters(Path, NewName, context);
@@ -3835,7 +3759,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the force property
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -3845,7 +3768,6 @@ namespace Microsoft.PowerShell.Commands
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -3910,7 +3832,6 @@ namespace Microsoft.PowerShell.Commands
         /// if the object that is set should be written to the pipeline.
         /// Defaults to false.
         /// </summary>
-        ///
         [Parameter]
         public SwitchParameter PassThru
         {
@@ -3921,16 +3842,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the copy-item cmdlet.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -4092,7 +4010,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the force property
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -4102,7 +4019,6 @@ namespace Microsoft.PowerShell.Commands
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -4169,16 +4085,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the clear-item cmdlet.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -4373,16 +4286,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the invoke-item cmdlet.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -4489,7 +4399,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the provider that will be removed.
         /// </summary>
-        ///
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty()]
         public string[] PSProvider
