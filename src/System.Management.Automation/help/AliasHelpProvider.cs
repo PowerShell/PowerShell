@@ -10,7 +10,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Implements the help provider for alias help.
     /// </summary>
-    ///
     /// <remarks>
     /// Unlike other help providers, AliasHelpProvider directly inherits from HelpProvider
     /// instead of HelpProviderWithCache. This is because alias can be created/removed/updated
