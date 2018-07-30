@@ -12,7 +12,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    ///
     /// By design, on the server side, each remote connection is represented by
     /// a ServerRemoteSession object, which contains one instance of this class.
     ///
@@ -273,15 +272,12 @@ namespace System.Management.Automation.Remoting
         /// <param name="dataEventArg">
         /// This parameter contains the remote data received from client.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="dataEventArg" /> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If the parameter <paramref name="dataEventArg" /> does not contain remote data.
         /// </exception>
-        ///
         /// <exception cref="PSRemotingDataStructureException">
         /// If the destination of the data is not for server.
         /// </exception>
@@ -721,7 +717,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="createRunspaceEventArg"></param>
@@ -904,7 +899,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="negotiationEventArg">
         /// This parameter contains the client negotiation capability packet.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="negotiationEventArg"/> is null.
         /// </exception>
@@ -1129,7 +1123,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="clientRunspacePoolId"></param>
         /// <returns></returns>

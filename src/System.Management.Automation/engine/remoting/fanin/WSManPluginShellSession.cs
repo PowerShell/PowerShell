@@ -394,7 +394,6 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    ///
     /// </summary>
     internal class WSManPluginShellSession : WSManPluginServerSession
     {
@@ -767,7 +766,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="requestDetails"></param>
         internal void Stop(
