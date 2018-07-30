@@ -9,6 +9,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Text;
@@ -342,10 +343,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            _orderedEntries.Sort((e1, e2) => _orderByPropertyComparer.Compare(e1, e2));
-            for (int i = 0; i < _orderedEntries.Count; i++)
+            // using OrderBy to get stable sort.
+            foreach(var entry in _orderedEntries.OrderBy(e => e, _orderByPropertyComparer))
             {
-                DoGrouping(_orderedEntries[i], NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
+                DoGrouping(entry, NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
             }
 
             s_tracer.WriteLine(_groups.Count);
