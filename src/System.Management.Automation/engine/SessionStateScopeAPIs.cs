@@ -19,14 +19,13 @@ namespace System.Management.Automation
         /// scope is implied or can be accessed using $local in
         /// the shell.
         /// </summary>
-        
         private SessionStateScope _currentScope;
 
         /// <summary>
         /// Cmdlet parameter name to return in the error message
         /// instead of "scopeID".
         /// </summary>
-        internal const string scopeParameterName = "Scope";
+        internal const string ScopeParameterName = "Scope";
 
         /// <summary>
         /// Given a scope identifier, returns the proper session state scope.
@@ -99,18 +98,18 @@ namespace System.Management.Automation
 
                         if (scopeNumericID < 0)
                         {
-                            throw PSTraceSource.NewArgumentOutOfRangeException(scopeParameterName, scopeID);
+                            throw PSTraceSource.NewArgumentOutOfRangeException(ScopeParameterName, scopeID);
                         }
 
                         result = GetScopeByID(scopeNumericID) ?? _currentScope;
                     }
                     catch (FormatException)
                     {
-                        throw PSTraceSource.NewArgumentException(scopeParameterName, AutomationExceptions.InvalidScopeIdArgument, scopeParameterName);
+                        throw PSTraceSource.NewArgumentException(ScopeParameterName, AutomationExceptions.InvalidScopeIdArgument, ScopeParameterName);
                     }
                     catch (OverflowException)
                     {
-                        throw PSTraceSource.NewArgumentOutOfRangeException(scopeParameterName, scopeID);
+                        throw PSTraceSource.NewArgumentOutOfRangeException(ScopeParameterName, scopeID);
                     }
                 }
             }
@@ -151,7 +150,7 @@ namespace System.Management.Automation
             {
                 ArgumentOutOfRangeException outOfRange =
                     PSTraceSource.NewArgumentOutOfRangeException(
-                        scopeParameterName,
+                        ScopeParameterName,
                         originalID,
                         SessionStateStrings.ScopeIDExceedsAvailableScopes,
                         originalID);
