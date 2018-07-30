@@ -137,6 +137,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+
             return sb.Length >= 2 ? sb.Remove(sb.Length - 2, 2).ToString() : string.Empty;
         }
 
@@ -152,6 +153,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     values.Add(propValue.PropertyValue);
                 }
+
                 return values;
             }
         }
@@ -190,11 +192,11 @@ namespace Microsoft.PowerShell.Commands
         /// An instance of the PSTraceSource class used for trace output.
         /// </summary>
         [TraceSourceAttribute(
-             "GroupObjectCommand",
-             "Class that has group base implementation")]
+            "GroupObjectCommand",
+            "Class that has group base implementation")]
         private static PSTraceSource s_tracer =
             PSTraceSource.GetTracer("GroupObjectCommand",
-             "Class that has group base implementation");
+                "Class that has group base implementation");
 
         #endregion tracer
 
@@ -260,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
                     bool isCurrentItemGrouped = false;
 
 
-                    if(groups.Count > 0)
+                    if (groups.Count > 0)
                     {
                         var lastGroup = groups[groups.Count - 1];
                         // Check if the current input object can be converted to one of the already known types
@@ -276,7 +278,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // create a new group
                         s_tracer.WriteLine("Create a new group: {0}", currentObjectorderValues);
-                        GroupInfo newObjGrp = noElement ? new GroupInfoNoElement(currentObjectEntry) : new GroupInfo(currentObjectEntry);
+                        GroupInfo newObjGrp = noElement
+                            ? new GroupInfoNoElement(currentObjectEntry)
+                            : new GroupInfo(currentObjectEntry);
                         groups.Add(newObjGrp);
 
                         groupInfoDictionary.Add(currentTupleObject, newObjGrp);
@@ -284,12 +288,14 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         private void WriteNonTerminatingError(Exception exception, string resourceIdAndErrorId,
-      ErrorCategory category)
+            ErrorCategory category)
         {
             Exception ex = new Exception(StringUtil.Format(resourceIdAndErrorId), exception);
             WriteError(new ErrorRecord(ex, resourceIdAndErrorId, category, null));
         }
+
         #endregion utils
 
         /// <summary>
@@ -307,6 +313,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Property = OrderByProperty.GetDefaultKeyPropertySet(InputObject);
                     }
+
                     _orderByProperty.ProcessExpressionParameter(this, Property);
 
                     currentEntry = _orderByProperty.CreateOrderByPropertyEntry(this, InputObject, CaseSensitive, _cultureInfo);
@@ -315,6 +322,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ascending[index] = true;
                     }
+
                     _orderByPropertyComparer = new OrderByPropertyComparer(ascending, _cultureInfo, CaseSensitive);
 
                     _hasProcessedFirstInputObject = true;
@@ -334,7 +342,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            _orderedEntries.Sort((e1,e2)=> _orderByPropertyComparer.Compare(e1,e2));
+            _orderedEntries.Sort((e1, e2) => _orderByPropertyComparer.Compare(e1, e2));
             for (int i = 0; i < _orderedEntries.Count; i++)
             {
                 DoGrouping(_orderedEntries[i], NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
@@ -374,6 +382,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteNonTerminatingError(e, UtilityCommonStrings.InvalidOperation, ErrorCategory.InvalidArgument);
                         return;
                     }
+
                     WriteObject(table);
                 }
                 else
