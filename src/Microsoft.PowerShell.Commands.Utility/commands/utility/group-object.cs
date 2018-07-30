@@ -226,6 +226,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly List<GroupInfo> _groups = new List<GroupInfo>();
         private readonly OrderByProperty _orderByProperty = new OrderByProperty();
         private readonly Dictionary<object, GroupInfo> _tupleToGroupInfoMappingDictionary = new Dictionary<object, GroupInfo>();
+        private readonly List<OrderByPropertyEntry> _orderedEntries = new List<OrderByPropertyEntry>();
         private OrderByPropertyComparer _orderByPropertyComparer;
         private bool _hasProcessedFirstInputObject;
 
@@ -258,15 +259,16 @@ namespace Microsoft.PowerShell.Commands
                 {
                     bool isCurrentItemGrouped = false;
 
-                    for (int groupsIndex = 0; groupsIndex < groups.Count; groupsIndex++)
+
+                    if(groups.Count > 0)
                     {
+                        var lastGroup = groups[groups.Count - 1];
                         // Check if the current input object can be converted to one of the already known types
                         // by looking up in the type to GroupInfo mapping.
-                        if (orderByPropertyComparer.Compare(groups[groupsIndex].GroupValue, currentObjectEntry) == 0)
+                        if (orderByPropertyComparer.Compare(lastGroup.GroupValue, currentObjectEntry) == 0)
                         {
-                            groups[groupsIndex].Add(currentObjectEntry.inputObject);
+                            lastGroup.Add(currentObjectEntry.inputObject);
                             isCurrentItemGrouped = true;
-                            break;
                         }
                     }
 
@@ -322,7 +324,8 @@ namespace Microsoft.PowerShell.Commands
                     currentEntry = _orderByProperty.CreateOrderByPropertyEntry(this, InputObject, CaseSensitive, _cultureInfo);
                 }
 
-                DoGrouping(currentEntry, this.NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
+
+                _orderedEntries.Add(currentEntry);
             }
         }
 
@@ -331,6 +334,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
+            _orderedEntries.Sort((e1,e2)=> _orderByPropertyComparer.Compare(e1,e2));
+            for (int i = 0; i < _orderedEntries.Count; i++)
+            {
+                DoGrouping(_orderedEntries[i], NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
+            }
+
             s_tracer.WriteLine(_groups.Count);
             if (_groups.Count > 0)
             {
