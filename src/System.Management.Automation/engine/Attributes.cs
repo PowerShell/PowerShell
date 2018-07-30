@@ -143,7 +143,6 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
         /// </param>
-        ///
         /// <returns>bool true if the validate succeeded</returns>
         /// <exception cref="ValidationMetadataException">
         /// Whenever any exception occurs during data validate.
@@ -802,7 +801,6 @@ namespace System.Management.Automation
     public class PSTypeNameAttribute : Attribute
     {
         /// <summary>
-        ///
         /// </summary>
         public string PSTypeName { get; private set; }
 

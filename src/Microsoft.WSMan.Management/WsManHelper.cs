@@ -1115,7 +1115,6 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        ///
         /// </summary>
         private static Dictionary<string, string> ResourceValueCache = new Dictionary<string, string>();
 

@@ -8,7 +8,6 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
     /// Implements the stop-transcript cmdlet
     ///
     /// </summary>
@@ -18,7 +17,6 @@ namespace Microsoft.PowerShell.Commands
     public sealed class StopTranscriptCommand : PSCmdlet
     {
         /// <summary>
-        ///
         /// Starts the transcription
         /// </summary>
 
