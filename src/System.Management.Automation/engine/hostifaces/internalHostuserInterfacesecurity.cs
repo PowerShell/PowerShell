@@ -11,7 +11,6 @@ namespace System.Management.Automation.Internal.Host
     class InternalHostUserInterface : PSHostUserInterface
     {
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -33,7 +32,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>

@@ -36,7 +36,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -72,7 +71,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -109,7 +107,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -146,7 +143,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -183,7 +179,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -220,7 +215,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -257,7 +251,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -294,7 +287,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -322,7 +314,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -350,7 +341,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -391,7 +381,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -413,7 +402,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -441,7 +429,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -478,7 +465,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -501,7 +487,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -529,7 +514,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -553,7 +537,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -589,7 +572,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
@@ -607,7 +589,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="str"></param>
         /// <param name="offset"></param>
@@ -629,7 +610,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="character"></param>
         /// <returns></returns>

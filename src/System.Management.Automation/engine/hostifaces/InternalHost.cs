@@ -14,7 +14,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Internal.Host
 {
     /// <summary>
-    ///
     /// Wraps PSHost instances to provide a shim layer
     /// between InternalCommand and the host-supplied PSHost instance.
     ///
@@ -29,7 +28,6 @@ namespace System.Management.Automation.Internal.Host
     internal class InternalHost : PSHost, IHostSupportsInteractiveSession
     {
         /// <summary>
-        ///
         /// There should only be one instance of InternalHost per runspace (i.e. per engine), and all engine use of the host
         /// should be through that single instance.  If we ever accidentally create more than one instance of InternalHost per
         /// runspace, then some of the internal state checks that InternalHost makes, like checking the nestedPromptCounter, can
@@ -58,13 +56,11 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
-        ///
         ///  when the external host's Name is null or empty.
         ///
         /// </exception>
@@ -89,13 +85,11 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
-        ///
         ///  when the external host's Version is null.
         ///
         /// </exception>
@@ -120,13 +114,11 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
-        ///
         ///  when the external host's InstanceId is a zero Guid.
         ///
         /// </exception>
@@ -150,7 +142,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -179,14 +170,12 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value>
         /// </value>
         /// <exception cref="NotImplementedException">
-        ///
         ///  when the external host's CurrentCulture is null.
         ///
         /// </exception>
@@ -201,14 +190,12 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value>
         /// </value>
         /// <exception cref="NotImplementedException">
-        ///
         /// If the external host's CurrentUICulture is null.
         ///
         /// </exception>
@@ -226,7 +213,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -237,7 +223,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// <seealso cref="ExitNestedPrompt"/>
@@ -260,7 +245,6 @@ namespace System.Management.Automation.Internal.Host
         /// Internal proxy for EnterNestedPrompt
         /// </summary>
         /// <param name="callingCommand"></param>
-        ///
         internal void EnterNestedPrompt(InternalCommand callingCommand)
         {
             // Ensure we are in control of the pipeline
@@ -419,7 +403,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// <seealso cref="EnterNestedPrompt()"/>
@@ -444,7 +427,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -458,7 +440,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// <seealso cref="NotifyEndApplication"/>
@@ -469,7 +450,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// Called by the engine to notify the host that the execution of a legacy command has completed.
         ///
         /// <seealso cref="NotifyBeginApplication"/>

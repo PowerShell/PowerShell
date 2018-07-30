@@ -65,7 +65,6 @@ namespace Microsoft.PowerShell
         #region methods
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -80,13 +79,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="NotSupportedException">
-        ///
         /// On calling this method
         ///
         /// </exception>
@@ -99,13 +96,11 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
         /// <value></value>
         /// <exception cref="NotSupportedException">
-        ///
         /// On calling this method
         ///
         /// </exception>
@@ -117,7 +112,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>
@@ -132,7 +126,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// See base class
         ///
         /// </summary>

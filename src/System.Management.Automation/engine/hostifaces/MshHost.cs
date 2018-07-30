@@ -7,13 +7,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Management.Automation.Host
 {
     /// <summary>
-    ///
     /// Defines the properties and facilities providing by an application hosting an MSH <see
     /// cref="System.Management.Automation.Runspaces.Runspace"/>.
     ///
     /// </summary>
     /// <remarks>
-    ///
     /// A hosting application derives from this class and
     /// overrides the abstract methods and properties.  The hosting application creates an instance of its derived class and
     /// passes it to the <see cref="System.Management.Automation.Runspaces.RunspaceFactory"/> CreateRunspace method.
@@ -48,7 +46,6 @@ namespace System.Management.Automation.Host
         internal static bool IsStdOutputRedirected;
 
         /// <summary>
-        ///
         /// Protected constructor which does nothing.  Provided per .Net design guidelines section 4.3.1
         ///
         /// </summary>
@@ -59,7 +56,6 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets the hosting application's identification in some user-friendly fashion. This name can be referenced by scripts and cmdlets
         /// to identify the host that is executing them.  The format of the value is not defined, but a short, simple string is
         /// recommended.
@@ -70,7 +66,6 @@ namespace System.Management.Automation.Host
         /// your hosting application. For the default console host shipped by Microsoft this is ConsoleHost.
         /// </remarks>
         /// <value>
-        ///
         /// The name identifier of the hosting application.
         ///
         /// </value>
@@ -86,7 +81,6 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets the version of the hosting application.  This value should remain invariant for a particular build of the
         /// host.  This value may be referenced by scripts and cmdlets.
         ///
@@ -96,7 +90,6 @@ namespace System.Management.Automation.Host
         /// that is hosting the Monad engine.
         /// </remarks>
         /// <value>
-        ///
         /// The version number of the hosting application.
         ///
         /// </value>
@@ -107,7 +100,6 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets a GUID that uniquely identifies this instance of the host.  The value should remain invariant for the lifetime of
         /// this instance.
         ///
@@ -119,14 +111,12 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets the hosting application's implementation of the
         /// <see cref="System.Management.Automation.Host.PSHostUserInterface"/> abstract base class. A host
         /// that does not want to support user interaction should return null.
         ///
         /// </summary>
         /// <value>
-        ///
         /// A reference to an instance of the hosting application's implementation of a class derived from
         /// <see cref="System.Management.Automation.Host.PSHostUserInterface"/>, or null to indicate that user
         /// interaction is not supported.
@@ -144,17 +134,14 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets the host's culture: the culture that the runspace should use to set the CurrentCulture on new threads
         ///
         /// </summary>
         /// <value>
-        ///
         /// A CultureInfo object representing the host's current culture.  Returning null is not allowed.
         ///
         /// </value>
         /// <remarks>
-        ///
         /// The runspace will set the thread current culture to this value each time it starts a pipeline. Thus, cmdlets are
         /// encouraged to use Thread.CurrentThread.CurrentCulture.
         ///
@@ -166,14 +153,12 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets the host's UI culture: the culture that the runspace and cmdlets should use to do resource loading.
         ///
         /// The runspace will set the thread current ui culture to this value each time it starts a pipeline.
         ///
         /// </summary>
         /// <value>
-        ///
         /// A CultureInfo object representing the host's current UI culture.  Returning null is not allowed.
         ///
         /// </value>
@@ -184,12 +169,10 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Request by the engine to end the current engine runspace (to shut down and terminate the host's root runspace).
         ///
         /// </summary>
         /// <remarks>
-        ///
         /// This method is called by the engine to request the host shutdown the engine.  This is invoked by the exit keyword
         /// or by any other facility by which a runspace instance wishes to be shut down.
         ///
@@ -197,7 +180,6 @@ namespace System.Management.Automation.Host
         ///
         /// </remarks>
         /// <param name="exitCode">
-        ///
         /// The exit code accompanying the exit keyword. Typically, after exiting a runspace, a host will also terminate. The
         /// exitCode parameter can be used to set the host's process exit code.
         ///
@@ -206,13 +188,11 @@ namespace System.Management.Automation.Host
         public abstract void SetShouldExit(int exitCode);
 
         /// <summary>
-        ///
         /// Instructs the host to interrupt the currently running pipeline and start a new, "nested" input loop, where an input
         /// loop is the cycle of prompt, input, execute.
         ///
         /// </summary>
         /// <remarks>
-        ///
         /// Typically called by the engine in response to some user action that suspends the currently executing pipeline, such
         /// as choosing the "suspend" option of a ConfirmProcessing call. Before calling this method, the engine should set
         /// various shell variables to the express the state of the interrupted input loop (current pipeline, current object in
@@ -226,21 +206,18 @@ namespace System.Management.Automation.Host
         /// <!--Was: ExecuteSubShell.  "subshell" implies a new child engine, which is not the case here.  This is called during the
         /// interruption of a pipeline to allow nested pipeline(s) to be run as a way to the user to suspend execution while he
         /// evaluates other commands.  It does not create a truly new engine instance with new session state.-->
-        ///
         /// </remarks>
         /// <seealso cref="System.Management.Automation.Host.PSHost.ExitNestedPrompt"/>
 
         public abstract void EnterNestedPrompt();
 
         /// <summary>
-        ///
         /// Causes the host to end the currently running input loop.  If the input loop was created by a prior call to
         /// EnterNestedPrompt, the enclosing pipeline will be resumed.  If the current input loop is the top-most loop, then the
         /// host will act as though SetShouldExit was called.
         ///
         /// </summary>
         /// <remarks>
-        ///
         /// Typically called by the engine in response to some user action that resumes a suspended pipeline, such as with the
         /// 'continue-command' intrinsic cmdlet. Before calling this method, the engine should clear out the loop-specific
         /// variables that were set when the loop was created.
@@ -253,19 +230,16 @@ namespace System.Management.Automation.Host
         public abstract void ExitNestedPrompt();
 
         /// <summary>
-        ///
         /// Used to allow the host to pass private data through a Runspace to cmdlets running inside that Runspace's
         /// runspace.  The type and nature of that data is entirely defined by the host, but there are some caveats:
         ///
         ///
         /// </summary>
         /// <returns>
-        ///
         /// The default implementation returns null.
         ///
         /// </returns>
         /// <remarks>
-        ///
         /// If the host is using an out-of-process Runspace, then the value of this property is serialized when crossing
         /// that process boundary in the same fashion as any object in a pipeline is serialized when crossing process boundaries.
         /// In this case, the BaseObject property of the value will be null.
@@ -292,7 +266,6 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Called by the engine to notify the host that it is about to execute a "legacy" command line application.  A legacy
         /// application is defined as a console-mode executable that may do one or more of the following:
         /// . reads from stdin
@@ -302,7 +275,6 @@ namespace System.Management.Automation.Host
         ///
         /// </summary>
         /// <remarks>
-        ///
         /// Notifying the host allows the host to do such things as save off any state that might need to be restored when the
         /// legacy application terminates, set or remove break handler hooks, redirect stream handles, and so forth.
         ///
@@ -330,7 +302,6 @@ namespace System.Management.Automation.Host
         public abstract void NotifyBeginApplication();
 
         /// <summary>
-        ///
         /// Called by the engine to notify the host that the execution of a legacy command has completed.
         ///
         /// </summary>
