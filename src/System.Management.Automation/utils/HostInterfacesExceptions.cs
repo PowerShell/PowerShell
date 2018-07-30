@@ -7,7 +7,6 @@ using System.Management.Automation.Internal;
 namespace System.Management.Automation.Host
 {
     /// <summary>
-    ///
     /// Defines the exception thrown when the Host cannot complete an operation
     /// such as checking whether there is any input available.
     ///
@@ -19,7 +18,6 @@ namespace System.Management.Automation.Host
     {
         #region ctors
         /// <summary>
-        ///
         /// Initializes a new instance of the HostException class
         ///
         /// </summary>
@@ -32,12 +30,10 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Initializes a new instance of the HostException class and defines the error message
         ///
         /// </summary>
         /// <param name="message">
-        ///
         /// The error message that explains the reason for the exception.
         ///
         /// </param>
@@ -49,18 +45,15 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Initializes a new instance of the HostException class and defines the error message and
         /// inner exception.
         ///
         /// </summary>
         /// <param name="message">
-        ///
         /// The error message that explains the reason for the exception.
         ///
         /// </param>
         /// <param name="innerException">
-        ///
         /// The exception that is the cause of the current exception. If the <paramref name="innerException"/>
         /// parameter is not a null reference, the current exception is raised in a catch
         /// block that handles the inner exception.
@@ -75,31 +68,26 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Initializes a new instance of the HostException class and defines the error message,
         /// inner exception, the error ID, and the error category.
         ///
         /// </summary>
         /// <param name="message">
-        ///
         /// The error message that explains the reason for the exception.
         ///
         /// </param>
         /// <param name="innerException">
-        ///
         /// The exception that is the cause of the current exception. If the <paramref name="innerException"/>
         /// parameter is not a null reference, the current exception is raised in a catch
         /// block that handles the inner exception.
         ///
         /// </param>
         /// <param name="errorId">
-        ///
         /// The string that should uniquely identifies the situation where the exception is thrown.
         /// The string should not contain white space.
         ///
         /// </param>
         /// <param name="errorCategory">
-        ///
         /// The ErrorCategory into which this exception situation falls
         ///
         /// </param>
@@ -116,18 +104,15 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Initializes a new instance of the HostException class and defines the SerializationInfo
         /// and the StreamingContext.
         ///
         /// </summary>
         /// <param name="info">
-        ///
         /// The object that holds the serialized object data.
         ///
         /// </param>
         /// <param name="context">
-        ///
         /// The contextual information about the source or destination.
         ///
         /// </param>
@@ -149,7 +134,6 @@ namespace System.Management.Automation.Host
     }
 
     /// <summary>
-    ///
     /// Defines the exception thrown when an error occurs from prompting for a command parameter.
     ///
     /// </summary>
@@ -160,7 +144,6 @@ namespace System.Management.Automation.Host
     {
         #region ctors
         /// <summary>
-        ///
         /// Initializes a new instance of the PromptingException class
         ///
         /// </summary>
@@ -172,12 +155,10 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Initializes a new instance of the PromptingException class and defines the error message
         ///
         /// </summary>
         /// <param name="message">
-        ///
         /// The error message that explains the reason for the exception.
         ///
         /// </param>
@@ -189,18 +170,15 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Initializes a new instance of the PromptingException class and defines the error message and
         /// inner exception.
         ///
         /// </summary>
         /// <param name="message">
-        ///
         /// The error message that explains the reason for the exception.
         ///
         /// </param>
         /// <param name="innerException">
-        ///
         /// The exception that is the cause of the current exception. If the <paramref name="innerException"/>
         /// parameter is not a null reference, the current exception is raised in a catch
         /// block that handles the inner exception.
@@ -215,31 +193,26 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Initializes a new instance of the PromptingException class and defines the error message,
         /// inner exception, the error ID, and the error category.
         ///
         /// </summary>
         /// <param name="message">
-        ///
         /// The error message that explains the reason for the exception.
         ///
         /// </param>
         /// <param name="innerException">
-        ///
         /// The exception that is the cause of the current exception. If the <paramref name="innerException"/>
         /// parameter is not a null reference, the current exception is raised in a catch
         /// block that handles the inner exception.
         ///
         /// </param>
         /// <param name="errorId">
-        ///
         /// The string that should uniquely identifies the situation where the exception is thrown.
         /// The string should not contain white space.
         ///
         /// </param>
         /// <param name="errorCategory">
-        ///
         /// The ErrorCategory into which this exception situation falls
         ///
         /// </param>
@@ -254,18 +227,15 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Initializes a new instance of the HostException class and defines the SerializationInfo
         /// and the StreamingContext.
         ///
         /// </summary>
         /// <param name="info">
-        ///
         /// The object that holds the serialized object data.
         ///
         /// </param>
         /// <param name="context">
-        ///
         /// The contextual information about the source or destination.
         ///
         /// </param>

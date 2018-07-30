@@ -482,7 +482,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Get the pass / fail result of calling the SAFER API
         /// </summary>
-        ///
         /// <param name="path">The path to the file in question</param>
         /// <param name="handle">A file handle to the file in question, if available.</param>
         [ArchitectureSensitive]
@@ -579,13 +578,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// throw if file does not exist
         /// </summary>
-        ///
         /// <param name="filePath"> path to file </param>
-        ///
         /// <returns> Does not return a value </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal static void CheckIfFileExists(string filePath)
         {
             if (!File.Exists(filePath))
@@ -598,13 +593,9 @@ namespace System.Management.Automation.Internal
         /// check to see if the specified cert is suitable to be
         /// used as a code signing cert
         /// </summary>
-        ///
         /// <param name="c"> certificate object </param>
-        ///
         /// <returns> true on success, false otherwise </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal static bool CertIsGoodForSigning(X509Certificate2 c)
         {
             if (!CertHasPrivatekey(c))
@@ -620,13 +611,9 @@ namespace System.Management.Automation.Internal
         /// used as an encryption cert for PKI encryption. Note
         /// that this cert doesn't require the private key.
         /// </summary>
-        ///
         /// <param name="c"> certificate object </param>
-        ///
         /// <returns> true on success, false otherwise </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal static bool CertIsGoodForEncryption(X509Certificate2 c)
         {
             return (
@@ -671,13 +658,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// check if the specified cert has a private key in it
         /// </summary>
-        ///
         /// <param name="cert"> certificate object </param>
-        ///
         /// <returns> true on success, false otherwise </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal static bool CertHasPrivatekey(X509Certificate2 cert)
         {
             return cert.HasPrivateKey;
@@ -686,13 +669,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Get the EKUs of a cert
         /// </summary>
-        ///
         /// <param name="cert"> certificate object </param>
-        ///
         /// <returns> a collection of cert eku strings </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         [ArchitectureSensitive]
         internal static Collection<string> GetCertEKU(X509Certificate2 cert)
         {
@@ -749,13 +728,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// convert an int to a DWORD
         /// </summary>
-        ///
         /// <param name="n"> signed int number  </param>
-        ///
         /// <returns> DWORD </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal static DWORD GetDWORDFromInt(int n)
         {
             UInt32 result = BitConverter.ToUInt32(BitConverter.GetBytes(n), 0);
@@ -765,13 +740,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// convert a DWORD to int
         /// </summary>
-        ///
         /// <param name="n"> number </param>
-        ///
         /// <returns> int </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal static int GetIntFromDWORD(DWORD n)
         {
             Int64 n64 = n - 0x100000000L;

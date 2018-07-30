@@ -18,7 +18,6 @@ namespace System.Management.Automation
     /// Defines the options that control what data is embedded in the
     /// signature blob
     /// </summary>
-    ///
     public enum SigningOption
     {
         /// <summary>
@@ -61,25 +60,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Sign a file
         /// </summary>
-        ///
         /// <param name="option"> option that controls what gets embedded in the signature blob  </param>
-        ///
         /// <param name="fileName"> name of file to sign </param>
-        ///
         /// <param name="certificate"> signing cert  </param>
-        ///
         /// <param name="timeStampServerUrl"> URL of time stamping server  </param>
-        ///
         /// <param name="hashAlgorithm"> The name of the hash
         /// algorithm to use. </param>
-        ///
         /// <returns> Does not return a value </returns>
-        ///
         ///
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if argument fileName or certificate is null.
         /// </exception>
-        ///
         ///
         /// <exception cref="System.ArgumentException">
         /// Thrown if
@@ -87,7 +78,6 @@ namespace System.Management.Automation
         /// -- the specified certificate is not suitable for
         ///    signing code
         /// </exception>
-        ///
         ///
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
@@ -100,13 +90,10 @@ namespace System.Management.Automation
         ///  -- etc
         /// </exception>
         ///
-        ///
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found
         /// </exception>
-        ///
         /// <remarks>  </remarks>
-        ///
         [ArchitectureSensitive]
         internal static Signature SignFile(SigningOption option,
                                            string fileName,
@@ -274,29 +261,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Get signature on the specified file
         /// </summary>
-        ///
         /// <param name="fileName"> name of file to check </param>
-        ///
         /// <param name="fileContent"> content of file to check </param>
-        ///
         /// <returns> Signature object </returns>
-        ///
         /// <exception cref="System.ArgumentException">
         /// Thrown if argument fileName is empty.
         /// </exception>
-        ///
         ///
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if argument fileName is null
         /// </exception>
         ///
-        ///
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found.
         /// </exception>
-        ///
         /// <remarks>  </remarks>
-        ///
         [ArchitectureSensitive]
         internal static Signature GetSignature(string fileName, string fileContent)
         {

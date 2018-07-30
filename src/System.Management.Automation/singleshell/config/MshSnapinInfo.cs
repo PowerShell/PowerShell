@@ -1257,7 +1257,6 @@ namespace System.Management.Automation
                                            "CoreMshSnapInResources,Description", "CoreMshSnapInResources,Vendor");
 
         /// <summary>
-        ///
         /// </summary>
         private static IList<DefaultPSSnapInInformation> DefaultMshSnapins
         {

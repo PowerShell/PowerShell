@@ -536,7 +536,6 @@ namespace Microsoft.PowerShell
         /// class summary for an overview of the semantics enforced by this
         /// authorization manager.
         /// </summary>
-        ///
         /// <param name="commandInfo">
         /// The command to be run.
         /// </param>
@@ -550,20 +549,16 @@ namespace Microsoft.PowerShell
         /// If access is denied, this parameter provides a specialized
         /// Exception as the reason.
         /// </param>
-        ///
         /// <returns>
         /// True if the command should be run.  False otherwise.
         /// </returns>
-        ///
         /// <exception cref="System.ArgumentException">
         /// CommandInfo is invalid. This may occur if
         /// commandInfo.Name is null or empty.
         /// </exception>
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// CommandInfo is null.
         /// </exception>
-        ///
         /// <exception cref="System.IO.FileNotFoundException">
         /// The file specified by commandInfo.Path is not found.
         /// </exception>
