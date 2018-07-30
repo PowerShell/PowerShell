@@ -7,7 +7,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class MamlCommandHelpInfo keeps track of help information to be returned by
     /// command help provider.
     ///

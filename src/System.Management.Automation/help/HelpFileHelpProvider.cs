@@ -11,7 +11,6 @@ using System.Management.Automation.Internal;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpFileHelpProvider implement the help provider for help.txt kinds of
     /// help contents.
     ///

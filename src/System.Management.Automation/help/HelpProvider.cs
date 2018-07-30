@@ -11,7 +11,6 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpProvider defines the interface to be implemented by help providers.
     ///
     /// Help Providers:

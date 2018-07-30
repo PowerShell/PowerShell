@@ -6,7 +6,6 @@ using System.Collections.Generic;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpProviderWithFullCache provides a pseudo implementation of HelpProvider
     /// at which results are fully cached in a hashtable after initial cache load.
     ///

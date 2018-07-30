@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpInfo keeps track of help information to be returned by help system.
     ///
     /// HelpInfo includes information in following aspect,
