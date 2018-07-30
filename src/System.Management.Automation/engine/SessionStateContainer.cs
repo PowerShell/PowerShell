@@ -3798,7 +3798,7 @@ namespace System.Management.Automation
                 if (String.IsNullOrEmpty(name))
                 {
                     string providerPath =
-                        Globber.GetProviderPath(resolvePath, context, out provider, out driveInfo);
+                        Globber.GetProviderPath(WildcardPattern.Unescape(resolvePath), context, out provider, out driveInfo);
 
                     providerInstance = GetProviderInstance(provider);
                     providerPaths.Add(providerPath);
