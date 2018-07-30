@@ -113,10 +113,10 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder sb = new StringBuilder();
             foreach (ObjectCommandPropertyValue propValue in propValues)
             {
-                if (propValue != null && propValue.PropertyValue != null)
+                var propValuePropertyValue = propValue?.PropertyValue;
+                if (propValuePropertyValue != null)
                 {
-                    var propertyValueItems = propValue.PropertyValue as ICollection;
-                    if (propertyValueItems != null)
+                    if (propValuePropertyValue is ICollection propertyValueItems)
                     {
                         sb.Append("{");
                         var length = sb.Length;
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}, ", propValue.PropertyValue.ToString()));
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}, ", propValuePropertyValue.ToString()));
                     }
                 }
             }
@@ -162,17 +162,17 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The list of objects in this group.
         /// </summary>
-        public Collection<PSObject> Group { get; } = null;
+        public Collection<PSObject> Group { get; }
 
         /// <summary>
         /// The name of the group.
         /// </summary>
-        public string Name { get; } = null;
+        public string Name { get; }
 
         /// <summary>
         /// The OrderByPropertyEntry used to build this group object.
         /// </summary>
-        internal OrderByPropertyEntry GroupValue { get; } = null;
+        internal OrderByPropertyEntry GroupValue { get; }
     }
 
     /// <summary>
@@ -203,12 +203,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter]
-        public SwitchParameter NoElement
-        {
-            get { return _noElement; }
-            set { _noElement = value; }
-        }
-        private bool _noElement;
+        public SwitchParameter NoElement { get; set; }
+
         /// <summary>
         /// the AsHashTable parameter.
         /// </summary>
@@ -225,11 +221,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "HashTable")]
         public SwitchParameter AsString { get; set; }
 
-        private List<GroupInfo> _groups = new List<GroupInfo>();
-        private OrderByProperty _orderByProperty = new OrderByProperty();
+        private readonly List<GroupInfo> _groups = new List<GroupInfo>();
+        private readonly OrderByProperty _orderByProperty = new OrderByProperty();
+        private readonly Dictionary<object, GroupInfo> _tupleToGroupInfoMappingDictionary = new Dictionary<object, GroupInfo>();
+        private OrderByPropertyComparer _orderByPropertyComparer;
         private bool _hasProcessedFirstInputObject;
-        private Dictionary<object, GroupInfo> _tupleToGroupInfoMappingDictionary = new Dictionary<object, GroupInfo>();
-        private OrderByPropertyComparer _orderByPropertyComparer = null;
 
         #endregion
 
@@ -246,18 +242,15 @@ namespace Microsoft.PowerShell.Commands
         internal static void DoGrouping(OrderByPropertyEntry currentObjectEntry, bool noElement, List<GroupInfo> groups, Dictionary<object, GroupInfo> groupInfoDictionary,
             OrderByPropertyComparer orderByPropertyComparer)
         {
-            if (currentObjectEntry != null && currentObjectEntry.orderValues != null && currentObjectEntry.orderValues.Count > 0)
+            var currentObjectorderValues = currentObjectEntry.orderValues;
+            if (currentObjectorderValues != null && currentObjectorderValues.Count > 0)
             {
-                object currentTupleObject = PSTuple.ArrayToTuple(currentObjectEntry.orderValues.ToArray());
+                object currentTupleObject = PSTuple.ArrayToTuple(currentObjectorderValues.ToArray());
 
-                GroupInfo currentGroupInfo = null;
-                if (groupInfoDictionary.TryGetValue(currentTupleObject, out currentGroupInfo))
+                if (groupInfoDictionary.TryGetValue(currentTupleObject, out var currentGroupInfo))
                 {
-                    if (currentGroupInfo != null)
-                    {
-                        //add this inputObject to an existing group
-                        currentGroupInfo.Add(currentObjectEntry.inputObject);
-                    }
+                    //add this inputObject to an existing group
+                    currentGroupInfo?.Add(currentObjectEntry.inputObject);
                 }
                 else
                 {
@@ -278,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!isCurrentItemGrouped)
                     {
                         // create a new group
-                        s_tracer.WriteLine("Create a new group: {0}", currentObjectEntry.orderValues);
+                        s_tracer.WriteLine("Create a new group: {0}", currentObjectorderValues);
                         GroupInfo newObjGrp = noElement ? new GroupInfoNoElement(currentObjectEntry) : new GroupInfo(currentObjectEntry);
                         groups.Add(newObjGrp);
 
@@ -302,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (InputObject != null && InputObject != AutomationNull.Value)
             {
-                OrderByPropertyEntry currentEntry = null;
+                OrderByPropertyEntry currentEntry;
 
                 if (!_hasProcessedFirstInputObject)
                 {
@@ -341,20 +334,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (AsHashTable)
                 {
-                    Hashtable _table = CollectionsUtil.CreateCaseInsensitiveHashtable();
+                    Hashtable table = CollectionsUtil.CreateCaseInsensitiveHashtable();
                     try
                     {
-                        foreach (GroupInfo _grp in _groups)
+                        foreach (GroupInfo grp in _groups)
                         {
                             if (AsString)
                             {
-                                _table.Add(_grp.Name, _grp.Group);
+                                table.Add(grp.Name, grp.Group);
                             }
                             else
                             {
-                                if (_grp.Values.Count == 1)
+                                if (grp.Values.Count == 1)
                                 {
-                                    _table.Add(PSObject.Base(_grp.Values[0]), _grp.Group);
+                                    table.Add(PSObject.Base(grp.Values[0]), grp.Group);
                                 }
                                 else
                                 {
@@ -370,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteNonTerminatingError(e, UtilityCommonStrings.InvalidOperation, ErrorCategory.InvalidArgument);
                         return;
                     }
-                    WriteObject(_table);
+                    WriteObject(table);
                 }
                 else
                 {
