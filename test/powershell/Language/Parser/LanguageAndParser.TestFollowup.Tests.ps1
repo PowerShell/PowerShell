@@ -303,3 +303,16 @@ Describe "Hash expression with if statement as value" -Tags "CI" {
         $hash['h'] | Should -BeExactly 'h'
     }
 }
+
+Describe "WildcardPattern" -Tags "CI" {
+    It "Unescaping escaped string '<inputStr>' should get the original" -TestCases @(
+        @{inputStr = '*This'}
+        @{inputStr = 'Is?'}
+        @{inputStr = 'Real[ly]'}
+        @{inputStr = 'Ba`sic'}
+        @{inputStr = 'Test `[more`]?'}
+    ) {
+        param($inputStr)
+        [WildcardPattern]::Unescape([WildcardPattern]::Escape($inputStr)) | Should -BeExactly $inputStr
+    }
+}

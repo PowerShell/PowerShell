@@ -460,7 +460,13 @@ namespace System.Management.Automation
 
             s_pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
 
-            string relativePath = GetDriveRootRelativePathFromPSPath(path, context, true, out drive, out providerInstance);
+            string relativePath =
+                GetDriveRootRelativePathFromPSPath(
+                    path,
+                    context,
+                    !context.SuppressWildcardExpansion,
+                    out drive,
+                    out providerInstance);
 
             Dbg.Diagnostics.Assert(
                 drive != null,
@@ -3630,13 +3636,11 @@ namespace System.Management.Automation
                 StringContainsGlobCharacters(leafElement) ||
                 isLastLeaf)
             {
-                string regexEscapedLeafElement = ConvertMshEscapeToRegexEscape(leafElement);
-
                 // Construct the glob filter
 
                 WildcardPattern stringMatcher =
                     WildcardPattern.Get(
-                        regexEscapedLeafElement,
+                        leafElement,
                         WildcardOptions.IgnoreCase);
 
                 // Construct the include filter
@@ -4270,13 +4274,11 @@ namespace System.Management.Automation
                 (StringContainsGlobCharacters(leafElement) ||
                  isLastLeaf))
             {
-                string regexEscapedLeafElement = ConvertMshEscapeToRegexEscape(leafElement);
-
                 // Construct the glob filter
 
                 WildcardPattern stringMatcher =
                     WildcardPattern.Get(
-                        regexEscapedLeafElement,
+                        leafElement,
                         WildcardOptions.IgnoreCase);
 
                 // Construct the include filter
