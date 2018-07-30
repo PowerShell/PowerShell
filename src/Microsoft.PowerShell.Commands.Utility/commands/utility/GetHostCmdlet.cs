@@ -8,7 +8,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
     /// Writes the PSHost object to the success stream.
     ///
     /// </summary>
@@ -19,7 +18,6 @@ namespace Microsoft.PowerShell.Commands
     class GetHostCommand : PSCmdlet
     {
         /// <summary>
-        ///
         /// See base class.
         ///
         /// </summary>

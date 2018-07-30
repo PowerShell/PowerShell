@@ -14,7 +14,6 @@ using System.Text;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
     /// Retrieves input from the host virtual console and writes it to the pipeline output.
     ///
     /// </summary>
@@ -24,7 +23,6 @@ namespace Microsoft.PowerShell.Commands
     public sealed class ReadHostCommand : PSCmdlet
     {
         /// <summary>
-        ///
         /// Constructs a new instance.
         ///
         /// </summary>
@@ -38,7 +36,6 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        ///
         /// The objects to display on the host before collecting input.
         ///
         /// </summary>
@@ -61,7 +58,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// Set to no echo the input as is is typed.
         ///
         /// </summary>
