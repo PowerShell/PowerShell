@@ -22,30 +22,59 @@ Describe 'ConvertFrom-Markdown tests' -Tags 'CI' {
 
             [string] $CodeFormatString,
 
-            [string] $CodeText
+            [string] $CodeText,
+
+            [bool] $VT100Support
             )
 
             switch($elementType)
             {
-                "Header1" { "$esc[7m$text$esc[0m`n`n" }
-                "Header2" { "$esc[4;93m$text$esc[0m`n`n" }
-                "Header3" { "$esc[4;94m$text$esc[0m`n`n" }
-                "Header4" { "$esc[4;95m$text$esc[0m`n`n" }
-                "Header5" { "$esc[4;96m$text$esc[0m`n`n" }
-                "Header6" { "$esc[4;97m$text$esc[0m`n`n" }
+                "Header1" { if($VT100Support) {"$esc[7m$text$esc[0m`n`n" } else {"$text`n`n"} }
+                "Header2" { if($VT100Support) {"$esc[4;93m$text$esc[0m`n`n" } else {"$text`n`n"} }
+                "Header3" { if($VT100Support) {"$esc[4;94m$text$esc[0m`n`n" } else {"$text`n`n"} }
+                "Header4" { if($VT100Support) {"$esc[4;95m$text$esc[0m`n`n" } else {"$text`n`n"} }
+                "Header5" { if($VT100Support) {"$esc[4;96m$text$esc[0m`n`n" } else {"$text`n`n"} }
+                "Header6" { if($VT100Support) {"$esc[4;97m$text$esc[0m`n`n" } else {"$text`n`n"} }
 
-                "Code" { ($CodeFormatString -f "$esc[48;2;155;155;155;38;2;30;30;30m$CodeText$esc[0m") + "`n`n" }
+                "Code" {
+                    if($VT100Support) {
+                        if($IsMacOS)
+                        {
+                            ($CodeFormatString -f "$esc[107;95m$CodeText$esc[0m") + "`n`n"
+                        }
+                        else
+                        {
+                            ($CodeFormatString -f "$esc[48;2;155;155;155;38;2;30;30;30m$CodeText$esc[0m") + "`n`n"
+                        }
+                    }
+                    else {
+                        $CodeFormatString -f "$CodeText" + "`n`n"
+                    }
+                }
                 "CodeBlock" {
                     $expectedString = @()
-                    $CodeText -split "`n" | ForEach-Object { $expectedString += "$esc[48;2;155;155;155;38;2;30;30;30m$_$esc[500@$esc[0m" }
+                    $CodeText -split "`n" | ForEach-Object {
+                        if($VT100Support) {
+                            if($IsMacOS) {
+                                $expectedString += "$esc[107;95m$_$esc[500@$esc[0m"
+                            }
+                            else {
+                                $expectedString += "$esc[48;2;155;155;155;38;2;30;30;30m$_$esc[500@$esc[0m"
+                            }
+
+                        }
+                        else {
+                            $expectedString += $_
+                        }
+                    }
                     $returnString = $expectedString -join "`n"
                     "$returnString`n`n"
                 }
 
-                "Link" { "$esc[4;38;5;117m`"$text`"$esc[0m`n" }
-                "Image" { "$esc[33m[$text]$esc[0m`n" }
-                "Bold" { "$esc[1m$text$esc[0m`n" }
-                "Italics" { "$esc[36m$text$esc[0m`n" }
+                "Link" { if($VT100Support) {"$esc[4;38;5;117m`"$text`"$esc[0m`n" } else { "`"$text`"`n" } }
+                "Image" { if($VT100Support) { "$esc[33m[$text]$esc[0m`n" } else { "[$text]`n" } }
+                "Bold" { if($VT100Support) { "$esc[1m$text$esc[0m`n" } else { "$text`n" } }
+                "Italics" { if($VT100Support) { "$esc[36m$text$esc[0m`n" } else { "$text`n" } }
             }
         }
 
@@ -112,26 +141,54 @@ bool function()`n{`n}
 "@
 
                 $TestCases = @(
-                    @{ element = 'Header1'; InputMD = '# Header 1'; Text = 'Header 1' }
-                    @{ element = 'Header2'; InputMD = '## Header 2'; Text = 'Header 2' }
-                    @{ element = 'Header3'; InputMD = '### Header 3'; Text = 'Header 3' }
-                    @{ element = 'Header4'; InputMD = '#### Header 4'; Text = 'Header 4' }
-                    @{ element = 'Header5'; InputMD = '##### Header 5'; Text = 'Header 5' }
-                    @{ element = 'Header6'; InputMD = '###### Header 6'; Text = 'Header 6' }
-                    @{ element = 'Code'; InputMD = 'This is a `code` sample'; CodeFormatString = 'This is a {0} sample'; CodeText = 'code'}
-                    @{ element = 'CodeBlock'; InputMD = $codeBlock; CodeText = $codeBlockText }
-                    @{ element = 'Link'; InputMD = '[GitHub](https://www.github.com)'; Text = 'GitHub'; Url = 'https://www.github.com'}
-                    @{ element = 'Image'; InputMD = '![alt-text](https://bing.com/ps.svg)'; Text = 'alt-text'; Url = 'https://bing.com/ps.svg'}
-                    @{ element = 'Bold'; InputMD = '**bold text**'; Text = 'bold text' }
-                    @{ element = 'Italics'; InputMD = '*italics text*'; Text = 'italics text' }
+                    @{ element = 'Header1'; InputMD = '# Header 1'; Text = 'Header 1'; VT100 = $true }
+                    @{ element = 'Header2'; InputMD = '## Header 2'; Text = 'Header 2'; VT100 = $true }
+                    @{ element = 'Header3'; InputMD = '### Header 3'; Text = 'Header 3'; VT100 = $true }
+                    @{ element = 'Header4'; InputMD = '#### Header 4'; Text = 'Header 4'; VT100 = $true }
+                    @{ element = 'Header5'; InputMD = '##### Header 5'; Text = 'Header 5'; VT100 = $true }
+                    @{ element = 'Header6'; InputMD = '###### Header 6'; Text = 'Header 6'; VT100 = $true }
+                    @{ element = 'Code'; InputMD = 'This is a `code` sample'; CodeFormatString = 'This is a {0} sample'; CodeText = 'code'; VT100 = $true}
+                    @{ element = 'CodeBlock'; InputMD = $codeBlock; CodeText = $codeBlockText; VT100 = $true }
+                    @{ element = 'Link'; InputMD = '[GitHub](https://www.github.com)'; Text = 'GitHub'; Url = 'https://www.github.com'; VT100 = $true}
+                    @{ element = 'Image'; InputMD = '![alt-text](https://bing.com/ps.svg)'; Text = 'alt-text'; Url = 'https://bing.com/ps.svg'; VT100 = $true}
+                    @{ element = 'Bold'; InputMD = '**bold text**'; Text = 'bold text'; VT100 = $true}
+                    @{ element = 'Italics'; InputMD = '*italics text*'; Text = 'italics text'; VT100 = $true }
+
+                    @{ element = 'Header1'; InputMD = '# Header 1'; Text = 'Header 1'; VT100 = $false }
+                    @{ element = 'Header2'; InputMD = '## Header 2'; Text = 'Header 2'; VT100 = $false }
+                    @{ element = 'Header3'; InputMD = '### Header 3'; Text = 'Header 3'; VT100 = $false }
+                    @{ element = 'Header4'; InputMD = '#### Header 4'; Text = 'Header 4'; VT100 = $false }
+                    @{ element = 'Header5'; InputMD = '##### Header 5'; Text = 'Header 5'; VT100 = $false }
+                    @{ element = 'Header6'; InputMD = '###### Header 6'; Text = 'Header 6'; VT100 = $false }
+                    @{ element = 'Code'; InputMD = 'This is a `code` sample'; CodeFormatString = 'This is a {0} sample'; CodeText = 'code'; VT100 = $false}
+                    @{ element = 'CodeBlock'; InputMD = $codeBlock; CodeText = $codeBlockText ; VT100 = $false}
+                    @{ element = 'Link'; InputMD = '[GitHub](https://www.github.com)'; Text = 'GitHub'; Url = 'https://www.github.com'; VT100 = $false}
+                    @{ element = 'Image'; InputMD = '![alt-text](https://bing.com/ps.svg)'; Text = 'alt-text'; Url = 'https://bing.com/ps.svg'; VT100 = $false}
+                    @{ element = 'Bold'; InputMD = '**bold text**'; Text = 'bold text' ; VT100 = $false}
+                    @{ element = 'Italics'; InputMD = '*italics text*'; Text = 'italics text' ; VT100 = $false}
                 )
         }
 
+        It 'Can convert element : <element> to vt100 using pipeline input - VT100 : <VT100>' -TestCases $TestCases {
+            param($element, $inputMD, $text, $codeFormatString, $codeText, $VT100)
 
-        It 'Can convert element : <element> to vt100 using pipeline input' -TestCases $TestCases {
-            param($element, $inputMD, $text, $codeFormatString, $codeText)
+            try
+            {
+                if(-not $VT100)
+                {
+                    $options = Get-MarkdownOption
+                    $options.EnableVT100Encoding = $false
+                    $options | Set-MarkdownOption
+                }
 
-            $output = $inputMD | ConvertFrom-Markdown -AsVT100EncodedString
+                $output = $inputMD | ConvertFrom-Markdown -AsVT100EncodedString
+            }
+            finally
+            {
+                $options = Get-MarkdownOption
+                $options.EnableVT100Encoding = $true
+                $options | Set-MarkdownOption
+            }
 
             if($element -like 'Header?' -or
                $element -eq 'Link' -or
@@ -139,15 +196,15 @@ bool function()`n{`n}
                $element -eq 'Bold' -or
                $element -eq 'Italics')
             {
-                $expectedString = GetExpectedString -ElementType $element -Text $text
+                $expectedString = GetExpectedString -ElementType $element -Text $text -VT100Support $VT100
             }
             elseif($element -eq 'Code')
             {
-                $expectedString = GetExpectedString -ElementType $element -CodeFormatString $codeFormatString -CodeText $codeText
+                $expectedString = GetExpectedString -ElementType $element -CodeFormatString $codeFormatString -CodeText $codeText -VT100Support $VT100
             }
             elseif($element -eq 'CodeBlock')
             {
-                $expectedString = GetExpectedString -ElementType $element -CodeText $codeText
+                $expectedString = GetExpectedString -ElementType $element -CodeText $codeText -VT100Support $VT100
             }
 
             $output.VT100EncodedString | Should -BeExactly $expectedString
@@ -198,6 +255,11 @@ bool function()`n{`n}
             $output = ConvertFrom-Markdown -Path $mdLiteralPath -AsVT100EncodedString
             $output.VT100EncodedString | Should -BeExactly $expectedStringFromFile
         }
+
+        It 'Can accept Path as positional parameter' {
+            $output = ConvertFrom-Markdown $mdFile.FullName -AsVT100EncodedString
+            $output.VT100EncodedString | Should -BeExactly $expectedStringFromFile
+        }
     }
 
     Context "ConvertFrom-Markdown error cases" {
@@ -235,17 +297,26 @@ bool function()`n{`n}
         It "Verify default values for MarkdownOptions" {
             $options = Get-MarkdownOption
 
-            $options.Header1 | Should -BeExactly "$esc[7m[7m$esc[0m"
-            $options.Header2 | Should -BeExactly "$esc[4;93m[4;93m$esc[0m"
-            $options.Header3 | Should -BeExactly "$esc[4;94m[4;94m$esc[0m"
-            $options.Header4 | Should -BeExactly "$esc[4;95m[4;95m$esc[0m"
-            $options.Header5 | Should -BeExactly "$esc[4;96m[4;96m$esc[0m"
-            $options.Header6 | Should -BeExactly "$esc[4;97m[4;97m$esc[0m"
-            $options.Code | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
-            $options.Link | Should -BeExactly "$esc[4;38;5;117m[4;38;5;117m$esc[0m"
-            $options.Image | Should -BeExactly "$esc[33m[33m$esc[0m"
-            $options.EmphasisBold | Should -BeExactly "$esc[1m[1m$esc[0m"
-            $options.EmphasisItalics | Should -BeExactly "$esc[36m[36m$esc[0m"
+            $options.AsEscapeSequence("Header1") | Should -BeExactly "$esc[7m[7m$esc[0m"
+            $options.AsEscapeSequence("Header2") | Should -BeExactly "$esc[4;93m[4;93m$esc[0m"
+            $options.AsEscapeSequence("Header3") | Should -BeExactly "$esc[4;94m[4;94m$esc[0m"
+            $options.AsEscapeSequence("Header4") | Should -BeExactly "$esc[4;95m[4;95m$esc[0m"
+            $options.AsEscapeSequence("Header5") | Should -BeExactly "$esc[4;96m[4;96m$esc[0m"
+            $options.AsEscapeSequence("Header6") | Should -BeExactly "$esc[4;97m[4;97m$esc[0m"
+
+            if($IsMacOS)
+            {
+                $options.AsEscapeSequence("Code") | Should -BeExactly "$esc[107;95m[107;95m$esc[0m"
+            }
+            else
+            {
+                $options.AsEscapeSequence("Code") | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
+            }
+
+            $options.AsEscapeSequence("Link") | Should -BeExactly "$esc[4;38;5;117m[4;38;5;117m$esc[0m"
+            $options.AsEscapeSequence("Image") | Should -BeExactly "$esc[33m[33m$esc[0m"
+            $options.AsEscapeSequence("EmphasisBold") | Should -BeExactly "$esc[1m[1m$esc[0m"
+            $options.AsEscapeSequence("EmphasisItalics") | Should -BeExactly "$esc[36m[36m$esc[0m"
         }
 
         It "Verify Set-MarkdownOption can get options" {
@@ -263,34 +334,108 @@ bool function()`n{`n}
 
             $newOptions = Get-MarkdownOption
 
-            $newOptions.Header1 | Should -BeExactly "$esc[4;1m[4;1m$esc[0m"
-            $newOptions.Header2 | Should -BeExactly "$esc[93m[93m$esc[0m"
-            $newOptions.Header3 | Should -BeExactly "$esc[94m[94m$esc[0m"
-            $newOptions.Header4 | Should -BeExactly "$esc[95m[95m$esc[0m"
-            $newOptions.Header5 | Should -BeExactly "$esc[96m[96m$esc[0m"
-            $newOptions.Header6 | Should -BeExactly "$esc[97m[97m$esc[0m"
-            #$options.Code | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
-            $newOptions.Link | Should -BeExactly "$esc[4;38;5;88m[4;38;5;88m$esc[0m"
-            $newOptions.Image | Should -BeExactly "$esc[34m[34m$esc[0m"
-            $newOptions.EmphasisBold | Should -BeExactly "$esc[32m[32m$esc[0m"
-            $newOptions.EmphasisItalics | Should -BeExactly "$esc[35m[35m$esc[0m"
+            $newOptions.AsEscapeSequence("Header1") | Should -BeExactly "$esc[4;1m[4;1m$esc[0m"
+            $newOptions.AsEscapeSequence("Header2") | Should -BeExactly "$esc[93m[93m$esc[0m"
+            $newOptions.AsEscapeSequence("Header3") | Should -BeExactly "$esc[94m[94m$esc[0m"
+            $newOptions.AsEscapeSequence("Header4") | Should -BeExactly "$esc[95m[95m$esc[0m"
+            $newOptions.AsEscapeSequence("Header5") | Should -BeExactly "$esc[96m[96m$esc[0m"
+            $newOptions.AsEscapeSequence("Header6") | Should -BeExactly "$esc[97m[97m$esc[0m"
+
+            if($IsMacOS)
+            {
+                $newOptions.AsEscapeSequence("Code") | Should -BeExactly "$esc[107;95m[107;95m$esc[0m"
+            }
+            else
+            {
+                $newOptions.AsEscapeSequence("Code") | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
+            }
+
+            $newOptions.AsEscapeSequence("Link") | Should -BeExactly "$esc[4;38;5;88m[4;38;5;88m$esc[0m"
+            $newOptions.AsEscapeSequence("Image") | Should -BeExactly "$esc[34m[34m$esc[0m"
+            $newOptions.AsEscapeSequence("EmphasisBold") | Should -BeExactly "$esc[32m[32m$esc[0m"
+            $newOptions.AsEscapeSequence("EmphasisItalics") | Should -BeExactly "$esc[35m[35m$esc[0m"
         }
 
         It "Verify defaults for light theme" {
             Set-MarkdownOption -Theme Light
             $options = Get-MarkdownOption
 
-            $options.Header1 | Should -BeExactly "$esc[7m[7m$esc[0m"
-            $options.Header2 | Should -BeExactly "$esc[4;33m[4;33m$esc[0m"
-            $options.Header3 | Should -BeExactly "$esc[4;34m[4;34m$esc[0m"
-            $options.Header4 | Should -BeExactly "$esc[4;35m[4;35m$esc[0m"
-            $options.Header5 | Should -BeExactly "$esc[4;36m[4;36m$esc[0m"
-            $options.Header6 | Should -BeExactly "$esc[4;30m[4;30m$esc[0m"
-            $options.Code | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
-            $options.Link | Should -BeExactly "$esc[4;38;5;117m[4;38;5;117m$esc[0m"
-            $options.Image | Should -BeExactly "$esc[33m[33m$esc[0m"
-            $options.EmphasisBold | Should -BeExactly "$esc[1m[1m$esc[0m"
-            $options.EmphasisItalics | Should -BeExactly "$esc[36m[36m$esc[0m"
+            $options.AsEscapeSequence("Header1") | Should -BeExactly "$esc[7m[7m$esc[0m"
+            $options.AsEscapeSequence("Header2") | Should -BeExactly "$esc[4;33m[4;33m$esc[0m"
+            $options.AsEscapeSequence("Header3") | Should -BeExactly "$esc[4;34m[4;34m$esc[0m"
+            $options.AsEscapeSequence("Header4") | Should -BeExactly "$esc[4;35m[4;35m$esc[0m"
+            $options.AsEscapeSequence("Header5") | Should -BeExactly "$esc[4;36m[4;36m$esc[0m"
+            $options.AsEscapeSequence("Header6") | Should -BeExactly "$esc[4;30m[4;30m$esc[0m"
+
+            if($IsMacOS)
+            {
+                $options.AsEscapeSequence("Code") | Should -BeExactly "$esc[107;95m[107;95m$esc[0m"
+            }
+            else
+            {
+                $options.AsEscapeSequence("Code") | Should -BeExactly "$esc[48;2;155;155;155;38;2;30;30;30m[48;2;155;155;155;38;2;30;30;30m$esc[0m"
+            }
+
+            $options.AsEscapeSequence("Link") | Should -BeExactly "$esc[4;38;5;117m[4;38;5;117m$esc[0m"
+            $options.AsEscapeSequence("Image") | Should -BeExactly "$esc[33m[33m$esc[0m"
+            $options.AsEscapeSequence("EmphasisBold") | Should -BeExactly "$esc[1m[1m$esc[0m"
+            $options.AsEscapeSequence("EmphasisItalics") | Should -BeExactly "$esc[36m[36m$esc[0m"
+        }
+
+        It "Options should be string without escape sequences" {
+            $options = Get-MarkdownOption
+
+            $options.Header1 | Should -BeExactly "[7m"
+            $options.Header2 | Should -BeExactly "[4;93m"
+            $options.Header3 | Should -BeExactly "[4;94m"
+            $options.Header4 | Should -BeExactly "[4;95m"
+            $options.Header5 | Should -BeExactly "[4;96m"
+            $options.Header6 | Should -BeExactly "[4;97m"
+
+            if($IsMacOS)
+            {
+                $options.Code | Should -BeExactly "[107;95m"
+            }
+            else
+            {
+                $options.Code | Should -BeExactly "[48;2;155;155;155;38;2;30;30;30m"
+            }
+
+
+            $options.Link | Should -BeExactly "[4;38;5;117m"
+            $options.Image | Should -BeExactly "[33m"
+            $options.EmphasisBold | Should -BeExactly "[1m"
+            $options.EmphasisItalics | Should -BeExactly "[36m"
+        }
+
+        It "Verify PSMarkdownOptionInfo is defined in module scope" {
+
+            $PSMarkdownOptionInfo | Should -BeNullOrEmpty
+
+            $mod = Get-Module Microsoft.PowerShell.Utility
+            $options =  & $mod { $PSMarkdownOptionInfo }
+
+            $options.Header1 | Should -BeExactly "[7m"
+            $options.Header2 | Should -BeExactly "[4;93m"
+            $options.Header3 | Should -BeExactly "[4;94m"
+            $options.Header4 | Should -BeExactly "[4;95m"
+            $options.Header5 | Should -BeExactly "[4;96m"
+            $options.Header6 | Should -BeExactly "[4;97m"
+
+            if($IsMacOS)
+            {
+                $options.Code | Should -BeExactly "[107;95m"
+            }
+            else
+            {
+                $options.Code | Should -BeExactly "[48;2;155;155;155;38;2;30;30;30m"
+            }
+
+
+            $options.Link | Should -BeExactly "[4;38;5;117m"
+            $options.Image | Should -BeExactly "[33m"
+            $options.EmphasisBold | Should -BeExactly "[1m"
+            $options.EmphasisItalics | Should -BeExactly "[36m"
         }
     }
 
@@ -306,7 +451,7 @@ bool function()`n{`n}
         It "can show VT100 converted from markdown" {
             $text = "Bold"
             $mdText = "**$text**"
-            $expectedString = GetExpectedString -ElementType 'Bold' -Text $text
+            $expectedString = GetExpectedString -ElementType 'Bold' -Text $text -VT100Support $true
 
             $result = $mdText | ConvertFrom-Markdown -AsVT100EncodedString | Show-Markdown
             $result | Should -BeExactly $expectedString

@@ -499,7 +499,7 @@ namespace System.Management.Automation.Language
             typeof(VariableOps).GetMethod(nameof(VariableOps.SetVariableValue), staticFlags);
 
         internal static readonly MethodInfo Utils_IsComObject =
-            typeof(Utils).GetMethod(nameof(Utils.IsComObject), staticFlags, binder: null, types: new Type[] {typeof(object)}, modifiers: null);
+            typeof(Utils).GetMethod(nameof(Utils.IsComObject), staticFlags);
 
         internal static readonly MethodInfo ClassOps_ValidateSetProperty =
             typeof(ClassOps).GetMethod(nameof(ClassOps.ValidateSetProperty), staticPublicFlags);

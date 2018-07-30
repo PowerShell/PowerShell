@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(
         VerbsData.ConvertFrom, "Markdown",
         DefaultParameterSetName = PathParameterSet,
-        HelpUri = "TBD")]
+        HelpUri = "https://go.microsoft.com/fwlink/?linkid=2006503")]
     [OutputType(typeof(Microsoft.PowerShell.MarkdownRender.MarkdownInfo))]
     public class ConvertFromMarkdownCommand : PSCmdlet
     {
@@ -29,13 +29,14 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets path to the file to convert from Markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
-        [Parameter(ParameterSetName = PathParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = PathParameterSet, Mandatory = true, Position = 0)]
         public string[] Path { get; set; }
 
         /// <summary>
         /// Gets or sets the path to the file to convert from Markdown to MarkdownInfo.
         /// </summary>
         [ValidateNotNullOrEmpty]
+        [Alias("PSPath", "LP")]
         [Parameter(ParameterSetName = LiteralPathParameterSet, Mandatory = true)]
         public string[] LiteralPath { get; set; }
 
@@ -56,18 +57,27 @@ namespace Microsoft.PowerShell.Commands
         private const string LiteralPathParameterSet = "LiteralParamSet";
         private const string InputObjParamSet = "InputObjParamSet";
         private MarkdownConversionType conversionType = MarkdownConversionType.HTML;
-        private MarkdownOptionInfo mdOption = null;
+        private PSMarkdownOptionInfo mdOption = null;
 
         /// <summary>
-        /// Read the MarkdownOptionInfo set in SessionState.
+        /// Read the PSMarkdownOptionInfo set in SessionState.
         /// </summary>
         protected override void BeginProcessing()
         {
-            mdOption = SessionState.PSVariable.GetValue("MarkdownOptionInfo", new MarkdownOptionInfo()) as MarkdownOptionInfo;
+            mdOption = this.CommandInfo.Module.SessionState.PSVariable.GetValue("PSMarkdownOptionInfo", new PSMarkdownOptionInfo()) as PSMarkdownOptionInfo;
 
             if (mdOption == null)
             {
                 throw new InvalidOperationException();
+            }
+
+            bool? supportsVT100 = this.Host?.UI.SupportsVirtualTerminal;
+
+            // supportsVT100 == null if the host is null.
+            // supportsVT100 == false if host does not support VT100.
+            if (supportsVT100 != true)
+            {
+                mdOption.EnableVT100Encoding = false;
             }
 
             if (AsVT100EncodedString)
@@ -122,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void ConvertEachFile(IEnumerable<string> paths, MarkdownConversionType conversionType, bool isLiteral, MarkdownOptionInfo optionInfo)
+        private void ConvertEachFile(IEnumerable<string> paths, MarkdownConversionType conversionType, bool isLiteral, PSMarkdownOptionInfo optionInfo)
         {
             foreach (var path in paths)
             {

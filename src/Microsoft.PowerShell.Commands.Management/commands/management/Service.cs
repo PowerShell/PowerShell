@@ -599,7 +599,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="service"></param>
         /// <returns>ServiceController as PSObject with UserName, Description and StartupType added</returns>
-        private PSObject AddProperties(ServiceController service) {
+        private PSObject AddProperties(ServiceController service)
+        {
             NakedWin32Handle hScManager = IntPtr.Zero;
             NakedWin32Handle hService = IntPtr.Zero;
             int lastError = 0;
@@ -611,7 +612,8 @@ namespace Microsoft.PowerShell.Commands
                     lpDatabaseName: null,
                     dwDesiredAccess: NativeMethods.SC_MANAGER_CONNECT
                 );
-                if (IntPtr.Zero == hScManager) {
+                if (IntPtr.Zero == hScManager)
+                {
                     lastError = Marshal.GetLastWin32Error();
                     Win32Exception exception = new Win32Exception(lastError);
                     WriteNonTerminatingError(
@@ -626,7 +628,8 @@ namespace Microsoft.PowerShell.Commands
                     service.ServiceName,
                     NativeMethods.SERVICE_QUERY_CONFIG
                 );
-                if (IntPtr.Zero == hService) {
+                if (IntPtr.Zero == hService)
+                {
                     lastError = Marshal.GetLastWin32Error();
                     Win32Exception exception = new Win32Exception(lastError);
                     WriteNonTerminatingError(
@@ -646,7 +649,8 @@ namespace Microsoft.PowerShell.Commands
                 NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = new NativeMethods.QUERY_SERVICE_CONFIG();
                 querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig(hService, out serviceInfo);
 
-                if(!querySuccessful) {
+                if (!querySuccessful)
+                {
                     WriteNonTerminatingError(
                         service: service,
                         innerException: null,
@@ -678,16 +682,20 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (IntPtr.Zero != hService) {
+                if (IntPtr.Zero != hService)
+                {
                     bool succeeded = NativeMethods.CloseServiceHandle(hService);
-                    if (!succeeded) {
+                    if (!succeeded)
+                    {
                         Diagnostics.Assert(lastError != 0, "ErrorCode not success");
                     }
                 }
 
-                if (IntPtr.Zero != hScManager) {
+                if (IntPtr.Zero != hScManager)
+                {
                     bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
-                    if (!succeeded) {
+                    if (!succeeded)
+                    {
                         Diagnostics.Assert(lastError != 0, "ErrorCode not success");
                     }
                 }
@@ -2115,7 +2123,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Set the delayed auto start
-                if(StartupType == ServiceStartupType.AutomaticDelayedStart) {
+                if (StartupType == ServiceStartupType.AutomaticDelayedStart)
+                {
                     NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO();
                     ds.fDelayedAutostart = true;
                     size = Marshal.SizeOf(ds);
@@ -2674,7 +2683,8 @@ namespace Microsoft.PowerShell.Commands
                 cbBufSize: 0,
                 pcbBytesNeeded: out bufferSizeNeeded);
 
-            if (status != true && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER) {
+            if (status != true && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER)
+            {
                 return status;
             }
 
@@ -2710,7 +2720,8 @@ namespace Microsoft.PowerShell.Commands
                 cbBufSize: 0,
                 pcbBytesNeeded: out bufferSizeNeeded);
 
-            if (status != true && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER) {
+            if (status != true && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER)
+            {
                 return status;
             }
 
@@ -2775,7 +2786,7 @@ namespace Microsoft.PowerShell.Commands
         internal static ServiceStartupType GetServiceStartupType(ServiceStartMode startMode, bool delayedAutoStart)
         {
             ServiceStartupType result = ServiceStartupType.Disabled;
-            switch(startMode)
+            switch (startMode)
             {
                 case ServiceStartMode.Automatic:
                     result = delayedAutoStart ? ServiceStartupType.AutomaticDelayedStart : ServiceStartupType.Automatic;
@@ -2796,7 +2807,8 @@ namespace Microsoft.PowerShell.Commands
     ///<summary>
     ///Enum for usage with StartupType. Automatic, Manual and Disabled index matched from System.ServiceProcess.ServiceStartMode
     ///</summary>
-    public enum ServiceStartupType {
+    public enum ServiceStartupType
+    {
         ///<summary>Invalid service</summary>
         InvalidValue = -1,
         ///<summary>Automatic service</summary>
