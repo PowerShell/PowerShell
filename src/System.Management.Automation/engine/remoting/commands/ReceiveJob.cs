@@ -179,7 +179,6 @@ namespace Microsoft.PowerShell.Commands
         private bool _flush = true;
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter NoRecurse
@@ -196,14 +195,12 @@ namespace Microsoft.PowerShell.Commands
         private bool _recurse = true;
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter Force
         { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         public override JobState State
         {
@@ -214,7 +211,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         public override Hashtable Filter
         {
@@ -222,7 +218,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         public override string[] Command
         {
@@ -233,12 +228,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected const string LocationParameterSet = "Location";
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter Wait
@@ -255,7 +248,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter AutoRemoveJob
@@ -271,7 +263,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter WriteEvents
@@ -284,7 +275,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter WriteJobInResults
@@ -320,7 +310,6 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -612,7 +601,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         public void Dispose()
         {
@@ -621,7 +609,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)
@@ -716,7 +703,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="job">Job object from which to write the results from
         /// </param>
-        ///
         private void WriteJobResults(Job job)
         {
             if (job == null) return;
@@ -933,7 +919,6 @@ namespace Microsoft.PowerShell.Commands
         /// Write the results from this Job object. It also writes the
         /// results from its child objects recursively.
         /// </summary>
-        ///
         /// <param name="duplicate">Hashtable used for duplicate detection</param>
         /// <param name="job">Job whose results are written</param>
         /// <param name="registerInsteadOfWrite"></param>
@@ -992,7 +977,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="job"></param>
         /// <remarks>this method should always be called before
@@ -1428,7 +1412,6 @@ namespace Microsoft.PowerShell.Commands
         /// Write the results from this Job object. It also writes the
         /// results from its child objects recursively.
         /// </summary>
-        ///
         /// <param name="job">Job whose results are written</param>
         /// <param name="registerInsteadOfWrite"></param>
         private void WriteJobResultsRecursively(Job job, bool registerInsteadOfWrite)
@@ -1439,7 +1422,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="jobs"></param>
         /// <param name="checkForRecurse"></param>

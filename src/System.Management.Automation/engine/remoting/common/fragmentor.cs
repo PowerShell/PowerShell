@@ -664,7 +664,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -882,15 +881,12 @@ namespace System.Management.Automation.Remoting
         #region Stream Overrides
 
         /// <summary>
-        ///
         /// </summary>
         public override bool CanRead { get { return true; } }
         /// <summary>
-        ///
         /// </summary>
         public override bool CanSeek { get { return false; } }
         /// <summary>
-        ///
         /// </summary>
         public override bool CanWrite { get { return true; } }
         /// <summary>
@@ -898,7 +894,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override long Length { get { return _length; } }
         /// <summary>
-        ///
         /// </summary>
         public override long Position
         {
@@ -913,7 +908,6 @@ namespace System.Management.Automation.Remoting
         {
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="offset"></param>
         /// <param name="origin"></param>
@@ -923,7 +917,6 @@ namespace System.Management.Automation.Remoting
             throw new NotSupportedException();
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="value"></param>
         public override void SetLength(long value)

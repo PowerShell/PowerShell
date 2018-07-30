@@ -196,17 +196,14 @@ namespace System.Management.Automation
         EstablishedAndKeyExchanged = 15,
 
         /// <summary>
-        ///
         /// </summary>
         Disconnecting = 16,
 
         /// <summary>
-        ///
         /// </summary>
         Disconnected = 17,
 
         /// <summary>
-        ///
         /// </summary>
         Reconnecting = 18,
 
@@ -305,7 +302,6 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    ///
     /// This is the event arg that contains the state information.
     /// </summary>
     internal class RemoteSessionStateEventArgs : EventArgs
