@@ -285,40 +285,31 @@ namespace System.Management.Automation
         /// Gets the metadata for the specified cmdlet from the cache or creates
         /// a new instance if its not in the cache.
         /// </summary>
-        ///
         /// <param name="commandName">
         /// The name of the command that this metadata represents.
         /// </param>
-        ///
         /// <param name="cmdletType">
         /// The cmdlet to get the metadata for.
         /// </param>
-        ///
         /// <param name="context">
         /// The current engine context.
         /// </param>
-        ///
         /// <returns>
         /// The CommandMetadata for the specified cmdlet.
         /// </returns>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="commandName"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="cmdletType"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        ///
         internal static CommandMetadata Get(string commandName, Type cmdletType, ExecutionContext context)
         {
             if (String.IsNullOrEmpty(commandName))
@@ -351,35 +342,28 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs an instance of CommandMetadata using reflection against a bindable object
         /// </summary>
-        ///
         /// <param name="commandName">
         /// The name of the command that this metadata represents.
         /// </param>
-        ///
         /// <param name="cmdletType">
         /// An instance of an object type that can be used to bind MSH parameters. A type is
         /// considered bindable if it has at least one field and/or property that is decorated
         /// with the ParameterAttribute.
         /// </param>
-        ///
         /// <param name="context">
         /// The current engine context. If null, the command and type metadata will be generated
         /// and will not be cached.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="cmdletType"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        ///
         internal CommandMetadata(string commandName, Type cmdletType, ExecutionContext context)
         {
             if (String.IsNullOrEmpty(commandName))
@@ -633,7 +617,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the bit in the parameter set map for the default parameter set.
         /// </summary>
-        ///
         internal uint DefaultParameterSetFlag
         {
             get { return _defaultParameterSetFlag; }
@@ -675,11 +658,9 @@ namespace System.Management.Automation
         /// Constructs the command metadata by using reflection against the
         /// CLR type.
         /// </summary>
-        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        ///
         private void ConstructCmdletMetadataUsingReflection()
         {
             Diagnostics.Assert(
@@ -721,19 +702,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Extracts the cmdlet data from the CmdletAttribute
         /// </summary>
-        ///
         /// <param name="attribute">
         /// The CmdletAttribute to process
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="attribute"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        ///
         private void ProcessCmdletAttribute(CmdletCommonMetadataAttribute attribute)
         {
             if (attribute == null)

@@ -572,7 +572,6 @@ namespace System.Management.Automation
         private bool _timerInitialized = false;
         private bool _isTimerActive = false;
         /// <summary>
-        ///
         /// We sample every 100ms to check if the engine is idle (currentlyRunningPipeline == null). If it's "idle"
         /// in four consecutive samples, then we believe it's actually idle. In this way we can avoid capturing possible
         /// pipeline transitions.
@@ -580,7 +579,6 @@ namespace System.Management.Automation
         private int _consecutiveIdleSamples = 0;
 
         /// <summary>
-        ///
         /// Send on-idle event if the engine is idle. The property "AutoReset" of the timer is always false,
         /// so only one handler will be running at anytime. The timer will be enabled again if we can meet
         /// the following two conditions.
@@ -1536,7 +1534,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Destructor for the EventManager class
         /// </summary>
-        ///
         ~PSLocalEventManager()
         {
             Dispose(false);
@@ -1545,7 +1542,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Disposes the EventManager class.
         /// </summary>
-        ///
         public void Dispose()
         {
             Dispose(true);
@@ -1560,7 +1556,6 @@ namespace System.Management.Automation
         /// Whether to actually dispose the object.
         /// </param>
         /// </summary>
-        ///
         public void Dispose(bool disposing)
         {
             if (disposing)
@@ -2221,7 +2216,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new instance of the PSEventArgs type
         /// </summary>
-        ///
         /// <param name="computerName">
         /// Computer on which this event was generated
         /// </param>
@@ -2351,7 +2345,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a new instance of the PSEventUnsubscribedEventArgs type
         /// </summary>
-        ///
         /// <param name="eventSubscriber">
         /// The event subscriber being unregistered
         /// </param>
@@ -2386,7 +2379,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Add add an event to the collection
         /// </summary>
-        ///
         /// <param name="eventToAdd">
         /// The PSEventArgs instance that represents this event
         /// </param>
