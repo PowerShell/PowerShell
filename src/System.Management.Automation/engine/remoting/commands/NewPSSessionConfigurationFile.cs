@@ -18,7 +18,6 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
     /// <summary>
     /// New-PSSessionConfigurationFile command implementation
-    ///
     /// See Declarative Initial Session State (DISC)
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSSessionConfigurationFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217036")]
@@ -581,7 +580,6 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -1069,7 +1067,6 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// New-PSRoleCapabilityFile command implementation
-    ///
     /// Creates a role capability file suitable for use in a Role Capability (which can be referenced in a Session Configuration file)
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSRoleCapabilityFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=623708")]
@@ -1438,7 +1435,6 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {

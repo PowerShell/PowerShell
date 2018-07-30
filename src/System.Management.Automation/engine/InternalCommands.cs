@@ -1894,14 +1894,10 @@ namespace Microsoft.PowerShell.Commands
     /// * Referencing a non-existent property of an object
     /// * Calling a function as a method (with parentheses and commas)
     /// * Using the variable expansion syntax in a string literal w/o naming a variable, i.e. "${}"
-    ///
     /// Parameters:
-    ///
     /// -Version allows the script author to specify which strict mode version to enforce.
     /// -Off turns strict mode off
-    ///
     /// Note:
-    ///
     /// Unlike Set-PSDebug -strict, Set-StrictMode is not engine-wide, and only
     /// affects the scope it was defined in.
     /// </summary>

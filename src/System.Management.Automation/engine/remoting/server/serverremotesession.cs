@@ -12,10 +12,8 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    ///
     /// By design, on the server side, each remote connection is represented by
     /// a ServerRemoteSession object, which contains one instance of this class.
-    ///
     /// This class holds 4 pieces of information.
     /// 1. Client capability: This is the capability received during the negotiation process.
     /// 2. Server capability: This comes from default parameters.
@@ -23,7 +21,6 @@ namespace System.Management.Automation.Remoting
     ///    the client sent to the server. This parameters can be changed and resent after the connection
     ///    is established.
     /// 4. Server configuration: this holds the server sider configuration parameters.
-    ///
     /// All these together define the connection level parameters.
     /// </summary>
     internal class ServerRemoteSessionContext
@@ -60,14 +57,11 @@ namespace System.Management.Automation.Remoting
 
     /// <summary>
     /// This class is designed to be the server side controller of a remote connection.
-    ///
     /// It contains a static entry point that the PowerShell server process will get into
     /// the server mode. At this entry point, a runspace configuration is passed in. This runspace
     /// configuration is used to instantiate a server side runspace.
-    ///
     /// This class controls a remote connection by using a Session data structure handler, which
     /// in turn contains a Finite State Machine, and a transport mechanism.
-    ///
     /// </summary>
     internal class ServerRemoteSession : RemoteSession
     {
@@ -261,7 +255,6 @@ namespace System.Management.Automation.Remoting
         /// This is the data dispatcher for the whole remote connection.
         /// This dispatcher is registered with the server side input queue's InputDataReady event.
         /// When the input queue has received data from client, it calls the InputDataReady listeners.
-        ///
         /// This dispatcher distinguishes the negotiation packet as a special case. For all other data,
         /// it dispatches the data through Finite State Machines DoMessageReceived handler by raising the event
         /// MessageReceived. The FSM's DoMessageReceived handler further dispatches to the receiving
@@ -273,15 +266,12 @@ namespace System.Management.Automation.Remoting
         /// <param name="dataEventArg">
         /// This parameter contains the remote data received from client.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="dataEventArg" /> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If the parameter <paramref name="dataEventArg" /> does not contain remote data.
         /// </exception>
-        ///
         /// <exception cref="PSRemotingDataStructureException">
         /// If the destination of the data is not for server.
         /// </exception>
@@ -721,7 +711,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="createRunspaceEventArg"></param>
@@ -904,7 +893,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="negotiationEventArg">
         /// This parameter contains the client negotiation capability packet.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="negotiationEventArg"/> is null.
         /// </exception>
@@ -1129,7 +1117,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="clientRunspacePoolId"></param>
         /// <returns></returns>

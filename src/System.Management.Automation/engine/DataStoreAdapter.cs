@@ -11,7 +11,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines a drive that exposes a provider path to the user.
     /// </summary>
-    ///
     /// <remarks>
     /// A cmdlet provider may want to derive from this class to provide their
     /// own public members or to cache information related to the drive. For instance,
@@ -107,26 +106,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the root of the drive.
         /// </summary>
-        ///
         /// <param name="path">
         /// The root path to set for the drive.
         /// </param>
-        ///
         /// <remarks>
         /// This method can only be called during drive
         /// creation. A NotSupportedException if this method
         /// is called outside of drive creation.
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If this method gets called any other time except
         /// during drive creation.
         /// </exception>
-        ///
         internal void SetRoot(string path)
         {
             if (path == null)
@@ -169,13 +163,11 @@ namespace System.Management.Automation
         /// be modified during drive creation through
         /// the SetRoot method.
         /// </summary>
-        ///
         /// <value>
         /// True if the drive is being created and the
         /// root can be modified through the SetRoot method.
         /// False otherwise.
         /// </value>
-        ///
         internal bool DriveBeingCreated { get; set; }
 
         /// <summary>
@@ -189,7 +181,6 @@ namespace System.Management.Automation
         /// True if the drive was automounted by the system,
         /// and then manually removed by the user.
         /// </summary>
-        ///
         internal bool IsAutoMountedManuallyRemoved { get; set; }
 
         /// <summary>
@@ -214,13 +205,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets if the drive-root relative paths on this drive are separated by a
         /// colon or not.
-        ///
         /// This is true for all PSDrives on all platforms, except for filesystems on
         /// non-Windows platforms.
-        ///
         /// This is not a path separator in the sense of separating paths in a single
         /// string.
-        ///
         /// The biggest difference in filesystem handling between PS internally, and Unix
         /// style systems is, that paths on Windows separate the drive letter from the
         /// actual path by a colon. The second difference is, that a path that starts with
@@ -228,13 +216,11 @@ namespace System.Management.Automation
         /// that case) where a similar path on a Unix style filesystem would be
         /// root-relative, which is basically drive-relative for the filesystem, as there
         /// is only one filesystem drive.
-        ///
         /// This property indicates, that a path can be checked for that drive-relativity
         /// by checking for a colon. The main reason for this can be seen in all the
         /// places that use this property, where PowerShell's code checks/splits/string
         /// manipulates paths according to the colon character. This happens in many
         /// places.
-        ///
         /// The idea here was to introduce a property that allows a code to query if a
         /// PSDrive expects colon to be such a separator or not. I talked to Jim back then
         /// about the problem, and this seemed to be a reasonable solution, given that
@@ -242,18 +228,15 @@ namespace System.Management.Automation
         /// a certain windows way on all platforms, or need special treatment on platforms
         /// where colon does not exist as drive separator (regular filesystems on Unix
         /// platforms are the only exception).
-        ///
         /// Globally this property can also be only true for one single PSDrive, because
         /// if there is no drive separator, there is also no drive, and because there is
         /// no drive there is no way to match against multiple such drives.
-        ///
         /// Additional data:
         /// It seems that on single rooted filesystems, only the default
         /// drive of "/" needs to set this VolumeSeparatedByColon to false
         /// otherwise, creating new drives from the filesystem should actually
         /// have this set to true as all the drives will have <string>: except
         /// for "/"
-        ///
         /// </summary>
         public bool VolumeSeparatedByColon { get; internal set; } = true;
 
@@ -263,18 +246,15 @@ namespace System.Management.Automation
         /// Constructs a new instance of the PSDriveInfo using another PSDriveInfo
         /// as a template.
         /// </summary>
-        ///
         /// <param name="driveInfo">
         /// An existing PSDriveInfo object that should be copied to this instance.
         /// </param>
-        ///
         /// <remarks>
         /// A protected constructor that derived classes can call with an instance
         /// of this class. This allows for easy creation of derived PSDriveInfo objects
         /// which can be created in CmdletProvider's NewDrive method using the PSDriveInfo
         /// that is passed in.
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="PSDriveInfo"/> is null.
         /// </exception>
@@ -303,30 +283,24 @@ namespace System.Management.Automation
         /// Constructs a drive that maps an MSH Path in
         /// the shell to a Cmdlet Provider.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the drive.
         /// </param>
-        ///
         /// <param name="provider">
         /// The name of the provider which implements the functionality
         /// for the root path of the drive.
         /// </param>
-        ///
         /// <param name="root">
         /// The root path of the drive. For example, the root of a
         /// drive in the file system can be c:\windows\system32
         /// </param>
-        ///
         /// <param name="description">
         /// The description for the drive.
         /// </param>
-        ///
         /// <param name="credential">
         /// The credentials under which all operations on the drive should occur.
         /// If null, the current user credential is used.
         /// </param>
-        ///
         /// <throws>
         /// ArgumentNullException - if <paramref name="name"/>,
         /// <paramref name="provider"/>, or <paramref name="root"/>
@@ -386,25 +360,20 @@ namespace System.Management.Automation
         /// Constructs a drive that maps an MSH Path in
         /// the shell to a Cmdlet Provider.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the drive.
         /// </param>
-        ///
         /// <param name="provider">
         /// The name of the provider which implements the functionality
         /// for the root path of the drive.
         /// </param>
-        ///
         /// <param name="root">
         /// The root path of the drive. For example, the root of a
         /// drive in the file system can be c:\windows\system32
         /// </param>
-        ///
         /// <param name="description">
         /// The description for the drive.
         /// </param>
-        ///
         /// <param name="credential">
         /// The credentials under which all operations on the drive should occur.
         /// If null, the current user credential is used.
@@ -413,7 +382,6 @@ namespace System.Management.Automation
         /// The network path of the drive. This field would be populated only if PSDriveInfo
         /// is targeting the network drive or else this filed is null for local drives.
         /// </param>
-        ///
         /// <throws>
         /// ArgumentNullException - if <paramref name="name"/>,
         /// <paramref name="provider"/>, or <paramref name="root"/>
@@ -434,25 +402,20 @@ namespace System.Management.Automation
         /// Constructs a drive that maps an MSH Path in
         /// the shell to a Cmdlet Provider.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the drive.
         /// </param>
-        ///
         /// <param name="provider">
         /// The name of the provider which implements the functionality
         /// for the root path of the drive.
         /// </param>
-        ///
         /// <param name="root">
         /// The root path of the drive. For example, the root of a
         /// drive in the file system can be c:\windows\system32
         /// </param>
-        ///
         /// <param name="description">
         /// The description for the drive.
         /// </param>
-        ///
         /// <param name="credential">
         /// The credentials under which all operations on the drive should occur.
         /// If null, the current user credential is used.
@@ -461,7 +424,6 @@ namespace System.Management.Automation
         /// It indicates if the the created PSDrive would be
         /// persisted across PowerShell sessions.
         /// </param>
-        ///
         /// <throws>
         /// ArgumentNullException - if <paramref name="name"/>,
         /// <paramref name="provider"/>, or <paramref name="root"/>
@@ -484,7 +446,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the drive as a string.
         /// </summary>
-        ///
         /// <returns>
         /// Returns a String that is that name of the drive.
         /// </returns>
@@ -497,12 +458,10 @@ namespace System.Management.Automation
         /// Gets or sets the hidden property. The hidden property
         /// determines if the drive should be hidden from the user.
         /// </summary>
-        ///
         /// <value>
         /// True if the drive should be hidden from the user, false
         /// otherwise.
         /// </value>
-        ///
         internal bool Hidden
         {
             get
@@ -524,22 +483,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the name of the drive to a new name.
         /// </summary>
-        ///
         /// <param name="newName">
         /// The new name for the drive.
         /// </param>
-        ///
         /// <remarks>
         /// This must be internal so that we allow the renaming of drives
         /// via the Core Command API but not through a reference to the
         /// drive object. More goes in to renaming a drive than just modifying
         /// the name in this class.
         /// </remarks>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="newName"/> is null or empty.
         /// </exception>
-        ///
         internal void SetName(string newName)
         {
             if (String.IsNullOrEmpty(newName))
@@ -553,11 +508,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the provider of the drive to a new provider.
         /// </summary>
-        ///
         /// <param name="newProvider">
         /// The new provider for the drive.
         /// </param>
-        ///
         /// <remarks>
         /// This must be internal so that we allow the renaming of providers.
         /// All drives must be associated with the new provider name and can
@@ -565,11 +518,9 @@ namespace System.Management.Automation
         /// drive object. More goes in to renaming a provider than just modifying
         /// the provider in this class.
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="newProvider"/> is null.
         /// </exception>
-        ///
         internal void SetProvider(ProviderInfo newProvider)
         {
             if (newProvider == null)
@@ -627,11 +578,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Compares this instance to the specified drive.
         /// </summary>
-        ///
         /// <param name="drive">
         /// A PSDriveInfo object to compare.
         /// </param>
-        ///
         /// <returns>
         /// A signed number indicating the relative values of this instance and object specified.
         /// Return Value: Less than zero        Meaning: This instance is less than object.
@@ -655,16 +604,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Compares this instance to the specified object. The object must be a PSDriveInfo.
         /// </summary>
-        ///
         /// <param name="obj">
         /// An object to compare.
         /// </param>
-        ///
         /// <returns>
         /// A signed number indicating the relative values of this
         /// instance and object specified.
         /// </returns>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="obj"/> is not a PSDriveInfo instance.
         /// </exception>
@@ -687,11 +633,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Compares this instance to the specified object.
         /// </summary>
-        ///
         /// <param name="obj">
         /// An object to compare.
         /// </param>
-        ///
         /// <returns>
         /// True if the drive names are equal, false otherwise.
         /// </returns>
@@ -710,11 +654,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Compares this instance to the specified object.
         /// </summary>
-        ///
         /// <param name="drive">
         /// An object to compare.
         /// </param>
-        ///
         /// <returns>
         /// True if the drive names are equal, false otherwise.
         /// </returns>
@@ -727,15 +669,12 @@ namespace System.Management.Automation
         /// Equality operator for the drive determines if the drives
         /// are equal by having the same name.
         /// </summary>
-        ///
         /// <param name="drive1">
         /// The first object to compare to the second.
         /// </param>
-        ///
         /// <param name="drive2">
         /// The second object to compare to the first.
         /// </param>
-        ///
         /// <returns>
         /// True if the objects are PSDriveInfo objects and have the same name,
         /// false otherwise.
@@ -763,15 +702,12 @@ namespace System.Management.Automation
         /// Inequality operator for the drive determines if the drives
         /// are not equal by using the drive name.
         /// </summary>
-        ///
         /// <param name="drive1">
         /// The first object to compare to the second.
         /// </param>
-        ///
         /// <param name="drive2">
         /// The second object to compare to the first.
         /// </param>
-        ///
         /// <returns>
         /// True if the PSDriveInfo objects do not have the same name,
         /// false otherwise.
@@ -785,15 +721,12 @@ namespace System.Management.Automation
         /// Compares the specified drives to determine if drive1 is less than
         /// drive2.
         /// </summary>
-        ///
         /// <param name="drive1">
         /// The drive to determine if it is less than the other drive.
         /// </param>
-        ///
         /// <param name="drive2">
         /// The drive to compare drive1 against.
         /// </param>
-        ///
         /// <returns>
         /// True if the lexical comparison of drive1's name is less than drive2's name.
         /// </returns>
@@ -826,15 +759,12 @@ namespace System.Management.Automation
         /// Compares the specified drives to determine if drive1 is greater than
         /// drive2.
         /// </summary>
-        ///
         /// <param name="drive1">
         /// The drive to determine if it is greater than the other drive.
         /// </param>
-        ///
         /// <param name="drive2">
         /// The drive to compare drive1 against.
         /// </param>
-        ///
         /// <returns>
         /// True if the lexical comparison of drive1's name is greater than drive2's name.
         /// </returns>
@@ -868,7 +798,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the hash code for this instance.
         /// </summary>
-        ///
         /// <returns>The result of base.GetHashCode()</returns>
         /// <!-- Override the base GetHashCode because the compiler complains
         /// if you don't when you implement operator== and operator!= -->

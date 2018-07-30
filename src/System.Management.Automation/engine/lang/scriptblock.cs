@@ -24,18 +24,12 @@ namespace System.Management.Automation
     /// An object representing a pre-compiled block of powershell script.
     /// </summary>
     /// <remarks>
-    ///
     /// This class track a block of script in a compiled form. It is also
     /// used for direct invocation of the script block.
-    ///
     /// 1. Overview
-    ///
     /// Script block comes in two forms,
-    ///
     /// a. Full form (cmdlet form)
-    ///
     /// This comes in following format
-    ///
     /// {
     ///     begin
     ///     {
@@ -50,37 +44,26 @@ namespace System.Management.Automation
     ///         statementlist;
     ///     }
     /// }
-    ///
     /// This form is used for running the script in a pipeline like
     /// a cmdlet.
-    ///
     /// b. Simple form
-    ///
     /// This comes in following format
-    ///
     /// {
     ///     statementlist;
     /// }
-    ///
     /// 2. Script block execution
-    ///
     /// For the full form (or cmdlet form) of script block, the script
     /// block itself is part of a pipeline. Its execution is handled through
     /// ScriptCommandProcessor, which involves execution of begin/process/end
     /// blocks like a cmdlet. If a scriptblock in simple form is used in
     /// a pipeline, its execution is done through ScriptCommandProcessor
     /// also, with some of begin/process/end blocks default to be empty.
-    ///
     /// A script block in simple form can be directly invoked (outside
     /// of a pipeline context). For example,
-    ///
     ///     {"text"}.Invoke()
-    ///
     /// A scriptblock can be directly invoked internally or externally through
     /// runspace API.
-    ///
     /// This class will handle the logic for direct invocation of script blocks.
-    ///
     /// </remarks>
     public partial class ScriptBlock
     {
@@ -132,14 +115,12 @@ namespace System.Management.Automation
         /// <remarks>
         /// Some ScriptBlocks are too complicated to be converted into a PowerShell object.
         /// For those ScriptBlocks a <see cref="ScriptBlockToPowerShellNotSupportedException"/> is thrown.
-        ///
         /// ScriptBlock cannot be converted into a PowerShell object if
         /// - It contains more than one statement
         /// - It references variables undeclared in <c>param(...)</c> block
         /// - It uses redirection to a file
         /// - It uses dot sourcing
         /// - Command names can't be resolved (i.e. if an element of a pipeline is another scriptblock)
-        ///
         /// Declaration of variables in a <c>param(...)</c> block is enforced,
         /// because undeclared variables are assumed to be variables from a remoting server.
         /// Since we need to fully evaluate parameters of commands of a PowerShell object's
@@ -367,7 +348,6 @@ namespace System.Management.Automation
         /// Execute this node with the specified arguments. The arguments show
         /// up in the script as $args with $_ being the first argument.
         /// </summary>
-        ///
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
         /// the script block returned as a collection of PSObjects</returns>
@@ -382,7 +362,6 @@ namespace System.Management.Automation
         /// A method that allows a scriptblock to be invoked with additional context in the form of a
         /// set of local functions and variables to be defined in the scriptblock's scope. The list of
         /// variables may include the special variables $input, $_ and $this.
-        ///
         /// This overload of the function takes a hashtable and converts it to the
         /// required dictionary which makes the API easier to use from within a PowerShell script.
         /// </summary>
@@ -822,17 +801,14 @@ namespace System.Management.Automation
         /// Execute this node with the specified arguments. The arguments show
         /// up in the script as $args with $_ being the first argument.
         /// </summary>
-        ///
         /// <param name="dollarUnder">
         /// The value of the $_ variable for the script block. If AutomationNull.Value,
         /// the $_ variable is not created.
         /// </param>
-        ///
         /// <param name="input">
         /// The value of the $input variable for the script block. If AutomationNull.Value,
         /// the $input variable is not created.
         /// </param>
-        ///
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
         /// the script block returned as a collection of PSObjects</returns>
@@ -879,7 +855,6 @@ namespace System.Management.Automation
         /// Execute this node with the specified arguments. The arguments show
         /// up in the script as $args with $_ being the first argument.
         /// </summary>
-        ///
         /// <param name="useLocalScope"></param>
         /// <param name="errorHandlingBehavior"></param>
         /// <param name="dollarUnder">
@@ -892,7 +867,6 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="scriptThis"></param>
         /// <param name="args">The arguments to this script.</param>
-        ///
         /// <returns>The object(s) generated during the execution of
         /// the script block returned as a collection of PSObjects</returns>
         /// <exception cref="RuntimeException">A script exception occurred</exception>

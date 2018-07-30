@@ -20,7 +20,6 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>
     /// There is already an internal class Token for representing the token.
-    ///
     /// This class wraps the internal Token class for providing limited information
     /// to syntax editor.
     /// </remarks>
@@ -53,11 +52,8 @@ namespace System.Management.Automation
         /// The text here represents the content of token. It can be the same as
         /// the text chunk within script resulting into this token, but usually is not
         /// the case.
-        ///
         /// For example, -name in following command result into a parameter token.
-        ///
         ///     get-process -name foo
-        ///
         /// Text property in this case is 'name' instead of '-name'.
         /// </remarks>
         public string Content
@@ -372,9 +368,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, 'get-process' in
-        ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         Command,
 
@@ -383,9 +377,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, '-name' in
-        ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         CommandParameter,
 
@@ -394,9 +386,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, 'foo' in
-        ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         CommandArgument,
 
@@ -405,9 +395,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, 12 in
-        ///
         ///     $a=12
-        ///
         /// </remarks>
         Number,
 
@@ -416,9 +404,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, "12" in
-        ///
         ///     $a="12"
-        ///
         /// </remarks>
         String,
 
@@ -427,9 +413,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, $a in
-        ///
         ///     $a="12"
-        ///
         /// </remarks>
         Variable,
 
@@ -438,9 +422,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, Name in
-        ///
         ///     $a.Name
-        ///
         /// </remarks>
         Member,
 
@@ -449,13 +431,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, :loop in
-        ///
         ///     :loop
         ///     foreach($a in $b)
         ///     {
         ///         $a
         ///     }
-        ///
         /// </remarks>
         LoopLabel,
 
@@ -464,9 +444,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, Mandatory in
-        ///
         ///     param([Mandatory] $a)
-        ///
         /// </remarks>
         Attribute,
 
@@ -475,9 +453,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, [string] in
-        ///
         ///     $a = [string] 12
-        ///
         /// </remarks>
         Type,
 
@@ -486,9 +462,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, + in
-        ///
         ///     $a = 1 + 2
-        ///
         /// </remarks>
         Operator,
 
@@ -497,12 +471,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, { in
-        ///
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         GroupStart,
 
@@ -511,12 +483,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, } in
-        ///
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         GroupEnd,
 
@@ -525,12 +495,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, if in
-        ///
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         Keyword,
 
@@ -539,13 +507,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, #here in
-        ///
         ///     #here
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         Comment,
 
@@ -554,13 +520,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, ; in
-        ///
         ///     #here
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         StatementSeparator,
 
@@ -569,13 +533,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, \n in
-        ///
         ///     #here
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         NewLine,
 
@@ -584,10 +546,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// For example, ` in
-        ///
         ///     get-command -name `
         ///     foo
-        ///
         /// </remarks>
         LineContinuation,
 

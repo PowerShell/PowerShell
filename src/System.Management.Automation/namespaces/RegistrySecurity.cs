@@ -29,15 +29,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the security descriptor for the item specified by <paramref name="path"/>.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item.
         /// </param>
-        ///
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to retrieve.
         /// </param>
-        ///
         /// <returns>
         /// Nothing. An object that represents the security descriptor for the item
         /// specified by path is written to the WriteSecurityDescriptorObject method.
@@ -81,11 +78,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the security descriptor for the item specified by <paramref name="path"/>
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to set the security descriptor on.
         /// </param>
-        ///
         /// <param name="securityDescriptor">
         /// The new security descriptor for the item.
         /// </param>
@@ -188,15 +183,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Creates a new empty security descriptor.
         /// </summary>
-        ///
         /// <param name="type">
         /// The type of item associated with this security descriptor
         /// </param>
-        ///
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to create.
         /// </param>
-        ///
         /// <returns>
         /// An instance of <see cref="System.Security.AccessControl.ObjectSecurity" /> object.
         /// </returns>

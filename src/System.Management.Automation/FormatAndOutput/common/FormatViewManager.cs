@@ -587,7 +587,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// Helper class to manage the logging of errors resulting from
     /// evaluations of PSPropertyExpression instances
-    ///
     /// Depending on settings, it queues the failing PSPropertyExpressionResult
     /// instances and generates a list of out-of-band FormatEntryData
     /// objects to be sent to the output pipeline

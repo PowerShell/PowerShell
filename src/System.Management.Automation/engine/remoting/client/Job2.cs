@@ -27,7 +27,6 @@ namespace System.Management.Automation
     /// implementations of the same, it is required to have a
     /// new class that will have the extended functionality. This
     /// is to ensure that backwards compatibility is maintained
-    ///
     /// However, this class will derive from the existing Job
     /// class. The option of deprecating the existing class was
     /// considered as well. In order to maintain backwards
@@ -42,7 +41,6 @@ namespace System.Management.Automation
     /// asynchronous support can be provided:
     ///     1. Classical pattern (Begin and End)
     ///     2. Event based pattern
-    ///
     /// Although the PowerShell API uses the classical pattern
     /// and we would like the Job API and PowerShell API to be
     /// as close as possible, the classical pattern is inherently
@@ -115,7 +113,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected object SyncRoot
         {

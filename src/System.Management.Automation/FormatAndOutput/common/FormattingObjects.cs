@@ -201,7 +201,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// desired number of columns on the screen.
         /// Advisory, the outputter can decide otherwise
-        ///
         /// A zero value signifies let the outputter get the
         /// best fit on the screen (possibly blocking until the end)
         /// </summary>

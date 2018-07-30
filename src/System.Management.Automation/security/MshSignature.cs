@@ -187,22 +187,14 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructor for class Signature
-        ///
         /// Call this to create a validated time-stamped signature object.
         /// </summary>
-        ///
         /// <param name="filePath"> this signature is found in this file </param>
-        ///
         /// <param name="error"> win32 error code </param>
-        ///
         /// <param name="signer"> cert of the signer </param>
-        ///
         /// <param name="timestamper"> cert of the time stamper </param>
-        ///
         /// <returns> constructed object </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal Signature(string filePath,
                            DWORD error,
                            X509Certificate2 signer,
@@ -217,18 +209,12 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructor for class Signature
-        ///
         /// Call this to create a validated signature object.
         /// </summary>
-        ///
         /// <param name="filePath"> this signature is found in this file </param>
-        ///
         /// <param name="signer"> cert of the signer </param>
-        ///
         /// <returns> constructed object </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal Signature(string filePath,
                            X509Certificate2 signer)
         {
@@ -240,20 +226,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructor for class Signature
-        ///
         /// Call this ctor when creating an invalid signature object
         /// </summary>
-        ///
         /// <param name="filePath"> this signature is found in this file </param>
-        ///
         /// <param name="error"> win32 error code </param>
-        ///
         /// <param name="signer"> cert of the signer </param>
-        ///
         /// <returns> constructed object </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal Signature(string filePath,
                            DWORD error,
                            X509Certificate2 signer)
@@ -266,18 +245,12 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructor for class Signature
-        ///
         /// Call this ctor when creating an invalid signature object
         /// </summary>
-        ///
         /// <param name="filePath"> this signature is found in this file </param>
-        ///
         /// <param name="error"> win32 error code </param>
-        ///
         /// <returns> constructed object </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal Signature(string filePath, DWORD error)
         {
             Utils.CheckArgForNullOrEmpty(filePath, "filePath");

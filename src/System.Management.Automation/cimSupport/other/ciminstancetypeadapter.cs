@@ -19,7 +19,6 @@ namespace Microsoft.PowerShell.Cim
     /// Implementing the PropertyOnlyAdapter for the time being as CimInstanceTypeAdapter currently
     /// supports only properties. If method support is needed in future, this should derive from
     /// Adapter class.
-    ///
     /// The Adapter registration is done in monad\src\singleshell\installer\MshManagementMshSnapin.cs
     /// </remarks>
     public sealed class CimInstanceAdapter : PSPropertyAdapter
@@ -55,7 +54,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="baseObject"></param>
         /// <returns></returns>
@@ -96,7 +94,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="baseObject"></param>
         /// <param name="propertyName"></param>
@@ -154,7 +151,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -180,7 +176,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -243,7 +238,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="baseObject"></param>
         /// <returns></returns>
@@ -296,7 +290,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -311,7 +304,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -340,7 +332,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <param name="value"></param>

@@ -68,9 +68,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Private data to be used by applications built on top of PowerShell.
-        ///
         /// Local runspace pool is created with application private data set to an empty <see cref="PSPrimitiveDictionary"/>.
-        ///
         /// Runspaces that are part of a <see cref="RunspacePool"/> inherit application private data from the pool.
         /// </summary>
         public override PSPrimitiveDictionary GetApplicationPrivateData()

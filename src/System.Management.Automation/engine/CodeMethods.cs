@@ -45,7 +45,6 @@ namespace Microsoft.PowerShell
 
     /// <summary>
     /// Contains CodeMethod implementations for some adapted types like:
-    ///
     /// 1. DirectoryEntry Related Code Methods
     ///    (a) Convert from DE LargeInteger to Int64.
     ///    (b) Convert from DE Dn-With-Binary to string.

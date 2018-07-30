@@ -268,7 +268,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="data">
         /// data to process
@@ -320,7 +319,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="remoteObject"></param>
         /// <exception cref="Exception">
@@ -455,7 +453,6 @@ namespace System.Management.Automation.Remoting.Client
         /// connection, the event handler should complete processing as fast as possible.
         /// Importantly the event handler should not generate any call that results in a
         /// user request like host.ReadLine().
-        ///
         /// Errors (occurred during connection attempt) are reported through WSManTransportErrorOccured
         /// event.
         /// </summary>
@@ -466,7 +463,6 @@ namespace System.Management.Automation.Remoting.Client
         /// connection, the event handler should complete processing as fast as possible.
         /// Importantly the event handler should not generate any call that results in a
         /// user request like host.ReadLine().
-        ///
         /// Errors (occurred during connection attempt) are reported through WSManTransportErrorOccured
         /// event.
         /// </summary>
@@ -477,7 +473,6 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Indicated successful completion of a connect operation on transport
-        ///
         /// Errors are reported through WSManTransportErrorOccured
         /// event.
         /// </summary>
@@ -485,7 +480,6 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Indicated successful completion of a disconnect operation on transport
-        ///
         /// Errors are reported through WSManTransportErrorOccured
         /// event.
         /// </summary>
@@ -493,7 +487,6 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Indicated successful completion of a reconnect operation on transport
-        ///
         /// Errors are reported through WSManTransportErrorOccured
         /// event.
         /// </summary>
@@ -501,7 +494,6 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Indicates that the transport/command is ready for a disconnect operation.
-        ///
         /// Errors are reported through WSManTransportErrorOccured event.
         /// </summary>
         internal event EventHandler<EventArgs> ReadyForDisconnect;
@@ -513,7 +505,6 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Indicates successful processing of a delay stream request on a receive operation
-        ///
         /// this event is useful when PS wants to invoke a pipeline in disconnected mode
         /// </summary>
         internal event EventHandler<EventArgs> DelayStreamRequestProcessed;
@@ -1423,7 +1414,6 @@ namespace System.Management.Automation.Remoting.Server
         #region Abstract interfaces
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="data"></param>
         /// <param name="flush">
@@ -1438,12 +1428,10 @@ namespace System.Management.Automation.Remoting.Server
         protected abstract void SendDataToClient(byte[] data, bool flush, bool reportAsPending, bool reportAsDataBoundary);
 
         /// <summary>
-        ///
         /// </summary>
         internal abstract void ReportExecutionStatusAsRunning();
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="reasonForClose">
         /// message describing why the transport manager must be closed

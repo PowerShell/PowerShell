@@ -28,7 +28,6 @@ namespace System.Management.Automation
     #region Constructors
 
         /// <summary>
-        ///
         /// </summary>
         public RemotingEncodingException()
             : base()
@@ -36,7 +35,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         public RemotingEncodingException(string message)
@@ -45,7 +43,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -55,7 +52,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -522,7 +518,6 @@ namespace System.Management.Automation
         /// is caught on server and is sent to client. This exception gets
         /// serialized as an error record. On the client this data type is deserialized in
         /// to an ErrorRecord.
-        ///
         /// ErrorRecord on the client has an instance of RemoteException as exception.
         /// </summary>
         ExceptionAsErrorRecord = 1,
@@ -662,8 +657,6 @@ namespace System.Management.Automation
         /// |   |           |        |         |            | hostInfo       |                     |
         /// |   |           |        |         |            | appParameters  |                     |
         /// --------------------------------------------------------------------------------------
-        ///
-        ///
         internal static RemoteDataObject GenerateCreateRunspacePool(
             Guid clientRunspacePoolId,
             int minRunspaces,
@@ -714,8 +707,6 @@ namespace System.Management.Automation
         /// |   |           |        |         | spacePool  | maxRunspaces,  |                     |
         /// |   |           |        |         |            |                |                     |
         /// --------------------------------------------------------------------------------------
-        ///
-        ///
         internal static RemoteDataObject GenerateConnectRunspacePool(
             Guid clientRunspacePoolId,
             int minRunspaces,
@@ -770,8 +761,6 @@ namespace System.Management.Automation
         /// |   |           |        |         | olInitData | maxRunspaces,  |                     |
         /// |   |           |        |         |            |                |                     |
         /// --------------------------------------------------------------------------------------
-        ///
-        ///
         internal static RemoteDataObject GenerateRunspacePoolInitData(
             Guid runspacePoolId,
             int minRunspaces,
@@ -1004,7 +993,6 @@ namespace System.Management.Automation
         /// |   |           |        |         | module,FQM,   |                     |
         /// |   |           |        |         | argumentList  |                     |
         /// --------------------------------------------------------------------------
-        ///
         internal static RemoteDataObject GenerateGetCommandMetadata(ClientRemotePowerShell shell)
         {
             Command getCommand = null;
@@ -1085,7 +1073,6 @@ namespace System.Management.Automation
         /// |   |           |        |         | tings, stream |                     |
         /// |   |           |        |         | options       |                     |
         /// --------------------------------------------------------------------------
-        ///
         internal static RemoteDataObject GenerateCreatePowerShell(ClientRemotePowerShell shell)
         {
             PowerShell powerShell = shell.PowerShell;

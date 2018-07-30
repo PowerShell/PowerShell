@@ -15,7 +15,6 @@ namespace System.Management.Automation.Runspaces
     /// Implementation of PSConsoleLoadException requires it to
     ///     1. Implement IContainsErrorRecord,
     ///     2. ISerializable
-    ///
     /// Basic information for this exception includes,
     ///     1. PSSnapin name
     ///     2. Inner exception.

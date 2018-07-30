@@ -121,7 +121,6 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// Return a message that looks like:
-        ///
         ///     At {filename}:{line} char:{column}
         ///     + $x + @y
         ///     +    ~

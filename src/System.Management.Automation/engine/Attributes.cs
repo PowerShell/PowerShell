@@ -84,7 +84,6 @@ namespace System.Management.Automation
     /// <see cref="ValidateRangeAttribute"/>,
     /// <see cref="ValidatePatternAttribute"/>, and
     /// <see cref="ValidateSetAttribute"/>.
-    ///
     /// PSSnapins wishing to create custom argument validation attributes
     /// should derive from
     /// <see cref="ValidateArgumentsAttribute"/>
@@ -92,18 +91,15 @@ namespace System.Management.Automation
     /// <see cref="ValidateArgumentsAttribute.Validate"/>
     /// abstract method, after which they can apply the
     /// attribute to their parameters.
-    ///
     /// <see cref="ValidateArgumentsAttribute"/> validates the argument
     /// as a whole.  If the argument value is potentially an enumeration,
     /// you can derive from <see cref="ValidateEnumeratedArgumentsAttribute"/>
     /// which will take care of unrolling the enumeration
     /// and validate each element individually.
-    ///
     /// It is also recommended to override
     /// <see cref="System.Object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example
     /// "[ValidateRangeAttribute(5,10)]".
-    ///
     /// If this attribute is applied to a string parameter, the string command argument will be validated.
     /// If this attribute is applied to a string[] parameter, the string[] command argument will be validated.
     /// </remarks>
@@ -143,7 +139,6 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
         /// </param>
-        ///
         /// <returns>bool true if the validate succeeded</returns>
         /// <exception cref="ValidationMetadataException">
         /// Whenever any exception occurs during data validate.
@@ -174,13 +169,11 @@ namespace System.Management.Automation
     /// the argument value is an enumeration,
     /// <see cref="ValidateEnumeratedArgumentsAttribute"/> will unroll
     /// the enumeration and validate each item individually.
-    ///
     /// Existing enumerated validation attributes include
     /// <see cref="ValidateLengthAttribute"/>,
     /// <see cref="ValidateRangeAttribute"/>,
     /// <see cref="ValidatePatternAttribute"/>, and
     /// <see cref="ValidateSetAttribute"/>.
-    ///
     /// PSSnapins wishing to create custom enumerated argument validation attributes
     /// should derive from
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute"/>
@@ -188,12 +181,10 @@ namespace System.Management.Automation
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute.ValidateElement"/>
     /// abstract method, after which they can apply the
     /// attribute to their parameters.
-    ///
     /// It is also recommended to override
     /// <see cref="System.Object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example
     /// "[ValidateRangeAttribute(5,10)]".
-    ///
     /// If this attribute is applied to a string parameter, the string command argument will be validated.
     /// If this attribute is applied to a string[] parameter, each string command argument will be validated.
     /// </remarks>
@@ -532,9 +523,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Attributes implemented by a provider can use:
-        ///
         ///     [OutputType(ProviderCmdlet='cmdlet', typeof(...))]
-        ///
         /// To specify the provider specific objects returned for a given cmdlet.
         /// </summary>
         public string ProviderCmdlet { get; set; }
@@ -802,7 +791,6 @@ namespace System.Management.Automation
     public class PSTypeNameAttribute : Attribute
     {
         /// <summary>
-        ///
         /// </summary>
         public string PSTypeName { get; private set; }
 
@@ -1298,7 +1286,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the custom error message pattern that is displayed to the user.
-        ///
         /// The text representation of the object being validated and the validating regex is passed as
         /// the first and second formatting parameters to the ErrorMessage formatting pattern.
         /// <example>
@@ -1362,10 +1349,8 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// Gets or sets the custom error message that is displayed to the user.
-        ///
         /// The item being validated and the validating scriptblock is passed as the first and second
         /// formatting argument.
-        ///
         /// <example>
         /// <code>
         /// [ValidateScript("$_ % 2", ErrorMessage = "The item '{0}' did not pass validation of script '{1}'")]
@@ -1611,10 +1596,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the custom error message that is displayed to the user
-        ///
         /// The item being validated and a text representation of the validation set
         /// is passed as the first and second formatting argument to the ErrorMessage formatting pattern.
-        ///
         /// <example>
         /// <code>
         /// [ValidateSet("A","B","C", ErrorMessage="The item '{0}' is not part of the set '{1}'.")
@@ -2106,7 +2089,6 @@ namespace System.Management.Automation
     /// the name.
     /// Existing argument transformation attributes include
     /// <see cref="ArgumentTypeConverterAttribute"/>.
-    ///
     /// PSSnapins wishing to create custom argument transformation attributes
     /// should derive from
     /// <seealso cref="ArgumentTransformationAttribute"/>
@@ -2114,12 +2096,10 @@ namespace System.Management.Automation
     /// <seealso cref="ArgumentTransformationAttribute.Transform"/>
     /// abstract method, after which they can apply the
     /// attribute to their parameters.
-    ///
     /// It is also recommended to override
     /// <see cref="System.Object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example
     /// "[ValidateRangeAttribute(5,10)]".
-    ///
     /// If multiple transformations are defined on a parameter,
     /// they will be invoked in series, each getting the output
     /// of the previous transformation.

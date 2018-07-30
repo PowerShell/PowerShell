@@ -1060,7 +1060,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="source"></param>
         /// <param name="streamName"></param>
@@ -2176,11 +2175,9 @@ namespace System.Management.Automation
         /// This string is used for serializing the PSObject at depth 0
         /// or when pso.SerializationMethod == SerializationMethod.String.
         /// </summary>
-        ///
         /// <param name="source">
         /// PSObject to be converted to string
         /// </param>
-        ///
         /// <returns>
         /// string value to use for serializing this PSObject.
         /// </returns>
@@ -2762,7 +2759,6 @@ namespace System.Management.Automation
         /// (or InternalDeserializer.DecodeString).
         /// This method has been introduced to produce shorter output than XmlConvert.EncodeName
         /// (which escapes everything that can't be part of an xml name - whitespace, punctuation).
-        ///
         /// This method has been split into 2 parts to optimize its performance:
         /// 1) part1 (this method) checks if there are any encodable characters and
         ///    if there aren't it simply (and efficiently) returns the original string
@@ -2958,7 +2954,6 @@ namespace System.Management.Automation
         private readonly ReferenceIdHandlerForDeserializer<ConsolidatedString> _typeRefIdHandler;
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="context"></param>
@@ -5391,11 +5386,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the "ToString" from PSObject.
         /// </summary>
-        ///
         /// <param name="source">
         /// PSObject to be converted to string
         /// </param>
-        ///
         /// <returns>
         /// "ToString" value
         /// </returns>

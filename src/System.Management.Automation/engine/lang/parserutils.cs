@@ -399,7 +399,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a helper function for converting an object to a particular type.
-        ///
         /// It will throw exception with information about token representing the object.
         /// </summary>
         internal static T ConvertTo<T>(object obj, IScriptExtent errorPosition)

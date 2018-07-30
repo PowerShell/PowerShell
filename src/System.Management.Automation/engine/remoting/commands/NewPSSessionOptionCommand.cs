@@ -118,7 +118,6 @@ namespace Microsoft.PowerShell.Commands
         /// The duration for which PowerShell remoting waits (in milliseconds) before timing
         /// out on a connection to a remote machine. Simply put, the timeout for a remote
         /// runspace creation.
-        ///
         /// The user would like to tweak this timeout depending on whether
         /// he/she is connecting to a machine in the data center or across a slow WAN.
         /// </summary>

@@ -131,11 +131,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is a hashtable to track which help files are loaded already.
-        ///
         /// This will avoid one help file getting loaded again and again.
         /// (Which should not happen unless some provider is pointing
         /// to a help file that actually doesn't contain the help for it).
-        ///
         /// </summary>
         private readonly Hashtable _helpFiles = new Hashtable();
 
@@ -261,7 +259,6 @@ namespace System.Management.Automation
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
-        ///
         /// If false, searches for pattern in the command names.
         /// </param>
         /// <returns></returns>

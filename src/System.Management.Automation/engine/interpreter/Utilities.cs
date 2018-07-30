@@ -562,7 +562,6 @@ namespace System.Management.Automation.Interpreter
     /// <summary>
     /// Provides a dictionary-like object used for caches which holds onto a maximum
     /// number of elements specified at construction time.
-    ///
     /// This class is not thread safe.
     /// </summary>
     internal class CacheDict<TKey, TValue>
@@ -680,7 +679,6 @@ namespace System.Management.Automation.Interpreter
         /// <summary>
         /// True if the caller will guarantee that all cleanup happens as the thread
         /// unwinds.
-        ///
         /// This is typically used in a case where the thread local is surrounded by
         /// a try/finally block.  The try block pushes some state, the finally block
         /// restores the previous state.  Therefore when the thread exits the thread

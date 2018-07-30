@@ -317,7 +317,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// information is different then the task scheduler information in this
         /// object is updated to match what is in Task Scheduler, since that information
         /// takes precedence.
-        ///
         /// Task Scheduler information:
         /// - Triggers
         /// - Options
@@ -2315,7 +2314,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// <summary>
     /// This class defines the JobInvocationInfo class for PowerShell jobs
     /// for job scheduling.  The following parameters are supported:
-    ///
     ///  "ScriptBlock"             -> ScriptBlock
     ///  "FilePath"                -> String
     ///  "InitializationScript"    -> ScriptBlock

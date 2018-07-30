@@ -262,7 +262,6 @@ namespace System.Management.Automation.Runspaces
         /// for any operation. The user would like to tweak this timeout
         /// depending on whether he/she is connecting to a machine in the data
         /// center or across a slow WAN.
-        ///
         /// Default: 3*60*1000 == 3minutes
         /// </summary>
         public int OperationTimeout { get; set; } = BaseTransportManager.ClientDefaultOperationTimeoutMs;
@@ -495,7 +494,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#ShellUri")]
         public string ShellUri
@@ -655,7 +653,6 @@ namespace System.Management.Automation.Runspaces
         ///  an interactive user account identity; if the client application is running
         ///  under a user context different then the interactive user, the client
         ///  application has to explicitly load the user profile prior to using this option.
-        ///
         /// IMPORTANT: proxy configuration is supported for HTTPS only; for HTTP, the direct
         /// connection to the server is used
         /// </summary>
@@ -850,7 +847,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="useSsl"></param>
         /// <param name="computerName"></param>
@@ -1263,7 +1259,6 @@ namespace System.Management.Automation.Runspaces
         /// User has the following options:
         /// 1. AuthMechanism + Credential
         /// 2. CertificateThumbPrint
-        ///
         /// All the above are mutually exclusive.
         /// </summary>
         /// <exception cref="InvalidOperationException">

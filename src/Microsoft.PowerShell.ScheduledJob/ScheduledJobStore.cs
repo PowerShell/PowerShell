@@ -21,7 +21,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// corresponding scheduled job definition location under an "Output"
     /// directory, where each run will have a subdirectory with a name derived
     /// from the job run date/time.
-    ///
     /// File Structure for "JobDefinitionFoo":
     /// $env:User\AppData\Local\Windows\PowerShell\ScheduledJobs\JobDefinitionFoo\
     ///     ScheduledJobDefinition.xml
@@ -33,7 +32,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     ///             Status.xml
     ///             Results.xml
     ///         ...
-    ///
     /// </summary>
     internal class ScheduledJobStore
     {

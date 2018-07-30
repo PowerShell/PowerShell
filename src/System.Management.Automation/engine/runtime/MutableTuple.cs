@@ -249,7 +249,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates a generic tuple with the specified types.
-        ///
         /// If the number of slots fits within the maximum tuple size then we simply
         /// create a single tuple.  If it's greater then we create nested tuples
         /// (e.g. a Tuple`2 which contains a Tuple`128 and a Tuple`8 if we had a size of 136).

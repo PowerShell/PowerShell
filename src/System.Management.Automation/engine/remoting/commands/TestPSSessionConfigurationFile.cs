@@ -13,7 +13,6 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Test-PSSessionConfigurationFile command implementation
-    ///
     /// See Declarative Initial Session Config (DISC)
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "PSSessionConfigurationFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217039")]
@@ -38,7 +37,6 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {

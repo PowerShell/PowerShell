@@ -20,22 +20,16 @@ namespace Microsoft.PowerShell.Commands
     /// sessions are in the disconnected state no commands can be invoked on them and
     /// any existing remote running commands will not return any data.
     /// The PS sessions can be reconnected by using the Connect-PSSession cmdlet.
-    ///
     /// The cmdlet can be used in the following ways:
-    ///
     /// Disconnect a PS session object:
     /// > $session = New-PSSession serverName
     /// > Disconnect-PSSession $session
-    ///
     /// Disconnect a PS session by name:
     /// > Disconnect-PSSession -Name $session.Name
-    ///
     /// Disconnect a PS session by Id:
     /// > Disconnect-PSSession -Id $session.Id
-    ///
     /// Disconnect a collection of PS sessions:
     /// > Get-PSSession | Disconnect-PSSession
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Disconnect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = DisconnectPSSessionCommand.SessionParameterSet,

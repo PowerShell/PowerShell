@@ -16,27 +16,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the AliasInfo class with the specified name and referenced command
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the command.
         /// </param>
-        ///
         /// <param name="definition">
         /// The token that the alias refers to.
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for this engine, used to lookup the current session state.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="definition"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="context"/> is null.
         /// </exception>
-        ///
         internal AliasInfo(string name, string definition, ExecutionContext context) : base(name, CommandTypes.Alias)
         {
             _definition = definition;
@@ -51,31 +45,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the AliasInfo class with the specified name and referenced command
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the command.
         /// </param>
-        ///
         /// <param name="definition">
         /// The token that the alias refers to.
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for this engine instance, used to look up session state.
         /// </param>
-        ///
         /// <param name="options">
         /// The options to set on the alias. Note, Constant can only be set at creation time.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="definition"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="context"/> is null.
         /// </exception>
-        ///
         internal AliasInfo(
             string name,
             string definition,
@@ -136,12 +123,10 @@ namespace System.Management.Automation
         /// Gets the command information for the command that
         /// the alias eventually resolves to.
         /// </summary>
-        ///
         /// <remarks>
         /// An alias may reference another alias. This property follows the reference
         /// chain of aliases to its end.
         /// </remarks>
-        ///
         /// <!--
         /// If the command didn't resolve to anything but aliases, the UnresolvedCommandName
         /// property contains the last name the resolution succeeded in finding.
@@ -211,19 +196,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the new definition for the alias.
         /// </summary>
-        ///
         /// <param name="definition">
         /// The new definition for the alias.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the value will be set even if the alias is ReadOnly.
         /// </param>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is readonly or constant.
         /// </exception>
-        ///
         internal void SetDefinition(string definition, bool force)
         {
             // Check to see if the variable is writable
@@ -247,7 +228,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the scope options for the alias
         /// </summary>
-        ///
         /// <exception cref="System.Management.Automation.SessionStateUnauthorizedAccessException">
         /// If the trying to set an alias that is constant or
         ///     if the value trying to be set is ScopedItemOptions.Constant
@@ -268,15 +248,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the options for the alias and allows changes ReadOnly options only if force is specified.
         /// </summary>
-        ///
         /// <param name="newOptions">
         /// The new options value.
         /// </param>
-        ///
         /// <param name="force">
         /// If true the change to the options will happen even if the existing options are read-only.
         /// </param>
-        ///
         internal void SetOptions(ScopedItemOptions newOptions, bool force)
         {
             // Check to see if the variable is constant, if so
@@ -359,7 +336,6 @@ namespace System.Management.Automation
         /// If ResolvedCommand has not yet been called or was able
         /// to resolve the command, this this property will return null.
         /// </summary>
-        ///
         internal string UnresolvedCommandName { get; private set; }
 
         /// <summary>

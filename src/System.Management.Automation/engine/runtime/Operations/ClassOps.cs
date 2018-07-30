@@ -166,10 +166,8 @@ namespace System.Management.Automation.Internal
         /// When the same script file gets executed multiple times, the .NET type generated from the PowerShell class
         /// defined in the file will be shared in those executions, and thus this method will be called multiple times
         /// possibly in the contexts of different Runspace/SessionState.
-        ///
         /// We always use the SessionState from the most recent execution as the default SessionState, so be noted that
         /// the default SessionState may change over time.
-        ///
         /// This should be OK because the common usage is to run the static method in the same Runspace where the class
         /// is declared, and thus we can always get the correct SessionState to use by querying the 'SessionStateKeeper'.
         /// The default SessionState is used only if a static method is called from a Runspace where the class is never

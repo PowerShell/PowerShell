@@ -244,7 +244,6 @@ namespace System.Management.Automation.ComInterop
         /// will check if the typeinfo is expected to be missing. This can include error cases where
         /// the same error is guaranteed to happen all the time, on all machines, under all circumstances.
         /// In such cases, we just have to operate without the typeinfo.
-        ///
         /// However, if accessing the typeinfo is failing in a transient way, we might want to throw
         /// an exception so that we will eagerly predictably indicate the problem.
         /// </summary>
@@ -330,7 +329,6 @@ namespace System.Management.Automation.ComInterop
     /// Callers of these methods need to use them extremely carefully as incorrect use could cause GC-holes
     /// and other problems.
     /// </summary>
-    ///
     internal static class UnsafeMethods
     {
         [System.Runtime.Versioning.ResourceExposure(System.Runtime.Versioning.ResourceScope.None)]

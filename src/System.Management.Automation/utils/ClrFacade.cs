@@ -146,10 +146,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// The algorithm is as follows:
-        ///
         /// 1. Alternate data stream "Zone.Identifier" is checked first. If this alternate data stream has content, then the content is parsed to determine the SecurityZone.
         /// 2. If the alternate data stream "Zone.Identifier" doesn't exist, or its content is not expected, then the file path will be analyzed to determine the SecurityZone.
-        ///
         /// For #1, the parsing rules are observed as follows:
         ///   A. Read content of the data stream line by line. Each line is trimmed.
         ///   B. Try to match the current line with '^\[ZoneTransfer\]'.
@@ -160,7 +158,6 @@ namespace System.Management.Automation
         ///        - if not matching, then continue to do step (#C) with the next line.
         ///   D. Reach EOF, then return 'NoZone'.
         /// After #1, if the returned SecurityZone is 'NoZone', then proceed with #2. Otherwise, return it as the mapping result.
-        ///
         /// For #2, the analysis rules are observed as follows:
         ///   A. If the path is a UNC path, then
         ///       - if the host name of the UNC path is IP address, then mapping it to "Internet" zone.
@@ -170,7 +167,6 @@ namespace System.Management.Automation
         ///       - if the drive is CDRom, mapping it to "Untrusted" zone
         ///       - if the drive is Network, mapping it to "Intranet" zone
         ///       - otherwise, mapping it to "MyComputer" zone.
-        ///
         /// The above algorithm has two changes comparing to the behavior of "Zone.CreateFromUrl" I observed:
         ///   (1) If a file downloaded from internet (ZoneId=3) is not on the local machine, "Zone.CreateFromUrl" won't respect the MOTW.
         ///       I think it makes more sense for powershell to always check the MOTW first, even for files not on local box.

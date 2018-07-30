@@ -6,11 +6,9 @@ namespace System.Management.Automation
     /// <summary>
     /// LogContext is the class to keep track of context information for each
     /// event to be logged.
-    ///
     /// LogContext info is collected by Msh Log Engine and passed on to log provider
     /// interface.
     /// </summary>
-    ///
     internal class LogContext
     {
         #region Context Properties
@@ -70,7 +68,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Type of the command, which can be Alias, CommandLet, Script, Application, etc.
-        ///
         /// The value of this property is a usually conversion of CommandTypes enum into a string.
         /// </summary>
         /// <value></value>

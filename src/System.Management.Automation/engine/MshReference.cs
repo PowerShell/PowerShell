@@ -14,7 +14,6 @@ namespace System.Management.Automation
     /// This class is used to describe both kinds of references:
     ///     a. reference to a value: _value will be holding the value being referenced.
     ///     b. reference to a variable: _value will be holding a PSVariable instance for the variable to be referenced.
-    ///
     /// A reference is created in following ways,
     ///     a. value reference
     ///         $a = [ref] 3
@@ -22,7 +21,6 @@ namespace System.Management.Automation
     ///         [ref] $a = $b
     ///     b. variable reference
     ///         $a = [ref] $b
-    ///
     /// </remarks>
     public class PSReference
     {

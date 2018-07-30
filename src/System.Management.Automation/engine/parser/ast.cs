@@ -680,7 +680,6 @@ namespace System.Management.Automation.Language
     #region Script Blocks
 
     /// <summary>
-    ///
     /// </summary>
     public class ScriptRequirements
     {
@@ -5481,7 +5480,6 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast that represents a parameter to a command, e.g. <c>dir -Path a*</c>, this class represent '-Path', and
     /// in <c>dir -Path:a*</c>, this class represents '-Path:a*'.
-    ///
     /// In the first case, the argument 'a*' is not represented by this class because the parser can't know until runtime
     /// if the argument is positional or if -Path accepts an argument.  In the later case, the argument 'a*' always
     /// belongs to the parameter -Path.
@@ -5670,9 +5668,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// <para>Returns the name of the command invoked by this ast.</para>
-        ///
         /// <para>This command name may not be known statically, in which case null is returned.</para>
-        ///
         /// <para>
         /// For example, if the command name is in a variable: <example>&amp; $foo</example>, then the parser cannot know which command is executed.
         /// Similarly, if the command is being invoked in a module: <example>&amp; (gmo SomeModule) Bar</example>, then the parser does not know the
@@ -6419,7 +6415,6 @@ namespace System.Management.Automation.Language
         #region static fields/methods
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="stmt"></param>
         /// <param name="resourceModulePairsToImport">Item1 - ResourceName, Item2 - ModuleName, Item3 - ModuleVersion</param>
@@ -6654,7 +6649,6 @@ namespace System.Management.Automation.Language
         ///   (1) Keyword Name
         ///   (2) InstanceName
         ///   (3) Body, could be ScriptBlockExpressionAst (for Node keyword) or a HashtableAst (remaining)
-        ///
         /// This property is never null and never empty
         /// </summary>
         public ReadOnlyCollection<CommandElementAst> CommandElements { get; private set; }

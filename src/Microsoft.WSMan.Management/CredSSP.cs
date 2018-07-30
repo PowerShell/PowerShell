@@ -60,7 +60,6 @@ namespace Microsoft.WSMan.Management
         #region Utilities
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns>
         /// Returns a session object upon successful creation..otherwise
@@ -391,7 +390,6 @@ namespace Microsoft.WSMan.Management
     /// server, hence allowing the user to perform management operations that access
     /// a second hop.
     /// This cmdlet performs the following:
-    ///
     /// On the client:
     /// 1. Enables WSMan local configuration on client to enable CredSSP
     /// 2. Sets CredSSP policy AllowFreshCredentials to wsman/Delegate. This policy
@@ -535,7 +533,6 @@ namespace Microsoft.WSMan.Management
         #endregion
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// </exception>
@@ -681,7 +678,6 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        ///
         /// </summary>
         private void UpdateCurrentUserRegistrySettings()
         {

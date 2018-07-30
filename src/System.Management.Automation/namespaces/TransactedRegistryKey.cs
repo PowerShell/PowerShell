@@ -83,7 +83,6 @@ namespace Microsoft.PowerShell.Commands.Internal
     /// <summary>
     /// Registry encapsulation. To get an instance of a TransactedRegistryKey use the
     /// Registry class's static members then call OpenSubKey.
-    ///
     /// @see Registry
     /// @security(checkDllCalls=off)
     /// @security(checkClassLinking=on)

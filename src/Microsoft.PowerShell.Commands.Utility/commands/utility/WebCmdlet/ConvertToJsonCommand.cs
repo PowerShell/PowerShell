@@ -386,7 +386,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Return an alternate representation of the specified aggregate object that serializes the same JSON, except
         /// that any contained properties that cannot be evaluated are treated as having the value null.
-        ///
         /// The result is a dictionary in which all public fields and public gettable properties of the original object
         /// are represented.  If any exception occurs while retrieving the value of a field or property, that entity
         /// is included in the output dictionary with a value of null.

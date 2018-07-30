@@ -28,7 +28,6 @@ namespace System.Management.Automation.Interpreter
     /// Visits a LambdaExpression, replacing the constants with direct accesses
     /// to their StrongBox fields. This is very similar to what
     /// ExpressionQuoter does for LambdaCompiler.
-    ///
     /// Also inserts debug information tracking similar to what the interpreter
     /// would do.
     /// </summary>

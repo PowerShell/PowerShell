@@ -38,62 +38,50 @@ namespace System.Management.Automation
         NotSpecified = 0,
 
         /// <summary>
-        ///
         /// </summary>
         OpenError = 1,
 
         /// <summary>
-        ///
         /// </summary>
         CloseError = 2,
 
         /// <summary>
-        ///
         /// </summary>
         DeviceError = 3,
 
         /// <summary>
-        ///
         /// </summary>
         DeadlockDetected = 4,
 
         /// <summary>
-        ///
         /// </summary>
         InvalidArgument = 5,
 
         /// <summary>
-        ///
         /// </summary>
         InvalidData = 6,
 
         /// <summary>
-        ///
         /// </summary>
         InvalidOperation = 7,
 
         /// <summary>
-        ///
         /// </summary>
         InvalidResult = 8,
 
         /// <summary>
-        ///
         /// </summary>
         InvalidType = 9,
 
         /// <summary>
-        ///
         /// </summary>
         MetadataError = 10,
 
         /// <summary>
-        ///
         /// </summary>
         NotImplemented = 11,
 
         /// <summary>
-        ///
         /// </summary>
         NotInstalled = 12,
 
@@ -103,22 +91,18 @@ namespace System.Management.Automation
         ObjectNotFound = 13,
 
         /// <summary>
-        ///
         /// </summary>
         OperationStopped = 14,
 
         /// <summary>
-        ///
         /// </summary>
         OperationTimeout = 15,
 
         /// <summary>
-        ///
         /// </summary>
         SyntaxError = 16,
 
         /// <summary>
-        ///
         /// </summary>
         ParserError = 17,
 
@@ -128,27 +112,22 @@ namespace System.Management.Automation
         PermissionDenied = 18,
 
         /// <summary>
-        ///
         /// </summary>
         ResourceBusy = 19,
 
         /// <summary>
-        ///
         /// </summary>
         ResourceExists = 20,
 
         /// <summary>
-        ///
         /// </summary>
         ResourceUnavailable = 21,
 
         /// <summary>
-        ///
         /// </summary>
         ReadError = 22,
 
         /// <summary>
-        ///
         /// </summary>
         WriteError = 23,
 
@@ -516,7 +495,6 @@ namespace System.Management.Automation
     /// when they want to display a more specific Message than the one
     /// contained in a particular Exception, without having to create
     /// a new Exception or define a new Exception class.
-    ///
     /// It is permitted to subclass <see cref="ErrorDetails"/>
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
@@ -567,7 +545,6 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ErrorDetails(string)"/>,
         /// since the improved
         /// information about the error may help enable future scenarios.
-        ///
         /// This constructor first loads the error message template string using
         /// <see cref="Cmdlet.GetResourceString"/>.
         /// The default implementation of
@@ -615,7 +592,6 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ErrorDetails(string)"/>,
         /// since the improved
         /// information about the error may help enable future scenarios.
-        ///
         /// This constructor first loads a template string using
         /// <see cref="System.Management.Automation.IResourceSupplier.GetResourceString"/>.
         /// The default implementation of
@@ -668,7 +644,6 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ErrorDetails(string)"/>,
         /// since the improved
         /// information about the error may help enable future scenarios.
-        ///
         /// This constructor first loads a template string from the assembly using
         /// <see cref="System.Resources.ResourceManager.GetString(string)"/>.
         /// The constructor then inserts the specified args using
@@ -743,7 +718,6 @@ namespace System.Management.Automation
         /// is non-empty, the default host will display it instead of
         /// the <see cref="System.Exception.Message"/> in
         /// <see cref="System.Management.Automation.ErrorRecord.Exception"/>.
-        ///
         /// This should be a grammatically correct localized text string, as with
         /// <see cref="System.Exception.Message"/>
         /// </remarks>
@@ -942,7 +916,6 @@ namespace System.Management.Automation
     /// <see cref="System.Management.Automation.ErrorRecord"/>
     /// instances in shell variable
     /// $error.
-    ///
     /// Some terminating errors implement
     /// <see cref="System.Management.Automation.IContainsErrorRecord"/>
     /// which gives them an ErrorRecord property containing this additional
@@ -1212,18 +1185,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the value for note from mshObject
         /// </summary>
-        ///
         /// <param name="mshObject">
         /// PSObject from which value is fetched.
         /// </param>
-        ///
         /// <param name="note">
         /// name of note whose value is fetched
         /// </param>
         /// <returns>
         /// value of note
         /// </returns>
-        ///
         private static object GetNoteValue
         (
             PSObject mshObject,
@@ -1246,21 +1216,15 @@ namespace System.Management.Automation
         /// serializedErrorRecord PSObject is in the format returned
         /// by ToPSObjectForRemoting method.
         /// </summary>
-        ///
         /// <param name="serializedErrorRecord">
         /// PSObject to convert to ErrorRecord
         /// </param>
-        ///
-        ///
         /// <returns>
         /// ErrorRecord convert from mshObject.
         /// </returns>
-        ///
-        ///
         /// <exception cref="ArgumentNullException">
         /// Thrown if mshObject parameter is null.
         /// </exception>
-        ///
         internal static ErrorRecord FromPSObjectForRemoting
         (
             PSObject serializedErrorRecord
@@ -1719,13 +1683,11 @@ namespace System.Management.Automation
     /// which contains an instance of
     /// <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>
     /// rather than the actual exception.
-    ///
     /// Do not call WriteError(e.ErrorRecord).
     /// The ErrorRecord contained in the ErrorRecord property of
     /// an exception which implements IContainsErrorRecord
     /// should not be passed directly to WriteError, since it contains
     /// a ParentContainsErrorRecordException rather than the real exception.
-    ///
     /// It is permitted for PSSnapins to implement custom Exception classes which implement
     /// <see cref="IContainsErrorRecord"/>,
     /// but it is generally preferable for Cmdlets and CmdletProviders to communicate
@@ -1786,7 +1748,6 @@ namespace System.Management.Automation
     /// the custom class to be used in the
     /// <see cref="ErrorDetails(IResourceSupplier,string,string,object[])"/>.
     /// constructor.
-    ///
     /// <see cref="ErrorDetails"/> contains special constructor
     /// <see cref="ErrorDetails(IResourceSupplier,string,string,object[])"/>
     /// reducing the steps which localizable code generally has to duplicate when it
@@ -1809,7 +1770,6 @@ namespace System.Management.Automation
         /// <see cref="IResourceSupplier"/>.
         /// Consider implementing <see cref="IResourceSupplier"/>
         /// if you want more complex behavior.
-        ///
         /// Insertions will be inserted into the string with
         /// <see cref="System.String.Format(IFormatProvider,string,object[])"/>
         /// to generate the final error message in

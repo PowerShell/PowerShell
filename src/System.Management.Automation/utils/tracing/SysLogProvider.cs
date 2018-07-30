@@ -34,16 +34,13 @@ namespace System.Management.Automation.Tracing
     /// Note:
     ///     commitId, threadId, and eventId are logged as HEX without a leading
     ///     '0x'.
-    ///
     /// 4 types of log entries are produced.
     /// NOTE: Where constant string are logged, the template places the string in
     /// double quotes. For example, the GitCommitId log entry uses "GitCommitId"
     /// for the context value.
-    ///
     /// Note that the examples illustrate the output from SysLogProvider.Log,
     /// Data automatically prepended by syslog, such as timestamp, hostname, ident,
     /// and processid are not shown.
-    ///
     /// GitCommitId
     ///   This is the first log entry for a session. It provides a correlation
     ///   between the full git commit id string and a hash code used for subsequent
@@ -56,20 +53,17 @@ namespace System.Management.Automation.Tracing
     ///     (19E1025:3:10) [GitCommitId] v6.0.0-beta.9 Hash:64D0C08D
     ///   Example 2: Commit id with SHA-1 hash
     ///     (19E1025:3:10) [GitCommitId] v6.0.0-beta.8-67-gca2630a3dea6420a3cd3914c84a74c1c45311f54 Hash:8EE3A3B3
-    ///
     /// Transfer
     ///   A log entry to record a transfer event.
     ///   Context: "Transfer"
     ///   The playload is two, space separated string guids, the first being the
     ///   parent activityid followed by the new activityid.
     ///   Example: (19E1025:3:10) [Transfer] {de168a71-6bb9-47e4-8712-bc02506d98be} {ab0077f6-c042-4728-be76-f688cfb1b054}
-    ///
     /// Activity
     ///   A log entry for when activity is set.
     ///   Context: "Activity"
     ///   Payload: The string guid of the activity id.
     ///   Example: (19E1025:3:10) [Activity] {ab0077f6-c042-4728-be76-f688cfb1b054}
-    ///
     ///  Event
     ///   Application logging (Events)
     ///   Context: EventId:taskname.opcodename.levelname

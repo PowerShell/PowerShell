@@ -176,21 +176,17 @@ namespace System.Management.Automation.Remoting
     /// Class which handles the throttling operations. This class is singleton and therefore
     /// when used either across cmdlets or at the infrastructure level it will ensure that
     /// there aren't more operations by way of accumulation than what is intended by design.
-    ///
     /// This class contains a queue of items, each of which has the
     /// <see cref="System.Management.Automation.Remoting.IThrottleOperation">
     /// IThrottleOperation</see> interface implemented. To begin with
     /// THROTTLE_LIMIT number of items will be taken from the queue and the operations on
     /// them will be executed. Subsequently, as and when operations complete, new items from
     /// the queue will be taken and their operations executed.
-    ///
     /// Whenever a consumer submits or adds operations, the methods will start as much
     /// operations from the queue as permitted based on the throttle limit. Also the event
     /// handler will start an operation once a previous event is completed.
-    ///
     /// The queue used is a generic queue of type IThrottleOperations, as it will offer better
     /// performance
-    ///
     /// </summary>
     /// <remarks>Throttle limit is currently set to 50. This value may be modified later based
     /// on a figure that we may arrive at out of experience.</remarks>

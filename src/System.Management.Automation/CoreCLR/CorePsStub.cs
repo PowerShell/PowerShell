@@ -370,7 +370,6 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Gets the managed type that an object needs to be coverted to in order for it to be able
         /// to be represented as a Variant.
-        ///
         /// In general, there is a many-to-many mapping between Type and VarEnum. However, this method
         /// returns a simple mapping that is needed for the current implementation. The reason for the
         /// many-to-many relation is:
@@ -746,13 +745,11 @@ namespace System.Management.Automation.Tracing
     using System.Management.Automation.Internal;
 
     /// <summary>
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public abstract class EtwActivity
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="activityId"></param>
         /// <returns></returns>
@@ -762,7 +759,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         public static Guid CreateActivityId()
@@ -771,7 +767,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         public static Guid GetActivityId()
@@ -866,17 +861,14 @@ namespace System.Management.Automation.Tracing
         ManagedPlugIn = 0x100,
 
         /// <summary>
-        ///
         /// </summary>
         UseAlwaysDebug = 0x2000000000000000,
 
         /// <summary>
-        ///
         /// </summary>
         UseAlwaysOperational = 0x8000000000000000,
 
         /// <summary>
-        ///
         /// </summary>
         UseAlwaysAnalytic = 0x4000000000000000,
     }
@@ -954,7 +946,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message1"></param>
         /// <param name="message2"></param>
@@ -965,7 +956,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="instanceId"></param>
@@ -976,7 +966,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="className"></param>
         /// <param name="methodName"></param>
@@ -990,7 +979,6 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="className"></param>
         /// <param name="methodName"></param>
@@ -1018,7 +1006,6 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Returns an instance of BaseChannelWriter.
         /// If the Etw is not supported by the platform it will return NullWriter.Instance
-        ///
         /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).
         ///    The supplied task and keywords are used to pass to the Etw provider in case they are
         /// not defined in the manifest file.
@@ -1031,7 +1018,6 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Returns an instance of BaseChannelWriter.
         /// If the Etw is not supported by the platform it will return NullWriter.Instance
-        ///
         /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).
         ///    The supplied task and keywords are used to pass to the Etw provider in case they are
         /// not defined in the manifest file.
@@ -1044,7 +1030,6 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Returns an instance of BaseChannelWriter.
         /// If the Etw is not supported by the platform it will return NullWriter.Instance
-        ///
         /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).
         ///    The supplied task and keywords are used to pass to the Etw provider in case they are
         /// not defined in the manifest file.

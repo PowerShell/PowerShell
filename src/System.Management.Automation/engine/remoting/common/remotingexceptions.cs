@@ -10,7 +10,6 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This enum defines the error message ids used by the resource manager to get
     /// localized messages.
-    ///
     /// Related error ids are organized in a pre-defined range of values.
     /// </summary>
     internal enum PSRemotingErrorId : uint

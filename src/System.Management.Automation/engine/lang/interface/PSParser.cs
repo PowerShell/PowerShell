@@ -24,16 +24,12 @@ namespace System.Management.Automation
     /// <remarks>
     /// This is a class providing the interface for parsing a script into a collection of
     /// tokens, which primarily can be used for syntax colorization.
-    ///
     /// Classes provided for syntax colorization includes,
-    ///
     ///     1. PSParser: this class provides the main interface to be used.
     ///     2. PSToken: this class provides a public representation of powershell tokens.
     ///     3. PSParseError: this class provides a public representation of syntax errors.
-    ///
     /// These three classes are provided for exposing interfaces only. They
     /// should not be used in PowerShell engine code.
-    ///
     /// </remarks>
     //
     //  1. Design

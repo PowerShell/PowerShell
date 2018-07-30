@@ -107,12 +107,10 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// Existing Key = HKCU and HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell
         /// Proposed value = Existing default execution policy if not already specified
-        ///
         /// Schema:
         /// {
         ///     "shell-ID-string:ExecutionPolicy" : "execution policy string"
         /// }
-        ///
         /// TODO: In a single config file, it might be better to nest this. It is unnecessary complexity until a need arises for more nested values.
         /// </summary>
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
@@ -156,7 +154,6 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds
         /// Proposed value = existing default. Probably "1"
-        ///
         /// Schema:
         /// {
         ///     "ConsolePrompting" : bool
@@ -176,7 +173,6 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell
         /// Proposed value = Existing default. Probably "0"
-        ///
         /// Schema:
         /// {
         ///     "DisablePromptToUpdateHelp" : bool
@@ -524,7 +520,6 @@ namespace System.Management.Automation.Configuration
     ///  - Software\Policies\Microsoft\Windows\EventLog
     ///     SubKeys                   Name-Value-Pairs
     ///      - ProtectedEventLogging  { EnableProtectedEventLogging (0 or 1); EncryptionCertificate (string[]) }
-    ///
     /// The JSON representation is in sync with the 'PowerShellPolicies' type. Here is an example:
     /// {
     ///   "PowerShellPolicies": {

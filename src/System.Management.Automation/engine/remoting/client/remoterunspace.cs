@@ -1097,12 +1097,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pipeline">Pipeline to add to the
         /// list of pipelines in execution</param>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Thrown if the runspace is not in the Opened state.
         /// <see cref="RunspaceState"/>.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">Thrown if
         /// <paramref name="pipeline"/> is null.
         /// </exception>
@@ -1144,7 +1142,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pipeline">Pipeline to remove from the
         /// list of pipelines in execution</param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="pipeline"/> is null.
         /// </exception>
@@ -1754,10 +1751,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Private data to be used by applications built on top of PowerShell.
-        ///
         /// Remote runspace gets its application private data from the server (when creating the remote runspace pool)
         /// - calling this method on a remote runspace will block until the data is received from the server.
-        ///
         /// Runspaces that are part of a <see cref="RunspacePool"/> inherit application private data from the pool.
         /// </summary>
         public override PSPrimitiveDictionary GetApplicationPrivateData()
@@ -2591,23 +2586,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a variable in session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the item to set.
         /// </param>
-        ///
         /// <param name="value">
         /// The new value of the item being set.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// name is null
         /// </exception>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2655,23 +2645,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// name of variable to look up
         /// </param>
-        ///
         /// <returns>
         /// The value of the specified variable.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// name is null
         /// </exception>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2731,11 +2716,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the list of applications out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2778,11 +2761,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the list of scripts out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2825,11 +2806,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the APIs to access drives out of session state
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2844,11 +2823,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get/Set the language mode out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2893,11 +2870,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the module info out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2912,11 +2887,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the APIs to access paths and locations out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2931,11 +2904,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the APIs to access a provider out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2950,11 +2921,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the APIs to access variables out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2969,11 +2938,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the APIs to build script blocks and execute script out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>
@@ -2988,11 +2955,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the instance of the provider interface APIs out of session state.
         /// </summary>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// Another SessionStateProxy call or another pipeline is in progress.
         /// </exception>

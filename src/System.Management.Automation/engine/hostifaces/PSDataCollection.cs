@@ -1139,7 +1139,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Makes a shallow copy of all the elements currently in this collection
         /// and clears them from this collection. This will not result in a blocking call.
-        ///
         /// Calling this method might have side effects on the enumerator. When this
         /// method is called, the behavior of the enumerator is not defined.
         /// </summary>
@@ -1154,7 +1153,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Makes a shallow copy of all the elements currently in this collection
         /// and clears them from this collection. This will not result in a blocking call.
-        ///
         /// Calling this method might have side effects on the enumerator. When this
         /// method is called, the behavior of the enumerator is not defined.
         /// </summary>
@@ -1976,7 +1974,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         void IDisposable.Dispose()
         {

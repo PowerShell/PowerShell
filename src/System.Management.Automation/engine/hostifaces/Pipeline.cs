@@ -333,7 +333,6 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Gets the property which indicates if this pipeline is a child pipeline.
-        ///
         /// IsChild flag makes it possible for the pipeline to differentiate between
         /// a true v1 nested pipeline and the cmdlets calling cmdlets case. See bug
         /// 211462.
@@ -373,7 +372,6 @@ namespace System.Management.Automation.Runspaces
         /// When the caller calls Error.Read(), the caller reads from the
         /// output of the pipeline.  Thus, <paramref name="Error"/>
         /// is a PipelineReader or "thing which can be read from".
-        ///
         /// This is the non-terminating error stream from the command.
         /// In this release, the objects read from this PipelineReader
         /// are PSObjects wrapping ErrorRecords.
@@ -430,16 +428,13 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// If this flag is true, the commands in this Pipeline will redirect the global error output pipe
         /// (ExecutionContext.ShellFunctionErrorOutputPipe) to the command's error output pipe.
-        ///
         /// When the global error output pipe is not set, $ErrorActionPreference is not checked and all
         /// errors are treated as terminating errors.
-        ///
         /// On V1, the global error output pipe is redirected to the command's error output pipe only when
         /// it has already been redirected. The command-line host achieves this redirection by merging the
         /// error output into the output pipe so it checks $ErrorActionPreference all right. However, when
         /// the Pipeline class is used programmatically the global error output pipe is not set and the first
         /// error terminates the pipeline.
-        ///
         /// This flag is used to force the redirection. By default it is false to maintain compatibility with
         /// V1, but the V2 hosting interface (PowerShell class) sets this flag to true to ensure the global
         /// error output pipe is always set and $ErrorActionPreference when invoking the Pipeline.
@@ -605,7 +600,6 @@ namespace System.Management.Automation.Runspaces
         /// finish until Input to pipeline is closed. Caller of InvokeAsync must close
         /// the input pipe after all input has been written to input pipe. Input pipe
         /// is closed by calling Pipeline.Input.Close();
-        ///
         /// If you want this pipeline to execute as a standalone command
         /// (that is, using command-line parameters only),
         /// be sure to call Pipeline.Input.Close() before calling

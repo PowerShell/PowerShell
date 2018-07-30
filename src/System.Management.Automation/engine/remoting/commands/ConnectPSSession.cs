@@ -23,26 +23,19 @@ namespace Microsoft.PowerShell.Commands
     /// be specified and in this case all disconnected remote runspaces found on the
     /// remote computer will be be connected and PSSession objects created on the local
     /// machine.
-    ///
     /// The cmdlet can be used in the following ways:
-    ///
     /// Connect a PS session object:
     /// > $session = New-PSSession serverName
     /// > Disconnect-PSSession $session
     /// > Connect-PSSession $session
-    ///
     /// Connect a PS session by name:
     /// > Connect-PSSession $session.Name
-    ///
     /// Connect a PS session by Id:
     /// > Connect-PSSession $session.Id
-    ///
     /// Connect a collection of PS session:
     /// > Get-PSSession | Connect-PSSession
-    ///
     /// Connect all disconnected PS sessions on a remote computer
     /// > Connect-PSSession serverName
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Connect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ConnectPSSessionCommand.NameParameterSet,

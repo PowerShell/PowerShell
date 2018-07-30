@@ -1527,7 +1527,6 @@ namespace System.Management.Automation
             /// <summary>
             /// Check if a hash code matches a small set of pre-computed hashes
             /// for suspicious strings in a PowerShell script.
-            ///
             /// If you need to add a new string, use the commented out
             /// method HashNewPattern (commented out because it's dead
             /// code - needed only to generate this switch statement below.)
@@ -1683,7 +1682,6 @@ namespace System.Management.Automation
             /// <summary>
             /// Check the list of running hashes for any matches, but
             /// only up to the limit of <paramref name="upTo"/>.
-            ///
             /// If a hash matches, we ignore the possibility of a
             /// collision. If the hash is acceptable, collisions will
             /// be infrequent and we'll just log an occasionaly script
@@ -1707,15 +1705,12 @@ namespace System.Management.Automation
 
             /// <summary>
             /// Scan a string for suspicious content.
-            ///
             /// This is based on the Rubin-Karp algorithm, but heavily
             /// modified to support searching for multiple patterns at
             /// the same time.
-            ///
             /// The key difference from Rubin-Karp is that we don't undo
             /// the hash of the first character as we shift along in the
             /// input.
-            ///
             /// Instead, we can rely on knowing we need the hashes for
             /// shorter strings anyway, so we reuse their values in
             /// computing the hash for the longer patterns. This lets us

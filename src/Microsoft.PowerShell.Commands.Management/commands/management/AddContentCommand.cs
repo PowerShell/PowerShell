@@ -22,15 +22,12 @@ namespace Microsoft.PowerShell.Commands
         /// Seeks to the end of the writer stream in each of the writers in the
         /// content holders.
         /// </summary>
-        ///
         /// <param name="contentHolders">
         /// The content holders that contain the writers to be moved.
         /// </param>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If calling Seek on the content writer throws an exception.
         /// </exception>
-        ///
         internal override void SeekContentPosition(List<ContentHolder> contentHolders)
         {
             foreach (ContentHolder holder in contentHolders)
@@ -68,15 +65,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Makes the call to ShouldProcess with appropriate action and target strings.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item on which the content will be added.
         /// </param>
-        ///
         /// <returns>
         /// True if the action should continue or false otherwise.
         /// </returns>
-        ///
         internal override bool CallShouldProcess(string path)
         {
             string action = NavigationResources.AddContentAction;

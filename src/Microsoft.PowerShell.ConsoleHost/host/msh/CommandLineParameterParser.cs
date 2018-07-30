@@ -436,15 +436,11 @@ namespace Microsoft.PowerShell
 #endif
 
         /// <summary>
-        ///
         /// Processes all the command line parameters to ConsoleHost.  Returns the exit code to be used to terminate the process, or
         /// Success to indicate that the program should continue running.
-        ///
         /// </summary>
         /// <param name="args">
-        ///
         /// The command line parameters to be processed.
-        ///
         /// </param>
 
         internal void Parse(string[] args)

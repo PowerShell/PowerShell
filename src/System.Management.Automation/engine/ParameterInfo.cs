@@ -17,19 +17,15 @@ namespace System.Management.Automation
         /// Constructs the parameter info using the specified aliases, attributes, and
         /// parameter set metadata
         /// </summary>
-        ///
         /// <param name="parameter">
         /// The parameter metadata to retrieve the parameter information from.
         /// </param>
-        ///
         /// <param name="parameterSetFlag">
         /// The parameter set flag to get the parameter information from.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="parameter"/> is null.
         /// </exception>
-        ///
         internal CommandParameterInfo(
             CompiledCommandParameter parameter,
             uint parameterSetFlag)
@@ -65,7 +61,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets whether or not the parameter is a dynamic parameter.
         /// </summary>
-        ///
         /// <remarks>
         /// True if the parameter is dynamic, or false otherwise.
         /// </remarks>
@@ -74,7 +69,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets whether or not the parameter is mandatory.
         /// </summary>
-        ///
         /// <remarks>
         /// True if the parameter is mandatory, or false otherwise.
         /// </remarks>

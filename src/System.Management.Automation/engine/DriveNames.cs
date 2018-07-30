@@ -7,7 +7,6 @@ namespace System.Management.Automation
     /// Holds the strings used as the default drive names for all the
     /// default providers
     /// </summary>
-    ///
     internal static class DriveNames
     {
         /// <summary>

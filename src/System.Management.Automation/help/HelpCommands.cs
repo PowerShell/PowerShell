@@ -96,13 +96,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
-        ///
         /// 1. Reminder (Default - Experienced User)
         /// 2. Detailed (Beginner - Beginning User)
         /// 3. Full     (All Users)
         /// 4. Examples
         /// 5. Parameters
-        ///
         /// Currently we support these views only for Cmdlets.
         /// A SnapIn developer can however change these views.
         /// </remarks>
@@ -123,13 +121,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
-        ///
         /// 1. Reminder (Default - Experienced User)
         /// 2. Detailed (Beginner - Beginning User)
         /// 3. Full     (All Users)
         /// 4. Examples
         /// 5. Parameters
-        ///
         /// Currently we support these views only for Cmdlets.
         /// A SnapIn developer can however change these views.
         /// </remarks>
@@ -150,12 +146,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
-        ///
         /// 1. Reminder (Default - Experienced User)
         /// 2. Detailed (Beginner - Beginning User)
         /// 3. Full     (All Users)
         /// 4. Examples
-        ///
         /// Currently we support these views only for Cmdlets.
         /// A SnapIn developer can however change these views.
         /// </remarks>
@@ -372,7 +366,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Change <paramref name="originalHelpObject"/> as per user request.
-        ///
         /// This method creates a new type to the existing typenames
         /// depending on Detailed,Full,Example parameters and adds this
         /// new type(s) to the top of the list.

@@ -170,7 +170,6 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
-        ///
         /// If there are multiple reader threads, the objects returned
         /// to blocking reads Read(int count) and ReadToEnd()
         /// are not necessarily single blocks of objects added to the
@@ -179,7 +178,6 @@ namespace System.Management.Automation.Internal
         /// Each reader reads items from the stream as they become available.
         /// Otherwise, if a maximum _capacity has been imposed, the writer
         /// and reader could become mutually deadlocked.
-        ///
         /// When there are multiple blocked readers, any of the readers
         /// may get the next object(s) added.
         /// </remarks>
@@ -194,7 +192,6 @@ namespace System.Management.Automation.Internal
         /// <returns>A collection of zero or more objects.</returns>
         /// <remarks>
         /// If the stream is empty, a collection of size zero is returned.
-        ///
         /// If there are multiple reader threads, the objects returned
         /// to blocking reads Read(int count) and ReadToEnd()
         /// are not necessarily single blocks of objects added to the
@@ -203,7 +200,6 @@ namespace System.Management.Automation.Internal
         /// Each reader reads items from the stream as they become available.
         /// Otherwise, if a maximum _capacity has been imposed, the writer
         /// and reader could become mutually deadlocked.
-        ///
         /// When there are multiple blocked readers, any of the readers
         /// may get the next object(s) added.
         /// </remarks>
@@ -354,39 +350,31 @@ namespace System.Management.Automation.Internal
     /// The stream may be bound or unbounded.  Bounded streams
     /// are created via passing a capacity to the constructor.
     /// Unbounded streams are created using the default constructor.
-    ///
     /// The capacity of the stream can not be changed after
     /// construction.
-    ///
     /// For bounded streams, attempts to write to the stream when
     /// the capacity has been reached causes the writer to block
     /// until objects are read.
-    ///
     /// For unbounded streams, writers only block for the amount
     /// of time needed to acquire exclusive access to the
     /// stream.  Note that unbounded streams have a capacity of
     /// of Int32.MaxValue objects.  In theory, if this limit were
     /// reached, the stream would function as a bounded stream.
-    ///
     /// This class is safe for multi-threaded use with the following
     /// side-effects:
-    ///
     /// > For bounded streams, write operations are not guaranteed to
     /// be atomic.  If a write operation causes the capacity to be
     /// reached without writing all data, a partial write occurs and
     /// the writer blocks until data is read from the stream.
-    ///
     /// > When multiple writer or reader threads are used, the order
     /// the reader or writer acquires a lock on the stream is
     /// undefined.  This means that the first call to write does not
     /// guarantee the writer will acquire a write lock first.  The first
     /// call to read does not guarantee the reader will acquire the
     /// read lock first.
-    ///
     /// > Reads and writes may occur in any order. With a bounded
     /// stream, write operations between threads may also result in
     /// interleaved write operations.
-    ///
     /// The result is that the order of data is only guaranteed if there is a
     /// single writer.
     /// </remarks>
@@ -1097,7 +1085,6 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
-        ///
         /// If there are multiple reader threads, the objects returned
         /// to blocking reads Read(int count) and ReadToEnd()
         /// are not necessarily single blocks of objects added to the
@@ -1106,7 +1093,6 @@ namespace System.Management.Automation.Internal
         /// Each reader reads items from the stream as they become available.
         /// Otherwise, if a maximum _capacity has been imposed, the writer
         /// and reader could become mutually deadlocked.
-        ///
         /// When there are multiple blocked readers, any of the readers
         /// may get the next object(s) added.
         /// </remarks>
@@ -1172,7 +1158,6 @@ namespace System.Management.Automation.Internal
         /// <returns>A collection of zero or more objects.</returns>
         /// <remarks>
         /// If the stream is empty, a collection of size zero is returned.
-        ///
         /// If there are multiple reader threads, the objects returned
         /// to blocking reads Read(int count) and ReadToEnd()
         /// are not necessarily single blocks of objects added to the
@@ -1181,7 +1166,6 @@ namespace System.Management.Automation.Internal
         /// Each reader reads items from the stream as they become available.
         /// Otherwise, if a maximum _capacity has been imposed, the writer
         /// and reader could become mutually deadlocked.
-        ///
         /// When there are multiple blocked readers, any of the readers
         /// may get the next object(s) added.
         /// </remarks>
@@ -1523,7 +1507,6 @@ namespace System.Management.Automation.Internal
     /// An object stream using a PSDataCollection as the object store.
     /// This stream lets user to supply a custom PSDataCollection instance
     /// to use as the stream's object store.
-    ///
     /// This stream is designed to be used with the user supplied
     /// PSDataBuffers. For internal only purposes use ObjectStream.
     /// </summary>
@@ -1893,7 +1876,6 @@ namespace System.Management.Automation.Internal
         #region Event Handlers
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1903,7 +1885,6 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

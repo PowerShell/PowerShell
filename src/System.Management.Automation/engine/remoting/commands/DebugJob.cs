@@ -18,11 +18,9 @@ namespace Microsoft.PowerShell.Commands
     /// it is debuggable and if it is will break into its job debugger in step mode.
     /// For multiple debuggable child jobs, each job execution will be halted and the
     /// debugger will step to each job execution point sequentially.
-    ///
     /// When a job is debugged its output data is written to host and the executing job
     /// script will break into the host debugger, in step mode, at the next stoppable
     /// execution point.
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsDiagnostic.Debug, "Job", SupportsShouldProcess = true, DefaultParameterSetName = DebugJobCommand.JobParameterSet,

@@ -21,7 +21,6 @@ namespace System.Management.Automation.ComInterop
     /// 3.We could guess which primitive type is the closest match. This will make COM components be as easily
     ///   accessible as .NET methods.
     /// 4.We could use the type library to check what the expected type is. However, the type library may not be available.
-    ///
     /// VarEnumSelector implements option # 3
     /// </summary>
     internal class VarEnumSelector
@@ -98,7 +97,6 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Gets the managed type that an object needs to be coverted to in order for it to be able
         /// to be represented as a Variant.
-        ///
         /// In general, there is a many-to-many mapping between Type and VarEnum. However, this method
         /// returns a simple mapping that is needed for the current implementation. The reason for the
         /// many-to-many relation is:

@@ -84,7 +84,6 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// class that holds plugin + shell context information used to handle
     /// shutdown notifications.
-    ///
     /// Explicit destruction and release of the IntPtrs is not required because
     /// their lifetime is managed by WinRM.
     /// </summary>

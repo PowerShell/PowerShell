@@ -126,11 +126,9 @@ namespace System.Management.Automation
         /// We user the assembly short name (AssemblyName.Name) as the key.
         /// According to the Spec of AssemblyLoadContext, "in the context of a given instance of AssemblyLoadContext, only one assembly with
         /// a given name can be loaded. Attempt to load a second assembly with the same name and different MVID will result in an exception."
-        ///
         /// MVID is Module Version Identifier, which is a guid. Its purpose is solely to be unique for each time the module is compiled, and
         /// it gets regenerated for every compilation. That means AssemblyLoadContext cannot handle loading two assemblies with the same name
         /// but different versions, not even two assemblies with the exactly same code and version but built by two separate compilations.
-        ///
         /// Therefore, there is no need to use the full assembly name as the key. Short assembly name is sufficient.
         /// </remarks>
         private static readonly ConcurrentDictionary<string, Assembly> s_assemblyCache =

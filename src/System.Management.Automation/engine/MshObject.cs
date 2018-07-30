@@ -608,7 +608,6 @@ namespace System.Management.Automation
         /// <remarks>
         /// If an object is not adapted, InternalAdapter will use the dotnet adapter.
         /// So there is no point falling back to the same dotnet adapter.
-        ///
         /// If an object is adapted, this adapter will be used to resolve the dotnet
         /// members.
         /// </remarks>
@@ -930,7 +929,6 @@ namespace System.Management.Automation
         #region static methods
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -939,7 +937,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -948,7 +945,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -957,7 +953,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -966,7 +961,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -1805,7 +1799,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="settings"></param>
         /// <param name="noteName"></param>
@@ -2117,13 +2110,11 @@ namespace System.Management.Automation
         /// adapters except for dotNetInstanceAdapter, mshMemberSetAdapter and mshObjectAdapter.
         /// If the original adapter is not one of those, then .net members are also exposed
         /// on the PSObject. This will have the following effect:
-        ///
         /// 1. Every adapted object like xml, wmi, adsi will show adapted members as well as
         ///    .net members.
         /// 2. Users will not need to access PSBase to access original .net members.
         /// 3. This will fix v1.0 ADSI adapter where most of the complaints were about
         ///    discovering original .net members.
-        ///
         /// Use of this class will allow us to customize the ultimate .net member lookup.
         /// For example, XML adapter already exposes .net methods.
         /// Using this class you can choose exact .net adapter to support .net
@@ -2365,7 +2356,6 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    ///
     /// </summary>
     /// <remarks>
     /// Please keep in sync with SerializationMethod from

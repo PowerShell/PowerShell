@@ -39,7 +39,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// execution entry point override
         /// we assume that a LineOutput interface instance already has been acquired
-        ///
         /// IMPORTANT: it assumes the presence of a pre-processing formatting command
         /// </summary>
         internal override void ProcessRecord()
