@@ -21,6 +21,9 @@ Describe "Get-ChildItem" -Tags "CI" {
             $null = New-Item -Path $TestDrive -Name $item_F -ItemType "File" -Force | ForEach-Object {$_.Attributes = "hidden"}
             $null = New-Item -Path (Join-Path -Path $TestDrive -ChildPath $item_E) -Name $item_G -ItemType "File" -Force
 
+            $specialDirName = "Test[Dir]"
+            $specialDir = "Test``[Dir``]"
+
             $searchRoot = Join-Path $TestDrive -ChildPath "TestPS"
             $file1 = Join-Path $searchRoot -ChildPath "D1" -AdditionalChildPath "File1.txt"
             $file2 = Join-Path $searchRoot -ChildPath "File1.txt"
@@ -140,6 +143,14 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem -LiteralPath $TestDrive -Recurse -Include *.dll).Count | Should Be (Get-ChildItem $TestDrive -Recurse -Include *.dll).Count
             (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Include $item_G).Count | Should Be 1
             (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
+        }
+
+        It "Should list files in directory contains special char" {
+            $null = New-Item -Path $TestDrive -Name $specialDirName -ItemType Directory -Force
+            $specialPath = Join-Path $TestDrive $specialDir
+            $null = New-Item -Path $specialPath -Name file1.txt -ItemType File -Force
+            $null = New-Item -Path $specialPath -Name file2.txt -ItemType File -Force
+            (Get-ChildItem -Path $specialPath).Count | Should -Be 2
         }
 
         It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
