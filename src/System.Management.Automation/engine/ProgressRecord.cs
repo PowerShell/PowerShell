@@ -7,12 +7,10 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Defines a data structure used to represent the status of an ongoing operation at a point in time.
     ///
     /// </summary>
     /// <remarks>
-    ///
     /// ProgressRecords are passed to <see cref="System.Management.Automation.Cmdlet.WriteProgress(ProgressRecord)"/>,
     /// which, according to user preference, forwards that information on to the host for rendering to the user.
     ///
@@ -26,23 +24,19 @@ namespace System.Management.Automation
         #region Public API
 
         /// <summary>
-        ///
         /// Initializes a new instance of the ProgressRecord class and defines the activity Id,
         /// activity description, and status description.
         ///
         /// </summary>
         /// <param name="activityId">
-        ///
         /// A unique numeric key that identifies the activity to which this record applies.
         ///
         /// </param>
         /// <param name="activity">
-        ///
         /// A description of the activity for which progress is being reported.
         ///
         /// </param>
         /// <param name="statusDescription">
-        ///
         /// A description of the status of the activity.
         ///
         /// </param>
@@ -87,7 +81,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// Gets the Id of the activity to which this record corresponds.  Used as a 'key' for the
         /// linking of subordinate activities.
         ///
@@ -104,12 +97,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// Gets and sets the Id of the activity for which this record is a subordinate.
         ///
         /// </summary>
         /// <remarks>
-        ///
         /// Used to allow chaining of progress records (such as when one installation invokes a child installation). UI:
         /// normally not directly visible except as already displayed as its own activity. Usually a sub-activity will be
         /// positioned below and to the right of its parent.
@@ -121,7 +112,6 @@ namespace System.Management.Automation
         /// <!--NTRAID#Windows OS Bugs-1161549 the default value for this should be picked up from a variable in the
         /// shell so that a script can set that variable, and have all subsequent calls to WriteProgress (the API) be
         /// subordinate to the "current parent id".-->
-        ///
         /// </remarks>
 
         public
@@ -143,12 +133,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// Gets and sets the description of the activity for which progress is being reported.
         ///
         /// </summary>
         /// <remarks>
-        ///
         /// States the overall intent of whats being accomplished, such as "Recursively removing item c:\temp." Typically
         /// displayed in conjunction with a progress bar.
         ///
@@ -173,7 +161,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// Gets and sets the current status of the operation, e.g., "35 of 50 items Copied." or "95% completed." or "100 files purged."
         ///
         /// </summary>
@@ -197,7 +184,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// Gets and sets the current operation of the many required to accomplish the activity (such as "copying foo.txt"). Normally displayed
         /// below its associated progress bar, e.g., "deleting file foo.bar"
         /// Set to null or empty in the case a sub-activity will be used to show the current operation.
@@ -221,7 +207,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// Gets and sets the estimate of the percentage of total work for the activity that is completed.  Typically displayed as a progress bar.
         /// Set to a negative value to indicate that the percentage completed should not be displayed.
         ///
@@ -251,7 +236,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// Gets and sets the estimate of time remaining until this activity is completed.  This can be based upon a measurement of time since
         /// started and the percent complete or another approach deemed appropriate by the caller.
         ///
@@ -259,7 +243,6 @@ namespace System.Management.Automation
         ///
         /// </summary>
         ///<remarks>
-        ///
         /// A value less than 0 means "don't display a time remaining."
         ///
         /// </remarks>
@@ -281,7 +264,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// Gets and sets the type of record represented by this instance.
         ///
         /// </summary>
@@ -306,12 +288,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// Overrides <see cref="System.Object.ToString"/>
-        ///
         /// </summary>
         /// <returns>
-        ///
         /// "parent = a id = b act = c stat = d cur = e pct = f sec = g type = h" where
         /// a, b, c, d, e, f, and g are the values of ParentActivityId, ActivityId, Activity, StatusDescription,
         /// CurrentOperation, PercentComplete, SecondsRemaining and RecordType properties.
@@ -542,7 +521,6 @@ namespace System.Management.Automation
     } //ProgressRecord
 
     /// <summary>
-    ///
     /// Defines two types of progress record that refer to the beginning (or middle) and end of an operation.
     ///
     /// </summary>

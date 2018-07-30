@@ -77,7 +77,6 @@ namespace System.Management.Automation
         /// all errors to a variable name.  Semantically this is equivalent to :  cmd |set-var varname -passthru
         /// but it should be MUCH faster as there is no binding that takes place
         /// </summary>
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// may not be set to null
         /// </exception>
@@ -3225,7 +3224,6 @@ namespace System.Management.Automation
         internal bool IsErrorActionSet { get; private set; } = false;
 
         /// <summary>
-        ///
         /// Preference setting for displaying ProgressRecords when WriteProgress is called.
         ///
         /// </summary>
@@ -3256,7 +3254,6 @@ namespace System.Management.Automation
         private bool _isProgressPreferenceCached = false;
 
         /// <summary>
-        ///
         /// Preference setting for displaying InformationRecords when WriteInformation is called.
         ///
         /// </summary>
