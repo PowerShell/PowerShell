@@ -22,8 +22,7 @@ namespace System.Management.Automation
         private SessionStateScope _currentScope;
 
         /// <summary>
-        /// Cmdlet parameter name to return in the error message
-        /// instead of "scopeID".
+        /// Cmdlet parameter name to return in the error message instead of "scopeID".
         /// </summary>
         internal const string ScopeParameterName = "Scope";
 
