@@ -24,6 +24,7 @@ Describe "Out-File" -Tags "CI" {
         $expectedContent = "some test text"
         $inObject = New-Object psobject -Property @{text=$expectedContent}
         $testfile = Join-Path -Path $TestDrive -ChildPath outfileTest.txt
+        $testfileSp = Join-Path -Path $TestDrive -ChildPath "``[outfileTest``].txt"
     }
 
     AfterEach {
@@ -89,6 +90,14 @@ Describe "Out-File" -Tags "CI" {
         $actual[9]  | Should -Match "some test text"
         $actual[10] | Should -BeNullOrEmpty
         $actual[11] | Should -BeNullOrEmpty
+    }
+
+    It "Should create the file with correct name when FilePath contains special char" {
+        Out-File -FilePath $testfile
+        Out-File -FilePath $testfileSp
+
+        $testfile | Should -Exist
+        $testfileSp | Should -Exist
     }
 
     It "Should limit each line to the specified number of characters when the width switch is used on objects" {
