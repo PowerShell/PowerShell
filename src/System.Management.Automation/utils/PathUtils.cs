@@ -294,7 +294,9 @@ namespace System.Management.Automation
                 path =
                     command.SessionState.Path.GetUnresolvedProviderPathFromPSPath(
                         isLiteralPath ? filePath : WildcardPattern.Unescape(filePath),
-                        cmdletProviderContext, out provider, out drive);
+                        cmdletProviderContext,
+                        out provider,
+                        out drive);
                 cmdletProviderContext.ThrowFirstErrorOrDoNothing();
                 if (!provider.NameEquals(command.Context.ProviderNames.FileSystem))
                 {
