@@ -3630,13 +3630,11 @@ namespace System.Management.Automation
                 StringContainsGlobCharacters(leafElement) ||
                 isLastLeaf)
             {
-                string regexEscapedLeafElement = ConvertMshEscapeToRegexEscape(leafElement);
-
                 // Construct the glob filter
 
                 WildcardPattern stringMatcher =
                     WildcardPattern.Get(
-                        regexEscapedLeafElement,
+                        leafElement,
                         WildcardOptions.IgnoreCase);
 
                 // Construct the include filter
@@ -4270,13 +4268,11 @@ namespace System.Management.Automation
                 (StringContainsGlobCharacters(leafElement) ||
                  isLastLeaf))
             {
-                string regexEscapedLeafElement = ConvertMshEscapeToRegexEscape(leafElement);
-
                 // Construct the glob filter
 
                 WildcardPattern stringMatcher =
                     WildcardPattern.Get(
-                        regexEscapedLeafElement,
+                        leafElement,
                         WildcardOptions.IgnoreCase);
 
                 // Construct the include filter
