@@ -262,7 +262,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     bool isCurrentItemGrouped = false;
 
-
                     if (groups.Count > 0)
                     {
                         var lastGroup = groups[groups.Count - 1];
@@ -333,7 +332,6 @@ namespace Microsoft.PowerShell.Commands
                     currentEntry = _orderByProperty.CreateOrderByPropertyEntry(this, InputObject, CaseSensitive, _cultureInfo);
                 }
 
-
                 _orderedEntries.Add(currentEntry);
             }
         }
@@ -344,7 +342,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             // using OrderBy to get stable sort.
-            foreach(var entry in _orderedEntries.OrderBy(e => e, _orderByPropertyComparer))
+            foreach (var entry in _orderedEntries.OrderBy(e => e, _orderByPropertyComparer))
             {
                 DoGrouping(entry, NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
             }
