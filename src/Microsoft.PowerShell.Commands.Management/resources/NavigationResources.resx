@@ -168,9 +168,6 @@
   <data name="MoveItemInUse" xml:space="preserve">
     <value>Cannot move item because the item at '{0}' is in use.</value>
   </data>
-  <data name="RenameMultipleItemError" xml:space="preserve">
-      <value>Cannot rename item because the path '{0}' resolved to multiple items. Only one item can be renamed at a time.</value>
-  </data>
   <data name="RenameItemDoesntExist" xml:space="preserve">
     <value>Cannot rename because item at '{0}' does not exist.</value>
   </data>
