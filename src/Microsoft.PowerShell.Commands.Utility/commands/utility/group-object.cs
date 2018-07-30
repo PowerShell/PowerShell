@@ -24,10 +24,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="inputObjects">Input objects used to create a tuple.</param>
         /// <returns>Tuple object.</returns>
-        internal static object ArrayToTuple(object[] inputObjects)
+        internal static object ArrayToTuple<T>(IList<T> inputObjects)
         {
             Diagnostics.Assert(inputObjects != null, "inputObjects is null");
-            Diagnostics.Assert(inputObjects.Length > 0, "inputObjects is empty");
+            Diagnostics.Assert(inputObjects.Count > 0, "inputObjects is empty");
 
             return ArrayToTuple(inputObjects, 0);
         }
@@ -38,12 +38,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="inputObjects">Input objects used to create a tuple</param>
         /// <param name="startIndex">Start index of the array from which the objects have to considered for the tuple creation.</param>
         /// <returns>Tuple object.</returns>
-        internal static object ArrayToTuple(object[] inputObjects, int startIndex)
+        internal static object ArrayToTuple<T>(IList<T> inputObjects, int startIndex)
         {
             Diagnostics.Assert(inputObjects != null, "inputObjects is null");
-            Diagnostics.Assert(inputObjects.Length > 0, "inputObjects is empty");
+            Diagnostics.Assert(inputObjects.Count > 0, "inputObjects is empty");
 
-            switch (inputObjects.Length - startIndex)
+            switch (inputObjects.Count - startIndex)
             {
                 case 0:
                     return null;
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
             var currentObjectorderValues = currentObjectEntry.orderValues;
             if (currentObjectorderValues != null && currentObjectorderValues.Count > 0)
             {
-                object currentTupleObject = PSTuple.ArrayToTuple(currentObjectorderValues.ToArray());
+                object currentTupleObject = PSTuple.ArrayToTuple(currentObjectorderValues);
 
                 if (groupInfoDictionary.TryGetValue(currentTupleObject, out var currentGroupInfo))
                 {
