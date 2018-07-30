@@ -11,7 +11,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    ///
     /// Wraps Hitesh's xml serializer in such a way that it will select the proper serializer based on the data
     /// format.
     ///
@@ -20,7 +19,6 @@ namespace Microsoft.PowerShell
     internal class Serialization
     {
         /// <summary>
-        ///
         /// Describes the format of the data streamed between minishells, e.g. the allowed arguments to the minishell
         /// -outputformat and -inputformat command line parameters.
         ///
@@ -29,7 +27,6 @@ namespace Microsoft.PowerShell
         internal enum DataFormat
         {
             /// <summary>
-            ///
             /// text format -- i.e. stream text just as out-default would display it.
             ///
             /// </summary>
@@ -37,7 +34,6 @@ namespace Microsoft.PowerShell
             Text = 0,
 
             /// <summary>
-            ///
             /// XML-serialized format
             ///
             /// </summary>
@@ -45,7 +41,6 @@ namespace Microsoft.PowerShell
             XML = 1,
 
             /// <summary>
-            ///
             /// Indicates that the data should be discarded instead of processed.
             ///
             /// </summary>

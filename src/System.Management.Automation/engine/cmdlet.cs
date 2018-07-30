@@ -110,11 +110,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the parameter set
         /// </summary>
-        ///
         /// <param name="parameterSetName">
         /// The name of the valid parameter set.
         /// </param>
-        ///
         internal void SetParameterSetName(string parameterSetName)
         {
             _parameterSetName = parameterSetName;

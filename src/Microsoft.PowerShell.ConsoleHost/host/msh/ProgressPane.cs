@@ -9,7 +9,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    ///
     /// ProgressPane is a class that represents the "window" in which outstanding activities for which the host has received
     /// progress updates are shown.
     ///
@@ -19,12 +18,10 @@ namespace Microsoft.PowerShell
     class ProgressPane
     {
         /// <summary>
-        ///
         /// Constructs a new instance.
         ///
         /// </summary>
         /// <param name="ui">
-        ///
         /// An implementation of the PSHostRawUserInterface with which the pane will be shown and hidden.
         ///
         /// </param>
@@ -38,12 +35,10 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Indicates whether the pane is visible on the screen buffer or not.
         ///
         /// </summary>
         /// <value>
-        ///
         /// true if the pane is visible, false if not.
         ///
         ///</value>
@@ -59,7 +54,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Shows the pane in the screen buffer.  Saves off the content of the region of the buffer that will be overwritten so
         /// that it can be restored again.
         ///
@@ -142,7 +136,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Hides the pane by restoring the saved contents of the region of the buffer that the pane occupies.  If the pane is
         /// not showing, then does nothing.
         ///
@@ -166,12 +159,10 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Updates the pane with the rendering of the supplied PendingProgress, and shows it.
         ///
         /// </summary>
         /// <param name="pendingProgress">
-        ///
         /// A PendingProgress instance that represents the outstanding activities that should be shown.
         ///
         /// </param>

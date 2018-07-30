@@ -475,7 +475,6 @@ namespace System.Management.Automation.Runspaces
         #region Runspace - Remote Factory
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
@@ -496,7 +495,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeTable">
         /// The TypeTable to use while deserializing/serializing remote objects.
@@ -520,7 +518,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="connectionInfo"></param>
         /// <param name="host"></param>
@@ -560,7 +557,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="host"></param>
         /// <param name="connectionInfo"></param>
@@ -571,7 +567,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="connectionInfo"></param>
         /// <returns></returns>
@@ -585,7 +580,6 @@ namespace System.Management.Automation.Runspaces
         #region V3 Extensions
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeTable"></param>
         /// <returns></returns>
@@ -597,7 +591,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeTable"></param>
         /// <param name="processInstance"></param>

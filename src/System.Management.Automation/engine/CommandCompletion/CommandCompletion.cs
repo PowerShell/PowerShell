@@ -64,7 +64,6 @@ namespace System.Management.Automation
         #region public methods
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cursorIndex"></param>
@@ -86,7 +85,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="input">The input to complete</param>
         /// <param name="cursorIndex">The index of the cursor in the input</param>
@@ -104,7 +102,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="ast">Ast for pre-parsed input</param>
         /// <param name="tokens">Tokens for pre-parsed input</param>
@@ -693,7 +690,6 @@ namespace System.Management.Automation
         /// exists for legacy purpose only. It is used only in a remote interactive session from Win8 to Win7. V3 and forward
         /// uses completely different completers.
         /// </summary>
-        ///
         /// <remarks>
         /// The implementation of file name completion is completely different on V2 and V3 for remote scenarios. On PSv3, the
         /// CompletionResults are generated always on the target machine, and

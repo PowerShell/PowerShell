@@ -10,7 +10,6 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
     /// Implements the start-transcript cmdlet
     ///
     /// </summary>
@@ -20,7 +19,6 @@ namespace Microsoft.PowerShell.Commands
     public sealed class StartTranscriptCommand : PSCmdlet
     {
         /// <summary>
-        ///
         /// The name of the file in which to write the transcript. If not provided, the file indicated by the variable
         /// $TRANSCRIPT is used.  If neither the filename is supplied or $TRANSCRIPT is not set, the filename shall be $HOME/My
         /// Documents/PowerShell_transcript.YYYYMMDDmmss.txt
@@ -75,7 +73,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// Describes the current state of the activity.
         ///
         /// </summary>
@@ -144,7 +141,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// Starts the transcription
         /// </summary>
         protected override void BeginProcessing()
