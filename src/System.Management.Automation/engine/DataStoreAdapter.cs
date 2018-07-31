@@ -244,7 +244,6 @@ namespace System.Management.Automation
         /// otherwise, creating new drives from the filesystem should actually
         /// have this set to true as all the drives will have <string>: except
         /// for "/"
-        ///
         /// </summary>
         public bool VolumeSeparatedByColon { get; internal set; } = true;
 

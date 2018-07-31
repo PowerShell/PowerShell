@@ -1686,7 +1686,6 @@ namespace System.Management.Automation
         /// IsChild flag makes it possible for the pipeline to differentiate between
         /// a true v1 nested pipeline and the cmdlets calling cmdlets case. See bug
         /// 211462.
-        ///
         /// </summary>
         internal bool IsChild { get; private set; } = false;
 

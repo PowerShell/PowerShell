@@ -316,7 +316,6 @@ namespace System.Management.Automation
         ///
         /// for any other format, we simply treat the entire string
         /// as user name and set domain name to "".
-        ///
         /// </summary>
         private static bool IsValidUserName(string input,
                                             out string user,

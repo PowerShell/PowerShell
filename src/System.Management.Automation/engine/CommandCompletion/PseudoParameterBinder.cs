@@ -251,7 +251,6 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Runs the PowerShell parameter binding algorithm against a CommandAst,
     /// returning information about which parameters were bound.
-    ///
     /// </summary>
     public static class StaticParameterBinder
     {

@@ -6072,7 +6072,6 @@ namespace System.Management.Automation
         ///             D^
         ///         }
         ///     }
-        ///
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="ast"></param>

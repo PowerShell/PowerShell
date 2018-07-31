@@ -44,7 +44,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates a PowerShell event.
-        ///
         /// <param name="sourceIdentifier">
         /// An optional identifier that identifies the source event
         /// </param>
@@ -62,7 +61,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Generate a PowerShell event.
-        ///
         /// <param name="sourceIdentifier">
         /// An optional identifier that identifies the source event
         /// </param>
@@ -83,7 +81,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Generate a PowerShell event.
-        ///
         /// <param name="sourceIdentifier">
         /// An optional identifier that identifies the source event
         /// </param>
@@ -136,7 +133,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get the event subscription that corresponds to an identifier
-        ///
         /// <param name="sourceIdentifier">
         /// The identifier that identifies the source of the events
         /// </param>
@@ -145,7 +141,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -173,7 +168,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -205,7 +199,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -233,7 +226,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -265,7 +257,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -312,7 +303,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Unsubscribes from an event on an object.
-        ///
         /// <param name="subscriber">
         /// The subscriber associated with the event subscription
         /// </param>
@@ -377,7 +367,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -408,7 +397,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -448,7 +436,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -497,7 +484,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -528,7 +514,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -810,7 +795,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Unsubscribes from an event on an object.
-        ///
         /// <param name="subscriber">
         /// The subscriber associated with the event subscription
         /// </param>
@@ -822,7 +806,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Unsubscribes from an event on an object.
-        ///
         /// <param name="subscriber">
         /// The subscriber associated with the event subscription
         /// </param>
@@ -896,7 +879,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates a PowerShell event.
-        ///
         /// <param name="sourceIdentifier">
         /// An optional identifier that identifies the source event
         /// </param>
@@ -1079,7 +1061,6 @@ namespace System.Management.Automation
         /// To prevent starvation of the foreground script, we throttle the number of events
         /// that we process while the parser is waiting. If the parser is not waiting, we
         /// do not throttle the event processing.
-        ///
         /// </summary>
         internal void ProcessPendingActions()
         {
@@ -1308,7 +1289,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get the event subscription that corresponds to an identifier
-        ///
         /// <param name="sourceIdentifier">
         /// The identifier that identifies the source of the events
         /// </param>
@@ -1551,7 +1531,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Stop the timer if it's not null.
         /// Unsubscribes from all events.
-        ///
         /// <param name="disposing">
         /// Whether to actually dispose the object.
         /// </param>
@@ -1611,7 +1590,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates a PowerShell event.
-        ///
         /// <param name="sourceIdentifier">
         /// An optional identifier that identifies the source event
         /// </param>
@@ -1680,7 +1658,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get the event subscription that corresponds to an identifier
-        ///
         /// <param name="sourceIdentifier">
         /// The identifier that identifies the source of the events
         /// </param>
@@ -1692,7 +1669,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -1723,7 +1699,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -1758,7 +1733,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -1789,7 +1763,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Subscribes to an event on an object.
-        ///
         /// <param name="source">
         /// The source object that defines the event
         /// </param>
@@ -1824,7 +1797,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Unsubscribes from an event on an object.
-        ///
         /// <param name="subscriber">
         /// The subscriber associated with the event subscription
         /// </param>
@@ -2117,7 +2089,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a new instance of the PsEventHandler class for a given
         /// event manager, source identifier, and extra data
-        ///
         /// <param name="eventManager">
         /// The event manager to which we forward events.
         /// </param>
@@ -2487,7 +2458,6 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// Creates a new instance of the PSEventJob class.
-        ///
         /// <param name="eventManager">
         /// The event manager that controls the event subscriptions
         /// </param>
@@ -2573,7 +2543,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Invoke the script block
-        ///
         /// <param name="eventSubscriber">
         /// The subscriber that generated this event
         /// </param>

@@ -63,7 +63,6 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -85,12 +84,10 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <exception cref="HostException">
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
         ///     implemented by the external host
-        ///
         /// </exception>
         public override
         string
@@ -123,12 +120,10 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <exception cref="HostException">
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
         ///     implemented by the external host
-        ///
         /// </exception>
 
         public override
@@ -163,14 +158,12 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <param name="value">
         /// </param>
         /// <exception cref="HostException">
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
-        ///
         /// </exception>
 
         public override
@@ -192,7 +185,6 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <param name="foregroundColor">
         /// </param>
@@ -203,7 +195,6 @@ namespace System.Management.Automation.Internal.Host
         /// <exception cref="HostException">
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
-        ///
         /// </exception>
 
         public override
@@ -225,14 +216,12 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// <seealso cref="Write(string)"/>
         /// <seealso cref="WriteLine(string)"/>
         /// </summary>
         /// <exception cref="HostException">
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
         ///     implemented by the external host
-        ///
         /// </exception>
 
         public override
@@ -249,14 +238,12 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <param name="value">
         /// </param>
         /// <exception cref="HostException">
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
-        ///
         /// </exception>
 
         public override
@@ -295,7 +282,6 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <param name="foregroundColor">
         /// </param>
@@ -306,7 +292,6 @@ namespace System.Management.Automation.Internal.Host
         /// <exception cref="HostException">
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
-        ///
         /// </exception>
 
         public override
@@ -328,12 +313,10 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <exception cref="HostException">
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
-        ///
         /// </exception>
 
         public override
@@ -376,15 +359,12 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="preference"></param>
         /// <exception cref="ActionPreferenceStopException">
         /// If the debug preference is set to ActionPreference.Stop
-        ///
         /// </exception>
         /// <exception cref="ActionPreferenceStopException">
         /// If the debug preference is set to ActionPreference.Inquire and user requests to stop execution.
-        ///
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If the debug preference is not a valid ActionPreference value.
-        ///
         /// </exception>
 
         internal
@@ -475,17 +455,14 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// Ask the user whether to continue/stop or break to a nested prompt.
-        ///
         /// </summary>
         /// <param name="message">
         /// Message to display to the user. This routine will append the text "Continue" to ensure that people know what question
         /// they are answering.
-        ///
         /// </param>
         /// <param name="actionPreference">
         /// Preference setting which determines the behaviour.  This is by-ref and will be modified based upon what the user
         /// types. (e.g. YesToAll will change Inquire => NotifyContinue)
-        ///
         /// </param>
 
         private
@@ -552,12 +529,10 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <exception cref="HostException">
         /// if <paramref name="record"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
-        ///
         /// </exception>
 
         public override
@@ -585,12 +560,10 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <exception cref="HostException">
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
-        ///
         /// </exception>
 
         public override
@@ -633,12 +606,10 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <exception cref="HostException">
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
-        ///
         /// </exception>
 
         public override void WriteWarningLine(string message)
@@ -732,7 +703,6 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <param name="caption">
         /// </param>
@@ -742,16 +712,13 @@ namespace System.Management.Automation.Internal.Host
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="descriptions"/> is null.
-        ///
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If <paramref name="descriptions"/>.Count is less than 1.
-        ///
         /// </exception>
         /// <exception cref="HostException">
         /// if the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
-        ///
         /// </exception>
 
         public override
@@ -796,7 +763,6 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -806,7 +772,6 @@ namespace System.Management.Automation.Internal.Host
         /// <exception cref="HostException">
         /// if the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
-        ///
         /// </exception>
 
         public override

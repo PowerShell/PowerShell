@@ -2011,7 +2011,6 @@ namespace System.Management.Automation
         /// so that the additional information in
         /// <see cref="System.Management.Automation.ErrorRecord"/>
         /// is available.
-        ///
         /// <see cref="System.Management.Automation.Cmdlet.ThrowTerminatingError"/>
         /// always throws
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
@@ -3225,7 +3224,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Preference setting for displaying ProgressRecords when WriteProgress is called.
-        ///
         /// </summary>
         /// <value></value>
         internal ActionPreference ProgressPreference
@@ -3255,7 +3253,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Preference setting for displaying InformationRecords when WriteInformation is called.
-        ///
         /// </summary>
         /// <value></value>
         internal ActionPreference InformationPreference

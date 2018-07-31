@@ -12,7 +12,6 @@ namespace System.Management.Automation.Internal.Host
     {
         /// <summary>
         /// See base class
-        ///
         /// </summary>
 
         public override
@@ -33,7 +32,6 @@ namespace System.Management.Automation.Internal.Host
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
 
         public override

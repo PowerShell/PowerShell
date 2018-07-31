@@ -79,7 +79,6 @@ namespace System.Management.Automation
     /// runspace API.
     ///
     /// This class will handle the logic for direct invocation of script blocks.
-    ///
     /// </remarks>
     public partial class ScriptBlock
     {

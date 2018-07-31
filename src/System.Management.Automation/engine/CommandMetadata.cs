@@ -406,7 +406,6 @@ namespace System.Management.Automation
         /// By the time this constructor is called, information about CmdletAttribute
         /// and RuntimeDefinedParameters for the script block has been setup with
         /// the scriptblock object.
-        ///
         /// </remarks>
         internal CommandMetadata(ScriptBlock scriptblock, string commandName, ExecutionContext context)
         {
@@ -1288,7 +1287,6 @@ end
         /// (included in <see cref="SessionCapabilities.RemoteServer"/>)
         /// doesn't use all parameters of Get-Help
         /// and uses only a limited set of argument values for the parameters it does use.
-        ///
         /// <see cref="CommandMetadata"/> can be passed to <see cref="ProxyCommand.Create(CommandMetadata)"/> method to generate
         /// a body of a proxy function that forwards calls to the actual cmdlet, while exposing only the parameters
         /// listed in <see cref="CommandMetadata"/>.  Exposing only the restricted proxy function while making

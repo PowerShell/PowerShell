@@ -33,7 +33,6 @@ namespace System.Management.Automation
     ///
     /// These three classes are provided for exposing interfaces only. They
     /// should not be used in PowerShell engine code.
-    ///
     /// </remarks>
     //
     //  1. Design

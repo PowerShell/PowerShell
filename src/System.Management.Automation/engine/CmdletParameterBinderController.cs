@@ -3321,7 +3321,6 @@ namespace System.Management.Automation
         ///     - attempt to bind input value using type coercion
         /// - If parameter support ValueFromPipelineByPropertyName
         ///     - attempt to bind the vlue of the property with the matching name using type coercion
-        ///
         /// </remarks>
         private bool BindPipelineParametersPrivate(PSObject inputToOperateOn)
         {
@@ -4618,7 +4617,6 @@ namespace System.Management.Automation
         /// For parameterName:
         /// When the name is enclosed by quotes, the index returned should be the index of the second quote plus 1 (the length of the key if the key is in a valid format);
         /// When the name is not enclosed by quotes, the index returned should be the length of the key.
-        ///
         /// </returns>
         private static int GetValueToken(int index, string key, ref string name, bool getCmdletName)
         {
