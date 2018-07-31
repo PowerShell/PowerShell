@@ -3893,6 +3893,14 @@ namespace System.Management.Automation
             _members = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
         }
 
+        /// <summary>
+        /// Constructs this collection with an initial capacity
+        /// </summary>
+        internal PSMemberInfoInternalCollection(int capacity)
+        {
+            _members = new OrderedDictionary(capacity, StringComparer.OrdinalIgnoreCase);
+        }
+
         private void Replace(T oldMember, T newMember)
         {
             _members[newMember.Name] = newMember;
@@ -4893,6 +4901,7 @@ namespace System.Management.Automation
             }
         }
     }
+
 
     #endregion Member collection classes and its auxiliary classes
 }
