@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ArrayToTuple is a helper method used to create a tuple for the supplied input array.
         /// </summary>
+        /// <typeparam name="T">The first generic type parameter.</typeparam>
         /// <param name="inputObjects">Input objects used to create a tuple.</param>
         /// <returns>Tuple object.</returns>
         internal static object ArrayToTuple<T>(IList<T> inputObjects)
@@ -37,7 +38,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ArrayToTuple is a helper method used to create a tuple for the supplied input array.
         /// </summary>
-        /// <param name="inputObjects">Input objects used to create a tuple</param>
+        /// <typeparam name="T">The first generic type parameter.</typeparam>
+        /// <param name="inputObjects">Input objects used to create a tuple.</param>
         /// <param name="startIndex">Start index of the array from which the objects have to considered for the tuple creation.</param>
         /// <returns>Tuple object.</returns>
         internal static object ArrayToTuple<T>(IList<T> inputObjects, int startIndex)
@@ -143,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Values of the group.
+        /// Gets the values of the group.
         /// </summary>
         public ArrayList Values
         {
@@ -160,22 +162,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Number of objects in the group.
+        /// Gets the number of objects in the group.
         /// </summary>
         public int Count { get; internal set; }
 
         /// <summary>
-        /// The list of objects in this group.
+        /// Gets the list of objects in this group.
         /// </summary>
         public Collection<PSObject> Group { get; }
 
         /// <summary>
-        /// The name of the group.
+        /// Gets the name of the group.
         /// </summary>
         public string Name { get; }
 
         /// <summary>
-        /// The OrderByPropertyEntry used to build this group object.
+        /// Gets the OrderByPropertyEntry used to build this group object.
         /// </summary>
         internal OrderByPropertyEntry GroupValue { get; }
     }
@@ -204,14 +206,14 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Switches
 
         /// <summary>
-        /// Flatten the groups.
+        /// Gets or sets the NoElement parameter indicating of the groups should be flattened.
         /// </summary>
         /// <value></value>
         [Parameter]
         public SwitchParameter NoElement { get; set; }
 
         /// <summary>
-        /// the AsHashTable parameter.
+        /// Gets or sets the AsHashTable parameter.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "HashTable")]
@@ -220,16 +222,15 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsHashTable { get; set; }
 
         /// <summary>
-        ///
+        /// Gets or sets the AsString parameter.
         /// </summary>
-        /// <value></value>
         [Parameter(ParameterSetName = "HashTable")]
         public SwitchParameter AsString { get; set; }
 
         private readonly List<GroupInfo> _groups = new List<GroupInfo>();
         private readonly OrderByProperty _orderByProperty = new OrderByProperty();
         private readonly Dictionary<object, GroupInfo> _tupleToGroupInfoMappingDictionary = new Dictionary<object, GroupInfo>();
-        private readonly List<OrderByPropertyEntry> _orderedEntries = new List<OrderByPropertyEntry>();
+        private readonly List<OrderByPropertyEntry> _entriesToOrder = new List<OrderByPropertyEntry>();
         private OrderByPropertyComparer _orderByPropertyComparer;
         private bool _hasProcessedFirstInputObject;
 
@@ -241,21 +242,21 @@ namespace Microsoft.PowerShell.Commands
         /// Utility function called by Group-Object to create Groups.
         /// </summary>
         /// <param name="currentObjectEntry">Input object that needs to be grouped.</param>
-        /// <param name="noElement">true if we are not accumulating objects</param>
+        /// <param name="noElement">True if we are not accumulating objects.</param>
         /// <param name="groups">List containing Groups.</param>
         /// <param name="groupInfoDictionary">Dictionary used to keep track of the groups with hash of the property values being the key.</param>
         /// <param name="orderByPropertyComparer">The Comparer to be used while comparing to check if new group has to be created.</param>
         internal static void DoGrouping(OrderByPropertyEntry currentObjectEntry, bool noElement, List<GroupInfo> groups, Dictionary<object, GroupInfo> groupInfoDictionary,
             OrderByPropertyComparer orderByPropertyComparer)
         {
-            var currentObjectorderValues = currentObjectEntry.orderValues;
-            if (currentObjectorderValues != null && currentObjectorderValues.Count > 0)
+            var currentObjectOrderValues = currentObjectEntry.orderValues;
+            if (currentObjectOrderValues != null && currentObjectOrderValues.Count > 0)
             {
-                object currentTupleObject = PSTuple.ArrayToTuple(currentObjectorderValues);
+                object currentTupleObject = PSTuple.ArrayToTuple(currentObjectOrderValues);
 
                 if (groupInfoDictionary.TryGetValue(currentTupleObject, out var currentGroupInfo))
                 {
-                    //add this inputObject to an existing group
+                    // add this inputObject to an existing group
                     currentGroupInfo?.Add(currentObjectEntry.inputObject);
                 }
                 else
@@ -265,6 +266,7 @@ namespace Microsoft.PowerShell.Commands
                     if (groups.Count > 0)
                     {
                         var lastGroup = groups[groups.Count - 1];
+
                         // Check if the current input object can be converted to one of the already known types
                         // by looking up in the type to GroupInfo mapping.
                         if (orderByPropertyComparer.Compare(lastGroup.GroupValue, currentObjectEntry) == 0)
@@ -277,7 +279,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!isCurrentItemGrouped)
                     {
                         // create a new group
-                        s_tracer.WriteLine("Create a new group: {0}", currentObjectorderValues);
+                        s_tracer.WriteLine("Create a new group: {0}", currentObjectOrderValues);
                         GroupInfo newObjGrp = noElement
                             ? new GroupInfoNoElement(currentObjectEntry)
                             : new GroupInfo(currentObjectEntry);
@@ -332,17 +334,17 @@ namespace Microsoft.PowerShell.Commands
                     currentEntry = _orderByProperty.CreateOrderByPropertyEntry(this, InputObject, CaseSensitive, _cultureInfo);
                 }
 
-                _orderedEntries.Add(currentEntry);
+                _entriesToOrder.Add(currentEntry);
             }
         }
 
         /// <summary>
-        ///
+        /// Completes the processing of the gathered group objects.
         /// </summary>
         protected override void EndProcessing()
         {
             // using OrderBy to get stable sort.
-            foreach (var entry in _orderedEntries.OrderBy(e => e, _orderByPropertyComparer))
+            foreach (var entry in _entriesToOrder.OrderBy(e => e, _orderByPropertyComparer))
             {
                 DoGrouping(entry, NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
             }
