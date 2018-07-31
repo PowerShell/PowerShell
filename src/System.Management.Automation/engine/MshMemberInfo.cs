@@ -5019,7 +5019,6 @@ namespace System.Management.Automation
         }
     }
 
-
     #endregion Member collection classes and its auxiliary classes
 }
 
