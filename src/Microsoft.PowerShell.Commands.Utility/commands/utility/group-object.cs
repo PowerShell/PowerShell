@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Group-Object implementation.
     /// </summary>
-    [Cmdlet(VerbsData.Group, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113338", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.Group, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113338", RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "GroupInfo")]
     [OutputType(typeof(Hashtable), typeof(GroupInfo))]
     public class GroupObjectCommand : ObjectBase
     {
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the NoElement parameter indicating of the groups should be flattened.
         /// </summary>
         /// <value></value>
-        [Parameter]
+        [Parameter(ParameterSetName = "GroupInfo")]
         public SwitchParameter NoElement { get; set; }
 
         /// <summary>
@@ -233,6 +233,8 @@ namespace Microsoft.PowerShell.Commands
         private readonly List<OrderByPropertyEntry> _entriesToOrder = new List<OrderByPropertyEntry>();
         private OrderByPropertyComparer _orderByPropertyComparer;
         private bool _hasProcessedFirstInputObject;
+        private bool _hasDifferentValueTypes;
+        private Type[] _valueTypeTuple;
 
         #endregion
 
@@ -247,6 +249,56 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="groupInfoDictionary">Dictionary used to keep track of the groups with hash of the property values being the key.</param>
         /// <param name="orderByPropertyComparer">The Comparer to be used while comparing to check if new group has to be created.</param>
         internal static void DoGrouping(OrderByPropertyEntry currentObjectEntry, bool noElement, List<GroupInfo> groups, Dictionary<object, GroupInfo> groupInfoDictionary,
+            OrderByPropertyComparer orderByPropertyComparer)
+        {
+            var currentObjectorderValues = currentObjectEntry.orderValues;
+            if (currentObjectorderValues != null && currentObjectorderValues.Count > 0)
+            {
+                object currentTupleObject = PSTuple.ArrayToTuple(currentObjectorderValues.ToArray());
+
+                if (groupInfoDictionary.TryGetValue(currentTupleObject, out var currentGroupInfo))
+                {
+                    //add this inputObject to an existing group
+                    currentGroupInfo?.Add(currentObjectEntry.inputObject);
+                }
+                else
+                {
+                    bool isCurrentItemGrouped = false;
+
+                    for (int groupsIndex = 0; groupsIndex < groups.Count; groupsIndex++)
+                    {
+                        // Check if the current input object can be converted to one of the already known types
+                        // by looking up in the type to GroupInfo mapping.
+                        if (orderByPropertyComparer.Compare(groups[groupsIndex].GroupValue, currentObjectEntry) == 0)
+                        {
+                            groups[groupsIndex].Add(currentObjectEntry.inputObject);
+                            isCurrentItemGrouped = true;
+                            break;
+                        }
+                    }
+
+                    if (!isCurrentItemGrouped)
+                    {
+                        // create a new group
+                        s_tracer.WriteLine("Create a new group: {0}", currentObjectorderValues);
+                        GroupInfo newObjGrp = noElement ? new GroupInfoNoElement(currentObjectEntry) : new GroupInfo(currentObjectEntry);
+                        groups.Add(newObjGrp);
+
+                        groupInfoDictionary.Add(currentTupleObject, newObjGrp);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Utility function called by Group-Object to create Groups.
+        /// </summary>
+        /// <param name="currentObjectEntry">Input object that needs to be grouped.</param>
+        /// <param name="noElement">True if we are not accumulating objects.</param>
+        /// <param name="groups">List containing Groups.</param>
+        /// <param name="groupInfoDictionary">Dictionary used to keep track of the groups with hash of the property values being the key.</param>
+        /// <param name="orderByPropertyComparer">The Comparer to be used while comparing to check if new group has to be created.</param>
+        internal static void DoOrderedGrouping(OrderByPropertyEntry currentObjectEntry, bool noElement, List<GroupInfo> groups, Dictionary<object, GroupInfo> groupInfoDictionary,
             OrderByPropertyComparer orderByPropertyComparer)
         {
             var currentObjectOrderValues = currentObjectEntry.orderValues;
@@ -318,6 +370,20 @@ namespace Microsoft.PowerShell.Commands
 
                     _orderByProperty.ProcessExpressionParameter(this, Property);
 
+                    if (AsString && !AsHashTable)
+                    {
+                        ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectWithHashTable);
+                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, AsString);
+                        ThrowTerminatingError(er);
+                    }
+
+                    if (AsHashTable && !AsString && _orderByProperty.MshParameterList.Count != 1)
+                    {
+                        ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectSingleProperty);
+                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);
+                        ThrowTerminatingError(er);
+                    }
+
                     currentEntry = _orderByProperty.CreateOrderByPropertyEntry(this, InputObject, CaseSensitive, _cultureInfo);
                     bool[] ascending = new bool[currentEntry.orderValues.Count];
                     for (int index = 0; index < currentEntry.orderValues.Count; index++)
@@ -335,6 +401,34 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 _entriesToOrder.Add(currentEntry);
+
+                var currentEntryOrderValues = currentEntry.orderValues;
+                if (!_hasDifferentValueTypes)
+                {
+                    if (_valueTypeTuple == null)
+                    {
+                        _valueTypeTuple = currentEntryOrderValues.Select(c => PSObject.Base(c.PropertyValue)?.GetType()).ToArray();
+                    }
+                    else
+                    {
+                        if (_valueTypeTuple.Length != currentEntryOrderValues.Count)
+                        {
+                            _hasDifferentValueTypes = true;
+                        }
+                        else
+                        {
+                            for (int i = 0; i < _valueTypeTuple.Length; i++)
+                            {
+                                var type = _valueTypeTuple[i];
+                                if (PSObject.Base(currentEntryOrderValues[i].PropertyValue)?.GetType() != type)
+                                {
+                                    _hasDifferentValueTypes = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -343,10 +437,29 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            // using OrderBy to get stable sort.
-            foreach (var entry in _entriesToOrder.OrderBy(e => e, _orderByPropertyComparer))
+            if (!_hasDifferentValueTypes)
             {
-                DoGrouping(entry, NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
+                // using OrderBy to get stable sort.
+                // fast path when we only have the same object types to group
+                foreach (var entry in _entriesToOrder.OrderBy(e => e, _orderByPropertyComparer))
+                {
+                    DoOrderedGrouping(entry, NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
+                    if (Stopping)
+                    {
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var entry in _entriesToOrder)
+                {
+                    DoGrouping(entry, NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
+                    if (Stopping)
+                    {
+                        return;
+                    }
+                }
             }
 
             s_tracer.WriteLine(_groups.Count);
@@ -354,27 +467,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (AsHashTable)
                 {
-                    Hashtable table = CollectionsUtil.CreateCaseInsensitiveHashtable();
+                    Hashtable hashtable = CollectionsUtil.CreateCaseInsensitiveHashtable();
                     try
                     {
-                        foreach (GroupInfo grp in _groups)
+                        if (AsString)
                         {
-                            if (AsString)
+                            foreach (GroupInfo grp in _groups)
                             {
-                                table.Add(grp.Name, grp.Group);
+                                hashtable.Add(grp.Name, grp.Group);
                             }
-                            else
+                        }
+                        else
+                        {
+                            foreach (GroupInfo grp in _groups)
                             {
-                                if (grp.Values.Count == 1)
-                                {
-                                    table.Add(PSObject.Base(grp.Values[0]), grp.Group);
-                                }
-                                else
-                                {
-                                    ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectSingleProperty);
-                                    ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);
-                                    ThrowTerminatingError(er);
-                                }
+                                hashtable.Add(PSObject.Base(grp.Values[0]), grp.Group);
                             }
                         }
                     }
@@ -384,20 +491,11 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    WriteObject(table);
+                    WriteObject(hashtable);
                 }
                 else
                 {
-                    if (AsString)
-                    {
-                        ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectWithHashTable);
-                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, AsString);
-                        ThrowTerminatingError(er);
-                    }
-                    else
-                    {
-                        WriteObject(_groups, true);
-                    }
+                    WriteObject(_groups, true);
                 }
             }
         }
