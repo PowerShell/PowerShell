@@ -4213,15 +4213,6 @@ param(
     [string[]]
     ${Category},
 
-    [string[]]
-    ${Component},
-
-    [string[]]
-    ${Functionality},
-
-    [string[]]
-    ${Role},
-
     [Parameter(ParameterSetName='DetailedView', Mandatory=$true)]
     [switch]
     ${Detailed},
@@ -4237,6 +4228,15 @@ param(
     [Parameter(ParameterSetName='Parameters', Mandatory=$true)]
     [string]
     ${Parameter},
+
+    [string[]]
+    ${Component},
+
+    [string[]]
+    ${Functionality},
+
+    [string[]]
+    ${Role},
 
     [Parameter(ParameterSetName='Online', Mandatory=$true)]
     [switch]
