@@ -112,11 +112,17 @@ Describe "History cmdlet test cases" -Tags "CI" {
     }
 
     It "HistoryInfo calculates Duration" {
-        $ctor = [Microsoft.PowerShell.Commands.HistoryInfo].GetConstructors([Reflection.BindingFlags]::NonPublic -bor [Reflection.BindingFlags]::Instance).Where{$_.GetParameters().Length -eq 5}
         $start = [datetime]::new(2001, 01, 01, 10, 01, 01)
         $duration = [timespan] "1:2:21"
         $end = $start + $duration
-        $hi = $ctor.Invoke((1, "command", [Management.Automation.Runspaces.PipelineState]::Completed, $start, $end))
-        $hi.Duration | Should Be $duration
+        $history = [PSCustomObject] @{
+                CommandLine="command"
+                ExecutionStatus=[Management.Automation.Runspaces.PipelineState]::Completed
+                StartExecutionTime=$start
+                EndExecutionTime=$end
+        }
+        $history | Add-History
+        $h = Get-History -count 1
+        $h.Duration | Should Be $duration
     }
 }
