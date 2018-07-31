@@ -502,7 +502,6 @@ namespace System.Management.Automation
             _instanceMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(instanceMemberCapacity);
         }
 
-
         /// <summary>
         /// Initializes a new instance of PSObject wrapping obj (accessible through BaseObject).
         /// </summary>
