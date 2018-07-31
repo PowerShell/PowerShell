@@ -801,9 +801,7 @@ namespace System.Management.Automation
                 }
             }
 
-            string firstString = first as string;
-
-            if (firstString != null)
+            if (first is string firstString)
             {
                 string secondString = second as string;
                 if (secondString == null)
@@ -834,6 +832,7 @@ namespace System.Management.Automation
             try
             {
                 secondConverted = LanguagePrimitives.ConvertTo(second, firstType, culture);
+
             }
             catch (PSInvalidCastException e)
             {
@@ -841,9 +840,7 @@ namespace System.Management.Automation
                                                          first.ToString(), second.ToString(), e.Message);
             }
 
-            IComparable firstComparable = first as IComparable;
-
-            if (firstComparable != null)
+            if (first is IComparable firstComparable)
             {
                 return firstComparable.CompareTo(secondConverted);
             }
@@ -1646,9 +1643,9 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static T ConvertTo<T>(object valueToConvert)
         {
-            if (valueToConvert is T)
+            if (valueToConvert is T variable)
             {
-                return (T)valueToConvert;
+                return variable;
             }
             return (T)ConvertTo(valueToConvert, typeof(T), true, CultureInfo.InvariantCulture, null);
         }
@@ -1664,9 +1661,9 @@ namespace System.Management.Automation
         /// <returns>false for conversion failure, true for success</returns>
         public static bool TryConvertTo<T>(object valueToConvert, out T result)
         {
-            if (valueToConvert is T)
+            if (valueToConvert is T variable)
             {
-                result = (T)valueToConvert;
+                result = variable;
                 return true;
             }
             return TryConvertTo(valueToConvert, CultureInfo.InvariantCulture, out result);
@@ -1684,10 +1681,16 @@ namespace System.Management.Automation
         /// <returns>false for conversion failure, true for success</returns>
         public static bool TryConvertTo<T>(object valueToConvert, IFormatProvider formatProvider, out T result)
         {
-            result = default(T);
+            result = default;
             try
             {
-                result = (T)ConvertTo(valueToConvert, typeof(T), formatProvider);
+                if (TryConvertTo(valueToConvert, typeof(T), formatProvider, out var res))
+                {
+                    result = (T) res;
+                    return true;
+                }
+
+                return false;
             }
             catch (InvalidCastException)
             {
@@ -1697,7 +1700,6 @@ namespace System.Management.Automation
             {
                 return false;
             }
-            return true;
         }
 
         /// <summary>
@@ -1729,20 +1731,31 @@ namespace System.Management.Automation
         /// <returns>false for conversion failure, true for success</returns>
         public static bool TryConvertTo(object valueToConvert, Type resultType, IFormatProvider formatProvider, out object result)
         {
-            result = null;
+            result = default;
             try
             {
-                result = ConvertTo(valueToConvert, resultType, formatProvider);
+                using (typeConversion.TraceScope("Converting \"{0}\" to \"{1}\".", valueToConvert, resultType))
+                {
+                    if (resultType == null)
+                    {
+                        return false;
+                    }
+
+                    var conversion = FigureConversion(valueToConvert, resultType, out var debase);
+                    if (conversion.Rank== ConversionRank.None)
+                    {
+                        return false;
+                    }
+                    result = conversion.Invoke(debase ? PSObject.Base(valueToConvert) : valueToConvert,
+                        resultType, true, debase ? (PSObject)valueToConvert : null,
+                        formatProvider, null);
+                    return true;
+                }
             }
             catch (InvalidCastException)
             {
                 return false;
             }
-            catch (ArgumentException)
-            {
-                return false;
-            }
-            return true;
         }
 
         #endregion public type conversion
