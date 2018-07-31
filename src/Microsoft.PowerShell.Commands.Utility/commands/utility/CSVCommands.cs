@@ -1278,6 +1278,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _alreadyWarnedUnspecifiedName = alreadyWriteOutWarning;
             ReadHeader();
+            var prevalidated = false;
             while (true)
             {
                 Collection<string> values = ParseNextRecord();
@@ -1290,7 +1291,8 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                PSObject result = BuildMshobject(TypeName, Header, values, _delimiter);
+                PSObject result = BuildMshobject(TypeName, Header, values, _delimiter, prevalidated);
+                prevalidated = true;
                 _cmdlet.WriteObject(result);
             }
             alreadyWriteOutWarning = _alreadyWarnedUnspecifiedName;
@@ -1611,10 +1613,10 @@ namespace Microsoft.PowerShell.Commands
 
         private
         PSObject
-        BuildMshobject(string type, IList<string> names, Collection<string> values, char delimiter)
+        BuildMshobject(string type, IList<string> names, Collection<string> values, char delimiter, bool preValidated = false)
         {
             //string[] namesarray = null;
-            PSObject result = new PSObject();
+            PSObject result = new PSObject(names.Count);
             char delimiterlocal = delimiter;
             int unspecifiedNameIndex = 1;
             for (int i = 0; i <= names.Count - 1; i++)
@@ -1635,7 +1637,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = values[i];
                 }
-                result.Properties.Add(new PSNoteProperty(name, value));
+
+                result.Properties.Add(new PSNoteProperty(name, value), preValidated);
             }
 
             if (!_alreadyWarnedUnspecifiedName && unspecifiedNameIndex != 1)
@@ -1644,7 +1647,7 @@ namespace Microsoft.PowerShell.Commands
                 _alreadyWarnedUnspecifiedName = true;
             }
 
-            if (type != null && type.Length > 0)
+            if (!string.IsNullOrEmpty(type))
             {
                 result.TypeNames.Clear();
                 result.TypeNames.Add(type);
