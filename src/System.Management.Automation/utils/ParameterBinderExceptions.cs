@@ -26,7 +26,6 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
-        ///
         /// <!--
         /// InvocationInfo.MyCommand.Name == {0}
         /// -->

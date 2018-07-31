@@ -135,7 +135,6 @@ namespace System.Management.Automation
         /// This will avoid one help file getting loaded again and again.
         /// (Which should not happen unless some provider is pointing
         /// to a help file that actually doesn't contain the help for it).
-        ///
         /// </summary>
         private readonly Hashtable _helpFiles = new Hashtable();
 

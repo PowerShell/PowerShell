@@ -226,8 +226,6 @@ namespace System.Management.Automation
     ///
     /// For instance, the Exception flag will enable tracing on these methods:
     ///     TraceException
-    ///
-    ///
     /// </summary>
     /// <remarks>
     /// To get an instance of this class a user should define a static

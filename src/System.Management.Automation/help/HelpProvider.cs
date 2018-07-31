@@ -39,7 +39,6 @@ namespace System.Management.Automation
     ///     2. ExactMatchHelp:
     ///     3. SearchHelp:
     ///     4. ProcessForwardedHelp
-    ///
     /// </summary>
     internal abstract class HelpProvider
     {
@@ -205,7 +204,6 @@ namespace System.Management.Automation
         ///
         /// This will be called either from search help or exact match help
         /// to find the error.
-        ///
         /// </summary>
         /// <param name="exception"></param>
         /// <param name="target"></param>

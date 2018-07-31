@@ -27,7 +27,6 @@ namespace System.Management.Automation
     ///     c. CommandLifecycleEvent
     ///     d. ProviderLifecycleEvent
     ///     e. SettingsEvent
-    ///
     /// </summary>
     internal abstract class LogProvider
     {

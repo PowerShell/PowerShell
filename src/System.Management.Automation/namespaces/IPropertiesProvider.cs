@@ -111,7 +111,6 @@ namespace System.Management.Automation.Provider
         /// An <see cref="System.Management.Automation.PSObject"/> can be used as a property bag for the
         /// properties that need to be returned if the <paramref name="providerSpecificPickList"/> contains
         /// multiple properties to write.
-        ///
         /// <paramref name="propertyValue"/> is a property bag containing the properties that should be set.
         /// See <see cref="System.Management.Automation.PSObject"/> for more information.
         /// </remarks>

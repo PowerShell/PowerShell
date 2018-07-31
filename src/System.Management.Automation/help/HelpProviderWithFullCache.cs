@@ -13,7 +13,6 @@ namespace System.Management.Automation
     /// help contents for this provider can be loaded once and be used for later
     /// search. So logically class derived from this class only need to provide
     /// a way to load and initialize help cache.
-    ///
     /// </summary>
     internal abstract class HelpProviderWithFullCache : HelpProviderWithCache
     {

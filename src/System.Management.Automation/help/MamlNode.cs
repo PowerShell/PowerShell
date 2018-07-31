@@ -187,7 +187,6 @@ namespace System.Management.Automation
         ///
         ///         The outside PSObject will have a property
         ///             attribute => "value"
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -294,7 +293,6 @@ namespace System.Management.Automation
         /// We are making each property value is an array (PSObject[]) to start with.
         /// At the end, SimplifyProperties will be called to reduce PSObject[] containing
         /// only one element to PSObject itself.
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -360,7 +358,6 @@ namespace System.Management.Automation
         /// an node with maml formatting node inside is treated. The side effect of this
         /// is that the properties for outside mshObject will be lost. An example of this
         /// is that,
-        ///
         /// <command>
         ///     <description attrib1="value1">
         ///         <para></para>
@@ -743,7 +740,6 @@ namespace System.Management.Automation
         ///    </para>
         ///    In this case, an PSObject of type "MamlParaTextItem" will be created with following property
         ///        a. text="para text"
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <param name="newLine"></param>
@@ -805,7 +801,6 @@ namespace System.Management.Automation
         ///        a. tag=" 1. " or " 2. "
         ///        b. text="text for list item 1" or "text for list item 2"
         /// In the case of unordered list, similar PSObject will created with type to be "MamlUnorderedListText" and tag="*"
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -1086,7 +1081,6 @@ namespace System.Management.Automation
         /// is to remove that fixed amount from the text.
         ///
         /// For example, in xml,
-        ///
         /// <preformatted>
         ///     void function()
         ///     {

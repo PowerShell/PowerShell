@@ -20,7 +20,6 @@ namespace System.Management.Automation
     ///
     /// EventLogLogProvider will be packaged in the same dll as Msh Log Engine since EventLog should
     /// always be available.
-    ///
     /// </summary>
     internal class EventLogLogProvider : LogProvider
     {

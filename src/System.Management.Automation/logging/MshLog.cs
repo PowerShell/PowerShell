@@ -396,7 +396,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// LogProviderHealthEvent: Log a command health event.
-        ///
         /// </summary>
         /// <param name="executionContext">Execution context for the engine that is running</param>
         /// <param name="exception">Exception associated with this event</param>
@@ -520,7 +519,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// LogPipelineExecutionDetailEvent: Log a pipeline execution detail event.
-        ///
         /// </summary>
         /// <param name="executionContext">Execution Context for the current running engine</param>
         /// <param name="detail">detail to be logged for this pipeline execution detail</param>
@@ -586,7 +584,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// LogProviderHealthEvent: Log a Provider health event.
-        ///
         /// </summary>
         /// <param name="executionContext">Execution context for the engine that is running</param>
         /// <param name="providerName">Name of the provider</param>

@@ -1010,7 +1010,6 @@ namespace System.Management.Automation.Provider
         /// <param name="recurse">
         /// Tells the provider to recurse sub-containers when copying.
         /// </param>
-        ///
         /// <returns>
         /// Nothing is returned, but all the objects that were copied should be written to the WriteItemObject method.
         /// </returns>

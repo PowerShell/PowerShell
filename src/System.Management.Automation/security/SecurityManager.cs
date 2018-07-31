@@ -49,7 +49,6 @@ namespace Microsoft.PowerShell
     ///    suppress this warning message, right-click on the file in File Explorer,
     ///    select "Properties," and then "Unblock."  Requires Shell.
     /// Bypass - No files must be signed, and internet origin is not verified
-    ///
     /// </summary>
     public sealed class PSAuthorizationManager : AuthorizationManager
     {

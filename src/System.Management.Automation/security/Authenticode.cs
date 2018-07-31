@@ -67,18 +67,15 @@ namespace System.Management.Automation
         /// <param name="hashAlgorithm"> The name of the hash
         /// algorithm to use. </param>
         /// <returns> Does not return a value </returns>
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if argument fileName or certificate is null.
         /// </exception>
-        ///
         /// <exception cref="System.ArgumentException">
         /// Thrown if
         /// -- argument fileName is empty OR
         /// -- the specified certificate is not suitable for
         ///    signing code
         /// </exception>
-        ///
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
         /// It is not possible to know exactly what went wrong.
@@ -89,7 +86,6 @@ namespace System.Management.Automation
         ///  -- certificate password mismatch
         ///  -- etc
         /// </exception>
-        ///
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found
         /// </exception>
@@ -267,11 +263,9 @@ namespace System.Management.Automation
         /// <exception cref="System.ArgumentException">
         /// Thrown if argument fileName is empty.
         /// </exception>
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if argument fileName is null
         /// </exception>
-        ///
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found.
         /// </exception>

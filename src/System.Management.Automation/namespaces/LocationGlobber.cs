@@ -1759,7 +1759,6 @@ namespace System.Management.Automation
         /// the current working drive.
         ///
         /// If the path refers to a non-existent drive, this parameter is set to null, and an exception is thrown.
-        ///
         /// </param>
         /// <param name="providerInstance">
         /// The provider instance that was used.
@@ -2586,7 +2585,6 @@ namespace System.Management.Automation
         /// Calling this method for the path above would return all files that end in 'a' and
         /// any other two characters followed by ".cs" in all the subdirectories of
         /// foo that have a bar subdirectory.
-        ///
         /// </remarks>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/>, <paramref name="provider"/>, or
@@ -3551,12 +3549,10 @@ namespace System.Management.Automation
         /// Calling this method for the path above would return all files that end in 'a' and
         /// any other two characters followed by ".cs" in all the subdirectories of
         /// foo that have a bar subdirectory.
-        ///
         /// </remarks>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="provider"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
@@ -4429,7 +4425,6 @@ namespace System.Management.Automation
         /// 2. Any ` not followed by a ` is converted to a \
         /// 3. Any ` that is followed by a ` collapses the two into a single `
         /// 4. Any other character is immediately appended to the result.
-        ///
         /// </remarks>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.

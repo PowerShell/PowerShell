@@ -27,7 +27,6 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// Defines the different Execution Policies supported by the
     /// PSAuthorizationManager class.
-    ///
     /// </summary>
     public enum ExecutionPolicy
     {
@@ -70,7 +69,6 @@ namespace Microsoft.PowerShell
     /// policy. They are in the following priority, with successive
     /// elements overriding the items that precede them:
     /// LocalMachine -> CurrentUser -> Runspace
-    ///
     /// </summary>
     public enum ExecutionPolicyScope
     {
@@ -100,7 +98,6 @@ namespace System.Management.Automation.Internal
 {
     /// <summary>
     /// The SAFER policy associated with this file
-    ///
     /// </summary>
     internal enum SaferPolicy
     {
