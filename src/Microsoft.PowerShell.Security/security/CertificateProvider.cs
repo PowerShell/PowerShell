@@ -870,7 +870,6 @@ namespace Microsoft.PowerShell.Commands
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         /// </exception>
-        ///
         protected override void NewItem(
                 string path,
                 string type,

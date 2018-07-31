@@ -20,7 +20,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Default constructor
         /// </summary>
-
         internal CommandProcessorBase()
         {
         }
@@ -674,11 +673,11 @@ namespace System.Management.Automation
         ///
         /// This default implementation reads the next pipeline object and sets
         /// it as the CurrentPipelineObject in the InternalCommand.
+        /// Does not throw.
         /// </summary>
         /// <returns>
         /// True if read succeeds.
         /// </returns>
-        /// does not throw
         internal virtual bool Read()
         {
             // Prepare the default value parameter list if this is the first call to Read
