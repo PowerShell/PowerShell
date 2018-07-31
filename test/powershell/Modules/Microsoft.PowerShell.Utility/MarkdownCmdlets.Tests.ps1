@@ -474,7 +474,7 @@ bool function()`n{`n}
 
             $text = "Header"
             $mdText = "# $text"
-            $expectedString = GetExpectedString -ElementType Header1 -Text $text
+            $expectedString = GetExpectedString -ElementType Header1 -Text $text -VT100Support $true
             $mdFile = Join-Path $TestDrive "test.md"
             Set-Content -Path $mdFile -Value $mdText
 
@@ -486,7 +486,7 @@ bool function()`n{`n}
         It "Can show markdown piped directly to cmdlet" {
             $text = "Header"
             $mdText = "# $text"
-            $expectedString = GetExpectedString -ElementType Header1 -Text $text
+            $expectedString = GetExpectedString -ElementType Header1 -Text $text -VT100Support $true
 
             $result = $mdText | Show-Markdown
             $result | Should -BeExactly $expectedString
