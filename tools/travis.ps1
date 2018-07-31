@@ -253,6 +253,7 @@ elseif($Stage -eq 'Build')
 
     # Running tests, which require sudo.
     $sudoPesterParam = $noSudoPesterParam.Clone()
+    $sudoPesterParam.Remove('Path')
     $sudoPesterParam['Tag'] = @('RequireSudoOnUnix')
     $sudoPesterParam['ExcludeTag'] = @()
     $sudoPesterParam['Sudo'] = $true
@@ -282,9 +283,11 @@ elseif($Stage -eq 'Build')
 
     # Determine whether the build passed
     try {
-        $allTestResutls = @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject) + $noSudoResultsWithExpFeatures + $sudoResultsWithExpFeatures
+        $allTestResultsWithNoExpFeature = @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject)
+        $allTestResultsWithExpFeatures = $noSudoResultsWithExpFeatures + $sudoResultsWithExpFeatures
         # this throws if there was an error
-        $allTestResutls | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
+        $allTestResultsWithNoExpFeature | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
+        $allTestResultsWithExpFeatures  | ForEach-Object { Test-PSPesterResults -ResultObject $_ -CanHaveNoResult }
         $result = "PASS"
     }
     catch {

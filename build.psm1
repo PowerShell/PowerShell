@@ -1393,12 +1393,17 @@ function Test-PSPesterResults
     [CmdletBinding(DefaultParameterSetName='file')]
     param(
         [Parameter(ParameterSetName='file')]
-        [string]$TestResultsFile = "pester-tests.xml",
+        [string] $TestResultsFile = "pester-tests.xml",
+
         [Parameter(ParameterSetName='file')]
-        [string]$TestArea = 'test/powershell',
-        [Parameter(ParameterSetName='PesterPassThruObject',Mandatory)]
-        [pscustomobject] $ResultObject
-        )
+        [string] $TestArea = 'test/powershell',
+
+        [Parameter(ParameterSetName='PesterPassThruObject', Mandatory)]
+        [pscustomobject] $ResultObject,
+
+        [Parameter(ParameterSetName='PesterPassThruObject')]
+        [switch] $CanHaveNoResult
+    )
 
     if($PSCmdLet.ParameterSetName -eq 'file')
     {
@@ -1429,7 +1434,7 @@ function Test-PSPesterResults
     }
     elseif ($PSCmdLet.ParameterSetName -eq 'PesterPassThruObject')
     {
-        if ($ResultObject.TotalCount -le 0)
+        if ($ResultObject.TotalCount -le 0 -and -not $CanHaveNoResult)
         {
             throw 'NO TESTS RUN'
         }
