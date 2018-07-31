@@ -59,7 +59,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -69,14 +68,12 @@ namespace Microsoft.PowerShell
         /// If <paramref name="descriptions"/> is null
         ///    OR
         ///    at least one FieldDescription in <paramref name="descriptions"/> is null
-        ///
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If <paramref name="descriptions"/> count is less than 1
         ///    OR
         ///    at least one FieldDescription.AssemblyFullName in <paramref name="descriptions"/> is
         ///     null or empty
-        ///
         /// </exception>
         /// <exception cref="PromptingException">
         /// If a FieldDescription in <paramref name="descriptions"/> specifies one of SecureString or
@@ -84,12 +81,10 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    at least one FieldDescription in <paramref name="descriptions"/> specifies an array
         ///     whose rank is less than 1.
-        ///
         /// </exception>
         /// <exception cref="PSInvalidCastException">
         /// If the converting the user input to the prompt field type fails unless it is caused by
         ///     OverflowException or FormatException
-        ///
         /// </exception>
 
         public override

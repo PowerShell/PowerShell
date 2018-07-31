@@ -43,7 +43,6 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// Class ConsoleControl is used to wrap the various win32 console APIs 1:1 (i.e. at a low level, without attempting to be a
     /// "true" object-oriented library.
-    ///
     /// </summary>
 
     internal static class ConsoleControl
@@ -479,7 +478,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Types of control ConsoleBreakSignals received by break Win32Handler delegates
-        ///
         /// </summary>
 
         internal enum ConsoleBreakSignal : uint
@@ -628,7 +626,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// flags used by ConsoleControl.GetMode and ConsoleControl.SetMode
-        ///
         /// </summary>
         [Flags]
         internal enum ConsoleModes : uint
@@ -654,7 +651,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Returns a mask of ConsoleModes flags describing the current modality of the console
-        ///
         /// </summary>
         /// <exception cref="HostException">
         /// If Win32's GetConsoleMode fails
@@ -682,19 +678,15 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Sets the current mode of the console device
-        ///
         /// </summary>
         /// <param name="consoleHandle">
         /// Handle to the console device returned by GetInputHandle
-        ///
         /// </param>
         /// <param name="mode">
         /// Mask of mode flags
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's SetConsoleMode fails
-        ///
         /// </exception>
 
         internal static void SetMode(ConsoleHandle consoleHandle, ConsoleModes mode)
@@ -720,31 +712,24 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Reads input from the console device according to the mode in effect (see GetMode, SetMode)
-        ///
         /// </summary>
         /// <param name="consoleHandle"></param>
         /// Handle to the console device returned by GetInputHandle
-        ///
         /// <param name="initialContent">
         /// Initial contents of the edit buffer, if any. charactersToRead should be at least as large as the length of this string.
-        ///
         /// </param>
         /// <param name="charactersToRead">
         /// Number of characters to read from the device.
-        ///
         /// </param>
         /// <param name="endOnTab">
         /// true to allow the user to terminate input by hitting the tab or shift-tab key, in addition to the enter key
-        ///
         /// </param>
         /// <param name="keyState">
         /// bit mask indicating the state of the control/shift keys at the point input was terminated.
-        ///
         /// </param>
         /// <returns></returns>
         /// <exception cref="HostException">
         /// If Win32's ReadConsole fails
-        ///
         /// </exception>
 
         internal static string ReadConsole(ConsoleHandle consoleHandle, string initialContent,
@@ -796,15 +781,12 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where input is read
-        ///
         /// </param>
         /// <param name="buffer">
         /// array where data read are stored
-        ///
         /// </param>
         /// <returns>
         /// actual number of input records read
-        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's ReadConsoleInput fails
@@ -838,15 +820,12 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where input is peeked
-        ///
         /// </param>
         /// <param name="buffer">
         /// array where data read are stored
-        ///
         /// </param>
         /// <returns>
         /// actual number of input records peeked
-        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's PeekConsoleInput fails
@@ -886,11 +865,9 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where the number of console input events is obtained
-        ///
         /// </param>
         /// <returns>
         /// number of console input events
-        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's GetNumberOfConsoleInputEvents fails
@@ -921,7 +898,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where the input buffer is flushed
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's FlushConsoleInputBuffer fails
@@ -955,11 +931,9 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// Handle for the console where the screen buffer info is obtained
-        ///
         /// </param>
         /// <returns>
         /// info about the screen buffer. See the definition of CONSOLE_SCREEN_BUFFER_INFO
-        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's GetConsoleScreenBufferInfo fails
@@ -1063,15 +1037,12 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where output is written
-        ///
         /// </param>
         /// <param name="origin">
         /// location on screen buffer where writing starts
-        ///
         /// </param>
         /// <param name="contents">
         /// 2D array of cells. Caller needs to ensure that the array is 2D.
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's GetConsoleScreenBufferInfo fails
@@ -1683,20 +1654,16 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where output is read
-        ///
         /// </param>
         /// <param name="origin">
         /// location on screen buffer where reading begins
-        ///
         /// </param>
         /// <param name="contentsRegion">
         /// indicates the area in <paramref name="contents"/> where the data read
         /// is stored.
-        ///
         /// </param>
         /// <param name="contents">
         /// this is ref because the bounds and size of the array are needed.
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// If there is not enough memory to complete calls to Win32's ReadConsoleOutput
@@ -2241,19 +2208,15 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where output is filled
-        ///
         /// </param>
         /// <param name="character">
         /// character to fill the console output
-        ///
         /// </param>
         /// <param name="numberToWrite">
         /// number of times to write character
-        ///
         /// </param>
         /// <param name="origin">
         /// location on screen buffer where writing starts
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's FillConsoleOutputCharacter fails
@@ -2299,19 +2262,15 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where output is filled
-        ///
         /// </param>
         /// <param name="attribute">
         /// attribute to fill the console output
-        ///
         /// </param>
         /// <param name="numberToWrite">
         /// number of times to write attribute
-        ///
         /// </param>
         /// <param name="origin">
         /// location on screen buffer where writing starts
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's FillConsoleOutputAttribute fails
@@ -2356,23 +2315,18 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where screen buffer is scrolled
-        ///
         /// </param>
         /// <param name="scrollRectangle">
         /// area to be scrolled
-        ///
         /// </param>
         /// <param name="clipRectangle">
         /// area to be updated after scrolling
-        ///
         /// </param>
         /// <param name="destOrigin">
         /// location to which the top left corner of scrollRectangle move
-        ///
         /// </param>
         /// <param name="fill">
         /// character and attribute to fill the area vacated by the scroll
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's ScrollConsoleScreenBuffer fails
@@ -2416,17 +2370,14 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where window info is set
-        ///
         /// </param>
         /// <param name="absolute">
         /// If this parameter is TRUE, the coordinates specify the new upper-left and
         /// lower-right corners of the window. If it is false, the coordinates are offsets
         /// to the current window-corner coordinates
-        ///
         /// </param>
         /// <param name="windowInfo">
         /// specify the size and position of the console screen buffer's window
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's SetConsoleWindowInfo fails
@@ -2454,11 +2405,9 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console for which the largest window size is obtained
-        ///
         /// </param>
         /// <returns>
         /// the largest window size
-        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's GetLargestConsoleWindowSize fails
@@ -2489,7 +2438,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <returns>
         /// a string for the title of the window
-        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's GetConsoleTitle fails
@@ -2522,7 +2470,6 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleTitle">
         /// a string for the title of the window
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's SetConsoleTitle fails
@@ -2546,19 +2493,15 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Wrap Win32 WriteConsole
-        ///
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where the string is written
-        ///
         /// </param>
         /// <param name="output">
         /// string that is written
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// if the Win32's WriteConsole fails
-        ///
         /// </exception>
 
         internal static void WriteConsole(ConsoleHandle consoleHandle, string output)
@@ -2615,15 +2558,12 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where text attribute is set
-        ///
         /// </param>
         /// <param name="attribute">
         /// text attribute to set the console
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// if the Win32's SetConsoleTextAttribute fails
-        ///
         /// </exception>
 
         internal static void SetConsoleTextAttribute(ConsoleHandle consoleHandle, WORD attribute)
@@ -2742,11 +2682,9 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where cursor position is set
-        ///
         /// </param>
         /// <param name="cursorPosition">
         /// location to which the cursor will be set
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's SetConsoleCursorPosition fails
@@ -2779,11 +2717,9 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where cursor info is obtained
-        ///
         /// </param>
         /// <returns>
         /// cursor info
-        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's GetConsoleCursorInfo fails
@@ -2834,11 +2770,9 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="consoleHandle">
         /// handle for the console where cursor info is set
-        ///
         /// </param>
         /// <param name="cursorInfo">
         /// cursor info to set the cursor
-        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's SetConsoleCursorInfo fails
@@ -2932,7 +2866,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Class to hold the Native Methods used in this file enclosing class.
-        ///
         /// </summary>
 
         internal static class NativeMethods

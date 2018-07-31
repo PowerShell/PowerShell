@@ -12,7 +12,6 @@ namespace Microsoft.PowerShell
 {
     /// <summary>
     /// ConsoleHostUserInterface implements console-mode user interface for powershell
-    ///
     /// </summary>
     internal partial
     class ConsoleHostUserInterface : System.Management.Automation.Host.PSHostUserInterface
@@ -23,7 +22,6 @@ namespace Microsoft.PowerShell
         /// In future, when we have Credential object from the security team,
         /// this function will be modified to prompt using secure-path
         /// if so configured.
-        ///
         /// </summary>
         /// <param name="userName"> name of the user whose creds are to be prompted for. If set to null or empty string, the function will prompt for user name first. </param>
         /// <param name="targetName"> name of the target for which creds are being collected </param>

@@ -1819,7 +1819,6 @@ $result
 
         /// <summary>
         /// Gets the Scope
-        ///
         /// </summary>
         /// <param name="computer"></param>
         /// <param name="namespaceParameter"></param>

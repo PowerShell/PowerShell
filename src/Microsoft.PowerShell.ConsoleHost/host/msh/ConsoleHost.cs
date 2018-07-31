@@ -36,7 +36,6 @@ namespace Microsoft.PowerShell
 {
     /// <summary>
     /// Subclasses S.M.A.Host to implement a console-mode monad host.
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
     internal sealed partial class ConsoleHost
@@ -59,7 +58,6 @@ namespace Microsoft.PowerShell
         // Removed HandleUnexpectedExceptions infrastructure
         /// <summary>
         /// internal Entry point in msh console host implementation
-        ///
         /// </summary>
         /// <param name="bannerText">
         /// Banner text to be displayed by ConsoleHost
@@ -69,7 +67,6 @@ namespace Microsoft.PowerShell
         /// </param>
         /// <param name = "args">
         /// Command line parameters to pwsh.exe
-        ///
         /// </param>
         /// <returns>
         /// The exit code for the shell.
@@ -96,7 +93,6 @@ namespace Microsoft.PowerShell
         ///
         /// Anyone checking the exit code of the shell or monitor can mask off the hiword to determine the exit code passed
         /// by the script that the shell last executed.
-        ///
         /// </returns>
         internal static int Start(
             string bannerText,
@@ -283,7 +279,6 @@ namespace Microsoft.PowerShell
 #if UNIX
         /// <summary>
         /// The break handler for the program.  Dispatches a break event to the current Executor.
-        ///
         /// </summary>
         private static void MyBreakHandler(object sender, ConsoleCancelEventArgs args)
         {
@@ -311,7 +306,6 @@ namespace Microsoft.PowerShell
 #else
         /// <summary>
         /// The break handler for the program.  Dispatches a break event to the current Executor.
-        ///
         /// </summary>
         /// <param name="signal"></param>
         /// <returns></returns>
@@ -383,7 +377,6 @@ namespace Microsoft.PowerShell
         /// if the cancellation is blocked (which can be the case when the pipeline blocks and nothing implements Cmdlet.Stop
         /// properly).  That is because the OS will not inject another thread when a break event occurs if one has already been
         /// injected and is running.
-        ///
         /// </summary>
         /// <param name="shouldEndSession">
         /// if true, then flag the parent ConsoleHost that it should shutdown the session.  If false, then only the current
@@ -519,7 +512,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -537,7 +529,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -553,7 +544,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -562,7 +552,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -855,7 +844,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -873,7 +861,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -918,11 +905,9 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// If an input loop is running, then starts a new, nested input loop.  If an input loop is not running,
         /// throws an exception.
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// If a nested prompt is entered while the host is not running at least one prompt loop.
-        ///
         /// </exception>
         public override void EnterNestedPrompt()
         {
@@ -950,11 +935,9 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// If there is no nested prompt.
-        ///
         /// </exception>
         public override void ExitNestedPrompt()
         {
@@ -966,7 +949,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// See base class
-        ///
         /// </summary>
         public override void NotifyBeginApplication()
         {
@@ -992,7 +974,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// See base class
-        ///
         /// <seealso cref="NotifyBeginApplication"/>
         /// </summary>
         public override void NotifyEndApplication()
@@ -1040,7 +1021,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Constructs a new instance
-        ///
         /// </summary>
         internal ConsoleHost()
         {
@@ -1111,7 +1091,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Finalizes the instance
-        ///
         /// </summary>
         ~ConsoleHost()
         {
@@ -1120,7 +1099,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Disposes of this instance, per the IDisposable pattern
-        ///
         /// </summary>
         public void Dispose()
         {
@@ -1178,11 +1156,9 @@ namespace Microsoft.PowerShell
         /// Indicates if the session should be terminated or not.  Typically set by the break handler for Close, Logoff, and
         /// Shutdown events.  Note that the only valid transition for this property is from false to true: it is not legal to
         /// try to set it to false after is was set to true.
-        ///
         /// </summary>
         /// <value>
         /// true to shut down the session.  false is only allowed if the property is already false.
-        ///
         /// </value>
         internal bool ShouldEndSession
         {
@@ -1214,7 +1190,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// The Runspace ref object being used by this Host instance.  A host only opens one Runspace.
-        ///
         /// </summary>
         /// <value></value>
         internal RunspaceRef RunspaceRef
@@ -1308,7 +1283,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// The main run loop of the program: processes command line parameters, and starts up a runspace.
-        ///
         /// </summary>
         /// <param name="cpp">
         /// Commandline parameter parser. The commandline parameter parser is expected to parse all the
@@ -1319,7 +1293,6 @@ namespace Microsoft.PowerShell
         /// </param>
         /// <returns>
         /// The process exit code to be returned by Main.
-        ///
         /// </returns>
 
         private uint Run(CommandLineParameterParser cpp, bool isPrestartWarned)
@@ -1399,11 +1372,9 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Loops over the Host's sole Runspace; opens the runspace, initializes it, then recycles it if the Runspace fails.
-        ///
         /// </summary>
         /// <returns>
         /// The process exit code to be returned by Main.
-        ///
         /// </returns>
         private uint DoRunspaceLoop(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs, bool staMode, string configurationName)
         {
@@ -1531,7 +1502,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Opens and Initializes the Host's sole Runspace.  Processes the startup scripts and runs any command passed on the
         /// command line.
-        ///
         /// </summary>
 
         private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, Collection<CommandParameter> initialCommandArgs)
@@ -1914,7 +1884,6 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Escapes backtick and tick characters with a backtick, returns the result
-        ///
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
@@ -2002,15 +1971,12 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Reports an exception according to the exception reporting settings in effect.
-        ///
         /// </summary>
         /// <param name="e">
         /// The exception to report.
-        ///
         /// </param>
         /// <param name="header">
         /// Optional header message.  Empty or null means "no header"
-        ///
         /// </param>
         private void ReportExceptionFallback(Exception e, string header)
         {
@@ -2223,7 +2189,6 @@ namespace Microsoft.PowerShell
         ///
         /// Neither this class' instances nor its static data is threadsafe.  Caller is responsible for ensuring threadsafe
         /// access.
-        ///
         /// </summary>
         private class InputLoop
         {
@@ -2257,7 +2222,6 @@ namespace Microsoft.PowerShell
             /// <returns>True if next input loop is nested, False otherwise.</returns>
             /// <exception cref="InvalidOperationException">
             ///  when there is no instanceStack.Count == 0
-            ///
             /// </exception>
 
             internal static bool ExitCurrentLoop()
@@ -2333,7 +2297,6 @@ namespace Microsoft.PowerShell
             /// <summary>
             /// Evaluates the prompt, displays it, gets a command from the console, and executes it.  Repeats until the command
             /// is "exit", or until the shutdown flag is set.
-            ///
             /// </summary>
             internal void Run(bool inputLoopIsNested)
             {

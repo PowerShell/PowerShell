@@ -11,7 +11,6 @@ namespace Microsoft.PowerShell
     /// of necessary information for monad management mshsnapin.
     ///
     /// This class will be built with monad management dll
-    ///
     /// </summary>
     [RunInstaller(true)]
     public sealed class PSManagementPSSnapIn : PSSnapIn

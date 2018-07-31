@@ -624,7 +624,6 @@ namespace Microsoft.PowerShell.Commands
         private int _numberObjects = 0;
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {

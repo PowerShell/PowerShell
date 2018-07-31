@@ -12,7 +12,6 @@ namespace Microsoft.PowerShell
     ///
     /// This class will be built with monad host engine dll
     /// (Microsoft.PowerShell.ConsoleHost.dll).
-    ///
     /// </summary>
     [RunInstaller(true)]
     public sealed class PSHostPSSnapIn : PSSnapIn

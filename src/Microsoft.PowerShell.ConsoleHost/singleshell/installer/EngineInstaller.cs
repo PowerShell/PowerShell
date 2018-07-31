@@ -24,7 +24,6 @@ namespace Microsoft.PowerShell
     /// This class derives from base class PSInstaller. PSInstaller will
     /// handle the details about how information got written into registry.
     /// Here, the information about registry content is provided.
-    ///
     /// </summary>
     [RunInstaller(true)]
     public sealed class EngineInstaller : PSInstaller

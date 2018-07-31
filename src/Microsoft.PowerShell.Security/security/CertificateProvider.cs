@@ -160,7 +160,6 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Currently, we only support one dynamic parameter: DeleteKey
     /// If provided, we will delete the private key when we remove a certificate
-    ///
     /// </summary>
     internal sealed class ProviderRemoveItemDynamicParameters
     {
@@ -1140,7 +1139,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">
         /// The path of the item to retrieve.
         /// </param>
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// Path is null
         /// </exception>

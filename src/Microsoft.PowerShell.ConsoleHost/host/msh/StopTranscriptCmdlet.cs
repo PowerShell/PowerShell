@@ -9,7 +9,6 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Implements the stop-transcript cmdlet
-    ///
     /// </summary>
 
     [Cmdlet(VerbsLifecycle.Stop, "Transcript", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113415")]
