@@ -225,7 +225,6 @@ namespace System.Management.Automation
     /// If the command processor is created based on a script file, its exit exception
     /// handling is different in the sense that it indicates an exitcode instead of killing
     /// current powershell session.
-    ///
     /// </remarks>
     internal sealed class DlrScriptCommandProcessor : ScriptCommandProcessorBase
     {

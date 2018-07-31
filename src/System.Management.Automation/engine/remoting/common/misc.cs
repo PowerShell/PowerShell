@@ -108,7 +108,6 @@ namespace System.Management.Automation
         /// <summary>
         /// This is the state a connect start with. When a connection is closed,
         /// the connection will eventually come back to this Idle state.
-        ///
         /// </summary>
         Idle = 1,
 

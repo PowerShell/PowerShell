@@ -51,7 +51,6 @@ namespace Microsoft.PowerShell.Commands
     ///              Receive-PSJob -Job $job -ComputerName "Server2"
     ///              The parameter ComputerName cannot be used with jobs which are
     ///              not PSRemotingJob
-    ///
     /// </summary>
     [Cmdlet(VerbsCommunications.Receive, "Job", DefaultParameterSetName = ReceiveJobCommand.LocationParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113372", RemotingCapability = RemotingCapability.SupportedByCommand)]

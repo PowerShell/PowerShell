@@ -20,7 +20,6 @@ namespace System.Management.Automation
     /// etc.
     ///
     /// In general, there will be a specific helpInfo child class for each kind of help provider.
-    ///
     /// </summary>
     internal abstract class HelpInfo
     {

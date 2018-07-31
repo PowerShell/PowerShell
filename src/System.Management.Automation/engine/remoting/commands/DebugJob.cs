@@ -22,7 +22,6 @@ namespace Microsoft.PowerShell.Commands
     /// When a job is debugged its output data is written to host and the executing job
     /// script will break into the host debugger, in step mode, at the next stoppable
     /// execution point.
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsDiagnostic.Debug, "Job", SupportsShouldProcess = true, DefaultParameterSetName = DebugJobCommand.JobParameterSet,

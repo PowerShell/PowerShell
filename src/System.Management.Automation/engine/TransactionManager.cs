@@ -181,7 +181,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Disposes the PSTransaction object, which disposes the
         /// underlying transaction.
-        ///
         /// <param name="disposing">
         /// Whether to actually dispose the object.
         /// </param>
@@ -233,7 +232,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Disposes the PSTransactionContext object, which resets the
         /// active PSTransaction.
-        ///
         /// <param name="disposing">
         /// Whether to actually dispose the object.
         /// </param>
@@ -677,7 +675,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Disposes the PSTransactionContext object, which resets the
         /// active PSTransaction.
-        ///
         /// <param name="disposing">
         /// Whether to actually dispose the object.
         /// </param>

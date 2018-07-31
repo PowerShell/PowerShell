@@ -196,7 +196,6 @@ namespace System.Management.Automation.Remoting
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         ///     |     Blob ...
         ///     +-+-+-+-+-+-+-+-
-        ///
         /// </summary>
         /// <returns>
         /// The binary encoded FragmentedRemoteObject to be ready to pass to WinRS Send API.

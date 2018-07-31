@@ -66,7 +66,6 @@ namespace System.Management.Automation.Remoting
     ///
     /// This class controls a remote connection by using a Session data structure handler, which
     /// in turn contains a Finite State Machine, and a transport mechanism.
-    ///
     /// </summary>
     internal class ServerRemoteSession : RemoteSession
     {

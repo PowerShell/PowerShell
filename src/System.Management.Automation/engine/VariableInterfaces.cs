@@ -387,7 +387,6 @@ namespace System.Management.Automation
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// if the variable is constant.
         /// </exception>
@@ -424,7 +423,6 @@ namespace System.Management.Automation
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// if the variable is constant.
         /// </exception>

@@ -17,7 +17,6 @@ namespace System.Management.Automation
     /// Help File help information are stored in '.help.txt' files. These files are
     /// located in the Monad / CustomShell Path as well as in the Application Base
     /// of PSSnapIns
-    ///
     /// </summary>
     internal class HelpFileHelpProvider : HelpProviderWithCache
     {

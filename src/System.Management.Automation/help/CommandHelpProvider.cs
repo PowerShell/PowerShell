@@ -477,7 +477,6 @@ namespace System.Management.Automation
         /// This will avoid one help file getting loaded again and again.
         /// (Which should not happen unless some commandlet is pointing
         /// to a help file that actually doesn't contain the help for it).
-        ///
         /// </summary>
         private readonly Hashtable _helpFiles = new Hashtable();
 
@@ -962,7 +961,6 @@ namespace System.Management.Automation
         ///     b. If HelpItems node (which should be the top node of any command help file)
         ///        has an attribute "schema" with value "maml", its content is in maml
         ///        schema
-        ///
         /// </summary>
         /// <param name="helpFile"></param>
         /// <param name="helpItemsNode"></param>
