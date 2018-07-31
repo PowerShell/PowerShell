@@ -355,8 +355,9 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
     }
 
     It "Does not duplicate the System32 module path in subprocesses" {
-        $test = '$null = $env:PSModulePath -match "$env:windir\\System32\\WindowsPowerShell\\v1.0\\Modules"; $matches.Count -gt 1'
-        pwsh -C { pwsh -C $test } | Should -BeTrue
+        pwsh -C {
+            pwsh -C '$null = $env:PSModulePath -match (Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"); $matches.Count'
+        } | Should -BeTrue
     }
 }
 
