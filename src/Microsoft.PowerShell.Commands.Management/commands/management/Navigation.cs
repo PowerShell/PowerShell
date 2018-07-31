@@ -3672,8 +3672,6 @@ namespace Microsoft.PowerShell.Commands
                         break;
                 }
             }
-            finally {
-            }
         }
 
         private void RenameItem(string path, bool literalPath = false)
