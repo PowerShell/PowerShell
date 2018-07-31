@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
         private OrderByPropertyComparer _orderByPropertyComparer;
         private bool _hasProcessedFirstInputObject;
         private bool _hasDifferentValueTypes;
-        private Type[] _valueTypeTuple;
+        private Type[] _propertyTypesCandidate;
 
         #endregion
 
@@ -377,7 +377,10 @@ namespace Microsoft.PowerShell.Commands
                         ThrowTerminatingError(er);
                     }
 
-                    if (AsHashTable && !AsString && _orderByProperty.MshParameterList.Count != 1)
+                    if (AsHashTable
+                        && !AsString
+                        && (Property != null && Property.Length > 1
+                            || _orderByProperty.MshParameterList.Count > 1))
                     {
                         ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectSingleProperty);
                         ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);
@@ -405,28 +408,49 @@ namespace Microsoft.PowerShell.Commands
                 var currentEntryOrderValues = currentEntry.orderValues;
                 if (!_hasDifferentValueTypes)
                 {
-                    if (_valueTypeTuple == null)
+                    UpdateOrderPropertyTypeInfo(currentEntryOrderValues);
+                }
+            }
+        }
+
+        private void UpdateOrderPropertyTypeInfo(List<ObjectCommandPropertyValue> currentEntryOrderValues)
+        {
+            if (_propertyTypesCandidate == null)
+            {
+                _propertyTypesCandidate = currentEntryOrderValues.Select(c => PSObject.Base(c.PropertyValue)?.GetType()).ToArray();
+                return;
+            }
+
+            if (_propertyTypesCandidate.Length != currentEntryOrderValues.Count)
+            {
+                _hasDifferentValueTypes = true;
+                return;
+            }
+
+            // check all the types we group on.
+            // if we find more than one set of types, _hasDifferentValueTypes is set to true,
+            // and we are forced to take a slower code path when we group our objects
+            for (int i = 0; i < _propertyTypesCandidate.Length; i++)
+            {
+                var candidateType = _propertyTypesCandidate[i];
+                var propertyType = PSObject.Base(currentEntryOrderValues[i].PropertyValue)?.GetType();
+                if (propertyType == null)
+                {
+                    // we ignore properties without values. We can always compare against null.
+                    continue;
+                }
+
+                // if we haven't gotten a type for a property yet, update it when we do get a value
+                if (propertyType != candidateType)
+                {
+                    if (candidateType == null)
                     {
-                        _valueTypeTuple = currentEntryOrderValues.Select(c => PSObject.Base(c.PropertyValue)?.GetType()).ToArray();
+                        _propertyTypesCandidate[i] = propertyType;
                     }
                     else
                     {
-                        if (_valueTypeTuple.Length != currentEntryOrderValues.Count)
-                        {
-                            _hasDifferentValueTypes = true;
-                        }
-                        else
-                        {
-                            for (int i = 0; i < _valueTypeTuple.Length; i++)
-                            {
-                                var type = _valueTypeTuple[i];
-                                if (PSObject.Base(currentEntryOrderValues[i].PropertyValue)?.GetType() != type)
-                                {
-                                    _hasDifferentValueTypes = true;
-                                    break;
-                                }
-                            }
-                        }
+                        _hasDifferentValueTypes = true;
+                        break;
                     }
                 }
             }
