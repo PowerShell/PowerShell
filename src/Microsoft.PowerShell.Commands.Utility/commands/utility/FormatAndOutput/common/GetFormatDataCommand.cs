@@ -4,6 +4,8 @@
 using System;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
+
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Runspaces;
@@ -169,6 +171,17 @@ namespace Microsoft.PowerShell.Commands
                 viewList.Add(formatdef);
             }// foreach(ViewDefinition...
 
+            if (typedefs.Count == 0) {
+                System.ArgumentException exception = new System.ArgumentException("No such type");
+                // All files must have the same extension otherwise throw.
+                ErrorRecord errorRecord = new ErrorRecord(
+                    exception,
+                    "SPECIFIED_TYPE_NOT_FOUND",
+                    ErrorCategory.ResourceUnavailable,
+                    _typename);
+
+                ThrowTerminatingError(errorRecord);
+            }
             // write out all the available type definitions
             foreach (var pair in typedefs)
             {
