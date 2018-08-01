@@ -3647,32 +3647,27 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            try
+            if (base.SuppressWildcardExpansion)
             {
-                if (base.SuppressWildcardExpansion)
-                {
-                    RenameItem(Path, literalPath: true);
-                    return;
-                }
-
-                Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);
-
-                switch (resolvedPaths.Count)
-                {
-                    case 0:
-                        break;
-
-                    case 1:
-                        string resolvedPath = resolvedPaths[0].Path;
-                        RenameItem(resolvedPath, literalPath: true);
-                        break;
-
-                    default:
-                        RenameItem(Path, literalPath: true);
-                        break;
-                }
+                RenameItem(Path, literalPath: true);
+                return;
             }
-            finally {
+
+            Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);
+
+            switch (resolvedPaths.Count)
+            {
+                case 0:
+                    break;
+
+                case 1:
+                    string resolvedPath = resolvedPaths[0].Path;
+                    RenameItem(resolvedPath, literalPath: true);
+                    break;
+
+                default:
+                    RenameItem(Path, literalPath: true);
+                    break;
             }
         }
 
