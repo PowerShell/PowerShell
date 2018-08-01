@@ -11,9 +11,7 @@ using System.Globalization;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    ///
     /// ConsoleHostUserInterface implements console-mode user interface for powershell
-    ///
     /// </summary>
     internal partial
     class ConsoleHostUserInterface : System.Management.Automation.Host.PSHostUserInterface
@@ -24,18 +22,12 @@ namespace Microsoft.PowerShell
         /// In future, when we have Credential object from the security team,
         /// this function will be modified to prompt using secure-path
         /// if so configured.
-        ///
         /// </summary>
         /// <param name="userName"> name of the user whose creds are to be prompted for. If set to null or empty string, the function will prompt for user name first. </param>
-        ///
         /// <param name="targetName"> name of the target for which creds are being collected </param>
-        ///
         /// <param name="message"> message to be displayed. </param>
-        ///
         /// <param name="caption"> caption for the message. </param>
-        ///
         /// <returns> PSCredential object</returns>
-        ///
 
         public override PSCredential PromptForCredential(
             string caption,
@@ -55,19 +47,12 @@ namespace Microsoft.PowerShell
         /// Prompt for credentials.
         /// </summary>
         /// <param name="userName"> name of the user whose creds are to be prompted for. If set to null or empty string, the function will prompt for user name first. </param>
-        ///
         /// <param name="targetName"> name of the target for which creds are being collected </param>
-        ///
         /// <param name="message"> message to be displayed. </param>
-        ///
         /// <param name="caption"> caption for the message. </param>
-        ///
         /// <param name="allowedCredentialTypes"> what type of creds can be supplied by the user </param>
-        ///
         /// <param name="options"> options that control the cred gathering UI behavior </param>
-        ///
         /// <returns> PSCredential object, or null if input was cancelled (or if reading from stdin and stdin at EOF)</returns>
-        ///
 
         public override PSCredential PromptForCredential(
             string caption,

@@ -122,7 +122,6 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the SignatureCommandsBase class,
         /// using the given command name.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the command.
         /// </param>
@@ -338,7 +337,6 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// Defaults to 'notroot'.
         /// </summary>
-        ///
         [Parameter(Mandatory = false)]
         [ValidateSet("signer", "notroot", "all")]
         public string IncludeChain
@@ -603,11 +601,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// get SigningOption value corresponding to a string name
         /// </summary>
-        ///
         /// <param name="optionName"> name of option </param>
-        ///
         /// <returns> SigningOption </returns>
-        ///
         private static SigningOption GetSigningOption(string optionName)
         {
             foreach (SigningOptionInfo si in s_sigOptionInfo)

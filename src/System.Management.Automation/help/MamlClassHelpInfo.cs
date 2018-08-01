@@ -6,10 +6,8 @@ using System.Xml;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class MamlClassHelpInfo keeps track of help information to be returned by
     /// class help provider.
-    ///
     /// </summary>
     internal class MamlClassHelpInfo : HelpInfo
     {

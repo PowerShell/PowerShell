@@ -283,7 +283,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="type"></param>
@@ -689,7 +688,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sessionState"></param>
         /// <param name="scriptBlock"></param>

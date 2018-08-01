@@ -20,8 +20,8 @@
   ![](./Images/squash-merge.png)&nbsp;&nbsp;&nbsp;&nbsp;![](./Images/squash-confirm.png)
 
 - Use `Create a merge commit` for feature-work PRs **only if** the commit history of the PR is reasonably clean.
-  After using this option, Github will make it your default option for merging a PR.
-  So, do remember to change the default back to `Squash and merge`.
+  After using this option, GitHub will make it your default option for merging a PR.
+  Do remember to change the default back to `Squash and merge`.
 
   ![](./Images/merge-commit.png)&nbsp;&nbsp;&nbsp;&nbsp;![](./Images/merge-commit-confirm.png)
 

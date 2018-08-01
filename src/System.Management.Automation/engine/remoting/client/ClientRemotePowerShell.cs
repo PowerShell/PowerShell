@@ -200,7 +200,6 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         internal void SendInput()
         {
@@ -289,7 +288,6 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
@@ -560,7 +558,6 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
@@ -695,7 +692,6 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>

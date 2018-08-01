@@ -115,7 +115,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected object SyncRoot
         {

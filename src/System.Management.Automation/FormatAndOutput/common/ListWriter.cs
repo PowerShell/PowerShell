@@ -30,7 +30,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private int _columnWidth = 0;
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="propertyNames">names of the properties to display</param>
         /// <param name="screenColumnWidth">column width of the screen</param>

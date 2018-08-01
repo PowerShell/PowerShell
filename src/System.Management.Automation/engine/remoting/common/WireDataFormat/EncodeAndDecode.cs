@@ -28,7 +28,6 @@ namespace System.Management.Automation
     #region Constructors
 
         /// <summary>
-        ///
         /// </summary>
         public RemotingEncodingException()
             : base()
@@ -36,7 +35,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         public RemotingEncodingException(string message)
@@ -45,7 +43,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -55,7 +52,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>

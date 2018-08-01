@@ -6,7 +6,6 @@ namespace System.Management.Automation.Provider
     /// <summary>
     /// Declares a class as a Cmdlet provider.
     /// </summary>
-    ///
     /// <remarks>
     /// The class must be derived from System.Management.Automation.Provider.CmdletProvider to
     /// be recognized by the runspace.
@@ -17,20 +16,16 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Constructor for the attribute.
         /// </summary>
-        ///
         /// <param name="providerName">
         /// The provider name.
         /// </param>
-        ///
         /// <param name="providerCapabilities">
         /// An enumeration of the capabilities that the provider implements beyond the
         /// default capabilities that are required.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="providerName"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="PSArgumentException">
         /// If <paramref name="providerName"/> contains any of the following characters: \ [ ] ? * :
         /// </exception>
@@ -91,7 +86,6 @@ namespace System.Management.Automation.Provider
         /// parameter. The Monad engine should not try to do the filtering on behalf of this
         /// provider.
         /// </summary>
-        ///
         /// <remarks>
         /// Note, the provider should make every effort to filter in a way that is consistent
         /// with the Monad engine. This option is allowed because in many cases the provider
@@ -104,7 +98,6 @@ namespace System.Management.Automation.Provider
         /// parameter. The Monad engine should not try to do the filtering on behalf of this
         /// provider.
         /// </summary>
-        ///
         /// <remarks>
         /// Note, the provider should make every effort to filter in a way that is consistent
         /// with the Monad engine. This option is allowed because in many cases the provider
@@ -115,7 +108,6 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// The provider can take a provider specific filter string.
         /// </summary>
-        ///
         /// <remarks>
         /// When this attribute is specified a provider specific filter can be passed from
         /// the Core Commands to the provider. This filter string is not interpreted in any
@@ -128,7 +120,6 @@ namespace System.Management.Automation.Provider
         /// engine should not try to do the wildcard matching on behalf of the provider when this
         /// flag is set.
         /// </summary>
-        ///
         /// <remarks>
         /// Note, the provider should make every effort to do the wildcard matching in a way that is consistent
         /// with the Monad engine. This option is allowed because in many cases wildcard matching

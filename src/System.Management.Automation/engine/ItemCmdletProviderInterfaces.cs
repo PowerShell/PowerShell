@@ -27,15 +27,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a facade over the "real" session state API
         /// </summary>
-        ///
         /// <param name="cmdlet">
         /// An instance of the cmdlet.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="cmdlet"/> is null.
         /// </exception>
-        ///
         internal ItemCmdletProviderIntrinsics(Cmdlet cmdlet)
         {
             if (cmdlet == null)
@@ -50,15 +47,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a facade over the "real" session state API
         /// </summary>
-        ///
         /// <param name="sessionState">
         /// An instance of the "real" session state class.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> is null.
         /// </exception>
-        ///
         internal ItemCmdletProviderIntrinsics(SessionStateInternal sessionState)
         {
             if (sessionState == null)
@@ -78,38 +72,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to retrieve. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <returns>
         /// The object(s) at the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -127,46 +113,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item(s) to retrieve. They may be a drive or provider-qualified path(s) and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        ///
         /// <returns>
         /// The object(s) at the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -184,42 +160,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to retrieve. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// Nothing. The object(s) at the specified path are written to the context.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -237,38 +204,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the get-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -290,42 +249,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to set. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="value">
         /// The new value to set the item to.
         /// </param>
-        ///
         /// <returns>
         /// The object(s) set at the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -343,50 +293,39 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item(s) to set. They may be drive or provider-qualified paths and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="value">
         /// The new value to set the item to.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        ///
         /// <returns>
         /// The object(s) set at the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -404,46 +343,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to set. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="value">
         /// The new value to set the item to.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// Nothing. The object(s) set at the specified path are written to the context.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -461,42 +390,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the set-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="value">
         /// The new value of the item at the specified path.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -521,38 +441,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Clears the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to clear. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <returns>
         /// The object(s) cleared at the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -570,46 +482,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Clears the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item to clear. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        ///
         /// <returns>
         /// The object(s) cleared at the specified path.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -627,42 +529,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Clears the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to be cleared. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// Nothing. The object(s) cleared at the specified path are written to the context.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -680,38 +573,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the clear-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -733,34 +618,27 @@ namespace System.Management.Automation
         /// <summary>
         /// Invokes the default action of the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to invoke. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -778,38 +656,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Invokes the default action of the item(s) at the specified path(s).
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item(s) to invoke. They may be drive or provider-qualified paths and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -827,38 +697,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Invokes the default action for the item at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to be invoked. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -876,38 +738,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the invoke-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -929,42 +783,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Renames the item at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to rename. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="newName">
         /// The new name of the item.
         /// </param>
-        ///
         /// <returns>
         /// The item(s) that were renamed.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -982,46 +827,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Renames the item at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to rename. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="newName">
         /// The new name of the item.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <returns>
         /// The item(s) that were renamed.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1039,46 +874,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Renames the item at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to rename. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="newName">
         /// The new name of the item.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// Nothing.  The item(s) that get renamed are written to the context.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1099,42 +924,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the rename-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="newName">
         /// The new name of the item.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1159,50 +975,39 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a new item at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the container to create item in. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="name">
         /// The name of the new item to create.
         /// </param>
-        ///
         /// <param name="itemTypeName">
         /// The type of the new item to create.
         /// </param>
-        ///
         /// <param name="content">
         /// The content of the new item to create.
         /// </param>
-        ///
         /// <returns>
         /// The item that was created.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1224,54 +1029,42 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a new item at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the container to create item in. They may be drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="name">
         /// The name of the new item to create.
         /// </param>
-        ///
         /// <param name="itemTypeName">
         /// The type of the new item to create.
         /// </param>
-        ///
         /// <param name="content">
         /// The content of the new item to create.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <returns>
         /// The item(s) that was created.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1294,54 +1087,42 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a new item at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the container to create item in. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="name">
         /// The name of the new item to create.
         /// </param>
-        ///
         /// <param name="type">
         /// The type of the new item to create.
         /// </param>
-        ///
         /// <param name="content">
         /// The content of the new item to create.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// Nothing.  The new item is written to the context.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> or <paramref name="propertyToClear"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1364,46 +1145,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the new-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="type">
         /// The type of the new item to create.
         /// </param>
-        ///
         /// <param name="content">
         /// The content of the new item to create.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1429,40 +1200,32 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the items at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to remove. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="recurse">
         /// If true, removes all the children in all the sub-containers of the specified
         /// container. If false, only removes the immediate children of the specified
         /// container.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1480,48 +1243,38 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the items at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item(s) to remove. They may be drive or provider-qualified paths and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="recurse">
         /// If true, removes all the children in all the sub-containers of the specified
         /// container. If false, only removes the immediate children of the specified
         /// container.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1539,40 +1292,32 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the items at the given path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to remove. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="recurse">
         /// If true, removes all the children in all the sub-containers of the specified
         /// container. If false, only removes the immediate children of the specified
         /// container.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1593,44 +1338,35 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the remove-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="recurse">
         /// If true, removes all the children in all the sub-containers of the specified
         /// container. If false, only removes the immediate children of the specified
         /// container.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1655,51 +1391,40 @@ namespace System.Management.Automation
         /// <summary>
         /// Copy item at the specified path
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to copy. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="destinationPath">
         /// The path to copy the item to.
         /// </param>
-        ///
         /// <param name="recurse">
         /// If true, copies all the children in all the sub-containers of the specified
         /// container. If false, only copies the specified item.
         /// </param>
-        ///
         /// <param name="copyContainers">
         /// Determines how the source container is used in the copy operation.
         /// </param>
-        ///
         /// <returns>
         /// The item(s) that were copied.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1721,59 +1446,46 @@ namespace System.Management.Automation
         /// <summary>
         /// Copy item at the specified path
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item(s) to copy. They may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="destinationPath">
         /// The path to copy the item to.
         /// </param>
-        ///
         /// <param name="recurse">
         /// If true, copies all the children in all the sub-containers of the specified
         /// container. If false, only copies the specified item.
         /// </param>
-        ///
         /// <param name="copyContainers">
         /// Determines how the source container is used in the copy operation.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        ///
         /// <returns>
         /// The item(s) that were copied.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1797,55 +1509,43 @@ namespace System.Management.Automation
         /// <summary>
         /// Copy item at the specified path
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to copy. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="destinationPath">
         /// The path to copy the item to.
         /// </param>
-        ///
         /// <param name="recurse">
         /// If true, copies all the children in all the sub-containers of the specified
         /// container. If false, only copies the specified item.
         /// </param>
-        ///
         /// <param name="copyContainers">
         /// Determines how the source container is used in the copy operation.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// Nothing. The item(s) that were copied are written to the context.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1868,47 +1568,37 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the copy-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="destination">
         /// The path to copy the item to.
         /// </param>
-        ///
         /// <param name="recurse">
         /// If true, copies all the children in all the sub-containers of the specified
         /// container. If false, only copies the specified item.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1934,23 +1624,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Moves the item at the specified path to the specified destination.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to move.
         /// </param>
-        ///
         /// <param name="destination">
         /// The path to the location that the item will be moved.
         /// </param>
-        ///
         /// <returns>
         /// The item(s) that were moved.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="destination"/> resolves to multiple paths.
         /// or
@@ -1960,25 +1645,20 @@ namespace System.Management.Automation
         /// If <paramref name="path"/> resolves to multiple paths and <paramref name="destination"/>
         /// is not a container.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -1996,31 +1676,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Moves the item at the specified path to the specified destination.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path(s) to the item to move.
         /// </param>
-        ///
         /// <param name="destination">
         /// The path to the location that the item will be moved.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        ///
         /// <returns>
         /// The item(s) that were moved.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="destination"/> resolves to multiple paths.
         /// or
@@ -2030,25 +1703,20 @@ namespace System.Management.Automation
         /// If <paramref name="path"/> resolves to multiple paths and <paramref name="destination"/>
         /// is not a container.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -2066,45 +1734,35 @@ namespace System.Management.Automation
         /// <summary>
         /// Moves the item at the specified path to the specified destination.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to move.
         /// </param>
-        ///
         /// <param name="destination">
         /// The path to the location that the item will be moved.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// Nothing. The object that is moved is written to the context.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -2125,42 +1783,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the move-item cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="destination">
         /// The path to move the item to.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -2185,33 +1834,26 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if an item at the given path exits.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to determine if it exists. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <returns>
         /// True if the item at the specified path exists. False otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -2229,41 +1871,32 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if an item at the given path exits.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to determine if it exists. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        ///
         /// <returns>
         /// True if the item at the specified path exists. False otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -2281,37 +1914,29 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if an item at the given path exits.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to determine if it exists. It may be a drive or provider-qualified path and may include
         /// glob characters.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// True if the item at the specified path exists. False otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -2331,37 +1956,29 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the test-path cmdlet.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -2384,32 +2001,25 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if the specified path is to an item that is a container.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to determine if it is a container.
         /// </param>
-        ///
         /// <returns>
         /// True if the path is to an item that is a container. False otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -2427,36 +2037,28 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if the specified path is to an item that is a container.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the item to determine if it is a container.
         /// </param>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// True if the path is to an item that is a container. False otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>

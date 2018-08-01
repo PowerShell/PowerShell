@@ -301,7 +301,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArgumentException">
@@ -363,7 +362,6 @@ namespace System.Management.Automation.Remoting
         public abstract InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo);
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sessionConfigurationData"></param>
         /// <param name="senderInfo"></param>
@@ -433,7 +431,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="isDisposing"></param>
         protected virtual void Dispose(bool isDisposing)
@@ -445,7 +442,6 @@ namespace System.Management.Automation.Remoting
         #region GetInitialSessionState from 3rd party shell ids
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="shellId"></param>
         /// <param name="initializationParameters">
@@ -504,7 +500,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="shellId">
         /// shellId for which the assembly is getting loaded
@@ -808,7 +803,6 @@ namespace System.Management.Automation.Remoting
     internal sealed class DefaultRemotePowerShellConfiguration : PSSessionConfiguration
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="senderInfo"></param>
         /// <returns></returns>
@@ -898,7 +892,6 @@ namespace System.Management.Automation.Remoting
         internal TypeValidationCallback ValidationCallback;
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="callback"></param>
@@ -1030,7 +1023,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1062,7 +1054,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1094,7 +1085,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1126,7 +1116,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1147,7 +1136,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1195,7 +1183,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1248,7 +1235,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1513,7 +1499,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         private static void ValidatePS1XMLExtension(string key, string[] paths, string filePath)
         {
@@ -1541,7 +1526,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         private static void ValidatePS1OrPSM1Extension(string key, string[] paths, string filePath)
         {
@@ -1571,7 +1555,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="table"></param>
         /// <param name="filePath"></param>

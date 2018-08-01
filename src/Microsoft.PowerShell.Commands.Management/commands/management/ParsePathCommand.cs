@@ -101,70 +101,58 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Determines if the qualifier should be returned
         /// </summary>
-        ///
         /// <value>
         /// If true the qualifier of the path will be returned.
         /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
-        ///
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = qualifierSet, Mandatory = false)]
         public SwitchParameter Qualifier { get; set; }
 
         /// <summary>
         /// Determines if the qualifier should be returned
         /// </summary>
-        ///
         /// <value>
         /// If true the qualifier of the path will be returned.
         /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
-        ///
         [Parameter(ParameterSetName = noQualifierSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter NoQualifier { get; set; }
 
         /// <summary>
         /// Determines if the parent path should be returned
         /// </summary>
-        ///
         /// <value>
         /// If true the parent of the path will be returned.
         /// </value>
-        ///
         [Parameter(ParameterSetName = parentSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Parent { get; set; } = true;
 
         /// <summary>
         /// Determines if the leaf name should be returned
         /// </summary>
-        ///
         /// <value>
         /// If true the leaf name of the path will be returned.
         /// </value>
-        ///
         [Parameter(ParameterSetName = leafSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Leaf { get; set; }
 
         /// <summary>
         /// Determines if the leaf base name (name without extension) should be returned
         /// </summary>
-        ///
         /// <value>
         /// If true the leaf base name of the path will be returned.
         /// </value>
-        ///
         [Parameter(ParameterSetName = leafBaseSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter LeafBase { get; set; }
 
         /// <summary>
         /// Determines if the extension should be returned
         /// </summary>
-        ///
         /// <value>
         /// If true the extension of the path will be returned.
         /// </value>
-        ///
         [Parameter(ParameterSetName = extensionSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Extension { get; set; }
 
@@ -443,15 +431,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Removes either the drive or provider qualifier or both from the path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to strip the provider qualifier from.
         /// </param>
-        ///
         /// <returns>
         /// The path without the qualifier.
         /// </returns>
-        ///
         private string RemoveQualifier(string path)
         {
             Dbg.Diagnostics.Assert(

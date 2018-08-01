@@ -3383,7 +3383,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         internal TypeTable() : this(isShared: false)
         {

@@ -61,12 +61,10 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a CmdletProviderContext instance to the current context of
         /// the command.
         /// </summary>
-        ///
         /// <returns>
         /// A CmdletProviderContext instance initialized to the context of the current
         /// command.
         /// </returns>
-        ///
         internal CmdletProviderContext GetCurrentContext()
         {
             CmdletProviderContext currentCommandContext = CmdletProviderContext;
