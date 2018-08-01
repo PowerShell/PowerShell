@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Group-Object implementation.
     /// </summary>
-    [Cmdlet(VerbsData.Group, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113338", RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "GroupInfo")]
+    [Cmdlet(VerbsData.Group, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113338", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(Hashtable), typeof(GroupInfo))]
     public class GroupObjectCommand : ObjectBase
     {
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the NoElement parameter indicating of the groups should be flattened.
         /// </summary>
         /// <value></value>
-        [Parameter(ParameterSetName = "GroupInfo")]
+        [Parameter]
         public SwitchParameter NoElement { get; set; }
 
         /// <summary>
@@ -224,6 +224,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the AsString parameter.
         /// </summary>
+        /// <value></value>
         [Parameter(ParameterSetName = "HashTable")]
         public SwitchParameter AsString { get; set; }
 
