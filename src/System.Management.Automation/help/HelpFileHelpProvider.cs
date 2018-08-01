@@ -11,14 +11,12 @@ using System.Management.Automation.Internal;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpFileHelpProvider implement the help provider for help.txt kinds of
     /// help contents.
     ///
     /// Help File help information are stored in '.help.txt' files. These files are
     /// located in the Monad / CustomShell Path as well as in the Application Base
     /// of PSSnapIns
-    ///
     /// </summary>
     internal class HelpFileHelpProvider : HelpProviderWithCache
     {

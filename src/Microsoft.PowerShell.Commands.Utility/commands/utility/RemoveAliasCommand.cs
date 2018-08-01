@@ -10,7 +10,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "Remove-Alias" cmdlet.
     /// </summary>
-    ///
     [Cmdlet(VerbsCommon.Remove, "Alias", DefaultParameterSetName = "Default", HelpUri = "")]
     [Alias("ral")]
     public class RemoveAliasCommand : PSCmdlet

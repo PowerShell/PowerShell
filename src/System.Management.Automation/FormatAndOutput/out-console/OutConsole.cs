@@ -10,7 +10,6 @@ namespace Microsoft.PowerShell.Commands
     using System.Management.Automation.Internal;
     using Microsoft.PowerShell.Commands.Internal.Format;
 
-    ///
     /// <summary>
     /// Null sink to absorb pipeline output
     /// </summary>
@@ -24,7 +23,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
-        ///
         /// <summary>
         /// Do nothing
         /// </summary>

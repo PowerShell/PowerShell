@@ -49,7 +49,6 @@ namespace Microsoft.PowerShell.Commands
         private Job[] _jobs;
 
         /// <summary>
-        ///
         /// </summary>
         public override String[] Command
         {
@@ -83,7 +82,6 @@ namespace Microsoft.PowerShell.Commands
         private bool _force = false;
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter Wait
@@ -327,7 +325,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void StopProcessing()
         {
@@ -339,7 +336,6 @@ namespace Microsoft.PowerShell.Commands
         #region Dispose
 
         /// <summary>
-        ///
         /// </summary>
         public void Dispose()
         {
@@ -348,7 +344,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)

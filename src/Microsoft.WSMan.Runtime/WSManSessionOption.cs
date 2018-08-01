@@ -56,7 +56,6 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// property
         /// </summary>
-        ///
         public bool SkipRevocationCheck
         {
             get { return _SkipRevocationCheck; }

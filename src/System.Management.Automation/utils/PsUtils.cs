@@ -42,7 +42,6 @@ namespace System.Management.Automation
         /// If you need the MainModule of a 64-bit process from a WOW64
         /// process, you will need to write the P/Invoke yourself.
         /// </summary>
-        ///
         /// <param name="targetProcess">The process from which to
         /// retrieve the MainModule</param>
         /// <exception cref="NotSupportedException">
@@ -54,7 +53,6 @@ namespace System.Management.Automation
         /// The process Id is not available (or) The process has exited.
         /// </exception>
         /// <exception cref="System.ComponentModel.Win32Exception">
-        ///
         /// </exception>
         internal static ProcessModule GetMainModule(Process targetProcess)
         {
@@ -93,7 +91,6 @@ namespace System.Management.Automation
         /// tzres.dll and tzres.mui.dll being loaded into every process to convert the time information to local format.
         /// For perf reasons, we resort to P/Invoke.
         /// </summary>
-        ///
         /// <param name="current">The process we want to find the
         /// parent of</param>
         internal static Process GetParentProcess(Process current)

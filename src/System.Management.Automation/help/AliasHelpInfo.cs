@@ -13,7 +13,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the AliasHelpInfo class.
         /// </summary>
-        ///
         /// <remarks>
         /// The constructor is private. The only way to create an
         /// AliasHelpInfo object is through static method <see cref="GetHelpInfo"/>

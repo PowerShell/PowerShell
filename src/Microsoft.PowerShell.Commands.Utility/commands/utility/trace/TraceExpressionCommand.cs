@@ -32,7 +32,6 @@ namespace Microsoft.PowerShell.Commands
         /// The TraceSource parameter determines which TraceSource categories the
         /// operation will take place on.
         /// </summary>
-        ///
         [Parameter(Position = 0, Mandatory = true)]
         public string[] Name
         {
@@ -79,7 +78,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The parameter which determines the options for output from the trace listeners.
         /// </summary>
-        ///
         [Parameter]
         public TraceOptions ListenerOption
         {
@@ -236,7 +234,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Ensures that the sub-pipeline we created gets stopped as well.
         /// </summary>
-        ///
         protected override void StopProcessing()
         {
             if (_pipeline != null)
@@ -314,7 +311,6 @@ namespace Microsoft.PowerShell.Commands
     /// cmdlet.  It gets attached to the sub-pipelines success or error pipeline and redirects
     /// all objects written to these pipelines to trace-command pipeline.
     /// </summary>
-    ///
     internal class TracePipelineWriter : PipelineWriter
     {
         internal TracePipelineWriter(

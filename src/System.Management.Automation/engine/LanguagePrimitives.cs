@@ -4536,7 +4536,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert">the same as in the public version</param>
         /// <param name="resultType">the same as in the public version</param>

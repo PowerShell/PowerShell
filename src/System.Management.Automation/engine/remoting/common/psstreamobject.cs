@@ -14,62 +14,50 @@ namespace System.Management.Automation.Remoting.Internal
     public enum PSStreamObjectType
     {
         /// <summary>
-        ///
         /// </summary>
         Output = 1,
 
         /// <summary>
-        ///
         /// </summary>
         Error = 2,
 
         /// <summary>
-        ///
         /// </summary>
         MethodExecutor = 3,
 
         /// <summary>
-        ///
         /// </summary>
         Warning = 4,
 
         /// <summary>
-        ///
         /// </summary>
         BlockingError = 5,
 
         /// <summary>
-        ///
         /// </summary>
         ShouldMethod = 6,
 
         /// <summary>
-        ///
         /// </summary>
         WarningRecord = 7,
 
         /// <summary>
-        ///
         /// </summary>
         Debug = 8,
 
         /// <summary>
-        ///
         /// </summary>
         Progress = 9,
 
         /// <summary>
-        ///
         /// </summary>
         Verbose = 10,
 
         /// <summary>
-        ///
         /// </summary>
         Information = 11,
 
         /// <summary>
-        ///
         /// </summary>
         Exception = 12,
     }
@@ -84,7 +72,6 @@ namespace System.Management.Automation.Remoting.Internal
     public class PSStreamObject
     {
         /// <summary>
-        ///
         /// </summary>
         public PSStreamObjectType ObjectType { get; set; }
         internal Object Value { get; set; }
@@ -98,7 +85,6 @@ namespace System.Management.Automation.Remoting.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="objectType"></param>
         /// <param name="value"></param>
@@ -498,32 +484,26 @@ namespace System.Management.Automation.Remoting.Internal
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    ///
     /// </summary>
     public class CmdletMethodInvoker<T>
     {
         /// <summary>
-        ///
         /// </summary>
         public Func<Cmdlet, T> Action { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         public Exception ExceptionThrownOnCmdletThread { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         public ManualResetEventSlim Finished { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         public object SyncObject { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         public T MethodResult { get; set; }
     }
