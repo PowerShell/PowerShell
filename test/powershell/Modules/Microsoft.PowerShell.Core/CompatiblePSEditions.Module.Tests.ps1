@@ -359,7 +359,7 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
             pwsh.exe -C '$null = $env:PSModulePath -match ([regex]::Escape((Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"))); $matches.Count'
         }
 
-        $sys32ModPathCount -le 1 | Should -BeTrue
+        $sys32ModPathCount | Should -Be 1
     }
 }
 
