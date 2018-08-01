@@ -2592,7 +2592,9 @@ namespace System.Management.Automation.Runspaces
 
         // this is used to throw errors when updating a shared TypeTable.
         internal readonly bool isShared;
-        private List<string> _typeFileList;
+        private readonly List<string> _typeFileList;
+
+        private readonly Func<string, ConsolidatedString, PSMemberInfoInternalCollection<PSMemberInfo>> _memberFactoryFunc;
 
         // This holds all the type information that is in the typetable
         // Holds file name if types file was used to update the types
@@ -3392,6 +3394,7 @@ namespace System.Management.Automation.Runspaces
         {
             this.isShared = isShared;
             _typeFileList = new List<string>();
+            _memberFactoryFunc = MemberFactory;
         }
 
         /// <summary>
@@ -3510,13 +3513,10 @@ namespace System.Management.Automation.Runspaces
                 var retValueTable = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (string type in types)
                 {
-                    PSMemberInfoInternalCollection<PSMemberInfo> typeMembers;
-                    if (!_extendedMembers.TryGetValue(type, out typeMembers))
+                    if (!_extendedMembers.TryGetValue(type, out var typeMembers))
                         continue;
                     PSMemberSet settings = typeMembers[PSStandardMembers] as PSMemberSet;
-                    if (settings == null)
-                        continue;
-                    PSPropertySet typeProperties = settings.Members[PropertySerializationSet] as PSPropertySet;
+                    PSPropertySet typeProperties = settings?.Members[PropertySerializationSet] as PSPropertySet;
                     if (typeProperties == null)
                         continue;
                     foreach (string reference in typeProperties.ReferencedPropertyNames)
@@ -3557,58 +3557,64 @@ namespace System.Management.Automation.Runspaces
             {
                 return new PSMemberInfoInternalCollection<PSMemberInfo>();
             }
-            PSMemberInfoInternalCollection<PSMemberInfo> result = _consolidatedMembers.GetOrAdd(types.Key, k =>
+
+            PSMemberInfoInternalCollection<PSMemberInfo> result = _consolidatedMembers.GetOrAdd(types.Key, _memberFactoryFunc, types);
+            return result;
+        }
+
+        private PSMemberInfoInternalCollection<PSMemberInfo> MemberFactory(string k, ConsolidatedString types)
+        {
+            var retValue = new PSMemberInfoInternalCollection<PSMemberInfo>();
+            for (int i = types.Count - 1; i >= 0; i--)
             {
-                var retValue = new PSMemberInfoInternalCollection<PSMemberInfo>();
-                for (int i = types.Count - 1; i >= 0; i--)
+                if (!_extendedMembers.TryGetValue(types[i], out var typeMembers))
                 {
-                    PSMemberInfoInternalCollection<PSMemberInfo> typeMembers;
-                    if (!_extendedMembers.TryGetValue(types[i], out typeMembers))
-                    {
-                        continue;
-                    }
-                    foreach (PSMemberInfo typeMember in typeMembers)
-                    {
-                        PSMemberInfo currentMember = retValue[typeMember.Name];
-                        // If the member was not present, we add it
-                        if (currentMember == null)
-                        {
-                            retValue.Add(typeMember.Copy());
-                            continue;
-                        }
-                        // There was a currentMember with the same name as typeMember
-                        PSMemberSet currentMemberAsMemberSet = currentMember as PSMemberSet;
-                        PSMemberSet typeMemberAsMemberSet = typeMember as PSMemberSet;
-                        // if we are not in a memberset inherit members situation we just replace
-                        // the current member with the new more specific member
-                        if (currentMemberAsMemberSet == null || typeMemberAsMemberSet == null ||
-                            !typeMemberAsMemberSet.InheritMembers)
-                        {
-                            retValue.Remove(typeMember.Name);
-                            retValue.Add(typeMember.Copy());
-                            continue;
-                        }
-                        // We are in a MemberSet InheritMembers situation, so we add the members in
-                        // typeMembers to the existing memberset.
-                        foreach (PSMemberInfo typeMemberAsMemberSetMember in typeMemberAsMemberSet.Members)
-                        {
-                            if (currentMemberAsMemberSet.Members[typeMemberAsMemberSetMember.Name] == null)
-                            {
-                                ((PSMemberInfoIntegratingCollection<PSMemberInfo>)currentMemberAsMemberSet.Members)
-                                    .AddToTypesXmlCache(typeMemberAsMemberSetMember, false);
-                                continue;
-                            }
-                            // there is a name conflict, the new member wins.
-                            Diagnostics.Assert(!typeMemberAsMemberSetMember.IsHidden,
-                                "new member in types.xml cannot be hidden");
-                            currentMemberAsMemberSet.InternalMembers.Replace(typeMemberAsMemberSetMember);
-                        }
-                    }
+                    continue;
                 }
 
-                return retValue;
-            });
-            return result;
+                foreach (PSMemberInfo typeMember in typeMembers)
+                {
+                    PSMemberInfo currentMember = retValue[typeMember.Name];
+                    // If the member was not present, we add it
+                    if (currentMember == null)
+                    {
+                        retValue.Add(typeMember.Copy());
+                        continue;
+                    }
+
+                    // There was a currentMember with the same name as typeMember
+                    PSMemberSet currentMemberAsMemberSet = currentMember as PSMemberSet;
+                    PSMemberSet typeMemberAsMemberSet = typeMember as PSMemberSet;
+                    // if we are not in a memberset inherit members situation we just replace
+                    // the current member with the new more specific member
+                    if (currentMemberAsMemberSet == null || typeMemberAsMemberSet == null ||
+                        !typeMemberAsMemberSet.InheritMembers)
+                    {
+                        retValue.Remove(typeMember.Name);
+                        retValue.Add(typeMember.Copy());
+                        continue;
+                    }
+
+                    // We are in a MemberSet InheritMembers situation, so we add the members in
+                    // typeMembers to the existing memberset.
+                    foreach (PSMemberInfo typeMemberAsMemberSetMember in typeMemberAsMemberSet.Members)
+                    {
+                        if (currentMemberAsMemberSet.Members[typeMemberAsMemberSetMember.Name] == null)
+                        {
+                            ((PSMemberInfoIntegratingCollection<PSMemberInfo>)currentMemberAsMemberSet.Members)
+                                .AddToTypesXmlCache(typeMemberAsMemberSetMember, false);
+                            continue;
+                        }
+
+                        // there is a name conflict, the new member wins.
+                        Diagnostics.Assert(!typeMemberAsMemberSetMember.IsHidden,
+                            "new member in types.xml cannot be hidden");
+                        currentMemberAsMemberSet.InternalMembers.Replace(typeMemberAsMemberSetMember);
+                    }
+                }
+            }
+
+            return retValue;
         }
 
         /// <summary>
