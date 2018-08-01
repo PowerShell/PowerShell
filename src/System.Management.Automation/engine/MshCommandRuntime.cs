@@ -2252,7 +2252,7 @@ namespace System.Management.Automation
             {
                 // Only generate these exceptions if a pipeline has already been declared as the 'writing' pipeline.
                 // Otherwise, these are probably infrastructure messages and can be ignored.
-                if (this.PipelineProcessor._permittedToWrite != null)
+                if (this.PipelineProcessor?._permittedToWrite != null)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                         PipelineStrings.WriteNotPermitted);

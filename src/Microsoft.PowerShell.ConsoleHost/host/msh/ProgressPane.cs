@@ -89,12 +89,17 @@ namespace Microsoft.PowerShell
 
                 //if the cursor is at the bottom, create screen buffer space by scrolling
                 int scrollRows = rows - ((_rawui.BufferSize.Height - 1) - _location.Y);
-                for (int i = 0; i < rows; i++)
-                {
-                    Console.Out.Write('\n');
-                }
                 if (scrollRows > 0)
                 {
+                    // Scroll the console screen up by 'scrollRows'
+                    var bottomLocation = _location;
+                    bottomLocation.Y = _rawui.BufferSize.Height;
+                    _rawui.CursorPosition = bottomLocation;
+                    for (int i = 0; i < scrollRows; i++)
+                    {
+                        Console.Out.Write('\n');
+                    }
+
                     _location.Y -= scrollRows;
                     _savedCursor.Y -= scrollRows;
                 }
