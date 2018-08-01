@@ -3551,7 +3551,7 @@ namespace System.Management.Automation.Runspaces
             return PSObject.TransformMemberInfoCollection<PSMemberInfo, T>(GetMembers(types));
         }
 
-        private PSMemberInfoInternalCollection<PSMemberInfo> GetMembers(ConsolidatedString types)
+        internal PSMemberInfoInternalCollection<PSMemberInfo> GetMembers(ConsolidatedString types)
         {
             if ((types == null) || string.IsNullOrEmpty(types.Key))
             {
