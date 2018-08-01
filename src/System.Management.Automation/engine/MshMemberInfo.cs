@@ -4575,8 +4575,9 @@ namespace System.Management.Automation
                     TypeTable typeTable = _mshOwner.GetTypeTable();
                     if (typeTable != null)
                     {
-                        PSMemberInfoInternalCollection<T> typesXmlMembers = typeTable.GetMembers<T>(_mshOwner.InternalTypeNames);
-                        if (typesXmlMembers[member.Name] != null)
+                        var typesXmlMembers = typeTable.GetMembers(_mshOwner.InternalTypeNames);
+                        var typesXmlMember = typesXmlMembers[member.Name];
+                        if (typesXmlMember is T)
                         {
                             throw new ExtendedTypeSystemException(
                                 "AlreadyPresentInTypesXml",
