@@ -268,7 +268,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="data">
         /// data to process
@@ -320,7 +319,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="remoteObject"></param>
         /// <exception cref="Exception">
@@ -1423,7 +1421,6 @@ namespace System.Management.Automation.Remoting.Server
         #region Abstract interfaces
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="data"></param>
         /// <param name="flush">
@@ -1438,12 +1435,10 @@ namespace System.Management.Automation.Remoting.Server
         protected abstract void SendDataToClient(byte[] data, bool flush, bool reportAsPending, bool reportAsDataBoundary);
 
         /// <summary>
-        ///
         /// </summary>
         internal abstract void ReportExecutionStatusAsRunning();
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="reasonForClose">
         /// message describing why the transport manager must be closed

@@ -615,7 +615,6 @@ namespace Microsoft.PowerShell.Commands
         #region Override Methods
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -688,7 +687,6 @@ namespace Microsoft.PowerShell.Commands
         private IList<string> _propertyNames;
 
         /// <summary>
-        ///
         /// </summary>
         private ExportCsvHelper _helper;
 
@@ -738,7 +736,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region CSV conversion
         /// <summary>
-        ///
         /// </summary>
         /// <param name="line"></param>
         public override void
@@ -866,19 +863,16 @@ namespace Microsoft.PowerShell.Commands
     #region ExportHelperConversion
 
     /// <summary>
-    ///
     /// </summary>
     internal class ExportCsvHelper : IDisposable
     {
         /// <summary>
-        ///
         /// </summary>
         private PSCmdlet _cmdlet;
 
         private char _delimiter;
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="delimiter"></param>
@@ -953,7 +947,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="mshObject"></param>
         /// <param name="propertyNames"></param>

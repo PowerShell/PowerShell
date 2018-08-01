@@ -2714,7 +2714,6 @@ namespace System.Management.Automation
         /// Creates an instance of PSRemotingChildJob
         /// </summary>
         /// <param name="remoteCommand">command invoked by this job object</param>
-        ///
         /// <param name="helper"></param>
         /// <param name="throttleManager"></param>
         internal PSRemotingChildJob(string remoteCommand, ExecutionCmdletHelper helper, ThrottleManager throttleManager)
@@ -2881,7 +2880,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         public Runspace Runspace { get; }
 

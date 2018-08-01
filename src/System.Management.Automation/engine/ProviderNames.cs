@@ -9,7 +9,6 @@ namespace System.Management.Automation
     /// shell the provider name includes the PSSnapin name. In custom
     /// shells it does not.
     /// </summary>
-    ///
     internal abstract class ProviderNames
     {
         /// <summary>

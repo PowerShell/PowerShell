@@ -67,7 +67,6 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         public override string[] Command { get; set; }
         #endregion Parameters

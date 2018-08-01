@@ -57,7 +57,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info">
         /// The serialization information.
         /// </param>
-        ///
         /// <param name="context">
         /// The streaming context.
         /// </param>
@@ -132,7 +131,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info">
         /// The serialization information.
         /// </param>
-        ///
         /// <param name="context">
         /// The streaming context.
         /// </param>
@@ -207,7 +205,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info">
         /// The serialization information.
         /// </param>
-        ///
         /// <param name="context">
         /// The streaming context.
         /// </param>
@@ -282,7 +279,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="info">
         /// The serialization information.
         /// </param>
-        ///
         /// <param name="context">
         /// The streaming context.
         /// </param>

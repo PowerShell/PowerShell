@@ -16,7 +16,6 @@ namespace System.Management.Automation
     /// <summary>
     /// The parameter binder for native commands.
     /// </summary>
-    ///
     internal class NativeCommandParameterBinder : ParameterBinderBase
     {
         #region ctor
@@ -24,11 +23,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a NativeCommandParameterBinder
         /// </summary>
-        ///
         /// <param name="command">
         /// The NativeCommand to bind to.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// <paramref name="command"/>.Context is null
         /// </exception>
@@ -135,7 +132,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the command arguments in string form
         /// </summary>
-        ///
         internal String Arguments
         {
             get

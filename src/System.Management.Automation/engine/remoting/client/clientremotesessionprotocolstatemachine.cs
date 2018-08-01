@@ -496,7 +496,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="clearQueuedEvents">
         /// optional bool indicating whether to clear currently queued events
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -533,7 +532,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// The parameter contains the actual FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -583,7 +581,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="PSArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -617,7 +614,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="PSArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -647,7 +643,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -699,7 +694,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>

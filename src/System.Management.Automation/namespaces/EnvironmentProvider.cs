@@ -41,11 +41,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes the alias drive
         /// </summary>
-        ///
         /// <returns>
         /// An array of a single PSDriveInfo object representing the alias drive.
         /// </returns>
-        ///
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
             string description = SessionStateStrings.EnvironmentDriveDescription;
@@ -70,15 +68,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a environment variable from session state
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the environment variable to retrieve.
         /// </param>
-        ///
         /// <returns>
         /// A DictionaryEntry that represents the value of the environment variable.
         /// </returns>
-        ///
         internal override object GetSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
@@ -99,19 +94,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the environment variable of the specified name to the specified value
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the environment variable to set.
         /// </param>
-        ///
         /// <param name="value">
         /// The new value for the environment variable.
         /// </param>
-        ///
         /// <param name="writeItem">
         /// If true, the item that was set should be written to WriteItemObject.
         /// </param>
-        ///
         internal override void SetSessionStateItem(string name, object value, bool writeItem)
         {
             Dbg.Diagnostics.Assert(
@@ -155,11 +146,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Removes the specified environment variable from session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the environment variable to remove from session state.
         /// </param>
-        ///
         internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
@@ -172,12 +161,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a flattened view of the environment variables in session state
         /// </summary>
-        ///
         /// <returns>
         /// An IDictionary representing the flattened view of the environment variables in
         /// session state.
         /// </returns>
-        ///
         internal override IDictionary GetSessionStateTable()
         {
             // Environment variables are case-sensitive on Unix and
@@ -229,15 +216,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the Value property of the DictionaryEntry item
         /// </summary>
-        ///
         /// <param name="item">
         /// The item to get the value from.
         /// </param>
-        ///
         /// <returns>
         /// The value of the item.
         /// </returns>
-        ///
         internal override object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(

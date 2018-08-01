@@ -92,7 +92,6 @@ namespace System.Management.Automation
     /// <see cref="ValidateArgumentsAttribute.Validate"/>
     /// abstract method, after which they can apply the
     /// attribute to their parameters.
-    ///
     /// <see cref="ValidateArgumentsAttribute"/> validates the argument
     /// as a whole.  If the argument value is potentially an enumeration,
     /// you can derive from <see cref="ValidateEnumeratedArgumentsAttribute"/>
@@ -143,7 +142,6 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
         /// </param>
-        ///
         /// <returns>bool true if the validate succeeded</returns>
         /// <exception cref="ValidationMetadataException">
         /// Whenever any exception occurs during data validate.
@@ -802,7 +800,6 @@ namespace System.Management.Automation
     public class PSTypeNameAttribute : Attribute
     {
         /// <summary>
-        ///
         /// </summary>
         public string PSTypeName { get; private set; }
 
@@ -1365,7 +1362,6 @@ namespace System.Management.Automation
         ///
         /// The item being validated and the validating scriptblock is passed as the first and second
         /// formatting argument.
-        ///
         /// <example>
         /// <code>
         /// [ValidateScript("$_ % 2", ErrorMessage = "The item '{0}' did not pass validation of script '{1}'")]
@@ -1614,7 +1610,6 @@ namespace System.Management.Automation
         ///
         /// The item being validated and a text representation of the validation set
         /// is passed as the first and second formatting argument to the ErrorMessage formatting pattern.
-        ///
         /// <example>
         /// <code>
         /// [ValidateSet("A","B","C", ErrorMessage="The item '{0}' is not part of the set '{1}'.")

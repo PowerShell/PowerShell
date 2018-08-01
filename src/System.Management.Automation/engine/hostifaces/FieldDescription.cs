@@ -14,10 +14,8 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Host
 {
     /// <summary>
-    ///
     /// Provides a description of a field for use by <see cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>.
     /// <!--Used by the Msh engine to describe cmdlet parameters.-->
-    ///
     /// </summary>
     /// <remarks>
     /// It is permitted to subclass <see cref="System.Management.Automation.Host.FieldDescription"/>
@@ -28,19 +26,13 @@ namespace System.Management.Automation.Host
     FieldDescription
     {
         /// <summary>
-        ///
         /// Initializes a new instance of FieldDescription and defines the Name value.
-        ///
         /// </summary>
         /// <param name="name">
-        ///
         /// The name to identify this field description
-        ///
         /// </param>
         /// <exception cref="System.Management.Automation.PSArgumentException">
-        ///
         /// <paramref name="name"/> is null or empty.
-        ///
         /// </exception>
 
         public
@@ -68,19 +60,13 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Sets the ParameterTypeName, ParameterTypeFullName, and ParameterAssemblyFullName as a single operation.
-        ///
         /// </summary>
         /// <param name="parameterType">
-        ///
         /// The Type that sets the properties.
-        ///
         /// </param>
         /// <exception cref="System.Management.Automation.PSArgumentNullException">
-        ///
         /// If <paramref name="parameterType"/> is null.
-        ///
         /// </exception>
 
         public
@@ -98,22 +84,16 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets the short name of the parameter's type.
-        ///
         /// </summary>
         /// <value>
-        ///
         /// The type name of the parameter
-        ///
         /// </value>
         /// <remarks>
-        ///
         /// If not already set by a call to <see cref="System.Management.Automation.Host.FieldDescription.SetParameterType"/>,
         /// <see cref="System.String"/> will be used as the type.
         /// <!--The value of ParameterTypeName is the string value returned.
         /// by System.Type.Name.-->
-        ///
         /// </remarks>
 
         public
@@ -134,17 +114,13 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets the full string name of the parameter's type.
-        ///
         /// </summary>
         /// <remarks>
-        ///
         /// If not already set by a call to <see cref="System.Management.Automation.Host.FieldDescription.SetParameterType"/>,
         /// <see cref="System.String"/> will be used as the type.
         /// <!--The value of ParameterTypeName is the string value returned.
         /// by System.Type.Name.-->
-        ///
         /// </remarks>
 
         public
@@ -165,18 +141,14 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets the full name of the assembly containing the type identified by ParameterTypeFullName or ParameterTypeName
-        ///
         /// </summary>
         /// <remarks>
-        ///
         /// If the assembly is not currently loaded in the hosting application's AppDomain, the hosting application needs
         /// to load the containing assembly to access the type information. AssemblyName is used for this purpose.
         ///
         /// If not already set by a call to <see cref="System.Management.Automation.Host.FieldDescription.SetParameterType"/>,
         /// <see cref="System.String"/> will be used as the type.
-        ///
         /// </remarks>
 
         public
@@ -197,19 +169,14 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// A short, human-presentable message to describe and identify the field.  If supplied, a typical implementation of
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> will use this value instead of
         /// the field name to identify the field to the user.
-        ///
         /// </summary>
         /// <exception cref="System.Management.Automation.PSArgumentNullException">
-        ///
         /// set to null.
-        ///
         /// </exception>
         /// <remarks>
-        ///
         /// Note that the special character &amp; (ampersand) may be embedded in the label string to identify the next
         /// character in the label as a "hot key" (aka "keyboard accelerator") that the
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> implementation may use
@@ -220,7 +187,6 @@ namespace System.Management.Automation.Host
         /// For example, a field named "SSN" might have "&amp;Social Security Number" as it's label.
         ///
         /// If no label is set, then the empty string is returned.
-        ///
         /// </remarks>
 
         public
@@ -245,20 +211,14 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets and sets the help message for this field.
-        ///
         /// </summary>
         /// <exception cref="System.Management.Automation.PSArgumentNullException">
-        ///
         /// Set to null.
-        ///
         /// </exception>
         /// <remarks>
-        ///
         /// This should be a few sentences to describe the field, suitable for presentation as a tool tip.
         /// Avoid placing including formatting characters such as newline and tab.
-        ///
         /// </remarks>
 
         public
@@ -283,9 +243,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets and sets whether a value must be supplied for this field
-        ///
         /// </summary>
 
         public
@@ -303,14 +261,11 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets and sets the default value, if any, for the implementation of <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         /// to pre-populate its UI with. This is a PSObject instance so that the value can be serialized, converted,
         /// manipulated like any pipeline object.
-        ///
         /// </summary>
         ///<remarks>
-        ///
         /// It is up to the implementer of <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/> to decide if it
         /// can make use of the object in its presentation of the fields prompt.
         ///
@@ -334,11 +289,9 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// Gets the Attribute classes that apply to the field. In the case that <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         /// is being called from the MSH engine, this will contain the set of prompting attributes that are attached to a
         /// cmdlet parameter declaration.
-        ///
         /// </summary>
 
         public
@@ -349,15 +302,11 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// For use by remoting serialization.
-        ///
         /// </summary>
         /// <param name="nameOfType"></param>
         /// <exception cref="System.Management.Automation.PSArgumentException">
-        ///
         /// If <paramref name="nameOfType"/> is null.
-        ///
         /// </exception>
 
         internal
@@ -373,15 +322,11 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// For use by remoting serialization.
-        ///
         /// </summary>
         /// <param name="fullNameOfType"></param>
         /// <exception cref="System.Management.Automation.PSArgumentException">
-        ///
         /// If <paramref name="fullNameOfType"/> is null.
-        ///
         /// </exception>
 
         internal
@@ -397,15 +342,11 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        ///
         /// For use by remoting serialization.
-        ///
         /// </summary>
         /// <param name="fullNameOfAssembly"></param>
         /// <exception cref="System.Management.Automation.PSArgumentException">
-        ///
         /// If <paramref name="fullNameOfAssembly"/> is null.
-        ///
         /// </exception>
 
         internal

@@ -107,7 +107,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Internal helper to get to SessionState
         /// </summary>
-        ///
         internal SessionState InternalState
         {
             get { return _state; }

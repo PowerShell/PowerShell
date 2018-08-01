@@ -255,7 +255,6 @@ namespace System.Management.Automation.Internal
         public const int ALG_TYPE_RSA = (2) << (9);
 
         /// <summary>
-        ///
         /// </summary>
         public const int ALG_SID_RSA_ANY = 0;
 
@@ -944,7 +943,6 @@ namespace System.Management.Automation.Internal
         private bool _keyExchangeStarted = false;
 
         /// <summary>
-        ///
         /// </summary>
         protected void RunKeyExchangeIfRequired()
         {
@@ -1120,7 +1118,6 @@ namespace System.Management.Automation.Internal
         internal abstract RemoteSession Session { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         public void Dispose()
         {
@@ -1129,7 +1126,6 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="disposing"></param>
         public void Dispose(bool disposing)
@@ -1258,7 +1254,6 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="encryptedSessionKey"></param>
         /// <returns></returns>
@@ -1375,7 +1370,6 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="encryptedSessionKey"></param>
         /// <returns></returns>

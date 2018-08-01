@@ -56,15 +56,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an instance of the Name class.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the command.
         /// </param>
-        ///
         /// <returns>
         /// An instance of the Name class.
         /// </returns>
-        ///
         internal static PSSnapinQualifiedName GetInstance(string name)
         {
             if (name == null)
@@ -86,7 +83,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the command's full name.
         /// </summary>
-        ///
         internal string FullName
         {
             get
@@ -99,7 +95,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the command's PSSnapin name.
         /// </summary>
-        ///
         internal string PSSnapInName
         {
             get
@@ -112,7 +107,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the command's short name.
         /// </summary>
-        ///
         internal string ShortName
         {
             get
@@ -125,11 +119,9 @@ namespace System.Management.Automation
         /// <summary>
         /// The full name
         /// </summary>
-        ///
         /// <returns>
         /// A string representing the full name.
         /// </returns>
-        ///
         public override string ToString()
         {
             return _fullName;
