@@ -803,8 +803,7 @@ namespace System.Management.Automation
 
             if (first is string firstString)
             {
-                string secondString = second as string;
-                if (secondString == null)
+                if (!(second is string secondString))
                 {
                     try
                     {
@@ -832,7 +831,6 @@ namespace System.Management.Automation
             try
             {
                 secondConverted = LanguagePrimitives.ConvertTo(second, firstType, culture);
-
             }
             catch (PSInvalidCastException e)
             {
@@ -1661,9 +1659,9 @@ namespace System.Management.Automation
         /// <returns>false for conversion failure, true for success</returns>
         public static bool TryConvertTo<T>(object valueToConvert, out T result)
         {
-            if (valueToConvert is T variable)
+            if (valueToConvert is T value)
             {
-                result = variable;
+                result = value;
                 return true;
             }
             return TryConvertTo(valueToConvert, CultureInfo.InvariantCulture, out result);
@@ -1681,25 +1679,15 @@ namespace System.Management.Automation
         /// <returns>false for conversion failure, true for success</returns>
         public static bool TryConvertTo<T>(object valueToConvert, IFormatProvider formatProvider, out T result)
         {
-            result = default;
-            try
-            {
-                if (TryConvertTo(valueToConvert, typeof(T), formatProvider, out var res))
-                {
-                    result = (T) res;
-                    return true;
-                }
+            result = default(T);
 
-                return false;
-            }
-            catch (InvalidCastException)
+            if (TryConvertTo(valueToConvert, typeof(T), formatProvider, out var res))
             {
-                return false;
+                result = (T) res;
+                return true;
             }
-            catch (ArgumentException)
-            {
-                return false;
-            }
+
+            return false;
         }
 
         /// <summary>
@@ -1731,7 +1719,7 @@ namespace System.Management.Automation
         /// <returns>false for conversion failure, true for success</returns>
         public static bool TryConvertTo(object valueToConvert, Type resultType, IFormatProvider formatProvider, out object result)
         {
-            result = default;
+            result = null;
             try
             {
                 using (typeConversion.TraceScope("Converting \"{0}\" to \"{1}\".", valueToConvert, resultType))
