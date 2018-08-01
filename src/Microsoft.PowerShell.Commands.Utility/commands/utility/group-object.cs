@@ -60,19 +60,49 @@ namespace Microsoft.PowerShell.Commands
                 case 4:
                     return Tuple.Create(inputObjects[startIndex], inputObjects[startIndex + 1], inputObjects[startIndex + 2], inputObjects[startIndex + 3]);
                 case 5:
-                    return Tuple.Create(inputObjects[startIndex], inputObjects[startIndex + 1], inputObjects[startIndex + 2], inputObjects[startIndex + 3], inputObjects[startIndex + 4]);
+                    return Tuple.Create(
+                        inputObjects[startIndex],
+                        inputObjects[startIndex + 1],
+                        inputObjects[startIndex + 2],
+                        inputObjects[startIndex + 3],
+                        inputObjects[startIndex + 4]);
                 case 6:
-                    return Tuple.Create(inputObjects[startIndex], inputObjects[startIndex + 1], inputObjects[startIndex + 2], inputObjects[startIndex + 3], inputObjects[startIndex + 4],
+                    return Tuple.Create(
+                        inputObjects[startIndex],
+                        inputObjects[startIndex + 1],
+                        inputObjects[startIndex + 2],
+                        inputObjects[startIndex + 3],
+                        inputObjects[startIndex + 4],
                         inputObjects[startIndex + 5]);
                 case 7:
-                    return Tuple.Create(inputObjects[startIndex], inputObjects[startIndex + 1], inputObjects[startIndex + 2], inputObjects[startIndex + 3], inputObjects[startIndex + 4],
-                        inputObjects[startIndex + 5], inputObjects[startIndex + 6]);
+                    return Tuple.Create(
+                        inputObjects[startIndex],
+                        inputObjects[startIndex + 1],
+                        inputObjects[startIndex + 2],
+                        inputObjects[startIndex + 3],
+                        inputObjects[startIndex + 4],
+                        inputObjects[startIndex + 5],
+                        inputObjects[startIndex + 6]);
                 case 8:
-                    return Tuple.Create(inputObjects[startIndex], inputObjects[startIndex + 1], inputObjects[startIndex + 2], inputObjects[startIndex + 3], inputObjects[startIndex + 4],
-                        inputObjects[startIndex + 5], inputObjects[startIndex + 6], inputObjects[startIndex + 7]);
+                    return Tuple.Create(
+                        inputObjects[startIndex],
+                        inputObjects[startIndex + 1],
+                        inputObjects[startIndex + 2],
+                        inputObjects[startIndex + 3],
+                        inputObjects[startIndex + 4],
+                        inputObjects[startIndex + 5],
+                        inputObjects[startIndex + 6],
+                        inputObjects[startIndex + 7]);
                 default:
-                    return Tuple.Create(inputObjects[startIndex], inputObjects[startIndex + 1], inputObjects[startIndex + 2], inputObjects[startIndex + 3], inputObjects[startIndex + 4],
-                        inputObjects[startIndex + 5], inputObjects[startIndex + 6], ArrayToTuple(inputObjects, startIndex + 7));
+                    return Tuple.Create(
+                        inputObjects[startIndex],
+                        inputObjects[startIndex + 1],
+                        inputObjects[startIndex + 2],
+                        inputObjects[startIndex + 3],
+                        inputObjects[startIndex + 4],
+                        inputObjects[startIndex + 5],
+                        inputObjects[startIndex + 6],
+                        ArrayToTuple(inputObjects, startIndex + 7));
             }
         }
     }
@@ -83,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GroupInfoNoElement : GroupInfo
     {
         internal GroupInfoNoElement(OrderByPropertyEntry groupValue)
-            : base(groupValue)
+        : base(groupValue)
         {
         }
 
@@ -194,12 +224,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// An instance of the PSTraceSource class used for trace output.
         /// </summary>
-        [TraceSourceAttribute(
-            "GroupObjectCommand",
-            "Class that has group base implementation")]
-        private static PSTraceSource s_tracer =
-            PSTraceSource.GetTracer("GroupObjectCommand",
-                "Class that has group base implementation");
+        [TraceSource("GroupObjectCommand", "Class that has group base implementation")]
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("GroupObjectCommand", "Class that has group base implementation");
 
         #endregion tracer
 
@@ -249,7 +275,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="groups">List containing Groups.</param>
         /// <param name="groupInfoDictionary">Dictionary used to keep track of the groups with hash of the property values being the key.</param>
         /// <param name="orderByPropertyComparer">The Comparer to be used while comparing to check if new group has to be created.</param>
-        internal static void DoGrouping(OrderByPropertyEntry currentObjectEntry, bool noElement, List<GroupInfo> groups, Dictionary<object, GroupInfo> groupInfoDictionary,
+        internal static void DoGrouping(
+            OrderByPropertyEntry currentObjectEntry,
+            bool noElement,
+            List<GroupInfo> groups,
+            Dictionary<object, GroupInfo> groupInfoDictionary,
             OrderByPropertyComparer orderByPropertyComparer)
         {
             var currentObjectorderValues = currentObjectEntry.orderValues;
@@ -259,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (groupInfoDictionary.TryGetValue(currentTupleObject, out var currentGroupInfo))
                 {
-                    //add this inputObject to an existing group
+                    // add this inputObject to an existing group
                     currentGroupInfo?.Add(currentObjectEntry.inputObject);
                 }
                 else
@@ -299,7 +329,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="groups">List containing Groups.</param>
         /// <param name="groupInfoDictionary">Dictionary used to keep track of the groups with hash of the property values being the key.</param>
         /// <param name="orderByPropertyComparer">The Comparer to be used while comparing to check if new group has to be created.</param>
-        internal static void DoOrderedGrouping(OrderByPropertyEntry currentObjectEntry, bool noElement, List<GroupInfo> groups, Dictionary<object, GroupInfo> groupInfoDictionary,
+        internal static void DoOrderedGrouping(
+            OrderByPropertyEntry currentObjectEntry,
+            bool noElement,
+            List<GroupInfo> groups,
+            Dictionary<object, GroupInfo> groupInfoDictionary,
             OrderByPropertyComparer orderByPropertyComparer)
         {
             var currentObjectOrderValues = currentObjectEntry.orderValues;
@@ -334,8 +368,9 @@ namespace Microsoft.PowerShell.Commands
                         // create a new group
                         s_tracer.WriteLine("Create a new group: {0}", currentObjectOrderValues);
                         GroupInfo newObjGrp = noElement
-                            ? new GroupInfoNoElement(currentObjectEntry)
-                            : new GroupInfo(currentObjectEntry);
+                                              ? new GroupInfoNoElement(currentObjectEntry)
+                                              : new GroupInfo(currentObjectEntry);
+
                         groups.Add(newObjGrp);
 
                         groupInfoDictionary.Add(currentTupleObject, newObjGrp);
@@ -344,8 +379,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void WriteNonTerminatingError(Exception exception, string resourceIdAndErrorId,
-            ErrorCategory category)
+        private void WriteNonTerminatingError(Exception exception, string resourceIdAndErrorId, ErrorCategory category)
         {
             Exception ex = new Exception(StringUtil.Format(resourceIdAndErrorId), exception);
             WriteError(new ErrorRecord(ex, resourceIdAndErrorId, category, null));
@@ -378,10 +412,7 @@ namespace Microsoft.PowerShell.Commands
                         ThrowTerminatingError(er);
                     }
 
-                    if (AsHashTable
-                        && !AsString
-                        && (Property != null && Property.Length > 1
-                            || _orderByProperty.MshParameterList.Count > 1))
+                    if (AsHashTable && !AsString && (Property != null && (Property.Length > 1 || _orderByProperty.MshParameterList.Count > 1)))
                     {
                         ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectSingleProperty);
                         ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);
