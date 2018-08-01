@@ -1234,10 +1234,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 TypeName = ReadTypeInformation();
             }
-
+            var values = new List<string>(16);
+            var builder = new StringBuilder(256);
             while ((Header == null) && (!this.EOF))
             {
-                Collection<string> values = ParseNextRecord();
+                ParseNextRecord(values, builder);
 
                 // Trim all trailing blankspaces and delimiters ( single/multiple ).
                 // If there is only one element in the row and if its a blankspace we dont trim it.
@@ -1279,9 +1280,11 @@ namespace Microsoft.PowerShell.Commands
             _alreadyWarnedUnspecifiedName = alreadyWriteOutWarning;
             ReadHeader();
             var prevalidated = false;
+            var values = new List<string>(16);
+            var builder = new StringBuilder(256);
             while (true)
             {
-                Collection<string> values = ParseNextRecord();
+                ParseNextRecord(values, builder);
                 if (values.Count == 0)
                     break;
 
@@ -1367,13 +1370,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// Parsed collection of strings.
         /// </returns>
-        private Collection<string>
-        ParseNextRecord()
+        private void 
+        ParseNextRecord(List<string> result, StringBuilder current)
         {
-            // Collection of strings to return
-            Collection<string> result = new Collection<string>();
+            result.Clear();
             // current string
-            StringBuilder current = new StringBuilder();
+            current.Clear();
 
             bool seenBeginQuote = false;
             // int i = 0;
@@ -1521,8 +1523,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 result.Add(current.ToString());
             }
-
-            return result;
         }
 
         // If we detect a newline we return it as a string "\r", "\n" or "\r\n"
@@ -1613,7 +1613,7 @@ namespace Microsoft.PowerShell.Commands
 
         private
         PSObject
-        BuildMshobject(string type, IList<string> names, Collection<string> values, char delimiter, bool preValidated = false)
+        BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, bool preValidated = false)
         {
             //string[] namesarray = null;
             PSObject result = new PSObject(names.Count);
