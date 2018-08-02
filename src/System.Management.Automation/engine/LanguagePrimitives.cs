@@ -855,6 +855,146 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Tries to compare first and second, converting second to the type of the first, if necessary.
+        /// If a conversion is needed but fails, false is return.
+        /// </summary>
+        /// <param name="first">First comparison value.</param>
+        /// <param name="second">Second comparison value.</param>
+        /// <param name="result">Less than zero if first is smaller than second, more than
+        /// zero if it is greater or zero if they are the same.</param>
+        /// <returns>True if the comparison was successful, false otherwise.</returns>
+        public static bool TryCompare(object first, object second, out int result)
+        {
+            return TryCompare(first, second, false, CultureInfo.InvariantCulture, out result);
+        }
+
+        /// <summary>
+        /// Tries to compare first and second, converting second to the type of the first, if necessary.
+        /// If a conversion is needed but fails, false is return.
+        /// </summary>
+        /// <param name="first">First comparison value.</param>
+        /// <param name="second">Second comparison value.</param>
+        /// <param name="ignoreCase">Used if both values are strings.</param>
+        /// <param name="result">Less than zero if first is smaller than second, more than zero if it is greater or zero if they are the same.</param>
+        /// <returns>True if the comparison was successful, false otherwise.</returns>
+        public static bool TryCompare(object first, object second, bool ignoreCase, out int result)
+        {
+            return TryCompare(first, second, ignoreCase, CultureInfo.InvariantCulture, out result);
+        }
+
+        /// <summary>
+        /// Tries to compare first and second, converting second to the type of the first, if necessary.
+        /// If a conversion is needed but fails, false is return.
+        /// </summary>
+        /// <param name="first">First comparison value.</param>
+        /// <param name="second">Second comparison value.</param>
+        /// <param name="ignoreCase">Used if both values are strings.</param>
+        /// <param name="formatProvider">Used in type conversions and if both values are strings.</param>
+        /// <param name="result">Less than zero if first is smaller than second, more than  zero if it is greater or zero if they are the same.</param>
+        /// <returns>True if the comparison was successful, false otherwise.</returns>
+        /// <exception cref="ArgumentException">The parameter <paramref name="formatProvider"/> is not a <see cref="CultureInfo"/>.</exception>
+        public static bool TryCompare(object first, object second, bool ignoreCase, IFormatProvider formatProvider, out int result)
+        {
+            result = 0;
+            if (formatProvider == null)
+            {
+                formatProvider = CultureInfo.InvariantCulture;
+            }
+
+            if (!(formatProvider is CultureInfo culture))
+            {
+                throw PSTraceSource.NewArgumentException("formatProvider");
+            }
+
+            first = PSObject.Base(first);
+            second = PSObject.Base(second);
+
+            int CompareNullToNumeric(object value, bool numberIsRightHandSide)
+            {
+                var i = numberIsRightHandSide ? -1 : 1;
+
+                // If it's a positive number, including 0, it's greater than null
+                // for everything else it's less than zero...
+                switch (GetTypeCode(value.GetType()))
+                {
+                    case TypeCode.Int16: return Math.Sign((Int16)value) < 0 ? -i : i;
+                    case TypeCode.Int32: return Math.Sign((Int32)value) < 0 ? -i : i;
+                    case TypeCode.Int64: return Math.Sign((Int64)value) < 0 ? -i : i;
+                    case TypeCode.SByte: return Math.Sign((sbyte)value) < 0 ? -i : i;
+                    case TypeCode.Single: return Math.Sign((Single)value) < 0 ? -i : i;
+                    case TypeCode.Double: return Math.Sign((Double)value) < 0 ? -i : i;
+                    case TypeCode.Decimal: return Math.Sign((Decimal)value) < 0 ? -i : i;
+                    default: return i;
+                }
+            }
+
+            if (first == null && second == null)
+            {
+                result = 0;
+                return true;
+            }
+
+            if (first == null)
+            {
+                result = CompareNullToNumeric(second, true);
+                return true;
+            }
+
+            if (second == null)
+            {
+                // If it's a positive number, including 0, it's greater than null
+                // for everything else it's less than zero...
+                result = CompareNullToNumeric(first, false);
+                return true;
+            }
+
+            if (first is string firstString)
+            {
+                if (!(second is string secondString))
+                {
+                    if (!TryConvertTo(second, culture, out secondString))
+                    {
+                        return false;
+                    }
+                }
+
+                result = culture.CompareInfo.Compare(firstString, secondString, ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
+                return true;
+            }
+
+            Type firstType = first.GetType();
+            Type secondType = second.GetType();
+            int firstIndex = TypeTableIndex(firstType);
+            int secondIndex = TypeTableIndex(secondType);
+            if (firstIndex != -1 && secondIndex != -1)
+            {
+                result = NumericCompare(first, second, firstIndex, secondIndex);
+                return true;
+            }
+
+            if (!TryConvertTo(second, firstType, culture, out object secondConverted))
+            {
+                return false;
+            }
+
+            if (first is IComparable firstComparable)
+            {
+                result = firstComparable.CompareTo(secondConverted);
+                return true;
+            }
+
+            if (first.Equals(second))
+            {
+                result = 0;
+                return true;
+            }
+
+            // At this point, we know that they aren't equal but we have no way of
+            // knowing which should compare greater than the other so we return false.
+            return false;
+        }
+
+        /// <summary>
         /// Returns true if the language considers obj to be true
         /// </summary>
         /// <param name="obj">obj to verify if it is true</param>
