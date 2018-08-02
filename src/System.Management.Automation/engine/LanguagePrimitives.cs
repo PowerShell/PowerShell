@@ -1683,7 +1683,7 @@ namespace System.Management.Automation
 
             if (TryConvertTo(valueToConvert, typeof(T), formatProvider, out var res))
             {
-                result = (T) res;
+                result = (T)res;
                 return true;
             }
 
@@ -1712,11 +1712,11 @@ namespace System.Management.Automation
         /// <remarks>
         /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails.
         /// </remarks>
-        /// <param name="valueToConvert">value to be converted and returned</param>
-        /// <param name="resultType">type to convert valueToConvert</param>
-        /// <param name="formatProvider">governing conversion of types</param>
+        /// <param name="valueToConvert">value to be converted and returned.</param>
+        /// <param name="resultType">type to convert valueToConvert.</param>
+        /// <param name="formatProvider">governing conversion of types.</param>
         /// <param name="result">result of the conversion. This is valid only if the return is true.</param>
-        /// <returns>false for conversion failure, true for success</returns>
+        /// <returns>false for conversion failure, true for success.</returns>
         public static bool TryConvertTo(object valueToConvert, Type resultType, IFormatProvider formatProvider, out object result)
         {
             result = null;
@@ -1730,13 +1730,18 @@ namespace System.Management.Automation
                     }
 
                     var conversion = FigureConversion(valueToConvert, resultType, out var debase);
-                    if (conversion.Rank== ConversionRank.None)
+                    if (conversion.Rank == ConversionRank.None)
                     {
                         return false;
                     }
-                    result = conversion.Invoke(debase ? PSObject.Base(valueToConvert) : valueToConvert,
-                        resultType, true, debase ? (PSObject)valueToConvert : null,
-                        formatProvider, null);
+
+                    result = conversion.Invoke(
+                                               debase ? PSObject.Base(valueToConvert) : valueToConvert,
+                                               resultType,
+                                               recurse: true,
+                                               debase ? (PSObject)valueToConvert : null,
+                                               formatProvider,
+                                               backupTable: null);
                     return true;
                 }
             }
