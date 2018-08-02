@@ -40,7 +40,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal abstract class OutputContext
         {
             /// <summary>
-            ///
             /// </summary>
             /// <param name="parentContextInStack">parent context in the stack, it can be null</param>
             internal OutputContext(OutputContext parentContextInStack)

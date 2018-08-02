@@ -10,12 +10,11 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "Remove-Alias" cmdlet.
     /// </summary>
-    ///
     [Cmdlet(VerbsCommon.Remove, "Alias", DefaultParameterSetName = "Default", HelpUri = "")]
     [Alias("ral")]
     public class RemoveAliasCommand : PSCmdlet
     {
-         #region Parameters
+        #region Parameters
 
         /// <summary>
         /// The alias name to remove.
@@ -24,8 +23,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name { get; set; }
 
         /// <summary>
-        /// The scope parameter for the command determines
-        /// which scope the alias is removed from.
+        /// The scope parameter for the command determines which scope the alias is removed from.
         /// </summary>
         [Parameter]
         public string Scope { get; set; }
@@ -46,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            foreach(string aliasName in Name)
+            foreach (string aliasName in Name)
             {
                 AliasInfo existingAlias = null;
                 if (String.IsNullOrEmpty(Scope))
@@ -65,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     ItemNotFoundException notAliasFound = new ItemNotFoundException(StringUtil.Format(AliasCommandStrings.NoAliasFound, "name", aliasName));
-                    ErrorRecord error = new ErrorRecord(notAliasFound, "ItemNotFoundException",ErrorCategory.ObjectNotFound, aliasName);
+                    ErrorRecord error = new ErrorRecord(notAliasFound, "ItemNotFoundException", ErrorCategory.ObjectNotFound, aliasName);
                     WriteError(error);
                 }
             }

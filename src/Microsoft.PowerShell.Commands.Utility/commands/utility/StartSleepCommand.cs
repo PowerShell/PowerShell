@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// Allows sleep time to be specified in seconds
+        /// Allows sleep time to be specified in seconds.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Seconds", ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true)]
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
         public int Seconds { get; set; }
 
         /// <summary>
-        /// Allows sleep time to be specified in milliseconds
+        /// Allows sleep time to be specified in milliseconds.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Milliseconds", ValueFromPipelineByPropertyName = true)]
         [ValidateRangeAttribute(0, int.MaxValue)]
@@ -68,8 +68,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _stopping = false;
 
         /// <summary>
-        /// This method causes calling thread to sleep for
-        /// specified milliseconds
+        /// This method causes calling thread to sleep for specified milliseconds.
         /// </summary>
         private void Sleep(int milliSecondsToSleep)
         {
@@ -87,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
+        /// ProcessRecord method.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -109,14 +108,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             Sleep(sleepTime);
-        } // EndProcessing
+        }
 
         /// <summary>
-        /// stopprocessing override
+        /// StopProcessing override.
         /// </summary>
-        protected override
-        void
-        StopProcessing()
+        protected override void StopProcessing()
         {
             lock (_syncObject)
             {
@@ -129,6 +126,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-    } // StartSleepCommand
-} // namespace Microsoft.PowerShell.Commands
-
+    }
+}

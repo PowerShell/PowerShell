@@ -5,10 +5,12 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +28,6 @@ namespace System.Management.Automation
     ///
     /// Changes to these type of modules will not be re-analyzed, unless the user re-imports the module,
     /// or runs Get-Module -List.
-    ///
     /// </summary>
     internal class AnalysisCache
     {
@@ -100,6 +101,12 @@ namespace System.Management.Automation
                 var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
                 if (moduleManifestProperties != null)
                 {
+                    if (ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
+                    {
+                        ModuleIntrinsics.Tracer.WriteLine($"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
+                        return null;
+                    }
+
                     Version version;
                     if (ModuleUtils.IsModuleInVersionSubdirectory(modulePath, out version))
                     {
@@ -156,6 +163,31 @@ namespace System.Management.Automation
             if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleManifestAnalysisResult(modulePath, result != null);
 
             return result ?? AnalyzeTheOldWay(modulePath, context, lastWriteTime);
+        }
+
+        /// <summary>
+        /// Check if a module is compatible with the current PSEdition given its path and its manifest properties.
+        /// </summary>
+        /// <param name="modulePath">The path to the module.</param>
+        /// <param name="moduleManifestProperties">The properties of the module's manifest.</param>
+        /// <returns></returns>
+        internal static bool ModuleIsEditionIncompatible(string modulePath, Hashtable moduleManifestProperties)
+        {
+#if UNIX
+            return false;
+#else
+            if (!ModuleUtils.IsOnSystem32ModulePath(modulePath))
+            {
+                return false;
+            }
+
+            if (!moduleManifestProperties.ContainsKey("CompatiblePSEditions"))
+            {
+                return true;
+            }
+
+            return !Utils.IsPSEditionSupported(LanguagePrimitives.ConvertTo<string[]>(moduleManifestProperties["CompatiblePSEditions"]));
+#endif
         }
 
         internal static bool ModuleAnalysisViaGetModuleRequired(object modulePathObj, bool hadCmdlets, bool hadFunctions, bool hadAliases)
@@ -447,6 +479,14 @@ namespace System.Management.Automation
         {
             ModuleIntrinsics.Tracer.WriteLine("Requested caching for {0}", module.Name);
 
+            // Don't cache incompatible modules on the system32 module path even if loaded with
+            // -SkipEditionCheck, since it will break subsequent sessions.
+            if (!module.IsConsideredEditionCompatible)
+            {
+                ModuleIntrinsics.Tracer.WriteLine($"Module '{module.Name}' not edition compatible and not cached.");
+                return;
+            }
+
             DateTime lastWriteTime;
             ModuleCacheEntry moduleCacheEntry;
             GetModuleEntryFromCache(module.Path, out lastWriteTime, out moduleCacheEntry);
@@ -650,10 +690,9 @@ namespace System.Management.Automation
             var keys = Entries.Keys;
             foreach (var key in keys)
             {
-                if (!Utils.FileExists(key))
+                if (!File.Exists(key))
                 {
-                    ModuleCacheEntry unused;
-                    removedSomething |= Entries.TryRemove(key, out unused);
+                    removedSomething |= Entries.TryRemove(key, out ModuleCacheEntry _);
                 }
             }
 
@@ -690,7 +729,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (Utils.FileExists(filename))
+                if (File.Exists(filename))
                 {
                     var fileLastWriteTime = new FileInfo(filename).LastWriteTime;
                     if (fileLastWriteTime > this.LastReadTime)
@@ -987,7 +1026,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if (Utils.FileExists(s_cacheStoreLocation))
+                    if (File.Exists(s_cacheStoreLocation))
                     {
                         return Deserialize(s_cacheStoreLocation);
                     }
@@ -1025,12 +1064,53 @@ namespace System.Management.Automation
 
         static AnalysisCacheData()
         {
-            s_cacheStoreLocation =
-                Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath") ??
+            // If user defines a custom cache path, then use that.
+            string userDefinedCachePath = Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath");
+            if (!string.IsNullOrEmpty(userDefinedCachePath))
+            {
+                s_cacheStoreLocation = userDefinedCachePath;
+                return;
+            }
+
+            string cacheFileName = "ModuleAnalysisCache";
+            if (ExperimentalFeature.EnabledExperimentalFeatureNames.Count > 0)
+            {
+                // If any experimental features are enabled, we cannot use the default cache file because those
+                // features may expose commands that are not available in a regular powershell session, and we
+                // should not cache those commands in the default cache file because that will result in wrong
+                // auto-completion suggestions when the default cache file is used in another powershell session.
+                //
+                // Here we will generate a cache file name that represent the combination of enabled feature names.
+                // We first convert enabled feature names to lower case, then we sort the feature names, and then
+                // compute an SHA1 hash from the sorted feature names. We will use a short SHA name (first 8 chars)
+                // to generate the cache file name.
+                int index = 0;
+                string[] featureNames = new string[ExperimentalFeature.EnabledExperimentalFeatureNames.Count];
+                foreach (string featureName in ExperimentalFeature.EnabledExperimentalFeatureNames)
+                {
+                    featureNames[index++] = featureName.ToLowerInvariant();
+                }
+
+                Array.Sort(featureNames);
+                string allNames = string.Join(Environment.NewLine, featureNames);
+
+                // Use SHA1 because it's faster.
+                // It's very unlikely to get collision from hashing the combinations of enabled features names.
+                byte[] hashBytes;
+                using (var sha1 = SHA1.Create())
+                {
+                    hashBytes = sha1.ComputeHash(Encoding.UTF8.GetBytes(allNames));
+                }
+
+                // Use the first 8 characters of the hash string for a short SHA. 
+                string stringVal = BitConverter.ToString(hashBytes, startIndex: 0, length: 4).Replace("-", String.Empty);
+                cacheFileName = String.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, stringVal);
+            }
+
 #if UNIX
-                Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ModuleAnalysisCache");
+            s_cacheStoreLocation = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), cacheFileName);
 #else
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\PowerShell\ModuleAnalysisCache");
+            s_cacheStoreLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\PowerShell", cacheFileName);
 #endif
         }
     }
@@ -1044,4 +1124,4 @@ namespace System.Management.Automation
         public ConcurrentDictionary<string, CommandTypes> Commands;
         public ConcurrentDictionary<string, TypeAttributes> Types;
     }
-} // System.Management.Automation
+}

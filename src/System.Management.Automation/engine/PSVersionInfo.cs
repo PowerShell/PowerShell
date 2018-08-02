@@ -78,11 +78,11 @@ namespace System.Management.Automation
 
             if (productVersion.Contains(" Commits: "))
             {
-                rawGitCommitId = "v" + productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
+                rawGitCommitId = productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
             }
             else
             {
-                rawGitCommitId = "v" + mainVersion;
+                rawGitCommitId = mainVersion;
             }
 
             s_psV6Version = new SemanticVersion(mainVersion);
@@ -192,7 +192,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks>
         /// For 2.0 PowerShell, we still use "1" as the registry version key.
@@ -208,7 +207,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks>
         /// For 3.0 PowerShell, we use "3" as the registry version key only for Engine

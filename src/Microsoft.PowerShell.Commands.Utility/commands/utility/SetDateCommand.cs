@@ -13,7 +13,7 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// implementation for the set-date command
+    /// Implementation for the set-date command.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Date", DefaultParameterSetName = "Date", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113393")]
     [OutputType(typeof(DateTime))]
@@ -22,20 +22,20 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// Allows user to override the date/time object that will be processed
+        /// Allows user to override the date/time object that will be processed.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Date", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public DateTime Date { get; set; }
 
         /// <summary>
-        /// Allows a use to specify a timespan with which to apply to the current time
+        /// Allows a use to specify a timespan with which to apply to the current time.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Adjust", ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         public TimeSpan Adjust { get; set; }
 
         /// <summary>
-        /// This option determines the default output format used to display the object set-date emits
+        /// This option determines the default output format used to display the object set-date emits.
         /// </summary>
         [Parameter]
         public DisplayHintType DisplayHint { get; set; } = DisplayHintType.DateTime;
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         #region methods
 
         /// <summary>
-        /// set the date
+        /// Set the date.
         /// </summary>
         [ArchitectureSensitive]
         protected override void ProcessRecord()
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
             outputObj.Properties.Add(note);
 
             WriteObject(outputObj);
-        } // EndProcessing
+        }
 
         #endregion
 
@@ -129,9 +129,7 @@ namespace Microsoft.PowerShell.Commands
 
             [DllImport(PinvokeDllNames.SetLocalTimeDllName, SetLastError = true)]
             public static extern bool SetLocalTime(ref SystemTime systime);
-        } // NativeMethods
-
+        }
         #endregion
-    } // SetDateCommand
-} // namespace Microsoft.PowerShell.Commands
-
+    }
+}

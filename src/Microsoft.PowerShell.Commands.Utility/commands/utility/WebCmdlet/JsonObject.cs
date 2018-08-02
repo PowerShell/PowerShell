@@ -19,7 +19,7 @@ using System.Reflection;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// JsonObject class
+    /// JsonObject class.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public static class JsonObject
@@ -73,7 +73,14 @@ namespace Microsoft.PowerShell.Commands
                     // we just continue the deserialization.
                 }
 
-                obj = JsonConvert.DeserializeObject(input, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 });
+                obj = JsonConvert.DeserializeObject(
+                    input,
+                    new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.None,
+                        MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+                        MaxDepth = 1024
+                    });
 
                 // JObject is a IDictionary
                 var dictionary = obj as JObject;

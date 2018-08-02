@@ -7,6 +7,7 @@
     <PackageReference Include="PowerShellGet" Version="1.6.0" />
     <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.1.0.0" />
     <PackageReference Include="PSReadLine" Version="2.0.0-beta2" />
+    <PackageReference Include="ThreadJob" Version="1.1.1" />
   </ItemGroup>
 
 </Project>

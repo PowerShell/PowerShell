@@ -143,7 +143,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Make the positional binding swallow this exception when it's set to true
         /// </summary>
-        ///
         /// <remarks>
         /// This property is only used internally in the positional binding phase
         /// </remarks>

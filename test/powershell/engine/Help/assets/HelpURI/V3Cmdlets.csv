@@ -91,3 +91,7 @@ Get-ComputerInfo,https://go.microsoft.com/fwlink/?LinkId=799466
 Get-TimeZone,https://go.microsoft.com/fwlink/?LinkId=799468
 Set-TimeZone,https://go.microsoft.com/fwlink/?LinkId=799469
 Get-Uptime,https://go.microsoft.com/fwlink/?linkid=834862
+ConvertFrom-Markdown,https://go.microsoft.com/fwlink/?linkid=2006503
+Get-MarkdownOption,https://go.microsoft.com/fwlink/?linkid=2006371
+Set-MarkdownOption,https://go.microsoft.com/fwlink/?linkid=2006265
+Show-Markdown,https://go.microsoft.com/fwlink/?linkid=2006266

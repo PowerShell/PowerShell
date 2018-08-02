@@ -8,9 +8,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
-    /// Writes the PSHost object to the success stream
-    ///
+    /// Writes the PSHost object to the success stream.
     /// </summary>
 
     [Cmdlet(VerbsCommon.Get, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113318", RemotingCapability = RemotingCapability.None)]
@@ -19,9 +17,7 @@ namespace Microsoft.PowerShell.Commands
     class GetHostCommand : PSCmdlet
     {
         /// <summary>
-        ///
-        /// See base class
-        ///
+        /// See base class.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -29,4 +25,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

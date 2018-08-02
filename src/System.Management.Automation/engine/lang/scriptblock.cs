@@ -24,7 +24,6 @@ namespace System.Management.Automation
     /// An object representing a pre-compiled block of powershell script.
     /// </summary>
     /// <remarks>
-    ///
     /// This class track a block of script in a compiled form. It is also
     /// used for direct invocation of the script block.
     ///
@@ -80,7 +79,6 @@ namespace System.Management.Automation
     /// runspace API.
     ///
     /// This class will handle the logic for direct invocation of script blocks.
-    ///
     /// </remarks>
     public partial class ScriptBlock
     {
@@ -367,7 +365,6 @@ namespace System.Management.Automation
         /// Execute this node with the specified arguments. The arguments show
         /// up in the script as $args with $_ being the first argument.
         /// </summary>
-        ///
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
         /// the script block returned as a collection of PSObjects</returns>
@@ -519,7 +516,18 @@ namespace System.Management.Automation
                                        invocationInfo: null,
                                        propagateAllExceptionsToTop: true,
                                        args: args);
-            Diagnostics.Assert(result.Count == 1, "Code generation ensures we return the correct type");
+
+            // This is needed only for the case where the
+            // method returns [object]. If the argument to 'return'
+            // is a pipeline that emits nothing then result.Count will
+            // be zero so we catch that and "convert" it to null. Note that
+            // the return statement is still required in the method, it 
+            // just recieves nothing from it's argument.
+            if (result.Count == 0)
+            {
+                return default(T);
+            }
+
             return (T)result[0];
         }
 
@@ -811,17 +819,14 @@ namespace System.Management.Automation
         /// Execute this node with the specified arguments. The arguments show
         /// up in the script as $args with $_ being the first argument.
         /// </summary>
-        ///
         /// <param name="dollarUnder">
         /// The value of the $_ variable for the script block. If AutomationNull.Value,
         /// the $_ variable is not created.
         /// </param>
-        ///
         /// <param name="input">
         /// The value of the $input variable for the script block. If AutomationNull.Value,
         /// the $input variable is not created.
         /// </param>
-        ///
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
         /// the script block returned as a collection of PSObjects</returns>
@@ -868,7 +873,6 @@ namespace System.Management.Automation
         /// Execute this node with the specified arguments. The arguments show
         /// up in the script as $args with $_ being the first argument.
         /// </summary>
-        ///
         /// <param name="useLocalScope"></param>
         /// <param name="errorHandlingBehavior"></param>
         /// <param name="dollarUnder">
@@ -881,7 +885,6 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="scriptThis"></param>
         /// <param name="args">The arguments to this script.</param>
-        ///
         /// <returns>The object(s) generated during the execution of
         /// the script block returned as a collection of PSObjects</returns>
         /// <exception cref="RuntimeException">A script exception occurred</exception>

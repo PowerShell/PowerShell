@@ -665,7 +665,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="inputstream"></param>
         /// <param name="outputstream"></param>
@@ -1331,7 +1330,6 @@ namespace System.Management.Automation
         ///         PowerShell shell = PowerShell.Create("get-process").
         ///                                     AddCommand("select-object").AddParameter("name");
         ///     </code>
-        ///
         /// This will add the value "name" to the positional parameter list of "select-object"
         /// cmdlet. When the command is invoked, this value will get bound to positional parameter 0
         /// of the "select-object" cmdlet which is "Property".
@@ -1688,7 +1686,6 @@ namespace System.Management.Automation
         /// IsChild flag makes it possible for the pipeline to differentiate between
         /// a true v1 nested pipeline and the cmdlets calling cmdlets case. See bug
         /// 211462.
-        ///
         /// </summary>
         internal bool IsChild { get; private set; } = false;
 
@@ -3287,7 +3284,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         private void DetermineIsBatching()
         {
@@ -4658,7 +4654,6 @@ namespace System.Management.Automation
 #endif
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="TInput">Type for the input collection</typeparam>
         /// <typeparam name="TOutput">Type for the output collection</typeparam>
@@ -5030,7 +5025,6 @@ namespace System.Management.Automation
             private object _syncObject = new object();
 
             /// <summary>
-            ///
             /// </summary>
             /// <param name="inputStream"></param>
             /// <param name="outputStream"></param>

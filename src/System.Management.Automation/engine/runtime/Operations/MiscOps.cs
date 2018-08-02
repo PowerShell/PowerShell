@@ -1212,8 +1212,12 @@ namespace System.Management.Automation
                 ScriptBlock scriptBlock = scriptBlockExpressionWrapper.GetScriptBlock(
                     context, functionDefinitionAst.IsFilter);
 
-                context.EngineSessionState.SetFunctionRaw(functionDefinitionAst.Name,
-                                                          scriptBlock, context.EngineSessionState.CurrentScope.ScopeOrigin);
+                var expAttribute = scriptBlock.ExperimentalAttribute;
+                if (expAttribute == null || expAttribute.ToShow)
+                {
+                    context.EngineSessionState.SetFunctionRaw(functionDefinitionAst.Name, 
+                        scriptBlock, context.EngineSessionState.CurrentScope.ScopeOrigin);
+                }
             }
             catch (Exception exception)
             {
@@ -2159,7 +2163,6 @@ namespace System.Management.Automation
         /// Note that AddPowerShellTypesToTheScope() would be call on every foo call, 10 times.
         ///
         /// This method also should be called for 'using module' statements. Then added types would have a different name.
-        ///
         /// </summary>
         /// <param name="types"></param>
         /// <param name="context"></param>

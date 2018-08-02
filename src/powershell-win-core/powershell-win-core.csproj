@@ -24,6 +24,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="..\powershell-win-core\pwsh-preview.cmd"> 
+      <Link>preview\pwsh-preview.cmd</Link> 
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> 
+    </Content> 
   </ItemGroup>
 
   <ItemGroup>

@@ -60,7 +60,6 @@ namespace Microsoft.WSMan.Management
 
     #region WsManSessionFlags
     /// <summary><para>WSManSessionFlags enumeration.</para></summary>
-    ///
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     [TypeLibType((short)0)]
     public enum WSManSessionFlags
@@ -127,7 +126,6 @@ namespace Microsoft.WSMan.Management
 
     #region AuthenticationMechanism
     /// <summary>WSManEnumFlags enumeration</summary>
-    ///
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     public enum AuthenticationMechanism
     {
@@ -505,7 +503,6 @@ namespace Microsoft.WSMan.Management
         object CreateConnectionOptions();
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         string CommandLine
@@ -928,7 +925,6 @@ namespace Microsoft.WSMan.Management
         void Delete(object resourceUri, int flags);
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="actionURI"></param>
         /// <param name="resourceUri"></param>

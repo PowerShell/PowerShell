@@ -378,7 +378,6 @@ else
         #region Cmdlet Overrides
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// 1. Either both "AssemblyName" and "ConfigurationTypeName" must be specified
@@ -1517,8 +1516,6 @@ else
         internal static string GetWinrmPluginShellName()
         {
             // PowerShell Core uses a versioned directory to hold the plugin
-            // TODO: This should be PSVersionInfo.PSVersionName once we get
-            // closer to release. Right now it doesn't support alpha versions.
             return System.String.Concat("PowerShell.", PSVersionInfo.GitCommitId);
         }
 
@@ -1529,8 +1526,6 @@ else
         internal static string GetWinrmPluginDllPath()
         {
             // PowerShell Core uses its versioned directory instead of system32
-            // TODO: This should be PSVersionInfo.PSVersionName once we get
-            // closer to release. Right now it doesn't support alpha versions.
             string pluginDllDirectory =  System.IO.Path.Combine("%windir%\\system32\\PowerShell", PSVersionInfo.GitCommitId);
             return System.IO.Path.Combine(pluginDllDirectory, RemotingConstants.PSPluginDLLName);
         }
@@ -3258,7 +3253,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
         #region Cmdlet overrides
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// 1. Either both "AssemblyName" and "ConfigurationTypeName" must be specified
@@ -3375,7 +3369,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -4392,7 +4385,6 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         #region Cmdlet Overrides
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// 1. Either both "AssemblyName" and "ConfigurationTypeName" must be specified
@@ -4406,7 +4398,6 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -4420,7 +4411,6 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {
@@ -4491,7 +4481,6 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
     }
 
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, RemotingConstants.PSSessionConfigurationNoun,
         SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144299")]
@@ -4631,7 +4620,6 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         #region Cmdlet Overrides
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// 1. Either both "AssemblyName" and "ConfigurationTypeName" must be specified
@@ -4645,7 +4633,6 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -4659,7 +4646,6 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {
@@ -4723,7 +4709,6 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
     #region Enable-PSRemoting
 
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, RemotingConstants.PSRemotingNoun,
         SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144300")]
@@ -4888,6 +4873,12 @@ param(
             $dotPos = $powershellVersionMajor.IndexOf(""."")
             if ($dotPos -ne -1) {{
                 $powershellVersionMajor = $powershellVersionMajor.Substring(0, $dotPos)
+            }}
+            # If we are running a Preview version, we don't want to clobber the generic PowerShell.6 endpoint
+            # but instead create a PowerShell.6-Preview endpoint
+            if ($PSVersionTable.PSVersion.PreReleaseLabel)
+            {{
+                $powershellVersionMajor += ""-preview""
             }}
             Register-EndpointIfNotPresent -Name (""PowerShell."" + $powershellVersionMajor) $Force $queryForRegisterDefault $captionForRegisterDefault
 
@@ -5121,7 +5112,6 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
         #region Cmdlet Overrides
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// 1. Either both "AssemblyName" and "ConfigurationTypeName" must be specified
@@ -5135,7 +5125,6 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {

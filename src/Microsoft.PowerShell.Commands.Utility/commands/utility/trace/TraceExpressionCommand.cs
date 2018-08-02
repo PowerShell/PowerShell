@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
@@ -32,7 +32,6 @@ namespace Microsoft.PowerShell.Commands
         /// The TraceSource parameter determines which TraceSource categories the
         /// operation will take place on.
         /// </summary>
-        ///
         [Parameter(Position = 0, Mandatory = true)]
         public string[] Name
         {
@@ -41,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The flags to be set on the TraceSource
+        /// The flags to be set on the TraceSource.
         /// </summary>
         /// <value></value>
         [Parameter(Position = 2)]
@@ -70,17 +69,15 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// When set, this parameter is the arguments to pass to the command specified by
-        /// the -Command parameter
+        /// the -Command parameter.
         /// </summary>
         [Parameter(ParameterSetName = "commandSet", ValueFromRemainingArguments = true)]
         [Alias("Args")]
         public object[] ArgumentList { get; set; }
 
         /// <summary>
-        /// The parameter which determines the options for output from the
-        /// trace listeners.
+        /// The parameter which determines the options for output from the trace listeners.
         /// </summary>
-        ///
         [Parameter]
         public TraceOptions ListenerOption
         {
@@ -92,11 +89,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Adds the file trace listener using the specified file
+        /// Adds the file trace listener using the specified file.
         /// </summary>
         /// <value></value>
         [Parameter]
-        [Alias("PSPath","Path")]
+        [Alias("PSPath", "Path")]
         public string FilePath
         {
             get { return base.FileListener; }
@@ -104,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         } // File
 
         /// <summary>
-        /// Force parameter to control read-only files
+        /// Force parameter to control read-only files.
         /// </summary>
         [Parameter]
         public SwitchParameter Force
@@ -114,8 +111,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// If this parameter is specified the Debugger trace listener
-        /// will be added.
+        /// If this parameter is specified the Debugger trace listener will be added.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -126,8 +122,7 @@ namespace Microsoft.PowerShell.Commands
         } // Debugger
 
         /// <summary>
-        /// If this parameter is specified the Msh Host trace listener
-        /// will be added.
+        /// If this parameter is specified the Msh Host trace listener will be added.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -187,8 +182,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Executes the expression.
-        ///
-        /// Note, this was taken from apply-expression
+        /// Note, this was taken from apply-expression.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -240,7 +234,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Ensures that the sub-pipeline we created gets stopped as well.
         /// </summary>
-        ///
         protected override void StopProcessing()
         {
             if (_pipeline != null)
@@ -318,7 +311,6 @@ namespace Microsoft.PowerShell.Commands
     /// cmdlet.  It gets attached to the sub-pipelines success or error pipeline and redirects
     /// all objects written to these pipelines to trace-command pipeline.
     /// </summary>
-    ///
     internal class TracePipelineWriter : PipelineWriter
     {
         internal TracePipelineWriter(
@@ -342,8 +334,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get the wait handle signaled when buffer space is available
-        /// in the underlying stream.
+        /// Get the wait handle signaled when buffer space is available in the underlying stream.
         /// </summary>
         public override WaitHandle WaitHandle
         {
@@ -367,7 +358,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the number of objects in the underlying stream
+        /// Returns the number of objects in the underlying stream.
         /// </summary>
         public override int Count
         {
@@ -375,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get the capacity of the stream
+        /// Get the capacity of the stream.
         /// </summary>
         /// <value>
         /// The capacity of the stream.
@@ -391,7 +382,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Close the stream
+        /// Close the stream.
         /// </summary>
         /// <remarks>
         /// Causes subsequent calls to IsOpen to return false and calls to
@@ -399,7 +390,7 @@ namespace Microsoft.PowerShell.Commands
         /// All calls to Close() after the first call are silently ignored.
         /// </remarks>
         /// <exception cref="ObjectDisposedException">
-        /// The stream is already disposed
+        /// The stream is already disposed.
         /// </exception>
         public override void Close()
         {
@@ -415,14 +406,14 @@ namespace Microsoft.PowerShell.Commands
         /// but disposed streams may not.
         /// </summary>
         /// <exception cref="ObjectDisposedException">
-        /// The underlying stream is disposed
+        /// The underlying stream is disposed.
         /// </exception>
         public override void Flush()
         {
         }
 
         /// <summary>
-        /// Write a single object into the underlying stream
+        /// Write a single object into the underlying stream.
         /// </summary>
         /// <param name="obj">The object to add to the stream</param>
         /// <returns>
@@ -431,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
         /// or if the object was AutomationNull.Value.
         /// </returns>
         /// <exception cref="ObjectDisposedException">
-        /// The underlying stream is closed
+        /// The underlying stream is closed.
         /// </exception>
         public override int Write(object obj)
         {
@@ -456,7 +447,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Write objects to the underlying stream
+        /// Write objects to the underlying stream.
         /// </summary>
         /// <param name="obj">object or enumeration to read from</param>
         /// <param name="enumerateCollection">
@@ -468,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <returns>The number of objects written</returns>
         /// <exception cref="ObjectDisposedException">
-        /// The underlying stream is closed
+        /// The underlying stream is closed.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="obj"/> contains AutomationNull.Value

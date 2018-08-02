@@ -146,8 +146,7 @@ namespace Microsoft.PowerShell.Commands
         public string Pattern { get; set; }
 
         /// <summary>
-        /// The context for the match, or null if -context was not
-        /// specified.
+        /// The context for the match, or null if -context was not specified.
         /// </summary>
         public MatchInfoContext Context { get; set; }
 
@@ -155,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the path of the matching file truncated relative to the <paramref name="directory"/> parameter.
         /// <remarks>
         /// For example, if the matching path was c:\foo\bar\baz.c and the directory argument was c:\foo
-        /// the routine would return bar\baz.c
+        /// the routine would return bar\baz.c .
         /// </remarks>
         /// </summary>
         /// <param name="directory">The directory base the truncation on.</param>
@@ -674,7 +673,7 @@ namespace Microsoft.PowerShell.Commands
         /// a possibly-continuous set of matches by excluding
         /// overlapping context (lines will only appear once)
         /// and other matching lines (since they will appear
-        /// as their own match entries.)
+        /// as their own match entries.).
         /// </remarks>
         private class LogicalContextTracker : IContextTracker
         {
@@ -846,8 +845,7 @@ namespace Microsoft.PowerShell.Commands
             /// and adds it to the emit queue.
             /// </summary>
             /// <remarks>
-            /// Context ranges must be within the bounds of the context
-            /// buffer.
+            /// Context ranges must be within the bounds of the context buffer.
             /// </remarks>
             /// <param name="match">The match to operate on.</param>
             /// <param name="preStartIndex">The start index of the precontext range.</param>
@@ -957,7 +955,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "Object")]
         [AllowNull]
@@ -977,31 +975,28 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// String index to start from the beginning.
-        ///
-        /// If the value is negative, the length is counted from the
-        /// end of the string.
+        /// If the value is negative, the length is counted from the  end of the string.
         /// </summary>
-        ///
         [Parameter(Mandatory = true, Position = 0)]
         public string[] Pattern { get; set; }
 
         private Regex[] _regexPattern;
 
         /// <summary>
-        /// file to read from
-        /// Globbing is done on these
+        /// File to read from.
+        /// Globbing is done on these.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "File")]
         [FileinfoToString]
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Literal file to read from
-        /// Globbing is not done on these
+        /// Literal file to read from.
+        /// Globbing is not done on these.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralFile")]
         [FileinfoToString]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
@@ -1017,8 +1012,9 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _isLiteralPath = false;
 
-        /// <summary> If set, match pattern string literally.
-        /// If not (default) search using pattern as a Regular Expression
+        /// <summary>
+        /// If set, match pattern string literally.
+        /// If not (default) search using pattern as a Regular Expression.
         /// </summary>
         [Parameter]
         public SwitchParameter SimpleMatch
@@ -1178,7 +1174,6 @@ namespace Microsoft.PowerShell.Commands
         /// If set, sets the Matches property of MatchInfo to the result
         /// of calling System.Text.RegularExpressions.Regex.Matches() on
         /// the corresponding line.
-        ///
         /// Has no effect if -SimpleMatch is also specified.
         /// </summary>
         [Parameter]
@@ -1303,11 +1298,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// process the input
+        /// Process the input.
         /// </summary>
-        ///
         /// <returns> Does not return a value </returns>
-        ///
         /// <exception cref="ArgumentException">Regular expression parsing error, path error</exception>
         /// <exception cref="FileNotFoundException">A file cannot be found.</exception>
         /// <exception cref="DirectoryNotFoundException">A file cannot be found.</exception>
@@ -1500,8 +1493,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Emit any objects which have been queued up, and clear
-        /// the queue.
+        /// Emit any objects which have been queued up, and clear the queue.
         /// </summary>
         /// <param name="contextTracker">The context tracker to operate on.</param>
         /// <returns>Whether or not any objects were emitted.</returns>
@@ -1581,8 +1573,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Check the operand and see if it matches, if this.quiet is not set, then
-        /// return a partially populated MatchInfo object with Line, Pattern, IgnoreCase
-        /// set.
+        /// return a partially populated MatchInfo object with Line, Pattern, IgnoreCase set.
         /// </summary>
         /// <param name="matchInfo"></param>
         /// <param name="matchResult">the match info object - this will be
@@ -1707,7 +1698,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
             return false;
-        } // end doMatch
+        }
 
         /// Get a list or resolved file paths.
         private List<string> ResolveFilePaths(string[] filePaths, bool isLiteralPath)
@@ -1858,6 +1849,5 @@ namespace Microsoft.PowerShell.Commands
 
             return ok;
         }
-    } // end class SelectStringCommand
+    }
 }
-

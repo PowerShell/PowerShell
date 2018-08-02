@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// gets or sets the parameter Method
+        /// Gets or sets the parameter Method.
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
         [Parameter(ParameterSetName = "StandardMethodNoProxy")]
@@ -28,10 +28,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// gets or sets the parameter CustomMethod
+        /// Gets or sets the parameter CustomMethod.
         /// </summary>
-        [Parameter(Mandatory=true,ParameterSetName = "CustomMethod")]
-        [Parameter(Mandatory=true,ParameterSetName = "CustomMethodNoProxy")]
+        [Parameter(Mandatory = true, ParameterSetName = "CustomMethod")]
+        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
         public override string CustomMethod
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// enable automatic following of rel links
+        /// Enable automatic following of rel links.
         /// </summary>
         [Parameter]
         [Alias("FL")]
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// gets or sets the maximum number of rel links to follow
+        /// Gets or sets the maximum number of rel links to follow.
         /// </summary>
         [Parameter]
         [Alias("ML")]
@@ -222,18 +222,18 @@ namespace Microsoft.PowerShell.Commands
         {
             /// <summary>
             /// Return type not defined in response,
-            /// best effort detect
+            /// best effort detect.
             /// </summary>
             Detect,
 
             /// <summary>
-            /// Json return type
+            /// Json return type.
             /// </summary>
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
             Json,
 
             /// <summary>
-            /// Xml return type
+            /// Xml return type.
             /// </summary>
             Xml,
         }

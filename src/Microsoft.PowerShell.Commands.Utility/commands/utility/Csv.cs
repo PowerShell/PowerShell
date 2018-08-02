@@ -16,19 +16,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the delimiter that separates the values
+        /// Gets or sets the delimiter that separates the values.
         /// </summary>
-        ///
         internal char Delimiter { get; } = ',';
 
         /// <summary>
         /// Parse a CSV String.
         /// </summary>
-        ///
         /// <param name="csv">
-        /// String to be parsed
+        /// String to be parsed.
         /// </param>
-        ///
         internal Collection<string> ParseCsv(string csv)
         {
             Collection<string> result = new Collection<string>();
@@ -98,9 +95,9 @@ namespace Microsoft.PowerShell.Commands
                         default:
                             tempString += c;
                             break;
-                    }//switch
-                }//else
-            }//for int
+                    }
+                }
+            }
             if (tempString.Length > 0)
             {
                 result.Add(tempString);
@@ -109,4 +106,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

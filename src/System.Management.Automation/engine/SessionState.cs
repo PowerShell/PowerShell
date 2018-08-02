@@ -41,15 +41,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for session state object
         /// </summary>
-        ///
         /// <param name="context">
         /// The context for the runspace to which this session state object belongs.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// if <paramref name="context"/> is null.
         /// </exception>
-        ///
         internal SessionStateInternal(ExecutionContext context) : this(null, false, context)
         {
         }
@@ -143,7 +140,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Provides all the path manipulation and globbing for Monad paths.
         /// </summary>
-        ///
         internal LocationGlobber Globber
         {
             get { return _globberPrivate ?? (_globberPrivate = ExecutionContext.LocationGlobber); }
@@ -301,7 +297,7 @@ namespace System.Management.Automation
                     ExecutionContext.EngineHostInterface,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PSHostDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $HOME - indicate where a user's home directory is located in the file system.
             //    -- %USERPROFILE% on windows
@@ -311,28 +307,28 @@ namespace System.Management.Automation
                     home,
                     ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope,
                     RunspaceInit.HOMEDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $ExecutionContext
             v = new PSVariable(SpecialVariables.ExecutionContext,
                     ExecutionContext.EngineIntrinsics,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.ExecutionContextDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSVersionTable
             v = new PSVariable(SpecialVariables.PSVersionTable,
                     PSVersionInfo.GetPSVersionTable(),
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PSVersionTableDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSEdition
             v = new PSVariable(SpecialVariables.PSEdition,
                     PSVersionInfo.PSEditionValue,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PSEditionDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PID
             Process currentProcess = Process.GetCurrentProcess();
@@ -341,15 +337,15 @@ namespace System.Management.Automation
                     currentProcess.Id,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PIDDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSCulture
             v = new PSCultureVariable();
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSUICulture
             v = new PSUICultureVariable();
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $?
             v = new QuestionMarkVariable(this.ExecutionContext);
@@ -357,28 +353,24 @@ namespace System.Management.Automation
 
             // $ShellId - if there is no runspace config, use the default string
             string shellId = ExecutionContext.ShellID;
-
             v = new PSVariable(SpecialVariables.ShellId, shellId,
                    ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.MshShellIdDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
             // $PSHOME
-            // This depends on the shellId. If we cannot read the application base
-            // registry key, set the variable to empty string
-            string applicationBase = string.Empty;
-            try
-            {
-                applicationBase = Utils.GetApplicationBase(shellId);
-            }
-            catch (SecurityException)
-            {
-            }
+            string applicationBase = Utils.DefaultPowerShellAppBase;
             v = new PSVariable(SpecialVariables.PSHome, applicationBase,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PSHOMEDescription);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
 
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+            // $EnabledExperimentalFeatures
+            v = new PSVariable(SpecialVariables.EnabledExperimentalFeatures,
+                               ExperimentalFeature.EnabledExperimentalFeatureNames,
+                               ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
+                               RunspaceInit.EnabledExperimentalFeatures);
+            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
         }
 
         /// <summary>
@@ -420,7 +412,6 @@ namespace System.Management.Automation
         /// Notification for SessionState to do cleanup
         /// before runspace is closed.
         /// </summary>
-        ///
         internal void RunspaceClosingNotification()
         {
             if (this != ExecutionContext.TopLevelSessionState && Providers.Count > 0)
@@ -444,38 +435,30 @@ namespace System.Management.Automation
         /// Constructs a new instance of a ProviderInvocationException
         /// using the specified data
         /// </summary>
-        ///
         /// <param name="resourceId">
         /// The resource ID to use as the format message for the error.
         /// </param>
-        ///
         /// <param name="resourceStr">
         /// This is the message template string.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider information used when formatting the error message.
         /// </param>
-        ///
         /// <param name="path">
         /// The path used when formatting the error message.
         /// </param>
-        ///
         /// <param name="e">
         /// The exception that was thrown by the provider. This will be set as
         /// the ProviderInvocationException's InnerException and the message will
         /// be used when formatting the error message.
         /// </param>
-        ///
         /// <returns>
         /// A new instance of a ProviderInvocationException.
         /// </returns>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// Wraps <paramref name="e"/> in a ProviderInvocationException
         /// and then throws it.
         /// </exception>
-        ///
         internal ProviderInvocationException NewProviderInvocationException(
             string resourceId,
             string resourceStr,
@@ -490,43 +473,34 @@ namespace System.Management.Automation
         /// Constructs a new instance of a ProviderInvocationException
         /// using the specified data
         /// </summary>
-        ///
         /// <param name="resourceId">
         /// The resource ID to use as the format message for the error.
         /// </param>
-        ///
         /// <param name="resourceStr">
         /// This is the message template string.
         /// </param>
-        ///
         /// <param name="provider">
         /// The provider information used when formatting the error message.
         /// </param>
-        ///
         /// <param name="path">
         /// The path used when formatting the error message.
         /// </param>
-        ///
         /// <param name="e">
         /// The exception that was thrown by the provider. This will be set as
         /// the ProviderInvocationException's InnerException and the message will
         /// be used when formatting the error message.
         /// </param>
-        ///
         /// <param name="useInnerExceptionErrorMessage">
         /// If true, the error record from the inner exception will be used if it contains one.
         /// If false, the error message specified by the resourceId will be used.
         /// </param>
-        ///
         /// <returns>
         /// A new instance of a ProviderInvocationException.
         /// </returns>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// Wraps <paramref name="e"/> in a ProviderInvocationException
         /// and then throws it.
         /// </exception>
-        ///
         internal ProviderInvocationException NewProviderInvocationException(
             string resourceId,
             string resourceStr,

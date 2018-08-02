@@ -930,7 +930,6 @@ namespace System.Management.Automation
         #region static methods
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -939,7 +938,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -948,7 +946,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -957,7 +954,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -966,7 +962,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -1805,7 +1800,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="settings"></param>
         /// <param name="noteName"></param>
@@ -2365,7 +2359,6 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    ///
     /// </summary>
     /// <remarks>
     /// Please keep in sync with SerializationMethod from

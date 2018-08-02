@@ -277,6 +277,8 @@ Returns Link response headers to test paginated results. The endpoint accepts 3 
   * `nourl` - Returns a Link header that does not include the URI portion. Suppresses `next` link.
   * `malformed` - Returns a malformed Link header. Suppresses `next` link.
   * `multiple` - Returns multiple Link headers instead of a single Link header and returns `next` link if one is available.
+  * `nowhitespace` - Returns `default` links without any whitespace between the semicolon and `rel`
+  * `extrawhitespace` - Returns `default` links with double whitespace between the semicolon and `rel`
 
 The body will contain the same results as `/Get/` with the addition of the `type`, `linknumber`, and `maxlinks` for the current page.
 

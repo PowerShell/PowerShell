@@ -174,6 +174,16 @@ Describe "Measure-Object" -Tags "CI" {
 
             $actual.Maximum | Should -Be $expected
         }
+
+        It "Should be able to return all the statitics for given values" {
+            $result = 1..10  | Measure-Object -AllStats
+            $result.Count    | Should -Be 10
+            $result.Average  | Should -Be 5.5
+            $result.Sum      | Should -Be 55
+            $result.Minimum  | Should -Be 1
+            $result.Maximum  | Should -Be 10
+            ($result.StandardDeviation).ToString()  | Should -Be '3.02765035409749'
+        }
     }
 
     Context "String tests" {

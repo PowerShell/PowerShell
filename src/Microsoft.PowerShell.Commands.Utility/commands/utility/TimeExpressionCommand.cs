@@ -22,13 +22,13 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
         /// <summary>
-        /// The script block to apply
+        /// The script block to apply.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         public ScriptBlock Expression { set; get; }
@@ -44,16 +44,15 @@ namespace Microsoft.PowerShell.Commands
         #region methods
 
         /// <summary>
-        /// Output the timer
+        /// Output the timer.
         /// </summary>
         protected override void EndProcessing()
         {
             WriteObject(_stopWatch.Elapsed);
-        } // EndProcessing
+        }
 
         /// <summary>
-        /// Execute the script block passing in the current pipeline object as
-        /// it's only parameter.
+        /// Execute the script block passing in the current pipeline object as it's only parameter.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -71,8 +70,6 @@ namespace Microsoft.PowerShell.Commands
 
             _stopWatch.Stop();
         }
-
         #endregion
     }
-} // namespace Microsoft.PowerShell.Commands
-
+}

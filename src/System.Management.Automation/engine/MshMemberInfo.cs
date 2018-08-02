@@ -2359,7 +2359,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="script"></param>

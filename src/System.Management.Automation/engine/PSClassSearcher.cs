@@ -157,7 +157,7 @@ namespace System.Management.Automation
         {
             bool matchFound = false;
 
-            var moduleList = ModuleUtils.GetDefaultAvailableModuleFiles(false, false, _context);
+            var moduleList = ModuleUtils.GetDefaultAvailableModuleFiles(isForAutoDiscovery: false, _context);
 
             foreach (var modulePath in moduleList)
             {

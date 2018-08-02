@@ -24,7 +24,6 @@ using System.Security;
 namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 {
     /// <summary>
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes",
         Justification = "Needed Internal use only")]
@@ -314,7 +313,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         private CimMofDeserializer _deserializer;
         private CimMofDeserializer.OnClassNeeded _onClassNeeded;
         /// <summary>
-        ///
         /// </summary>
         internal CimDSCParser(CimMofDeserializer.OnClassNeeded onClassNeeded)
         {
@@ -323,7 +321,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         }
 
         /// <summary>
-        ///
         /// </summary>
         internal CimDSCParser(CimMofDeserializer.OnClassNeeded onClassNeeded, Microsoft.Management.Infrastructure.Serialization.MofDeserializerSchemaValidationOption validationOptions)
         {
@@ -333,7 +330,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
@@ -392,7 +388,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
@@ -464,7 +459,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
 namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 {
     /// <summary>
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes",
         Justification = "Needed Internal use only")]
@@ -1031,7 +1025,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         public static List<Tuple<DSCResourceRunAsCredential, Microsoft.Management.Infrastructure.CimClass>> GetCachedClasses()
@@ -2186,7 +2179,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 #endif
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="moduleInfo"></param>
         /// <param name="resourcesToImport"></param>
@@ -2460,7 +2452,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="resourceDefinitions"></param>
@@ -2528,7 +2519,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="module"></param>
@@ -2890,7 +2880,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.MarkdownRender\Microsoft.PowerShell.MarkdownRender.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -66,8 +67,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.8.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="2.8.2" />
-    <PackageReference Include="NJsonSchema" Version="9.10.56" />
+    <PackageReference Include="NJsonSchema" Version="9.10.65" />
   </ItemGroup>
 
 </Project>

@@ -13,7 +13,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// definitions for hash table keys
+    /// Definitions for hash table keys.
     /// </summary>
     internal static class SortObjectParameterDefinitionKeys
     {
@@ -44,13 +44,12 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Base Cmdlet for cmdlets which deal with raw objects
+    /// Base Cmdlet for cmdlets which deal with raw objects.
     /// </summary>
     public class ObjectCmdletBase : PSCmdlet
     {
         #region Parameters
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -90,7 +89,6 @@ namespace Microsoft.PowerShell.Commands
         internal CultureInfo _cultureInfo = null;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -111,7 +109,6 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
@@ -146,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
         internal List<PSObject> InputObjects { get; } = new List<PSObject>();
 
         /// <summary>
-        /// CultureInfo converted from the Culture Cmdlet parameter
+        /// CultureInfo converted from the Culture Cmdlet parameter.
         /// </summary>
         internal CultureInfo ConvertedCulture
         {
@@ -159,9 +156,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Internal Properties
 
         /// <summary>
-        ///
-        /// Simply accumulates the incoming objects
-        ///
+        /// Simply accumulates the incoming objects.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -177,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
         #region Internal properties
 
         /// <summary>
-        /// a logical matrix where each row is an input object and its property values specified by Properties
+        /// A logical matrix where each row is an input object and its property values specified by Properties.
         /// </summary>
         internal List<OrderByPropertyEntry> OrderMatrix { get; } = null;
 
@@ -606,7 +601,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This is the row of the OrderMatrix
+    /// This is the row of the OrderMatrix.
     /// </summary>
     internal sealed class OrderByPropertyEntry
     {
@@ -712,7 +707,6 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        OrderByPropertyComparer _orderByPropertyComparer = null;
+        private OrderByPropertyComparer _orderByPropertyComparer = null;
     }
 }
-

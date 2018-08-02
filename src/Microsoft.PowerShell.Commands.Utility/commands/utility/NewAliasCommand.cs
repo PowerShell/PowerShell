@@ -8,9 +8,8 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The implementation of the "new-alias" cmdlet
+    /// The implementation of the "new-alias" cmdlet.
     /// </summary>
-    ///
     [Cmdlet(VerbsCommon.New, "Alias", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113352")]
     [OutputType(typeof(AliasInfo))]
     public class NewAliasCommand : WriteAliasCommandBase
@@ -20,7 +19,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The main processing loop of the command.
         /// </summary>
-        ///
         protected override void ProcessRecord()
         {
             // If not force, then see if the alias already exists
@@ -127,8 +125,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(result);
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
-    } // class NewAliasCommand
-}//Microsoft.PowerShell.Commands
-
+    }
+}

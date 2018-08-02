@@ -31,7 +31,6 @@ namespace System.Management.Automation
         /// This is a hashtable to track which help files are loaded already.
         ///
         /// This will avoid one help file getting loaded again and again.
-        ///
         /// </summary>
         private readonly Hashtable _helpFiles = new Hashtable();
 
@@ -178,7 +177,6 @@ namespace System.Management.Automation
         ///     b. If HelpItems node (which should be the top node of any command help file)
         ///        has an attribute "schema" with value "maml", its content is in maml
         ///        schema
-        ///
         /// </summary>
         /// <param name="helpFile">File name.</param>
         /// <param name="helpItemsNode">Nodes to check.</param>

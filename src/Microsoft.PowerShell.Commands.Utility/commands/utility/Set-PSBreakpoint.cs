@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// the action to take when hitting this breakpoint
+        /// The action to take when hitting this breakpoint.
         /// </summary>
         [Parameter(ParameterSetName = "Command")]
         [Parameter(ParameterSetName = "Line")]
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         public ScriptBlock Action { get; set; } = null;
 
         /// <summary>
-        /// The column to set the breakpoint on
+        /// The column to set the breakpoint on.
         /// </summary>
         [Parameter(Position = 2, ParameterSetName = "Line")]
         [ValidateRange(1, int.MaxValue)]
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
         private int? _column = null;
 
         /// <summary>
-        /// the command(s) to set the breakpoint on
+        /// The command(s) to set the breakpoint on.
         /// </summary>
         [Alias("C")]
         [Parameter(ParameterSetName = "Command", Mandatory = true)]
@@ -54,14 +54,14 @@ namespace Microsoft.PowerShell.Commands
         public string[] Command { get; set; } = null;
 
         /// <summary>
-        /// the line to set the breakpoint on
+        /// The line to set the breakpoint on.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "Line", Mandatory = true)]
         [ValidateNotNull]
         public int[] Line { get; set; } = null;
 
         /// <summary>
-        /// the script to set the breakpoint on
+        /// The script to set the breakpoint on.
         /// </summary>
         [Parameter(ParameterSetName = "Command", Position = 0)]
         [Parameter(ParameterSetName = "Line", Mandatory = true, Position = 0)]
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Script { get; set; } = null;
 
         /// <summary>
-        /// the variables to set the breakpoint(s) on
+        /// The variables to set the breakpoint(s) on.
         /// </summary>
         [Alias("V")]
         [Parameter(ParameterSetName = "Variable", Mandatory = true)]
@@ -78,7 +78,6 @@ namespace Microsoft.PowerShell.Commands
         public string[] Variable { get; set; } = null;
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter(ParameterSetName = "Variable")]
         public VariableAccessMode Mode { get; set; } = VariableAccessMode.Write;
@@ -86,14 +85,12 @@ namespace Microsoft.PowerShell.Commands
         #endregion parameters
 
         /// <summary>
-        /// verifies that debugging is supported
+        /// Verifies that debugging is supported.
         /// </summary>
         protected override void BeginProcessing()
         {
-            //
             // Check whether we are executing on a remote session and if so
             // whether the RemoteScript debug option is selected.
-            //
             if (this.Context.InternalHost.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost &&
                 ((this.Context.CurrentRunspace == null) || (this.Context.CurrentRunspace.Debugger == null) ||
                  ((this.Context.CurrentRunspace.Debugger.DebugMode & DebugModes.RemoteScript) != DebugModes.RemoteScript) &&
@@ -126,13 +123,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// set a new breakpoint
+        /// Set a new breakpoint.
         /// </summary>
         protected override void ProcessRecord()
         {
-            //
             // If there is a script, resolve its path
-            //
             Collection<string> scripts = new Collection<string>();
 
             if (Script != null)

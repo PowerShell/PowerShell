@@ -33,7 +33,6 @@ namespace System.Management.Automation
         #region Constructor
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="psMD"></param>
         internal ParameterSetMetadata(ParameterSetSpecificMetadata psMD)
@@ -199,7 +198,6 @@ namespace System.Management.Automation
         #region Private / Internal Methods & Properties
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="psMD"></param>
         internal void Initialize(ParameterSetSpecificMetadata psMD)
@@ -298,7 +296,6 @@ namespace System.Management.Automation
         private const string HelpMessageFormat = @"{0}HelpMessage='{1}'";
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         internal string GetProxyParameterData()
@@ -505,7 +502,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the parameter
         /// </summary>
-        ///
         public String Name
         {
             get
@@ -629,7 +625,6 @@ namespace System.Management.Automation
         #region Internal Methods/Properties
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="compiledParameterMD"></param>
         internal void Initialize(CompiledCommandParameter compiledParameterMD)
@@ -662,7 +657,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="cmdParameterMetadata"></param>
         /// <returns></returns>
@@ -763,7 +757,6 @@ namespace System.Management.Automation
         private const string CredentialAttributeFormat = @"{0}[System.Management.Automation.CredentialAttribute()]";
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="prefix">
         /// prefix that is added to every new-line. Used for tabbing content.
@@ -1066,7 +1059,6 @@ namespace System.Management.Automation
     /// <summary>
     /// The metadata associated with a bindable type
     /// </summary>
-    ///
     internal class InternalParameterMetadata
     {
         #region ctor
@@ -1074,33 +1066,26 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or constructs an instance of the InternalParameterMetadata for the specified runtime-defined parameters.
         /// </summary>
-        ///
         /// <param name="runtimeDefinedParameters">
         /// The runtime-defined parameter collection that describes the parameters and their metadata.
         /// </param>
-        ///
         /// <param name="processingDynamicParameters">
         /// True if dynamic parameters are being processed, or false otherwise.
         /// </param>
-        ///
         /// <param name="checkNames">
         /// Check for reserved parameter names.
         /// </param>
-        ///
         /// <returns>
         /// An instance of the TypeMetadata for the specified runtime-defined parameters. The metadata
         /// is always constructed on demand and never cached.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="runtimeDefinedParameters"/> is null.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        ///
         internal static InternalParameterMetadata Get(RuntimeDefinedParameterDictionary runtimeDefinedParameters,
                                                       bool processingDynamicParameters,
                                                       bool checkNames)
@@ -1116,33 +1101,26 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or constructs an instance of the InternalParameterMetadata for the specified type.
         /// </summary>
-        ///
         /// <param name="type">
         /// The type to get the metadata for.
         /// </param>
-        ///
         /// <param name="context">
         /// The current engine context.
         /// </param>
-        ///
         /// <param name="processingDynamicParameters">
         /// True if dynamic parameters are being processed, or false otherwise.
         /// </param>
-        ///
         /// <returns>
         /// An instance of the TypeMetadata for the specified type. The metadata may get
         /// constructed on-demand or may be retrieved from the cache.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="type"/> is null.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        ///
         internal static InternalParameterMetadata Get(Type type, ExecutionContext context, bool processingDynamicParameters)
         {
             if (type == null)
@@ -1168,29 +1146,23 @@ namespace System.Management.Automation
         /// Constructs an instance of the InternalParameterMetadata using the metadata in the
         /// runtime-defined parameter collection.
         /// </summary>
-        ///
         /// <param name="runtimeDefinedParameters">
         /// The collection of runtime-defined parameters that declare the parameters and their
         /// metadata.
         /// </param>
-        ///
         /// <param name="processingDynamicParameters">
         /// True if dynamic parameters are being processed, or false otherwise.
         /// </param>
-        ///
         /// <param name="checkNames">
         /// Check if the parameter name has been reserved.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="runtimeDefinedParameters"/> is null.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        ///
         internal InternalParameterMetadata(RuntimeDefinedParameterDictionary runtimeDefinedParameters, bool processingDynamicParameters, bool checkNames)
         {
             if (runtimeDefinedParameters == null)
@@ -1205,24 +1177,19 @@ namespace System.Management.Automation
         /// Constructs an instance of the InternalParameterMetadata using the reflection information retrieved
         /// from the enclosing bindable object type.
         /// </summary>
-        ///
         /// <param name="type">
         /// The type information for the bindable object
         /// </param>
-        ///
         /// <param name="processingDynamicParameters">
         /// True if dynamic parameters are being processed, or false otherwise.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="type"/> is null.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        ///
         internal InternalParameterMetadata(Type type, bool processingDynamicParameters)
         {
             if (type == null)
@@ -1241,7 +1208,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the type name of the bindable type
         /// </summary>
-        ///
         internal string TypeName { get; } = String.Empty;
 
         /// <summary>
@@ -1249,7 +1215,6 @@ namespace System.Management.Automation
         /// The dictionary keys are the names of the parameters (or aliases) and
         /// the values are the compiled parameter metadata.
         /// </summary>
-        ///
         internal Dictionary<string, CompiledCommandParameter> BindableParameters { get; }
             = new Dictionary<string, CompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
@@ -1257,7 +1222,6 @@ namespace System.Management.Automation
         /// Gets a dictionary of the parameters that have been aliased to other names. The key is
         /// the alias name and the value is the CompiledCommandParameter metadata.
         /// </summary>
-        ///
         internal Dictionary<string, CompiledCommandParameter> AliasedParameters { get; }
             = new Dictionary<string, CompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
@@ -1278,24 +1242,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Fills in the data for an instance of this class using the specified runtime-defined parameters
         /// </summary>
-        ///
         /// <param name="runtimeDefinedParameters">
         /// A description of the parameters and their metadata.
         /// </param>
-        ///
         /// <param name="processingDynamicParameters">
         /// True if dynamic parameters are being processed, or false otherwise.
         /// </param>
-        ///
         /// <param name="checkNames">
         /// Check if the parameter name has been reserved.
         /// </param>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        ///
         private void ConstructCompiledParametersUsingRuntimeDefinedParameters(
             RuntimeDefinedParameterDictionary runtimeDefinedParameters,
             bool processingDynamicParameters,
@@ -1308,10 +1267,12 @@ namespace System.Management.Automation
             foreach (RuntimeDefinedParameter parameterDefinition in runtimeDefinedParameters.Values)
             {
                 // Create the compiled parameter and add it to the bindable parameters collection
-
-                // NTRAID#Windows Out Of Band Releases-926374-2005/12/22-JonN
-                if (parameterDefinition == null)
-                    continue;
+                if (processingDynamicParameters)
+                {
+                    // When processing dynamic parameters, parameter definitions come from the user,
+                    // Invalid data could be passed in, or the parameter could be actually disabled. 
+                    if (parameterDefinition == null || parameterDefinition.IsDisabled()) { continue; }
+                }
 
                 CompiledCommandParameter parameter = new CompiledCommandParameter(parameterDefinition, processingDynamicParameters);
                 AddParameter(parameter, checkNames);
@@ -1321,16 +1282,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Compiles the parameter using reflection against the CLR type.
         /// </summary>
-        ///
         /// <param name="processingDynamicParameters">
         /// True if dynamic parameters are being processed, or false otherwise.
         /// </param>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        ///
         private void ConstructCompiledParametersUsingReflection(bool processingDynamicParameters)
         {
             Diagnostics.Assert(
@@ -1379,7 +1337,6 @@ namespace System.Management.Automation
             }
         }
 
-        // NTRAID#Windows Out Of Band Releases-906345-2005/06/30-JeffJon
         // This call verifies that the parameter is unique or
         // can be deemed unique. If not, an exception is thrown.
         // If it is unique (or deemed unique), then it is added
@@ -1458,7 +1415,6 @@ namespace System.Management.Automation
 
             foreach (string alias in parameter.Aliases)
             {
-                // NTRAID#Windows Out Of Band Releases-917356-JonN
                 if (AliasedParameters.ContainsKey(alias))
                 {
                     throw new MetadataException(
@@ -1486,31 +1442,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if the specified member represents a parameter based on its attributes
         /// </summary>
-        ///
         /// <param name="member">
         /// The member to check to see if it is a parameter.
         /// </param>
-        ///
         /// <returns>
         /// True if at least one ParameterAttribute is declared on the member, or false otherwise.
         /// </returns>
-        ///
         /// <exception cref="MetadataException">
         /// If GetCustomAttributes fails on <paramref name="member"/>.
         /// </exception>
-        ///
         private static bool IsMemberAParameter(MemberInfo member)
         {
-            bool result = false;
-
             try
             {
-                // MemberInfo.GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR
-                var attributes = member.GetCustomAttributes(typeof(ParameterAttribute), false);
-                if (attributes.Any())
+                var expAttribute = member.GetCustomAttributes<ExperimentalAttribute>(inherit: false).FirstOrDefault();
+                if (expAttribute != null && expAttribute.ToHide) { return false; }
+
+                var hasAnyVisibleParamAttributes = false;
+                var paramAttributes = member.GetCustomAttributes<ParameterAttribute>(inherit: false);
+                foreach (var paramAttribute in paramAttributes)
                 {
-                    result = true;
+                    if (!paramAttribute.ToHide)
+                    {
+                        hasAnyVisibleParamAttributes = true;
+                        break;
+                    }
                 }
+                return hasAnyVisibleParamAttributes;
             }
             catch (MetadataException metadataException)
             {
@@ -1530,8 +1488,6 @@ namespace System.Management.Automation
                     member.Name,
                     argumentException.Message);
             }
-
-            return result;
         } // IsMemberAParameter
 
         #endregion helper methods

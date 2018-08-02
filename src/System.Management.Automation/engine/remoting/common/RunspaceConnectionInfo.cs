@@ -495,7 +495,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#ShellUri")]
         public string ShellUri
@@ -850,7 +849,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="useSsl"></param>
         /// <param name="computerName"></param>
@@ -2953,56 +2951,66 @@ namespace System.Management.Automation.Runspaces
         private const uint ContainersFeatureNotEnabled = 2;
         private const uint OtherError = 9999;
 
+        private const uint FileNotFoundHResult = 0x80070002;
+
+        // The list of executable to try in order
+        private static readonly string[] Executables = new string[] { "pwsh.exe", "powershell.exe"};
+
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// For Hyper-V container, it is Guid of utility VM hosting Hyper-V container.
+        /// Gets or Sets, for Hyper-V container, the Guid of utility VM hosting Hyper-V container.
         /// For Windows Server Container, it is empty.
         /// </summary>
         public Guid RuntimeId { get; set; }
 
         /// <summary>
-        /// OB root of the container.
+        /// Gets or sets the OB root of the container.
         /// </summary>
         public string ContainerObRoot { get; set; }
 
         /// <summary>
-        /// ID of the container.
+        /// Gets or sets the ID of the container.
         /// </summary>
         public string ContainerId { get; set; }
 
         /// <summary>
-        /// Process ID of the process created in container.
+        /// Gets or sets the process ID of the process created in container.
         /// </summary>
         internal int ProcessId { get; set; }
 
         /// <summary>
-        /// Whether the process in container should be launched as high privileged account
+        /// Gets or sets whether the process in container should be launched as high privileged account
         /// (RunAsAdmin being true) or low privileged account (RunAsAdmin being false).
         /// </summary>
         internal bool RunAsAdmin { get; set; } = false;
 
         /// <summary>
-        /// The configuration name of the container session.
+        /// Gets or sets the configuration name of the container session.
         /// </summary>
         internal string ConfigurationName { get; set; }
 
         /// <summary>
-        /// Whether the process in container has terminated.
+        /// Gets or sets whether the process in container has terminated.
         /// </summary>
         internal bool ProcessTerminated { get; set; } = false;
 
         /// <summary>
-        /// The error code.
+        /// Gets or sets the error code.
         /// </summary>
         internal uint ErrorCode { get; set; } = 0;
 
         /// <summary>
-        /// The error message for other errors.
+        /// Gets or sets the error message for other errors.
         /// </summary>
         internal string ErrorMessage { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the PowerShell executable being used to host the runspace.
+        /// </summary>
+        internal string Executable { get; set; } = string.Empty;
 
         #endregion
 
@@ -3123,7 +3131,9 @@ namespace System.Management.Automation.Runspaces
                 // other errors caught without exception
                 default:
                     throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotCreateProcessInContainer,
-                                                                            ContainerId));
+                                                                            ContainerId, 
+                                                                            Executable,
+                                                                            ErrorCode));
             }
         }
 
@@ -3207,30 +3217,49 @@ namespace System.Management.Automation.Runspaces
                     //
                     // Hyper-V container (i.e., RuntimeId is not empty) uses Hyper-V socket transport.
                     // Windows Server container (i.e., RuntimeId is empty) uses named pipe transport for now.
-                    // This code executes `powershell.exe` as it exists in the container which currently is
-                    // expected to be Windows PowerShell as it's inbox in the container.
+                    // This code executes `pwsh.exe` as it exists in the container which currently is
+                    // expected to be PowerShell Core as it's inbox in the container.
+                    // If `pwsh.exe` does not exist, fall back to `powershell.exe` which is Windows PowerShell.
                     //
-                    cmd = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                        @"{{""CommandLine"": ""powershell.exe {0} -NoLogo {1}"",""RestrictedToken"": {2}}}",
-                        (RuntimeId != Guid.Empty) ? "-so -NoProfile" : "-NamedPipeServerMode",
-                        String.IsNullOrEmpty(ConfigurationName) ? String.Empty : String.Concat("-Config ", ConfigurationName),
-                        (RunAsAdmin) ? "false" : "true");
-
-                    HCS_PROCESS_INFORMATION ProcessInformation = new HCS_PROCESS_INFORMATION();
-                    IntPtr Process = IntPtr.Zero;
-
-                    //
-                    // Create PowerShell process inside the container.
-                    //
-                    result = HcsCreateProcess(ComputeSystem, cmd, ref ProcessInformation, ref Process, ref resultString);
-                    if (result != 0)
+                    foreach (string executableToTry in Executables)
                     {
-                        processId = 0;
-                        error = result;
-                    }
-                    else
-                    {
-                        processId = Convert.ToInt32(ProcessInformation.ProcessId);
+                        cmd = GetContainerProcessCommand(executableToTry);
+
+                        HCS_PROCESS_INFORMATION ProcessInformation = new HCS_PROCESS_INFORMATION();
+                        IntPtr Process = IntPtr.Zero;
+
+                        //
+                        // Create PowerShell process inside the container.
+                        //
+                        result = HcsCreateProcess(ComputeSystem, cmd, ref ProcessInformation, ref Process, ref resultString);
+                        if (result == 0)
+                        {
+                            processId = Convert.ToInt32(ProcessInformation.ProcessId);
+
+                            // Reset error to 0 in case this is not the first iteration of the loop.
+                            error = 0;
+
+                            // the process was started, exit the loop.
+                            break;
+                        }
+                        else if (result == FileNotFoundHResult)
+                        {
+                            // "The system cannot find the file specified", try the next one
+                            // or exit the loop of none are left to try.
+                            // Set the process and error information in case we exit the loop.
+                            processId = 0;
+                            error = result;
+                            continue;
+                        }
+                        else
+                        {
+                            processId = 0;
+                            error = result;
+
+                            // the executable was found but did not work
+                            // exit the loop with the error state.
+                            break;
+                        }
                     }
                 }
             }
@@ -3258,6 +3287,23 @@ namespace System.Management.Automation.Runspaces
 
             ProcessId = processId;
             ErrorCode = error;
+        }
+
+        /// <summary>
+        /// Get Command to launch container process based on instance properties.
+        /// </summary>
+        /// <param name="executable">The name of the executable to use in the command.</param>
+        /// <returns>The command to launch the container process.</returns>
+        private string GetContainerProcessCommand(string executable)
+        {
+            Executable = executable;
+            return string.Format(
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        @"{{""CommandLine"": ""{0} {1} -NoLogo {2}"",""RestrictedToken"": {3}}}",
+                        Executable, 
+                        (RuntimeId != Guid.Empty) ? "-SocketServerMode -NoProfile" : "-NamedPipeServerMode",
+                        string.IsNullOrEmpty(ConfigurationName) ? string.Empty : string.Concat("-Config ", ConfigurationName),
+                        RunAsAdmin ? "false" : "true");
         }
 
         /// <summary>

@@ -9,12 +9,12 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Base class for Enable/Disable/Remove-PSBreakpoint
+    /// Base class for Enable/Disable/Remove-PSBreakpoint.
     /// </summary>
     public abstract class PSBreakpointCommandBase : PSCmdlet
     {
         /// <summary>
-        /// the breakpoint to enable
+        /// The breakpoint to enable.
         /// </summary>
         [Parameter(ParameterSetName = "Breakpoint", ValueFromPipeline = true, Position = 0, Mandatory = true)]
         [ValidateNotNull]
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         private Breakpoint[] _breakpoints;
 
         /// <summary>
-        /// The Id of the breakpoint to enable
+        /// The Id of the breakpoint to enable.
         /// </summary>
         [Parameter(ParameterSetName = "Id", ValueFromPipelineByPropertyName = true, Position = 0, Mandatory = true)]
         [ValidateNotNull]
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
         private int[] _ids;
 
         /// <summary>
-        /// Gathers the list of breakpoints to process and calls ProcessBreakpoints
+        /// Gathers the list of breakpoints to process and calls ProcessBreakpoints.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Process the given breakpoint
+        /// Process the given breakpoint.
         /// </summary>
         protected abstract void ProcessBreakpoint(Breakpoint breakpoint);
 
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This class implements Enable-PSBreakpoint
+    /// This class implements Enable-PSBreakpoint.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Id", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113295")]
     [OutputType(typeof(Breakpoint))]
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThru;
 
         /// <summary>
-        /// Enables the given breakpoint
+        /// Enables the given breakpoint.
         /// </summary>
         protected override void ProcessBreakpoint(Breakpoint breakpoint)
         {

@@ -8,17 +8,17 @@ using System.Collections.ObjectModel;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This is the base class for update-typedata and update-formatdata
+    /// This is the base class for update-typedata and update-formatdata.
     /// </summary>
     public class UpdateData : PSCmdlet
     {
         /// <summary>
-        /// File parameter set name
+        /// File parameter set name.
         /// </summary>
         protected const string FileParameterSet = "FileSet";
 
         /// <summary>
-        /// Files to append to the existing set
+        /// Files to append to the existing set.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
             ParameterSetName = FileParameterSet)]
@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] AppendPath { set; get; } = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// Files to prepend to the existing set
+        /// Files to prepend to the existing set.
         /// </summary>
         [Parameter(ParameterSetName = FileParameterSet)]
         [ValidateNotNull]
@@ -54,7 +54,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="files"></param>
         /// <param name="errorId"></param>

@@ -20,9 +20,7 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
         $err.Exception.ErrorCode | Should -Be 801
     }
 
-   # Marked as pending due to https://github.com/Microsoft/omi/issues/502
-   # It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
-    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -Pending {
+    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
         $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
         $credential = [PSCredential]::new('username', $password)
 

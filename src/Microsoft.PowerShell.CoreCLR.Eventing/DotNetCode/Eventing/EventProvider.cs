@@ -146,7 +146,6 @@ namespace System.Diagnostics.Eventing
 
         /// <summary>
         /// This method deregisters the controlGuid of this class with ETW.
-        ///
         /// </summary>
         public virtual void Close()
         {

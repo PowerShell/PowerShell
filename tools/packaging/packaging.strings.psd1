@@ -48,6 +48,40 @@ case "$1" in
         ;;
 esac
 '@
+    MacOSLauncherScript = @'
+#!/usr/bin/env bash
+open {0}
+'@
+MacOSLauncherPlistTemplate = @'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>PowerShell.sh</string>
+    <key>CFBundleGetInfoString</key>
+    <string>{1}</string>
+    <key>CFBundleIconFile</key>
+    <string>{2}</string>
+    <key>CFBundleIdentifier</key>
+    <string>{0}</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>PowerShell</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>{1}</string>
+    <key>CFBundleSupportedPlatforms</key>
+    <array>
+        <string>MacOSX</string>
+    </array>
+    <key>CFBundleVersion</key>
+    <string>{1}</string>
+</dict>
+</plist>
+'@
 # see https://developer.apple.com/library/content/documentation/DeveloperTools/Reference/DistributionDefinitionRef/Chapters/Distribution_XML_Ref.html
 OsxDistributionTemplate = @'
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>

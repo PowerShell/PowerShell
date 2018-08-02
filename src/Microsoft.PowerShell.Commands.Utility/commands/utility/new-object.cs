@@ -32,13 +32,15 @@ namespace Microsoft.PowerShell.Commands
 
 #if !UNIX
         private Guid _comObjectClsId = Guid.Empty;
-        /// <summary> the ProgID of the Com object</summary>
+        /// <summary>
+        /// The ProgID of the Com object.
+        /// </summary>
         [Parameter(ParameterSetName = "Com", Mandatory = true, Position = 0)]
         public string ComObject { get; set; } = null;
 #endif
 
         /// <summary>
-        /// The parameters for the constructor
+        /// The parameters for the constructor.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = netSetName, Mandatory = false, Position = 1)]
@@ -46,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         public object[] ArgumentList { get; set; } = null;
 
         /// <summary>
-        /// True if we should have an error when Com objects will use an interop assembly
+        /// True if we should have an error when Com objects will use an interop assembly.
         /// </summary>
         [Parameter(ParameterSetName = "Com")]
         public SwitchParameter Strict { get; set; }
@@ -295,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject(comObject);
             }
 #endif
-        }//protected override void BeginProcessing()
+        }
 
         #endregion Overrides
 
@@ -473,10 +475,10 @@ namespace Microsoft.PowerShell.Commands
         // HResult code '-2147417850' - Cannot change thread mode after it is set.
         private const int RPC_E_CHANGED_MODE = unchecked((int)0x80010106);
         private const string netSetName = "Net";
-    }//internal class NewObjectCommand: PSCmdlet
+    }
 
     /// <summary>
-    /// Native methods for dealing with COM objects
+    /// Native methods for dealing with COM objects.
     /// </summary>
     internal class NewObjectNativeMethods
     {

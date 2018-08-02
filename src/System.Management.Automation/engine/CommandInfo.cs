@@ -21,7 +21,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Aliases create a name that refers to other command types
         /// </summary>
-        ///
         /// <remarks>
         /// Aliases are only persisted within the execution of a single engine.
         /// </remarks>
@@ -30,7 +29,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Script functions that are defined by a script block
         /// </summary>
-        ///
         /// <remarks>
         /// Functions are only persisted within the execution of a single engine.
         /// </remarks>
@@ -39,7 +37,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Script filters that are defined by a script block.
         /// </summary>
-        ///
         /// <remarks>
         /// Filters are only persisted within the execution of a single engine.
         /// </remarks>
@@ -58,7 +55,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Any existing application (can be console or GUI).
         /// </summary>
-        ///
         /// <remarks>
         /// An application can have any extension that can be executed either directly through CreateProcess
         /// or indirectly through ShellExecute.
@@ -83,7 +79,6 @@ namespace System.Management.Automation
         /// <summary>
         /// All possible command types.
         /// </summary>
-        ///
         /// <remarks>
         /// Note, a CommandInfo instance will never specify
         /// All as its CommandType but All can be used when filtering the CommandTypes.
@@ -102,19 +97,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the CommandInfo class with the specified name and type
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the command.
         /// </param>
-        ///
         /// <param name="type">
         /// The type of the command.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        ///
         internal CommandInfo(string name, CommandTypes type)
         {
             // The name can be empty for functions and filters but it
@@ -132,23 +123,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the CommandInfo class with the specified name and type
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the command.
         /// </param>
-        ///
         /// <param name="type">
         /// The type of the command.
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the command.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        ///
         internal CommandInfo(string name, CommandTypes type, ExecutionContext context)
             : this(name, type)
         {
@@ -280,7 +266,6 @@ namespace System.Management.Automation
         /// <summary>
         /// A string representing the definition of the command.
         /// </summary>
-        ///
         /// <remarks>
         /// This is overridden by derived classes to return specific
         /// information for the command type.
@@ -290,15 +275,12 @@ namespace System.Management.Automation
         /// <summary>
         /// This is required for renaming aliases, functions, and filters
         /// </summary>
-        ///
         /// <param name="newName">
         /// The new name for the command.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="newName"/> is null or empty.
         /// </exception>
-        ///
         internal void Rename(string newName)
         {
             if (String.IsNullOrEmpty(newName))
@@ -662,30 +644,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Generates the parameter and parameter set info from the cmdlet metadata
         /// </summary>
-        ///
         /// <returns>
         /// A collection of CommandParameterSetInfo representing the cmdlet metadata.
         /// </returns>
-        ///
         /// <exception cref="ArgumentException">
         /// The type name is invalid or the length of the type name
         /// exceeds 1024 characters.
         /// </exception>
-        ///
         /// <exception cref="System.Security.SecurityException">
         /// The caller does not have the required permission to load the assembly
         /// or create the type.
         /// </exception>
-        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        ///
         internal Collection<CommandParameterSetInfo> GenerateCommandParameterSetInfo()
         {
             Collection<CommandParameterSetInfo> result;
