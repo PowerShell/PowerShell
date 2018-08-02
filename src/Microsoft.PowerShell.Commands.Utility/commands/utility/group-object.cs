@@ -112,8 +112,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public sealed class GroupInfoNoElement : GroupInfo
     {
-        internal GroupInfoNoElement(OrderByPropertyEntry groupValue)
-        : base(groupValue)
+        internal GroupInfoNoElement(OrderByPropertyEntry groupValue) : base(groupValue)
         {
         }
 
@@ -250,7 +249,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the AsString parameter.
         /// </summary>
-        /// <value></value>
         [Parameter(ParameterSetName = "HashTable")]
         public SwitchParameter AsString { get; set; }
 
@@ -368,8 +366,8 @@ namespace Microsoft.PowerShell.Commands
                         // create a new group
                         s_tracer.WriteLine("Create a new group: {0}", currentObjectOrderValues);
                         GroupInfo newObjGrp = noElement
-                                              ? new GroupInfoNoElement(currentObjectEntry)
-                                              : new GroupInfo(currentObjectEntry);
+                            ? new GroupInfoNoElement(currentObjectEntry)
+                            : new GroupInfo(currentObjectEntry);
 
                         groups.Add(newObjGrp);
 
