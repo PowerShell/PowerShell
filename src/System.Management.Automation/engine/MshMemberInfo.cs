@@ -4008,20 +4008,32 @@ namespace System.Management.Automation
     /// </summary>
     internal class PSMemberInfoInternalCollection<T> : PSMemberInfoCollection<T>, IEnumerable<T> where T : PSMemberInfo
     {
-        private readonly OrderedDictionary _members;
+        private OrderedDictionary _members;
         private int _countHidden;
+
+        private OrderedDictionary Members
+        {
+            get
+            {
+                if (_members == null)
+                {
+                    _members = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
+                }
+
+                return _members;
+            }
+        }
 
         /// <summary>
         /// Constructs this collection
         /// </summary>
         internal PSMemberInfoInternalCollection()
         {
-            _members = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
         }
 
         private void Replace(T oldMember, T newMember)
         {
-            _members[newMember.Name] = newMember;
+            Members[newMember.Name] = newMember;
             if (oldMember.IsHidden)
             {
                 _countHidden--;
@@ -4040,9 +4052,9 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(newMember != null, "called from internal code that checks for new member not null");
 
-            lock (_members)
+            lock (Members)
             {
-                var oldMember = _members[newMember.Name] as T;
+                var oldMember = Members[newMember.Name] as T;
                 Diagnostics.Assert(oldMember != null, "internal code checks member already exists");
                 Replace(oldMember, newMember);
             }
@@ -4075,16 +4087,15 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("member");
             }
 
-            lock (_members)
+            lock (Members)
             {
-                var existingMember = _members[member.Name] as T;
-                if (existingMember != null)
+                if (Members[member.Name] is T existingMember)
                 {
                     Replace(existingMember, member);
                 }
                 else
                 {
-                    _members[member.Name] = member;
+                    Members[member.Name] = member;
                     if (member.IsHidden)
                     {
                         _countHidden++;
@@ -4114,16 +4125,15 @@ namespace System.Management.Automation
                     name);
             }
 
-            lock (_members)
+            lock (Members)
             {
-                var member = _members[name] as PSMemberInfo;
-                if (member != null)
+                if (Members[name] is PSMemberInfo member)
                 {
                     if (member.IsHidden)
                     {
                         _countHidden--;
                     }
-                    _members.Remove(name);
+                    Members.Remove(name);
                 }
             }
         }
@@ -4143,9 +4153,14 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentException("name");
                 }
 
-                lock (_members)
+                if (_members == null)
                 {
-                    return _members[name] as T;
+                    return null;
+                }
+
+                lock (Members)
+                {
+                    return Members[name] as T;
                 }
             }
         }
@@ -4203,9 +4218,9 @@ namespace System.Management.Automation
         private PSMemberInfoInternalCollection<T> GetInternalMembers(MshMemberMatchOptions matchOptions)
         {
             PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
-            lock (_members)
+            lock (Members)
             {
-                foreach (T member in _members.Values.OfType<T>())
+                foreach (T member in Members.Values.OfType<T>())
                 {
                     if (member.MatchesOptions(matchOptions))
                     {
@@ -4224,9 +4239,14 @@ namespace System.Management.Automation
         {
             get
             {
-                lock (_members)
+                if (_members == null)
                 {
-                    return _members.Count;
+                    return 0;
+                }
+
+                lock (Members)
+                {
+                    return Members.Count;
                 }
             }
         }
@@ -4238,9 +4258,14 @@ namespace System.Management.Automation
         {
             get
             {
-                lock (_members)
+                if (_members == null)
                 {
-                    return _members.Count - _countHidden;
+                    return 0;
+                }
+
+                lock (Members)
+                {
+                    return Members.Count - _countHidden;
                 }
             }
         }
@@ -4254,9 +4279,14 @@ namespace System.Management.Automation
         {
             get
             {
-                lock (_members)
+                if (_members == null)
                 {
-                    return _members[index] as T;
+                    return null;
+                }
+
+                lock (Members)
+                {
+                    return Members[index] as T;
                 }
             }
         }
@@ -4269,10 +4299,10 @@ namespace System.Management.Automation
         /// <returns>the enumerator for this collection</returns>
         public override IEnumerator<T> GetEnumerator()
         {
-            lock (_members)
+            lock (Members)
             {
                 // Copy the members to a list so that iteration can be performed without holding a lock.
-                return _members.Values.OfType<T>().ToList().GetEnumerator();
+                return Members.Values.OfType<T>().ToList().GetEnumerator();
             }
         }
     }
