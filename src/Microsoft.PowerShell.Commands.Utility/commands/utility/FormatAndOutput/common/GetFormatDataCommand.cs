@@ -171,12 +171,10 @@ namespace Microsoft.PowerShell.Commands
                 viewList.Add(formatdef);
             }// foreach(ViewDefinition...
 
-            // If no Type Definitions are found for _typename throw a terminating error
             if (typedefs.Count == 0)
             {
-                // All files must have the same extension otherwise throw.
                 ErrorRecord errorRecord = new ErrorRecord(
-                    new System.Exception("No such type"),
+                    new TypeLoadException("No such type could be found"),
                     "SPECIFIED_TYPE_NOT_FOUND",
                     ErrorCategory.ResourceUnavailable,
                     _typename);
@@ -184,7 +182,6 @@ namespace Microsoft.PowerShell.Commands
             }
             else 
             {
-                // write out all the available type definitions
                 foreach (var pair in typedefs)
                 {
                     var typeNames = pair.Key;
