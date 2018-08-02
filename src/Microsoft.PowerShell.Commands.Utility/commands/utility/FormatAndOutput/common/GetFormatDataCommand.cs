@@ -3,8 +3,8 @@
 
 using System;
 using System.Linq;
-using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation;
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -172,7 +172,8 @@ namespace Microsoft.PowerShell.Commands
             }// foreach(ViewDefinition...
 
             // If no Type Definitions are found for _typename throw a terminating error
-            if (typedefs.Count == 0) {
+            if (typedefs.Count == 0)
+            {
                 // All files must have the same extension otherwise throw.
                 ErrorRecord errorRecord = new ErrorRecord(
                     new System.Exception("No such type"),
@@ -181,7 +182,8 @@ namespace Microsoft.PowerShell.Commands
                     _typename);
                 ThrowTerminatingError(errorRecord);
             }
-            else {
+            else 
+            {
                 // write out all the available type definitions
                 foreach (var pair in typedefs)
                 {
