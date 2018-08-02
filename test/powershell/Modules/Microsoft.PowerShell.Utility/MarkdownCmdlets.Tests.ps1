@@ -448,7 +448,7 @@ bool function()`n{`n}
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("ShowMarkdownOutputBypass", $false)
         }
 
-        It "can show VT100 converted from markdown" {
+        It "Can show VT100 converted from markdown" {
             $text = "Bold"
             $mdText = "**$text**"
             $expectedString = GetExpectedString -ElementType 'Bold' -Text $text -VT100Support $true
@@ -457,7 +457,7 @@ bool function()`n{`n}
             $result | Should -BeExactly $expectedString
         }
 
-        It "can show HTML converted from markdown" {
+        It "Can show HTML converted from markdown" {
             $text = "Bold"
             $mdText = "**$text**"
             $expectedString = GetExpectedHTML -ElementType 'Bold' -Text $text
@@ -466,7 +466,45 @@ bool function()`n{`n}
             $result | Should -BeExactly $expectedString
         }
 
-        It "Gets an error if the input object is missing the <propertyname> property." -TestCases @(@{propertyname = 'Html'}, @{propertyname = 'VT100EncodedString'}) {
+        It "Markdown files work with cmdlet: <pathParam>" -TestCases @(
+            @{ pathParam = "Path" }
+            @{ pathParam = "LiteralPath" }
+        ) {
+            param($pathParam)
+
+            $text = "Header"
+            $mdText = "# $text"
+            $expectedString = GetExpectedString -ElementType Header1 -Text $text -VT100Support $true
+            $mdFile = Join-Path $TestDrive "test.md"
+            Set-Content -Path $mdFile -Value $mdText
+
+            $params = @{ $pathParam = $mdFile }
+            $result = Show-Markdown @params
+            $result | Should -BeExactly $expectedString
+        }
+
+        It "Can show markdown piped directly to cmdlet" {
+            $text = "Header"
+            $mdText = "# $text"
+            $expectedString = GetExpectedString -ElementType Header1 -Text $text -VT100Support $true
+
+            $result = $mdText | Show-Markdown
+            $result | Should -BeExactly $expectedString
+        }
+
+        It "Can show markdown piped directly to cmdlet as HTML" {
+            $text = "Header"
+            $mdText = "# $text"
+            $expectedString = GetExpectedHTML -ElementType Header1 -Text $text
+
+            $result = $mdText | Show-Markdown -UseBrowser
+            $result | Should -BeExactly $expectedString
+        }
+
+        It "Gets an error if the input object is missing the <propertyname> property." -TestCases @(
+            @{ propertyname = 'Html' }
+            @{ propertyname = 'VT100EncodedString' }
+        ) {
             param($propertyname)
 
             $markdownInfo = [Microsoft.PowerShell.MarkdownRender.MarkdownInfo]::new()
