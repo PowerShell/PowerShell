@@ -1169,6 +1169,9 @@ function Start-PSPester {
         $configFile = [System.IO.Path]::GetTempFileName()
         $configFile = [System.IO.Path]::ChangeExtension($configFile, ".json")
 
+        ## Create the config.json file to enable the given experimental feature.
+        ## On Windows, we need to have 'RemoteSigned' declared for ExecutionPolicy because the ExecutionPolicy is 'Restricted' by default.
+        ## On Unix, ExecutionPolicy is not supported, so we don't need to declare it.
         if ($Environment.IsWindows) {
             $content = @"
 {
