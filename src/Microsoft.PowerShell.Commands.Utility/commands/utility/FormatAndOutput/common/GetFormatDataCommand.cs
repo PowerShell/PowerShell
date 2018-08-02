@@ -171,38 +171,40 @@ namespace Microsoft.PowerShell.Commands
                 viewList.Add(formatdef);
             }// foreach(ViewDefinition...
 
+            // If no Type Definitions are found for _typename throw a terminating error
             if (typedefs.Count == 0) {
-                System.ArgumentException exception = new System.ArgumentException("No such type");
                 // All files must have the same extension otherwise throw.
                 ErrorRecord errorRecord = new ErrorRecord(
-                    exception,
+                    new System.ArgumentException("No such type"),
                     "SPECIFIED_TYPE_NOT_FOUND",
                     ErrorCategory.ResourceUnavailable,
                     _typename);
 
                 ThrowTerminatingError(errorRecord);
             }
-            // write out all the available type definitions
-            foreach (var pair in typedefs)
-            {
-                var typeNames = pair.Key;
-
-                if (writeOldWay)
+            else {
+                // write out all the available type definitions
+                foreach (var pair in typedefs)
                 {
-                    foreach (var typeName in typeNames)
+                    var typeNames = pair.Key;
+
+                    if (writeOldWay)
                     {
-                        var etd = new ExtendedTypeDefinition(typeName, pair.Value);
+                        foreach (var typeName in typeNames)
+                        {
+                            var etd = new ExtendedTypeDefinition(typeName, pair.Value);
+                            WriteObject(etd);
+                        }
+                    }
+                    else
+                    {
+                        var etd = new ExtendedTypeDefinition(typeNames[0], pair.Value);
+                        for (int i = 1; i < typeNames.Count; i++)
+                        {
+                            etd.TypeNames.Add(typeNames[i]);
+                        }
                         WriteObject(etd);
                     }
-                }
-                else
-                {
-                    var etd = new ExtendedTypeDefinition(typeNames[0], pair.Value);
-                    for (int i = 1; i < typeNames.Count; i++)
-                    {
-                        etd.TypeNames.Add(typeNames[i]);
-                    }
-                    WriteObject(etd);
                 }
             }
         }
