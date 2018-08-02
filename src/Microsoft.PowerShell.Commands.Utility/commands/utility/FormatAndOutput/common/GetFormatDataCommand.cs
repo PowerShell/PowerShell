@@ -175,11 +175,10 @@ namespace Microsoft.PowerShell.Commands
             if (typedefs.Count == 0) {
                 // All files must have the same extension otherwise throw.
                 ErrorRecord errorRecord = new ErrorRecord(
-                    new System.ArgumentException("No such type"),
+                    new System.Exception("No such type"),
                     "SPECIFIED_TYPE_NOT_FOUND",
                     ErrorCategory.ResourceUnavailable,
                     _typename);
-
                 ThrowTerminatingError(errorRecord);
             }
             else {
