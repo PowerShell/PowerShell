@@ -803,7 +803,8 @@ namespace System.Management.Automation
 
             if (first is string firstString)
             {
-                if (!(second is string secondString))
+                string secondString = second as string;
+                if (secondString == null)
                 {
                     try
                     {
@@ -1641,9 +1642,9 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static T ConvertTo<T>(object valueToConvert)
         {
-            if (valueToConvert is T variable)
+            if (valueToConvert is T value)
             {
-                return variable;
+                return value;
             }
             return (T)ConvertTo(valueToConvert, typeof(T), true, CultureInfo.InvariantCulture, null);
         }
@@ -1681,7 +1682,7 @@ namespace System.Management.Automation
         {
             result = default(T);
 
-            if (TryConvertTo(valueToConvert, typeof(T), formatProvider, out var res))
+            if (TryConvertTo(valueToConvert, typeof(T), formatProvider, out object res))
             {
                 result = (T)res;
                 return true;
@@ -1729,19 +1730,20 @@ namespace System.Management.Automation
                         return false;
                     }
 
-                    var conversion = FigureConversion(valueToConvert, resultType, out var debase);
+                    var conversion = FigureConversion(valueToConvert, resultType, out bool debase);
                     if (conversion.Rank == ConversionRank.None)
                     {
                         return false;
                     }
 
                     result = conversion.Invoke(
-                                               debase ? PSObject.Base(valueToConvert) : valueToConvert,
-                                               resultType,
-                                               recurse: true,
-                                               debase ? (PSObject)valueToConvert : null,
-                                               formatProvider,
-                                               backupTable: null);
+                        debase ? PSObject.Base(valueToConvert) : valueToConvert,
+                        resultType,
+                        recurse: true,
+                        debase ? (PSObject)valueToConvert : null,
+                        formatProvider,
+                        backupTable: null);
+
                     return true;
                 }
             }
