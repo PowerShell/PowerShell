@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, ConvertMarkdownStrings.InvalidParameterSet, ParameterSetName));
             }
         }
 
