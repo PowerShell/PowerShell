@@ -4125,6 +4125,11 @@ namespace System.Management.Automation
                     name);
             }
 
+            if (_members == null)
+            {
+                return;
+            }
+
             lock (_members)
             {
                 if (Members[name] is PSMemberInfo member)
