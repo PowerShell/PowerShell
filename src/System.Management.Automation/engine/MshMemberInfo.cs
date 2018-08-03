@@ -4011,6 +4011,10 @@ namespace System.Management.Automation
         private OrderedDictionary _members;
         private int _countHidden;
 
+        /// <summary>
+        /// Get the OrderedDictionary for holding all members.
+        /// We use this property to delay initializing _members until we absolutely need to.
+        /// </summary>
         private OrderedDictionary Members
         {
             get
@@ -4130,15 +4134,15 @@ namespace System.Management.Automation
                 return;
             }
 
-            lock (Members)
+            lock (_members)
             {
-                if (Members[name] is PSMemberInfo member)
+                if (_members[name] is PSMemberInfo member)
                 {
                     if (member.IsHidden)
                     {
                         _countHidden--;
                     }
-                    Members.Remove(name);
+                    _members.Remove(name);
                 }
             }
         }
@@ -4163,9 +4167,9 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                lock (Members)
+                lock (_members)
                 {
-                    return Members[name] as T;
+                    return _members[name] as T;
                 }
             }
         }
@@ -4223,9 +4227,15 @@ namespace System.Management.Automation
         private PSMemberInfoInternalCollection<T> GetInternalMembers(MshMemberMatchOptions matchOptions)
         {
             PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
-            lock (Members)
+
+            if (_members == null)
             {
-                foreach (T member in Members.Values.OfType<T>())
+                return returnValue;
+            }
+
+            lock (_members)
+            {
+                foreach (T member in _members.Values.OfType<T>())
                 {
                     if (member.MatchesOptions(matchOptions))
                     {
@@ -4249,7 +4259,7 @@ namespace System.Management.Automation
                     return 0;
                 }
 
-                lock (Members)
+                lock (_members)
                 {
                     return _members.Count;
                 }
@@ -4268,7 +4278,7 @@ namespace System.Management.Automation
                     return 0;
                 }
 
-                lock (Members)
+                lock (_members)
                 {
                     return _members.Count - _countHidden;
                 }
@@ -4289,7 +4299,7 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                lock (Members)
+                lock (_members)
                 {
                     return _members[index] as T;
                 }
@@ -4309,10 +4319,10 @@ namespace System.Management.Automation
                 return Enumerable.Empty<T>().GetEnumerator();
             }
 
-            lock (Members)
+            lock (_members)
             {
                 // Copy the members to a list so that iteration can be performed without holding a lock.
-                return Members.Values.OfType<T>().ToList().GetEnumerator();
+                return _members.Values.OfType<T>().ToList().GetEnumerator();
             }
         }
     }
