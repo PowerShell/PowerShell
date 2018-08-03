@@ -757,10 +757,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Look up the assembly in the current folder
-            string currentFolderPath = SessionState.Path.GetResolvedPSPathFromPSPath(refAssemblyDll)[0].Path;
-            if (File.Exists(currentFolderPath))
+            var psPaths = SessionState.Path.GetResolvedPSPathFromPSPath(refAssemblyDll);
+
+            if (psPaths.Count > 0)
             {
-                return currentFolderPath;
+                string currentFolderPath = psPaths[0].Path;
+                if (File.Exists(currentFolderPath))
+                {
+                    return currentFolderPath;
+                }
             }
 
             ErrorRecord errorRecord = new ErrorRecord(
