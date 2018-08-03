@@ -3816,6 +3816,14 @@ namespace System.Management.Automation
         public abstract void Add(T member, bool preValidated);
 
         /// <summary>
+        /// Overload used by PSObjectBuilder to remove the need to make a defensive copy of the PSOBject
+        /// </summary>
+        /// <param name="member"></param>
+        /// <param name="preValidated"></param>
+        /// <param name="inObjectBuilderScope"></param>
+        internal abstract void Add(T member, bool preValidated, bool inObjectBuilderScope);
+
+        /// <summary>
         /// Removes a member from this collection
         /// </summary>
         /// <param name="name">name of the member to be removed</param>
@@ -3896,6 +3904,7 @@ namespace System.Management.Automation
         /// <returns>the enumerator for this collection</returns>
         public abstract IEnumerator<T> GetEnumerator();
         #endregion IEnumerable
+
     }
 
     /// <summary>
@@ -4095,6 +4104,22 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">when a member by this name is already present</exception>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override void Add(T member, bool preValidated)
+        {
+            Add(member, preValidated, false);
+        }
+
+        /// <summary>
+        /// Adds a member to this collection
+        /// </summary>
+        /// <param name="member">member to be added</param>
+        /// <param name="preValidated">flag to indicate that validation has already been done
+        ///     on this new member.  Use only when you can guarantee that the input will not
+        ///     cause any of the errors normally caught by this method.</param>
+        /// <param name="inObjectBuilderScope">True if this is called from within an PSObjectBuilder.
+        /// In that case, the object has not yet been exposed to the outside world.</param>
+        /// <exception cref="ExtendedTypeSystemException">when a member by this name is already present</exception>
+        /// <exception cref="ArgumentException">for invalid arguments</exception>
+        internal override void Add(T member, bool preValidated, bool inObjectBuilderScope)
         {
             if (member == null)
             {
@@ -4539,6 +4564,11 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override void Add(T member, bool preValidated)
         {
+            Add(member, preValidated, false);
+        }
+
+        internal override void Add(T member, bool preValidated, bool inObjectBuilderScope)
+        {
             if (member == null)
             {
                 throw PSTraceSource.NewArgumentNullException("member");
@@ -4563,7 +4593,7 @@ namespace System.Management.Automation
                 }
             }
 
-            AddToReservedMemberSet(member, preValidated);
+            AddToReservedMemberSet(member, preValidated, inObjectBuilderScope);
         }
 
         /// <summary>
@@ -4571,7 +4601,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="member"></param>
         /// <param name="preValidated"></param>
-        internal void AddToReservedMemberSet(T member, bool preValidated)
+        /// <param name="inObjectBuilderScope"></param>
+        internal void AddToReservedMemberSet(T member, bool preValidated, bool inObjectBuilderScope)
         {
             if (!preValidated)
             {
@@ -4584,7 +4615,7 @@ namespace System.Management.Automation
                 }
             }
 
-            AddToTypesXmlCache(member, preValidated);
+            AddToTypesXmlCache(member, preValidated, inObjectBuilderScope);
         }
 
         /// <summary>
@@ -4592,8 +4623,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="member">member to be added</param>
         /// <param name="preValidated">flag to indicate that validation has already been done
-        ///    on this new member.  Use only when you can guarantee that the input will not
-        ///    cause any of the errors normally caught by this method.</param>
+        ///     on this new member.  Use only when you can guarantee that the input will not
+        ///     cause any of the errors normally caught by this method.</param>
+        /// <param name="inObjectBuilderScope"></param>
         /// <exception cref="ExtendedTypeSystemException">
         ///     When
         ///         adding a member with a reserved member name or
@@ -4602,7 +4634,7 @@ namespace System.Management.Automation
         ///         trying to add a member to a static memberset
         /// </exception>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
-        internal void AddToTypesXmlCache(T member, bool preValidated)
+        internal void AddToTypesXmlCache(T member, bool preValidated, bool inObjectBuilderScope)
         {
             if (member == null)
             {
@@ -4620,7 +4652,7 @@ namespace System.Management.Automation
                 }
             }
 
-            PSMemberInfo memberToBeAdded = member.Copy();
+            PSMemberInfo memberToBeAdded = inObjectBuilderScope ? member : member.Copy();
 
             if (_mshOwner != null)
             {
@@ -4629,7 +4661,7 @@ namespace System.Management.Automation
                     TypeTable typeTable = _mshOwner.GetTypeTable();
                     if (typeTable != null)
                     {
-                        var typesXmlMembers = typeTable.GetMembers(_mshOwner.InternalTypeNames);
+                        var typesXmlMembers = typeTable.GetMembers(_mshOwner.InternalTypeNames, inObjectBuilderScope);
                         var typesXmlMember = typesXmlMembers[member.Name];
                         if (typesXmlMember is T)
                         {
@@ -4644,11 +4676,17 @@ namespace System.Management.Automation
                 memberToBeAdded.ReplicateInstance(_mshOwner);
                 _mshOwner.InstanceMembers.Add(memberToBeAdded, preValidated);
 
-                // All member binders may need to invalidate dynamic sites, and now must generate
-                // different binding restrictions (specifically, must check for an instance member
-                // before considering the type table or adapted members.)
-                PSGetMemberBinder.SetHasInstanceMember(memberToBeAdded.Name);
-                PSVariableAssignmentBinder.NoteTypeHasInstanceMemberOrTypeName(PSObject.Base(_mshOwner).GetType());
+
+                // we can skip this if both conditions below is true,
+                // as we guarantee this is already done
+                if (!(inObjectBuilderScope && preValidated))
+                {
+                    // All member binders may need to invalidate dynamic sites, and now must generate
+                    // different binding restrictions (specifically, must check for an instance member
+                    // before considering the type table or adapted members.)
+                    PSGetMemberBinder.SetHasInstanceMember(memberToBeAdded.Name);
+                    PSVariableAssignmentBinder.NoteTypeHasInstanceMemberOrTypeName(PSObject.Base(_mshOwner).GetType());
+                }
 
                 return;
             }

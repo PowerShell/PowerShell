@@ -2595,7 +2595,7 @@ namespace System.Management.Automation.Runspaces
         private readonly List<string> _typeFileList;
 
         // The member factory is cached to avoid allocating Func<> delegates on each call
-        private readonly Func<string, ConsolidatedString, PSMemberInfoInternalCollection<PSMemberInfo>> _memberFactoryFunc;
+        private readonly Func<string, (ConsolidatedString, bool), PSMemberInfoInternalCollection<PSMemberInfo>> _memberFactoryFunc;
 
         // This holds all the type information that is in the typetable
         // Holds file name if types file was used to update the types
@@ -3549,20 +3549,22 @@ namespace System.Management.Automation.Runspaces
             return PSObject.TransformMemberInfoCollection<PSMemberInfo, T>(GetMembers(types));
         }
 
-        internal PSMemberInfoInternalCollection<PSMemberInfo> GetMembers(ConsolidatedString types)
+        internal PSMemberInfoInternalCollection<PSMemberInfo> GetMembers(ConsolidatedString types, bool inObjectBuilderScope = false)
         {
             if ((types == null) || string.IsNullOrEmpty(types.Key))
             {
                 return new PSMemberInfoInternalCollection<PSMemberInfo>();
             }
 
-            PSMemberInfoInternalCollection<PSMemberInfo> result = _consolidatedMembers.GetOrAdd(types.Key, _memberFactoryFunc, types);
+            PSMemberInfoInternalCollection<PSMemberInfo> result = _consolidatedMembers.GetOrAdd(types.Key, _memberFactoryFunc, (types, inObjectBuilderScope));
             return result;
         }
 
-        private PSMemberInfoInternalCollection<PSMemberInfo> MemberFactory(string k, ConsolidatedString types)
+        private PSMemberInfoInternalCollection<PSMemberInfo> MemberFactory(string k, (ConsolidatedString types, bool inObjectBuilderScope) tupleArgs)
         {
             var retValue = new PSMemberInfoInternalCollection<PSMemberInfo>();
+            var types = tupleArgs.types;
+            var inObjectBuilderScope = tupleArgs.inObjectBuilderScope;
             for (int i = types.Count - 1; i >= 0; i--)
             {
                 if (!_extendedMembers.TryGetValue(types[i], out var typeMembers))
@@ -3600,7 +3602,7 @@ namespace System.Management.Automation.Runspaces
                         if (currentMemberAsMemberSet.Members[typeMemberAsMemberSetMember.Name] == null)
                         {
                             ((PSMemberInfoIntegratingCollection<PSMemberInfo>)currentMemberAsMemberSet.Members)
-                                .AddToTypesXmlCache(typeMemberAsMemberSetMember, false);
+                                .AddToTypesXmlCache(typeMemberAsMemberSetMember, preValidated: false, inObjectBuilderScope);
                             continue;
                         }
 

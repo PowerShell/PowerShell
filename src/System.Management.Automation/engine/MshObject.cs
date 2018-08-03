@@ -535,15 +535,20 @@ namespace System.Management.Automation
         /// Initializes a new instance of PSObject wrapping obj (accessible through BaseObject).
         /// </summary>
         /// <param name="obj">object we are wrapping</param>
+        /// <param name="instanceMemberCapacity">The default size if the instance member collection.</param>
         /// <exception cref="ArgumentNullException">if <paramref name="obj"/> is null</exception>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "This is shipped as part of V1. Retaining this for backward compatibility.")]
-        public PSObject(object obj)
+        public PSObject(object obj, int instanceMemberCapacity = 0)
         {
             if (obj == null)
             {
                 throw PSTraceSource.NewArgumentNullException("obj");
             }
             CommonInitialization(obj);
+            if (instanceMemberCapacity != 0)
+            {
+                _instanceMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(instanceMemberCapacity);
+            }
         }
 
         /// <summary>
@@ -2346,6 +2351,172 @@ namespace System.Management.Automation
 
         #endregion
     }
+
+    /// <summary>
+    /// A factory class for more efficient creation of PSCustomObjects
+    /// </summary>
+    /// <para/>
+    /// This creates a context in which the guarantee is given that the
+    /// object being created, and the members that are being added are not
+    /// visible from any other location.
+    /// This way, defensive copies and otherwise expensive operations can be avoided.
+    public ref struct PSObjectBuilder
+    {
+        const int DefaultHirearchyDepth = 4;
+        private readonly HashSet<string> _validatedNames;
+        private Stack<PSObject> _currentObjectStack;
+
+        private PSObject _currentObject;
+
+        private Stack<PSObject> CurrentObjectStack => _currentObjectStack ?? (_currentObjectStack = new Stack<PSObject>(DefaultHirearchyDepth));
+
+        /// <summary>
+        /// Initializes a new instance of PSObjectBuilder.
+        /// </summary>
+        /// <param name="validatedNameCount">The initial size of the set that tracks validated parameter names.</param>
+        public PSObjectBuilder(int validatedNameCount)
+        {
+            if (validatedNameCount < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(validatedNameCount));
+
+            }
+            _validatedNames = new HashSet<string>(validatedNameCount);
+            _currentObjectStack = null;
+            _currentObject = null;
+        }
+
+        /// <summary>
+        /// Begins the creation of a new PSObject
+        /// </summary>
+        /// <param name="capacity">The initial capacity for the members collection.</param>
+        public void BeginCreateObject(int capacity)
+        {
+            if (_currentObject != null)
+            {
+                CurrentObjectStack.Push(_currentObject);
+            }
+            _currentObject = new PSObject(capacity);
+
+        }
+
+        /// <summary>
+        /// Add a property to the object.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="value">The value of the property.</param>
+        public void AddNoteProperty(string name, object value)
+        {
+            var validated = _validatedNames.Contains(name);
+            if (!validated)
+            {
+                _validatedNames.Add(name);
+            }
+            _currentObject.Properties.Add(new PSNoteProperty(name, value), validated, inObjectBuilderScope:true);
+        }
+
+        /// <summary>
+        /// Completes the addition of the object.
+        /// </summary>
+        /// <returns></returns>
+        public PSObject EndCreateObject()
+        {
+            var current = _currentObject;
+            PSObject next = null;
+            CurrentObjectStack?.TryPop(out next);
+            _currentObject = next;
+            return current;
+        }
+    }
+
+    /// <summary>
+    /// Unsafe version of PSObjectBuilder that is not guaranteed to be on the same thread.
+    /// Usage must be reviewed carefully.
+    /// </summary>
+    internal class PSObjectBuilderUnsafe
+    {
+        const int DefaultHirearchyDepth = 4;
+        private readonly HashSet<string> _validatedNames;
+        private Stack<PSObject> _currentObjectStack;
+
+        private PSObject _currentObject;
+
+        private Stack<PSObject> CurrentObjectStack => _currentObjectStack ?? (_currentObjectStack = new Stack<PSObject>(DefaultHirearchyDepth));
+
+        /// <summary>
+        /// Initializes a new instance of PSObjectBuilder.
+        /// </summary>
+        /// <param name="validatedNameCount">The initial size of the set that tracks validated parameter names.</param>
+        public PSObjectBuilderUnsafe(int validatedNameCount)
+        {
+            if (validatedNameCount < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(validatedNameCount));
+
+            }
+            _validatedNames = new HashSet<string>(validatedNameCount);
+            _currentObjectStack = null;
+            _currentObject = null;
+        }
+
+        /// <summary>
+        /// Begins the creation of a new PSObject based on an existing object.
+        /// </summary>
+        /// <param name="wrappedObject">The object to wrap.</param>
+        /// <param name="initialMemberCapacity">The initial capacity for the members collection.</param>
+        public void BeginCreateObject(object wrappedObject, int initialMemberCapacity)
+        {
+            if (_currentObject != null)
+            {
+                CurrentObjectStack.Push(_currentObject);
+            }
+            _currentObject = new PSObject(wrappedObject, initialMemberCapacity);
+
+        }
+
+        /// <summary>
+        /// Add a property to the object.
+        /// </summary>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="value">The value of the property.</param>
+        public void AddNoteProperty(string name, object value)
+        {
+            var validated = _validatedNames.Contains(name);
+            if (!validated)
+            {
+                _validatedNames.Add(name);
+            }
+            _currentObject.Properties.Add(new PSNoteProperty(name, value), validated, inObjectBuilderScope: true);
+        }
+
+        /// <summary>
+        /// Add a property to the object.
+        /// </summary>
+        /// <param name="noteProperty">The property to add.</param>
+        public void AddNoteProperty(PSNoteProperty noteProperty)
+        {
+            var validated = _validatedNames.Contains(noteProperty.Name);
+            if (!validated)
+            {
+                _validatedNames.Add(noteProperty.Name);
+            }
+            _currentObject.Properties.Add(noteProperty, validated, inObjectBuilderScope: true);
+        }
+
+        /// <summary>
+        /// Completes the addition of the object.
+        /// </summary>
+        /// <returns></returns>
+        public PSObject EndCreateObject()
+        {
+            var current = _currentObject;
+            PSObject next = null;
+            CurrentObjectStack?.TryPop(out next);
+            _currentObject = next;
+            return current;
+        }
+    }
+
 
     /// <summary>
     /// Serves as a placeholder BaseObject when PSObject's
