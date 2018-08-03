@@ -83,18 +83,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static bool IsEqual(object first, object second)
         {
-            try
+            if (LanguagePrimitives.TryCompare(first, second, true, CultureInfo.CurrentCulture, out int result))
             {
-                return LanguagePrimitives.Compare(first, second, true, CultureInfo.CurrentCulture) == 0;
+                return result == 0;
             }
-            catch (InvalidCastException)
-            {
-            }
-            catch (ArgumentException)
-            {
-                // Note that this will occur if the objects do not support
-                // IComparable.  We fall back to comparing as strings.
-            }
+
+            // Note that this will occur if the objects do not support
+            // IComparable.  We fall back to comparing as strings.
 
             // being here means the first object doesn't support ICompare
             // or an Exception was raised win Compare
