@@ -4052,7 +4052,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(newMember != null, "called from internal code that checks for new member not null");
 
-            lock (_members)
+            lock (Members)
             {
                 var oldMember = Members[newMember.Name] as T;
                 Diagnostics.Assert(oldMember != null, "internal code checks member already exists");
@@ -4087,7 +4087,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("member");
             }
 
-            lock (_members)
+            lock (Members)
             {
                 if (Members[member.Name] is T existingMember)
                 {
@@ -4130,7 +4130,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            lock (_members)
+            lock (Members)
             {
                 if (Members[name] is PSMemberInfo member)
                 {
@@ -4163,7 +4163,7 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                lock (_members)
+                lock (Members)
                 {
                     return Members[name] as T;
                 }
@@ -4223,7 +4223,7 @@ namespace System.Management.Automation
         private PSMemberInfoInternalCollection<T> GetInternalMembers(MshMemberMatchOptions matchOptions)
         {
             PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
-            lock (_members)
+            lock (Members)
             {
                 foreach (T member in Members.Values.OfType<T>())
                 {
@@ -4249,7 +4249,7 @@ namespace System.Management.Automation
                     return 0;
                 }
 
-                lock (_members)
+                lock (Members)
                 {
                     return _members.Count;
                 }
@@ -4268,7 +4268,7 @@ namespace System.Management.Automation
                     return 0;
                 }
 
-                lock (_members)
+                lock (Members)
                 {
                     return _members.Count - _countHidden;
                 }
@@ -4289,7 +4289,7 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                lock (_members)
+                lock (Members)
                 {
                     return _members[index] as T;
                 }
@@ -4309,7 +4309,7 @@ namespace System.Management.Automation
                 return Enumerable.Empty<T>().GetEnumerator();
             }
 
-            lock (_members)
+            lock (Members)
             {
                 // Copy the members to a list so that iteration can be performed without holding a lock.
                 return Members.Values.OfType<T>().ToList().GetEnumerator();
