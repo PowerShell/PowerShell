@@ -721,7 +721,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         errorRecord = new ErrorRecord(
                             new Exception(
-                                String.Format(ParserStrings.ErrorLoadingAssembly, assembly)),
+                                string.Format(ParserStrings.ErrorLoadingAssembly, assembly)),
                             "ErrorLoadingAssembly",
                             ErrorCategory.InvalidOperation,
                             assembly);
@@ -787,7 +787,7 @@ namespace Microsoft.PowerShell.Commands
 
             errorRecord = new ErrorRecord(
                 new Exception(
-                    String.Format(ParserStrings.ErrorLoadingAssembly, assembly)),
+                    string.Format(ParserStrings.ErrorLoadingAssembly, assembly)),
                 "ErrorLoadingAssembly",
                 ErrorCategory.InvalidOperation,
                 assembly);
