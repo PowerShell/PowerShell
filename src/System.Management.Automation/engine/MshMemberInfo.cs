@@ -4299,6 +4299,11 @@ namespace System.Management.Automation
         /// <returns>the enumerator for this collection</returns>
         public override IEnumerator<T> GetEnumerator()
         {
+            if (_members == null)
+            {
+                return Enumerable.Empty<T>().GetEnumerator();
+            }
+
             lock (_members)
             {
                 // Copy the members to a list so that iteration can be performed without holding a lock.
