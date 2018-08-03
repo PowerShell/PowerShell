@@ -4017,7 +4017,7 @@ namespace System.Management.Automation
             {
                 if (_members == null)
                 {
-                    _members = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
+                    System.Threading.Interlocked.CompareExchange(ref _members, new OrderedDictionary(StringComparer.OrdinalIgnoreCase), null);
                 }
 
                 return _members;
