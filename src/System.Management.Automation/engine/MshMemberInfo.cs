@@ -4012,7 +4012,7 @@ namespace System.Management.Automation
         private int _countHidden;
 
         /// <summary>
-        /// Get the OrderedDictionary for holding all members.
+        /// Gets the OrderedDictionary for holding all members.
         /// We use this property to delay initializing _members until we absolutely need to.
         /// </summary>
         private OrderedDictionary Members
@@ -4056,9 +4056,11 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(newMember != null, "called from internal code that checks for new member not null");
 
-            lock (Members)
+            // Save to a local variable to reduce property access.
+            var members = Members;
+            lock (members)
             {
-                var oldMember = Members[newMember.Name] as T;
+                var oldMember = members[newMember.Name] as T;
                 Diagnostics.Assert(oldMember != null, "internal code checks member already exists");
                 Replace(oldMember, newMember);
             }
@@ -4091,15 +4093,17 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("member");
             }
 
-            lock (Members)
+            // Save to a local variable to reduce property access.
+            var members = Members;
+            lock (members)
             {
-                if (Members[member.Name] is T existingMember)
+                if (members[member.Name] is T existingMember)
                 {
                     Replace(existingMember, member);
                 }
                 else
                 {
-                    Members[member.Name] = member;
+                    members[member.Name] = member;
                     if (member.IsHidden)
                     {
                         _countHidden++;
