@@ -4251,7 +4251,7 @@ namespace System.Management.Automation
 
                 lock (_members)
                 {
-                    return Members.Count;
+                    return _members.Count;
                 }
             }
         }
@@ -4270,7 +4270,7 @@ namespace System.Management.Automation
 
                 lock (_members)
                 {
-                    return Members.Count - _countHidden;
+                    return _members.Count - _countHidden;
                 }
             }
         }
