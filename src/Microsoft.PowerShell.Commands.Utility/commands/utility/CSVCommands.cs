@@ -1149,6 +1149,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private readonly StreamReader _sr;
 
+        // Initial sizes of the value list and the line stringbuilder.
+        // Set to reasonable initial sizes. They may grow beyond these,
+        // but this will prevent a few reallocations.
+        private const int valueCountGuestimate = 16;
+        private const int lineLengthGuestimate = 256;
+
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
             if (cmdlet == null)
@@ -1235,12 +1241,6 @@ namespace Microsoft.PowerShell.Commands
                 TypeName = ReadTypeInformation();
             }
 
-            // initial sizes of the value list and the line stringbuilder
-            // set to reasonable initial sizes. They may grow beyond these,
-            // but this will prevent a few reallocations.
-            const int valueCountGuestimate = 16;
-            const int lineLengthGuestimate = 256;
-
             var values = new List<string>(valueCountGuestimate);
             var builder = new StringBuilder(lineLengthGuestimate);
             while ((Header == null) && (!this.EOF))
@@ -1287,8 +1287,8 @@ namespace Microsoft.PowerShell.Commands
             _alreadyWarnedUnspecifiedName = alreadyWriteOutWarning;
             ReadHeader();
             var prevalidated = false;
-            var values = new List<string>(16);
-            var builder = new StringBuilder(256);
+            var values = new List<string>(valueCountGuestimate);
+            var builder = new StringBuilder(lineLengthGuestimate);
             while (true)
             {
                 ParseNextRecord(values, builder);
