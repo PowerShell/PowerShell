@@ -801,9 +801,7 @@ namespace System.Management.Automation
                 }
             }
 
-            string firstString = first as string;
-
-            if (firstString != null)
+            if (first is string firstString)
             {
                 string secondString = second as string;
                 if (secondString == null)
@@ -841,9 +839,7 @@ namespace System.Management.Automation
                                                          first.ToString(), second.ToString(), e.Message);
             }
 
-            IComparable firstComparable = first as IComparable;
-
-            if (firstComparable != null)
+            if (first is IComparable firstComparable)
             {
                 return firstComparable.CompareTo(secondConverted);
             }
@@ -1646,9 +1642,9 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static T ConvertTo<T>(object valueToConvert)
         {
-            if (valueToConvert is T)
+            if (valueToConvert is T value)
             {
-                return (T)valueToConvert;
+                return value;
             }
             return (T)ConvertTo(valueToConvert, typeof(T), true, CultureInfo.InvariantCulture, null);
         }
@@ -1664,9 +1660,9 @@ namespace System.Management.Automation
         /// <returns>false for conversion failure, true for success</returns>
         public static bool TryConvertTo<T>(object valueToConvert, out T result)
         {
-            if (valueToConvert is T)
+            if (valueToConvert is T value)
             {
-                result = (T)valueToConvert;
+                result = value;
                 return true;
             }
             return TryConvertTo(valueToConvert, CultureInfo.InvariantCulture, out result);
@@ -1685,19 +1681,14 @@ namespace System.Management.Automation
         public static bool TryConvertTo<T>(object valueToConvert, IFormatProvider formatProvider, out T result)
         {
             result = default(T);
-            try
+
+            if (TryConvertTo(valueToConvert, typeof(T), formatProvider, out object res))
             {
-                result = (T)ConvertTo(valueToConvert, typeof(T), formatProvider);
+                result = (T)res;
+                return true;
             }
-            catch (InvalidCastException)
-            {
-                return false;
-            }
-            catch (ArgumentException)
-            {
-                return false;
-            }
-            return true;
+
+            return false;
         }
 
         /// <summary>
@@ -1722,27 +1713,44 @@ namespace System.Management.Automation
         /// <remarks>
         /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails.
         /// </remarks>
-        /// <param name="valueToConvert">value to be converted and returned</param>
-        /// <param name="resultType">type to convert valueToConvert</param>
-        /// <param name="formatProvider">governing conversion of types</param>
+        /// <param name="valueToConvert">value to be converted and returned.</param>
+        /// <param name="resultType">type to convert valueToConvert.</param>
+        /// <param name="formatProvider">governing conversion of types.</param>
         /// <param name="result">result of the conversion. This is valid only if the return is true.</param>
-        /// <returns>false for conversion failure, true for success</returns>
+        /// <returns>false for conversion failure, true for success.</returns>
         public static bool TryConvertTo(object valueToConvert, Type resultType, IFormatProvider formatProvider, out object result)
         {
             result = null;
             try
             {
-                result = ConvertTo(valueToConvert, resultType, formatProvider);
+                using (typeConversion.TraceScope("Converting \"{0}\" to \"{1}\".", valueToConvert, resultType))
+                {
+                    if (resultType == null)
+                    {
+                        return false;
+                    }
+
+                    var conversion = FigureConversion(valueToConvert, resultType, out bool debase);
+                    if (conversion.Rank == ConversionRank.None)
+                    {
+                        return false;
+                    }
+
+                    result = conversion.Invoke(
+                        debase ? PSObject.Base(valueToConvert) : valueToConvert,
+                        resultType,
+                        recurse: true,
+                        debase ? (PSObject)valueToConvert : null,
+                        formatProvider,
+                        backupTable: null);
+
+                    return true;
+                }
             }
             catch (InvalidCastException)
             {
                 return false;
             }
-            catch (ArgumentException)
-            {
-                return false;
-            }
-            return true;
         }
 
         #endregion public type conversion
