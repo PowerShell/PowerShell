@@ -1289,6 +1289,7 @@ namespace Microsoft.PowerShell.Commands
             var prevalidated = false;
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
+            var objectBuilder = new PSObjectBuilder(20);
             while (true)
             {
                 ParseNextRecord(values, builder);
@@ -1301,8 +1302,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                PSObject result = BuildMshobject(TypeName, Header, values, _delimiter, prevalidated);
-                prevalidated = true;
+                PSObject result = BuildMshobject(TypeName, Header, values, _delimiter, ref objectBuilder);
                 _cmdlet.WriteObject(result);
             }
             alreadyWriteOutWarning = _alreadyWarnedUnspecifiedName;
@@ -1620,12 +1620,13 @@ namespace Microsoft.PowerShell.Commands
 
         private
         PSObject
-        BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, bool preValidated = false)
+        BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, ref PSObjectBuilder objectBuilder)
         {
             //string[] namesarray = null;
             PSObject result = new PSObject(names.Count);
             char delimiterlocal = delimiter;
             int unspecifiedNameIndex = 1;
+            objectBuilder.BeginCreateObject(names.Count);
             for (int i = 0; i <= names.Count - 1; i++)
             {
                 string name = names[i];
@@ -1645,7 +1646,7 @@ namespace Microsoft.PowerShell.Commands
                     value = values[i];
                 }
 
-                result.Properties.Add(new PSNoteProperty(name, value), preValidated);
+                objectBuilder.AddNoteProperty(name, value);
             }
 
             if (!_alreadyWarnedUnspecifiedName && unspecifiedNameIndex != 1)
@@ -1654,6 +1655,7 @@ namespace Microsoft.PowerShell.Commands
                 _alreadyWarnedUnspecifiedName = true;
             }
 
+            var result = objectBuilder.EndCreateObject();
             if (!string.IsNullOrEmpty(type))
             {
                 result.TypeNames.Clear();

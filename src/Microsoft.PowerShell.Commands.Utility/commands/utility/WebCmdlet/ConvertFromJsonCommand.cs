@@ -38,6 +38,8 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion parameters
 
+        private readonly HashSet<string> _preValidatedNames = new HashSet<string>(100);
+
         #region overrides
 
         /// <summary>
@@ -99,8 +101,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if successfully converted, else returns false.</returns>
         private bool ConvertFromJsonHelper(string input)
         {
-            ErrorRecord error = null;
-            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, out error);
+            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, _preValidatedNames, out ErrorRecord error);
 
             if (error != null)
             {

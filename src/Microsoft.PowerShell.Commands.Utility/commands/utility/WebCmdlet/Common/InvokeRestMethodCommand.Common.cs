@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.IO;
 using System.Xml;
@@ -71,6 +72,9 @@ namespace Microsoft.PowerShell.Commands
         public string ResponseHeadersVariable { get; set; }
 
         #endregion Parameters
+
+        private readonly HashSet<string> _preValidatedNames = new HashSet<string>(100);
+
 
         #region Helper Methods
 
@@ -174,8 +178,7 @@ namespace Microsoft.PowerShell.Commands
             bool converted = false;
             try
             {
-                ErrorRecord error;
-                obj = JsonObject.ConvertFromJson(json, out error);
+                obj = JsonObject.ConvertFromJson(json, _preValidatedNames, out ErrorRecord  error);
 
                 if (obj == null)
                 {

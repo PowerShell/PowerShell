@@ -1067,6 +1067,32 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// If obj is a PSObject, it will be returned as is, otherwise a new
+        /// PSObject will be created on obj. Its InstanceMembers and TypeNames
+        /// will be initialized if we are not going to use the ResurrectionTables
+        /// for this PSObject instance.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="storeTypeNameAndInstanceMembersLocally"></param>
+        /// <param name="initialMemberCapacity"></param>
+        /// <returns></returns>
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "AsPSObject is shipped as part of V1. This is a new overload method.")]
+        internal static PSObject AsPSObject(object obj, bool storeTypeNameAndInstanceMembersLocally, int initialMemberCapacity)
+        {
+            if (obj == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("obj");
+            }
+
+            if (obj is PSObject so)
+            {
+                return so;
+            }
+
+            return new PSObject(obj, initialMemberCapacity) { _storeTypeNameAndInstanceMembersLocally = storeTypeNameAndInstanceMembersLocally };
+        }
+
+        /// <summary>
         /// Returns an object that should be used as a key for getting 1) instance members and 2) type names
         /// - If base object is a PSCustomObject or a string or a type
         ///   then the most nested wrapping PSObject is returned (the PSObject where immediateBaseObject=PSCustomObject/string/type)
@@ -2387,6 +2413,24 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Initializes a new instance of PSObjectBuilder.
+        /// </summary>
+        /// <param name="validatedNameCount">The initial size of the set that tracks validated parameter names.</param>
+        /// <param name="trustedNames">True if all the names are preValidated.</param>
+        internal PSObjectBuilder(int validatedNameCount, bool trustedNames)
+        {
+            if (validatedNameCount < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(validatedNameCount));
+
+            }
+
+            _validatedNames = null;
+            _currentObjectStack = null;
+            _currentObject = null;
+        }
+
+        /// <summary>
         /// Begins the creation of a new PSObject
         /// </summary>
         /// <param name="capacity">The initial capacity for the members collection.</param>
@@ -2397,8 +2441,22 @@ namespace System.Management.Automation
                 CurrentObjectStack.Push(_currentObject);
             }
             _currentObject = new PSObject(capacity);
-
         }
+
+        /// <summary>
+        /// Begins the creation of a new PSObject
+        /// </summary>
+        /// <param name="instance">The object to wrap in a PSObject.</param>
+        /// <param name="capacity">The initial capacity for the members collection.</param>
+        public void BeginCreateObject(object instance, int capacity)
+        {
+            if (_currentObject != null)
+            {
+                CurrentObjectStack.Push(_currentObject);
+            }
+            _currentObject = new PSObject(instance, capacity);
+        }
+
 
         /// <summary>
         /// Add a property to the object.
@@ -2407,7 +2465,7 @@ namespace System.Management.Automation
         /// <param name="value">The value of the property.</param>
         public void AddNoteProperty(string name, object value)
         {
-            var validated = _validatedNames.Contains(name);
+            var validated = _validatedNames?.Contains(name) ?? true;
             if (!validated)
             {
                 _validatedNames.Add(name);
