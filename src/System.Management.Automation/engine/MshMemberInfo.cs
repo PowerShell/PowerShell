@@ -4291,7 +4291,7 @@ namespace System.Management.Automation
 
                 lock (_members)
                 {
-                    return Members[index] as T;
+                    return _members[index] as T;
                 }
             }
         }
