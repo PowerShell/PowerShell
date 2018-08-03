@@ -204,7 +204,7 @@ The #requires statement must be in one of the following formats:
     <value>The script '{0}' cannot be run because the following modules that are specified by the "#requires" statements of the script are missing: {1}.</value>
   </data>
   <data name="CouldNotAutoImportMatchingModule" xml:space="preserve">
-    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded. For more information, run 'Import-Module {1}'.</value>
+    <value>The '{0}' command was found in the module '{1}', but '{1}' does not support current PowerShell edition 'Core'. Use 'Import-Module -SkipEditionCheck '{1}''' to ignore the compatibility of this module.</value>
   </data>
   <data name="CouldNotAutoImportModule" xml:space="preserve">
     <value>The module '{0}' could not be loaded. For more information, run 'Import-Module {0}'.</value>
