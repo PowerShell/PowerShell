@@ -973,6 +973,18 @@ function Publish-PSTestTools {
     }
 }
 
+function Get-ExperimentalFeatureTests {
+    $testMetadataFile = Join-Path $PSScriptRoot "test/tools/TestMetadata.json"
+    $metadata = Get-Content -Path $testMetadataFile -Raw | ConvertFrom-Json | ForEach-Object -MemberName ExperimentalFeatures
+    $features = $metadata | Get-Member -MemberType NoteProperty | ForEach-Object -MemberName Name
+
+    $featureTests = @{}
+    foreach ($featureName in $features) {
+        $featureTests[$featureName] = $metadata.$featureName
+    }
+    $featureTests
+}
+
 function Start-PSPester {
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
@@ -983,9 +995,9 @@ function Start-PSPester {
         [string[]]$ExcludeTag = 'Slow',
         [string[]]$Tag = @("CI","Feature"),
         [switch]$ThrowOnFailure,
-        [string]$binDir = (Split-Path (Get-PSOptions -DefaultToNew).Output),
-        [string]$powershell = (Join-Path $binDir 'pwsh'),
-        [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
+        [string]$BinDir = (Split-Path (Get-PSOptions -DefaultToNew).Output),
+        [string]$powershell = (Join-Path $BinDir 'pwsh'),
+        [string]$Pester = ([IO.Path]::Combine($BinDir, "Modules", "Pester")),
         [Parameter(ParameterSetName='Unelevate',Mandatory=$true)]
         [switch]$Unelevate,
         [switch]$Quiet,
@@ -994,7 +1006,8 @@ function Start-PSPester {
         [switch]$PassThru,
         [Parameter(ParameterSetName='PassThru',HelpMessage='Run commands on Linux with sudo.')]
         [switch]$Sudo,
-        [switch]$IncludeFailingTest
+        [switch]$IncludeFailingTest,
+        [string]$ExperimentalFeatureName
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
@@ -1151,6 +1164,37 @@ function Start-PSPester {
         }
     }
 
+    $PSFlags = @("-noprofile")
+    if (-not [string]::IsNullOrEmpty($ExperimentalFeatureName)) {
+        $configFile = [System.IO.Path]::GetTempFileName()
+        $configFile = [System.IO.Path]::ChangeExtension($configFile, ".json")
+
+        ## Create the config.json file to enable the given experimental feature.
+        ## On Windows, we need to have 'RemoteSigned' declared for ExecutionPolicy because the ExecutionPolicy is 'Restricted' by default.
+        ## On Unix, ExecutionPolicy is not supported, so we don't need to declare it.
+        if ($Environment.IsWindows) {
+            $content = @"
+{
+    "Microsoft.PowerShell:ExecutionPolicy":"RemoteSigned",
+    "ExperimentalFeatures": [
+        "$ExperimentalFeatureName"
+    ]
+}
+"@
+        } else {
+            $content = @"
+{
+    "ExperimentalFeatures": [
+        "$ExperimentalFeatureName"
+    ]
+}
+"@
+        }
+
+        Set-Content -Path $configFile -Value $content -Encoding Ascii -Force
+        $PSFlags = @("-settings", $configFile, "-noprofile")
+    }
+
     # To ensure proper testing, the module path must not be inherited by the spawned process
     try {
         $originalModulePath = $env:PSModulePath
@@ -1158,7 +1202,7 @@ function Start-PSPester {
         $env:POWERSHELL_TELEMETRY_OPTOUT = 1
         if ($Unelevate)
         {
-            Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
+            Start-UnelevatedProcess -process $powershell -arguments ($PSFlags + "-c $Command")
             $currentLines = 0
             while ($true)
             {
@@ -1197,11 +1241,11 @@ function Start-PSPester {
                 $passThruFile = [System.IO.Path]::GetTempFileName()
                 try
                 {
-                    $command += "|Export-Clixml -Path '$passThruFile' -Force"
+                    $command += "| Export-Clixml -Path '$passThruFile' -Force"
 
-                    $passThruCommand = {& $powershell -noprofile -c $command }
+                    $passThruCommand = { & $powershell $PSFlags -c $command }
                     if ($Sudo.IsPresent) {
-                        $passThruCommand =  {& sudo $powershell -noprofile -c $command }
+                        $passThruCommand =  { & sudo $powershell $PSFlags -c $command }
                     }
 
                     $writeCommand = { Write-Host $_ }
@@ -1222,11 +1266,11 @@ function Start-PSPester {
             {
                 if ($Terse)
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $command} | ForEach-Object { Write-Terse -line $_ }
+                    Start-NativeExecution -sb {& $powershell $PSFlags -c $command} | ForEach-Object { Write-Terse -line $_ }
                 }
                 else
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $command}
+                    Start-NativeExecution -sb {& $powershell $PSFlags -c $command}
                 }
             }
         }
@@ -1352,12 +1396,17 @@ function Test-PSPesterResults
     [CmdletBinding(DefaultParameterSetName='file')]
     param(
         [Parameter(ParameterSetName='file')]
-        [string]$TestResultsFile = "pester-tests.xml",
+        [string] $TestResultsFile = "pester-tests.xml",
+
         [Parameter(ParameterSetName='file')]
-        [string]$TestArea = 'test/powershell',
-        [Parameter(ParameterSetName='PesterPassThruObject',Mandatory)]
-        [pscustomobject] $ResultObject
-        )
+        [string] $TestArea = 'test/powershell',
+
+        [Parameter(ParameterSetName='PesterPassThruObject', Mandatory)]
+        [pscustomobject] $ResultObject,
+
+        [Parameter(ParameterSetName='PesterPassThruObject')]
+        [switch] $CanHaveNoResult
+    )
 
     if($PSCmdLet.ParameterSetName -eq 'file')
     {
@@ -1388,7 +1437,7 @@ function Test-PSPesterResults
     }
     elseif ($PSCmdLet.ParameterSetName -eq 'PesterPassThruObject')
     {
-        if ($ResultObject.TotalCount -le 0)
+        if ($ResultObject.TotalCount -le 0 -and -not $CanHaveNoResult)
         {
             throw 'NO TESTS RUN'
         }
