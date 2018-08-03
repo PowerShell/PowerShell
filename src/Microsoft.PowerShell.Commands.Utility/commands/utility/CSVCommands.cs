@@ -1234,8 +1234,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 TypeName = ReadTypeInformation();
             }
-            var values = new List<string>(16);
-            var builder = new StringBuilder(256);
+
+            // initial sizes of the value list and the line stringbuilder
+            // set to reasonable initial sizes. They may grow beyond these,
+            // but this will prevent a few reallocations.
+            const int valueCountGuestimate = 16;
+            const int lineLengthGuestimate = 256;
+
+            var values = new List<string>(valueCountGuestimate);
+            var builder = new StringBuilder(lineLengthGuestimate);
             while ((Header == null) && (!this.EOF))
             {
                 ParseNextRecord(values, builder);
@@ -1370,7 +1377,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// Parsed collection of strings.
         /// </returns>
-        private void 
+        private void
         ParseNextRecord(List<string> result, StringBuilder current)
         {
             result.Clear();
