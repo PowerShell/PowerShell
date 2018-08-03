@@ -2594,6 +2594,7 @@ namespace System.Management.Automation.Runspaces
         internal readonly bool isShared;
         private readonly List<string> _typeFileList;
 
+        // The member factory is cached to avoid allocating Func<> delegates on each call
         private readonly Func<string, ConsolidatedString, PSMemberInfoInternalCollection<PSMemberInfo>> _memberFactoryFunc;
 
         // This holds all the type information that is in the typetable
@@ -3464,16 +3465,13 @@ namespace System.Management.Automation.Runspaces
         /// 1. There were errors loading TypeTable. Look in the Errors property to get
         /// detailed error messages.
         /// </exception>
-        internal TypeTable(IEnumerable<string> typeFiles, AuthorizationManager authorizationManager, PSHost host)
+        internal TypeTable(IEnumerable<string> typeFiles, AuthorizationManager authorizationManager, PSHost host) : this(isShared: true)
         {
             if (typeFiles == null)
             {
                 throw PSTraceSource.NewArgumentNullException("typeFiles");
             }
 
-            isShared = true;
-
-            _typeFileList = new List<string>();
             ConcurrentBag<string> errors = new ConcurrentBag<string>();
             foreach (string typefile in typeFiles)
             {
