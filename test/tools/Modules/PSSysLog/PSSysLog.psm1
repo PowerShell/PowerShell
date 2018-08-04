@@ -395,17 +395,28 @@ class PSLogItem
             $item.Count = 1
 
             $item.Timestamp = $time
-            $item.ProcessId = [int]::Parse($parts[[OsLogIds]::Pid])
-            $item.Message = $parts[[OsLogIds]::Message]
+            $osLogIds = [OsLogIds]::new();
+            $item.ProcessId = [int]::Parse($parts[$osLogIds.Pid])
+
+            # Around macOS 13, Apple added a field
+            # Detect if the field is the old or new field and if it is old
+            # Switch to the old schema
+            if($parts[$osLogIds.TTL] -match '\:')
+            {
+                $osLogIds.UseOldIds()
+            }
+
+            $item.Message = $parts[$osLogIds.Message]
 
             # [com.microsoft.powershell.logid]
             $splitChars = ('[', '.', ']')
-            $item.LogId = $parts[[OsLogIds]::Id]
+
+            $item.LogId = $parts[$osLogIds.Id]
             $subparts = $item.LogId.Split($splitChars, [StringSplitOptions]::RemoveEmptyEntries)
             if ($subparts.Length -eq 4)
             {
                 $item.LogId = $subparts[3]
-                if ($id -ne $null -and $id -ne $item.LogId)
+                if ($null -ne $id -and $id -ne $item.LogId)
                 {
                     # this is not the log id we're looking for.
                     $result = $null
@@ -414,7 +425,7 @@ class PSLogItem
             }
             # (commitid:TID:ChannelID)
             $splitChars = ('(', ')', ':', ' ')
-            $item.CommitId = $parts[[OsLogIds]::CommitId]
+            $item.CommitId = $parts[$osLogIds.CommitId]
             $subparts = $item.CommitId.Split($splitChars, [System.StringSplitOptions]::RemoveEmptyEntries)
             if ($subparts.Count -eq 3)
             {
@@ -429,7 +440,7 @@ class PSLogItem
 
             # [EventId]
             $splitChars = ('[', ']', ' ')
-            $item.EventId = $parts[[OsLogIds]::EventId]
+            $item.EventId = $parts[$osLogIds.EventId]
             $subparts = $item.EventId.Split($splitChars, [System.StringSplitOptions]::RemoveEmptyEntries)
             if ($subparts.Count -eq 1)
             {
