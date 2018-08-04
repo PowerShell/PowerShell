@@ -201,10 +201,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         }
     }
 
-    ## Logging seems broken on macOS 10.13. It works fine on macOS 10.12.6.
-    ## Travis CI updated macOS to 10.13.3 (kernel 17.4) and the logging tests start to fail.
-    # It 'Verifies basic logging with no customizations' -Skip:(!$IsSupportedEnvironment) {
-    It 'Verifies basic logging with no customizations' -Pending {
+    It 'Verifies basic logging with no customizations' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
@@ -223,8 +220,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         }
     }
 
-    # It 'Verifies logging level filtering works' -Skip:(!$IsSupportedEnvironment) {
-    It 'Verifies logging level filtering works' -Pending {
+    It 'Verifies logging level filtering works' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
