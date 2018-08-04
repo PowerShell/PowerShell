@@ -348,12 +348,13 @@ class PSLogItem
         3: Type                         Default
         4: activity                     0x12
         5: PID                          39437
-        6: processname                  pwsh:
-        7: sourcedll                    (libpsl-native.dylib)
-        8: log source                   [com.microsoft.powershell.powershell]
-        9: commitid:treadid:channel     (v6.0.1:1:10)
-        10:[EventId]                    [Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational]
-        11:Message Text
+        6: TTL (introduced in ~ 10.13)  0
+        7: processname                  pwsh:
+        8: sourcedll                    (libpsl-native.dylib)
+        9: log source                   [com.microsoft.powershell.powershell]
+        10: commitid:treadid:channel     (v6.0.1:1:10)
+        11:[EventId]                    [Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational]
+        12:Message Text
         #>
 
         [object] $result = $content
