@@ -209,11 +209,11 @@ Describe 'Basic os_log tests on MacOS' -Tag @('Feature','RequireSudoOnUnix') {
         $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose)
 
         $items | Should -Not -Be $null
-        $items.Length | Should -BeGreaterThan 1
+        $items.Count | Should -BeGreaterThan 1
         $items[0].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
         $items[1].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
         # if there are more items than expected...
-        if ($items.Length -gt 2)
+        if ($items.Count -gt 2)
         {
             # Force reporting of the first unexpected item to help diagnosis
             $items[2] | Should -Be $null
