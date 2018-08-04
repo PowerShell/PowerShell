@@ -158,7 +158,7 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
     }
 }
 
-Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
+Describe 'Basic os_log tests on MacOS' -Tag @('Feature','RequireSudoOnUnix') {
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsMacOS
         [bool] $persistenceEnabled = $false
