@@ -9,7 +9,7 @@ matrix:
       dist: trusty
       sudo: required
     - os: osx
-      osx_image: xcode8.1
+      osx_image: xcode9.4
   fast_finish: true
 
 addons:
