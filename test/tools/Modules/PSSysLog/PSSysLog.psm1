@@ -142,21 +142,33 @@ enum SysLogIds
 
 # Defines the array indices when calling
 # String.Split on an OsLog log entry
-enum OsLogIds
+Class OsLogIds
 {
-    Date = 0;
-    Time = 1;
-    Thread = 2;
-    Type = 3;
-    Activity = 4;
-    Pid = 5;
-    ProcessName = 6;
-    Module = 7;
-    Id = 8;
-    CommitId = 9;
-    EventId = 10;
-    Message = 11;
+    [int] $Date = 0;
+    [int] $Time = 1;
+    [int] $Thread = 2;
+    [int] $Type = 3;
+    [int] $Activity = 4;
+    [int] $Pid = 5;
+    [int] $TTL = 6;
+    [int] $ProcessName = 7;
+    [int] $Module = 8;
+    [int] $Id = 9;
+    [int] $CommitId = 10;
+    [int] $EventId = 11;
+    [int] $Message = 12;
+
+    [void] UseOldIds()
+    {
+        $this.ProcessName=6;
+        $this.Module =7;
+        $this.Id =8;
+        $this.CommitId=9;
+        $this.EventId=10;
+        $this.Message=11;
+    }
 }
+
 
 class PSLogItem
 {
