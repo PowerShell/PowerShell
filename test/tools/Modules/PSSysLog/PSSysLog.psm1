@@ -829,22 +829,41 @@ function Export-PSOsLog
         [ValidateNotNullOrEmpty()]
         [DateTime] $After,
 
-        [string] $LogId = "powershell"
+        [string] $LogId = "powershell",
+
+        [int] $LogPid
     )
+
     Test-MacOS
+
     # NOTE: The use of double quotes and single quotes for the predicate parameter
     # is mandatory. Reversing the usage (e.g., single quotes around double quotes)
     # causes the double quotes to be stripped breaking the predicate syntax expected
     # by log show
+    $extraParams = @()
+    if($LogPid)
+    {
+        $extraParams += @(
+            '--predicate'
+            "processID == $LogPid"
+        )
+    }
     if ($After -ne $null)
     {
         [string] $startTime = $After.ToString("yyyy-MM-dd HH:mm:ss")
-        Start-NativeExecution -command {log show --info --start "$startTime" --predicate "subsystem == 'com.microsoft.powershell'"}
+        $extraParams += @(
+            '--start'
+            "$startTime"
+        )
     }
-    else
-    {
-        Start-NativeExecution -command {log show --info --predicate "process == 'pwsh'"}
+    else {
+        $extraParams += @(
+            '--predicate'
+            "process == 'pwsh'"
+        )
     }
+
+    Start-NativeExecution -command {log show --info @extraParams}
 }
 
 <#
