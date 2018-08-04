@@ -203,10 +203,10 @@ Describe 'Basic os_log tests on MacOS' -Tag @('Feature','RequireSudoOnUnix') {
 
     It 'Verifies basic logging with no customizations' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId
-        & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
+        $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command '$PID'
 
-        Export-PSOsLog -After $after -Verbose | Set-Content -Path $contentFile
-        $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose
+        Export-PSOsLog -after $after -LogPid $testPid -Verbose | Set-Content -Path $contentFile
+        $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose)
 
         $items | Should -Not -Be $null
         $items.Length | Should -BeGreaterThan 1
@@ -222,9 +222,9 @@ Describe 'Basic os_log tests on MacOS' -Tag @('Feature','RequireSudoOnUnix') {
 
     It 'Verifies logging level filtering works' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
-        & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
+        $testPid = & $powershell -NoLogo -NoProfile -SettingsFile $configFile -Command '$PID'
 
-        Export-PSOsLog -After $after -Verbose | Set-Content -Path $contentFile
+        Export-PSOsLog -after $after -LogPid $testPid -Verbose | Set-Content -Path $contentFile
         # by default, powershell startup should only logs informational events.
         # With Level = Warning, nothing should be logged.
         $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3
