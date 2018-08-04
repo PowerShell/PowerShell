@@ -436,6 +436,25 @@ namespace Microsoft.PowerShell
 #endif
 
         /// <summary>
+        /// Processes the command line parameters to ConsoleHost which must be parsed before the Host is created.
+        /// Success to indicate that the program should continue running.
+        /// </summary>
+        /// <param name="args">
+        /// The command line parameters to be processed.
+        /// </param>
+        internal static void EarlyParse(string[] args)
+        {
+            Dbg.Assert(!_dirtyEarlyParse, "This instance has already been used. Create a new instance.");
+
+            // indicates that we've called this method on this instance, and that when it's done, the state variables
+            // will reflect the parse.
+
+            _dirtyEarlyParse = true;
+
+            EarlyParseHelper(args);
+        }
+
+        /// <summary>
         /// Processes all the command line parameters to ConsoleHost.  Returns the exit code to be used to terminate the process, or
         /// Success to indicate that the program should continue running.
         /// </summary>
@@ -481,6 +500,139 @@ namespace Microsoft.PowerShell
             return string.Empty;
         }
 
+        /// <summary>
+        /// Processes the command line parameters to ConsoleHost which must be parsed before the Host is created.
+        /// Success to indicate that the program should continue running.
+        /// </summary>
+        /// <param name="args">
+        /// The command line parameters to be processed.
+        /// </param>
+        private static void EarlyParseHelper(string[] args)
+        {
+            Dbg.Assert(args != null, "Argument 'args' to ParseHelper should never be null");
+            bool noexitSeen = false;
+            for (int i = 0; i < args.Length; ++i)
+            {
+                string switchKey = GetSwitchKey(args, ref i, null, out bool shouldBreak, ref noexitSeen);
+                if(shouldBreak){
+                    break;
+                }
+
+                if (MatchSwitch(switchKey, "settingsfile", "settings") )
+                {
+                    // parse setting file arg and don't write error as there is no host yet.
+                    if(!ParseSettingFileHelper(args,++i,null))
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Processes the -SettingFile Argument
+        /// Returns true if the argument was parsed successfully and false if not.
+        /// </summary>
+        /// <param name="args">
+        /// The command line parameters to be processed.
+        /// </param>
+        /// <param name="argIndex">
+        /// The index in args to the argument following -SettingFile
+        /// </param>
+        /// <param name="parser">
+        /// Used to allow the helper to write errors to the console.  If not supplied, no errors will be written.
+        /// </param>
+        private static bool ParseSettingFileHelper(string[] args, int argIndex, CommandLineParameterParser parser)
+        {
+            if (argIndex >= args.Length)
+            {
+                if(parser != null)
+                {
+                    parser.WriteCommandLineError(
+                        CommandLineParameterParserStrings.MissingSettingsFileArgument);
+                }
+                return false;
+            }
+            string configFile = null;
+            try
+            {
+                configFile = NormalizeFilePath(args[argIndex]);
+            }
+            catch (Exception ex)
+            {
+                if(parser != null)
+                {
+                    string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[argIndex], ex.Message);
+                    parser.WriteCommandLineError(error);
+                }
+                return false;
+            }
+
+            if (!System.IO.File.Exists(configFile))
+            {
+                if(parser != null)
+                {
+                    string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.SettingsFileNotExists, configFile);
+                    parser.WriteCommandLineError(error);
+                }
+                return false;
+            }
+            PowerShellConfig.Instance.SetSystemConfigFilePath(configFile);
+            return true;
+        }
+
+        /// <summary>
+        /// Returns the word in a switch from the current argument or parses a file.
+        /// For example -foo, /foo, or --foo would return foo
+        /// </summary>
+        /// <param name="args">
+        /// The command line parameters to be processed.
+        /// </param>
+        /// <param name="argIndex">
+        /// The index in args to the argument to process.
+        /// </param>
+        /// <param name="parser">
+        /// Used to allow the helper to write errors to the console.  If not supplied, Files will not be parsed.
+        /// </param>
+        /// <param name="shouldBreak">
+        /// If true, the parsing loop should break.
+        /// </param>
+        /// <param name="noexitSeen">
+        /// Used during parsing files
+        /// </param>
+        private static string GetSwitchKey(string[] args, ref int argIndex, CommandLineParameterParser parser, out bool shouldBreak, ref bool noexitSeen)
+        {
+            shouldBreak = false;
+            string switchKey = args[argIndex].Trim().ToLowerInvariant();
+            if (String.IsNullOrEmpty(switchKey))
+            {
+                return null;
+            }
+
+            if (!SpecialCharacters.IsDash(switchKey[0]) && switchKey[0] != '/')
+            {
+                // then its a file
+                if(parser!=null)
+                {
+                    --argIndex;
+                    parser.ParseFile(args, ref argIndex, noexitSeen);
+                }
+                shouldBreak = true;
+                return null;
+            }
+
+            // chop off the first character so that we're agnostic wrt specifying / or -
+            // in front of the switch name.
+            switchKey = switchKey.Substring(1);
+
+            // chop off the second dash so we're agnostic wrt specifying - or --
+            if (!String.IsNullOrEmpty(switchKey) && SpecialCharacters.IsDash(switchKey[0]))
+            {
+                switchKey = switchKey.Substring(1);
+            }
+            return switchKey;
+        }
+
         private void ParseHelper(string[] args)
         {
             Dbg.Assert(args != null, "Argument 'args' to ParseHelper should never be null");
@@ -488,31 +640,9 @@ namespace Microsoft.PowerShell
 
             for (int i = 0; i < args.Length; ++i)
             {
-                // Invariant culture used because command-line parameters are not localized.
-
-                string switchKey = args[i].Trim().ToLowerInvariant();
-                if (String.IsNullOrEmpty(switchKey))
-                {
-                    continue;
-                }
-
-                if (!SpecialCharacters.IsDash(switchKey[0]) && switchKey[0] != '/')
-                {
-                    // then its a file
-
-                    --i;
-                    ParseFile(args, ref i, noexitSeen);
+                string switchKey = GetSwitchKey(args, ref i, this, out bool shouldBreak, ref noexitSeen);
+                if(shouldBreak){
                     break;
-                }
-
-                // chop off the first character so that we're agnostic wrt specifying / or -
-                // in front of the switch name.
-                switchKey = switchKey.Substring(1);
-
-                // chop off the second dash so we're agnostic wrt specifying - or --
-                if (!String.IsNullOrEmpty(switchKey) && SpecialCharacters.IsDash(switchKey[0]))
-                {
-                    switchKey = switchKey.Substring(1);
                 }
 
                 // If version is in the commandline, don't continue to look at any other parameters
@@ -713,32 +843,11 @@ namespace Microsoft.PowerShell
 
                 else if (MatchSwitch(switchKey, "settingsfile", "settings") )
                 {
-                    ++i;
-                    if (i >= args.Length)
+                    // Parse setting file arg and write error
+                    if(!ParseSettingFileHelper(args,++i,this))
                     {
-                        WriteCommandLineError(
-                            CommandLineParameterParserStrings.MissingSettingsFileArgument);
                         break;
                     }
-                    string configFile = null;
-                    try
-                    {
-                        configFile = NormalizeFilePath(args[i]);
-                    }
-                    catch (Exception ex)
-                    {
-                        string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[i], ex.Message);
-                        WriteCommandLineError(error);
-                        break;
-                    }
-
-                    if (!System.IO.File.Exists(configFile))
-                    {
-                        string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.SettingsFileNotExists, configFile);
-                        WriteCommandLineError(error);
-                        break;
-                    }
-                    PowerShellConfig.Instance.SetSystemConfigFilePath(configFile);
                 }
 #if STAMODE
                 // explicit setting of the ApartmentState Not supported on NanoServer
@@ -818,7 +927,7 @@ namespace Microsoft.PowerShell
             _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
         }
 
-        private bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
+        private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
         {
             Dbg.Assert(switchKey != null, "need a value");
             Dbg.Assert(!String.IsNullOrEmpty(match), "need a value");
@@ -1232,6 +1341,7 @@ namespace Microsoft.PowerShell
         private bool _wasCommandEncoded;
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
         private bool _dirty;
+        private static bool _dirtyEarlyParse;
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;
         private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
