@@ -1185,7 +1185,14 @@ function New-MacOSLauncher
     New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
 
     # Define icns file information.
-    $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+    if ($IsPreview)
+    {
+        $iconfile = "$PSScriptRoot/../../assets/Powershell-preview.icns"
+    }
+    else
+    {
+        $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+    }
     $iconfilebase = (Get-Item -Path $iconfile).BaseName
 
     # Copy icns file.
