@@ -200,6 +200,7 @@ namespace Microsoft.PowerShell
             _helpText = helpText;
         }
 
+#region Internal properties
         internal bool AbortStartup
         {
             get
@@ -392,6 +393,219 @@ namespace Microsoft.PowerShell
         {
             get { return _workingDirectory; }
         }
+#endregion Internal properties
+
+#region static methods
+        /// <summary>
+        /// Processes the -SettingFile Argument.
+        /// </summary>
+        /// <param name="args">
+        /// The command line parameters to be processed.
+        /// </param>
+        /// <param name="argIndex">
+        /// The index in args to the argument following '-SettingFile'.
+        /// </param>
+        /// <param name="parser">
+        /// Used to allow the helper to write errors to the console.  If not supplied, no errors will be written.
+        /// </param>
+        /// <returns>
+        /// Returns true if the argument was parsed successfully and false if not.
+        /// </returns>
+        private static bool ParseSettingFileHelper(string[] args, int argIndex, CommandLineParameterParser parser)
+        {
+            if (argIndex >= args.Length)
+            {
+                if (parser != null)
+                {
+                    parser.WriteCommandLineError(
+                        CommandLineParameterParserStrings.MissingSettingsFileArgument);
+                }
+
+                return false;
+            }
+
+            string configFile = null;
+            try
+            {
+                configFile = NormalizeFilePath(args[argIndex]);
+            }
+            catch (Exception ex)
+            {
+                if (parser != null)
+                {
+                    string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[argIndex], ex.Message);
+                    parser.WriteCommandLineError(error);
+                }
+
+                return false;
+            }
+
+            if (!System.IO.File.Exists(configFile))
+            {
+                if (parser != null)
+                {
+                    string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.SettingsFileNotExists, configFile);
+                    parser.WriteCommandLineError(error);
+                }
+
+                return false;
+            }
+            PowerShellConfig.Instance.SetSystemConfigFilePath(configFile);
+            return true;
+        }
+
+        /// <summary>
+        /// Processes the command line parameters to ConsoleHost which must be parsed before the Host is created.
+        /// Success to indicate that the program should continue running.
+        /// </summary>
+        /// <param name="args">
+        /// The command line parameters to be processed.
+        /// </param>
+        internal static void EarlyParse(string[] args)
+        {
+            Dbg.Assert(!_dirtyEarlyParse, "This instance has already been used. Create a new instance.");
+
+            // indicates that we've called this method on this instance, and that when it's done, the state variables
+            // will reflect the parse.
+            _dirtyEarlyParse = true;
+
+            EarlyParseHelper(args);
+        }
+
+        private static string GetConfigurationNameFromGroupPolicy()
+        {
+            // Current user policy takes precedence.
+            var consoleSessionSetting = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
+            if (consoleSessionSetting != null)
+            {
+                if (consoleSessionSetting.EnableConsoleSessionConfiguration == true)
+                {
+                    if (!string.IsNullOrEmpty(consoleSessionSetting.ConsoleSessionConfigurationName))
+                    {
+                        return consoleSessionSetting.ConsoleSessionConfigurationName;
+                    }
+                }
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Processes the command line parameters to ConsoleHost which must be parsed before the Host is created.
+        /// Success to indicate that the program should continue running.
+        /// </summary>
+        /// <param name="args">
+        /// The command line parameters to be processed.
+        /// </param>
+        private static void EarlyParseHelper(string[] args)
+        {
+            Dbg.Assert(args != null, "Argument 'args' to ParseHelper should never be null");
+            bool noexitSeen = false;
+            for (int i = 0; i < args.Length; ++i)
+            {
+                string switchKey = GetSwitchKey(args, ref i, null, out bool shouldBreak, ref noexitSeen);
+                if (shouldBreak)
+                {
+                    break;
+                }
+
+                if (MatchSwitch(switchKey, "settingsfile", "settings"))
+                {
+                    // parse setting file arg and don't write error as there is no host yet.
+                    if (!ParseSettingFileHelper(args, ++i, null))
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the word in a switch from the current argument or parses a file.
+        /// For example -foo, /foo, or --foo would return 'foo'.
+        /// </summary>
+        /// <param name="args">
+        /// The command line parameters to be processed.
+        /// </param>
+        /// <param name="argIndex">
+        /// The index in args to the argument to process.
+        /// </param>
+        /// <param name="parser">
+        /// Used to allow the helper to write errors to the console.  If not supplied, Files will not be parsed.
+        /// </param>
+        /// <param name="shouldBreak">
+        /// If true, the parsing loop should break.
+        /// </param>
+        /// <param name="noexitSeen">
+        /// Used during parsing files.
+        /// </param>
+        /// <returns>
+        /// Returns the word in a switch from the current argument or null.
+        /// </returns>
+        private static string GetSwitchKey(string[] args, ref int argIndex, CommandLineParameterParser parser, out bool shouldBreak, ref bool noexitSeen)
+        {
+            shouldBreak = false;
+            string switchKey = args[argIndex].Trim().ToLowerInvariant();
+            if (string.IsNullOrEmpty(switchKey))
+            {
+                return null;
+            }
+
+            if (!SpecialCharacters.IsDash(switchKey[0]) && switchKey[0] != '/')
+            {
+                // then its a file
+                if (parser != null)
+                {
+                    --argIndex;
+                    parser.ParseFile(args, ref argIndex, noexitSeen);
+                }
+
+                shouldBreak = true;
+                return null;
+            }
+
+            // chop off the first character so that we're agnostic wrt specifying / or -
+            // in front of the switch name.
+            switchKey = switchKey.Substring(1);
+
+            // chop off the second dash so we're agnostic wrt specifying - or --
+            if (!string.IsNullOrEmpty(switchKey) && SpecialCharacters.IsDash(switchKey[0]))
+            {
+                switchKey = switchKey.Substring(1);
+            }
+
+            return switchKey;
+        }
+
+        private static string NormalizeFilePath(string path)
+        {
+            // Normalize slashes
+            path = path.Replace(StringLiterals.AlternatePathSeparator,
+                                StringLiterals.DefaultPathSeparator);
+
+            return Path.GetFullPath(path);
+        }
+
+        private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
+        {
+            Dbg.Assert(switchKey != null, "need a value");
+            Dbg.Assert(!String.IsNullOrEmpty(match), "need a value");
+            Dbg.Assert(match.Trim().ToLowerInvariant() == match, "match should be normalized to lowercase w/ no outside whitespace");
+            Dbg.Assert(smallestUnambiguousMatch.Trim().ToLowerInvariant() == smallestUnambiguousMatch, "match should be normalized to lowercase w/ no outside whitespace");
+            Dbg.Assert(match.Contains(smallestUnambiguousMatch), "sUM should be a substring of match");
+
+            if (match.Trim().ToLowerInvariant().IndexOf(switchKey, StringComparison.Ordinal) == 0)
+            {
+                if (switchKey.Length >= smallestUnambiguousMatch.Length)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+#endregion
 
         private void ShowHelp()
         {
@@ -436,25 +650,6 @@ namespace Microsoft.PowerShell
 #endif
 
         /// <summary>
-        /// Processes the command line parameters to ConsoleHost which must be parsed before the Host is created.
-        /// Success to indicate that the program should continue running.
-        /// </summary>
-        /// <param name="args">
-        /// The command line parameters to be processed.
-        /// </param>
-        internal static void EarlyParse(string[] args)
-        {
-            Dbg.Assert(!_dirtyEarlyParse, "This instance has already been used. Create a new instance.");
-
-            // indicates that we've called this method on this instance, and that when it's done, the state variables
-            // will reflect the parse.
-
-            _dirtyEarlyParse = true;
-
-            EarlyParseHelper(args);
-        }
-
-        /// <summary>
         /// Processes all the command line parameters to ConsoleHost.  Returns the exit code to be used to terminate the process, or
         /// Success to indicate that the program should continue running.
         /// </summary>
@@ -482,157 +677,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private static string GetConfigurationNameFromGroupPolicy()
-        {
-            // Current user policy takes precedence.
-            var consoleSessionSetting = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
-            if (consoleSessionSetting != null)
-            {
-                if (consoleSessionSetting.EnableConsoleSessionConfiguration == true)
-                {
-                    if (!string.IsNullOrEmpty(consoleSessionSetting.ConsoleSessionConfigurationName))
-                    {
-                        return consoleSessionSetting.ConsoleSessionConfigurationName;
-                    }
-                }
-            }
-
-            return string.Empty;
-        }
-
-        /// <summary>
-        /// Processes the command line parameters to ConsoleHost which must be parsed before the Host is created.
-        /// Success to indicate that the program should continue running.
-        /// </summary>
-        /// <param name="args">
-        /// The command line parameters to be processed.
-        /// </param>
-        private static void EarlyParseHelper(string[] args)
-        {
-            Dbg.Assert(args != null, "Argument 'args' to ParseHelper should never be null");
-            bool noexitSeen = false;
-            for (int i = 0; i < args.Length; ++i)
-            {
-                string switchKey = GetSwitchKey(args, ref i, null, out bool shouldBreak, ref noexitSeen);
-                if(shouldBreak){
-                    break;
-                }
-
-                if (MatchSwitch(switchKey, "settingsfile", "settings") )
-                {
-                    // parse setting file arg and don't write error as there is no host yet.
-                    if(!ParseSettingFileHelper(args,++i,null))
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Processes the -SettingFile Argument
-        /// Returns true if the argument was parsed successfully and false if not.
-        /// </summary>
-        /// <param name="args">
-        /// The command line parameters to be processed.
-        /// </param>
-        /// <param name="argIndex">
-        /// The index in args to the argument following -SettingFile
-        /// </param>
-        /// <param name="parser">
-        /// Used to allow the helper to write errors to the console.  If not supplied, no errors will be written.
-        /// </param>
-        private static bool ParseSettingFileHelper(string[] args, int argIndex, CommandLineParameterParser parser)
-        {
-            if (argIndex >= args.Length)
-            {
-                if(parser != null)
-                {
-                    parser.WriteCommandLineError(
-                        CommandLineParameterParserStrings.MissingSettingsFileArgument);
-                }
-                return false;
-            }
-            string configFile = null;
-            try
-            {
-                configFile = NormalizeFilePath(args[argIndex]);
-            }
-            catch (Exception ex)
-            {
-                if(parser != null)
-                {
-                    string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[argIndex], ex.Message);
-                    parser.WriteCommandLineError(error);
-                }
-                return false;
-            }
-
-            if (!System.IO.File.Exists(configFile))
-            {
-                if(parser != null)
-                {
-                    string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.SettingsFileNotExists, configFile);
-                    parser.WriteCommandLineError(error);
-                }
-                return false;
-            }
-            PowerShellConfig.Instance.SetSystemConfigFilePath(configFile);
-            return true;
-        }
-
-        /// <summary>
-        /// Returns the word in a switch from the current argument or parses a file.
-        /// For example -foo, /foo, or --foo would return foo
-        /// </summary>
-        /// <param name="args">
-        /// The command line parameters to be processed.
-        /// </param>
-        /// <param name="argIndex">
-        /// The index in args to the argument to process.
-        /// </param>
-        /// <param name="parser">
-        /// Used to allow the helper to write errors to the console.  If not supplied, Files will not be parsed.
-        /// </param>
-        /// <param name="shouldBreak">
-        /// If true, the parsing loop should break.
-        /// </param>
-        /// <param name="noexitSeen">
-        /// Used during parsing files
-        /// </param>
-        private static string GetSwitchKey(string[] args, ref int argIndex, CommandLineParameterParser parser, out bool shouldBreak, ref bool noexitSeen)
-        {
-            shouldBreak = false;
-            string switchKey = args[argIndex].Trim().ToLowerInvariant();
-            if (String.IsNullOrEmpty(switchKey))
-            {
-                return null;
-            }
-
-            if (!SpecialCharacters.IsDash(switchKey[0]) && switchKey[0] != '/')
-            {
-                // then its a file
-                if(parser!=null)
-                {
-                    --argIndex;
-                    parser.ParseFile(args, ref argIndex, noexitSeen);
-                }
-                shouldBreak = true;
-                return null;
-            }
-
-            // chop off the first character so that we're agnostic wrt specifying / or -
-            // in front of the switch name.
-            switchKey = switchKey.Substring(1);
-
-            // chop off the second dash so we're agnostic wrt specifying - or --
-            if (!String.IsNullOrEmpty(switchKey) && SpecialCharacters.IsDash(switchKey[0]))
-            {
-                switchKey = switchKey.Substring(1);
-            }
-            return switchKey;
-        }
-
         private void ParseHelper(string[] args)
         {
             Dbg.Assert(args != null, "Argument 'args' to ParseHelper should never be null");
@@ -641,7 +685,8 @@ namespace Microsoft.PowerShell
             for (int i = 0; i < args.Length; ++i)
             {
                 string switchKey = GetSwitchKey(args, ref i, this, out bool shouldBreak, ref noexitSeen);
-                if(shouldBreak){
+                if (shouldBreak)
+                {
                     break;
                 }
 
@@ -841,10 +886,10 @@ namespace Microsoft.PowerShell
                     }
                 }
 
-                else if (MatchSwitch(switchKey, "settingsfile", "settings") )
+                else if (MatchSwitch(switchKey, "settingsfile", "settings"))
                 {
                     // Parse setting file arg and write error
-                    if(!ParseSettingFileHelper(args,++i,this))
+                    if (!ParseSettingFileHelper(args, ++i, this))
                     {
                         break;
                     }
@@ -927,25 +972,6 @@ namespace Microsoft.PowerShell
             _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
         }
 
-        private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
-        {
-            Dbg.Assert(switchKey != null, "need a value");
-            Dbg.Assert(!String.IsNullOrEmpty(match), "need a value");
-            Dbg.Assert(match.Trim().ToLowerInvariant() == match, "match should be normalized to lowercase w/ no outside whitespace");
-            Dbg.Assert(smallestUnambiguousMatch.Trim().ToLowerInvariant() == smallestUnambiguousMatch, "match should be normalized to lowercase w/ no outside whitespace");
-            Dbg.Assert(match.Contains(smallestUnambiguousMatch), "sUM should be a substring of match");
-
-            if (match.Trim().ToLowerInvariant().IndexOf(switchKey, StringComparison.Ordinal) == 0)
-            {
-                if (switchKey.Length >= smallestUnambiguousMatch.Length)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private void ParseFormat(string[] args, ref int i, ref Serialization.DataFormat format, string resourceStr)
         {
             StringBuilder sb = new StringBuilder();
@@ -999,15 +1025,6 @@ namespace Microsoft.PowerShell
             }
 
             executionPolicy = args[i];
-        }
-
-        private static string NormalizeFilePath(string path)
-        {
-            // Normalize slashes
-            path = path.Replace(StringLiterals.AlternatePathSeparator,
-                                StringLiterals.DefaultPathSeparator);
-
-            return Path.GetFullPath(path);
         }
 
         private bool ParseFile(string[] args, ref int i, bool noexitSeen)
@@ -1310,6 +1327,7 @@ namespace Microsoft.PowerShell
             return true;
         }
 
+        private static bool _dirtyEarlyParse;
         private bool _socketServerMode;
         private bool _serverMode;
         private bool _namedPipeServerMode;
@@ -1341,7 +1359,6 @@ namespace Microsoft.PowerShell
         private bool _wasCommandEncoded;
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
         private bool _dirty;
-        private static bool _dirtyEarlyParse;
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;
         private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
