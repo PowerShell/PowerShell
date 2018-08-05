@@ -205,6 +205,9 @@ Describe 'Basic os_log tests on MacOS' -Tag @('Feature','RequireSudoOnUnix') {
         $configFile = WriteLogSettings -LogId $logId
         $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command '$PID'
 
+        # Made tests more reliable
+        Start-Sleep -Milliseconds 500
+
         Export-PSOsLog -after $after -LogPid $testPid -Verbose | Set-Content -Path $contentFile
         $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose)
 
