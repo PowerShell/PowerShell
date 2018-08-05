@@ -503,11 +503,13 @@ namespace Microsoft.PowerShell
             bool noexitSeen = false;
             for (int i = 0; i < args.Length; ++i)
             {
-                string switchKey = GetSwitchKey(args, ref i, null, out bool shouldBreak, ref noexitSeen);
-                if (shouldBreak)
+                var switchKeyResults = GetSwitchKey(args, ref i, null, ref noexitSeen);
+                if (switchKeyResults.ShouldBreak)
                 {
                     break;
                 }
+
+                string switchKey = switchKeyResults.SwitchKey;
 
                 if (MatchSwitch(switchKey, "settingsfile", "settings"))
                 {
@@ -533,22 +535,20 @@ namespace Microsoft.PowerShell
         /// <param name="parser">
         /// Used to allow the helper to write errors to the console.  If not supplied, Files will not be parsed.
         /// </param>
-        /// <param name="shouldBreak">
-        /// If true, the parsing loop should break.
-        /// </param>
         /// <param name="noexitSeen">
         /// Used during parsing files.
         /// </param>
         /// <returns>
-        /// Returns the word in a switch from the current argument or null.
+        /// Returns a Tuple:
+        /// The first value is a String called SwitchKey with the word in a switch from the current argument or null.
+        /// The second value is a bool called ShouldBreak, indicating if the parsing look should break.
         /// </returns>
-        private static string GetSwitchKey(string[] args, ref int argIndex, CommandLineParameterParser parser, out bool shouldBreak, ref bool noexitSeen)
+        private static (string SwitchKey, bool ShouldBreak) GetSwitchKey(string[] args, ref int argIndex, CommandLineParameterParser parser, ref bool noexitSeen)
         {
-            shouldBreak = false;
             string switchKey = args[argIndex].Trim().ToLowerInvariant();
             if (string.IsNullOrEmpty(switchKey))
             {
-                return null;
+                return (SwitchKey: null, ShouldBreak: false);
             }
 
             if (!SpecialCharacters.IsDash(switchKey[0]) && switchKey[0] != '/')
@@ -560,8 +560,7 @@ namespace Microsoft.PowerShell
                     parser.ParseFile(args, ref argIndex, noexitSeen);
                 }
 
-                shouldBreak = true;
-                return null;
+                return (SwitchKey: null, ShouldBreak: true);
             }
 
             // chop off the first character so that we're agnostic wrt specifying / or -
@@ -574,7 +573,7 @@ namespace Microsoft.PowerShell
                 switchKey = switchKey.Substring(1);
             }
 
-            return switchKey;
+            return (SwitchKey: switchKey, ShouldBreak: false);
         }
 
         private static string NormalizeFilePath(string path)
@@ -684,11 +683,13 @@ namespace Microsoft.PowerShell
 
             for (int i = 0; i < args.Length; ++i)
             {
-                string switchKey = GetSwitchKey(args, ref i, this, out bool shouldBreak, ref noexitSeen);
-                if (shouldBreak)
+                var switchKeyResults = GetSwitchKey(args, ref i, this, ref noexitSeen);
+                if (switchKeyResults.ShouldBreak)
                 {
                     break;
                 }
+
+                string switchKey = switchKeyResults.SwitchKey;
 
                 // If version is in the commandline, don't continue to look at any other parameters
                 if (MatchSwitch(switchKey, "version", "v"))
