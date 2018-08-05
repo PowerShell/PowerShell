@@ -174,8 +174,6 @@ namespace Microsoft.PowerShell
                 s_cpp = new CommandLineParameterParser(
                     (s_theConsoleHost != null) ? s_theConsoleHost.UI : (new NullHostUserInterface()),
                     bannerText, helpText);
-                tempArgs = new string[args.GetLength(0)];
-                args.CopyTo(tempArgs, 0);
 
                 s_cpp.Parse(tempArgs);
 
