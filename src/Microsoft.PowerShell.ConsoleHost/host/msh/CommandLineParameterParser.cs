@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell
             _helpText = helpText;
         }
 
-#region Internal properties
+        #region Internal properties
         internal bool AbortStartup
         {
             get
@@ -393,9 +393,10 @@ namespace Microsoft.PowerShell
         {
             get { return _workingDirectory; }
         }
-#endregion Internal properties
 
-#region static methods
+        #endregion Internal properties
+
+        #region static methods
         /// <summary>
         /// Processes the -SettingFile Argument.
         /// </summary>
@@ -604,7 +605,7 @@ namespace Microsoft.PowerShell
             return false;
         }
 
-#endregion
+        #endregion
 
         private void ShowHelp()
         {
