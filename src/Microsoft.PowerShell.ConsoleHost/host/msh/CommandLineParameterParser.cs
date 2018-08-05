@@ -412,7 +412,7 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// Returns true if the argument was parsed successfully and false if not.
         /// </returns>
-        private static bool ParseSettingFileHelper(string[] args, int argIndex, CommandLineParameterParser parser)
+        private static bool TryParseSettingFileHelper(string[] args, int argIndex, CommandLineParameterParser parser)
         {
             if (argIndex >= args.Length)
             {
@@ -515,7 +515,7 @@ namespace Microsoft.PowerShell
                 if (MatchSwitch(switchKey, "settingsfile", "settings"))
                 {
                     // parse setting file arg and don't write error as there is no host yet.
-                    if (!ParseSettingFileHelper(args, ++i, null))
+                    if (!TryParseSettingFileHelper(args, ++i, null))
                     {
                         break;
                     }
@@ -884,7 +884,7 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "settingsfile", "settings"))
                 {
                     // Parse setting file arg and write error
-                    if (!ParseSettingFileHelper(args, ++i, this))
+                    if (!TryParseSettingFileHelper(args, ++i, this))
                     {
                         break;
                     }
