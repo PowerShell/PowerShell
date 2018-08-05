@@ -477,18 +477,9 @@ namespace Microsoft.PowerShell
         {
             // Current user policy takes precedence.
             var consoleSessionSetting = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
-            if (consoleSessionSetting != null)
-            {
-                if (consoleSessionSetting.EnableConsoleSessionConfiguration == true)
-                {
-                    if (!string.IsNullOrEmpty(consoleSessionSetting.ConsoleSessionConfigurationName))
-                    {
-                        return consoleSessionSetting.ConsoleSessionConfigurationName;
-                    }
-                }
-            }
 
-            return string.Empty;
+            return (consoleSessionSetting?.EnableConsoleSessionConfiguration == true && !string.IsNullOrEmpty(consoleSessionSetting?.ConsoleSessionConfigurationName)) ? 
+                    consoleSessionSetting.ConsoleSessionConfigurationName : string.Empty;
         }
 
         /// <summary>
