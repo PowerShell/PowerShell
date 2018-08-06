@@ -19,11 +19,11 @@ namespace Microsoft.PowerShell.MarkdownRender
             // Format link as image or link.
             if (obj.IsImage)
             {
-                renderer.Write(renderer.EscapeSequences.FormatImage(obj.FirstChild.ToString()));
+                renderer.Write(renderer.EscapeSequences.FormatImage(obj.FirstChild?.ToString()));
             }
             else
             {
-                renderer.Write(renderer.EscapeSequences.FormatLink(obj.FirstChild.ToString(), obj.Url));
+                renderer.Write(renderer.EscapeSequences.FormatLink(obj.FirstChild?.ToString(), obj.Url));
             }
         }
     }
