@@ -1286,10 +1286,10 @@ namespace Microsoft.PowerShell.Commands
         {
             _alreadyWarnedUnspecifiedName = alreadyWriteOutWarning;
             ReadHeader();
-            var prevalidated = false;
+
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
-            var objectBuilder = new PSObjectBuilder(20);
+            var objectBuilder = new PSObjectBuilder(ValueCountGuestimate);
             while (true)
             {
                 ParseNextRecord(values, builder);
@@ -1623,7 +1623,6 @@ namespace Microsoft.PowerShell.Commands
         BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, ref PSObjectBuilder objectBuilder)
         {
             //string[] namesarray = null;
-            PSObject result = new PSObject(names.Count);
             char delimiterlocal = delimiter;
             int unspecifiedNameIndex = 1;
             objectBuilder.BeginCreateObject(names.Count);
@@ -1633,7 +1632,10 @@ namespace Microsoft.PowerShell.Commands
                 string value = null;
                 ////if name is null and delimiter is '"', continue
                 if (name.Length == 0 && delimiterlocal == '"')
+                {
                     continue;
+                }
+
                 ////if name is null and delimiter is not '"', use a default property name 'UnspecifiedName'
                 if (string.IsNullOrEmpty(name))
                 {
