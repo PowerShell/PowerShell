@@ -359,12 +359,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if ((Property == null || Property.Length == 0) && string.IsNullOrEmpty(ExpandProperty))
             {
-                FilteredWriteObject(inputObject, new List<PSNoteProperty>());
+                FilteredWriteObject(inputObject, null);
                 return;
             }
 
             //If property parameter is mentioned
-            List<PSNoteProperty> matchedProperties = new List<PSNoteProperty>();
+            List<PSNoteProperty> matchedProperties = new List<PSNoteProperty>(_propertyMshParameterList.Count);
             foreach (MshParameter p in _propertyMshParameterList)
             {
                 ProcessParameter(p, inputObject, matchedProperties);
@@ -586,6 +586,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!_unique)
             {
+                // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (obj != AutomationNull.Value)
                 {
                     SetPSCustomObject(obj);
@@ -594,48 +595,47 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
             //if only unique is mentioned
-            else if ((_unique))
+
+            var addedNotePropertiesCount = addedNoteProperties?.Count ?? 0;
+            bool isObjUnique = true;
+            foreach (UniquePSObjectHelper uniqueObj in _uniques)
             {
-                bool isObjUnique = true;
-                foreach (UniquePSObjectHelper uniqueObj in _uniques)
+                ObjectCommandComparer comparer = new ObjectCommandComparer(true, CultureInfo.CurrentCulture, true);
+                if ((comparer.Compare(obj.BaseObject, uniqueObj.WrittenObject.BaseObject) == 0) &&
+                    (uniqueObj.NotePropertyCount == addedNotePropertiesCount))
                 {
-                    ObjectCommandComparer comparer = new ObjectCommandComparer(true, CultureInfo.CurrentCulture, true);
-                    if ((comparer.Compare(obj.BaseObject, uniqueObj.WrittenObject.BaseObject) == 0) &&
-                        (uniqueObj.NotePropertyCount == addedNoteProperties.Count))
+                    bool found = true;
+                    for (var index = 0; index < addedNotePropertiesCount; index++)
                     {
-                        bool found = true;
-                        foreach (PSNoteProperty note in addedNoteProperties)
+                        // ReSharper disable once PossibleNullReferenceException
+                        PSNoteProperty note = addedNoteProperties[index];
+                        PSMemberInfo prop = uniqueObj.WrittenObject.Properties[note.Name];
+                        if (prop == null || comparer.Compare(prop.Value, note.Value) != 0)
                         {
-                            PSMemberInfo prop = uniqueObj.WrittenObject.Properties[note.Name];
-                            if (prop == null || comparer.Compare(prop.Value, note.Value) != 0)
-                            {
-                                found = false;
-                                break;
-                            }
-                        }
-                        if (found)
-                        {
-                            isObjUnique = false;
+                            found = false;
                             break;
                         }
                     }
-                    else
+
+                    if (found)
                     {
-                        continue;
+                        isObjUnique = false;
+                        break;
                     }
                 }
-                if (isObjUnique)
-                {
-                    SetPSCustomObject(obj);
-                    _uniques.Add(new UniquePSObjectHelper(obj, addedNoteProperties.Count));
-                }
             }
+            if (isObjUnique)
+            {
+                SetPSCustomObject(obj);
+                _uniques.Add(new UniquePSObjectHelper(obj, addedNotePropertiesCount));
+            }
+
         }
 
         private void SetPSCustomObject(PSObject psObj)
         {
             if (psObj.ImmediateBaseObject is PSCustomObject)
-                psObj.TypeNames.Insert(0, "Selected." + InputObject.BaseObject.GetType().ToString());
+                psObj.TypeNames.Insert(0, "Selected." + InputObject.BaseObject.GetType());
         }
 
         private void ProcessObjectAndHandleErrors(PSObject pso)
