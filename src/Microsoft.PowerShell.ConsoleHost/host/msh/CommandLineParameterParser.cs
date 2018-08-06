@@ -464,11 +464,8 @@ namespace Microsoft.PowerShell
         /// </param>
         internal static void EarlyParse(string[] args)
         {
-            Dbg.Assert(!_dirtyEarlyParse, "This instance has already been used. Create a new instance.");
-
             // indicates that we've called this method on this instance, and that when it's done, the state variables
             // will reflect the parse.
-            _dirtyEarlyParse = true;
 
             EarlyParseHelper(args);
         }
@@ -491,7 +488,12 @@ namespace Microsoft.PowerShell
         /// </param>
         private static void EarlyParseHelper(string[] args)
         {
-            Dbg.Assert(args != null, "Argument 'args' to ParseHelper should never be null");
+            if(args == null)
+            {
+                Dbg.Assert(args != null, "Argument 'args' to EarlyParseHelper should never be null");
+                return;
+            }
+            
             bool noexitSeen = false;
             for (int i = 0; i < args.Length; ++i)
             {
@@ -1313,7 +1315,6 @@ namespace Microsoft.PowerShell
             return true;
         }
 
-        private static bool _dirtyEarlyParse;
         private bool _socketServerMode;
         private bool _serverMode;
         private bool _namedPipeServerMode;
