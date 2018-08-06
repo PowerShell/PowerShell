@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell
         /// The index in args to the argument to process.
         /// </param>
         /// <param name="parser">
-        /// Used to allow the helper to write errors to the console.  If not supplied, Files will not be parsed.
+        /// Used to parse files in the args.  If not supplied, Files will not be parsed.
         /// </param>
         /// <param name="noexitSeen">
         /// Used during parsing files.
