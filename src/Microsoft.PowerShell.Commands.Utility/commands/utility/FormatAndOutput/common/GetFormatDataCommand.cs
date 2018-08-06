@@ -174,12 +174,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new TypeLoadException("No such type could be found"),
-                    "SPECIFIED_TYPE_NOT_FOUND",
-                    ErrorCategory.ResourceUnavailable,
+                    "SpecifiedTypeNotFound",
+                    ErrorCategory.InvalidOperation,
                     _typename);
-                ThrowTerminatingError(errorRecord);
+                WriteError(errorRecord);
             }
-            else 
+            else
             {
                 foreach (var pair in typedefs)
                 {
