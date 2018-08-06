@@ -4019,6 +4019,14 @@ namespace System.Management.Automation
             _members = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
         }
 
+        /// <summary>
+        /// Constructs this collection with an initial capacity
+        /// </summary>
+        internal PSMemberInfoInternalCollection(int capacity)
+        {
+            _members = new OrderedDictionary(capacity, StringComparer.OrdinalIgnoreCase);
+        }
+
         private void Replace(T oldMember, T newMember)
         {
             _members[newMember.Name] = newMember;
@@ -4567,8 +4575,9 @@ namespace System.Management.Automation
                     TypeTable typeTable = _mshOwner.GetTypeTable();
                     if (typeTable != null)
                     {
-                        PSMemberInfoInternalCollection<T> typesXmlMembers = typeTable.GetMembers<T>(_mshOwner.InternalTypeNames);
-                        if (typesXmlMembers[member.Name] != null)
+                        var typesXmlMembers = typeTable.GetMembers(_mshOwner.InternalTypeNames);
+                        var typesXmlMember = typesXmlMembers[member.Name];
+                        if (typesXmlMember is T)
                         {
                             throw new ExtendedTypeSystemException(
                                 "AlreadyPresentInTypesXml",
