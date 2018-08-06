@@ -102,6 +102,13 @@
     <Compile Remove="engine\TransactionManager.cs" />
     <Compile Remove="engine\hostifaces\NativeCultureResolver.cs" />
     <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
+    <Compile Remove="engine\PSMI\PSNegotiationData.cs" />
+    <Compile Remove="engine\PSMI\PSPowerShellPipeline.cs" />
+    <Compile Remove="engine\PSMI\Serialization\InternalMISerializer.cs" />
+    <Compile Remove="engine\PSMI\Serialization\KnownMITypes.cs" />
+    <Compile Remove="engine\PSMI\Serialization\MISerializer.cs" />
+    <Compile Remove="engine\PSMI\Serialization\MITypeSerializationInfo.cs" />
+    <Compile Remove="engine\PSMI\Serialization\PSMISerializer.cs" />
     <Compile Remove="logging\eventlog\EventLogLogProvider.cs" />
     <Compile Remove="namespaces\SafeTransactionHandle.cs" />
     <Compile Remove="namespaces\SafeRegistryHandle.cs" />
@@ -121,9 +128,11 @@
     <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
     <Compile Remove="utils\perfCounters\CounterSetRegistrarBase.cs" />
     <Compile Remove="utils\perfCounters\PSPerfCountersMgr.cs" />
+    <Compile Remove="utils\WindowsErrorReporting.cs" />
     <Compile Remove="gen\CoreMshSnapinResources.cs" />
     <Compile Remove="gen\ErrorPackageRemoting.cs" />
     <Compile Remove="gen\EventResource.cs" />
+    
 
     <EmbeddedResource Remove="resources\CoreMshSnapinResources.resx" />
     <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
