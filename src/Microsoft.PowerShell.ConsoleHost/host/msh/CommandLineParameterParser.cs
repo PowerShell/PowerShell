@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell
         /// <param name="args">
         /// The command line parameters to be processed.
         /// </param>
-        /// <param name="argIndex">
+        /// <param name="settingFileArgIndex">
         /// The index in args to the argument following '-SettingFile'.
         /// </param>
         /// <param name="parser">
@@ -412,9 +412,9 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// Returns true if the argument was parsed successfully and false if not.
         /// </returns>
-        private static bool TryParseSettingFileHelper(string[] args, int argIndex, CommandLineParameterParser parser)
+        private static bool TryParseSettingFileHelper(string[] args, int settingFileArgIndex, CommandLineParameterParser parser)
         {
-            if (argIndex >= args.Length)
+            if (settingFileArgIndex >= args.Length)
             {
                 if (parser != null)
                 {
@@ -428,13 +428,13 @@ namespace Microsoft.PowerShell
             string configFile = null;
             try
             {
-                configFile = NormalizeFilePath(args[argIndex]);
+                configFile = NormalizeFilePath(args[settingFileArgIndex]);
             }
             catch (Exception ex)
             {
                 if (parser != null)
                 {
-                    string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[argIndex], ex.Message);
+                    string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[settingFileArgIndex], ex.Message);
                     parser.WriteCommandLineError(error);
                 }
 
@@ -497,7 +497,7 @@ namespace Microsoft.PowerShell
             bool noexitSeen = false;
             for (int i = 0; i < args.Length; ++i)
             {
-                (string SwitchKey, bool ShouldBreak) switchKeyResults = GetSwitchKey(args, ref i, null, ref noexitSeen);
+                (string SwitchKey, bool ShouldBreak) switchKeyResults = GetSwitchKey(args, ref i, parser: null, ref noexitSeen);
                 if (switchKeyResults.ShouldBreak)
                 {
                     break;
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell
                 if (MatchSwitch(switchKey, match: "settingsfile", smallestUnambiguousMatch: "settings"))
                 {
                     // parse setting file arg and don't write error as there is no host yet.
-                    if (!TryParseSettingFileHelper(args, ++i, null))
+                    if (!TryParseSettingFileHelper(args, ++i, parser: null))
                     {
                         break;
                     }
