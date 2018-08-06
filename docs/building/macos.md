@@ -3,7 +3,7 @@
 This guide supplements the [Linux instructions](./linux.md), as
 building on macOS is almost identical.
 
-.NET Core 2.0 (and by transitivity, us) only supports macOS 10.12+.
+.NET Core 2.x (and by transitivity, us) only supports macOS 10.12+.
 
 ## Environment
 
