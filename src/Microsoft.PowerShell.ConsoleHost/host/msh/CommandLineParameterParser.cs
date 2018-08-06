@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell
             bool noexitSeen = false;
             for (int i = 0; i < args.Length; ++i)
             {
-                var switchKeyResults = GetSwitchKey(args, ref i, null, ref noexitSeen);
+                (string SwitchKey, bool ShouldBreak) switchKeyResults = GetSwitchKey(args, ref i, null, ref noexitSeen);
                 if (switchKeyResults.ShouldBreak)
                 {
                     break;
@@ -503,7 +503,7 @@ namespace Microsoft.PowerShell
 
                 string switchKey = switchKeyResults.SwitchKey;
 
-                if (MatchSwitch(switchKey, "settingsfile", "settings"))
+                if (MatchSwitch(switchKey, match: "settingsfile", smallestUnambiguousMatch: "settings"))
                 {
                     // parse setting file arg and don't write error as there is no host yet.
                     if (!TryParseSettingFileHelper(args, ++i, null))
@@ -668,7 +668,7 @@ namespace Microsoft.PowerShell
 
             for (int i = 0; i < args.Length; ++i)
             {
-                var switchKeyResults = GetSwitchKey(args, ref i, this, ref noexitSeen);
+                (string SwitchKey, bool ShouldBreak) switchKeyResults = GetSwitchKey(args, ref i, this, ref noexitSeen);
                 if (switchKeyResults.ShouldBreak)
                 {
                     break;
