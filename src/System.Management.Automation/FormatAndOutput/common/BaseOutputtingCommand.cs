@@ -769,7 +769,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 try
                 {
-                    return Console.WindowWidth;
+                    return (Console.WindowWidth != 0) ? Console.WindowWidth : DefaultConsoleWidth;
                 }
                 catch
                 {
