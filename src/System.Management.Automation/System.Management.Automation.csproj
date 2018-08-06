@@ -132,7 +132,6 @@
     <Compile Remove="gen\CoreMshSnapinResources.cs" />
     <Compile Remove="gen\ErrorPackageRemoting.cs" />
     <Compile Remove="gen\EventResource.cs" />
-    
 
     <EmbeddedResource Remove="resources\CoreMshSnapinResources.resx" />
     <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />

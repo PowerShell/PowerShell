@@ -319,7 +319,7 @@ namespace System.Management.Automation
         {
         }
         
-        #if !CORECLR
+#if !CORECLR
         // Keep in sync:
         // S.M.A.CommandProcessorBase.CheckForSevereException
         // S.M.A.Internal.ConsoleHost.CheckForSevereException
