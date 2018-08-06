@@ -858,7 +858,7 @@ namespace System.Management.Automation
         /// <returns>True if the comparison was successful, false otherwise.</returns>
         public static bool TryCompare(object first, object second, out int result)
         {
-            return TryCompare(first, second, false, CultureInfo.InvariantCulture, out result);
+            return TryCompare(first, second, ignoreCase: false, CultureInfo.InvariantCulture, out result);
         }
 
         /// <summary>
