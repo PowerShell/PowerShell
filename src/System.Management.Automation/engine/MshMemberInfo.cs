@@ -4008,15 +4008,31 @@ namespace System.Management.Automation
     /// </summary>
     internal class PSMemberInfoInternalCollection<T> : PSMemberInfoCollection<T>, IEnumerable<T> where T : PSMemberInfo
     {
-        private readonly OrderedDictionary _members;
+        private OrderedDictionary _members;
         private int _countHidden;
+
+        /// <summary>
+        /// Gets the OrderedDictionary for holding all members.
+        /// We use this property to delay initializing _members until we absolutely need to.
+        /// </summary>
+        private OrderedDictionary Members
+        {
+            get
+            {
+                if (_members == null)
+                {
+                    System.Threading.Interlocked.CompareExchange(ref _members, new OrderedDictionary(StringComparer.OrdinalIgnoreCase), null);
+                }
+
+                return _members;
+            }
+        }
 
         /// <summary>
         /// Constructs this collection
         /// </summary>
         internal PSMemberInfoInternalCollection()
         {
-            _members = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -4029,7 +4045,7 @@ namespace System.Management.Automation
 
         private void Replace(T oldMember, T newMember)
         {
-            _members[newMember.Name] = newMember;
+            Members[newMember.Name] = newMember;
             if (oldMember.IsHidden)
             {
                 _countHidden--;
@@ -4048,9 +4064,11 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(newMember != null, "called from internal code that checks for new member not null");
 
-            lock (_members)
+            // Save to a local variable to reduce property access.
+            var members = Members;
+            lock (members)
             {
-                var oldMember = _members[newMember.Name] as T;
+                var oldMember = members[newMember.Name] as T;
                 Diagnostics.Assert(oldMember != null, "internal code checks member already exists");
                 Replace(oldMember, newMember);
             }
@@ -4083,16 +4101,17 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("member");
             }
 
-            lock (_members)
+            // Save to a local variable to reduce property access.
+            var members = Members;
+            lock (members)
             {
-                var existingMember = _members[member.Name] as T;
-                if (existingMember != null)
+                if (members[member.Name] is T existingMember)
                 {
                     Replace(existingMember, member);
                 }
                 else
                 {
-                    _members[member.Name] = member;
+                    members[member.Name] = member;
                     if (member.IsHidden)
                     {
                         _countHidden++;
@@ -4122,10 +4141,14 @@ namespace System.Management.Automation
                     name);
             }
 
+            if (_members == null)
+            {
+                return;
+            }
+
             lock (_members)
             {
-                var member = _members[name] as PSMemberInfo;
-                if (member != null)
+                if (_members[name] is PSMemberInfo member)
                 {
                     if (member.IsHidden)
                     {
@@ -4149,6 +4172,11 @@ namespace System.Management.Automation
                 if (String.IsNullOrEmpty(name))
                 {
                     throw PSTraceSource.NewArgumentException("name");
+                }
+
+                if (_members == null)
+                {
+                    return null;
                 }
 
                 lock (_members)
@@ -4211,6 +4239,12 @@ namespace System.Management.Automation
         private PSMemberInfoInternalCollection<T> GetInternalMembers(MshMemberMatchOptions matchOptions)
         {
             PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
+
+            if (_members == null)
+            {
+                return returnValue;
+            }
+
             lock (_members)
             {
                 foreach (T member in _members.Values.OfType<T>())
@@ -4232,6 +4266,11 @@ namespace System.Management.Automation
         {
             get
             {
+                if (_members == null)
+                {
+                    return 0;
+                }
+
                 lock (_members)
                 {
                     return _members.Count;
@@ -4246,6 +4285,11 @@ namespace System.Management.Automation
         {
             get
             {
+                if (_members == null)
+                {
+                    return 0;
+                }
+
                 lock (_members)
                 {
                     return _members.Count - _countHidden;
@@ -4262,6 +4306,11 @@ namespace System.Management.Automation
         {
             get
             {
+                if (_members == null)
+                {
+                    return null;
+                }
+
                 lock (_members)
                 {
                     return _members[index] as T;
@@ -4277,6 +4326,11 @@ namespace System.Management.Automation
         /// <returns>the enumerator for this collection</returns>
         public override IEnumerator<T> GetEnumerator()
         {
+            if (_members == null)
+            {
+                return Enumerable.Empty<T>().GetEnumerator();
+            }
+
             lock (_members)
             {
                 // Copy the members to a list so that iteration can be performed without holding a lock.
