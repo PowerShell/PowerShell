@@ -254,8 +254,8 @@ namespace System.Management.Automation
                 // If it's a filesystem location then expand the wildcards
                 if (cwdinfo.Provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                 {
-                    // On UNIX, paths starting with ~ are not normalized
-                    bool normalizePath = arg.Length == 0 || arg[0] != '~';
+                    // On UNIX, paths starting with ~ or absolute paths are not normalized
+                    bool normalizePath = arg.Length == 0 || ! (arg[0] == '~' || arg[0] == '/');
 
                     // See if there are any matching paths otherwise just add the pattern as the argument
                     Collection<PSObject> paths = null;
