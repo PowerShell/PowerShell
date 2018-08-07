@@ -71,9 +71,9 @@ try {
     }
 
     if ($Build.IsPresent) {
-        Start-PSBuild -Crossgen -PSModuleRestore @releaseTagParam
+        Start-PSBuild -Crossgen -PSModuleRestore @releaseTagParam -Runtime osx.10.12-x64
 
-        Start-PSPackage @releaseTagParam
+        Start-PSPackage @releaseTagParam -Type 'osxpkg'
         switch ($ExtraPackage) {
             "tar" { Start-PSPackage -Type tar @releaseTagParam }
         }
