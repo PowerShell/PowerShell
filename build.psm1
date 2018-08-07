@@ -1426,8 +1426,11 @@ function Start-PSxUnit {
 
         # '-fxversion' workaround required due to https://github.com/dotnet/cli/issues/7901#issuecomment-343323674
         # Run sequential tests first, and then run the tests that can execute in parallel
-        dotnet xunit -fxversion 2.0.0 -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
-        dotnet xunit -fxversion 2.0.0 -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
+        log "Running sequential tests"
+        dotnet xunit -fxversion 2.0.7 -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
+
+        log "Running parallel tests"
+        dotnet xunit -fxversion 2.0.7 -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
     }
     finally {
         Pop-Location
