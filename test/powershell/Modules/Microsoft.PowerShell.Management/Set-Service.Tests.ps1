@@ -346,28 +346,31 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         { & $cmdlet @parameters } | Should -Throw -ErrorId $errorid
     }
 
-    It "Set-Service can run -Status Stopped to stop a service with dependencies, and can use -Force to stop a service with running dependent services" {
-        # stop a service with dependency
-        Set-Service -Status Running $testservicename2 | Should -Not -Throw
-        (Get-Service $testservicename1).Status | Should -BeExactly "Running"
-        (Get-Service $testservicename2).Status | Should -BeExactly "Running"
-        $script = { Set-Service -Status Stopped $testservicename2 }
-        { & $script } | Should -Not -Throw
-        (Get-Service $testservicename2).Status | Should -BeExactly "Stopped"
+    Context "Set-Service test cases on the services with dependent relationship" {
+        BeforeEach {
+            Set-Service -Status Running $testservicename2 | Should -Not -Throw
+            (Get-Service $testservicename1).Status | Should -BeExactly "Running"
+            (Get-Service $testservicename2).Status | Should -BeExactly "Running"
+        }
 
-        # stop a service with running dependent service
-        Set-Service -Status Running $testservicename2 | Should -Not -Throw
-        (Get-Service $testservicename1).Status | Should -BeExactly "Running"
-        (Get-Service $testservicename2).Status | Should -BeExactly "Running"
-        $script = { Set-Service -Status Stopped $testservicename1 }
-        { & $script } | Should -Throw
-        (Get-Service $testservicename1).Status | Should -BeExactly "Running"
-        (Get-Service $testservicename2).Status | Should -BeExactly "Running"
+        It "Set-Service can stop a service with dependency" {
+            $script = { Set-Service -Status Stopped $testservicename2 }
+            { & $script } | Should -Not -Throw
+            (Get-Service $testservicename2).Status | Should -BeExactly "Stopped"
+        }
 
-        # stop a service with running dependent service by -Force
-        $script = { Set-Service -Status Stopped -Force $testservicename1 }
-        { & $script } | Should -Not -Throw
-        (Get-Service $testservicename1).Status | Should -BeExactly "Stopped"
-        (Get-Service $testservicename2).Status | Should -BeExactly "Stopped"
+        It "Set-Service cannot stop a service with running dependent service" {
+            $script = { Set-Service -Status Stopped $testservicename1 }
+            { & $script } | Should -Throw
+            (Get-Service $testservicename1).Status | Should -BeExactly "Running"
+            (Get-Service $testservicename2).Status | Should -BeExactly "Running"
+        }
+
+        It "Set-Service can stop a service with running dependent service by parameter -Force" {
+            $script = { Set-Service -Status Stopped -Force $testservicename1 }
+            { & $script } | Should -Not -Throw
+            (Get-Service $testservicename1).Status | Should -BeExactly "Stopped"
+            (Get-Service $testservicename2).Status | Should -BeExactly "Stopped"
+        }
     }
 }
