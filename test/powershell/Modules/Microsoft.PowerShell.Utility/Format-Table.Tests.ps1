@@ -808,8 +808,7 @@ A Name                                  B
                 # Fill the console window with the string, so that it reaches its max width.
                 # Check if the max width is equal to default value (120), to test test hook set.
                 $testObject = @{ test = '1' * 200}
-                Format-table -inputobject $testObject | Out-String -Stream | ForEach-Object{$_.length} | Sort-Object | Select-Object -Last 1 | Should -Be 120
-                Format-Table -inputobject $testObject | Should -Not -BeNullOrEmpty
+                Format-table -inputobject $testObject | Out-String -Stream | ForEach-Object{$_.length} | Sort-Object -Bottom 1 | Should -Be 120
             }
             finally {
                 [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $false)
