@@ -761,6 +761,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         static private int GetConsoleWindowWidth(int columnNumber)
         {
+            if (InternalTestHooks.SetConsoleWidthToZero) 
+            {
+                return DefaultConsoleWidth;
+            }
+
             if (columnNumber == int.MaxValue)
             {
                 if (_noConsole)
@@ -769,6 +774,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 try
                 {
+                    // if Console width is set to 0, the default width is returned so that the output string is not null.
+                    // This can happen in environments where TERM is not set.
                     return (Console.WindowWidth != 0) ? Console.WindowWidth : DefaultConsoleWidth;
                 }
                 catch
