@@ -119,7 +119,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">
         /// The context the command is being run under.
         /// </param>
-        internal void WriteContentObject(object content, long readCount, PathInfo pathInfo, CmdletProviderContext context)
+        /// <param name="psobjectBuilder"></param>
+        internal void WriteContentObject(object content, long readCount, PathInfo pathInfo, CmdletProviderContext context, ref PSObjectBuilder psobjectBuilder)
         {
             Dbg.Diagnostics.Assert(
                 content != null,
@@ -133,15 +134,9 @@ namespace Microsoft.PowerShell.Commands
                 context != null,
                 "The caller should verify the context.");
 
-            PSObject result = PSObject.AsPSObject(content);
-
-            Dbg.Diagnostics.Assert(
-                result != null,
-                "A PSObject should always be constructed.");
+            psobjectBuilder.BeginCreateObject(content, 7);
 
             // Use the cached notes if the cache exists and the path is still the same
-            PSNoteProperty note;
-
             if (_currentContentItem != null &&
                 ((_currentContentItem.PathInfo == pathInfo) ||
                  (
@@ -152,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
                     )
                 )
             {
-                result = _currentContentItem.AttachNotes(result);
+                _currentContentItem.AttachNotes(ref psobjectBuilder);
             }
             else
             {
@@ -162,15 +157,14 @@ namespace Microsoft.PowerShell.Commands
 
                 // Construct a provider qualified path as the Path note
                 string psPath = pathInfo.Path;
-                note = new PSNoteProperty("PSPath", psPath);
-                result.Properties.Add(note, true);
+
+                psobjectBuilder.AddNoteProperty("PSPath", psPath);
                 tracer.WriteLine("Attaching {0} = {1}", "PSPath", psPath);
                 _currentContentItem.PSPath = psPath;
 
                 try
                 {
                     // Now get the parent path and child name
-
                     string parentPath = null;
 
                     if (pathInfo.Drive != null)
@@ -181,16 +175,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         parentPath = SessionState.Path.ParseParent(pathInfo.Path, String.Empty, context);
                     }
-                    note = new PSNoteProperty("PSParentPath", parentPath);
-                    result.Properties.Add(note, true);
+                    psobjectBuilder.AddNoteProperty("PSParentPath", parentPath);
                     tracer.WriteLine("Attaching {0} = {1}", "PSParentPath", parentPath);
                     _currentContentItem.ParentPath = parentPath;
 
                     // Get the child name
-
                     string childName = SessionState.Path.ParseChildName(pathInfo.Path, context);
-                    note = new PSNoteProperty("PSChildName", childName);
-                    result.Properties.Add(note, true);
+                    psobjectBuilder.AddNoteProperty("PSChildName", childName);
+
                     tracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
                     _currentContentItem.ChildName = childName;
                 }
@@ -200,29 +192,24 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // PSDriveInfo
-
                 if (pathInfo.Drive != null)
                 {
                     PSDriveInfo drive = pathInfo.Drive;
-                    note = new PSNoteProperty("PSDrive", drive);
-                    result.Properties.Add(note, true);
+                    psobjectBuilder.AddNoteProperty("PSDrive", drive);
                     tracer.WriteLine("Attaching {0} = {1}", "PSDrive", drive);
                     _currentContentItem.Drive = drive;
                 }
 
                 // ProviderInfo
-
                 ProviderInfo provider = pathInfo.Provider;
-                note = new PSNoteProperty("PSProvider", provider);
-                result.Properties.Add(note, true);
+                psobjectBuilder.AddNoteProperty("PSProvider", provider);
                 tracer.WriteLine("Attaching {0} = {1}", "PSProvider", provider);
                 _currentContentItem.Provider = provider;
             }
 
             // Add the ReadCount note
-            note = new PSNoteProperty("ReadCount", readCount);
-            result.Properties.Add(note, true);
-
+            psobjectBuilder.AddNoteProperty("ReadCount", readCount);
+            var result = psobjectBuilder.EndCreateObject();
             WriteObject(result);
         } // WriteContentObject
 
@@ -283,48 +270,35 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Attaches the cached notes to the specified PSObject.
             /// </summary>
-            /// <param name="content">
-            /// The PSObject to attached the cached notes to.
-            /// </param>
+            /// <param name="objectBuilder"></param>
             /// <returns>
             /// The PSObject that was passed in with the cached notes added.
             /// </returns>
-            public PSObject AttachNotes(PSObject content)
+            public void AttachNotes(ref PSObjectBuilder objectBuilder)
             {
                 // Construct a provider qualified path as the Path note
-
-                PSNoteProperty note = new PSNoteProperty("PSPath", PSPath);
-                content.Properties.Add(note, true);
+                objectBuilder.AddNoteProperty("PSPath", PSPath);
                 tracer.WriteLine("Attaching {0} = {1}", "PSPath", PSPath);
 
                 // Now attach the parent path and child name
-
-                note = new PSNoteProperty("PSParentPath", ParentPath);
-                content.Properties.Add(note, true);
+                objectBuilder.AddNoteProperty("PSParentPath", ParentPath);
                 tracer.WriteLine("Attaching {0} = {1}", "PSParentPath", ParentPath);
 
                 // Attach the child name
-
-                note = new PSNoteProperty("PSChildName", ChildName);
-                content.Properties.Add(note, true);
+                objectBuilder.AddNoteProperty("PSChildName", ChildName);
                 tracer.WriteLine("Attaching {0} = {1}", "PSChildName", ChildName);
 
                 // PSDriveInfo
-
                 if (PathInfo.Drive != null)
                 {
-                    note = new PSNoteProperty("PSDrive", Drive);
-                    content.Properties.Add(note, true);
+                    objectBuilder.AddNoteProperty("PSDrive", Drive);
                     tracer.WriteLine("Attaching {0} = {1}", "PSDrive", Drive);
                 }
 
                 // ProviderInfo
-
-                note = new PSNoteProperty("PSProvider", Provider);
-                content.Properties.Add(note, true);
+                objectBuilder.AddNoteProperty("PSProvider", Provider);
                 tracer.WriteLine("Attaching {0} = {1}", "PSProvider", Provider);
 
-                return content;
             } // AttachNotes
         } // ContentPathsCache
 

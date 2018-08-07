@@ -64,6 +64,8 @@ namespace System.Management.Automation.Provider
         /// </summary>
         private ProviderInfo _providerInformation = null;
 
+        private readonly PSObjectBuilderUnsafe _psObjectBuilderUnsafe = new PSObjectBuilderUnsafe(10);
+
         #endregion private data
 
         #region internal members
@@ -1775,46 +1777,31 @@ namespace System.Management.Automation.Provider
             {
                 throw PSTraceSource.NewArgumentNullException("item");
             }
-            PSObject result = new PSObject(item);
+
+            _psObjectBuilderUnsafe.BeginCreateObject(item, 6);
 
             Diagnostics.Assert(
                 ProviderInfo != null,
                 "The ProviderInfo should always be set");
 
-            // Move the TypeNames to the wrapping object if the wrapped object
-            // was an PSObject
-
-            PSObject mshObj = item as PSObject;
-            if (mshObj != null)
-            {
-                result.InternalTypeNames = new ConsolidatedString(mshObj.InternalTypeNames);
-            }
 
             // Construct a provider qualified path as the Path note
 
-            String providerQualifiedPath =
-                LocationGlobber.GetProviderQualifiedPath(path, ProviderInfo);
+            string providerQualifiedPath = LocationGlobber.GetProviderQualifiedPath(path, ProviderInfo);
 
-            result.AddOrSetProperty("PSPath", providerQualifiedPath);
+            _psObjectBuilderUnsafe.AddNoteProperty("PSPath", providerQualifiedPath);
             providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSPath", providerQualifiedPath);
 
             // Now get the parent path and child name
 
-            NavigationCmdletProvider navProvider = this as NavigationCmdletProvider;
-            if (navProvider != null && path != null)
+            if (this is NavigationCmdletProvider navProvider && path != null)
             {
                 // Get the parent path
 
                 string parentPath = null;
 
-                if (PSDriveInfo != null)
-                {
-                    parentPath = navProvider.GetParentPath(path, PSDriveInfo.Root, Context);
-                }
-                else
-                {
-                    parentPath = navProvider.GetParentPath(path, String.Empty, Context);
-                }
+                var root = PSDriveInfo != null ? PSDriveInfo.Root : String.Empty;
+                parentPath = navProvider.GetParentPath(path, root, Context);
 
                 string providerQualifiedParentPath = String.Empty;
 
@@ -1823,14 +1810,14 @@ namespace System.Management.Automation.Provider
                     providerQualifiedParentPath =
                         LocationGlobber.GetProviderQualifiedPath(parentPath, ProviderInfo);
                 }
-                result.AddOrSetProperty("PSParentPath", providerQualifiedParentPath);
+                _psObjectBuilderUnsafe.AddNoteProperty("PSParentPath", providerQualifiedParentPath);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSParentPath", providerQualifiedParentPath);
 
                 // Get the child name
 
                 string childName = navProvider.GetChildName(path, Context);
 
-                result.AddOrSetProperty("PSChildName", childName);
+                _psObjectBuilderUnsafe.AddNoteProperty("PSChildName", childName);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
             }
 
@@ -1838,14 +1825,22 @@ namespace System.Management.Automation.Provider
 
             if (PSDriveInfo != null)
             {
-                result.AddOrSetProperty(this.PSDriveInfo.GetNotePropertyForProviderCmdlets("PSDrive"));
+                _psObjectBuilderUnsafe.AddNoteProperty(this.PSDriveInfo.GetNotePropertyForProviderCmdlets("PSDrive"));
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSDrive", this.PSDriveInfo);
             }
 
             // ProviderInfo
-
-            result.AddOrSetProperty(this.ProviderInfo.GetNotePropertyForProviderCmdlets("PSProvider"));
+            _psObjectBuilderUnsafe.AddNoteProperty(this.ProviderInfo.GetNotePropertyForProviderCmdlets("PSProvider"));
             providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSProvider", this.ProviderInfo);
+
+            var result = _psObjectBuilderUnsafe.EndCreateObject();
+
+            // Move the TypeNames to the wrapping object if the wrapped object
+            // was an PSObject
+            if (item is PSObject mshObj)
+            {
+                result.InternalTypeNames = new ConsolidatedString(mshObj.InternalTypeNames);
+            }
 
             return result;
         } // WrapOutputInPSObject

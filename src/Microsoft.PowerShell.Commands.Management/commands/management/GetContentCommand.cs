@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (ContentHolder holder in contentStreams)
                 {
                     long countRead = 0;
-
+                    var psobjectBuilder = new PSObjectBuilder(7);
                     Dbg.Diagnostics.Assert(
                         holder.Reader != null,
                         "All holders should have a reader assigned");
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
 
                         // If the seek was successful, we start to read forwards from that
                         // point. Otherwise, we need to scan forwards to get the tail content.
-                        if (!seekSuccess && !ScanForwardsForTail(holder, currentContext))
+                        if (!seekSuccess && !ScanForwardsForTail(holder, currentContext, ref psobjectBuilder))
                         {
                             continue;
                         }
@@ -240,12 +240,12 @@ namespace Microsoft.PowerShell.Commands
                                 if (ReadCount == 1)
                                 {
                                     // Write out the content as a single object
-                                    WriteContentObject(results[0], countRead, holder.PathInfo, currentContext);
+                                    WriteContentObject(results[0], countRead, holder.PathInfo, currentContext, ref psobjectBuilder);
                                 }
                                 else
                                 {
                                     // Write out the content as an array of objects
-                                    WriteContentObject(results, countRead, holder.PathInfo, currentContext);
+                                    WriteContentObject(results, countRead, holder.PathInfo, currentContext, ref psobjectBuilder);
                                 }
                             }
                         } while (results != null && results.Count > 0 && ((TotalCount < 0) || countRead < TotalCount));
@@ -268,11 +268,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="holder"></param>
         /// <param name="currentContext"></param>
+        /// <param name="psobjectBuilder"></param>
         /// <returns>
         /// true if no error occured
         /// false if there was an error
         /// </returns>
-        private bool ScanForwardsForTail(ContentHolder holder, CmdletProviderContext currentContext)
+        private bool ScanForwardsForTail(ContentHolder holder, CmdletProviderContext currentContext, ref PSObjectBuilder psobjectBuilder)
         {
             var fsReader = holder.Reader as FileSystemContentReaderWriter;
             Dbg.Diagnostics.Assert(fsReader != null, "Tail is only supported for FileSystemContentReaderWriter");
@@ -339,13 +340,13 @@ namespace Microsoft.PowerShell.Commands
                         outputList.Add(tailResultQueue.Dequeue());
                     }
                     // Write out the content as an array of objects
-                    WriteContentObject(outputList.ToArray(), count, holder.PathInfo, currentContext);
+                    WriteContentObject(outputList.ToArray(), count, holder.PathInfo, currentContext, ref psobjectBuilder);
                 }
                 else if (ReadCount == 1)
                 {
                     // Write out the content as single object
                     while (tailResultQueue.Count > 0)
-                        WriteContentObject(tailResultQueue.Dequeue(), count++, holder.PathInfo, currentContext);
+                        WriteContentObject(tailResultQueue.Dequeue(), count++, holder.PathInfo, currentContext, ref psobjectBuilder);
                 }
                 else // ReadCount < Queue.Count
                 {
@@ -355,7 +356,7 @@ namespace Microsoft.PowerShell.Commands
                         for (int idx = 0; idx < ReadCount; idx++, count++)
                             outputList.Add(tailResultQueue.Dequeue());
                         // Write out the content as an array of objects
-                        WriteContentObject(outputList.ToArray(), count, holder.PathInfo, currentContext);
+                        WriteContentObject(outputList.ToArray(), count, holder.PathInfo, currentContext, ref psobjectBuilder);
                     }
 
                     int remainder = tailResultQueue.Count;
@@ -365,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
                         for (; remainder > 0; remainder--, count++)
                             outputList.Add(tailResultQueue.Dequeue());
                         // Write out the content as an array of objects
-                        WriteContentObject(outputList.ToArray(), count, holder.PathInfo, currentContext);
+                        WriteContentObject(outputList.ToArray(), count, holder.PathInfo, currentContext, ref psobjectBuilder);
                     }
                 }
             }

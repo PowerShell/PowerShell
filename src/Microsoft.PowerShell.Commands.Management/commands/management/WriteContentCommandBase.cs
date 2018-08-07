@@ -67,6 +67,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private bool _contentWritersOpen;
 
+        private const int PSContentCommandMemberCount = 7;
+
         #endregion private Data
 
         #region Command code
@@ -132,6 +134,7 @@ namespace Microsoft.PowerShell.Commands
             // Now write the content to the item
             try
             {
+                var psObjectBuilder = new PSObjectBuilder(PSContentCommandMemberCount, trustedNames: true);
                 foreach (ContentHolder holder in contentStreams)
                 {
                     if (holder.Writer != null)
@@ -168,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (result != null && result.Count > 0 && PassThru)
                         {
-                            WriteContentObject(result, result.Count, holder.PathInfo, currentContext);
+                            WriteContentObject(result, result.Count, holder.PathInfo, currentContext, ref psObjectBuilder);
                         }
                     }
                 }
