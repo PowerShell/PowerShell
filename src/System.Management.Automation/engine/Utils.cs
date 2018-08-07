@@ -1387,6 +1387,7 @@ namespace System.Management.Automation.Internal
         // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
         internal static bool StopwatchIsNotHighResolution;
         internal static bool DisableGACLoading;
+        internal static bool SetConsoleWidthToZero;
 
         // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
         // since we can't manipulate the System32 directory in a test
