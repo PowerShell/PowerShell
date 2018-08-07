@@ -1388,15 +1388,12 @@ namespace System.Management.Automation.Internal
         internal static bool StopwatchIsNotHighResolution;
         internal static bool DisableGACLoading;
         internal static bool SetConsoleWidthToZero;
-<<<<<<< HEAD
 
         // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
         // since we can't manipulate the System32 directory in a test
         internal static string TestWindowsPowerShellPSHomeLocation;
 
         internal static bool ShowMarkdownOutputBypass;
-=======
->>>>>>> 55c08134f... [Feature] Add test for Out-String when console width is equal to 0
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
