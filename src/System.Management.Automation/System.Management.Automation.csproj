@@ -121,6 +121,7 @@
     <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
     <Compile Remove="utils\perfCounters\CounterSetRegistrarBase.cs" />
     <Compile Remove="utils\perfCounters\PSPerfCountersMgr.cs" />
+    <Compile Remove="utils\WindowsErrorReporting.cs" />
     <Compile Remove="gen\CoreMshSnapinResources.cs" />
     <Compile Remove="gen\ErrorPackageRemoting.cs" />
     <Compile Remove="gen\EventResource.cs" />

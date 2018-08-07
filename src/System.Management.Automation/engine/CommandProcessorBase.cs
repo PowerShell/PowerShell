@@ -318,6 +318,55 @@ namespace System.Management.Automation
         protected virtual void OnRestorePreviousScope()
         {
         }
+        
+#if !CORECLR
+        // Keep in sync:
+        // S.M.A.CommandProcessorBase.CheckForSevereException
+        // S.M.A.Internal.ConsoleHost.CheckForSevereException
+        // S.M.A.Commands.CommandsCommon.CheckForSevereException
+        // S.M.A.Commands.UtilityCommon.CheckForSevereException
+        /// <summary>
+        /// Checks whether the exception is a severe exception which should
+        /// cause immediate process failure.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <remarks>
+        /// CB says 02/23/2005: I personally would err on the side
+        /// of treating OOM like an application exception, rather than
+        /// a critical system failure.I think this will be easier to justify
+        /// in Orcas, if we tease apart the two cases of OOM better.
+        /// But even in Whidbey, how likely is it that we couldnt JIT
+        /// some backout code?  At that point, the process or possibly
+        /// the machine is likely to stop executing soon no matter
+        /// what you do in this routine.  So I would just consider
+        /// AccessViolationException.  (I understand why you have SO here,
+        /// at least temporarily).
+        /// </remarks>
+        internal static void CheckForSevereException(Exception e)
+        {
+            if (e is AccessViolationException || e is StackOverflowException)
+            {
+                try
+                {
+                    if (!alreadyFailing)
+                    {
+                        alreadyFailing = true;
+
+                        // Get the ExecutionContext from the thread.
+                        ExecutionContext context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
+
+                        // Log a command health event for this critical error.
+                        MshLog.LogCommandHealthEvent(context, e, Severity.Critical);
+                    }
+                }
+                finally
+                {
+                    WindowsErrorReporting.FailFast(e);
+                }
+            }
+        }
+        private static bool alreadyFailing = false;
+#endif
 
         /// <summary>
         /// This method sets the current session state scope to the execution scope for the pipeline
