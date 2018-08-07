@@ -208,7 +208,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('Feature','RequireSudoOnUnix') {
         # Made tests more reliable
         Start-Sleep -Milliseconds 500
 
-        Export-PSOsLog -after $after -LogPid $testPid -Verbose | Set-Content -Path $contentFile
+        Export-PSOsLog -After $after -LogPid $testPid -Verbose | Set-Content -Path $contentFile
         $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose)
 
         $items | Should -Not -Be $null
@@ -227,7 +227,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('Feature','RequireSudoOnUnix') {
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
         $testPid = & $powershell -NoLogo -NoProfile -SettingsFile $configFile -Command '$PID'
 
-        Export-PSOsLog -after $after -LogPid $testPid -Verbose | Set-Content -Path $contentFile
+        Export-PSOsLog -After $after -LogPid $testPid -Verbose | Set-Content -Path $contentFile
         # by default, powershell startup should only logs informational events.
         # With Level = Warning, nothing should be logged.
         $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3
