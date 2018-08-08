@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Wait { get; set; }
 
         /// <summary>
-        /// Used to display the object at specified index.
+        /// Used to display the object at the specified index.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "IndexParameter")]
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Used to display all objects not at specified index.
+        /// Used to display all objects at the specified indices.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "SkipIndexParameter")]
@@ -695,8 +695,15 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private int _indexOfCurrentObject;
-        private int _indexCount;
+        /// <summary>
+        /// The index of the active index filter.
+        /// </summary>
+        private int _currentFilterIndex;
+
+        /// <summary>
+        /// The index of the object being processed.
+        /// </summary>
+        private int _currentObjectIndex;
 
         /// <summary>
         /// Handles processing of InputObject if -Index or -SkipIndex is specified.
@@ -705,41 +712,41 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_isIncludeIndex)
             {
-                if (_indexOfCurrentObject < _index.Length)
+                if (_currentFilterIndex < _index.Length)
                 {
-                    int currentlyRequestedIndex = _index[_indexOfCurrentObject];
-                    if (_indexCount == currentlyRequestedIndex)
+                    int nextIndexToOutput = _index[_currentFilterIndex];
+                    if (_currentObjectIndex == nextIndexToOutput)
                     {
                         ProcessObjectAndHandleErrors(InputObject);
-                        while ((_indexOfCurrentObject < _index.Length) && (_index[_indexOfCurrentObject] == currentlyRequestedIndex))
+                        while ((_currentFilterIndex < _index.Length) && (_index[_currentFilterIndex] == nextIndexToOutput))
                         {
-                            _indexOfCurrentObject++;
+                            _currentFilterIndex++;
                         }
                     }
                 }
 
-                if (!Wait && _indexOfCurrentObject >= _index.Length)
+                if (!Wait && _currentFilterIndex >= _index.Length)
                 {
                     EndProcessing();
                     throw new StopUpstreamCommandsException(this);
                 }
 
-                _indexCount++;
+                _currentObjectIndex++;
             }
             else
             {
-                if (_indexOfCurrentObject < _index.Length)
+                if (_currentFilterIndex < _index.Length)
                 {
-                    int nextIndexToSkip = _index[_indexOfCurrentObject];
-                    if (_indexCount != nextIndexToSkip)
+                    int nextIndexToSkip = _index[_currentFilterIndex];
+                    if (_currentObjectIndex != nextIndexToSkip)
                     {
                         ProcessObjectAndHandleErrors(InputObject);
                     }
                     else
                     {
-                        while ((_indexOfCurrentObject < _index.Length) && (_index[_indexOfCurrentObject] == nextIndexToSkip))
+                        while ((_currentFilterIndex < _index.Length) && (_index[_currentFilterIndex] == nextIndexToSkip))
                         {
-                            _indexOfCurrentObject++;
+                            _currentFilterIndex++;
                         }
                     }
                 }
@@ -748,7 +755,7 @@ namespace Microsoft.PowerShell.Commands
                     ProcessObjectAndHandleErrors(InputObject);
                 }
 
-                _indexCount++;
+                _currentObjectIndex++;
             }
         }
 
