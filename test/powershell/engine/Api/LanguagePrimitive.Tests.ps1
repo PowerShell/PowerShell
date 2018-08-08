@@ -50,7 +50,7 @@ Describe "Language Primitive Tests" -Tags "CI" {
     It "TryCompare should succeed on int and string" {
         $result = $null
         [System.Management.Automation.LanguagePrimitives]::TryCompare(1, "1", [ref] $result) | Should -BeTrue
-        $result | Should -BeExactly 0
+        $result | Should -Be 0
     }
 
     It "TryCompare should fail on int and datetime" {
