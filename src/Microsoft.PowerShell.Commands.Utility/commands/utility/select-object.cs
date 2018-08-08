@@ -189,11 +189,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "SkipIndexParameter")]
         [ValidateRangeAttribute(0, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public int[] SkipIndex {
-            get {
+        public int[] SkipIndex
+        {
+            get
+            {
                 return _index;
             }
-            set {
+            set
+            {
                 _index = value;
                 _indexSpecified = true;
                 _isIncludeIndex = false;
