@@ -2,14 +2,14 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Collections;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -19,7 +19,9 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public static class JsonObject
     {
-        class DuplicateMemberSet : HashSet<string>
+        private const int DefaultMemberSetCapacity = 32;
+
+        private class DuplicateMemberSet : HashSet<string>
         {
             public DuplicateMemberSet(int capacity) : base(capacity, StringComparer.CurrentCultureIgnoreCase)
             {
@@ -29,22 +31,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Convert a Json string back to an object of type PSObject.
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="error"></param>
+        /// <param name="input">The json text to convert.</param>
+        /// <param name="error">An error record if the conversion failed.</param>
         /// <returns>A PSObject.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public static object ConvertFromJson(string input, out ErrorRecord error)
         {
-            return ConvertFromJson(input, false, out error);
+            return ConvertFromJson(input, returnHashTable: false, out error);
         }
 
         /// <summary>
-        /// Convert a Json string back to an object of type PSObject or Hashtable depending on parameter <paramref name="returnHashTable"/>.
+        /// Convert a Json string back to an object of type PSObject or HashTable depending on parameter <paramref name="returnHashTable"/>.
         /// </summary>
-        /// <param name="input"></param>
-        /// <param name="returnHashTable"></param>
-        /// <param name="error"></param>
-        /// <returns>A PSObject or a Hashtable if the <paramref name="returnHashTable"/> parameter is true.</returns>
+        /// <param name="input">The json text to convert.</param>
+        /// <param name="returnHashTable">True if the result should be returned as a HashTable instead of a PSObject.</param>
+        /// <param name="error">An error record if the conversion failed.</param>
+        /// <returns>A PSObject or a HashTable if the <paramref name="returnHashTable"/> parameter is true.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public static object ConvertFromJson(string input, bool returnHashTable, out ErrorRecord error)
         {
@@ -53,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentNullException(nameof(input));
             }
 
-            var memberTracker = new DuplicateMemberSet(32);
+            var memberTracker = new DuplicateMemberSet(DefaultMemberSetCapacity);
             error = null;
             object obj;
             try
@@ -63,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
                 // To work around this, we need to identify when input is a Json array, and then try to parse it via JArray.Parse().
 
                 // If input starts with '[' (ignoring white spaces).
-                if ((Regex.Match(input, @"^\s*\[")).Success)
+                if (Regex.Match(input, @"^\s*\[").Success)
                 {
                     // JArray.Parse() will throw a JsonException if the array is invalid.
                     // This will be caught by the catch block below, and then throw an
@@ -104,9 +106,11 @@ namespace Microsoft.PowerShell.Commands
             catch (JsonException je)
             {
                 var msg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.JsonDeserializationFailed, je.Message);
+
                 // the same as JavaScriptSerializer does
                 throw new ArgumentException(msg, je);
             }
+
             return obj;
         }
 
@@ -119,8 +123,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (string.IsNullOrEmpty(entry.Key))
                 {
-                    var errorMsg = string.Format(CultureInfo.InvariantCulture,
-                                                    WebCmdletStrings.EmptyKeyInJsonString);
+                    var errorMsg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.EmptyKeyInJsonString);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
                         "EmptyKeyInJsonString",
@@ -132,10 +135,9 @@ namespace Microsoft.PowerShell.Commands
                 // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
                 // does not throw when encountering duplicates and just uses the last entry.
                 if (memberTracker.TryGetValue(entry.Key, out var maybePropertyName)
-                    && String.Compare(entry.Key, maybePropertyName, StringComparison.CurrentCulture) == 0)
+                    && string.Compare(entry.Key, maybePropertyName, StringComparison.CurrentCulture) == 0)
                 {
-                    var errorMsg = string.Format(CultureInfo.InvariantCulture,
-                                                    WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
+                    var errorMsg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
                         "DuplicateKeysInJsonString",
@@ -148,8 +150,7 @@ namespace Microsoft.PowerShell.Commands
                 // This is because PSObject cannot have keys with different casing.
                 if (memberTracker.TryGetValue(entry.Key, out var propertyName))
                 {
-                    var errorMsg = string.Format(CultureInfo.InvariantCulture,
-                                                    WebCmdletStrings.KeysWithDifferentCasingInJsonString, propertyName, entry.Key);
+                    var errorMsg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.KeysWithDifferentCasingInJsonString, propertyName, entry.Key);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
                         "KeysWithDifferentCasingInJsonString",
@@ -166,24 +167,24 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return null;
                     }
+
                     result.Properties.Add(new PSNoteProperty(entry.Key, listResult));
                 }
-
-                // Dictionary
                 else if (entry.Value is JObject dic)
                 {
+                    // Dictionary
                     PSObject dicResult = PopulateFromJDictionary(dic, new DuplicateMemberSet(dic.Count), out error);
                     if (error != null)
                     {
                         return null;
                     }
+
                     result.Properties.Add(new PSNoteProperty(entry.Key, dicResult));
                 }
-
-                // Value
-                else // (entry.Value is JValue)
+                else
                 {
-                    JValue theValue = entry.Value as JValue;
+                    // Value
+                    JValue theValue = (JValue)entry.Value;
                     result.Properties.Add(new PSNoteProperty(entry.Key, theValue.Value));
                 }
 
@@ -202,9 +203,9 @@ namespace Microsoft.PowerShell.Commands
             for (var index = 0; index < list.Count; index++)
             {
                 var element = list[index];
-                // Array
                 if (element is JArray subList)
                 {
+                    // Array
                     ICollection<object> listResult = PopulateFromJArray(subList, out error);
                     if (error != null)
                     {
@@ -213,10 +214,9 @@ namespace Microsoft.PowerShell.Commands
 
                     result[index] = listResult;
                 }
-
-                // Dictionary
                 else if (element is JObject dic)
                 {
+                    // Dictionary
                     PSObject dicResult = PopulateFromJDictionary(dic, new DuplicateMemberSet(dic.Count),  out error);
                     if (error != null)
                     {
@@ -225,10 +225,9 @@ namespace Microsoft.PowerShell.Commands
 
                     result[index] = dicResult;
                 }
-
-                // Value
-                else // (element is JValue)
+                else
                 {
+                    // Value
                     result[index] = ((JValue)element).Value;
                 }
             }
@@ -247,8 +246,7 @@ namespace Microsoft.PowerShell.Commands
                 // does not throw when encountering duplicates and just uses the last entry.
                 if (result.ContainsKey(entry.Key))
                 {
-                    string errorMsg = string.Format(CultureInfo.InvariantCulture,
-                                                    WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
+                    string errorMsg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
                         "DuplicateKeysInJsonString",
@@ -257,35 +255,36 @@ namespace Microsoft.PowerShell.Commands
                     return null;
                 }
 
-                // Array
                 if (entry.Value is JArray list)
                 {
+                    // Array
                     ICollection<object> listResult = PopulateHashTableFromJArray(list, out error);
                     if (error != null)
                     {
                         return null;
                     }
+
                     result.Add(entry.Key, listResult);
                 }
-
-                // Dictionary
                 else if (entry.Value is JObject dic)
                 {
+                    // Dictionary
                     Hashtable dicResult = PopulateHashTableFromJDictionary(dic, out error);
                     if (error != null)
                     {
                         return null;
                     }
+
                     result.Add(entry.Key, dicResult);
                 }
-
-                // Value
-                else // (entry.Value is JValue)
+                else
                 {
+                    // Value
                     JValue theValue = entry.Value as JValue;
                     result.Add(entry.Key, theValue.Value);
                 }
             }
+
             return result;
         }
 
@@ -298,9 +297,10 @@ namespace Microsoft.PowerShell.Commands
             for (var index = 0; index < list.Count; index++)
             {
                 var element = list[index];
-                // Array
+
                 if (element is JArray subList)
                 {
+                    // Array
                     ICollection<object> listResult = PopulateHashTableFromJArray(subList, out error);
                     if (error != null)
                     {
@@ -309,10 +309,9 @@ namespace Microsoft.PowerShell.Commands
 
                     result[index] = listResult;
                 }
-
-                // Dictionary
                 else if (element is JObject dic)
                 {
+                    // Dictionary
                     Hashtable dicResult = PopulateHashTableFromJDictionary(dic, out error);
                     if (error != null)
                     {
@@ -321,10 +320,9 @@ namespace Microsoft.PowerShell.Commands
 
                     result[index] = dicResult;
                 }
-
-                // Value
-                else // (element is JValue)
+                else
                 {
+                    // Value
                     result[index] = ((JValue)element).Value;
                 }
             }
