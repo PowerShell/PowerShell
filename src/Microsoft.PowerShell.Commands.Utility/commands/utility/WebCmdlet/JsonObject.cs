@@ -19,8 +19,6 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public static class JsonObject
     {
-        private const int DefaultMemberSetCapacity = 32;
-
         private class DuplicateMemberSet : HashSet<string>
         {
             public DuplicateMemberSet(int capacity) : base(capacity, StringComparer.CurrentCultureIgnoreCase)
@@ -55,7 +53,6 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentNullException(nameof(input));
             }
 
-            var memberTracker = new DuplicateMemberSet(DefaultMemberSetCapacity);
             error = null;
             object obj;
             try
@@ -90,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     obj = returnHashTable ?
                               PopulateHashTableFromJDictionary(dictionary, out error) :
-                              PopulateFromJDictionary(dictionary, memberTracker, out error);
+                              PopulateFromJDictionary(dictionary, new DuplicateMemberSet(dictionary.Count), out error);
                 }
                 else
                 {
@@ -123,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (string.IsNullOrEmpty(entry.Key))
                 {
-                    var errorMsg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.EmptyKeyInJsonString);
+                    var errorMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.EmptyKeyInJsonString);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
                         "EmptyKeyInJsonString",
@@ -137,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
                 if (memberTracker.TryGetValue(entry.Key, out var maybePropertyName)
                     && string.Compare(entry.Key, maybePropertyName, StringComparison.CurrentCulture) == 0)
                 {
-                    var errorMsg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
+                    var errorMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
                         "DuplicateKeysInJsonString",
@@ -150,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
                 // This is because PSObject cannot have keys with different casing.
                 if (memberTracker.TryGetValue(entry.Key, out var propertyName))
                 {
-                    var errorMsg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.KeysWithDifferentCasingInJsonString, propertyName, entry.Key);
+                    var errorMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.KeysWithDifferentCasingInJsonString, propertyName, entry.Key);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
                         "KeysWithDifferentCasingInJsonString",
@@ -246,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
                 // does not throw when encountering duplicates and just uses the last entry.
                 if (result.ContainsKey(entry.Key))
                 {
-                    string errorMsg = string.Format(CultureInfo.InvariantCulture, WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
+                    string errorMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
                         "DuplicateKeysInJsonString",
