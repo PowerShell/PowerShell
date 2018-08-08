@@ -10,11 +10,6 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Management.Automation.Internal;
-using System.Reflection;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -50,11 +45,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (input == null)
             {
-                throw new ArgumentNullException("input");
+                throw new ArgumentNullException(nameof(input));
             }
 
             error = null;
-            object obj = null;
+            object obj;
             try
             {
                 // JsonConvert.DeserializeObject does not throw an exception when an invalid Json array is passed.
@@ -83,32 +78,20 @@ namespace Microsoft.PowerShell.Commands
                     });
 
                 // JObject is a IDictionary
-                var dictionary = obj as JObject;
-                if (dictionary != null)
+                if (obj is JObject dictionary)
                 {
-                    if (returnHashTable)
-                    {
-                        obj = PopulateHashTableFromJDictionary(dictionary, out error);
-                    }
-                    else
-                    {
-                        obj = PopulateFromJDictionary(dictionary, out error);
-                    }
+                    obj = returnHashTable ?
+                              PopulateHashTableFromJDictionary(dictionary, out error) :
+                              PopulateFromJDictionary(dictionary, out error);
                 }
                 else
                 {
                     // JArray is a collection
-                    var list = obj as JArray;
-                    if (list != null)
+                    if (obj is JArray list)
                     {
-                        if (returnHashTable)
-                        {
-                            obj = PopulateHashTableFromJArray(list, out error);
-                        }
-                        else
-                        {
-                            obj = PopulateFromJArray(list, out error);
-                        }
+                        obj = returnHashTable ?
+                                  PopulateHashTableFromJArray(list, out error) :
+                                  PopulateFromJArray(list, out error);
                     }
                 }
             }
@@ -170,9 +153,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Array
-                else if (entry.Value is JArray)
+                if (entry.Value is JArray list)
                 {
-                    JArray list = entry.Value as JArray;
                     ICollection<object> listResult = PopulateFromJArray(list, out error);
                     if (error != null)
                     {
@@ -182,9 +164,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Dictionary
-                else if (entry.Value is JObject)
+                else if (entry.Value is JObject dic)
                 {
-                    JObject dic = entry.Value as JObject;
                     PSObject dicResult = PopulateFromJDictionary(dic, out error);
                     if (error != null)
                     {
@@ -212,9 +193,8 @@ namespace Microsoft.PowerShell.Commands
             foreach (var element in list)
             {
                 // Array
-                if (element is JArray)
+                if (element is JArray subList)
                 {
-                    JArray subList = element as JArray;
                     ICollection<object> listResult = PopulateFromJArray(subList, out error);
                     if (error != null)
                     {
@@ -224,9 +204,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Dictionary
-                else if (element is JObject)
+                else if (element is JObject dic)
                 {
-                    JObject dic = element as JObject;
                     PSObject dicResult = PopulateFromJDictionary(dic, out error);
                     if (error != null)
                     {
@@ -266,9 +245,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Array
-                else if (entry.Value is JArray)
+                if (entry.Value is JArray list)
                 {
-                    JArray list = entry.Value as JArray;
                     ICollection<object> listResult = PopulateHashTableFromJArray(list, out error);
                     if (error != null)
                     {
@@ -278,9 +256,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Dictionary
-                else if (entry.Value is JObject)
+                else if (entry.Value is JObject dic)
                 {
-                    JObject dic = entry.Value as JObject;
                     Hashtable dicResult = PopulateHashTableFromJDictionary(dic, out error);
                     if (error != null)
                     {
@@ -308,9 +285,8 @@ namespace Microsoft.PowerShell.Commands
             foreach (var element in list)
             {
                 // Array
-                if (element is JArray)
+                if (element is JArray subList)
                 {
-                    JArray subList = element as JArray;
                     ICollection<object> listResult = PopulateHashTableFromJArray(subList, out error);
                     if (error != null)
                     {
@@ -320,9 +296,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Dictionary
-                else if (element is JObject)
+                else if (element is JObject dic)
                 {
-                    JObject dic = element as JObject;
                     Hashtable dicResult = PopulateHashTableFromJDictionary(dic, out error);
                     if (error != null)
                     {
