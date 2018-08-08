@@ -29,9 +29,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Tuple object.</returns>
         internal static object ArrayToTuple<T>(IList<T> inputObjects)
         {
-            Diagnostics.Assert(inputObjects != null, "inputObjects is null");
-            Diagnostics.Assert(inputObjects.Count > 0, "inputObjects is empty");
-
             return ArrayToTuple(inputObjects, 0);
         }
 
@@ -157,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
 
                         foreach (object item in propertyValueItems)
                         {
-                            sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}, ", item.ToString()));
+                            sb.AppendFormat(CultureInfo.InvariantCulture, "{0}, ", item.ToString());
                         }
 
                         sb = sb.Length > length ? sb.Remove(sb.Length - 2, 2) : sb;
@@ -165,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}, ", propValuePropertyValue.ToString()));
+                        sb.AppendFormat(CultureInfo.InvariantCulture, "{0}, ", propValuePropertyValue.ToString());
                     }
                 }
             }
@@ -273,22 +270,22 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="groups">List containing Groups.</param>
         /// <param name="groupInfoDictionary">Dictionary used to keep track of the groups with hash of the property values being the key.</param>
         /// <param name="orderByPropertyComparer">The Comparer to be used while comparing to check if new group has to be created.</param>
-        internal static void DoGrouping(
+        private static void DoGrouping(
             OrderByPropertyEntry currentObjectEntry,
             bool noElement,
             List<GroupInfo> groups,
             Dictionary<object, GroupInfo> groupInfoDictionary,
             OrderByPropertyComparer orderByPropertyComparer)
         {
-            var currentObjectorderValues = currentObjectEntry.orderValues;
-            if (currentObjectorderValues != null && currentObjectorderValues.Count > 0)
+            var currentObjectOrderValues = currentObjectEntry.orderValues;
+            if (currentObjectOrderValues != null && currentObjectOrderValues.Count > 0)
             {
-                object currentTupleObject = PSTuple.ArrayToTuple(currentObjectorderValues.ToArray());
+                object currentTupleObject = PSTuple.ArrayToTuple(currentObjectOrderValues.ToArray());
 
                 if (groupInfoDictionary.TryGetValue(currentTupleObject, out var currentGroupInfo))
                 {
                     // add this inputObject to an existing group
-                    currentGroupInfo?.Add(currentObjectEntry.inputObject);
+                    currentGroupInfo.Add(currentObjectEntry.inputObject);
                 }
                 else
                 {
@@ -309,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!isCurrentItemGrouped)
                     {
                         // create a new group
-                        s_tracer.WriteLine("Create a new group: {0}", currentObjectorderValues);
+                        s_tracer.WriteLine("Create a new group: {0}", currentObjectOrderValues);
                         GroupInfo newObjGrp = noElement ? new GroupInfoNoElement(currentObjectEntry) : new GroupInfo(currentObjectEntry);
                         groups.Add(newObjGrp);
 
@@ -327,7 +324,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="groups">List containing Groups.</param>
         /// <param name="groupInfoDictionary">Dictionary used to keep track of the groups with hash of the property values being the key.</param>
         /// <param name="orderByPropertyComparer">The Comparer to be used while comparing to check if new group has to be created.</param>
-        internal static void DoOrderedGrouping(
+        private static void DoOrderedGrouping(
             OrderByPropertyEntry currentObjectEntry,
             bool noElement,
             List<GroupInfo> groups,
@@ -342,7 +339,7 @@ namespace Microsoft.PowerShell.Commands
                 if (groupInfoDictionary.TryGetValue(currentTupleObject, out var currentGroupInfo))
                 {
                     // add this inputObject to an existing group
-                    currentGroupInfo?.Add(currentObjectEntry.inputObject);
+                    currentGroupInfo.Add(currentObjectEntry.inputObject);
                 }
                 else
                 {
