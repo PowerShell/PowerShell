@@ -60,7 +60,7 @@ function Start-PSPackage {
             $WindowsRuntime, "Release"
         } elseif ($Type -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-        } elseif ($Type -eq "osxpkg") {
+        } elseif ($Type -in "osxpkg", "tar" -and $IsMacOS) {
             New-PSOptions -Configuration "Release" -Runtime 'osx.10.12-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
