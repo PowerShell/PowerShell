@@ -19,7 +19,12 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public static class JsonObject
     {
-        private const int maxDepthAllowed = 100;
+        class DuplicateMemberSet : HashSet<string>
+        {
+            public DuplicateMemberSet(int capacity) : base(capacity, StringComparer.CurrentCultureIgnoreCase)
+            {
+            }
+        }
 
         /// <summary>
         /// Convert a Json string back to an object of type PSObject.
@@ -48,6 +53,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentNullException(nameof(input));
             }
 
+            var memberTracker = new DuplicateMemberSet(32);
             error = null;
             object obj;
             try
@@ -82,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     obj = returnHashTable ?
                               PopulateHashTableFromJDictionary(dictionary, out error) :
-                              PopulateFromJDictionary(dictionary, out error);
+                              PopulateFromJDictionary(dictionary, memberTracker, out error);
                 }
                 else
                 {
@@ -105,15 +111,15 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // This function is a clone of PopulateFromDictionary using JObject as an input.
-        private static PSObject PopulateFromJDictionary(JObject entries, out ErrorRecord error)
+        private static PSObject PopulateFromJDictionary(JObject entries, DuplicateMemberSet memberTracker, out ErrorRecord error)
         {
             error = null;
-            PSObject result = new PSObject();
+            var result = new PSObject(entries.Count);
             foreach (var entry in entries)
             {
                 if (string.IsNullOrEmpty(entry.Key))
                 {
-                    string errorMsg = string.Format(CultureInfo.InvariantCulture,
+                    var errorMsg = string.Format(CultureInfo.InvariantCulture,
                                                     WebCmdletStrings.EmptyKeyInJsonString);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
@@ -125,9 +131,10 @@ namespace Microsoft.PowerShell.Commands
 
                 // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
                 // does not throw when encountering duplicates and just uses the last entry.
-                if (result.Properties.Any(psPropertyInfo => psPropertyInfo.Name.Equals(entry.Key, StringComparison.InvariantCulture)))
+                if (memberTracker.TryGetValue(entry.Key, out var maybePropertyName)
+                    && String.Compare(entry.Key, maybePropertyName, StringComparison.CurrentCulture) == 0)
                 {
-                    string errorMsg = string.Format(CultureInfo.InvariantCulture,
+                    var errorMsg = string.Format(CultureInfo.InvariantCulture,
                                                     WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
@@ -139,11 +146,10 @@ namespace Microsoft.PowerShell.Commands
 
                 // Compare case insensitive to tell the user to use the -AsHashTable option instead.
                 // This is because PSObject cannot have keys with different casing.
-                PSPropertyInfo property = result.Properties[entry.Key];
-                if (property != null)
+                if (memberTracker.TryGetValue(entry.Key, out var propertyName))
                 {
-                    string errorMsg = string.Format(CultureInfo.InvariantCulture,
-                                                    WebCmdletStrings.KeysWithDifferentCasingInJsonString, property.Name, entry.Key);
+                    var errorMsg = string.Format(CultureInfo.InvariantCulture,
+                                                    WebCmdletStrings.KeysWithDifferentCasingInJsonString, propertyName, entry.Key);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
                         "KeysWithDifferentCasingInJsonString",
@@ -166,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
                 // Dictionary
                 else if (entry.Value is JObject dic)
                 {
-                    PSObject dicResult = PopulateFromJDictionary(dic, out error);
+                    PSObject dicResult = PopulateFromJDictionary(dic, new DuplicateMemberSet(dic.Count), out error);
                     if (error != null)
                     {
                         return null;
@@ -180,7 +186,10 @@ namespace Microsoft.PowerShell.Commands
                     JValue theValue = entry.Value as JValue;
                     result.Properties.Add(new PSNoteProperty(entry.Key, theValue.Value));
                 }
+
+                memberTracker.Add(entry.Key);
             }
+
             return result;
         }
 
@@ -208,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
                 // Dictionary
                 else if (element is JObject dic)
                 {
-                    PSObject dicResult = PopulateFromJDictionary(dic, out error);
+                    PSObject dicResult = PopulateFromJDictionary(dic, new DuplicateMemberSet(dic.Count),  out error);
                     if (error != null)
                     {
                         return null;
