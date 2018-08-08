@@ -177,11 +177,33 @@ namespace Microsoft.PowerShell.Commands
             {
                 _index = value;
                 _indexSpecified = true;
+                _isIncludeIndex = true;
                 Array.Sort(_index);
             }
         }
+
+        /// <summary>
+        /// Used to display all objects not at specified index.
+        /// </summary>
+        /// <value></value>
+        [Parameter(ParameterSetName = "SkipIndexParameter")]
+        [ValidateRangeAttribute(0, int.MaxValue)]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public int[] SkipIndex {
+            get {
+                return _index;
+            }
+            set {
+                _index = value;
+                _indexSpecified = true;
+                _isIncludeIndex = false;
+                Array.Sort(_index);
+            }
+        }
+
         private int[] _index;
         private bool _indexSpecified;
+        private bool _isIncludeIndex;
 
         #endregion
 
@@ -641,15 +663,18 @@ namespace Microsoft.PowerShell.Commands
             _selectObjectQueue = new SelectObjectQueue(_first, _last, Skip, SkipLast, _firstOrLastSpecified);
         }
 
-        private int _indexOfCurrentObject = 0;
-        private int _indexCount = 0;
         /// <summary>
+        /// Handles processing of InputObject.
         /// </summary>
         protected override void ProcessRecord()
         {
             if (InputObject != AutomationNull.Value && InputObject != null)
             {
-                if (!_indexSpecified)
+                if (_indexSpecified)
+                {
+                    ProcessIndexed();
+                }
+                else
                 {
                     _selectObjectQueue.Enqueue(InputObject);
                     PSObject streamingInputObject = _selectObjectQueue.StreamingDequeue();
@@ -657,39 +682,75 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ProcessObjectAndHandleErrors(streamingInputObject);
                     }
+
                     if (_selectObjectQueue.AllRequestedObjectsProcessed && !this.Wait)
                     {
                         this.EndProcessing();
                         throw new StopUpstreamCommandsException(this);
                     }
                 }
-                else
+            }
+        }
+
+        private int _indexOfCurrentObject;
+        private int _indexCount;
+
+        /// <summary>
+        /// Handles processing of InputObject if -Index or -SkipIndex is specified.
+        /// </summary>
+        private void ProcessIndexed()
+        {
+            if (_isIncludeIndex)
+            {
+                if (_indexOfCurrentObject < _index.Length)
                 {
-                    if (_indexOfCurrentObject < _index.Length)
+                    int currentlyRequestedIndex = _index[_indexOfCurrentObject];
+                    if (_indexCount == currentlyRequestedIndex)
                     {
-                        int currentlyRequestedIndex = _index[_indexOfCurrentObject];
-                        if (_indexCount == currentlyRequestedIndex)
+                        ProcessObjectAndHandleErrors(InputObject);
+                        while ((_indexOfCurrentObject < _index.Length) && (_index[_indexOfCurrentObject] == currentlyRequestedIndex))
                         {
-                            ProcessObjectAndHandleErrors(InputObject);
-                            while ((_indexOfCurrentObject < _index.Length) && (_index[_indexOfCurrentObject] == currentlyRequestedIndex))
-                            {
-                                _indexOfCurrentObject++;
-                            }
+                            _indexOfCurrentObject++;
                         }
                     }
-
-                    if (!this.Wait && _indexOfCurrentObject >= _index.Length)
-                    {
-                        this.EndProcessing();
-                        throw new StopUpstreamCommandsException(this);
-                    }
-
-                    _indexCount++;
                 }
+
+                if (!Wait && _indexOfCurrentObject >= _index.Length)
+                {
+                    EndProcessing();
+                    throw new StopUpstreamCommandsException(this);
+                }
+
+                _indexCount++;
+            }
+            else
+            {
+                if (_indexOfCurrentObject < _index.Length)
+                {
+                    int nextIndexToSkip = _index[_indexOfCurrentObject];
+                    if (_indexCount != nextIndexToSkip)
+                    {
+                        ProcessObjectAndHandleErrors(InputObject);
+                    }
+                    else
+                    {
+                        while ((_indexOfCurrentObject < _index.Length) && (_index[_indexOfCurrentObject] == nextIndexToSkip))
+                        {
+                            _indexOfCurrentObject++;
+                        }
+                    }
+                }
+                else
+                {
+                    ProcessObjectAndHandleErrors(InputObject);
+                }
+
+                _indexCount++;
             }
         }
 
         /// <summary>
+        /// Completes the processing of Input.
         /// </summary>
         protected override void EndProcessing()
         {
