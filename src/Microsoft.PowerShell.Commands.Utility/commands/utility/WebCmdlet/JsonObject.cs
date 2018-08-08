@@ -54,7 +54,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             error = null;
-            object obj;
             try
             {
                 // JsonConvert.DeserializeObject does not throw an exception when an invalid Json array is passed.
@@ -73,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
                     // we just continue the deserialization.
                 }
 
-                obj = JsonConvert.DeserializeObject(
+                var obj = JsonConvert.DeserializeObject(
                     input,
                     new JsonSerializerSettings
                     {
@@ -82,22 +81,18 @@ namespace Microsoft.PowerShell.Commands
                         MaxDepth = 1024
                     });
 
-                // JObject is a IDictionary
-                if (obj is JObject dictionary)
+                switch (obj)
                 {
-                    obj = returnHashTable ?
-                              PopulateHashTableFromJDictionary(dictionary, out error) :
-                              PopulateFromJDictionary(dictionary, new DuplicateMemberSet(dictionary.Count), out error);
-                }
-                else
-                {
-                    // JArray is a collection
-                    if (obj is JArray list)
-                    {
-                        obj = returnHashTable ?
-                                  PopulateHashTableFromJArray(list, out error) :
-                                  PopulateFromJArray(list, out error);
-                    }
+                    case JObject dictionary:
+                        // JObject is a IDictionary
+                        return returnHashTable
+                                   ? PopulateHashTableFromJDictionary(dictionary, out error)
+                                   : PopulateFromJDictionary(dictionary, new DuplicateMemberSet(dictionary.Count), out error);
+                    case JArray list:
+                        return returnHashTable
+                                   ? PopulateHashTableFromJArray(list, out error)
+                                   : PopulateFromJArray(list, out error);
+                    default: return obj;
                 }
             }
             catch (JsonException je)
@@ -107,8 +102,6 @@ namespace Microsoft.PowerShell.Commands
                 // the same as JavaScriptSerializer does
                 throw new ArgumentException(msg, je);
             }
-
-            return obj;
         }
 
         // This function is a clone of PopulateFromDictionary using JObject as an input.
