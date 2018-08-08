@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="inputObjects">Input objects used to create a tuple.</param>
         /// <param name="startIndex">Start index of the array from which the objects have to considered for the tuple creation.</param>
         /// <returns>Tuple object.</returns>
-        internal static object ArrayToTuple<T>(IList<T> inputObjects, int startIndex)
+        private static object ArrayToTuple<T>(IList<T> inputObjects, int startIndex)
         {
             Diagnostics.Assert(inputObjects != null, "inputObjects is null");
             Diagnostics.Assert(inputObjects.Count > 0, "inputObjects is empty");
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
             var currentObjectOrderValues = currentObjectEntry.orderValues;
             if (currentObjectOrderValues != null && currentObjectOrderValues.Count > 0)
             {
-                object currentTupleObject = PSTuple.ArrayToTuple(currentObjectOrderValues.ToArray());
+                object currentTupleObject = PSTuple.ArrayToTuple(currentObjectOrderValues);
 
                 if (groupInfoDictionary.TryGetValue(currentTupleObject, out var currentGroupInfo))
                 {
