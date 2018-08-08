@@ -188,10 +188,11 @@ namespace Microsoft.PowerShell.Commands
         private static ICollection<object> PopulateFromJArray(JArray list, out ErrorRecord error)
         {
             error = null;
-            List<object> result = new List<object>();
+            var result = new object[list.Count];
 
-            foreach (var element in list)
+            for (var index = 0; index < list.Count; index++)
             {
+                var element = list[index];
                 // Array
                 if (element is JArray subList)
                 {
@@ -200,7 +201,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return null;
                     }
-                    result.Add(listResult);
+
+                    result[index] = listResult;
                 }
 
                 // Dictionary
@@ -211,16 +213,18 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return null;
                     }
-                    result.Add(dicResult);
+
+                    result[index] = dicResult;
                 }
 
                 // Value
                 else // (element is JValue)
                 {
-                    result.Add(((JValue)element).Value);
+                    result[index] = ((JValue)element).Value;
                 }
             }
-            return result.ToArray();
+
+            return result;
         }
 
         // This function is a clone of PopulateFromDictionary using JObject as an input.
@@ -280,10 +284,11 @@ namespace Microsoft.PowerShell.Commands
         private static ICollection<object> PopulateHashTableFromJArray(JArray list, out ErrorRecord error)
         {
             error = null;
-            List<object> result = new List<object>();
+            var result = new object[list.Count];
 
-            foreach (var element in list)
+            for (var index = 0; index < list.Count; index++)
             {
+                var element = list[index];
                 // Array
                 if (element is JArray subList)
                 {
@@ -292,7 +297,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return null;
                     }
-                    result.Add(listResult);
+
+                    result[index] = listResult;
                 }
 
                 // Dictionary
@@ -303,16 +309,18 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return null;
                     }
-                    result.Add(dicResult);
+
+                    result[index] = dicResult;
                 }
 
                 // Value
                 else // (element is JValue)
                 {
-                    result.Add(((JValue)element).Value);
+                    result[index] = ((JValue)element).Value;
                 }
             }
-            return result.ToArray();
+
+            return result;
         }
     }
 }
