@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SpecifiedTypeNotFound" xml:space="preserve">
-    <value>Cannot find the type.</value>
+    <value>The type name '{0}' could not be found.</value>
   </data>
 </root>

@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
             if (typedefs.Count == 0)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
-                    new TypeLoadException(GetFormatDataStrings.SpecifiedTypeNotFound),
+                    new TypeLoadException(StringUtil.Format(GetFormatDataStrings.SpecifiedTypeNotFound, _typename),
                     "SpecifiedTypeNotFound",
                     ErrorCategory.InvalidOperation,
                     _typename);
