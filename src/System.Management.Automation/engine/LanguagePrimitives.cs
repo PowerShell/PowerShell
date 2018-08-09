@@ -902,8 +902,6 @@ namespace System.Management.Automation
             first = PSObject.Base(first);
             second = PSObject.Base(second);
 
-
-
             if (first == null && second == null)
             {
                 result = 0;
