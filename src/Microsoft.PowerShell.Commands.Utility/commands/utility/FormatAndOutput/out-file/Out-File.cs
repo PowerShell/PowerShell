@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         /// Mandatory file name to write to.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public string LiteralPath
         {
             get
@@ -70,7 +70,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Encoding optional flag.
         /// </summary>
-        ///
         [Parameter(Position = 1)]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompletions(

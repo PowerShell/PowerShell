@@ -20,7 +20,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Default constructor
         /// </summary>
-        ///
         internal CommandProcessorBase()
         {
         }
@@ -28,11 +27,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes the base command processor class with the command metadata.
         /// </summary>
-        ///
         /// <param name="commandInfo">
         /// The metadata about the command to run.
         /// </param>
-        ///
         internal CommandProcessorBase(CommandInfo commandInfo)
         {
             if (commandInfo == null)
@@ -374,7 +371,6 @@ namespace System.Management.Automation
         /// host interfaces. These will be sent to the parameter binder controller
         /// for processing.
         /// </summary>
-        ///
         internal Collection<CommandParameterInternal> arguments = new Collection<CommandParameterInternal>();
 
         /// <summary>
@@ -676,13 +672,11 @@ namespace System.Management.Automation
         ///
         /// This default implementation reads the next pipeline object and sets
         /// it as the CurrentPipelineObject in the InternalCommand.
+        /// Does not throw.
         /// </summary>
-        ///
         /// <returns>
         /// True if read succeeds.
         /// </returns>
-        ///
-        /// does not throw
         internal virtual bool Read()
         {
             // Prepare the default value parameter list if this is the first call to Read
@@ -716,17 +710,14 @@ namespace System.Management.Automation
         /// PipelineProcessor.SynchronousExecute, and writes it to
         /// the error variable.
         /// </summary>
-        ///
         /// <param name="e">
         /// The exception to wrap in a CmdletInvocationException or
         /// CmdletProviderInvocationException.
         /// </param>
-        ///
         /// <returns>
         /// Always returns PipelineStoppedException.  The caller should
         /// throw this exception.
         /// </returns>
-        ///
         /// <remarks>
         /// Almost all exceptions which occur during pipeline invocation
         /// are wrapped in CmdletInvocationException before they are stored
@@ -873,11 +864,9 @@ namespace System.Management.Automation
         /// PipelineProcessor.SynchronousExecute, and writes it to
         /// the error variable.
         /// </summary>
-        ///
         /// <param name="e">
         /// The exception which occurred during script execution
         /// </param>
-        ///
         /// <exception cref="PipelineStoppedException">
         /// ManageScriptException throws PipelineStoppedException if-and-only-if
         /// the exception is a RuntimeException, otherwise it returns.

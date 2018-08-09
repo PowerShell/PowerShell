@@ -77,7 +77,6 @@ namespace System.Management.Automation
         /// all errors to a variable name.  Semantically this is equivalent to :  cmd |set-var varname -passthru
         /// but it should be MUCH faster as there is no binding that takes place
         /// </summary>
-        ///
         /// <exception cref="System.ArgumentNullException">
         /// may not be set to null
         /// </exception>
@@ -2012,7 +2011,6 @@ namespace System.Management.Automation
         /// so that the additional information in
         /// <see cref="System.Management.Automation.ErrorRecord"/>
         /// is available.
-        ///
         /// <see cref="System.Management.Automation.Cmdlet.ThrowTerminatingError"/>
         /// always throws
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
@@ -2254,7 +2252,7 @@ namespace System.Management.Automation
             {
                 // Only generate these exceptions if a pipeline has already been declared as the 'writing' pipeline.
                 // Otherwise, these are probably infrastructure messages and can be ignored.
-                if (this.PipelineProcessor._permittedToWrite != null)
+                if (this.PipelineProcessor?._permittedToWrite != null)
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                         PipelineStrings.WriteNotPermitted);
@@ -3225,9 +3223,7 @@ namespace System.Management.Automation
         internal bool IsErrorActionSet { get; private set; } = false;
 
         /// <summary>
-        ///
         /// Preference setting for displaying ProgressRecords when WriteProgress is called.
-        ///
         /// </summary>
         /// <value></value>
         internal ActionPreference ProgressPreference
@@ -3256,9 +3252,7 @@ namespace System.Management.Automation
         private bool _isProgressPreferenceCached = false;
 
         /// <summary>
-        ///
         /// Preference setting for displaying InformationRecords when WriteInformation is called.
-        ///
         /// </summary>
         /// <value></value>
         internal ActionPreference InformationPreference

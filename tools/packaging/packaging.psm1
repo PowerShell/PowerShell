@@ -1165,6 +1165,7 @@ function Get-MacOSPackageId
     }
 }
 
+# Dynamically build macOS launcher application.
 function New-MacOSLauncher
 {
     param(
@@ -1175,38 +1176,40 @@ function New-MacOSLauncher
     $IsPreview = Test-IsPreview -Version $Version
     $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
 
-    # Define folder for launch application.
-    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
+    # Define folder for launcher application.
+    $suffix = if ($IsPreview) { "-preview" }
+    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/PowerShell$suffix.app"
 
-    # Update icns file.
-    $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+    # Create folder structure for launcher application.
+    New-Item -Force -ItemType Directory -Path "$macosapp/Contents/MacOS" | Out-Null
+    New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
+
+    # Define icns file information.
+    if ($IsPreview)
+    {
+        $iconfile = "$PSScriptRoot/../../assets/Powershell-preview.icns"
+    }
+    else
+    {
+        $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+    }
     $iconfilebase = (Get-Item -Path $iconfile).BaseName
 
-    # Create Resources folder, ignore error if exists.
-    New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
+    # Copy icns file.
     Copy-Item -Force -Path $iconfile -Destination "$macosapp/Contents/Resources"
 
-    # Set values in plist.
+    # Create plist file.
     $plist = "$macosapp/Contents/Info.plist"
-    Start-NativeExecution {
-        defaults write $plist CFBundleIdentifier $packageId
-        defaults write $plist CFBundleVersion $Version
-        defaults write $plist CFBundleShortVersionString $Version
-        defaults write $plist CFBundleGetInfoString $Version
-        defaults write $plist CFBundleIconFile $iconfilebase
-    }
+    $plistcontent = $packagingStrings.MacOSLauncherPlistTemplate -f $packageId, $Version, $iconfilebase
+    $plistcontent | Out-File -Force -Path $plist -Encoding utf8
 
-    # Convert to XML plist, needed because defaults native
-    # app auto converts it to binary format when it modify
-    # the plist file.
-    Start-NativeExecution {
-        plutil -convert xml1 $plist
-    }
-
-    # Set permissions for plist and shell script. Note that
-    # defaults native app sets 700 when writing to the plist
-    # file from above. Both of these will be reset post fpm.
+    # Create shell script.
+    $executablepath = if ($IsPreview) { "/usr/local/bin/pwsh-preview" } else { "/usr/local/bin/pwsh" }
     $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
+    $shellscriptcontent = $packagingStrings.MacOSLauncherScript -f $executablepath
+    $shellscriptcontent | Out-File -Force -Path $shellscript -Encoding utf8
+
+    # Set permissions for plist and shell script.
     Start-NativeExecution {
         chmod 644 $plist
         chmod 755 $shellscript
@@ -1224,20 +1227,10 @@ function Clear-MacOSLauncher
     # the launcher app in the build structure and updating
     # it which locks out subsequent package builds due to
     # increase permissions.
-    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
-    $plist = "$macosapp/Contents/Info.plist"
-    $tempguid = (New-Guid).Guid
-    Start-NativeExecution {
-        defaults write $plist CFBundleIdentifier $tempguid
-        plutil -convert xml1 $plist
-    }
 
-    # Restore default permissions.
-    $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
-    Start-NativeExecution {
-        chmod 644 $shellscript
-        chmod 644 $plist
-    }
+    # Remove launcher application.
+    $macosfolder = "$PSScriptRoot/macos"
+    Remove-Item -Force -Recurse -Path $macosfolder
 }
 
 function New-StagingFolder
@@ -1412,8 +1405,8 @@ function New-UnifiedNugetPackage
         [Parameter(Mandatory = $true)]
         [string] $LinuxArm32BinPath,
 
-        [Parameter(Mandatory = $true)]
-        [string] $LinuxMuslPath,
+        [Parameter(Mandatory = $false)]
+        [string] $LinuxMuslBinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $LinuxBinPath,
@@ -1440,7 +1433,8 @@ function New-UnifiedNugetPackage
         "Microsoft.PowerShell.SDK.dll",
         "Microsoft.WSMan.Management.dll",
         "Microsoft.WSMan.Runtime.dll",
-        "System.Management.Automation.dll")
+        "System.Management.Automation.dll",
+        "Microsoft.PowerShell.MarkdownRender.dll")
 
     $linuxExceptionList = @(
         "Microsoft.PowerShell.Commands.Diagnostics.dll",
@@ -1480,7 +1474,12 @@ function New-UnifiedNugetPackage
             if ($linuxExceptionList -notcontains $file )
             {
                 CreateNugetPlatformFolder -Platform 'linux-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxArm32BinPath
-                CreateNugetPlatformFolder -Platform 'linux-musl-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxMuslBinPath
+
+                if($linuxMuslBinPath)
+                {
+                    CreateNugetPlatformFolder -Platform 'linux-musl-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxMuslBinPath
+                }
+
                 CreateNugetPlatformFolder -Platform 'linux-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxBinPath
                 CreateNugetPlatformFolder -Platform 'osx' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $osxBinPath
             }
@@ -1504,6 +1503,8 @@ function New-UnifiedNugetPackage
 
                 'Microsoft.PowerShell.Commands.Utility' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.MarkdownRender'), [tuple]::Create('version', $PackageVersion))) > $null
+
                     foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
                     {
                         $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
@@ -1535,6 +1536,8 @@ function New-UnifiedNugetPackage
                     {
                         $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
                     }
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
                 }
 
                 'Microsoft.PowerShell.Security' {
@@ -1564,6 +1567,14 @@ function New-UnifiedNugetPackage
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure'), [tuple]::Create('version', '1.0.0-alpha08'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'PowerShell.Core.Instrumentation'), [tuple]::Create('version', '6.0.0-RC2'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'libpsl'), [tuple]::Create('version', '6.0.0-rc'))) > $null
+                }
+
+                'Microsoft.PowerShell.MarkdownRender' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                    {
+                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                    }
                 }
             }
 
@@ -2438,14 +2449,14 @@ function New-MSIPackage
     [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
     if(!$isPreview)
     {
-        [Environment]::SetEnvironmentVariable("AddPathDefault", '1', "Process")
+        [Environment]::SetEnvironmentVariable("PwshPath", '', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '31ab5147-9a97-4452-8443-d9709f0516e1', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '1d00683b-0f84-4db8-a64f-2f98ad42fe06', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_black.ico', "Process")
     }
     else
     {
-        [Environment]::SetEnvironmentVariable("AddPathDefault", '0', "Process")
+        [Environment]::SetEnvironmentVariable("PwshPath", 'preview', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_av_colors.ico', "Process")

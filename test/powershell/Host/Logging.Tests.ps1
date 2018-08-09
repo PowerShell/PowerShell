@@ -158,7 +158,7 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
     }
 }
 
-Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
+Describe 'Basic os_log tests on MacOS' -Tag @('Feature','RequireSudoOnUnix') {
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsMacOS
         [bool] $persistenceEnabled = $false
@@ -203,17 +203,20 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
 
     It 'Verifies basic logging with no customizations' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId
-        & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
+        $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command '$PID'
 
-        Export-PSOsLog -After $after -Verbose | Set-Content -Path $contentFile
-        $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose
+        # Made tests more reliable
+        Start-Sleep -Milliseconds 500
+
+        Export-PSOsLog -After $after -LogPid $testPid -Verbose | Set-Content -Path $contentFile
+        $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose)
 
         $items | Should -Not -Be $null
-        $items.Length | Should -BeGreaterThan 1
+        $items.Count | Should -BeGreaterThan 1
         $items[0].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
         $items[1].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
         # if there are more items than expected...
-        if ($items.Length -gt 2)
+        if ($items.Count -gt 2)
         {
             # Force reporting of the first unexpected item to help diagnosis
             $items[2] | Should -Be $null
@@ -222,9 +225,9 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
 
     It 'Verifies logging level filtering works' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
-        & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
+        $testPid = & $powershell -NoLogo -NoProfile -SettingsFile $configFile -Command '$PID'
 
-        Export-PSOsLog -After $after -Verbose | Set-Content -Path $contentFile
+        Export-PSOsLog -After $after -LogPid $testPid -Verbose | Set-Content -Path $contentFile
         # by default, powershell startup should only logs informational events.
         # With Level = Warning, nothing should be logged.
         $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3

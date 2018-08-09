@@ -13,7 +13,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
@@ -173,7 +172,6 @@ namespace System.Management.Automation
         public const string Step = "Step";
 
         /// <summary>
-        ///
         /// </summary>
         public const string Switch = "Switch";
 
@@ -196,7 +194,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet manipulates data.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
@@ -328,7 +325,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet manipulates the lifecycle of something.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
@@ -393,7 +389,6 @@ namespace System.Management.Automation
         ///<summary>
         /// Record details about an item in a public store or publishing location
         ///</summary>
-        ///
         public const string Register = "Register";
 
         /// <summary>
@@ -439,20 +434,17 @@ namespace System.Management.Automation
         ///<summary>
         /// Remove details of an item from a public store or publishing location
         ///</summary>
-        ///
         public const string Unregister = "Unregister";
 
         ///<summary>
         /// Suspend execution until an expected event
         ///</summary>
-        ///
         public const string Wait = "Wait";
     }
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to diagnose the health of something.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
@@ -498,7 +490,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to communicate with something.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
@@ -539,7 +530,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to secure a resource.
     /// </summary>
-    ///
     /// <remarks>
     /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.

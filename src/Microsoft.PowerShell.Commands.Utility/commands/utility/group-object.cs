@@ -219,7 +219,6 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsHashTable { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "HashTable")]
@@ -332,7 +331,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {

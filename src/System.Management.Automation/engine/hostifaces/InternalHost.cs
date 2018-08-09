@@ -14,7 +14,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Internal.Host
 {
     /// <summary>
-    ///
     /// Wraps PSHost instances to provide a shim layer
     /// between InternalCommand and the host-supplied PSHost instance.
     ///
@@ -24,12 +23,10 @@ namespace System.Management.Automation.Internal.Host
     ///
     /// That leverage may be necessary to manage concurrent access between multiple pipelines sharing the same instance of
     /// PSHost.
-    ///
     /// </summary>
     internal class InternalHost : PSHost, IHostSupportsInteractiveSession
     {
         /// <summary>
-        ///
         /// There should only be one instance of InternalHost per runspace (i.e. per engine), and all engine use of the host
         /// should be through that single instance.  If we ever accidentally create more than one instance of InternalHost per
         /// runspace, then some of the internal state checks that InternalHost makes, like checking the nestedPromptCounter, can
@@ -38,7 +35,6 @@ namespace System.Management.Automation.Internal.Host
         /// To ensure that this constraint is met, I wanted to make this class a singleton.  However, Hitesh rightly pointed out
         /// that a singleton would be appdomain-global, which would prevent having multiple runspaces per appdomain. So we will
         /// just have to be careful not to create extra instances of InternalHost per runspace.
-        ///
         /// </summary>
         internal InternalHost(PSHost externalHost, ExecutionContext executionContext)
         {
@@ -58,15 +54,11 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
-        ///
         ///  when the external host's Name is null or empty.
-        ///
         /// </exception>
         public override string Name
         {
@@ -89,15 +81,11 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
-        ///
         ///  when the external host's Version is null.
-        ///
         /// </exception>
         public override System.Version Version
         {
@@ -120,15 +108,11 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="NotImplementedException">
-        ///
         ///  when the external host's InstanceId is a zero Guid.
-        ///
         /// </exception>
         public override System.Guid InstanceId
         {
@@ -150,9 +134,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value>
         /// </value>
@@ -179,16 +161,12 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value>
         /// </value>
         /// <exception cref="NotImplementedException">
-        ///
         ///  when the external host's CurrentCulture is null.
-        ///
         /// </exception>
         public override System.Globalization.CultureInfo CurrentCulture
         {
@@ -201,16 +179,12 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value>
         /// </value>
         /// <exception cref="NotImplementedException">
-        ///
         /// If the external host's CurrentUICulture is null.
-        ///
         /// </exception>
         public override CultureInfo CurrentUICulture
         {
@@ -226,9 +200,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <param name="exitCode"></param>
         public override void SetShouldExit(int exitCode)
@@ -237,9 +209,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// <seealso cref="ExitNestedPrompt"/>
         /// </summary>
         public override void EnterNestedPrompt()
@@ -260,7 +230,6 @@ namespace System.Management.Automation.Internal.Host
         /// Internal proxy for EnterNestedPrompt
         /// </summary>
         /// <param name="callingCommand"></param>
-        ///
         internal void EnterNestedPrompt(InternalCommand callingCommand)
         {
             // Ensure we are in control of the pipeline
@@ -419,9 +388,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// <seealso cref="EnterNestedPrompt()"/>
         /// </summary>
         public override void ExitNestedPrompt()
@@ -444,9 +411,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         public override PSObject PrivateData
         {
@@ -458,9 +423,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// <seealso cref="NotifyEndApplication"/>
         /// </summary>
         public override void NotifyBeginApplication()
@@ -469,9 +432,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// Called by the engine to notify the host that the execution of a legacy command has completed.
-        ///
         /// <seealso cref="NotifyBeginApplication"/>
         /// </summary>
         public override void NotifyEndApplication()

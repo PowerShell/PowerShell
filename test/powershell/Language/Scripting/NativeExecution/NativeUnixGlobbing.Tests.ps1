@@ -47,7 +47,13 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
 
 		$a = $v,$v
 		/bin/ls $a[1] | Should -Match "abc.txt"
-	}
+    }
+    # Test globbing with absolute paths - it shouldn't turn absolute paths into relative paths (#7089)
+    It 'Should not normalize absolute paths' {
+        $matches = /bin/echo /etc/*
+        # Matched path should start with '/etc/' not '../..'
+        $matches.substring(0,5) | Should Be '/etc/'
+    }
 	It 'Globbing should not happen with quoted expressions' {
 	    $v = "$TESTDRIVE/abc*"
 		/bin/echo "$v" | Should -BeExactly $v

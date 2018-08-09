@@ -954,7 +954,11 @@ namespace System.Management.Automation
 #if !UNIX
                 // If on Windows, we want to add the System32 Windows PowerShell module directory
                 // so that Windows modules are discoverable
-                newModulePathString += Path.PathSeparator + GetWindowsPowerShellPSHomeModulePath();
+                string windowsPowerShellModulePath = GetWindowsPowerShellPSHomeModulePath();
+                if (!newModulePathString.Contains(windowsPowerShellModulePath, StringComparison.OrdinalIgnoreCase))
+                {
+                    newModulePathString += Path.PathSeparator + windowsPowerShellModulePath;
+                }
 #endif
 
                 // Set the environment variable...

@@ -530,7 +530,6 @@ namespace Microsoft.PowerShell.Commands
         }// EndProcessing()
 
         /// <summary>
-        ///
         /// </summary>
         protected override void StopProcessing()
         {

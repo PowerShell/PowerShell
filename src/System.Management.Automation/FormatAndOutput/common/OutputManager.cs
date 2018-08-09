@@ -155,7 +155,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal CommandWrapper command = new CommandWrapper();
 
             /// <summary>
-            ///
             /// </summary>
             /// <param name="typeName">ETS type name of the object to process</param>
             /// <returns>true if there is a match</returns>

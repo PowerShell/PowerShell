@@ -21,7 +21,7 @@ We use the following labels for issue classifications:
 * `Issue-Enhancement`: the issue is more of a feature request than a bug.
 * `Issue-Meta`: an issue used to track multiple issues.
 * `Issue-Question`: ideally support can be provided via other mechanisms,
-  but sometimes folks to open an issue to get a question answered and we will use this label for such issues.
+  but sometimes folks do open an issue to get a question answered and we will use this label for such issues.
 
 [ln-rfc]: https://github.com/PowerShell/PowerShell-RFC
 

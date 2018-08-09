@@ -6,12 +6,22 @@ Describe "Move-Item tests" -Tag "CI" {
         Setup -f originalfile.txt -content "This is content"
         $source = "$TESTDRIVE/originalfile.txt"
         $target = "$TESTDRIVE/ItemWhichHasBeenMoved.txt"
+        Setup -f [orig-file].txt -content "This is not content"
+        $sourceSp = "$TestDrive/``[orig-file``].txt"
+        $targetSpName = "$TestDrive/ItemWhichHasBeen[Moved].txt"
+        $targetSp = "$TestDrive/ItemWhichHasBeen``[Moved``].txt"
     }
     It "Move-Item will move a file" {
         Move-Item $source $target
         $source | Should -Not -Exist
         $target | Should -Exist
         "$target" | Should -FileContentMatchExactly "This is content"
+    }
+    It "Move-Item will move a file when path contains special char" {
+        Move-Item $sourceSp $targetSpName
+        $sourceSp | Should -Not -Exist
+        $targetSp | Should -Exist
+        $targetSp | Should -FileContentMatchExactly "This is not content"
     }
 
     Context "Move-Item with filters" {

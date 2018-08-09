@@ -25,7 +25,6 @@ namespace Microsoft.PowerShell.Commands
         /// The TraceSource parameter determines which TraceSource categories the
         /// operation will take place on.
         /// </summary>
-        ///
         internal string[] NameInternal { get; set; } = new string[0];
 
         /// <summary>
@@ -51,7 +50,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The parameter which determines the options for output from the trace listeners.
         /// </summary>
-        ///
         internal TraceOptions ListenerOptionsInternal
         {
             get { return _traceOptions; }
@@ -185,7 +183,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Adds the console, debugger, file, or host listener if requested.
         /// </summary>
-        ///
         internal void AddTraceListenersToSources(Collection<PSTraceSource> matchingSources)
         {
             if (DebuggerListener)
@@ -371,7 +368,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The file streams that were open by this command.
         /// </summary>
-        ///
         internal Collection<FileStream> FileStreams { get; private set; }
 
         private static void AddListenerToSources(Collection<PSTraceSource> matchingSources, TraceListener listener)

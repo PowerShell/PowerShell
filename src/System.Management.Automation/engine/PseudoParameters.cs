@@ -32,25 +32,20 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a new instance of a runtime-defined parameter using the specified parameters.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the parameter. This cannot be null or empty.
         /// </param>
-        ///
         /// <param name="parameterType">
         /// The type of the parameter value. Arguments will be coerced to this type before binding.
         /// This parameter cannot be null.
         /// </param>
-        ///
         /// <param name="attributes">
         /// Any parameter attributes that should be on the parameter. This can be any of the
         /// parameter attributes including but not limited to Validate*Attribute, ExpandWildcardAttribute, etc.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="parameterType"/> is null.
         /// </exception>
@@ -78,7 +73,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the name of the parameter
         /// </summary>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="value"/> is null or empty on set.
         /// </exception>
@@ -102,11 +96,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the type of the parameter.
         /// </summary>
-        ///
         /// <remarks>
         /// Arguments will be coerced to this type before being bound.
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="value"/> is null.
         /// </exception>
@@ -131,7 +123,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the value of the parameter.
         /// </summary>
-        ///
         /// <remarks>
         /// If the value is set prior to parameter binding, the value will be
         /// reset before each pipeline object is processed.
@@ -159,7 +150,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the attribute collection that describes the parameter.
         /// </summary>
-        ///
         /// <remarks>
         /// This can be any attribute that can be applied to a normal parameter.
         /// </remarks>

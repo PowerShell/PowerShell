@@ -22,30 +22,30 @@ namespace System.Management.Automation
         private SessionStateScope _currentScope;
 
         /// <summary>
+        /// Cmdlet parameter name to return in the error message instead of "scopeID".
+        /// </summary>
+        internal const string ScopeParameterName = "Scope";
+
+        /// <summary>
         /// Given a scope identifier, returns the proper session state scope.
         /// </summary>
-        ///
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like
         /// "global", "local", or "private, or a numeric ID of a relative scope
         /// to the current scope.
         /// </param>
-        ///
         /// <returns>
         /// The scope identified by the scope ID or the current scope if the
         /// scope ID is not defined as a special or numeric scope identifier.
         /// </returns>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
         /// a number and not "script", "global", "local", or "private"
         /// </exception>
-        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        ///
         internal SessionStateScope GetScopeByID(string scopeID)
         {
             SessionStateScope result = _currentScope;
@@ -92,18 +92,18 @@ namespace System.Management.Automation
 
                         if (scopeNumericID < 0)
                         {
-                            throw PSTraceSource.NewArgumentOutOfRangeException("scopeID", scopeID);
+                            throw PSTraceSource.NewArgumentOutOfRangeException(ScopeParameterName, scopeID);
                         }
 
                         result = GetScopeByID(scopeNumericID) ?? _currentScope;
                     }
                     catch (FormatException)
                     {
-                        throw PSTraceSource.NewArgumentException("scopeID", AutomationExceptions.InvalidScopeIdArgument, "scopeID");
+                        throw PSTraceSource.NewArgumentException(ScopeParameterName, AutomationExceptions.InvalidScopeIdArgument, ScopeParameterName);
                     }
                     catch (OverflowException)
                     {
-                        throw PSTraceSource.NewArgumentOutOfRangeException("scopeID", scopeID);
+                        throw PSTraceSource.NewArgumentOutOfRangeException(ScopeParameterName, scopeID);
                     }
                 }
             }
@@ -114,21 +114,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Given a scope ID, walks the scope list to the appropriate scope and returns it.
         /// </summary>
-        ///
         /// <param name="scopeID">
         /// The numeric indexer to the scope relative to the current scope.
         /// </param>
-        ///
         /// <returns>
         /// The scope at the index specified.  The index is relative to the current
         /// scope.
         /// </returns>
-        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        ///
         internal SessionStateScope GetScopeByID(int scopeID)
         {
             SessionStateScope processingScope = _currentScope;
@@ -144,7 +140,7 @@ namespace System.Management.Automation
             {
                 ArgumentOutOfRangeException outOfRange =
                     PSTraceSource.NewArgumentOutOfRangeException(
-                        "scopeID",
+                        ScopeParameterName,
                         originalID,
                         SessionStateStrings.ScopeIDExceedsAvailableScopes,
                         originalID);
@@ -220,16 +216,13 @@ namespace System.Management.Automation
         /// Creates a new scope in the scope tree and assigns the parent
         /// and child scopes appropriately.
         /// </summary>
-        ///
         /// <param name="isScriptScope">
         /// If true, the new scope is pushed on to the script scope stack and
         /// can be referenced using $script:
         /// </param>
-        ///
         /// <returns>
         /// A new SessionStateScope which is a child of the current scope.
         /// </returns>
-        ///
         internal SessionStateScope NewScope(bool isScriptScope)
         {
             Diagnostics.Assert(
@@ -251,15 +244,12 @@ namespace System.Management.Automation
         /// Removes the current scope from the scope tree and
         /// changes the current scope to the parent scope.
         /// </summary>
-        ///
         /// <param name="scope">
         /// The scope to cleanup and remove.
         /// </param>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// The global scope cannot be removed.
         /// </exception>
-        ///
         internal void RemoveScope(SessionStateScope scope)
         {
             Diagnostics.Assert(

@@ -129,4 +129,7 @@
   <data name="MarkdownInfoInvalid" xml:space="preserve">
     <value>The property {0} of the given object is null or empty.</value>
   </data>
+  <data name="InvalidParameterSet" xml:space="preserve">
+    <value>Invalid parameter set name: {0}.</value>
+  </data>
 </root>

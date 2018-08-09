@@ -20,7 +20,6 @@ namespace Microsoft.PowerShell.Commands
         /// The TraceSource parameter determines which TraceSource categories the
         /// operation will take place on.
         /// </summary>
-        ///
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Name
         {
@@ -59,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "optionsSet")]
-        [Alias("PSPath","Path")]
+        [Alias("PSPath", "Path")]
         public string FilePath
         {
             get { return base.FileListener; }

@@ -60,7 +60,6 @@ namespace Microsoft.WSMan.Management
         #region Utilities
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns>
         /// Returns a session object upon successful creation..otherwise
@@ -535,7 +534,6 @@ namespace Microsoft.WSMan.Management
         #endregion
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// </exception>
@@ -681,7 +679,6 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        ///
         /// </summary>
         private void UpdateCurrentUserRegistrySettings()
         {

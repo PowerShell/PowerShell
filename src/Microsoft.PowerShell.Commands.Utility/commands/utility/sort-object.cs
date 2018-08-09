@@ -7,12 +7,11 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet("Sort",
             "Object",
             HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113403",
-            DefaultParameterSetName="Default",
+            DefaultParameterSetName = "Default",
             RemotingCapability = RemotingCapability.None)]
     public sealed class SortObjectCommand : OrderObjectBase
     {
@@ -42,15 +41,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This param specifies you only want the top N items returned.
         /// </summary>
-        [Parameter(ParameterSetName="Default")]
-        [ValidateRange(1,int.MaxValue)]
+        [Parameter(ParameterSetName = "Default")]
+        [ValidateRange(1, int.MaxValue)]
         public int Top { get; set; } = 0;
 
         /// <summary>
         /// This param specifies you only want the bottom N items returned.
         /// </summary>
-        [Parameter(ParameterSetName="Bottom", Mandatory=true)]
-        [ValidateRange(1,int.MaxValue)]
+        [Parameter(ParameterSetName = "Bottom", Mandatory = true)]
+        [ValidateRange(1, int.MaxValue)]
         public int Bottom { get; set; } = 0;
 
         /// <summary>
@@ -224,7 +223,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {

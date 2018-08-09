@@ -330,7 +330,6 @@ namespace System.Management.Automation.ComInterop
     /// Callers of these methods need to use them extremely carefully as incorrect use could cause GC-holes
     /// and other problems.
     /// </summary>
-    ///
     internal static class UnsafeMethods
     {
         [System.Runtime.Versioning.ResourceExposure(System.Runtime.Versioning.ResourceScope.None)]

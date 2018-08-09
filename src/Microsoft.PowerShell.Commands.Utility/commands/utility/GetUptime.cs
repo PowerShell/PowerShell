@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
             // InternalTestHooks.StopwatchIsNotHighResolution is used as test hook.
             if (Stopwatch.IsHighResolution && !InternalTestHooks.StopwatchIsNotHighResolution)
             {
-                TimeSpan uptime = TimeSpan.FromSeconds(Stopwatch.GetTimestamp()/Stopwatch.Frequency);
+                TimeSpan uptime = TimeSpan.FromSeconds(Stopwatch.GetTimestamp() / Stopwatch.Frequency);
 
                 switch (ParameterSetName)
                 {
@@ -65,5 +65,5 @@ namespace Microsoft.PowerShell.Commands
         /// Parameter set name for DateTime OutputType.
         /// </summary>
         private const string SinceParameterSet = "Since";
-   }
+    }
 }

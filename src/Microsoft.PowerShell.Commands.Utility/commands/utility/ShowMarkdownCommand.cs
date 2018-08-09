@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -20,7 +21,8 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(
         VerbsCommon.Show, "Markdown",
-        HelpUri = "TBD")]
+        DefaultParameterSetName = "Path",
+        HelpUri = "https://go.microsoft.com/fwlink/?linkid=2006266")]
     [OutputType(typeof(string))]
     public class ShowMarkdownCommand : PSCmdlet
     {
@@ -28,8 +30,28 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets InputObject of type Microsoft.PowerShell.MarkdownRender.MarkdownInfo to display.
         /// </summary>
         [ValidateNotNullOrEmpty]
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = "InputObject")]
         public PSObject InputObject { get; set; }
+
+        /// <summary>
+        /// Gets or sets path to markdown file(s) to display.
+        /// </summary>
+        [ValidateNotNullOrEmpty]
+        [Parameter(Position = 0, Mandatory = true,
+                   ValueFromPipelineByPropertyName = true, ParameterSetName = "Path")]
+        public string[] Path { get; set; }
+
+        /// <summary>
+        /// Gets or sets the literal path parameter to markdown files(s) to display.
+        /// </summary>
+        [Parameter(ParameterSetName = "LiteralPath",
+                   Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
+        [Alias("PSPath", "LP")]
+        public string[] LiteralPath
+        {
+            get { return Path; }
+            set { Path = value; }
+        }
 
         /// <summary>
         /// Gets or sets the switch to view Html in default browser.
@@ -37,19 +59,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter UseBrowser { get; set; }
 
-        private SteppablePipeline stepPipe;
+        private System.Management.Automation.PowerShell _powerShell;
 
         /// <summary>
         /// Override BeginProcessing.
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (!UseBrowser.IsPresent)
-            {
-                // Since UseBrowser is not bound, we use proxy to Out-Default
-                stepPipe = ScriptBlock.Create(@"Microsoft.PowerShell.Core\Out-Default @PSBoundParameters").GetSteppablePipeline(this.MyInvocation.CommandOrigin);
-                stepPipe.Begin(this);
-            }
+            _powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
         }
 
         /// <summary>
@@ -57,114 +74,148 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            object inpObj = InputObject.BaseObject;
-
-            if (inpObj is MarkdownInfo markdownInfo)
+            switch (ParameterSetName)
             {
-                if (UseBrowser)
-                {
-                    var html = markdownInfo.Html;
-
-                    if (!string.IsNullOrEmpty(html))
+                case "InputObject":
+                    if (InputObject.BaseObject is MarkdownInfo markdownInfo)
                     {
-                        string tmpFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".html");
-
-                        try
-                        {
-                            using (var writer = new StreamWriter(new FileStream(tmpFilePath, FileMode.Create, FileAccess.Write, FileShare.Write)))
-                            {
-                                writer.Write(html);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            var errorRecord = new ErrorRecord(
-                                e,
-                                "ErrorWritingTempFile",
-                                ErrorCategory.WriteError,
-                                tmpFilePath);
-
-                            WriteError(errorRecord);
-                            return;
-                        }
-
-                        if (InternalTestHooks.ShowMarkdownOutputBypass)
-                        {
-                            WriteObject(html);
-                            return;
-                        }
-
-                        try
-                        {
-                            ProcessStartInfo startInfo = new ProcessStartInfo();
-                            startInfo.FileName = tmpFilePath;
-                            startInfo.UseShellExecute = true;
-                            Process.Start(startInfo);
-                        }
-                        catch (Exception e)
-                        {
-                            var errorRecord = new ErrorRecord(
-                                e,
-                                "ErrorLaunchingDefaultApplication",
-                                ErrorCategory.InvalidOperation,
-                                targetObject : null);
-
-                            WriteError(errorRecord);
-                            return;
-                        }
+                        ProcessMarkdownInfo(markdownInfo);
                     }
                     else
                     {
-                        string errorMessage = StringUtil.Format(ConvertMarkdownStrings.MarkdownInfoInvalid, "Html");
+                        ConvertFromMarkdown("InputObject", InputObject.BaseObject);
+                    }
+
+                    break;
+
+                case "Path":
+                case "LiteralPath":
+                    ConvertFromMarkdown(ParameterSetName, Path);
+                    break;
+
+                default:
+                    throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, ConvertMarkdownStrings.InvalidParameterSet, ParameterSetName));
+            }
+        }
+
+        /// <summary>
+        /// Process markdown as path.
+        /// </summary>
+        /// <param name="parameter">Name of parameter to pass to `ConvertFrom-Markdown`.</param>
+        /// <param name="input">Value of parameter.</param>
+        private void ConvertFromMarkdown(string parameter, object input)
+        {
+            _powerShell.AddCommand("Microsoft.PowerShell.Utility\\ConvertFrom-Markdown").AddParameter(parameter, input);
+            if (!UseBrowser)
+            {
+                _powerShell.AddParameter("AsVT100EncodedString");
+            }
+
+            Collection<MarkdownInfo> output = _powerShell.Invoke<MarkdownInfo>();
+
+            if (_powerShell.HadErrors)
+            {
+                foreach (ErrorRecord errorRecord in _powerShell.Streams.Error)
+                {
+                    WriteError(errorRecord);
+                }
+            }
+
+            foreach (MarkdownInfo result in output)
+            {
+                ProcessMarkdownInfo(result);
+            }
+        }
+
+        /// <summary>
+        /// Process markdown as input objects.
+        /// </summary>
+        /// <param name="markdownInfo">Markdown object to process.</param>
+        private void ProcessMarkdownInfo(MarkdownInfo markdownInfo)
+        {
+            if (UseBrowser)
+            {
+                var html = markdownInfo.Html;
+
+                if (!string.IsNullOrEmpty(html))
+                {
+                    string tmpFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString() + ".html");
+
+                    try
+                    {
+                        using (var writer = new StreamWriter(new FileStream(tmpFilePath, FileMode.Create, FileAccess.Write, FileShare.Write)))
+                        {
+                            writer.Write(html);
+                        }
+                    }
+                    catch (Exception e)
+                    {
                         var errorRecord = new ErrorRecord(
-                            new InvalidDataException(errorMessage),
-                            "HtmlIsNullOrEmpty",
-                            ErrorCategory.InvalidData,
-                            html);
+                            e,
+                            "ErrorWritingTempFile",
+                            ErrorCategory.WriteError,
+                            tmpFilePath);
 
                         WriteError(errorRecord);
+                        return;
+                    }
+
+                    if (InternalTestHooks.ShowMarkdownOutputBypass)
+                    {
+                        WriteObject(html);
+                        return;
+                    }
+
+                    try
+                    {
+                        ProcessStartInfo startInfo = new ProcessStartInfo();
+                        startInfo.FileName = tmpFilePath;
+                        startInfo.UseShellExecute = true;
+                        Process.Start(startInfo);
+                    }
+                    catch (Exception e)
+                    {
+                        var errorRecord = new ErrorRecord(
+                            e,
+                            "ErrorLaunchingDefaultApplication",
+                            ErrorCategory.InvalidOperation,
+                            targetObject: null);
+
+                        WriteError(errorRecord);
+                        return;
                     }
                 }
                 else
                 {
-                    var vt100String = markdownInfo.VT100EncodedString;
+                    string errorMessage = StringUtil.Format(ConvertMarkdownStrings.MarkdownInfoInvalid, "Html");
+                    var errorRecord = new ErrorRecord(
+                        new InvalidDataException(errorMessage),
+                        "HtmlIsNullOrEmpty",
+                        ErrorCategory.InvalidData,
+                        html);
 
-                    if (!string.IsNullOrEmpty(vt100String))
-                    {
-                        if (InternalTestHooks.ShowMarkdownOutputBypass)
-                        {
-                            WriteObject(vt100String);
-                            return;
-                        }
-
-                        if (stepPipe != null)
-                        {
-                            stepPipe.Process(vt100String);
-                        }
-                    }
-                    else
-                    {
-                        string errorMessage = StringUtil.Format(ConvertMarkdownStrings.MarkdownInfoInvalid, "VT100EncodedString");
-                        var errorRecord = new ErrorRecord(
-                            new InvalidDataException(errorMessage),
-                            "VT100EncodedStringIsNullOrEmpty",
-                            ErrorCategory.InvalidData,
-                            vt100String);
-
-                        WriteError(errorRecord);
-                    }
+                    WriteError(errorRecord);
                 }
             }
             else
             {
-                string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, inpObj.GetType());
-                var errorRecord = new ErrorRecord(
-                            new ArgumentException(errorMessage),
-                            "InvalidInputObject",
-                            ErrorCategory.InvalidArgument,
-                            InputObject);
+                var vt100String = markdownInfo.VT100EncodedString;
 
-                WriteError(errorRecord);
+                if (!string.IsNullOrEmpty(vt100String))
+                {
+                    WriteObject(vt100String);
+                }
+                else
+                {
+                    string errorMessage = StringUtil.Format(ConvertMarkdownStrings.MarkdownInfoInvalid, "VT100EncodedString");
+                    var errorRecord = new ErrorRecord(
+                        new InvalidDataException(errorMessage),
+                        "VT100EncodedStringIsNullOrEmpty",
+                        ErrorCategory.InvalidData,
+                        vt100String);
+
+                    WriteError(errorRecord);
+                }
             }
         }
 
@@ -173,9 +224,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (stepPipe != null)
+            if (_powerShell != null)
             {
-                stepPipe.End();
+                _powerShell.Dispose();
             }
         }
     }

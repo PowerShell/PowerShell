@@ -285,7 +285,6 @@ namespace System.Management.Automation
         /// Gets or sets the parameter set flags that map the parameter sets
         /// for this parameter to the parameter set names.
         /// </summary>
-        ///
         /// <remarks>
         /// This is a bit-field that maps the parameter sets in this parameter
         /// to the parameter sets for the rest of the command.

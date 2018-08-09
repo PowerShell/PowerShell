@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         /// Literal FilePath parameter.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralFile")]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public string LiteralPath
         {
             get
@@ -76,7 +76,6 @@ namespace Microsoft.PowerShell.Commands
         private string _variable;
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -103,7 +102,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -112,7 +110,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {

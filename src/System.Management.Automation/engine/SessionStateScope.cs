@@ -19,11 +19,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for a session state scope.
         /// </summary>
-        ///
         /// <param name="parentScope">
         /// The parent of this scope.  It can be null for the global scope.
         /// </param>
-        ///
         internal SessionStateScope(SessionStateScope parentScope)
         {
             ScopeOrigin = CommandOrigin.Internal;
@@ -60,11 +58,9 @@ namespace System.Management.Automation
         /// The script scope for this scope. It may reference itself but may not
         /// be a null reference.
         /// </summary>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="value"/> is null when setting the property.
         /// </exception>
-        ///
         internal SessionStateScope ScriptScope
         {
             get { return _scriptScope; }
@@ -103,24 +99,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds a new drive to the scope's drive collection.
         /// </summary>
-        ///
         /// <param name="newDrive">
         /// The new drive to be added.
         /// </param>
-        ///
         /// <remarks>
         /// This method assumes the drive has already been verified and
         /// the provider has already been notified.
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="newDrive" /> is null.
         /// </exception>
-        ///
         /// <exception cref="SessionStateException">
         /// If a drive of the same name already exists in this scope.
         /// </exception>
-        ///
         internal void NewDrive(PSDriveInfo newDrive)
         {
             if (newDrive == null)
@@ -162,20 +153,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the specified drive from this scope.
         /// </summary>
-        ///
         /// <param name="drive">
         /// The drive to be removed.
         /// </param>
-        ///
         /// <remarks>
         /// This method assumes that the drive has already been validated for removal
         /// by the provider.
         /// </remarks>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="drive" /> is null.
         /// </exception>
-        ///
         internal void RemoveDrive(PSDriveInfo drive)
         {
             if (drive == null)
@@ -217,20 +204,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieves the drive of the specified name.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the drive to retrieve.
         /// </param>
-        ///
         /// <returns>
         /// An instance of a PSDriveInfo object with the specified name if one
         /// exists in this scope or null if one does not exist.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name" /> is null.
         /// </exception>
-        ///
         internal PSDriveInfo GetDrive(string name)
         {
             if (name == null)
@@ -283,25 +266,20 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an IDictionary for the variables in this scope.
         /// </summary>
-        ///
         internal IDictionary<string, PSVariable> Variables { get { return GetPrivateVariables(); } }
 
         /// <summary>
         /// Gets the specified variable from the variable table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable to retrieve.
         /// </param>
-        ///
         /// <param name="origin">
         /// The origin of the command trying to retrieve this variable...
         /// </param>
-        ///
         /// <returns>
         /// The PSVariable representing the variable specified.
         /// </returns>
-        ///
         internal PSVariable GetVariable(string name, CommandOrigin origin)
         {
             PSVariable result;
@@ -312,15 +290,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the specified variable from the variable table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable to retrieve.
         /// </param>
-        ///
         /// <returns>
         /// The PSVariable representing the variable specified.
         /// </returns>
-        ///
         internal PSVariable GetVariable(string name)
         {
             return GetVariable(name, ScopeOrigin);
@@ -355,7 +330,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="variable"></param>
         /// <returns></returns>
@@ -383,32 +357,25 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets a variable to the given value.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable to set.
         /// </param>
-        ///
         /// <param name="value">
         /// The value for the variable
         /// </param>
-        ///
         /// <param name="asValue">
         /// If true, sets the variable value to newValue. If false, newValue must
         /// be a PSVariable object and the item will be set rather than the value.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the variable will be set even if it is readonly.
         /// </param>
-        ///
         /// <param name="sessionState">
         /// Which SessionState this variable belongs to.
         /// </param>
-        ///
         /// <param name="origin">
         /// The origin of the caller
         /// </param>
-        ///
         /// <param name="fastPath">
         /// If true and the variable is being set in the global scope,
         /// then all of the normal variable lookup stuff is bypassed and
@@ -417,11 +384,9 @@ namespace System.Management.Automation
         /// <returns>
         /// The PSVariable representing the variable that was set.
         /// </returns>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
         /// </exception>
-        ///
         internal PSVariable SetVariable(string name, object value, bool asValue, bool force, SessionStateInternal sessionState, CommandOrigin origin = CommandOrigin.Internal, bool fastPath = false)
         {
             Diagnostics.Assert(name != null, "The caller should verify the name");
@@ -560,27 +525,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets a variable to the given value.
         /// </summary>
-        ///
         /// <param name="newVariable">
         /// The new variable to create.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the variable will be set even if it is readonly.
         /// </param>
-        ///
         /// <param name="sessionState">
         /// Which SessionState this variable belongs to.
         /// </param>
-        ///
         /// <returns>
         /// The PSVariable representing the variable that was set.
         /// </returns>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
         /// </exception>
-        ///
         internal PSVariable NewVariable(PSVariable newVariable, bool force, SessionStateInternal sessionState)
         {
             PSVariable variable;
@@ -656,19 +615,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a variable from the variable table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable to remove.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the variable will be removed even if its ReadOnly.
         /// </param>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// if the variable is constant.
         /// </exception>
-        ///
         internal void RemoveVariable(string name, bool force)
         {
             Diagnostics.Assert(
@@ -748,7 +703,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an IEnumerable for the aliases in this scope.
         /// </summary>
-        ///
         internal IEnumerable<AliasInfo> AliasTable
         {
             get
@@ -760,15 +714,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the specified alias from the alias table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the alias to retrieve.
         /// </param>
-        ///
         /// <returns>
         /// The string representing the value of the alias specified.
         /// </returns>
-        ///
         internal AliasInfo GetAlias(string name)
         {
             Diagnostics.Assert(
@@ -784,35 +735,27 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets an alias to the given value.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the alias to set.
         /// </param>
-        ///
         /// <param name="value">
         /// The value for the alias
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for this engine instance.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the value will be set even if the alias is ReadOnly.
         /// </param>
-        ///
         /// <param name="origin">
         /// Origin of the caller of this API
         /// </param>
-        ///
         /// <returns>
         /// The string representing the value that was set.
         /// </returns>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// if the alias is read-only or constant.
         /// </exception>
-        ///
         internal AliasInfo SetAliasValue(string name, string value, ExecutionContext context, bool force, CommandOrigin origin)
         {
             Diagnostics.Assert(
@@ -864,39 +807,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets an alias to the given value.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the alias to set.
         /// </param>
-        ///
         /// <param name="value">
         /// The value for the alias
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for this engine instance.
         /// </param>
-        ///
         /// <param name="options">
         /// The options to set on the alias.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the value will be set even if the alias is ReadOnly.
         /// </param>
-        ///
         /// <param name="origin">
         /// Origin of the caller of this API
         /// </param>
-        ///
         /// <returns>
         /// The string representing the value that was set.
         /// </returns>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is read-only or constant.
         /// </exception>
-        ///
         internal AliasInfo SetAliasValue(
             string name,
             string value,
@@ -989,28 +923,22 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets an alias to the given value.
         /// </summary>
-        ///
         /// <param name="aliasToSet">
         /// The information about the alias to be set
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the alias will be set even if there is an existing ReadOnly
         /// alias.
         /// </param>
-        ///
         /// <param name="origin">
         /// Specifies the command origin of the calling command.
         /// </param>
-        ///
         /// <returns>
         /// The string representing the value that was set.
         /// </returns>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is read-only or constant.
         /// </exception>
-        ///
         internal AliasInfo SetAliasItem(AliasInfo aliasToSet, bool force, CommandOrigin origin = CommandOrigin.Internal)
         {
             Diagnostics.Assert(
@@ -1067,19 +995,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a alias from the alias table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the alias to remove.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the alias will be removed even if it is ReadOnly.
         /// </param>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is constant.
         /// </exception>
-        ///
         internal void RemoveAlias(string name, bool force)
         {
             Diagnostics.Assert(
@@ -1118,7 +1042,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an IEnumerable for the functions in this scope.
         /// </summary>
-        ///
         internal Dictionary<string, FunctionInfo> FunctionTable
         {
             get
@@ -1130,16 +1053,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the specified function from the function table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to retrieve.
         /// </param>
-        ///
         /// <returns>
         /// A FunctionInfo that is either a FilterInfo or FunctionInfo representing the
         /// function or filter.
         /// </returns>
-        ///
         internal FunctionInfo GetFunction(string name)
         {
             Diagnostics.Assert(
@@ -1155,36 +1075,28 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets an function to the given function declaration.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to set.
         /// </param>
-        ///
         /// <param name="function">
         /// The script block that represents the code for the function.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        ///
         /// <param name="origin">
         /// The origin of the caller of this API
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the function/filter.
         /// </param>
-        ///
         /// <returns>
         /// A FunctionInfo that is either a FilterInfo or FunctionInfo representing the
         /// function or filter.
         /// </returns>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception>
-        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -1197,40 +1109,31 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets an function to the given function declaration.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to set.
         /// </param>
-        ///
         /// <param name="function">
         /// The script block that represents the code for the function.
         /// </param>
-        ///
         /// <param name="originalFunction">
         /// The original function (if any) from which the scriptblock was derived.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        ///
         /// <param name="origin">
         /// The origin of the caller of this API
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the function/filter.
         /// </param>
-        ///
         /// <returns>
         /// A FunctionInfo that is either a FilterInfo or FunctionInfo representing the
         /// function or filter.
         /// </returns>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception>
-        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -1245,44 +1148,34 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets an function to the given function declaration.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to set.
         /// </param>
-        ///
         /// <param name="function">
         /// The script block that the function should represent.
         /// </param>
-        ///
         /// <param name="originalFunction">
         /// The original function (if any) from which the scriptblock was derived.
         /// </param>
-        ///
         /// <param name="options">
         /// The options that should be applied to the function.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        ///
         /// <param name="origin">
         /// The origin of the caller of this API
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the function/filter.
         /// </param>
-        ///
         /// <returns>
         /// A FunctionInfo that is either a FilterInfo or FunctionInfo representing the
         /// function or filter.
         /// </returns>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception>
-        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -1311,52 +1204,40 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets an function to the given function declaration.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to set.
         /// </param>
-        ///
         /// <param name="function">
         /// The script block that the function should represent.
         /// </param>
-        ///
         /// <param name="originalFunction">
         /// The original function (if any) from which the scriptblock was derived.
         /// </param>
-        ///
         /// <param name="options">
         /// The options that should be applied to the function.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        ///
         /// <param name="origin">
         /// The origin of the caller of this API
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the function/filter.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The name of the help file associated with the function.
         /// </param>
-        ///
         /// <param name="functionFactory">
         /// Function to create the FunctionInfo.
         /// </param>
-        ///
         /// <returns>
         /// A FunctionInfo that is either a FilterInfo or FunctionInfo representing the
         /// function or filter.
         /// </returns>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception>
-        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -1467,19 +1348,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a function from the function table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to remove.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function is removed even if it is ReadOnly.
         /// </param>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is constant.
         /// </exception>
-        ///
         internal void RemoveFunction(string name, bool force)
         {
             Diagnostics.Assert(
@@ -1518,7 +1395,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an IEnumerable for the cmdlets in this scope.
         /// </summary>
-        ///
         internal Dictionary<string, List<CmdletInfo>> CmdletTable
         {
             get
@@ -1530,15 +1406,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the specified cmdlet from the cmdlet table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the cmdlet to retrieve.
         /// </param>
-        ///
         /// <returns>
         /// A CmdletInfo representing this cmdlet
         /// </returns>
-        ///
         internal CmdletInfo GetCmdlet(string name)
         {
             Diagnostics.Assert(
@@ -1563,31 +1436,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds a cmdlet to the cmdlet cache.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the cmdlet to add.
         /// </param>
-        ///
         /// <param name="cmdlet">
         /// The cmdlet that should be added.
         /// </param>
-        ///
         /// <param name="origin">
         /// The origin of the caller of this API
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the cmdlet.
         /// </param>
-        ///
         /// <returns>
         /// A CmdletInfo representing the cmdlet
         /// </returns>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the cmdlet is read-only or constant.
         /// </exception>
-        ///
         ///
         internal CmdletInfo AddCmdletToCache(
             string name,
@@ -1680,24 +1546,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a cmdlet from the cmdlet table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the cmdlet to remove.
         /// </param>
-        ///
         /// <param name="index">
         /// The index at which to remove the cmdlet
         /// If index is -1, remove all cmdlets with that name
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the cmdlet is removed even if it is ReadOnly.
         /// </param>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the cmdlet is constant.
         /// </exception>
-        ///
         internal void RemoveCmdlet(string name, int index, bool force)
         {
             Diagnostics.Assert(
@@ -1729,19 +1590,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a cmdlet entry from the cmdlet table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The key for the cmdlet entry to remove.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the cmdlet entry is removed even if it is ReadOnly.
         /// </param>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the cmdlet is constant.
         /// </exception>
-        ///
         internal void RemoveCmdletEntry(string name, bool force)
         {
             Diagnostics.Assert(
@@ -2021,7 +1878,6 @@ namespace System.Management.Automation
         /// We don't need a new reference in each scope since it
         /// is ScopedItemOptions.Constant.
         /// </summary>
-        ///
         private static readonly PSVariable s_trueVar =
             new PSVariable(
                 StringLiterals.True,
@@ -2034,7 +1890,6 @@ namespace System.Management.Automation
         /// We don't need a new reference in each scope since it
         /// is ScopedItemOptions.Constant.
         /// </summary>
-        ///
         private static readonly PSVariable s_falseVar =
             new PSVariable(
                 StringLiterals.False,
@@ -2047,7 +1902,6 @@ namespace System.Management.Automation
         /// We don't need a new reference in each scope since it
         /// is ScopedItemOptions.Constant.
         /// </summary>
-        ///
         private static readonly NullVariable s_nullVar =
             new NullVariable();
 
@@ -2077,7 +1931,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="alias"></param>
         /// <param name="value"></param>
@@ -2100,7 +1953,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="alias"></param>
         /// <param name="value"></param>

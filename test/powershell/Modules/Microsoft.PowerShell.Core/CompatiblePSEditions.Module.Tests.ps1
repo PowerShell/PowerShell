@@ -324,30 +324,42 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 }
 
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
-    BeforeAll {
-        if (-not $IsWindows)
-        {
-            return
+    $PSDefaultParameterValues = @{ 'It:Skip' = (-not $IsWindows) }
+
+    Context "System32 module path prepended to PSModulePath" {
+        BeforeAll {
+            if (-not $IsWindows)
+            {
+                return
+            }
+            Add-ModulePath (Join-Path $env:windir "System32\WindowsPowerShell\v1.0\Modules") -Prepend
         }
-        Add-ModulePath (Join-Path $env:windir "System32\WindowsPowerShell\v1.0\Modules") -Prepend
-    }
 
-    AfterAll {
-        if (-not $IsWindows)
-        {
-            return
+        AfterAll {
+            if (-not $IsWindows)
+            {
+                return
+            }
+            Restore-ModulePath
         }
-        Restore-ModulePath
+
+        It "Allows Windows PowerShell subprocesses to call `$PSHome modules still" {
+            $errors = powershell.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
+            $errors | Should -Be $null
+        }
+
+        It "Allows PowerShell Core 6 subprocesses to call core modules" {
+            $errors = pwsh.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
+            $errors | Should -Be $null
+        }
     }
 
-    It "Allows Windows PowerShell subprocesses to call `$PSHome modules still" -Skip:(-not $IsWindows) {
-        $errors = powershell.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
-        $errors | Should -Be $null
-    }
+    It "Does not duplicate the System32 module path in subprocesses" {
+        $sys32ModPathCount = pwsh.exe -C {
+            pwsh.exe -C '$null = $env:PSModulePath -match ([regex]::Escape((Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"))); $matches.Count'
+        }
 
-    It "Allows PowerShell Core 6 subprocesses to call core modules" -Skip:(-not $IsWindows) {
-        $errors = pwsh.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
-        $errors | Should -Be $null
+        $sys32ModPathCount | Should -Be 1
     }
 }
 

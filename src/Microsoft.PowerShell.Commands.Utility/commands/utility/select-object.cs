@@ -63,7 +63,6 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsCommon.Select, "Object", DefaultParameterSetName = "DefaultParameter",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113387", RemotingCapability = RemotingCapability.None)]
@@ -72,14 +71,12 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Switches
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(Position = 0, ParameterSetName = "DefaultParameter")]
@@ -87,7 +84,6 @@ namespace Microsoft.PowerShell.Commands
         public object[] Property { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -95,7 +91,6 @@ namespace Microsoft.PowerShell.Commands
         public string[] ExcludeProperty { get; set; } = null;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -103,7 +98,6 @@ namespace Microsoft.PowerShell.Commands
         public string ExpandProperty { get; set; } = null;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -115,7 +109,6 @@ namespace Microsoft.PowerShell.Commands
         private bool _unique;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -130,7 +123,6 @@ namespace Microsoft.PowerShell.Commands
         private int _last = 0;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -276,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             private int _streamedObjectCount;
-            private int _first,_last,_skip,_skipLast;
+            private int _first, _last, _skip, _skipLast;
             private bool _firstOrLastSpecified;
         }
 
@@ -332,7 +324,7 @@ namespace Microsoft.PowerShell.Commands
                 // ExcludeProperty implies -Property * for better UX
                 if ((Property == null) || (Property.Length == 0))
                 {
-                    Property = new Object[]{"*"};
+                    Property = new Object[] { "*" };
                     _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
                 }
             }
@@ -636,7 +628,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -653,7 +644,6 @@ namespace Microsoft.PowerShell.Commands
         private int _indexOfCurrentObject = 0;
         private int _indexCount = 0;
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -700,7 +690,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {

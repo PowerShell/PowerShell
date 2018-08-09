@@ -14,7 +14,6 @@ namespace System.Management.Automation
     /// <summary>
     /// The information about a parameter set and its parameters for a cmdlet
     /// </summary>
-    ///
     public class CommandParameterSetInfo
     {
         #region ctor
@@ -23,31 +22,24 @@ namespace System.Management.Automation
         /// Constructs the parameter set information using the specified parameter name,
         /// and type metadata.
         /// </summary>
-        ///
         /// <param name="name">
         /// The formal name of the parameter.
         /// </param>
-        ///
         /// <param name="isDefaultParameterSet">
         /// True if the parameter set is the default parameter set, or false otherwise.
         /// </param>
-        ///
         /// <param name="parameterSetFlag">
         /// The bit that specifies the parameter set in the type metadata.
         /// </param>
-        ///
         /// <param name="parameterMetadata">
         /// The type metadata about the cmdlet.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="parameterMetadata"/> is null.
         /// </exception>
-        ///
         internal CommandParameterSetInfo(
             string name,
             bool isDefaultParameterSet,
