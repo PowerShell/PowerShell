@@ -1,5 +1,18 @@
 # Changelog
 
+## v6.0.4 - 2018-08-08
+
+### Build and Packaging Improvements
+
+- Aggregate native components into a single NuGet package "Microsoft.PowerShell.Native".
+- Update the version of NuGet packages referenced by PowerShell.
+- Fix release build for macOS.
+
+### Test
+
+- Fix xUnit tests.
+- Add new tests for hosting PowerShell SDK NuGet packages.
+
 ## v6.0.3 - 2018-07-19
 
 ### Build and Packaging Improvements
