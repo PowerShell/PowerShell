@@ -370,7 +370,7 @@ namespace System.Management.Automation
             _listEntry = listEntry;
         }
 
-        private ListEntryBuilder AddItem(string value, string label, DisplayEntryValueType kind, string format, DisplayEntry itemSelectionContition)
+        private ListEntryBuilder AddItem(string value, string label, DisplayEntryValueType kind, string format, DisplayEntry itemSelectionCondition)
         {
             if (string.IsNullOrEmpty(value))
                 throw PSTraceSource.NewArgumentNullException("property");
@@ -380,29 +380,29 @@ namespace System.Management.Automation
                 DisplayEntry = new DisplayEntry(value, kind),
                 Label = label,
                 FormatString = format,
-                ItemSelectionCondition = itemSelectionContition,
+                ItemSelectionCondition = itemSelectionCondition,
             });
 
             return this;
         }
 
         /// <summary></summary>
-        public ListEntryBuilder AddItemScriptBlock(string scriptBlock, string label = null, string format = null, DisplayEntry itemSelectionContition = null)
+        public ListEntryBuilder AddItemScriptBlock(string scriptBlock, string label = null, string format = null, DisplayEntry itemSelectionCondition = null)
         {
-            return AddItem(scriptBlock, label, DisplayEntryValueType.ScriptBlock, format, itemSelectionContition);
+            return AddItem(scriptBlock, label, DisplayEntryValueType.ScriptBlock, format, itemSelectionCondition);
         }
 
         /// <summary></summary>
-        public ListEntryBuilder AddItemProperty(string property, string label = null, string format = null, DisplayEntry itemSelectionContition = null)
+        public ListEntryBuilder AddItemProperty(string property, string label = null, string format = null, DisplayEntry itemSelectionCondition = null)
         {
-            return AddItem(property, label, DisplayEntryValueType.Property, format, itemSelectionContition);
+            return AddItem(property, label, DisplayEntryValueType.Property, format, itemSelectionCondition);
         }
 
         /// <summary></summary>
         public ListEntryBuilder AddItemPropertyIfSet(string property, string label = null, string format = null)
         {
-            var itemSelectionContition = DisplayEntry.CreatePropertyEntry(property);
-            return AddItem(property, label, DisplayEntryValueType.Property, format, itemSelectionContition);
+            var itemSelectionCondition = DisplayEntry.CreatePropertyEntry(property);
+            return AddItem(property, label, DisplayEntryValueType.Property, format, itemSelectionCondition);
         }
 
         /// <summary></summary>
