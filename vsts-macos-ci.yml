@@ -43,6 +43,7 @@ phases:
     condition: succeeded()
 
   - powershell: |
+      $ErrorActionPreference = 'continue'
       tools/travis.ps1
     displayName: Build and test
     condition: succeeded()
