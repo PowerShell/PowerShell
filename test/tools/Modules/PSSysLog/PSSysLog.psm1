@@ -822,7 +822,7 @@ function Get-PSOsLog
 #>
 function Export-PSOsLog
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='default')]
     param
     (
         [Parameter(Mandatory)]
@@ -831,7 +831,16 @@ function Export-PSOsLog
 
         [string] $LogId = "powershell",
 
-        [int] $LogPid
+        [int] $LogPid,
+
+        [Parameter(Mandatory, ParameterSetName='WaitUntil')]
+        [int] $TimeoutInMilliseconds,
+
+        [Parameter(Mandatory, ParameterSetName='WaitUntil')]
+        [int] $IntervalInMilliseconds,
+
+        [Parameter(Mandatory, ParameterSetName='WaitUntil')]
+        [string] $MinimumCount
     )
 
     Test-MacOS
@@ -863,7 +872,56 @@ function Export-PSOsLog
         )
     }
 
-    Start-NativeExecution -command {log show --info @extraParams}
+    Wait-UntilSuccess {
+        # Leaving this in an turned on by default until the tests are stabilized.
+        Write-Verbose "Exporting macOS logs..." -Verbose
+        $log = @(Start-NativeExecution -command {log show --info @extraParams} | Select-String -SimpleMatch 'com.microsoft.powershell')
+
+        if($log.Count -ge $MinimumCount){
+            Write-Output $log
+        }
+        else {
+            throw "did not recieve at least $MinimumCount records but $($log.Count) instead."
+        }
+    } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds -LogErrorSb {
+        $log = Start-NativeExecution -command {log show --info @extraParams} | Select-String -SimpleMatch 'com.microsoft.powershell'
+        Send-VstsLogFile -Contents $log -LogName 'Export-PSOsLog-Failure'
+    }
+}
+
+function Wait-UntilSuccess
+{
+    [CmdletBinding()]
+    param (
+        [ScriptBlock]$sb,
+        [ScriptBlock]$LogErrorSb,
+        [int]$TimeoutInMilliseconds = 10000,
+        [int]$IntervalInMilliseconds = 10000
+        )
+    # Get the current time
+    $startTime = [DateTime]::Now
+
+    # Loop until the script block returns
+    while ($true) {
+        try{
+            return & $sb
+        }
+        catch{
+            # If the timeout period has passed, return false
+            $msPassed = ([DateTime]::Now - $startTime).TotalMilliseconds
+            if ($msPassed -gt $timeoutInMilliseconds) {
+                if($LogErrorSb)
+                {
+                    try { & $LogErrorSb } catch {Write-Verbose "Logging of Error details failed with: $_" -Verbose}
+                }
+                throw
+            }
+        }
+
+        # Sleep for the specified interval
+        Start-Sleep -Milliseconds $intervalInMilliseconds
+    }
+    return $true
 }
 
 <#
