@@ -246,13 +246,13 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 
     It "Select-Object with SkipIndex should work" {
         $results = "1", "2", "3" | Select-Object -SkipIndex 0, 2
-        $results.Count | Should -Be 1
+        $results | Should -HaveCount 1
         $results[0] | Should -BeExactly "2"
     }
 
     It "Select-Object with SkipIndex should work with index out of range" {
         $results = 0..10 | Select-Object -SkipIndex 5, 6, 7, 8, 11
-        $results.Count | Should -Be 7
+        $results | Should -HaveCount 7
         $results -join ',' | Should -BeExactly "0,1,2,3,4,9,10"
     }
 
