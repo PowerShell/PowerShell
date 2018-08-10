@@ -206,12 +206,6 @@ elseif($Stage -eq 'Build')
 
     $excludeTag = @('RequireSudoOnUnix')
 
-    if($env:TF_BUILD)
-    {
-        # Used to skip tests that fail in VSTS
-        $excludeTag += 'SkipInVSTS'
-    }
-
     $noSudoPesterParam = @{
         'BinDir'     = $output
         'PassThru'   = $true
@@ -264,12 +258,6 @@ elseif($Stage -eq 'Build')
     $sudoPesterParam.Remove('Path')
     $sudoPesterParam['Tag'] = @('RequireSudoOnUnix')
     $sudoPesterParam['ExcludeTag'] = @()
-    if($env:TF_BUILD)
-    {
-        # Used to skip tests that fail in VSTS
-        $sudoPesterParam['ExcludeTag'] = @('SkipInVSTS')
-    }
-
     $sudoPesterParam['Sudo'] = $true
     $sudoPesterParam['OutputFile'] = $testResultsSudo
     $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam
