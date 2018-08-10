@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
             for (var index = 0; index < list.Count; index++)
             {
                 var element = list[index];
-                switch(element)
+                switch (element)
                 {
                     case JArray subList:
                     {
