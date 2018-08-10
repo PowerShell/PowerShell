@@ -116,16 +116,16 @@ phases:
     condition: succeededOrFailed()
     displayName: Publish Test Results ParallelXUnitTestResults.xml
     inputs:
-      testRunner: Parallel XUnit
+      testRunner: XUnit
       testResultsFiles: '**\ParallelXUnitTestResults.xml'
-      testRunTitle: XUnit
+      testRunTitle: Parallel XUnit
       mergeTestResults: true
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     displayName: Publish Test Results SequentialXUnitTestResults.xml
     inputs:
-      testRunner: Sequential XUnit
+      testRunner: XUnit
       testResultsFiles: '**\SequentialXUnitTestResults.xml'
-      testRunTitle: XUnit
+      testRunTitle: Sequential XUnit
       mergeTestResults: true
