@@ -168,12 +168,12 @@ namespace Microsoft.PowerShell.Commands
                     typedefs.Add(consolidatedTypeName, viewList);
                 }
                 viewList.Add(formatdef);
-            }// foreach(ViewDefinition...
+            }
 
             if (typedefs.Count == 0)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
-                    new TypeLoadException(StringUtil.Format(GetFormatDataStrings.SpecifiedTypeNotFound, _typename),
+                    new TypeLoadException(StringUtil.Format(GetFormatDataStrings.SpecifiedTypeNotFound, _typename)),
                     "SpecifiedTypeNotFound",
                     ErrorCategory.InvalidOperation,
                     _typename);
