@@ -99,15 +99,16 @@ Describe "Module cmdlet version constraint checking" -Tags "Feature" {
                 RequiredVersion = '2.2'
             }
         )
+
+        $moduleName = 'TestModule'
+        $modulePath = Join-Path $TestDrive $moduleName
+        New-Item -Path $modulePath -ItemType Directory
+        $manifestPath = Join-Path $modulePath "$moduleName.psd1"
+        New-ModuleManifest -Path $manifestPath -ModuleVersion $actualVersion
     }
 
     Context "Checking preloaded modules" {
         BeforeAll {
-            $moduleName = 'TestModule'
-            $modulePath = Join-Path $TestDrive $moduleName
-            New-Item -Path $modulePath -ItemType Directory
-            $manifestPath = Join-Path $modulePath "$moduleName.psd1"
-            New-ModuleManifest -Path $manifestPath -ModuleVersion $actualVersion
             $oldPSModulePath = $env:PSModulePath
             $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
             Import-Module $modulePath
@@ -180,11 +181,37 @@ Describe "Module cmdlet version constraint checking" -Tags "Feature" {
     }
 
     Context "Required modules" {
+        BeforeAll {
+            Import-Module $modulePath
+            $reqModName = 'ReqMod'
+            $reqModPath = Join-Path $TestDrive "$reqModName.psd1"
+        }
 
-    }
+        AfterEach {
+            Get-Module $reqModName | Remove-Module
+        }
 
-    Context "Loading pre-loaded module without extension name" {
+        AfterAll {
+            Get-Module $moduleName | Remove-Module
+        }
 
+        It "Successfully loads a module when the required module has ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $successCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+            New-ModuleManifest -Path $reqModPath -RequiredModules $modSpec
+            $reqMod = Import-Module $reqModPath -PassThru
+
+            $reqMod.Name | Should -Be $reqModName
+        }
+
+        It "Does not load a module when the required module has ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $failCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+            New-ModuleManifest -Path $reqModPath -RequiredModules $modSpec
+            { Import-Module $reqModPath -ErrorAction Stop } | Should -Throw -ErrorId "Modules_InvalidManifest,Microsoft.PowerShell.Commands.ImportModuleCommand"
+        }
     }
 
     Context "Loading module with the same name but different version" {
