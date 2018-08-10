@@ -1042,13 +1042,10 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        // To find the entries based on name.
-        // Why collection - Different SnapIn/modules and same entity names.
-        // If used on command collection entry, then for the same name, one can have multiple output
         /// <summary>
         /// To find the entries based on name.
         /// Why collection - Different SnapIn/modules and same entity names.
-        /// If used on command collection entry, then for the same name, one can have multiple output
+        /// If used on command collection entry, then for the same name, one can have multiple output.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -1716,10 +1713,6 @@ namespace System.Management.Automation.Runspaces
             return new InitialSessionState();
         }
 
-        // This one is for module. Can take only one module, and not collection
-        // public static InitialSessionState Create(Module);
-
-        // Specify the unregistered module/snapIn path or path collection
         /// <summary>
         /// </summary>
         /// <param name="snapInPath"></param>

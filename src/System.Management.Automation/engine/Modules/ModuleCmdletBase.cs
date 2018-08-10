@@ -4484,7 +4484,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
         /// <param name="key">the table key to use.</param>
-        /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.>
+        /// <param name="manifestProcessingFlags">Specifies how to treat errors and whether to load elements.</param>
         /// <param name="result">Value from the manifest converted to the right type.</param>
         /// <returns><c>true</c> if success; <c>false</c> if there were errors.</returns>
         internal bool GetScalarFromData<T>(
