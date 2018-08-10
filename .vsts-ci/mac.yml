@@ -58,20 +58,24 @@ phases:
     displayName: After Success
     condition: succeeded()
 
+  # Uploads any packages as an artifact
   - powershell: |
       Get-ChildItem -Path *.pkg, *.tar.gz -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
         Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts]$_"
       }
     displayName: Publish Artifacts
-    condition: succeeded()
+    condition: succeededOrFailed()
 
+  # Uploads any Test results as an artifact
   - powershell: |
       Get-ChildItem -Path Test*.xml -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
         Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$_"
       }
     displayName: Publish Test Results
-    condition: succeeded()
+    condition: succeededOrFailed()
 
+  # Publish the various Test results as Test results to VSTS
+  # Separate tasks are used because a failure will stop the task
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     displayName: Publish Test Results TestResultsSudo.xml
@@ -110,9 +114,18 @@ phases:
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
-    displayName: Publish Test Results *XUnitTestResults.xml
+    displayName: Publish Test Results ParallelXUnitTestResults.xml
     inputs:
-      testRunner: XUnit
-      testResultsFiles: '**\*XUnitTestResults.xml'
+      testRunner: Parallel XUnit
+      testResultsFiles: '**\ParallelXUnitTestResults.xml'
+      testRunTitle: XUnit
+      mergeTestResults: true
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    displayName: Publish Test Results SequentialXUnitTestResults.xml
+    inputs:
+      testRunner: Sequential XUnit
+      testResultsFiles: '**\SequentialXUnitTestResults.xml'
       testRunTitle: XUnit
       mergeTestResults: true
