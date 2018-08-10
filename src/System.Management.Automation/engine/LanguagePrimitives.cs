@@ -696,6 +696,30 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Helper method for [Try]Compare to determine object ordering with null.
+        /// </summary>
+        /// <param name="value">the numeric value to compare to null</param>
+        /// <param name="numberIsRightHandSide">True if the number to compare is on the right hand side if the comparison.</param>
+        private static int CompareObjectToNull(object value, bool numberIsRightHandSide)
+        {
+            var i = numberIsRightHandSide ? -1 : 1;
+
+            // If it's a positive number, including 0, it's greater than null
+            // for everything else it's less than zero...
+            switch (value)
+            {
+                case Int16 i16: return Math.Sign(i16) < 0 ? -i : i;
+                case Int32 i32: return Math.Sign(i32) < 0 ? -i : i;
+                case Int64 i64: return Math.Sign(i64) < 0 ? -i : i;
+                case sbyte sby: return Math.Sign(sby) < 0 ? -i : i;
+                case float f: return Math.Sign(f) < 0 ? -i : i;
+                case double d: return Math.Sign(d) < 0 ? -i : i;
+                case decimal de: return Math.Sign(de) < 0 ? -i : i;
+                default: return i;
+            }
+        }
+
+        /// <summary>
         /// Compare first and second, converting second to the
         /// type of the first, if necessary.
         /// </summary>
@@ -762,43 +786,12 @@ namespace System.Management.Automation
 
             if (first == null)
             {
-                if (second == null)
-                {
-                    return 0;
-                }
-                else
-                {
-                    // If it's a positive number, including 0, it's greater than null
-                    // for everything else it's less than zero...
-                    switch (LanguagePrimitives.GetTypeCode(second.GetType()))
-                    {
-                        case TypeCode.Int16: return System.Math.Sign((Int16)second) < 0 ? 1 : -1;
-                        case TypeCode.Int32: return System.Math.Sign((Int32)second) < 0 ? 1 : -1;
-                        case TypeCode.Int64: return System.Math.Sign((Int64)second) < 0 ? 1 : -1;
-                        case TypeCode.SByte: return System.Math.Sign((sbyte)second) < 0 ? 1 : -1;
-                        case TypeCode.Single: return System.Math.Sign((System.Single)second) < 0 ? 1 : -1;
-                        case TypeCode.Double: return System.Math.Sign((System.Double)second) < 0 ? 1 : -1;
-                        case TypeCode.Decimal: return System.Math.Sign((System.Decimal)second) < 0 ? 1 : -1;
-                        default: return -1;
-                    }
-                }
+                return second == null ? 0 : CompareObjectToNull(second, true);
             }
 
             if (second == null)
             {
-                // If it's a positive number, including 0, it's greater than null
-                // for everything else it's less than zero...
-                switch (LanguagePrimitives.GetTypeCode(first.GetType()))
-                {
-                    case TypeCode.Int16: return System.Math.Sign((Int16)first) < 0 ? -1 : 1;
-                    case TypeCode.Int32: return System.Math.Sign((Int32)first) < 0 ? -1 : 1;
-                    case TypeCode.Int64: return System.Math.Sign((Int64)first) < 0 ? -1 : 1;
-                    case TypeCode.SByte: return System.Math.Sign((sbyte)first) < 0 ? -1 : 1;
-                    case TypeCode.Single: return System.Math.Sign((System.Single)first) < 0 ? -1 : 1;
-                    case TypeCode.Double: return System.Math.Sign((System.Double)first) < 0 ? -1 : 1;
-                    case TypeCode.Decimal: return System.Math.Sign((System.Decimal)first) < 0 ? -1 : 1;
-                    default: return 1;
-                }
+                return CompareObjectToNull(first, false);
             }
 
             if (first is string firstString)
@@ -852,6 +845,127 @@ namespace System.Management.Automation
             // At this point, we know that they aren't equal but we have no way of
             // knowing which should compare greater than the other so we throw an exception.
             throw PSTraceSource.NewArgumentException("first", ExtendedTypeSystem.NotIcomparable, first.ToString());
+        }
+
+        /// <summary>
+        /// Tries to compare first and second, converting second to the type of the first, if necessary.
+        /// If a conversion is needed but fails, false is return.
+        /// </summary>
+        /// <param name="first">First comparison value.</param>
+        /// <param name="second">Second comparison value.</param>
+        /// <param name="result">Less than zero if first is smaller than second, more than
+        /// zero if it is greater or zero if they are the same.</param>
+        /// <returns>True if the comparison was successful, false otherwise.</returns>
+        public static bool TryCompare(object first, object second, out int result)
+        {
+            return TryCompare(first, second, ignoreCase: false, CultureInfo.InvariantCulture, out result);
+        }
+
+        /// <summary>
+        /// Tries to compare first and second, converting second to the type of the first, if necessary.
+        /// If a conversion is needed but fails, false is return.
+        /// </summary>
+        /// <param name="first">First comparison value.</param>
+        /// <param name="second">Second comparison value.</param>
+        /// <param name="ignoreCase">Used if both values are strings.</param>
+        /// <param name="result">Less than zero if first is smaller than second, more than zero if it is greater or zero if they are the same.</param>
+        /// <returns>True if the comparison was successful, false otherwise.</returns>
+        public static bool TryCompare(object first, object second, bool ignoreCase, out int result)
+        {
+            return TryCompare(first, second, ignoreCase, CultureInfo.InvariantCulture, out result);
+        }
+
+        /// <summary>
+        /// Tries to compare first and second, converting second to the type of the first, if necessary.
+        /// If a conversion is needed but fails, false is return.
+        /// </summary>
+        /// <param name="first">First comparison value.</param>
+        /// <param name="second">Second comparison value.</param>
+        /// <param name="ignoreCase">Used if both values are strings.</param>
+        /// <param name="formatProvider">Used in type conversions and if both values are strings.</param>
+        /// <param name="result">Less than zero if first is smaller than second, more than  zero if it is greater or zero if they are the same.</param>
+        /// <returns>True if the comparison was successful, false otherwise.</returns>
+        /// <exception cref="ArgumentException">The parameter <paramref name="formatProvider"/> is not a <see cref="CultureInfo"/>.</exception>
+        public static bool TryCompare(object first, object second, bool ignoreCase, IFormatProvider formatProvider, out int result)
+        {
+            result = 0;
+            if (formatProvider == null)
+            {
+                formatProvider = CultureInfo.InvariantCulture;
+            }
+
+            if (!(formatProvider is CultureInfo culture))
+            {
+                throw PSTraceSource.NewArgumentException("formatProvider");
+            }
+
+            first = PSObject.Base(first);
+            second = PSObject.Base(second);
+
+            if (first == null && second == null)
+            {
+                result = 0;
+                return true;
+            }
+
+            if (first == null)
+            {
+                result = CompareObjectToNull(second, true);
+                return true;
+            }
+
+            if (second == null)
+            {
+                // If it's a positive number, including 0, it's greater than null
+                // for everything else it's less than zero...
+                result = CompareObjectToNull(first, false);
+                return true;
+            }
+
+            if (first is string firstString)
+            {
+                if (!(second is string secondString))
+                {
+                    if (!TryConvertTo(second, culture, out secondString))
+                    {
+                        return false;
+                    }
+                }
+
+                result = culture.CompareInfo.Compare(firstString, secondString, ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
+                return true;
+            }
+
+            Type firstType = first.GetType();
+            Type secondType = second.GetType();
+            int firstIndex = TypeTableIndex(firstType);
+            int secondIndex = TypeTableIndex(secondType);
+            if (firstIndex != -1 && secondIndex != -1)
+            {
+                result = NumericCompare(first, second, firstIndex, secondIndex);
+                return true;
+            }
+
+            if (!TryConvertTo(second, firstType, culture, out object secondConverted))
+            {
+                return false;
+            }
+
+            if (first is IComparable firstComparable)
+            {
+                result = firstComparable.CompareTo(secondConverted);
+                return true;
+            }
+
+            if (first.Equals(second))
+            {
+                result = 0;
+                return true;
+            }
+
+            // At this point, we know that they aren't equal but we have no way of
+            // knowing which should compare greater than the other so we return false.
+            return false;
         }
 
         /// <summary>
