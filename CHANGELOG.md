@@ -1,6 +1,6 @@
 # Changelog
 
-## v6.0.4 - 2018-08-08
+## v6.0.4 - 2018-08-10
 
 ### Build and Packaging Improvements
 
