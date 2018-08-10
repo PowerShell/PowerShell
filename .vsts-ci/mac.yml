@@ -68,7 +68,7 @@ phases:
 
   # Uploads any Test results as an artifact
   - powershell: |
-      Get-ChildItem -Path Test*.xml -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
+      Get-ChildItem -Path Test*.xml, *XUnitTestResults.xml -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
         Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$_"
       }
     displayName: Publish Test Results
