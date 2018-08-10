@@ -24,7 +24,7 @@ phases:
       Write-Host "##vso[task.setvariable variable=TMPDIR]$env:AGENT_TEMPDIRECTORY"
     displayName: Set TMPDIR to AGENT_TEMPDIRECTORY
     condition: succeededOrFailed()
-  
+
   - powershell: |
       git submodule update --init
     displayName: SubModule Init
