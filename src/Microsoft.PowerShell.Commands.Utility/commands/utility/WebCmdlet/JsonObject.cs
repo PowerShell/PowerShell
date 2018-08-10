@@ -19,9 +19,9 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public static class JsonObject
     {
-        private class DuplicateMemberSet : HashSet<string>
+        private class DuplicateMemberHashSet : HashSet<string>
         {
-            public DuplicateMemberSet(int capacity) : base(capacity, StringComparer.CurrentCultureIgnoreCase)
+            public DuplicateMemberHashSet(int capacity) : base(capacity, StringComparer.OrdinalIgnoreCase)
             {
             }
         }
@@ -35,18 +35,21 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public static object ConvertFromJson(string input, out ErrorRecord error)
         {
-            return ConvertFromJson(input, returnHashTable: false, out error);
+            return ConvertFromJson(input, returnHashtable: false, out error);
         }
 
         /// <summary>
-        /// Convert a Json string back to an object of type PSObject or HashTable depending on parameter <paramref name="returnHashTable"/>.
+        /// Convert a Json string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
+        /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
         /// </summary>
         /// <param name="input">The json text to convert.</param>
-        /// <param name="returnHashTable">True if the result should be returned as a HashTable instead of a PSObject.</param>
+        /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
+        /// instead of a <see cref="System.Management.Automation.PSObject"/>.</param>
         /// <param name="error">An error record if the conversion failed.</param>
-        /// <returns>A PSObject or a HashTable if the <paramref name="returnHashTable"/> parameter is true.</returns>
+        /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
+        /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        public static object ConvertFromJson(string input, bool returnHashTable, out ErrorRecord error)
+        public static object ConvertFromJson(string input, bool returnHashtable, out ErrorRecord error)
         {
             if (input == null)
             {
@@ -85,11 +88,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     case JObject dictionary:
                         // JObject is a IDictionary
-                        return returnHashTable
+                        return returnHashtable
                                    ? PopulateHashTableFromJDictionary(dictionary, out error)
-                                   : PopulateFromJDictionary(dictionary, new DuplicateMemberSet(dictionary.Count), out error);
+                                   : PopulateFromJDictionary(dictionary, new DuplicateMemberHashSet(dictionary.Count), out error);
                     case JArray list:
-                        return returnHashTable
+                        return returnHashtable
                                    ? PopulateHashTableFromJArray(list, out error)
                                    : PopulateFromJArray(list, out error);
                     default: return obj;
@@ -105,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // This function is a clone of PopulateFromDictionary using JObject as an input.
-        private static PSObject PopulateFromJDictionary(JObject entries, DuplicateMemberSet memberTracker, out ErrorRecord error)
+        private static PSObject PopulateFromJDictionary(JObject entries, DuplicateMemberHashSet memberHashTracker, out ErrorRecord error)
         {
             error = null;
             var result = new PSObject(entries.Count);
@@ -124,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
                 // does not throw when encountering duplicates and just uses the last entry.
-                if (memberTracker.TryGetValue(entry.Key, out var maybePropertyName)
+                if (memberHashTracker.TryGetValue(entry.Key, out var maybePropertyName)
                     && string.Compare(entry.Key, maybePropertyName, StringComparison.CurrentCulture) == 0)
                 {
                     var errorMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
@@ -138,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Compare case insensitive to tell the user to use the -AsHashTable option instead.
                 // This is because PSObject cannot have keys with different casing.
-                if (memberTracker.TryGetValue(entry.Key, out var propertyName))
+                if (memberHashTracker.TryGetValue(entry.Key, out var propertyName))
                 {
                     var errorMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.KeysWithDifferentCasingInJsonString, propertyName, entry.Key);
                     error = new ErrorRecord(
@@ -163,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
                 else if (entry.Value is JObject dic)
                 {
                     // Dictionary
-                    PSObject dicResult = PopulateFromJDictionary(dic, new DuplicateMemberSet(dic.Count), out error);
+                    PSObject dicResult = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count), out error);
                     if (error != null)
                     {
                         return null;
@@ -178,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
                     result.Properties.Add(new PSNoteProperty(entry.Key, theValue.Value));
                 }
 
-                memberTracker.Add(entry.Key);
+                memberHashTracker.Add(entry.Key);
             }
 
             return result;
@@ -207,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
                 else if (element is JObject dic)
                 {
                     // Dictionary
-                    PSObject dicResult = PopulateFromJDictionary(dic, new DuplicateMemberSet(dic.Count),  out error);
+                    PSObject dicResult = PopulateFromJDictionary(dic, new DuplicateMemberHashSet(dic.Count),  out error);
                     if (error != null)
                     {
                         return null;
