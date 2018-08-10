@@ -64,7 +64,7 @@ namespace System.Management.Automation.Provider
         /// </summary>
         private ProviderInfo _providerInformation = null;
 
-        private readonly PSObjectBuilderLessOptimized _psObjectBuilderLessOptimized = new PSObjectBuilderLessOptimized(10);
+        private readonly PSObjectBuilder _psObjectBuilder = new PSObjectBuilder(10);
 
         #endregion private data
 
@@ -1778,7 +1778,7 @@ namespace System.Management.Automation.Provider
                 throw PSTraceSource.NewArgumentNullException("item");
             }
 
-            _psObjectBuilderLessOptimized.BeginCreateObject(item, 6);
+            _psObjectBuilder.BeginCreateObject(item, 6);
 
             Diagnostics.Assert(
                 ProviderInfo != null,
@@ -1789,7 +1789,7 @@ namespace System.Management.Automation.Provider
 
             string providerQualifiedPath = LocationGlobber.GetProviderQualifiedPath(path, ProviderInfo);
 
-            _psObjectBuilderLessOptimized.AddNoteProperty("PSPath", providerQualifiedPath);
+            _psObjectBuilder.AddNoteProperty("PSPath", providerQualifiedPath);
             providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSPath", providerQualifiedPath);
 
             // Now get the parent path and child name
@@ -1810,14 +1810,14 @@ namespace System.Management.Automation.Provider
                     providerQualifiedParentPath =
                         LocationGlobber.GetProviderQualifiedPath(parentPath, ProviderInfo);
                 }
-                _psObjectBuilderLessOptimized.AddNoteProperty("PSParentPath", providerQualifiedParentPath);
+                _psObjectBuilder.AddNoteProperty("PSParentPath", providerQualifiedParentPath);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSParentPath", providerQualifiedParentPath);
 
                 // Get the child name
 
                 string childName = navProvider.GetChildName(path, Context);
 
-                _psObjectBuilderLessOptimized.AddNoteProperty("PSChildName", childName);
+                _psObjectBuilder.AddNoteProperty("PSChildName", childName);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
             }
 
@@ -1825,15 +1825,15 @@ namespace System.Management.Automation.Provider
 
             if (PSDriveInfo != null)
             {
-                _psObjectBuilderLessOptimized.AddNoteProperty(this.PSDriveInfo.GetNotePropertyForProviderCmdlets("PSDrive"));
+                _psObjectBuilder.AddNoteProperty(this.PSDriveInfo.GetNotePropertyForProviderCmdlets("PSDrive"));
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSDrive", this.PSDriveInfo);
             }
 
             // ProviderInfo
-            _psObjectBuilderLessOptimized.AddNoteProperty(this.ProviderInfo.GetNotePropertyForProviderCmdlets("PSProvider"));
+            _psObjectBuilder.AddNoteProperty(this.ProviderInfo.GetNotePropertyForProviderCmdlets("PSProvider"));
             providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSProvider", this.ProviderInfo);
 
-            var result = _psObjectBuilderLessOptimized.EndCreateObject();
+            var result = _psObjectBuilder.EndCreateObject();
 
             // Move the TypeNames to the wrapping object if the wrapped object
             // was an PSObject

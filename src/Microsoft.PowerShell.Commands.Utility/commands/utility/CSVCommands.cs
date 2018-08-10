@@ -1289,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
 
             var values = new List<string>(ValueCountGuestimate);
             var builder = new StringBuilder(LineLengthGuestimate);
-            var objectBuilder = new PSObjectBuilder(ValueCountGuestimate);
+            var objectBuilder = new ValuePSObjectBuilder(ValueCountGuestimate);
             while (true)
             {
                 ParseNextRecord(values, builder);
@@ -1620,7 +1620,7 @@ namespace Microsoft.PowerShell.Commands
 
         private
         PSObject
-        BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, ref PSObjectBuilder objectBuilder)
+        BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, ref ValuePSObjectBuilder objectBuilder)
         {
             //string[] namesarray = null;
             char delimiterlocal = delimiter;

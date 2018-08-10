@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
             // Now write the content to the item
             try
             {
-                var psObjectBuilder = new PSObjectBuilder(PSContentCommandMemberCount, trustedNames: true);
+                var psObjectBuilder = new ValuePSObjectBuilder(PSContentCommandMemberCount, trustedNames: true);
                 foreach (ContentHolder holder in contentStreams)
                 {
                     if (holder.Writer != null)

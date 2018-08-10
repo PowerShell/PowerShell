@@ -2386,7 +2386,7 @@ namespace System.Management.Automation
     /// object being created, and the members that are being added are not
     /// visible from any other location.
     /// This way, defensive copies and otherwise expensive operations can be avoided.
-    public ref struct PSObjectBuilder
+    public ref struct ValuePSObjectBuilder
     {
         const int DefaultHirearchyDepth = 4;
         private readonly HashSet<string> _validatedNames;
@@ -2397,10 +2397,10 @@ namespace System.Management.Automation
         private Stack<PSObject> CurrentObjectStack => _currentObjectStack ?? (_currentObjectStack = new Stack<PSObject>(DefaultHirearchyDepth));
 
         /// <summary>
-        /// Initializes a new instance of PSObjectBuilder.
+        /// Initializes a new instance of ValuePSObjectBuilder.
         /// </summary>
         /// <param name="validatedNameCount">The initial size of the set that tracks validated parameter names.</param>
-        public PSObjectBuilder(int validatedNameCount)
+        public ValuePSObjectBuilder(int validatedNameCount)
         {
             if (validatedNameCount < 1)
             {
@@ -2413,11 +2413,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of PSObjectBuilder.
+        /// Initializes a new instance of ValuePSObjectBuilder.
         /// </summary>
         /// <param name="validatedNameCount">The initial size of the set that tracks validated parameter names.</param>
         /// <param name="trustedNames">True if all the names are preValidated.</param>
-        internal PSObjectBuilder(int validatedNameCount, bool trustedNames)
+        internal ValuePSObjectBuilder(int validatedNameCount, bool trustedNames)
         {
             if (validatedNameCount < 1)
             {
@@ -2488,10 +2488,10 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Unsafe version of PSObjectBuilder that is not guaranteed to be on the same thread.
+    /// Unsafe version of ValuePSObjectBuilder that is not guaranteed to be on the same thread.
     /// Usage must be reviewed carefully.
     /// </summary>
-    internal class PSObjectBuilderLessOptimized
+    internal class PSObjectBuilder
     {
         const int DefaultHirearchyDepth = 4;
         private readonly HashSet<string> _validatedNames;
@@ -2502,10 +2502,10 @@ namespace System.Management.Automation
         private Stack<PSObject> CurrentObjectStack => _currentObjectStack ?? (_currentObjectStack = new Stack<PSObject>(DefaultHirearchyDepth));
 
         /// <summary>
-        /// Initializes a new instance of PSObjectBuilder.
+        /// Initializes a new instance of ValuePSObjectBuilder.
         /// </summary>
         /// <param name="validatedNameCount">The initial size of the set that tracks validated parameter names.</param>
-        public PSObjectBuilderLessOptimized(int validatedNameCount)
+        public PSObjectBuilder(int validatedNameCount)
         {
             if (validatedNameCount < 1)
             {

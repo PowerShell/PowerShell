@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new ArgumentNullException(nameof(input));
             }
 
-            var objectFactory = new PSObjectBuilder(32);
+            var objectFactory = new ValuePSObjectBuilder(32);
             var memberTracker = new DuplicateMemberSet(32);
             error = null;
             object obj;
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // This function is a clone of PopulateFromDictionary using JObject as an input.
-        private static PSObject PopulateFromJDictionary(JObject entries, ref PSObjectBuilder objectBuilder, DuplicateMemberSet memberTracker, out ErrorRecord error)
+        private static PSObject PopulateFromJDictionary(JObject entries, ref ValuePSObjectBuilder objectBuilder, DuplicateMemberSet memberTracker, out ErrorRecord error)
         {
             error = null;
             objectBuilder.BeginCreateObject(entries.Count);
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // This function is a clone of PopulateFromList using JArray as input.
-        private static ICollection<object> PopulateFromJArray(JArray list, ref PSObjectBuilder objectBuilder, out ErrorRecord error)
+        private static ICollection<object> PopulateFromJArray(JArray list, ref ValuePSObjectBuilder objectBuilder, out ErrorRecord error)
         {
             error = null;
             var result = new object[list.Count];

@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
         /// The context the command is being run under.
         /// </param>
         /// <param name="psobjectBuilder"></param>
-        internal void WriteContentObject(object content, long readCount, PathInfo pathInfo, CmdletProviderContext context, ref PSObjectBuilder psobjectBuilder)
+        internal void WriteContentObject(object content, long readCount, PathInfo pathInfo, CmdletProviderContext context, ref ValuePSObjectBuilder psobjectBuilder)
         {
             Dbg.Diagnostics.Assert(
                 content != null,
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns>
             /// The PSObject that was passed in with the cached notes added.
             /// </returns>
-            public void AttachNotes(ref PSObjectBuilder objectBuilder)
+            public void AttachNotes(ref ValuePSObjectBuilder objectBuilder)
             {
                 // Construct a provider qualified path as the Path note
                 objectBuilder.AddNoteProperty("PSPath", PSPath);

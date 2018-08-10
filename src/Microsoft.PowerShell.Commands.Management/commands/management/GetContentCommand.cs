@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (ContentHolder holder in contentStreams)
                 {
                     long countRead = 0;
-                    var psobjectBuilder = new PSObjectBuilder(7);
+                    var psobjectBuilder = new ValuePSObjectBuilder(7);
                     Dbg.Diagnostics.Assert(
                         holder.Reader != null,
                         "All holders should have a reader assigned");
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands
         /// true if no error occured
         /// false if there was an error
         /// </returns>
-        private bool ScanForwardsForTail(ContentHolder holder, CmdletProviderContext currentContext, ref PSObjectBuilder psobjectBuilder)
+        private bool ScanForwardsForTail(ContentHolder holder, CmdletProviderContext currentContext, ref ValuePSObjectBuilder psobjectBuilder)
         {
             var fsReader = holder.Reader as FileSystemContentReaderWriter;
             Dbg.Diagnostics.Assert(fsReader != null, "Tail is only supported for FileSystemContentReaderWriter");

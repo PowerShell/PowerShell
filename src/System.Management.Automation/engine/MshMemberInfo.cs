@@ -3816,7 +3816,7 @@ namespace System.Management.Automation
         public abstract void Add(T member, bool preValidated);
 
         /// <summary>
-        /// Overload used by PSObjectBuilder to remove the need to make a defensive copy of the PSOBject
+        /// Overload used by ValuePSObjectBuilder to remove the need to make a defensive copy of the PSOBject
         /// </summary>
         /// <param name="member"></param>
         /// <param name="preValidated"></param>
@@ -4115,7 +4115,7 @@ namespace System.Management.Automation
         /// <param name="preValidated">flag to indicate that validation has already been done
         ///     on this new member.  Use only when you can guarantee that the input will not
         ///     cause any of the errors normally caught by this method.</param>
-        /// <param name="inObjectBuilderScope">True if this is called from within an PSObjectBuilder.
+        /// <param name="inObjectBuilderScope">True if this is called from within an ValuePSObjectBuilder.
         /// In that case, the object has not yet been exposed to the outside world.</param>
         /// <exception cref="ExtendedTypeSystemException">when a member by this name is already present</exception>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
