@@ -59,21 +59,21 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 | Windows (arm) **Experimental**      | [32-bit][rl-winarm]/[64-bit][rl-winarm64]        | [32-bit][pv-winarm]/[64-bit][pv-winarm64]       | [Instructions][in-arm]                         |
 | Raspbian (Stretch) **Experimental** | [.tgz][rl-raspbian]                              | [.tgz][pv-raspbian]                             | [Instructions][in-raspbian]                    |
 
-[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/PowerShell-6.0.3-win-x64.msi
-[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/PowerShell-6.0.3-win-x86.msi
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/powershell_6.0.3-1.ubuntu.16.04_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/powershell_6.0.3-1.ubuntu.14.04_amd64.deb
-[rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/powershell_6.0.3-1.debian.8_amd64.deb
-[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/powershell_6.0.3-1.debian.9_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/powershell-6.0.3-1.rhel.7.x86_64.rpm
-[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/powershell-6.0.3-osx.10.12-x64.pkg
-[rl-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/PowerShell-6.0.3-win-arm32.zip
-[rl-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/PowerShell-6.0.3-win-arm64.zip
-[rl-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/PowerShell-6.0.3-win-x86.zip
-[rl-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/PowerShell-6.0.3-win-x64.zip
-[rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/powershell-6.0.3-osx-x64.tar.gz
-[rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/powershell-6.0.3-linux-x64.tar.gz
-[rl-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/powershell-6.0.3-linux-arm32.tar.gz
+[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/PowerShell-6.0.4-win-x64.msi
+[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/PowerShell-6.0.4-win-x86.msi
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/powershell_6.0.4-1.ubuntu.16.04_amd64.deb
+[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/powershell_6.0.4-1.ubuntu.14.04_amd64.deb
+[rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/powershell_6.0.4-1.debian.8_amd64.deb
+[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/powershell_6.0.4-1.debian.9_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/powershell-6.0.4-1.rhel.7.x86_64.rpm
+[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/powershell-6.0.4-osx.10.12-x64.pkg
+[rl-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/PowerShell-6.0.4-win-arm32.zip
+[rl-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/PowerShell-6.0.4-win-arm64.zip
+[rl-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/PowerShell-6.0.4-win-x86.zip
+[rl-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/PowerShell-6.0.4-win-x64.zip
+[rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/powershell-6.0.4-osx-x64.tar.gz
+[rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/powershell-6.0.4-linux-x64.tar.gz
+[rl-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/powershell-6.0.4-linux-arm32.tar.gz
 [rl-snap]: https://snapcraft.io/powershell
 
 [pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/PowerShell-6.1.0-preview.4-win-x64.msi
