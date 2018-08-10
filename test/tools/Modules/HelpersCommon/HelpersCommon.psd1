@@ -16,5 +16,16 @@ Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
 
 Description = 'Temporary module contains functions for using in tests'
 
-FunctionsToExport = 'Wait-UntilTrue', 'Test-IsElevated', 'Wait-FileToBePresent', 'Get-RandomFileName', 'Enable-Testhook', 'Disable-Testhook', 'Set-TesthookResult', 'Test-TesthookIsSet', 'Add-TestDynamicType'
+FunctionsToExport = @(
+        'Add-TestDynamicType'
+        'Disable-Testhook'
+        'Enable-Testhook'
+        'Get-RandomFileName'
+        'Send-VstsLogFile'
+        'Set-TesthookResult'
+        'Test-IsElevated'
+        'Test-TesthookIsSet'
+        'Wait-FileToBePresent'
+        'Wait-UntilTrue'
+    )
 }

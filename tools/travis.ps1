@@ -204,12 +204,14 @@ elseif($Stage -eq 'Build')
     $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
     $testResultsSudo = "$pwd/TestResultsSudo.xml"
 
+    $excludeTag = @('RequireSudoOnUnix')
+
     $noSudoPesterParam = @{
         'BinDir'     = $output
         'PassThru'   = $true
         'Terse'      = $true
         'Tag'        = @()
-        'ExcludeTag' = @('RequireSudoOnUnix')
+        'ExcludeTag' = $excludeTag
         'OutputFile' = $testResultsNoSudo
     }
 
