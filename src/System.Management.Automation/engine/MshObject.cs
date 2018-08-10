@@ -2491,7 +2491,7 @@ namespace System.Management.Automation
     /// Unsafe version of PSObjectBuilder that is not guaranteed to be on the same thread.
     /// Usage must be reviewed carefully.
     /// </summary>
-    internal class PSObjectBuilderUnsafe
+    internal class PSObjectBuilderLessOptimized
     {
         const int DefaultHirearchyDepth = 4;
         private readonly HashSet<string> _validatedNames;
@@ -2505,7 +2505,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of PSObjectBuilder.
         /// </summary>
         /// <param name="validatedNameCount">The initial size of the set that tracks validated parameter names.</param>
-        public PSObjectBuilderUnsafe(int validatedNameCount)
+        public PSObjectBuilderLessOptimized(int validatedNameCount)
         {
             if (validatedNameCount < 1)
             {
