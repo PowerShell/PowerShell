@@ -3,15 +3,21 @@
 #if !UNIX
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Text;
-using Microsoft.Win32;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
-using Dbg = System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Reflection;
+using System.Text;
+using System.Threading;
 using Microsoft.PowerShell.Commands.Internal;
+using Microsoft.Win32;
+
+using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -85,6 +91,43 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the name of the provider
         /// </summary>
         public const string ProviderName = "Registry";
+
+        /// <inheritdoc />
+        protected override bool TrySetCodeProperties(object item, string path)
+        {
+            if (PSObject.Base(item) is RegistryKey key)
+            {
+                // Escape any wildcard characters in the path
+                path = EscapeSpecialChars(path);
+
+                // Add the registry values to the PSObject
+                string[] valueNames = key.GetValueNames();
+
+                for (int index = 0; index < valueNames.Length; ++index)
+                {
+                    if (string.IsNullOrEmpty(valueNames[index]))
+                    {
+                        // The first unnamed value becomes the default value
+                        valueNames[index] = GetLocalizedDefaultToken();
+                        break;
+                    }
+                }
+
+                var registryProviderProperties = new RegistryProviderProperties(this, path, PSDriveInfo, valueNames);
+                RegistryProviderProperties.AttachObjectProperties(item, registryProviderProperties);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc />
+        protected override ProviderInfo Start(ProviderInfo providerInfo)
+        {
+            RegistryProviderProperties.ExtendWithCodeProperties(Context);
+            return providerInfo;
+        }
 
         #region DriveCmdletProvider overrides
 
@@ -3975,26 +4018,9 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Escape any wildcard characters in the path
-            path = EscapeSpecialChars(path);
 
             // Wrap the key in an PSObject
             PSObject outputObject = PSObject.AsPSObject(key.RegistryKey);
-
-            // Add the registry values to the PSObject
-            string[] valueNames = key.GetValueNames();
-
-            for (int index = 0; index < valueNames.Length; ++index)
-            {
-                if (String.IsNullOrEmpty(valueNames[index]))
-                {
-                    // The first unnamed value becomes the default value
-                    valueNames[index] = GetLocalizedDefaultToken();
-                    break;
-                }
-            }
-
-            outputObject.AddOrSetProperty("Property", valueNames);
 
             WriteItemObject(outputObject, path, true);
         } // WriteRegistryItemObject
@@ -4107,6 +4133,94 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private members
     } // RegistryProvider
+
+    /// <summary>
+    /// Provides storage for the common provider properties in a more efficient
+    /// way than PSNoteProperty.
+    /// </summary>
+    public class RegistryProviderProperties : NavigationProviderPropertiesBase<RegistryProviderProperties>
+    {
+        private static int s_codePropertiesAdded;
+
+        private readonly string[] _properties;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegistryProviderProperties"/> class.
+        /// </summary>
+        /// <param name="provider">The RegistryProvider that provided the path.</param>
+        /// <param name="path">The path to store properties for.</param>
+        /// <param name="driveInfo">The drive that the path belongs to.</param>
+        /// <param name="properties">The properties at the registry path.</param>
+        public RegistryProviderProperties(RegistryProvider provider, string path, PSDriveInfo driveInfo, string[] properties)
+        : base(path, driveInfo, provider)
+        {
+            _properties = properties;
+        }
+
+        /// <summary>
+        /// Code property for PSIsContainer.
+        /// </summary>
+        /// <param name="obj">The extended object.</param>
+        /// <returns>The PSIsContainer for the extended object.</returns>
+        public static bool GetIsContainer(PSObject obj) => obj.BaseObject is RegistryKey;
+
+        /// <summary>
+        /// Gets the properties of a registry key.
+        /// </summary>
+        /// <param name="obj">The object to get the stored properties for.</param>
+        /// <returns>An array of property names.</returns>
+        public static string[] GetPSProperties(PSObject obj)
+        {
+            var props = GetProperties(obj);
+            return props._properties;
+        }
+
+        /// <summary>
+        /// Adds code properties for the provider common properties.
+        /// </summary>
+        /// <param name="context">A <see cref="CmdletProviderContext"/>, used to update type data.</param>
+        internal static void ExtendWithCodeProperties(CmdletProviderContext context)
+        {
+            var incremented = Interlocked.Increment(ref s_codePropertiesAdded);
+            if (incremented != 1)
+            {
+                return;
+            }
+
+            var td = GetCodePropertiesTypeData<RegistryKey>();
+            var errors = new ConcurrentBag<string>();
+            var executionContext = context.ExecutionContext;
+
+            executionContext.TypeTable.Update(td, errors, isRemove: false);
+            if (errors.Count > 0)
+            {
+                throw new Exception(errors.First());
+            }
+
+            executionContext.InitialSessionState.Types.Add(new SessionStateTypeEntry(td, false));
+        }
+
+        private static TypeData GetCodePropertiesTypeData<T>()
+        {
+            var td = new TypeData(typeof(T)) { IsOverride = true };
+            var typeMembers = td.Members;
+            void AddCodeProperty(string name, string memberName)
+            {
+                var methodInfo = typeof(RegistryProviderProperties).GetMethod(memberName, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+                typeMembers.Add(name, new CodePropertyData(name, methodInfo, null));
+            }
+
+            AddCodeProperty("PSChildName", nameof(GetChildName));
+            AddCodeProperty("PSDrive", nameof(GetPSDrive));
+            AddCodeProperty("PSIsContainer", nameof(GetIsContainer));
+            AddCodeProperty("PSParentPath", nameof(GetParentPath));
+            AddCodeProperty("PSPath", nameof(GetPath));
+            AddCodeProperty("PSProvider", nameof(GetProviderInfo));
+            AddCodeProperty("Property", nameof(GetPSProperties));
+
+            return td;
+        }
+    }
 
     /// <summary>
     /// Defines dynamic parameters for the registry provider

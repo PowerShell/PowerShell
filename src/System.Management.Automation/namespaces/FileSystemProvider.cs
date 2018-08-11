@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,15 +14,18 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
+using System.Management.Automation.Runspaces;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.AccessControl;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using System.Xml.XPath;
 using Microsoft.Win32.SafeHandles;
+
 using Dbg = System.Management.Automation;
-using System.Runtime.InteropServices;
-using System.Management.Automation.Runspaces;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -164,6 +168,19 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return (attributeFilterSet || base.IsFilterSet());
+        }
+
+        /// <inheritdoc />
+        protected override bool TrySetCodeProperties(object item, string path)
+        {
+            if (PSObject.Base(item) is FileSystemInfo fileSystemInfo)
+            {
+                var fileSystemProviderProperties = new FileSystemProviderProperties(this, path, PSDriveInfo);
+                FileSystemProviderProperties.AttachObjectProperties(fileSystemInfo, fileSystemProviderProperties);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -366,6 +383,8 @@ namespace Microsoft.PowerShell.Commands
                         s_tracer.WriteLine("Not setting home directory {0} - does not exist", homeDirectory);
                 }
             }
+
+            FileSystemProviderProperties.ExtendWithCodeProperties(Context);
             return providerInfo;
         } // Start
 
@@ -8152,6 +8171,79 @@ namespace Microsoft.PowerShell.Commands
     }
 
     #endregion
+
+    /// <summary>
+    /// Provides storage for the common provider properties in a more efficient
+    /// way than PSNoteProperty.
+    /// </summary>
+    public class FileSystemProviderProperties : NavigationProviderPropertiesBase<FileSystemProviderProperties>
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileSystemProviderProperties"/> class.
+        /// </summary>
+        /// <param name="provider">The FileSystemProvider that provided the path.</param>
+        /// <param name="path">The path to store properties for.</param>
+        /// <param name="driveInfo">The drive that the path belongs to.</param>
+        public FileSystemProviderProperties(FileSystemProvider provider, string path,  PSDriveInfo driveInfo)
+            : base(path, driveInfo, provider)
+        {
+        }
+
+        /// <summary>
+        /// Code property for PSIsContainer.
+        /// </summary>
+        /// <param name="obj">The extended object.</param>
+        /// <returns>The PSIsContainer for the extended object.</returns>
+        public static bool GetIsContainer(PSObject obj) => obj.BaseObject is DirectoryInfo;
+
+        private static int s_codePropertiesAdded;
+
+        /// <summary>
+        /// Adds code properties for the provider common properties.
+        /// </summary>
+        /// <param name="context">A <see cref="CmdletProviderContext"/>, used to update type data.</param>
+        internal static void ExtendWithCodeProperties(CmdletProviderContext context)
+        {
+            var incremented = Interlocked.Increment(ref s_codePropertiesAdded);
+            if (incremented != 1)
+            {
+                return;
+            }
+
+            var td = GetCodePropertiesTypeData<FileSystemInfo>();
+            var errors = new ConcurrentBag<string>();
+            var executionContext = context.ExecutionContext;
+
+            executionContext.TypeTable.Update(td, errors, isRemove: false);
+            if (errors.Count > 0)
+            {
+                throw new Exception(errors.First());
+            }
+
+            executionContext.InitialSessionState.Types.Add(new SessionStateTypeEntry(td, false));
+        }
+
+        private static TypeData GetCodePropertiesTypeData<T>()
+        {
+            var td = new TypeData(typeof(T)) { IsOverride = true };
+            var typeMembers = td.Members;
+
+            void AddCodeProperty(string name, string memberName)
+            {
+                var methodInfo = typeof(FileSystemProviderProperties).GetMethod(memberName, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+                typeMembers.Add(name, new CodePropertyData(name, methodInfo, null));
+            }
+
+            AddCodeProperty("PSChildName", nameof(GetChildName));
+            AddCodeProperty("PSDrive", nameof(GetPSDrive));
+            AddCodeProperty("PSIsContainer", nameof(GetIsContainer));
+            AddCodeProperty("PSParentPath", nameof(GetParentPath));
+            AddCodeProperty("PSPath", nameof(GetPath));
+            AddCodeProperty("PSProvider", nameof(GetProviderInfo));
+
+            return td;
+        }
+    }
 }
 
 namespace System.Management.Automation.Internal
