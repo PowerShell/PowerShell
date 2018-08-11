@@ -373,7 +373,9 @@ namespace System.Management.Automation
         private ListEntryBuilder AddItem(string value, string label, DisplayEntryValueType kind, string format, DisplayEntry itemSelectionCondition)
         {
             if (string.IsNullOrEmpty(value))
+            {
                 throw PSTraceSource.NewArgumentNullException("property");
+            }
 
             _listEntry.Items.Add(new ListControlEntryItem
             {
