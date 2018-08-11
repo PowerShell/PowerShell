@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 $PID
-Start-Sleep 10
 
 function New-ModuleSpecification
 {
@@ -41,6 +40,48 @@ function New-ModuleSpecification
     }
 
     return $modSpec
+}
+
+function Invoke-ImportModule
+{
+    param(
+        $Module,
+        $MinimumVersion,
+        $MaximumVersion,
+        $RequiredVersion,
+        [switch]$PassThru,
+        [switch]$AsCustomObject)
+
+    $ipmoCmd = "Import-Module $Module "
+
+    if ($MinimumVersion)
+    {
+        $ipmoCmd += "-MinimumVersion '$MinimumVersion' "
+    }
+
+    if ($MaximumVersion)
+    {
+        $ipmoCmd += "-MaximumVersion '$MaximumVersion' "
+    }
+
+    if ($RequiredVersion)
+    {
+        $ipmoCmd += "-RequiredVersion '$RequiredVersion' "
+    }
+
+    if ($PassThru)
+    {
+        $ipmoCmd += "-PassThru "
+    }
+
+    if ($AsCustomObject)
+    {
+        $ipmoCmd += "-AsCustomObject "
+    }
+
+    $ipmoCmd += '-ErrorAction Stop '
+
+    return (Invoke-Expression $ipmoCmd)
 }
 
 Describe "Module cmdlet version constraint checking" -Tags "Feature" {
@@ -110,11 +151,11 @@ Describe "Module cmdlet version constraint checking" -Tags "Feature" {
         New-ModuleManifest -Path $manifestPath -ModuleVersion $actualVersion
     }
 
-    Context "Checking preloaded modules" {
+    Context "Checking preloaded modules with FullyQualifiedName" {
         BeforeAll {
             $oldPSModulePath = $env:PSModulePath
             $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
-            Import-Module $modulePath
+            $moduleInfo = Import-Module $modulePath -PassThru
         }
 
         AfterAll {
@@ -181,6 +222,133 @@ Describe "Module cmdlet version constraint checking" -Tags "Feature" {
 
             { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
         }
+
+        It "Successfully loads module from manifest path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $successCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $modSpec = New-ModuleSpecification -ModuleName $manifestPath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+        }
+
+        It "Does not load the module from manifest path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $failCases -Pending {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $modSpec = New-ModuleSpecification -ModuleName $manifestPath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+    }
+
+    Context "Checking preloaded modules with version parameters" {
+        BeforeAll {
+            $oldPSModulePath = $env:PSModulePath
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+            $moduleInfo = Import-Module $modulePath -PassThru
+        }
+
+        AfterAll {
+            Get-Module $moduleName | Remove-Module
+            $env:PSModulePath = $oldPSModulePath
+        }
+
+        It "Imports the loaded module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $successCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+            $importedModule = Invoke-ImportModule -Module $modulePath -MinimumVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -PassThru
+
+            (Get-Module $moduleName)[0] | Should -Be $importedModule
+        }
+
+        It "Does not import the module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $failCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $invocation = {
+                Invoke-ImportModule -Module $modulePath -MinimumVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+            }
+
+            if ($ModuleVersion -and $MaximumVersion -and [version]$ModuleVersion -gt [version]$MaximumVersion)
+            {
+                $invocation | Should -Throw -ErrorId 'ArgumentOutOfRange,Microsoft.PowerShell.Commands.ImportModuleCommand'
+                return
+            }
+
+            $invocation | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Imports the loaded module from module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $successCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+            $importedModule = Invoke-ImportModule -Module $moduleName -MinimumVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -PassThru
+
+            (Get-Module $moduleName)[0] | Should -Be $importedModule
+        }
+
+        It "Does not import the module from module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $failCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $invocation = {
+                Invoke-ImportModule -Module $moduleName -MinimumVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+            }
+
+            if ($ModuleVersion -and $MaximumVersion -and [version]$ModuleVersion -gt [version]$MaximumVersion)
+            {
+                $invocation | Should -Throw -ErrorId 'ArgumentOutOfRange,Microsoft.PowerShell.Commands.ImportModuleCommand'
+                return
+            }
+
+            $invocation | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Successfully loads module from manifest path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $successCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $mod = Invoke-ImportModule -Module $manifestPath -MinimumVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -PassThru
+
+            $mod.Name | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+        }
+
+        It "Does not load the module from manifest path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $failCases -Pending {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $invocation = {
+                Invoke-ImportModule -Module $manifestPath -MinimumVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+            }
+
+            if ($ModuleVersion -and $MaximumVersion -and [version]$ModuleVersion -gt [version]$MaximumVersion)
+            {
+                $invocation | Should -Throw -ErrorId 'ArgumentOutOfRange,Microsoft.PowerShell.Commands.ImportModuleCommand'
+                return
+            }
+
+            $invocation | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Successfully loads module from module info when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $successCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $mod = Invoke-ImportModule -Module $moduleInfo -MinimumVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -PassThru
+
+            $mod.Name | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+        }
+
+        It "Does not load the module from module info when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $failCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $invocation = {
+                Invoke-ImportModule -Module $moduleInfo -MinimumVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+            }
+
+            if ($ModuleVersion -and $MaximumVersion -and [version]$ModuleVersion -gt [version]$MaximumVersion)
+            {
+                $invocation | Should -Throw -ErrorId 'ArgumentOutOfRange,Microsoft.PowerShell.Commands.ImportModuleCommand'
+                return
+            }
+
+            $invocation | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
     }
 
     Context "Required modules" {
@@ -215,55 +383,6 @@ Describe "Module cmdlet version constraint checking" -Tags "Feature" {
             $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
             New-ModuleManifest -Path $reqModPath -RequiredModules $modSpec
             { Import-Module $reqModPath -ErrorAction Stop } | Should -Throw -ErrorId "Modules_InvalidManifest,Microsoft.PowerShell.Commands.ImportModuleCommand"
-        }
-    }
-
-    Context "Version checking with ModuleTable lookup" {
-        BeforeAll {
-            $oldPSModulePath = $env:PSModulePath
-            $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
-            # For some reason, we need a PSModuleInfo to add something to the module table
-            Import-Module $modulePath -PassThru | Import-Module
-        }
-
-        AfterAll {
-            $env:PSModulePath = $oldPSModulePath
-        }
-
-        It "Successfully loads module from module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $successCases {
-            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
-
-            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
-            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
-
-            $mod.Name | Should -Be $moduleName
-            $mod.Version | Should -Be $actualVersion
-        }
-
-        It "Does not load the module from module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $failCases {
-            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
-
-            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
-
-            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
-        }
-
-        It "Successfully loads module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $successCases {
-            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
-
-            $modSpec = New-ModuleSpecification -ModuleName $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
-            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
-
-            $mod.Name | Should -Be $moduleName
-            $mod.Version | Should -Be $actualVersion
-        }
-
-        It "Does not load the module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $failCases {
-            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
-
-            $modSpec = New-ModuleSpecification -ModuleName $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
-
-            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
         }
     }
 }
