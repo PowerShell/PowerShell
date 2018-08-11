@@ -1,6 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+$PID
+Start-Sleep 10
+
 function New-ModuleSpecification
 {
     param(
@@ -202,6 +205,7 @@ Describe "Module cmdlet version constraint checking" -Tags "Feature" {
             New-ModuleManifest -Path $reqModPath -RequiredModules $modSpec
             $reqMod = Import-Module $reqModPath -PassThru
 
+            $reqMod | Should -Not -Be $null
             $reqMod.Name | Should -Be $reqModName
         }
 
@@ -214,7 +218,52 @@ Describe "Module cmdlet version constraint checking" -Tags "Feature" {
         }
     }
 
-    Context "Loading module with the same name but different version" {
+    Context "Version checking with ModuleTable lookup" {
+        BeforeAll {
+            $oldPSModulePath = $env:PSModulePath
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+            # For some reason, we need a PSModuleInfo to add something to the module table
+            Import-Module $modulePath -PassThru | Import-Module
+        }
 
+        AfterAll {
+            $env:PSModulePath = $oldPSModulePath
+        }
+
+        It "Successfully loads module from module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $successCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+        }
+
+        It "Does not load the module from module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $failCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Successfully loads module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $successCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $modSpec = New-ModuleSpecification -ModuleName $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+        }
+
+        It "Does not load the module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $failCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
+
+            $modSpec = New-ModuleSpecification -ModuleName $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
     }
 }
