@@ -791,7 +791,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a DisplayEntry for the given scriptblock.
         /// </summary>
-        /// <param name="scriptblock">The content of the scriptblock</param>
+        /// <param name="scriptblock">The content of the scriptblock.</param>
+        /// <returns>A <see cref="DisplayEntry"/> for the <paramref name="scriptblock"/>.</returns>
         public static DisplayEntry CreateScriptBlockEntry(string scriptblock)
         {
             return new DisplayEntry(scriptblock, DisplayEntryValueType.ScriptBlock);
@@ -800,13 +801,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a DisplayEntry for the given property name.
         /// </summary>
-        /// <param name="property">the name of the property</param>
+        /// <param name="property">The name of the property.</param>
+        /// <returns>A <see cref="DisplayEntry"/> for the <paramref name="property"/>.</returns>
         public static DisplayEntry CreatePropertyEntry(string property)
         {
             return new DisplayEntry(property, DisplayEntryValueType.Property);
         }
 
-        /// <summary/>
+        /// <inheritdoc />
         public override string ToString()
         {
             return (ValueType == DisplayEntryValueType.Property ? "property: " : "script: ") + Value;

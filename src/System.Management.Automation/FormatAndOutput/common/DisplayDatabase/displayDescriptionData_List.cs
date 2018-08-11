@@ -386,19 +386,35 @@ namespace System.Management.Automation
             return this;
         }
 
-        /// <summary></summary>
+        /// <summary>Adds a scriptblock list entry.</summary>
+        /// <param name="scriptBlock">The content of the scriptblock to add.</param>
+        /// <param name="label">A label for the entry.</param>
+        /// <param name="format">A format string for the scriptblock result.</param>
+        /// <param name="itemSelectionCondition">A condition that has to be met for the entry to be displayed.</param>
+        /// <returns>A reference to this instance after the append operation has completed.</returns>
         public ListEntryBuilder AddItemScriptBlock(string scriptBlock, string label = null, string format = null, DisplayEntry itemSelectionCondition = null)
         {
             return AddItem(scriptBlock, label, DisplayEntryValueType.ScriptBlock, format, itemSelectionCondition);
         }
 
-        /// <summary></summary>
+        /// <summary>Adds a property list entry.</summary>
+        /// <param name="property">The property to add.</param>
+        /// <param name="label">A label for the entry.</param>
+        /// <param name="format">A format string for the property value.</param>
+        /// <param name="itemSelectionCondition">A condition that has to be met for the entry to be displayed.</param>
+        /// <returns>A reference to this instance after the append operation has completed.</returns>
         public ListEntryBuilder AddItemProperty(string property, string label = null, string format = null, DisplayEntry itemSelectionCondition = null)
         {
             return AddItem(property, label, DisplayEntryValueType.Property, format, itemSelectionCondition);
         }
 
-        /// <summary></summary>
+        /// <summary>
+        /// Adds a property that is displayed if it the property has a value.
+        /// </summary>
+        /// <param name="property">The property to add.</param>
+        /// <param name="label">A label for the entry.</param>
+        /// <param name="format">A format string for the property value.</param>
+        /// <returns>A reference to this instance after the append operation has completed.</returns>
         public ListEntryBuilder AddItemPropertyIfSet(string property, string label = null, string format = null)
         {
             var itemSelectionCondition = DisplayEntry.CreatePropertyEntry(property);
