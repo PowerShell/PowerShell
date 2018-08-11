@@ -1,8 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-$PID
-
 function New-ModuleSpecification
 {
     param(
@@ -52,36 +50,37 @@ function Invoke-ImportModule
         [switch]$PassThru,
         [switch]$AsCustomObject)
 
-    $ipmoCmd = "Import-Module $Module "
+    $cmdArgs =  @{
+        Name = $Module
+        ErrorAction = 'Stop'
+    }
 
     if ($MinimumVersion)
     {
-        $ipmoCmd += "-MinimumVersion '$MinimumVersion' "
+        $cmdArgs.MinimumVersion = $MinimumVersion
     }
 
     if ($MaximumVersion)
     {
-        $ipmoCmd += "-MaximumVersion '$MaximumVersion' "
+        $cmdArgs.MaximumVersion = $MaximumVersion
     }
 
     if ($RequiredVersion)
     {
-        $ipmoCmd += "-RequiredVersion '$RequiredVersion' "
+        $cmdArgs.RequiredVersion = $RequiredVersion
     }
 
     if ($PassThru)
     {
-        $ipmoCmd += "-PassThru "
+        $cmdArgs.PassThru = $true
     }
 
     if ($AsCustomObject)
     {
-        $ipmoCmd += "-AsCustomObject "
+        $cmdArgs.AsCustomObject = $true
     }
 
-    $ipmoCmd += '-ErrorAction Stop '
-
-    return (Invoke-Expression $ipmoCmd)
+    return Import-Module @cmdArgs
 }
 
 Describe "Module cmdlet version constraint checking" -Tags "Feature" {
@@ -314,31 +313,6 @@ Describe "Module cmdlet version constraint checking" -Tags "Feature" {
 
             $invocation = {
                 Invoke-ImportModule -Module $manifestPath -MinimumVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
-            }
-
-            if ($ModuleVersion -and $MaximumVersion -and [version]$ModuleVersion -gt [version]$MaximumVersion)
-            {
-                $invocation | Should -Throw -ErrorId 'ArgumentOutOfRange,Microsoft.PowerShell.Commands.ImportModuleCommand'
-                return
-            }
-
-            $invocation | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
-        }
-
-        It "Successfully loads module from module info when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $successCases {
-            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
-
-            $mod = Invoke-ImportModule -Module $moduleInfo -MinimumVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -PassThru
-
-            $mod.Name | Should -Be $moduleName
-            $mod.Version | Should -Be $actualVersion
-        }
-
-        It "Does not load the module from module info when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>" -TestCases $failCases {
-            param($ModuleVersion, $MaximumVersion, $RequiredVersion)
-
-            $invocation = {
-                Invoke-ImportModule -Module $moduleInfo -MinimumVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion
             }
 
             if ($ModuleVersion -and $MaximumVersion -and [version]$ModuleVersion -gt [version]$MaximumVersion)
