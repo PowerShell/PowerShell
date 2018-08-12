@@ -3655,13 +3655,17 @@ namespace Microsoft.PowerShell.Commands
 
             Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);
 
-            if (resolvedPaths == null) {
+            if (resolvedPaths == null)
+            {
                 return;
             }
 
-            if (resolvedPaths.Count == 1) {
+            if (resolvedPaths.Count == 1)
+            {
                 RenameItem(resolvedPaths[0].Path, literalPath: true);
-            } else {
+            }
+            else
+            {
                 RenameItem(WildcardPattern.Unescape(Path), literalPath: true);
             }
         }
