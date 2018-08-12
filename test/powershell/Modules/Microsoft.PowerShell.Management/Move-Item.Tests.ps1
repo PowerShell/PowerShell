@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 Describe "Move-Item tests" -Tag "CI" {
     BeforeAll {
-        $content = "This is content"
         Setup -f originalfile.txt -content "This is content"
         $source = "$TESTDRIVE/originalfile.txt"
         $target = "$TESTDRIVE/ItemWhichHasBeenMoved.txt"
@@ -10,6 +9,8 @@ Describe "Move-Item tests" -Tag "CI" {
         $sourceSp = "$TestDrive/``[orig-file``].txt"
         $targetSpName = "$TestDrive/ItemWhichHasBeen[Moved].txt"
         $targetSp = "$TestDrive/ItemWhichHasBeen``[Moved``].txt"
+        Setup -Dir [test-dir]
+        $wdSp = "$TestDrive/``[test-dir``]"
     }
     It "Move-Item will move a file" {
         Move-Item $source $target
@@ -22,6 +23,36 @@ Describe "Move-Item tests" -Tag "CI" {
         $sourceSp | Should -Not -Exist
         $targetSp | Should -Exist
         $targetSp | Should -FileContentMatchExactly "This is not content"
+    }
+    It "Move-Item will move a file when -Path and CWD contains special char" {
+        $content = "This is content"
+        $oldSpName = "[orig]file.txt"
+        $oldSpBName = "``[orig``]file.txt"
+        $oldSp = "$wdSp/$oldSpBName"
+        $newSpName = "[moved]file.txt"
+        $newSp = "$wdSp/``[moved``]file.txt"
+        In $wdSp -Execute {
+            $null = New-Item -Name $oldSpName -ItemType File -Value $content -Force
+            Move-Item -Path $oldSpBName $newSpName
+        }
+        $oldSp | Should -Not -Exist
+        $newSp | Should -Exist
+        $newSp | Should -FileContentMatchExactly $content
+    }
+    It "Move-Item will move a file when -LiteralPath and CWD contains special char" {
+        $content = "This is not content"
+        $oldSpName = "[orig]file2.txt"
+        $oldSpBName = "``[orig``]file2.txt"
+        $oldSp = "$wdSp/$oldSpBName"
+        $newSpName = "[moved]file2.txt"
+        $newSp = "$wdSp/``[moved``]file2.txt"
+        In $wdSp -Execute {
+            $null = New-Item -Name $oldSpName -ItemType File -Value $content -Force
+            Move-Item -LiteralPath $oldSpName $newSpName
+        }
+        $oldSp | Should -Not -Exist
+        $newSp | Should -Exist
+        $newSp | Should -FileContentMatchExactly $content
     }
 
     Context "Move-Item with filters" {
