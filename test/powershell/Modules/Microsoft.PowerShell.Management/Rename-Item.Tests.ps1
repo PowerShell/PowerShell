@@ -10,7 +10,6 @@ Describe "Rename-Item tests" -Tag "CI" {
         $targetSpName = "ItemWhichHasBeen[Renamed].txt"
         $targetSp = "$TestDrive/ItemWhichHasBeen``[Renamed``].txt"
         Setup -Dir [test-dir]
-        $wdSpName = "$TestDrive/[test-dir]"
         $wdSp = "$TestDrive/``[test-dir``]"
     }
     It "Rename-Item will rename a file" {
@@ -25,16 +24,16 @@ Describe "Rename-Item tests" -Tag "CI" {
         $targetSp | Should -Exist
         $targetSp | Should -FileContentMatchExactly "This is not content"
     }
-    It "Rename-Item will rename a file when path and cwd contains special char" {
+    It "Rename-Item will rename a file when -Path and CWD contains special char" {
         $content = "This is content"
         $oldSpName = "[orig]file.txt"
         $oldSpBName = "``[orig``]file.txt"
-        $oldSp = "$wdSp/``[orig``]file.txt"
+        $oldSp = "$wdSp/$oldSpBName"
         $newSpName = "[renamed]file.txt"
         $newSp = "$wdSp/``[renamed``]file.txt"
         In $wdSp -Execute {
             $null = New-Item -Name $oldSpName -ItemType File -Value $content -Force
-            Rename-Item $oldSpBName $newSpName
+            Rename-Item -Path $oldSpBName $newSpName
         }
         $oldSp | Should -Not -Exist
         $newSp | Should -Exist
