@@ -168,7 +168,6 @@ namespace System.Management.Automation
     public class WarningRecord : InformationalRecord
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         public WarningRecord(string message)
@@ -176,7 +175,6 @@ namespace System.Management.Automation
         { }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="record"></param>
         public WarningRecord(PSObject record)
@@ -225,7 +223,6 @@ namespace System.Management.Automation
     public class DebugRecord : InformationalRecord
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         public DebugRecord(string message)
@@ -233,7 +230,6 @@ namespace System.Management.Automation
         { }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="record"></param>
         public DebugRecord(PSObject record)
@@ -248,7 +244,6 @@ namespace System.Management.Automation
     public class VerboseRecord : InformationalRecord
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="message"></param>
         public VerboseRecord(string message)
@@ -256,7 +251,6 @@ namespace System.Management.Automation
         { }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="record"></param>
         public VerboseRecord(PSObject record)

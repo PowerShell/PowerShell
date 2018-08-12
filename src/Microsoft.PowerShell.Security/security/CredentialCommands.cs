@@ -31,7 +31,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the underlying PSCredential of
         /// the instance.
         /// </summary>
-        ///
         [Parameter(Position = 0, ParameterSetName = credentialSet)]
         [ValidateNotNull]
         [Credential()]

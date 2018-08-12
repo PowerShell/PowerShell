@@ -1637,6 +1637,11 @@
                     <File Id="fil66F0F6FD1F8BC9AEE1ABDC8C805F396C" KeyPath="yes" Source="$(env.ProductSourcePath)\en-US\default.help.txt" />
                 </Component>
             </Directory>
+            <Directory Id="dirA620CA71E6FF4F50B6D7BB0761D17036" Name="preview">
+                <Component Id="cmpA620CA71E6FF4F50B6D7BB0761D17036" Guid="{A620CA71-E6FF-4F50-B6D7-BB0761D17036}">
+                    <File Id="filA620CA71E6FF4F50B6D7BB0761D17036" KeyPath="yes" Source="$(env.ProductSourcePath)\preview\pwsh-preview.cmd" />
+                </Component>
+            </Directory>
             <Directory Id="dir9956A485678594F33C936BA160AD06C4" Name="Modules">
                 <Directory Id="dir9C2FC7DD1B408AD4F70123DF50131CBD" Name="PackageManagement">
                     <Directory Id="dirBE29553BD60B3A0392916BB9B7487287" Name="1.1.7.0">
@@ -1959,6 +1964,7 @@
             <ComponentRef Id="cmp0AC970BEC366F9ADB96BD5FA34459C23" />
             <ComponentRef Id="cmp268C3104F2C2E1772E901BF932388BA0" />
             <ComponentRef Id="cmp5C3D90690414B641947FDA684E9BE9A9" />
+            <ComponentRef Id="cmpA620CA71E6FF4F50B6D7BB0761D17036" />
             <ComponentRef Id="cmp2F126B84C7D50DC3F8F8E273DD6CE7DC" />
             <ComponentRef Id="cmp492FB39320E285A540ADEADE18A5F96E" />
             <ComponentRef Id="cmp07ED031B944723D46CE6E7A4657FAFB2" />

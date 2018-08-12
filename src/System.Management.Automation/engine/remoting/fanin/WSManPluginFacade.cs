@@ -25,7 +25,6 @@ namespace System.Management.Automation.Remoting
     // pointers (otherwise we end up storing the delegate into a GCRoot).
 
     /// <summary>
-    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -42,7 +41,6 @@ namespace System.Management.Automation.Remoting
         IntPtr inboundShellInformation);
 
     /// <summary>
-    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="shellContext">PVOID</param>
@@ -51,7 +49,6 @@ namespace System.Management.Automation.Remoting
         IntPtr shellContext);
 
     /// <summary>
-    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -68,7 +65,6 @@ namespace System.Management.Automation.Remoting
         IntPtr inboundConnectInformation);
 
     /// <summary>
-    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -92,7 +88,6 @@ namespace System.Management.Automation.Remoting
            IntPtr shutdownContext);
 
     /// <summary>
-    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="shellContext">PVOID</param>
@@ -103,7 +98,6 @@ namespace System.Management.Automation.Remoting
         IntPtr commandContext);
 
     /// <summary>
-    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -122,7 +116,6 @@ namespace System.Management.Automation.Remoting
         IntPtr inboundData);
 
     /// <summary>
-    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -139,7 +132,6 @@ namespace System.Management.Automation.Remoting
         IntPtr streamSet);
 
     /// <summary>
-    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -165,14 +157,12 @@ namespace System.Management.Automation.Remoting
         bool timedOut);
 
     /// <summary>
-    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     internal delegate void WSMShutdownPluginDelegate(
         IntPtr pluginContext);
 
     /// <summary>
-    ///
     /// </summary>
     internal sealed class WSManPluginEntryDelegates : IDisposable
     {
@@ -322,7 +312,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         private void CleanUpDelegates()
         {
@@ -486,7 +475,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -519,7 +507,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -564,7 +551,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="shellContext">PVOID</param>
@@ -577,7 +563,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -623,7 +608,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="shellContext">PVOID</param>
@@ -638,7 +622,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -673,7 +656,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -706,7 +688,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>

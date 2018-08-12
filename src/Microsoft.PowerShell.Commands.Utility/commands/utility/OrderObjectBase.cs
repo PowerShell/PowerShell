@@ -50,7 +50,6 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -90,7 +89,6 @@ namespace Microsoft.PowerShell.Commands
         internal CultureInfo _cultureInfo = null;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -111,7 +109,6 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
@@ -710,6 +707,6 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        OrderByPropertyComparer _orderByPropertyComparer = null;
+        private OrderByPropertyComparer _orderByPropertyComparer = null;
     }
 }

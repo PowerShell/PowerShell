@@ -262,8 +262,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the CustomMethod property.
         /// </summary>
-        [Parameter(Mandatory=true,ParameterSetName = "CustomMethod")]
-        [Parameter(Mandatory=true,ParameterSetName = "CustomMethodNoProxy")]
+        [Parameter(Mandatory = true, ParameterSetName = "CustomMethod")]
+        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
         public virtual string CustomMethod
@@ -280,8 +280,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the NoProxy property.
         /// </summary>
-        [Parameter(Mandatory=true,ParameterSetName = "CustomMethodNoProxy")]
-        [Parameter(Mandatory=true,ParameterSetName = "StandardMethodNoProxy")]
+        [Parameter(Mandatory = true, ParameterSetName = "CustomMethodNoProxy")]
+        [Parameter(Mandatory = true, ParameterSetName = "StandardMethodNoProxy")]
         public virtual SwitchParameter NoProxy { get; set; }
 
         #endregion
@@ -326,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
         /// A value may be a collection of form values or single form value.
         /// </summary>
         [Parameter]
-        public virtual IDictionary Form {get; set;}
+        public virtual IDictionary Form { get; set; }
 
         /// <summary>
         /// Gets or sets the ContentType property.
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
                 // supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
             }
-            else if ((Credential != null || null!= Token) && Authentication != WebAuthenticationType.None)
+            else if ((Credential != null || null != Token) && Authentication != WebAuthenticationType.None)
             {
                 ProcessAuthentication();
             }
@@ -797,7 +797,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessAuthentication()
         {
-            if(Authentication == WebAuthenticationType.Basic)
+            if (Authentication == WebAuthenticationType.Basic)
             {
                 WebSession.Headers["Authorization"] = GetBasicAuthorizationHeader();
             }
@@ -826,7 +826,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="message">Message for the exception</param>
         /// <param name="response">Response from the HTTP server</param>
-        public HttpResponseException (string message, HttpResponseMessage response) : base(message)
+        public HttpResponseException(string message, HttpResponseMessage response) : base(message)
         {
             Response = response;
         }
@@ -1255,9 +1255,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Returns true if the status code is one of the supported redirection codes.
-        static bool IsRedirectCode(HttpStatusCode code)
+        private static bool IsRedirectCode(HttpStatusCode code)
         {
-            int intCode = (int) code;
+            int intCode = (int)code;
             return
             (
                 (intCode >= 300 && intCode < 304)
@@ -1268,7 +1268,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Returns true if the status code is a redirection code and the action requires switching from POST to GET on redirection.
         // NOTE: Some of these status codes map to the same underlying value but spelling them out for completeness.
-        static bool IsRedirectToGet(HttpStatusCode code)
+        private static bool IsRedirectToGet(HttpStatusCode code)
         {
             return
             (
@@ -1787,7 +1787,7 @@ namespace Microsoft.PowerShell.Commands
 
             // we only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
-            string pattern = "<(?<url>.*?)>;\\srel=\"(?<rel>.*?)\"";
+            string pattern = "<(?<url>.*?)>;\\s*rel=\"(?<rel>.*?)\"";
             IEnumerable<string> links;
             if (response.Headers.TryGetValues("Link", out links))
             {

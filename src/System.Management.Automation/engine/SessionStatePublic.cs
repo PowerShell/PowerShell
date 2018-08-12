@@ -17,15 +17,12 @@ namespace System.Management.Automation
         /// <summary>
         /// The internal constructor for this object. It should be the only one that gets called.
         /// </summary>
-        ///
         /// <param name="sessionState">
         /// An instance of SessionState that the APIs should work against.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> is null.
         /// </exception>
-        ///
         internal SessionState(SessionStateInternal sessionState)
         {
             if (sessionState == null)
@@ -39,7 +36,6 @@ namespace System.Management.Automation
         /// <summary>
         /// The internal constructor for this object. It should be the only one that gets called.
         /// </summary>
-        ///
         /// <param name="context">
         /// An instance of ExecutionContext whose EngineSessionState represents the parent session state.
         /// </param>
@@ -49,7 +45,6 @@ namespace System.Management.Automation
         /// <param name="linkToGlobal">
         /// True if the session state should be linked to the global scope.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="context"/> is null.
         /// </exception>
@@ -302,7 +297,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a reference to the "real" session state object instead of the facade
         /// </summary>
-        ///
         internal SessionStateInternal Internal
         {
             get { return _sessionState; }

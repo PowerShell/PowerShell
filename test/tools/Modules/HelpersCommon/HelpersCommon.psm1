@@ -192,3 +192,47 @@ public class TestDynamic : DynamicObject
 }
 '@
 }
+
+# Upload an artifact in VSTS
+# On other systems will just log where the file was placed
+function Send-VstsLogFile {
+    param (
+        [parameter(Mandatory,ParameterSetName='contents')]
+        [string[]]
+        $Contents,
+        [parameter(Mandatory,ParameterSetName='contents')]
+        [string]
+        $LogName,
+        [parameter(Mandatory,ParameterSetName='path')]
+        [ValidateScript({Test-Path -Path $_})]
+        [string]
+        $Path
+    )
+
+    $logFolder = Join-Path -path $pwd -ChildPath 'logfile'
+    if(!(Test-Path -Path $logFolder))
+    {
+        $null = New-Item -Path $logFolder -ItemType Directory
+        if($IsMacOS -or $IsLinux)
+        {
+            $null = chmod a+rw $logFolder
+        }
+    }
+
+    if($Contents)
+    {
+        $logFile = Join-Path -Path $logFolder -ChildPath ([System.Io.Path]::GetRandomFileName() + "-$LogName.txt")
+        $name = Split-Path -leaf -Path $logFile
+
+        $Contents | out-file -path $logFile -Encoding ascii
+    }
+    else
+    {
+        $name = Split-Path -leaf -Path $path
+        $logFile = Join-Path -Path $logFolder -ChildPath ([System.Io.Path]::GetRandomFileName() + '-' + $name)
+        Copy-Item -Path $Path -Destination $logFile
+    }
+
+    Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
+    Write-Verbose "Log file captured as $name" -Verbose
+}

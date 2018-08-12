@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             // FirstFourDayWeek and DayOfWeek.Monday is from ISO 8601
-                            sb.Append(StringUtil.Format("{0:00}",calender.GetWeekOfYear(normalizedDatetime,
+                            sb.Append(StringUtil.Format("{0:00}", calender.GetWeekOfYear(normalizedDatetime,
                                                                                         CalendarWeekRule.FirstFourDayWeek,
                                                                                         DayOfWeek.Monday)));
                             break;

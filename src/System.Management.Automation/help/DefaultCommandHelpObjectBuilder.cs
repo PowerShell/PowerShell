@@ -19,7 +19,6 @@ namespace System.Management.Automation.Help
     internal class PositionalParameterComparer : IComparer
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>

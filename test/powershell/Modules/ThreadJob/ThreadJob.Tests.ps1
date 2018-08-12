@@ -23,19 +23,6 @@ function Wait-ForJobRunning
     }
 }
 
-function Wait-ForExpectedRSCount
-{
-    param (
-        $expectedRSCount
-    )
-
-    $iteration = 20
-    while (((Get-Runspace).Count -ne $expectedRSCount) -and ($iteration-- -gt 0))
-    {
-        Start-Sleep -Milliseconds 100
-    }
-}
-
 Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
     BeforeAll {
@@ -74,6 +61,21 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         param ([string]$param1)
         Write-Output "$param1 $using:Var1 $using:Var2"
 '@ > $scriptFilePath5
+
+        $WaitForCountFnScript = @'
+        function Wait-ForExpectedRSCount
+        {
+            param (
+                $expectedRSCount
+            )
+
+            $iteration = 20
+            while (((Get-Runspace).Count -ne $expectedRSCount) -and ($iteration-- -gt 0))
+            {
+                Start-Sleep -Milliseconds 100
+            }
+        }
+'@
     }
 
     AfterEach {
@@ -265,6 +267,8 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
     It 'ThreadJob Runspaces should be cleaned up at completion' {
 
+        $script = $WaitForCountFnScript + @'
+
         try
         {
             Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
@@ -276,20 +280,26 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             $job3 = Start-ThreadJob -ScriptBlock { "Hello 3!" }
             $job4 = Start-ThreadJob -ScriptBlock { "Hello 4!" }
 
-            $job1,$job2,$job3,$job4 | Wait-Job
+            $null = $job1,$job2,$job3,$job4 | Wait-Job
 
             # Allow for runspace clean up to happen
             Wait-ForExpectedRSCount $rsStartCount
 
-            (Get-Runspace).Count | Should -Be $rsStartCount
+            Write-Output ((Get-Runspace).Count -eq $rsStartCount)
         }
         finally
         {
             Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
         }
+'@
+
+        $result = & "$PSHOME/pwsh" -c $script
+        $result | Should -BeExactly "True"
     }
 
     It 'ThreadJob Runspaces should be cleaned up after job removal' {
+
+    $script = $WaitForCountFnScript + @'
 
         try {
             Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
@@ -302,14 +312,14 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             $job4 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
 
             Wait-ForExpectedRSCount ($rsStartCount + 4)
-            (Get-Runspace).Count | Should -Be ($rsStartCount + 4)
+            Write-Output ((Get-Runspace).Count -eq ($rsStartCount + 4))
 
             # Stop two jobs
             $job1 | Remove-Job -Force
             $job3 | Remove-Job -Force
 
             Wait-ForExpectedRSCount ($rsStartCount + 2)
-            (Get-Runspace).Count | Should -Be ($rsStartCount + 2)
+            Write-Output ((Get-Runspace).Count -eq ($rsStartCount + 2))
         }
         finally
         {
@@ -317,7 +327,11 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         }
 
         Wait-ForExpectedRSCount $rsStartCount
-        (Get-Runspace).Count | Should -Be $rsStartCount
+        Write-Output ((Get-Runspace).Count -eq $rsStartCount)
+'@
+
+        $result = & "$PSHOME/pwsh" -c $script
+        $result | Should -BeExactly "True","True","True"
     }
 
     It 'ThreadJob jobs should work with Receive-Job -AutoRemoveJob' {

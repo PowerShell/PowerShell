@@ -142,21 +142,33 @@ enum SysLogIds
 
 # Defines the array indices when calling
 # String.Split on an OsLog log entry
-enum OsLogIds
+Class OsLogIds
 {
-    Date = 0;
-    Time = 1;
-    Thread = 2;
-    Type = 3;
-    Activity = 4;
-    Pid = 5;
-    ProcessName = 6;
-    Module = 7;
-    Id = 8;
-    CommitId = 9;
-    EventId = 10;
-    Message = 11;
+    [int] $Date = 0;
+    [int] $Time = 1;
+    [int] $Thread = 2;
+    [int] $Type = 3;
+    [int] $Activity = 4;
+    [int] $Pid = 5;
+    [int] $TTL = 6;
+    [int] $ProcessName = 7;
+    [int] $Module = 8;
+    [int] $Id = 9;
+    [int] $CommitId = 10;
+    [int] $EventId = 11;
+    [int] $Message = 12;
+
+    [void] UseOldIds()
+    {
+        $this.ProcessName=6;
+        $this.Module =7;
+        $this.Id =8;
+        $this.CommitId=9;
+        $this.EventId=10;
+        $this.Message=11;
+    }
 }
+
 
 class PSLogItem
 {
@@ -336,12 +348,13 @@ class PSLogItem
         3: Type                         Default
         4: activity                     0x12
         5: PID                          39437
-        6: processname                  pwsh:
-        7: sourcedll                    (libpsl-native.dylib)
-        8: log source                   [com.microsoft.powershell.powershell]
-        9: commitid:treadid:channel     (v6.0.1:1:10)
-        10:[EventId]                    [Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational]
-        11:Message Text
+        6: TTL (introduced in ~ 10.13)  0
+        7: processname                  pwsh:
+        8: sourcedll                    (libpsl-native.dylib)
+        9: log source                   [com.microsoft.powershell.powershell]
+        10: commitid:treadid:channel     (v6.0.1:1:10)
+        11:[EventId]                    [Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational]
+        12:Message Text
         #>
 
         [object] $result = $content
@@ -382,17 +395,28 @@ class PSLogItem
             $item.Count = 1
 
             $item.Timestamp = $time
-            $item.ProcessId = [int]::Parse($parts[[OsLogIds]::Pid])
-            $item.Message = $parts[[OsLogIds]::Message]
+            $osLogIds = [OsLogIds]::new();
+            $item.ProcessId = [int]::Parse($parts[$osLogIds.Pid])
+
+            # Around macOS 13, Apple added a field
+            # Detect if the field is the old or new field and if it is old
+            # Switch to the old schema
+            if($parts[$osLogIds.TTL] -match '\:')
+            {
+                $osLogIds.UseOldIds()
+            }
+
+            $item.Message = $parts[$osLogIds.Message]
 
             # [com.microsoft.powershell.logid]
             $splitChars = ('[', '.', ']')
-            $item.LogId = $parts[[OsLogIds]::Id]
+
+            $item.LogId = $parts[$osLogIds.Id]
             $subparts = $item.LogId.Split($splitChars, [StringSplitOptions]::RemoveEmptyEntries)
             if ($subparts.Length -eq 4)
             {
                 $item.LogId = $subparts[3]
-                if ($id -ne $null -and $id -ne $item.LogId)
+                if ($null -ne $id -and $id -ne $item.LogId)
                 {
                     # this is not the log id we're looking for.
                     $result = $null
@@ -401,7 +425,7 @@ class PSLogItem
             }
             # (commitid:TID:ChannelID)
             $splitChars = ('(', ')', ':', ' ')
-            $item.CommitId = $parts[[OsLogIds]::CommitId]
+            $item.CommitId = $parts[$osLogIds.CommitId]
             $subparts = $item.CommitId.Split($splitChars, [System.StringSplitOptions]::RemoveEmptyEntries)
             if ($subparts.Count -eq 3)
             {
@@ -416,7 +440,7 @@ class PSLogItem
 
             # [EventId]
             $splitChars = ('[', ']', ' ')
-            $item.EventId = $parts[[OsLogIds]::EventId]
+            $item.EventId = $parts[$osLogIds.EventId]
             $subparts = $item.EventId.Split($splitChars, [System.StringSplitOptions]::RemoveEmptyEntries)
             if ($subparts.Count -eq 1)
             {
@@ -798,29 +822,106 @@ function Get-PSOsLog
 #>
 function Export-PSOsLog
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='default')]
     param
     (
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
         [DateTime] $After,
 
-        [string] $LogId = "powershell"
+        [string] $LogId = "powershell",
+
+        [int] $LogPid,
+
+        [Parameter(Mandatory, ParameterSetName='WaitUntil')]
+        [int] $TimeoutInMilliseconds,
+
+        [Parameter(Mandatory, ParameterSetName='WaitUntil')]
+        [int] $IntervalInMilliseconds,
+
+        [Parameter(Mandatory, ParameterSetName='WaitUntil')]
+        [string] $MinimumCount
     )
+
     Test-MacOS
+
     # NOTE: The use of double quotes and single quotes for the predicate parameter
     # is mandatory. Reversing the usage (e.g., single quotes around double quotes)
     # causes the double quotes to be stripped breaking the predicate syntax expected
     # by log show
+    $extraParams = @()
+    if($LogPid)
+    {
+        $extraParams += @(
+            '--predicate'
+            "processID == $LogPid"
+        )
+    }
     if ($After -ne $null)
     {
         [string] $startTime = $After.ToString("yyyy-MM-dd HH:mm:ss")
-        Start-NativeExecution -command {log show --info --start "$startTime" --predicate "subsystem == 'com.microsoft.powershell'"}
+        $extraParams += @(
+            '--start'
+            "$startTime"
+        )
     }
-    else
-    {
-        Start-NativeExecution -command {log show --info --predicate "process == 'pwsh'"}
+    else {
+        $extraParams += @(
+            '--predicate'
+            "process == 'pwsh'"
+        )
     }
+
+    Wait-UntilSuccess {
+        # Leaving this in an turned on by default until the tests are stabilized.
+        Write-Verbose "Exporting macOS logs..." -Verbose
+        $log = @(Start-NativeExecution -command {log show --info @extraParams} | Select-String -SimpleMatch 'com.microsoft.powershell')
+
+        if($log.Count -ge $MinimumCount){
+            Write-Output $log
+        }
+        else {
+            throw "did not recieve at least $MinimumCount records but $($log.Count) instead."
+        }
+    } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds -LogErrorSb {
+        $log = Start-NativeExecution -command {log show --info @extraParams} | Select-String -SimpleMatch 'com.microsoft.powershell'
+        Send-VstsLogFile -Contents $log -LogName 'Export-PSOsLog-Failure'
+    }
+}
+
+function Wait-UntilSuccess
+{
+    [CmdletBinding()]
+    param (
+        [ScriptBlock]$sb,
+        [ScriptBlock]$LogErrorSb,
+        [int]$TimeoutInMilliseconds = 10000,
+        [int]$IntervalInMilliseconds = 10000
+        )
+    # Get the current time
+    $startTime = [DateTime]::Now
+
+    # Loop until the script block returns
+    while ($true) {
+        try{
+            return & $sb
+        }
+        catch{
+            # If the timeout period has passed, return false
+            $msPassed = ([DateTime]::Now - $startTime).TotalMilliseconds
+            if ($msPassed -gt $timeoutInMilliseconds) {
+                if($LogErrorSb)
+                {
+                    try { & $LogErrorSb } catch {Write-Verbose "Logging of Error details failed with: $_" -Verbose}
+                }
+                throw
+            }
+        }
+
+        # Sleep for the specified interval
+        Start-Sleep -Milliseconds $intervalInMilliseconds
+    }
+    return $true
 }
 
 <#

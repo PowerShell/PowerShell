@@ -8,8 +8,10 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
+      env: TRAVIS_CI_CACHE_NAME=linux
     - os: osx
-      osx_image: xcode8.1
+      osx_image: xcode9.4
+      env: TRAVIS_CI_CACHE_NAME=macOS
   fast_finish: true
 
 addons:

@@ -33,7 +33,6 @@ namespace Microsoft.PowerShell.ScheduledJob
     ///             Status.xml
     ///             Results.xml
     ///         ...
-    ///
     /// </summary>
     internal class ScheduledJobStore
     {

@@ -125,7 +125,6 @@ namespace System.Management.Automation.Runspaces
     public abstract class ConstrainedSessionStateEntry : InitialSessionStateEntry
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="visibility"></param>
@@ -136,7 +135,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         public SessionStateEntryVisibility Visibility { get; set; }
     }
@@ -159,7 +157,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="visibility"></param>
@@ -436,7 +433,6 @@ namespace System.Management.Automation.Runspaces
     public sealed class SessionStateCmdletEntry : SessionStateCommandEntry
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="implementingType"></param>
@@ -450,7 +446,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="implementingType"></param>
@@ -477,23 +472,19 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         public Type ImplementingType { get; }
 
         /// <summary>
-        ///
         /// </summary>
         public string HelpFileName { get; }
     }
 
     /// <summary>
-    ///
     /// </summary>
     public sealed class SessionStateProviderEntry : ConstrainedSessionStateEntry
     {
         /// <summary>
-        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="implementingType"></param>
@@ -525,18 +516,15 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         public Type ImplementingType { get; }
 
         /// <summary>
-        ///
         /// </summary>
         public string HelpFileName { get; }
     }
 
     /// <summary>
-    ///
     /// </summary>
     public sealed class SessionStateScriptEntry : SessionStateCommandEntry
     {
@@ -575,13 +563,11 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         public string Path { get; }
     }
 
     /// <summary>
-    ///
     /// </summary>
     public sealed class SessionStateAliasEntry : SessionStateCommandEntry
     {
@@ -672,7 +658,6 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    ///
     /// </summary>
     public sealed class SessionStateApplicationEntry : SessionStateCommandEntry
     {
@@ -719,7 +704,6 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    ///
     /// </summary>
     public sealed class SessionStateFunctionEntry : SessionStateCommandEntry
     {
@@ -831,7 +815,6 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    ///
     /// </summary>
     public sealed class SessionStateVariableEntry : ConstrainedSessionStateEntry
     {
@@ -973,7 +956,6 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    ///
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public sealed class InitialSessionStateEntryCollection<T> : IEnumerable<T> where T : InitialSessionStateEntry
@@ -1044,7 +1026,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
@@ -1116,7 +1097,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="index"></param>
         public void RemoveItem(int index)
@@ -1726,7 +1706,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="snapInNameCollection"></param>
         /// <param name="warning"></param>
@@ -1742,7 +1721,6 @@ namespace System.Management.Automation.Runspaces
 
         //Specify the unregistered module/snapIn path or path collection
         /// <summary>
-        ///
         /// </summary>
         /// <param name="snapInPath"></param>
         /// <param name="warnings"></param>
@@ -1754,7 +1732,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="snapInPathCollection"></param>
         /// <param name="warnings"></param>
@@ -1985,7 +1962,6 @@ namespace System.Management.Automation.Runspaces
         private InitialSessionStateEntryCollection<SessionStateTypeEntry> _types;
 
         /// <summary>
-        ///
         /// </summary>
         public virtual InitialSessionStateEntryCollection<SessionStateFormatEntry> Formats
         {
@@ -2007,7 +1983,6 @@ namespace System.Management.Automation.Runspaces
         public bool DisableFormatUpdates { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         public virtual InitialSessionStateEntryCollection<SessionStateProviderEntry> Providers
         {
@@ -2070,7 +2045,6 @@ namespace System.Management.Automation.Runspaces
         private List<Hashtable> _dynamicVariablesToDefine;
 
         /// <summary>
-        ///
         /// </summary>
         public virtual InitialSessionStateEntryCollection<SessionStateVariableEntry> Variables
         {
@@ -2084,7 +2058,6 @@ namespace System.Management.Automation.Runspaces
         private InitialSessionStateEntryCollection<SessionStateVariableEntry> _variables;
 
         /// <summary>
-        ///
         /// </summary>
         public virtual InitialSessionStateEntryCollection<SessionStateVariableEntry> EnvironmentVariables
         {
@@ -2098,7 +2071,6 @@ namespace System.Management.Automation.Runspaces
         private InitialSessionStateEntryCollection<SessionStateVariableEntry> _environmentVariables;
 
         /// <summary>
-        ///
         /// </summary>
         public virtual HashSet<String> StartupScripts
         {
@@ -4213,15 +4185,6 @@ param(
     [string[]]
     ${Category},
 
-    [string[]]
-    ${Component},
-
-    [string[]]
-    ${Functionality},
-
-    [string[]]
-    ${Role},
-
     [Parameter(ParameterSetName='DetailedView', Mandatory=$true)]
     [switch]
     ${Detailed},
@@ -4237,6 +4200,15 @@ param(
     [Parameter(ParameterSetName='Parameters', Mandatory=$true)]
     [string]
     ${Parameter},
+
+    [string[]]
+    ${Component},
+
+    [string[]]
+    ${Functionality},
+
+    [string[]]
+    ${Role},
 
     [Parameter(ParameterSetName='Online', Mandatory=$true)]
     [switch]

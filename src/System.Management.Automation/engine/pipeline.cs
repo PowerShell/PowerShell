@@ -1540,7 +1540,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// The scope the pipeline should execute in.
         /// </summary>
-        ///
         internal SessionStateScope ExecutionScope
         {
             get { return _executionScope; }

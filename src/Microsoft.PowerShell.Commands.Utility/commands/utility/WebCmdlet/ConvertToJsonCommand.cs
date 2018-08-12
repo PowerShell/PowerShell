@@ -182,13 +182,11 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (obj is Newtonsoft.Json.Linq.JObject jObject)
             {
-                rv = jObject.ToObject<Dictionary<object,object>>();
+                rv = jObject.ToObject<Dictionary<object, object>>();
             }
             else
             {
                 TypeInfo t = obj.GetType().GetTypeInfo();
-                WriteVerbose(StringUtil.Format(UtilityCommonStrings.ConvertToJsonProcessValueVerboseMessage, t.Name, depth));
-
 
                 if (t.IsPrimitive)
                 {
@@ -444,6 +442,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Exception used for Stopping.
         /// </summary>
-        private class StoppingException : System.Exception {}
+        private class StoppingException : System.Exception { }
     }
 }

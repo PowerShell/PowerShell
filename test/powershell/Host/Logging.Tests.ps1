@@ -5,6 +5,7 @@ using namespace System.Text
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+Import-Module HelpersCommon
 Import-Module PSSysLog
 
 <#
@@ -158,7 +159,7 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
     }
 }
 
-Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
+Describe 'Basic os_log tests on MacOS' -Tag @('Feature','RequireSudoOnUnix') {
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsMacOS
         [bool] $persistenceEnabled = $false
@@ -202,32 +203,51 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
     }
 
     It 'Verifies basic logging with no customizations' -Skip:(!$IsSupportedEnvironment) {
-        $configFile = WriteLogSettings -LogId $logId
-        & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
+        try {
+            $configFile = WriteLogSettings -LogId $logId
+            $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command '$PID'
 
-        Export-PSOsLog -After $after -Verbose | Set-Content -Path $contentFile
-        $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose
+            Export-PSOsLog -After $after -LogPid $testPid -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 3000 -MinimumCount 2 |
+                Set-Content -Path $contentFile
+            $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose)
 
-        $items | Should -Not -Be $null
-        $items.Length | Should -BeGreaterThan 1
-        $items[0].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
-        $items[1].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
-        # if there are more items than expected...
-        if ($items.Length -gt 2)
-        {
-            # Force reporting of the first unexpected item to help diagnosis
-            $items[2] | Should -Be $null
+            $items | Should -Not -Be $null
+            $items.Count | Should -BeGreaterThan 1
+            $items[0].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
+            $items[1].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
+            # if there are more items than expected...
+            if ($items.Count -gt 2)
+            {
+                # Force reporting of the first unexpected item to help diagnosis
+                $items[2] | Should -Be $null
+            }
+        }
+        catch {
+            if (Test-Path $contentFile) {
+                Send-VstsLogFile -Path $contentFile
+            }
+            throw
         }
     }
 
-    It 'Verifies logging level filtering works' -Skip:(!$IsSupportedEnvironment) {
-        $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
-        & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
+    # This is pending because it results in false postitives (-Skip:(!$IsSupportedEnvironment) )
+    It 'Verifies logging level filtering works' -Pending {
+        try {
+            $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
+            $testPid = & $powershell -NoLogo -NoProfile -SettingsFile $configFile -Command '$PID'
 
-        Export-PSOsLog -After $after -Verbose | Set-Content -Path $contentFile
-        # by default, powershell startup should only logs informational events.
-        # With Level = Warning, nothing should be logged.
-        $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3
-        $items | Should -Be $null
+            Export-PSOsLog -After $after -LogPid $testPid |
+                Set-Content -Path $contentFile
+            # by default, powershell startup should only logs informational events.
+            # With Level = Warning, nothing should be logged.
+            $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3
+            $items | Should -Be $null
+        }
+        catch {
+            if (Test-Path $contentFile) {
+                Send-VstsLogFile -Path $contentFile
+            }
+            throw
+        }
     }
 }

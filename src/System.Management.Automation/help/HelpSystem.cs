@@ -83,7 +83,6 @@ namespace System.Management.Automation
     ///     Help providers may need to provide functionality in following two area,
     ///         a. caching and indexing to boost performance
     ///         b. localization
-    ///
     /// </summary>
     internal class HelpSystem
     {
@@ -278,7 +277,6 @@ namespace System.Management.Automation
         ///     3. if help target is a search pattern or step 2 returns no helpInfo, try to search for help
         ///        (Search for pattern in command name followed by pattern match in help content)
         ///     4. if step 3 returns exact one helpInfo object, try to retrieve exact help.
-        ///
         /// </summary>
         /// <param name="helpRequest">Help request object</param>
         /// <returns>An array of HelpInfo object</returns>
@@ -348,7 +346,6 @@ namespace System.Management.Automation
         /// If the helpInfo returned is not complete, we will forward the
         /// helpInfo object to appropriate help provider for further processing.
         /// (this is implemented by ForwardHelp)
-        ///
         /// </summary>
         /// <param name="helpRequest">Help request object</param>
         /// <returns>HelpInfo object retrieved. Can be Null.</returns>
@@ -387,7 +384,6 @@ namespace System.Management.Automation
         /// This is used in the following known scenarios so far
         ///     1. Alias: helpInfo returned by Alias is not what end user needed.
         ///               The real help can be retrieved from Command help provider.
-        ///
         /// </summary>
         /// <param name="helpInfo"></param>
         /// <param name="helpRequest">Help request object</param>
@@ -764,7 +760,6 @@ namespace System.Management.Automation
         ///
         /// Normally help providers will remove cached help content to make sure new help
         /// requests will be served with content of right culture.
-        ///
         /// </summary>
         internal void ResetHelpProviders()
         {
