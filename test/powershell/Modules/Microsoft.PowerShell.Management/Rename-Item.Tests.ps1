@@ -32,7 +32,7 @@ Describe "Rename-Item tests" -Tag "CI" {
         $oldSp = "$wdSp/``[orig``]file.txt"
         $newSpName = "[renamed]file.txt"
         $newSp = "$wdSp/``[renamed``]file.txt"
-        In $wdSpName -Execute {
+        In $wdSp -Execute {
             $null = New-Item -Name $oldSpName -ItemType File -Value $content -Force
             Rename-Item $oldSpBName $newSpName
         }
