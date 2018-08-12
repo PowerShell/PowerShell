@@ -4848,7 +4848,7 @@ namespace System.Management.Automation.Language
 
             lock (binderList)
             {
-                if (!binderList.Any())
+                if (binderList.Count == 0)
                 {
                     // Force one binder to be created if one hasn't been created already.
                     PSGetMemberBinder.Get(memberName, (Type)null, @static: false);

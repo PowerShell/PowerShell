@@ -147,15 +147,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes the new instance of NativeCommandProcessor class.
         /// </summary>
-        ///
         /// <param name="applicationInfo">
         /// The information about the application to run.
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for this command.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// <paramref name="applicationInfo"/> or <paramref name="context"/> is null
         /// </exception>
@@ -243,15 +240,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a new instance of a ParameterBinderController using a NativeCommandParameterBinder
         /// </summary>
-        ///
         /// <param name="command">
         /// The native command to be run.
         /// </param>
-        ///
         /// <returns>
         /// A new parameter binder controller for the specified command.
         /// </returns>
-        ///
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
             Dbg.Assert(_isPreparedCalled, "parameter binder should not be created before prepared is called");

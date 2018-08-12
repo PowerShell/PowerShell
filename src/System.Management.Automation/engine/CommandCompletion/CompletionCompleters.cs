@@ -27,7 +27,6 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// </summary>
     public static class CompletionCompleters
     {
@@ -47,7 +46,6 @@ namespace System.Management.Automation
         #region Command Names
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <returns></returns>
@@ -57,7 +55,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="moduleName"></param>
@@ -1617,7 +1614,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Process a parameter to get the argument completion results
         /// </summary>
-        ///
         /// <remarks>
         /// If the argument completion falls into these pre-defined cases:
         ///   1. The matching parameter is of type Enum
@@ -3915,7 +3911,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="prev">the argument that is right before the 'tab' location</param>
         /// <param name="position">the number of positional arguments before the 'tab' location</param>
@@ -4011,7 +4006,6 @@ namespace System.Management.Automation
         #region Filenames
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
@@ -4461,7 +4455,6 @@ namespace System.Management.Automation
         #region Variable
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="variableName"></param>
         /// <returns></returns>
@@ -6079,7 +6072,6 @@ namespace System.Management.Automation
         ///             D^
         ///         }
         ///     }
-        ///
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="ast"></param>

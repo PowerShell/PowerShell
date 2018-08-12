@@ -273,15 +273,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Merges this commands results
         /// </summary>
-        ///
         /// <param name="myResult">
         /// Pipeline stream to be redirected.
         /// </param>
-        ///
         /// <param name="toResult">
         /// Pipeline stream in to which myResult is merged
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// myResult parameter is not PipelineResultTypes.Error or
         /// toResult parameter is not PipelineResultTypes.Output

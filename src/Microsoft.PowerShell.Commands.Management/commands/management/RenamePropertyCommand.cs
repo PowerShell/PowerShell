@@ -56,7 +56,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The properties to be renamed on the item
         /// </summary>
-        ///
         [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
         public string Name { get; set; }
@@ -64,7 +63,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The new name of the property on the item
         /// </summary>
-        ///
         [Parameter(Mandatory = true, Position = 2, ValueFromPipelineByPropertyName = true)]
         public string NewName { get; set; }
 
@@ -73,16 +71,13 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null)

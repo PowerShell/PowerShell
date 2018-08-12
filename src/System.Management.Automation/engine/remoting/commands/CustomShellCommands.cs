@@ -378,7 +378,6 @@ else
         #region Cmdlet Overrides
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// 1. Either both "AssemblyName" and "ConfigurationTypeName" must be specified
@@ -3254,7 +3253,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
         #region Cmdlet overrides
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// 1. Either both "AssemblyName" and "ConfigurationTypeName" must be specified
@@ -3371,7 +3369,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -4388,7 +4385,6 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         #region Cmdlet Overrides
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// 1. Either both "AssemblyName" and "ConfigurationTypeName" must be specified
@@ -4402,7 +4398,6 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -4416,7 +4411,6 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {
@@ -4487,7 +4481,6 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
     }
 
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, RemotingConstants.PSSessionConfigurationNoun,
         SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144299")]
@@ -4627,7 +4620,6 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         #region Cmdlet Overrides
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// 1. Either both "AssemblyName" and "ConfigurationTypeName" must be specified
@@ -4641,7 +4633,6 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -4655,7 +4646,6 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {
@@ -4719,7 +4709,6 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
     #region Enable-PSRemoting
 
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, RemotingConstants.PSRemotingNoun,
         SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144300")]
@@ -5123,7 +5112,6 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
         #region Cmdlet Overrides
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// 1. Either both "AssemblyName" and "ConfigurationTypeName" must be specified
@@ -5137,7 +5125,6 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {

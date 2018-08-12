@@ -1271,7 +1271,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="requiredVersion">The version to check the manifest against</param>
         /// <param name="requiredModuleGuid">The module guid to check the manifest against</param>
         /// <returns></returns>
-        ///
         internal PSModuleInfo LoadModuleManifest(
             ExternalScriptInfo scriptInfo,
             ManifestProcessingFlags manifestProcessingFlags,
@@ -1295,7 +1294,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="requiredModuleGuid">The module guid to check the manifest against</param>
         /// <param name="options">The set of options that are used while importing a module</param>
         /// <returns></returns>
-        ///
         internal PSModuleInfo LoadModuleManifest(
             ExternalScriptInfo scriptInfo,
             ManifestProcessingFlags manifestProcessingFlags,
@@ -1389,7 +1387,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="options">The set of options that are used while importing a module</param>
         /// <param name="containedErrors">Tracks if there were errors in the file</param>
         /// <returns></returns>
-        ///
         internal PSModuleInfo LoadModuleManifest(
             string moduleManifestPath,
             ExternalScriptInfo scriptInfo,
@@ -4509,7 +4506,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleBase">The base path to use if the file is not rooted</param>
         /// <param name="name">The file name to resolve.</param>
         /// <param name="extension">The extension to use.</param>
-        ///
         /// <returns></returns>
         internal string FixupFileName(string moduleBase, string name, string extension)
         {
@@ -4562,7 +4558,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="moduleBase">The base path to use if the file is not rooted</param>
         /// <param name="path">The file name to resolve.</param>
-        ///
         /// <returns></returns>
         internal string GetAbsolutePath(string moduleBase, string path)
         {
@@ -5056,7 +5051,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="modulePath"></param>
         /// <param name="prefix"></param>

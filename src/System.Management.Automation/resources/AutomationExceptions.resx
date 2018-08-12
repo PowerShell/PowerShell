@@ -121,7 +121,7 @@
     <value>Cannot process argument because the value of argument "{0}" is not valid. Change the value of the "{0}" argument and run the operation again.</value>
   </data>
   <data name="InvalidScopeIdArgument" xml:space="preserve">
-    <value>Cannot process argument because the value of argument "{0}" is not valid. Valid values are "Global", "Local", or "Script", or a number relative to the current scope (0 through the number of scopes where 0 is the current scope and 1 is its parent). Change the value of the "{0}" argument and run the operation again.</value>
+    <value>Cannot process argument because the value of parameter "{0}" is not valid. Valid values are "Global", "Local", or "Script", or a number relative to the current scope (0 through the number of scopes where 0 is the current scope and 1 is its parent). Change the value of the "{0}" parameter and run the operation again.</value>
   </data>
   <data name="ArgumentNull" xml:space="preserve">
     <value>Cannot process argument because the value of argument "{0}" is null. Change the value of argument "{0}" to a non-null value.</value>

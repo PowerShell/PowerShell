@@ -57,11 +57,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The name of the property to set.
         /// </summary>
-        ///
         /// <value>
         /// This value type is determined by the InvokeProvider.
         /// </value>
-        ///
         [Parameter(Position = 1, ParameterSetName = propertyValuePathSet,
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 1, ParameterSetName = propertyValueLiteralPathSet,
@@ -72,11 +70,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The value of the property to set.
         /// </summary>
-        ///
         /// <value>
         /// This value type is determined by the InvokeProvider.
         /// </value>
-        ///
         [Parameter(Position = 2, ParameterSetName = propertyValuePathSet,
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 2, ParameterSetName = propertyValueLiteralPathSet,
@@ -107,16 +103,13 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             PSObject mshObject = null;

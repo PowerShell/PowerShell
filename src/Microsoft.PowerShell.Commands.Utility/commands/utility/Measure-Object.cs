@@ -17,9 +17,7 @@ namespace Microsoft.PowerShell.Commands
     public abstract class MeasureInfo
     {
         /// <summary>
-        ///
         /// Property name.
-        ///
         /// </summary>
         public string Property { get; set; } = null;
     }
@@ -89,37 +87,27 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// Keeping track of number of objects with a certain property.
-        ///
         /// </summary>
         public int Count { get; set; }
 
         /// <summary>
-        ///
         /// The average of property values.
-        ///
         /// </summary>
         public double? Average { get; set; }
 
         /// <summary>
-        ///
         /// The sum of property values.
-        ///
         /// </summary>
         public double? Sum { get; set; }
 
         /// <summary>
-        ///
         /// The max of property values.
-        ///
         /// </summary>
         public object Maximum { get; set; }
 
         /// <summary>
-        ///
         /// The min of property values.
-        ///
         /// </summary>
         public object Minimum { get; set; }
 
@@ -370,7 +358,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region TextMeasure ParameterSet
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]
@@ -388,7 +375,6 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureLines = false;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]
@@ -406,7 +392,6 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureWords = false;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]
@@ -424,7 +409,6 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureCharacters = false;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]

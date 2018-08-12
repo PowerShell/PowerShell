@@ -339,26 +339,67 @@ function Invoke-AppVeyorTest
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
     # To work-around it, we exlude all categories, but 'CI' from the list
-    $ExcludeTag = @('Slow', 'Feature', 'Scenario')
     if (Test-DailyBuild) {
         $ExcludeTag = @()
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
     else {
+        $ExcludeTag = @('Slow', 'Feature', 'Scenario')
         Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
     }
 
+    # Get the experimental feature names and the tests associated with them
+    $ExperimentalFeatureTests = Get-ExperimentalFeatureTests
+
     if ($Purpose -eq 'UnelevatedPesterTests') {
-        Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
+        $arguments = @{
+            Bindir = $env:CoreOutput
+            OutputFile = $testResultsNonAdminFile
+            Unelevate = $true
+            Terse = $true
+            Tag = @()
+            ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
+        }
+        Start-PSPester @arguments
         Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
-
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
+
+        # Run tests with specified experimental features enabled
+        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
+            $featureName = $entry.Key
+            $testFiles = $entry.Value
+
+            $expFeatureTestResultFile = "$pwd\TestsResultsNonAdmin.$featureName.xml"
+            $arguments['OutputFile'] = $expFeatureTestResultFile
+            $arguments['ExperimentalFeatureName'] = $featureName
+            if ($testFiles.Count -eq 0) {
+                # If an empty array is specified for the feature name, we run all tests with the feature enabled.
+                # This allows us to prevent regressions to a critical engine experimental feature.
+                $arguments.Remove('Path')
+            } else {
+                # If a non-empty string or array is specified for the feature name, we only run those test files.
+                $arguments['Path'] = $testFiles
+            }
+            Start-PSPester @arguments
+
+            Write-Host -ForegroundColor Green "Upload CoreCLR Non-Admin test results for experimental feature '$featureName'"
+            Update-AppVeyorTestResults -resultsFile $expFeatureTestResultFile
+            # Fail the build, if tests failed
+            Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
+        }
     }
 
     if ($Purpose -eq 'ElevatedPesterTests_xUnit_Packaging') {
-        Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
+        $arguments = @{
+            Terse = $true
+            Bindir = $env:CoreOutput
+            OutputFile = $testResultsAdminFile
+            Tag = @('RequireAdminOnWindows')
+            ExcludeTag = $ExcludeTag
+        }
+        Start-PSPester @arguments
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
@@ -374,6 +415,30 @@ function Invoke-AppVeyorTest
             $ParallelXUnitTestResultsFile
         ) | ForEach-Object {
             Test-XUnitTestResults -TestResultsFile $_
+        }
+
+        # Run tests with specified experimental features enabled
+        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
+            $featureName = $entry.Key
+            $testFiles = $entry.Value
+
+            $expFeatureTestResultFile = "$pwd\TestsResultsAdmin.$featureName.xml"
+            $arguments['OutputFile'] = $expFeatureTestResultFile
+            $arguments['ExperimentalFeatureName'] = $featureName
+            if ($testFiles.Count -eq 0) {
+                # If an empty array is specified for the feature name, we run all tests with the feature enabled.
+                # This allows us to prevent regressions to a critical engine experimental feature.
+                $arguments.Remove('Path')
+            } else {
+                # If a non-empty string or array is specified for the feature name, we only run those test files.
+                $arguments['Path'] = $testFiles
+            }
+            Start-PSPester @arguments
+
+            Write-Host -ForegroundColor Green "Upload CoreCLR Admin test results for experimental feature '$featureName'"
+            Update-AppVeyorTestResults -resultsFile $expFeatureTestResultFile
+            # Fail the build, if tests failed
+            Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
         }
     }
 

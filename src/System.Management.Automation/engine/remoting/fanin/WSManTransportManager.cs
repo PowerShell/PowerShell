@@ -2956,7 +2956,6 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <exception cref="PSRemotingTransportException">
         /// WSManRunShellCommandEx failed.

@@ -1579,7 +1579,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region Overrides
         /// <summary>
-        ///
         /// </summary>
         [ArchitectureSensitive]
         protected override void ProcessRecord()

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpProviderWithFullCache provides a pseudo implementation of HelpProvider
     /// at which results are fully cached in a hashtable after initial cache load.
     ///
@@ -14,7 +13,6 @@ namespace System.Management.Automation
     /// help contents for this provider can be loaded once and be used for later
     /// search. So logically class derived from this class only need to provide
     /// a way to load and initialize help cache.
-    ///
     /// </summary>
     internal abstract class HelpProviderWithFullCache : HelpProviderWithCache
     {

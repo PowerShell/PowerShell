@@ -202,7 +202,6 @@ namespace System.Management.Automation
         /// <summary>
         /// An null instance of CompletionResult.
         /// </summary>
-        ///
         /// <remarks>
         /// This can be used in argument completion, to indicate that the completion attempt has gone through the
         /// native command argument completion methods.
