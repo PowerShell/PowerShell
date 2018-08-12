@@ -122,13 +122,6 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        /// <inheritdoc />
-        protected override ProviderInfo Start(ProviderInfo providerInfo)
-        {
-            RegistryProviderProperties.ExtendWithCodeProperties(Context);
-            return providerInfo;
-        }
-
         #region DriveCmdletProvider overrides
 
         /// <summary>
@@ -4140,8 +4133,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class RegistryProviderProperties : NavigationProviderPropertiesBase<RegistryProviderProperties>
     {
-        private static int s_codePropertiesAdded;
-
         private readonly string[] _properties;
 
         /// <summary>
@@ -4175,34 +4166,9 @@ namespace Microsoft.PowerShell.Commands
             return props._properties;
         }
 
-        /// <summary>
-        /// Adds code properties for the provider common properties.
-        /// </summary>
-        /// <param name="context">A <see cref="CmdletProviderContext"/>, used to update type data.</param>
-        internal static void ExtendWithCodeProperties(CmdletProviderContext context)
+        internal static TypeData GetCodePropertiesTypeData()
         {
-            var incremented = Interlocked.Increment(ref s_codePropertiesAdded);
-            if (incremented != 1)
-            {
-                return;
-            }
-
-            var td = GetCodePropertiesTypeData<RegistryKey>();
-            var errors = new ConcurrentBag<string>();
-            var executionContext = context.ExecutionContext;
-
-            executionContext.TypeTable.Update(td, errors, isRemove: false);
-            if (errors.Count > 0)
-            {
-                throw new Exception(errors.First());
-            }
-
-            executionContext.InitialSessionState.Types.Add(new SessionStateTypeEntry(td, false));
-        }
-
-        private static TypeData GetCodePropertiesTypeData<T>()
-        {
-            var td = new TypeData(typeof(T)) { IsOverride = true };
+            var td = new TypeData(typeof(RegistryKey));
             var typeMembers = td.Members;
             void AddCodeProperty(string name, string memberName)
             {

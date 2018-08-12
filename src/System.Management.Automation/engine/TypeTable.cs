@@ -18,6 +18,7 @@ using System.Security;
 using System.Xml;
 using Dbg = System.Diagnostics.Debug;
 using System.Security.Permissions;
+using Microsoft.PowerShell.Commands;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -4399,6 +4400,15 @@ namespace System.Management.Automation.Runspaces
             else if (string.Equals(Path.Combine(psHome, "typesv3.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
             {
                 ProcessTypeData(filePath, errors, TypesV3_Ps1Xml.Get());
+
+                var providerItemTypeData = new[]
+                                           {
+                                               FileSystemProviderProperties.GetCodePropertiesTypeData(),
+                                               RegistryProviderProperties.GetCodePropertiesTypeData()
+                                           };
+
+                ProcessTypeData(filePath, errors, providerItemTypeData);
+
                 result = true;
             }
             else if (string.Equals(Path.Combine(psHome, "GetEvent.types.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))

@@ -4,8 +4,11 @@
 #pragma warning disable 1634, 1691
 #pragma warning disable 56506
 
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis; // for fxcop
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+// for fxcop
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
@@ -2005,6 +2008,8 @@ namespace System.Management.Automation.Provider
     /// <typeparam name="T">The Property container type.</typeparam>
     public class NavigationProviderPropertiesBase<T> : NavigationProviderPropertiesBase where T : NavigationProviderPropertiesBase
     {
+        private static readonly ConditionalWeakTable<object, T> s_objectProperties = new ConditionalWeakTable<object, T>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationProviderPropertiesBase{T}"/> class.
         /// </summary>
@@ -2040,8 +2045,6 @@ namespace System.Management.Automation.Provider
 
             return default(T);
         }
-
-        private static readonly ConditionalWeakTable<object, T> s_objectProperties = new ConditionalWeakTable<object, T>();
 
         /// <summary>
         /// Code property for PSDrive.

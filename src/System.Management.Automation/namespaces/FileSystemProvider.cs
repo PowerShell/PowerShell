@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -384,7 +383,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            FileSystemProviderProperties.ExtendWithCodeProperties(Context);
             return providerInfo;
         } // Start
 
@@ -8196,36 +8194,9 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The PSIsContainer for the extended object.</returns>
         public static bool GetIsContainer(PSObject obj) => obj.BaseObject is DirectoryInfo;
 
-        private static int s_codePropertiesAdded;
-
-        /// <summary>
-        /// Adds code properties for the provider common properties.
-        /// </summary>
-        /// <param name="context">A <see cref="CmdletProviderContext"/>, used to update type data.</param>
-        internal static void ExtendWithCodeProperties(CmdletProviderContext context)
+        internal static TypeData GetCodePropertiesTypeData()
         {
-            var incremented = Interlocked.Increment(ref s_codePropertiesAdded);
-            if (incremented != 1)
-            {
-                return;
-            }
-
-            var td = GetCodePropertiesTypeData<FileSystemInfo>();
-            var errors = new ConcurrentBag<string>();
-            var executionContext = context.ExecutionContext;
-
-            executionContext.TypeTable.Update(td, errors, isRemove: false);
-            if (errors.Count > 0)
-            {
-                throw new Exception(errors.First());
-            }
-
-            executionContext.InitialSessionState.Types.Add(new SessionStateTypeEntry(td, false));
-        }
-
-        private static TypeData GetCodePropertiesTypeData<T>()
-        {
-            var td = new TypeData(typeof(T)) { IsOverride = true };
+            var td = new TypeData(typeof(FileSystemInfo));
             var typeMembers = td.Members;
 
             void AddCodeProperty(string name, string memberName)
