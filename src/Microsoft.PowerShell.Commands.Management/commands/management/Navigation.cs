@@ -3605,7 +3605,7 @@ namespace Microsoft.PowerShell.Commands
 
         private Collection<PathInfo> GetResolvedPaths(string path)
         {
-            Collection<PathInfo> results = new Collection<PathInfo>();
+            Collection<PathInfo> results = null;
             try
             {
                 results = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
@@ -3647,7 +3647,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (base.SuppressWildcardExpansion)
+            if (SuppressWildcardExpansion)
             {
                 RenameItem(Path, literalPath: true);
                 return;
@@ -3655,19 +3655,14 @@ namespace Microsoft.PowerShell.Commands
 
             Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);
 
-            switch (resolvedPaths.Count)
-            {
-                case 0:
-                    break;
+            if (resolvedPaths == null) {
+                return;
+            }
 
-                case 1:
-                    string resolvedPath = resolvedPaths[0].Path;
-                    RenameItem(resolvedPath, literalPath: true);
-                    break;
-
-                default:
-                    RenameItem(Path, literalPath: true);
-                    break;
+            if (resolvedPaths.Count == 1) {
+                RenameItem(resolvedPaths[0].Path, literalPath: true);
+            } else {
+                RenameItem(WildcardPattern.Unescape(Path), literalPath: true);
             }
         }
 
