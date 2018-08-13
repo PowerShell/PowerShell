@@ -1513,7 +1513,20 @@ function Start-PSxUnit {
 
         # Run sequential tests first, and then run the tests that can execute in parallel
         dotnet xunit -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
-        dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
+        $extraParams = @()
+
+        # we are having intermittent issues on macOS with these tests failing.
+        # VSTS has suggested forcing them to be sequential
+        if($env:TF_BUILD -and $IsMacOS)
+        {
+            Write-Log 'Forcing parallel xunit tests to run sequentially.'
+            $extraParams += @(
+                '-parallel'
+                'none'
+            )
+        }
+
+        dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild @extraParams
     }
     finally {
         Pop-Location
