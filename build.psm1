@@ -140,10 +140,11 @@ function Get-EnvironmentInformation
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
         $environment += @{'IsSLES' = $LinuxInfo.ID -match 'sles'}
-        $environment += @{'IsRedHat7' = $LinuxInfo.ID -match 'rhel' -and $LinuxInfo.VERSION_ID -match '7' }
+        $environment += @{'IsRedHat' = $LinuxInfo.ID -match 'rhel'}
+        $environment += @{'IsRedHat7' = $Environment.IsRedHat -and $LinuxInfo.VERSION_ID -match '7' }
         $environment += @{'IsOpenSUSE13' = $Environmenst.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
         $environment += @{'IsOpenSUSE42.1' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'}
-        $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsRedHat7}
+        $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $Environment.IsSLES -or $Environment.IsOpenSUSE}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
@@ -151,6 +152,15 @@ function Get-EnvironmentInformation
         if ($environment.IsFedora -and (Test-Path ENV:\LD_LIBRARY_PATH)) {
             Remove-Item -Force ENV:\LD_LIBRARY_PATH
             Get-ChildItem ENV:
+        }
+
+        if( -not(
+            $environment.IsDebian -or
+            $environment.IsUbuntu -or
+            $environmment.IsRedHatFamily -or
+            $environmment.IsSUSEFamily)
+        ) {
+            throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
         }
     }
 
