@@ -3272,9 +3272,9 @@ namespace System.Management.Automation.Language
                             }
                             return true;
                         }
-                        else if (UInt64.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
+                        else if (UInt64.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u2))
                         {
-                            result = u * (ulong)multiplier;
+                            result = u2 * (ulong)multiplier;
                             return true;
                         }
                         else
