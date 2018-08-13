@@ -3258,6 +3258,22 @@ namespace System.Management.Automation.Language
                         return false;
                     }
 
+                    if (suffix == 'u' || suffix == 'U')
+                    {
+                        uint u;
+
+                        if (UInt32.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out u))
+                        {
+                            result = u * multiplier;
+                            return true;
+                        }
+                        else
+                        {
+                            result = null;
+                            return false;
+                        }
+                    }
+
                     if (real)
                     {
                         double d;
