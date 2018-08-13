@@ -39,4 +39,19 @@ Describe "Rename-Item tests" -Tag "CI" {
         $newSp | Should -Exist
         $newSp | Should -FileContentMatchExactly $content
     }
+    It "Rename-Item will rename a file when -LiteralPath and CWD contains special char" {
+        $content = "This is not content"
+        $oldSpName = "[orig]file2.txt"
+        $oldSpBName = "``[orig``]file2.txt"
+        $oldSp = "$wdSp/$oldSpBName"
+        $newSpName = "[renamed]file2.txt"
+        $newSp = "$wdSp/``[renamed``]file2.txt"
+        In $wdSp -Execute {
+            $null = New-Item -Name $oldSpName -ItemType File -Value $content -Force
+            Rename-Item -LiteralPath $oldSpName $newSpName
+        }
+        $oldSp | Should -Not -Exist
+        $newSp | Should -Exist
+        $newSp | Should -FileContentMatchExactly $content
+    }
 }
