@@ -3272,6 +3272,11 @@ namespace System.Management.Automation.Language
                             }
                             return true;
                         }
+                        else if (UInt64.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
+                        {
+                            result = u * (ulong)multiplier;
+                            return true;
+                        }
                         else
                         {
                             result = null;
