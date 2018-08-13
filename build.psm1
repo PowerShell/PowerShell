@@ -604,7 +604,7 @@ Fix steps:
         ## need RCEdit to modify the binaries embedded resources
         $rcedit = "~/.rcedit/rcedit-x64.exe"
         if (-not (Test-Path -Type Leaf $rcedit)) {
-            $rcedit = Get-Command rcedit-x64 -ErrorAction SilentlyContinue | Select-Object -First 1 | % Name
+            $rcedit = Get-Command "rcedit-x64.exe" -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1 | % Name
         }
         if (-not $rcedit) {
             throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
