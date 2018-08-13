@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.MarkdownRender
     {
         protected override void Write(VT100Renderer renderer, HeadingBlock obj)
         {
-            string headerText = obj.Inline?.FirstChild?.ToString();
+            string headerText = obj?.Inline?.FirstChild?.ToString();
 
             if (!string.IsNullOrEmpty(headerText))
             {

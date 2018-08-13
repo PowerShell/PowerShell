@@ -16,9 +16,9 @@ namespace Microsoft.PowerShell.MarkdownRender
     {
         protected override void Write(VT100Renderer renderer, FencedCodeBlock obj)
         {
-            if (obj?.Lines != null && obj.Lines.Lines != null)
+            if (obj?.Lines.Lines != null)
             {
-                foreach (var codeLine in obj?.Lines.Lines)
+                foreach (var codeLine in obj.Lines.Lines)
                 {
                     if (!string.IsNullOrWhiteSpace(codeLine.ToString()))
                     {
