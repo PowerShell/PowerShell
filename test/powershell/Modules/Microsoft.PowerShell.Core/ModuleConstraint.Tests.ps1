@@ -84,6 +84,7 @@ function Invoke-ImportModule
 }
 
 $actualVersion = '2.3'
+$actualGuid = [guid]'9b945229-65fd-4629-ae99-88e2618377ff'
 
 $successCases = @(
     @{
@@ -154,7 +155,7 @@ Describe "Module cmdlet version constraint checking" -Tags "Feature" {
         BeforeAll {
             $oldPSModulePath = $env:PSModulePath
             $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
-            $moduleInfo = Import-Module $modulePath -PassThru
+            Import-Module $modulePath
         }
 
         AfterAll {
@@ -245,7 +246,7 @@ Describe "Module cmdlet version constraint checking" -Tags "Feature" {
         BeforeAll {
             $oldPSModulePath = $env:PSModulePath
             $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
-            $moduleInfo = Import-Module $modulePath -PassThru
+            Import-Module $modulePath
         }
 
         AfterAll {
@@ -377,7 +378,7 @@ Describe "Root module version checking" -Tags "Feature" {
         BeforeAll {
             $oldPSModulePath = $env:PSModulePath
             $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
-            $moduleInfo = Import-Module $modulePath -PassThru
+            Import-Module $modulePath
         }
 
         AfterAll {
@@ -468,7 +469,7 @@ Describe "Root module version checking" -Tags "Feature" {
         BeforeAll {
             $oldPSModulePath = $env:PSModulePath
             $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
-            $moduleInfo = Import-Module $modulePath -PassThru
+            Import-Module $modulePath
         }
 
         AfterAll {
@@ -598,7 +599,7 @@ Describe "Versioned directory module version checking" -Tags "Feature" {
         BeforeAll {
             $oldPSModulePath = $env:PSModulePath
             $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
-            $moduleInfo = Import-Module $modulePath -PassThru
+            Import-Module $modulePath
         }
 
         AfterAll {
@@ -689,7 +690,7 @@ Describe "Versioned directory module version checking" -Tags "Feature" {
         BeforeAll {
             $oldPSModulePath = $env:PSModulePath
             $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
-            $moduleInfo = Import-Module $modulePath -PassThru
+            Import-Module $modulePath
         }
 
         AfterAll {
@@ -802,5 +803,332 @@ Describe "Versioned directory module version checking" -Tags "Feature" {
             New-ModuleManifest -Path $reqModPath -RequiredModules $modSpec
             { Import-Module $reqModPath -ErrorAction Stop } | Should -Throw -ErrorId "Modules_InvalidManifest,Microsoft.PowerShell.Commands.ImportModuleCommand"
         }
+    }
+}
+
+Describe "Module GUID checking logic" -Tags "Feature" {
+    BeforeAll {
+        $guidSuccessCases = [System.Collections.ArrayList]::new()
+        foreach ($case in $successCases)
+        {
+            $guidSuccessCases.Add($case)
+            $guidSuccessCases.Add(($case + @{ Guid = $actualGuid }))
+        }
+
+        $guidFailCases = [System.Collections.ArrayList]::new()
+        foreach ($case in $failCases)
+        {
+            $guidFailCases.Add($case)
+            $guidFailCases.Add(($case + @{ Guid = $actualGuid }))
+            $guidFailCases.Add(($case + @{ Guid = [guid]::NewGuid() }))
+        }
+    }
+
+    Context "FullyQualifiedName finding a loaded a psd1 module" {
+        BeforeAll {
+            $moduleName = 'GuidModule'
+            $modulePath = Join-Path $TestDrive $moduleName
+            $manifestPath = Join-Path $modulePath "$moduleName.psd1"
+            New-Item -Path $modulePath -ItemType Directory
+            New-ModuleManifest -Path $manifestPath -Guid $actualGuid -ModuleVersion $actualVersion
+
+            $oldModulePath = $env:PSModulePath
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+            Import-Module $modulePath
+        }
+
+        AfterAll {
+            Get-Module $moduleName | Remove-Module
+            $env:PSModulePath = $oldModulePath
+        }
+
+        It "Gets the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Get-Module -FullyQualifiedName $modSpec
+
+            $mod.Name | Should -Be $moduleName
+            $mod.Guid | Should -Be $actualGuid
+            $mod.Version | Should -Be $actualVersion
+        }
+
+        It "Loads the module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name    | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+            $mod.Guid    | Should -Be $actualGuid
+        }
+
+        It "Loads the module from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name    | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+            $mod.Guid    | Should -Be $actualGuid
+        }
+
+        It "Loads the module from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $manifestPath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name    | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+            $mod.Guid    | Should -Be $actualGuid
+        }
+
+        It "Does not get the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Get-Module -FullyQualifiedName $modSpec
+
+            $mod | Should -Be $null
+        }
+
+        It "Does not load the module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Does not load the module from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Does not load the module from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases -Pending {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $manifestPath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+    }
+
+    Context "FullyQualifiedName loading a rooted module" {
+        BeforeAll {
+            $moduleName = 'GuidRootedModule'
+            $modulePath = Join-Path $TestDrive $moduleName
+            $manifestPath = Join-Path $modulePath "$moduleName.psd1"
+            New-Item -Path $modulePath -ItemType Directory
+            $rootModuleName = 'RootModule.psm1'
+            $rootModulePath = Join-Path $modulePath $rootModuleName
+            New-Item -Path $rootModulePath -ItemType File -Value "function Test-GuidRootModule { 128 }"
+            New-ModuleManifest -Path $manifestPath -Guid $actualGuid -ModuleVersion $actualVersion -RootModule $rootModuleName
+
+            $oldModulePath = $env:PSModulePath
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+            Import-Module $modulePath
+        }
+
+        AfterAll {
+            Get-Module $moduleName | Remove-Module
+            $env:PSModulePath = $oldModulePath
+        }
+
+        It "Gets the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Get-Module -FullyQualifiedName $modSpec
+
+            $mod.Name | Should -Be $moduleName
+            $mod.Guid | Should -Be $actualGuid
+            $mod.Version | Should -Be $actualVersion
+        }
+
+        It "Loads the module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name    | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+            $mod.Guid    | Should -Be $actualGuid
+        }
+
+        It "Loads the module from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name    | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+            $mod.Guid    | Should -Be $actualGuid
+        }
+
+        It "Loads the module from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $manifestPath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name    | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+            $mod.Guid    | Should -Be $actualGuid
+        }
+
+        It "Does not get the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Get-Module -FullyQualifiedName $modSpec
+
+            $mod | Should -Be $null
+        }
+
+        It "Does not load the module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Does not load the module from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Does not load the module from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $manifestPath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+    }
+
+    Context "FullyQualifiedName loading a module in a versioned directory" {
+        BeforeAll {
+            $moduleName = 'GuidModule'
+            $modulePath = Join-Path $TestDrive $moduleName
+            $versionPath = Join-Path $modulePath $actualVersion
+            $manifestPath = Join-Path $versionPath "$moduleName.psd1"
+            New-Item -Path $versionPath -ItemType Directory
+            New-ModuleManifest -Path $manifestPath -Guid $actualGuid -ModuleVersion $actualVersion
+
+            $oldModulePath = $env:PSModulePath
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+            Import-Module $modulePath
+        }
+
+        AfterAll {
+            Get-Module $moduleName | Remove-Module
+            $env:PSModulePath = $oldModulePath
+        }
+
+        It "Gets the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Get-Module -FullyQualifiedName $modSpec
+
+            $mod.Name | Should -Be $moduleName
+            $mod.Guid | Should -Be $actualGuid
+            $mod.Version | Should -Be $actualVersion
+        }
+
+        It "Loads the module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name    | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+            $mod.Guid    | Should -Be $actualGuid
+        }
+
+        It "Loads the module from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name    | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+            $mod.Guid    | Should -Be $actualGuid
+        }
+
+        It "Loads the module from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $manifestPath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
+
+            $mod.Name    | Should -Be $moduleName
+            $mod.Version | Should -Be $actualVersion
+            $mod.Guid    | Should -Be $actualGuid
+        }
+
+        It "Does not get the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            $mod = Get-Module -FullyQualifiedName $modSpec
+
+            $mod | Should -Be $null
+        }
+
+        It "Does not load the module from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Does not load the module from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
+        It "Does not load the module from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases -Pending {
+            param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
+
+            $modSpec = New-ModuleSpecification -ModuleName $manifestPath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
+
+            { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+
     }
 }
