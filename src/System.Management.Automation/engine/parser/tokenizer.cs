@@ -3247,8 +3247,7 @@ namespace System.Management.Automation.Language
                                          NumberStyles.AllowExponent;
                     if (suffix == 'd' || suffix == 'D')
                     {
-                        decimal d;
-                        if (Decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
+                        if (Decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal d))
                         {
                             result = d * multiplier;
                             return true;
@@ -3260,9 +3259,7 @@ namespace System.Management.Automation.Language
 
                     if (suffix == 'u' || suffix == 'U')
                     {
-                        uint u;
-
-                        if (UInt32.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out u))
+                        if (UInt32.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out uint u))
                         {
                             result = u * multiplier;
                             return true;
@@ -3276,8 +3273,7 @@ namespace System.Management.Automation.Language
 
                     if (real)
                     {
-                        double d;
-                        if (Double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
+                        if (Double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double d))
                         {
                             // TryParse incorrectly return +0 when the result should be -0, so check for that case
                             if (d == 0.0 && strNum[0] == '-')
