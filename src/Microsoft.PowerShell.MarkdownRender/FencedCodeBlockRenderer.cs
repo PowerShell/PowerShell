@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using Markdig;
+using Markdig.Helpers;
 using Markdig.Renderers;
 using Markdig.Syntax;
 
@@ -18,7 +19,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         {
             if (obj?.Lines.Lines != null)
             {
-                foreach (string codeLine in obj.Lines.Lines)
+                foreach (StringLine codeLine in obj.Lines.Lines)
                 {
                     if (!string.IsNullOrWhiteSpace(codeLine.ToString()))
                     {
