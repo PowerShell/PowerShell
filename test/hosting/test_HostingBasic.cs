@@ -119,6 +119,7 @@ namespace PowerShell.Hosting.SDK.Tests
 
             using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
             {
+                // New-Item -ItemType SymbolicLink uses libpsl-native, hence using it for validating native dependencies.
                 string command = $"New-Item -ItemType SymbolicLink -Path {path} -Target {target}";
                 var results = ps.AddScript(command).Invoke<FileInfo>();
 
