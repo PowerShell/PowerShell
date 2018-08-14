@@ -55,11 +55,10 @@ namespace PowerShell.Hosting.SDK.Tests
             }
         }
 
-        /// Test is disabled since we do not have a CimCmdlets module released in the SDK.
-
         [SkippableFact]
         public static void TestCommandFromMMI()
         {
+            // Test is disabled since we do not have a CimCmdlets module released in the SDK.
             Skip.IfNot(Platform.IsWindows);
             using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
             {
@@ -67,7 +66,6 @@ namespace PowerShell.Hosting.SDK.Tests
                 Assert.True(results.Count > 0);
             }
         }
-
 
         [SkippableFact]
         public static void TestCommandFromDiagnostics()
@@ -124,18 +122,18 @@ namespace PowerShell.Hosting.SDK.Tests
                 string command = $"New-Item -ItemType SymbolicLink -Path {path} -Target {target}";
                 var results = ps.AddScript(command).Invoke<FileInfo>();
 
-                foreach(var item in results)
+                foreach (var item in results)
                 {
                     Assert.Equal(path, item.FullName);
                 }
             }
 
-            if(File.Exists(path))
+            if (File.Exists(path))
             {
                 File.Delete(path);
             }
 
-            if(File.Exists(target))
+            if (File.Exists(target))
             {
                 File.Delete(target);
             }
