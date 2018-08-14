@@ -107,6 +107,10 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Int32]
                 }
                 @{
+                    Accelerator = 'short'
+                    Type        = [System.Int16]
+                }
+                @{
                     Accelerator = 'int16'
                     Type        = [System.Int16]
                 }
@@ -233,6 +237,10 @@ Describe "Type accelerators" -Tags "CI" {
                 @{
                     Accelerator = 'uint'
                     Type        = [System.UInt32]
+                }
+                @{
+                    Accelerator = 'ushort'
+                    Type.       = [System.UInt16]
                 }
                 @{
                     Accelerator = 'uint16'
@@ -398,11 +406,11 @@ Describe "Type accelerators" -Tags "CI" {
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 97
+                $totalAccelerators = 98
             }
             else
             {
-                $totalAccelerators = 102
+                $totalAccelerators = 103
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{
