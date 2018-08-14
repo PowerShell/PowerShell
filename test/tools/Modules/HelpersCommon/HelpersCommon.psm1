@@ -251,3 +251,9 @@ function Test-IsRoot
 
     return $false
 }
+
+# Tests if we are running is a VSTS Linux Build
+function Test-IsVstsLinux
+{
+    return ($env:TF_BUILD -and $IsLinux)
+}
