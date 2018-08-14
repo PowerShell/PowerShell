@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
+
 function Clean-State
 {
     if (Test-Path $FullyQualifiedLink)
@@ -263,7 +266,7 @@ Describe "New-Item with links fails for non elevated user." -Tags "CI" {
         $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
     }
 
-    It "Should error correctly when failing to create a symbolic link" {
+    It "Should error correctly when failing to create a symbolic link" -Skip:(Test-IsRoot) {
         # This test expects that /sbin exists but is not writable by the user
         { New-Item -ItemType SymbolicLink -Path "/sbin/powershell-test" -Target $FullyQualifiedFolder -ErrorAction Stop } |
         Should -Throw -ErrorId "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"

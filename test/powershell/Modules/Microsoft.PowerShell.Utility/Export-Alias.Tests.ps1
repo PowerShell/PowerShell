@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
+
 Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 
 	BeforeAll {
@@ -94,7 +97,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 		$fulltestpath| Should -FileContentMatchExactly '"abcd02","efgh02","","None"'
     }
 
-	It "Export-Alias for Force ReadOnly Test" {
+	It "Export-Alias for Force ReadOnly Test" -Skip:(Test-IsRoot) {
 		Export-Alias $fulltestpath abcd01
 		if ( $IsWindows )
 		{
