@@ -240,7 +240,7 @@ Describe "Type accelerators" -Tags "CI" {
                 }
                 @{
                     Accelerator = 'ushort'
-                    Type.       = [System.UInt16]
+                    Type        = [System.UInt16]
                 }
                 @{
                     Accelerator = 'uint16'
