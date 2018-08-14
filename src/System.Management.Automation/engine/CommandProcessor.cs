@@ -81,8 +81,6 @@ namespace System.Management.Automation
             Init(scriptCommandInfo);
         }
 
-        // CommandProcessor
-
         #endregion ctor
 
         #region internal members

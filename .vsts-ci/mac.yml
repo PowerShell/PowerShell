@@ -67,6 +67,7 @@ phases:
       }
     displayName: Publish Artifacts
     condition: succeededOrFailed()
+    continueOnError: true
 
   # Uploads any Test results as an artifact
   - powershell: |
@@ -75,12 +76,14 @@ phases:
       }
     displayName: Publish Test Results
     condition: succeededOrFailed()
+    continueOnError: true
 
   # Publish the various Test results as Test results to VSTS
   # Separate tasks are used because a failure will stop the task
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     displayName: Publish Test Results TestResultsSudo.xml
+    continueOnError: true
     inputs:
       testRunner: NUnit
       testResultsFiles: '**\TestResultsSudo.xml'
@@ -90,6 +93,7 @@ phases:
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     displayName: Publish Test Results TestResultsNoSudo.xml
+    continueOnError: true
     inputs:
       testRunner: NUnit
       testResultsFiles: '**\TestResultsNoSudo.xml'
@@ -99,6 +103,7 @@ phases:
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     displayName: Publish Test Results TestResultsSudo.ExpTest.*.xml
+    continueOnError: true
     inputs:
       testRunner: NUnit
       testResultsFiles: '**\TestResultsSudo.ExpTest.*.xml'
@@ -108,6 +113,7 @@ phases:
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     displayName: Publish Test Results TestResultsNoSudo.ExpTest.*.xml
+    continueOnError: true
     inputs:
       testRunner: NUnit
       testResultsFiles: '**\TestResultsNoSudo.ExpTest.*.xml'
@@ -117,6 +123,7 @@ phases:
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     displayName: Publish Test Results ParallelXUnitTestResults.xml
+    continueOnError: true
     inputs:
       testRunner: XUnit
       testResultsFiles: '**\ParallelXUnitTestResults.xml'
@@ -126,6 +133,7 @@ phases:
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     displayName: Publish Test Results SequentialXUnitTestResults.xml
+    continueOnError: true
     inputs:
       testRunner: XUnit
       testResultsFiles: '**\SequentialXUnitTestResults.xml'

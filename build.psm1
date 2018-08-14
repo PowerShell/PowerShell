@@ -602,7 +602,11 @@ Fix steps:
 
     if ($Environment.IsWindows) {
         ## need RCEdit to modify the binaries embedded resources
-        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
+        $rcedit = "~/.rcedit/rcedit-x64.exe"
+        if (-not (Test-Path -Type Leaf $rcedit)) {
+            $rcedit = Get-Command "rcedit-x64.exe" -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1 | % Name
+        }
+        if (-not $rcedit) {
             throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
         }
 
@@ -632,7 +636,7 @@ Fix steps:
             $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
         }
 
-        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon $iconPath `
+        Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
             --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
             --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
             --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
@@ -1513,7 +1517,20 @@ function Start-PSxUnit {
 
         # Run sequential tests first, and then run the tests that can execute in parallel
         dotnet xunit -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
-        dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
+        $extraParams = @()
+
+        # we are having intermittent issues on macOS with these tests failing.
+        # VSTS has suggested forcing them to be sequential
+        if($env:TF_BUILD -and $IsMacOS)
+        {
+            Write-Log 'Forcing parallel xunit tests to run sequentially.'
+            $extraParams += @(
+                '-parallel'
+                'none'
+            )
+        }
+
+        dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild @extraParams
     }
     finally {
         Pop-Location
@@ -2447,16 +2464,9 @@ function Copy-PSGalleryModules
             $version
         }
 
-        # Remove semantic version in the destination directory
-        $destVer = if ($version -match "(\d+.\d+.\d+)-.+") {
-            $matches[1]
-        } else {
-            $version
-        }
-
         # Nuget seems to always use lowercase in the cache
         $src = "$nugetCache/$($name.ToLower())/$srcVer"
-        $dest = "$Destination/$name/$destVer"
+        $dest = "$Destination/$name"
 
         Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
