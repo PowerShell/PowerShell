@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         {
             if (obj?.Lines.Lines != null)
             {
-                foreach (var codeLine in obj.Lines.Lines)
+                foreach (string codeLine in obj.Lines.Lines)
                 {
                     if (!string.IsNullOrWhiteSpace(codeLine.ToString()))
                     {

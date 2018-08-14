@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.MarkdownRender
     {
         protected override void Write(VT100Renderer renderer, LinkInline obj)
         {
-            string text = obj?.FirstChild?.ToString();
+            string text = obj.FirstChild?.ToString();
 
             // Format link as image or link.
             if (obj.IsImage)
