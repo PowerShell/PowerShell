@@ -258,7 +258,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
         }
 
-        Get-Job | where PSJobTypeName -eq "ThreadJob" | Should -HaveCount 0
+        Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Should -HaveCount 0
     }
 
     It 'ThreadJob Runspaces should be cleaned up at completion' {
