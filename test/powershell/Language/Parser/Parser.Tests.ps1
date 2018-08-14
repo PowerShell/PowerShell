@@ -648,18 +648,18 @@ foo``u{2195}abc
 
 	Context "Numerical Notations Tests (starting at line 2374 to line 2452)" {
         $testData = @(
-			#Test various numbers using the standard notation.
+            #Test various numbers using the standard notation.
             @{ Script = "0"; Expected = "0" }
-			@{ Script = "-2"; Expected = "-2" }
-			@{ Script = "2"; Expected = "2" }
-			@{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue) }
-			@{ Script = $([int32]::MinValue); Expected = $([int32]::MinValue) }
-			#Tests for hexadecimal notation.
-			@{ Script = "0x0"; Expected = "0" }
-			@{ Script = "0xF"; Expected = "15" }
-			@{ Script = "0x80000000"; Expected = $([int32]::MinValue) }
-			@{ Script = "0xFFFFFFFF"; Expected = "-1" }
-			@{ Script = "0x7fffffff"; Expected = $([int32]::MaxValue) }
+            @{ Script = "-2"; Expected = "-2" }
+            @{ Script = "2"; Expected = "2" }
+            @{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue) }
+            @{ Script = $([int32]::MinValue); Expected = $([int32]::MinValue) }
+            #Tests for hexadecimal notation.
+            @{ Script = "0x0"; Expected = "0" }
+            @{ Script = "0xF"; Expected = "15" }
+            @{ Script = "0x80000000"; Expected = $([int32]::MinValue) }
+            @{ Script = "0xFFFFFFFF"; Expected = "-1" }
+            @{ Script = "0x7fffffff"; Expected = $([int32]::MaxValue) }
             @{ Script = "0x100000000"; Expected = [int64]0x100000000 }
             #Tests for uint notation.
             @{ Script = "0u"; Expected = [UInt32]::MinValue }
@@ -667,26 +667,26 @@ foo``u{2195}abc
             @{ Script = "4294967295u"; Expected = $([UInt32]::MaxValue) }
             @{ Script = "4294967301u"; Expected = "4294967301" }
             @{ Script = "18446744073709551615u"; Expected = $([UInt64]::MaxValue)}
-			#Tests for exponential notation.
-			@{ Script = "0e0"; Expected = "0" }
-			@{ Script = "0e1"; Expected = "0" }
-			@{ Script = "1e2"; Expected = "100" }
-			@{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue) }
-			@{ Script = "0e2"; Expected = "0" }
-			@{ Script = "-2e2"; Expected = "-200" }
-			@{ Script = "-0e2"; Expected = "0" }
-			@{ Script = "3e0"; Expected = "3" }
-			#Tests for floating point notation.
-			@{ Script = ".01"; Expected = "0.01" }
-			@{ Script = "0.0"; Expected = "0" }
-			@{ Script = "-0.1"; Expected = "-0.1" }
-			@{ Script = "9.12"; Expected = "9.12" }
-			@{ Script = $([single]::MinValue); Expected = $([float]::MinValue).ToString() }
+            #Tests for exponential notation.
+            @{ Script = "0e0"; Expected = "0" }
+            @{ Script = "0e1"; Expected = "0" }
+            @{ Script = "1e2"; Expected = "100" }
+            @{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue) }
+            @{ Script = "0e2"; Expected = "0" }
+            @{ Script = "-2e2"; Expected = "-200" }
+            @{ Script = "-0e2"; Expected = "0" }
+            @{ Script = "3e0"; Expected = "3" }
+            #Tests for floating point notation.
+            @{ Script = ".01"; Expected = "0.01" }
+            @{ Script = "0.0"; Expected = "0" }
+            @{ Script = "-0.1"; Expected = "-0.1" }
+            @{ Script = "9.12"; Expected = "9.12" }
+            @{ Script = $([single]::MinValue); Expected = $([float]::MinValue).ToString() }
             @{ Script = $([float]::MaxValue); Expected = $([float]::MaxValue).ToString() }
-			#Tests for the K suffix for numbers.
-			@{ Script = "0kb"; Expected = "0" }
-			@{ Script = "1kb"; Expected = "1024" }
-			@{ Script = "-2KB"; Expected = "-2048" }
+            #Tests for the K suffix for numbers.
+            @{ Script = "0kb"; Expected = "0" }
+            @{ Script = "1kb"; Expected = "1024" }
+            @{ Script = "-2KB"; Expected = "-2048" }
         )
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
