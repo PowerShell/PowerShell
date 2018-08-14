@@ -3380,6 +3380,7 @@ namespace System.Management.Automation.Language
                     {
                         result = (double)bigValue;
                     }
+
                     return true;
                 }
                 catch (Exception)
