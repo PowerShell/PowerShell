@@ -2460,16 +2460,9 @@ function Copy-PSGalleryModules
             $version
         }
 
-        # Remove semantic version in the destination directory
-        $destVer = if ($version -match "(\d+.\d+.\d+)-.+") {
-            $matches[1]
-        } else {
-            $version
-        }
-
         # Nuget seems to always use lowercase in the cache
         $src = "$nugetCache/$($name.ToLower())/$srcVer"
-        $dest = "$Destination/$name/$destVer"
+        $dest = "$Destination/$name"
 
         Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
