@@ -20,12 +20,10 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Class to manage the caching of analysis data.
-    ///
     /// For performance, module command caching is flattened after discovery. Many modules have nested
     /// modules that can only be resolved at runtime - for example,
     /// script modules that declare: $env:PATH += "; $psScriptRoot". When
     /// doing initial analysis, we include these in 'ExportedCommands'.
-    ///
     /// Changes to these type of modules will not be re-analyzed, unless the user re-imports the module,
     /// or runs Get-Module -List.
     /// </summary>

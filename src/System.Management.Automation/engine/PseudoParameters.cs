@@ -209,10 +209,10 @@ namespace System.Management.Automation
         public RuntimeDefinedParameterDictionary()
             : base(StringComparer.OrdinalIgnoreCase)
         {
-        } // ctor
+        }
 
         /// <summary>
-        /// Gets or sets the help file that documents these parameters
+        /// Gets or sets the help file that documents these parameters.
         /// </summary>
         public string HelpFile
         {
@@ -227,5 +227,5 @@ namespace System.Management.Automation
         public object Data { get; set; }
 
         internal static RuntimeDefinedParameter[] EmptyParameterArray = new RuntimeDefinedParameter[0];
-    } // class RuntimeDefinedParameterDictionary
-} // namespace System.Management.Automation
+    }
+}
