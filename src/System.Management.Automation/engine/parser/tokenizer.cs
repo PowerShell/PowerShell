@@ -3261,7 +3261,7 @@ namespace System.Management.Automation.Language
                     {
                         if (UInt32.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out uint u))
                         {
-                            ulong testresult = u * (ulong)multiplier;
+                            ulong testresult = u * multiplier;
                             if (testresult > UInt32.MaxValue)
                             {
                                 result = testresult;
