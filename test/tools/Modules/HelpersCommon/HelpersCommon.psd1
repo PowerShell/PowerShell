@@ -24,6 +24,7 @@ FunctionsToExport = @(
         'Send-VstsLogFile'
         'Set-TesthookResult'
         'Test-IsElevated'
+        'Test-IsRoot'
         'Test-TesthookIsSet'
         'Wait-FileToBePresent'
         'Wait-UntilTrue'
