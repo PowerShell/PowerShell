@@ -33,13 +33,6 @@ phases:
     condition: succeededOrFailed()
 
   - powershell: |
-      rvm install ruby-2.3.3;
-      rvm --default use 2.3.3;
-      displayName: Install Ruby
-    condition: succeededOrFailed()
-    enabled: false
-
-  - powershell: |
       tools/travis.ps1 -Stage Bootstrap
     displayName: Bootstrap
     condition: succeeded()
