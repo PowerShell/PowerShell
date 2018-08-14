@@ -70,7 +70,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             )
 
             $iteration = 20
-            while (((Get-Runspace).Count -ne $expectedRSCount) -and ($iteration-- -gt 0))
+            while ((@(Get-Runspace).Count -ne $expectedRSCount) -and ($iteration-- -gt 0))
             {
                 Start-Sleep -Milliseconds 100
             }
@@ -250,8 +250,8 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             # Allow jobs to start
             Wait-ForJobRunning $job2
 
-            $numRunningThreadJobs = (Get-Job | where { ($_.PSJobTypeName -eq "ThreadJob") -and ($_.State -eq "Running") }).Count
-            $numQueuedThreadJobs = (Get-Job | where { ($_.PSJobTypeName -eq "ThreadJob") -and ($_.State -eq "NotStarted") }).Count
+            $numRunningThreadJobs = @(Get-Job | where { ($_.PSJobTypeName -eq "ThreadJob") -and ($_.State -eq "Running") }).Count
+            $numQueuedThreadJobs = @(Get-Job | where { ($_.PSJobTypeName -eq "ThreadJob") -and ($_.State -eq "NotStarted") }).Count
 
             $numRunningThreadJobs | Should -Be 2
             $numQueuedThreadJobs | Should -Be 2
@@ -261,7 +261,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
         }
 
-        $numThreadJobs = (Get-Job | where PSJobTypeName -eq "ThreadJob").Count
+        $numThreadJobs = @(Get-Job | where PSJobTypeName -eq "ThreadJob").Count
         $numThreadJobs | Should -Be 0
     }
 
@@ -272,7 +272,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         try
         {
             Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
-            $rsStartCount = (Get-Runspace).Count
+            $rsStartCount = @(Get-Runspace).Count
 
             # Start four thread jobs with ThrottleLimit set to two
             $Job1 = Start-ThreadJob -ScriptBlock { "Hello 1!" } -ThrottleLimit 5
@@ -285,7 +285,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             # Allow for runspace clean up to happen
             Wait-ForExpectedRSCount $rsStartCount
 
-            Write-Output ((Get-Runspace).Count -eq $rsStartCount)
+            Write-Output (@(Get-Runspace).Count -eq $rsStartCount)
         }
         finally
         {
@@ -303,7 +303,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
         try {
             Get-Job | where PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
-            $rsStartCount = (Get-Runspace).Count
+            $rsStartCount = @(Get-Runspace).Count
 
             # Start four thread jobs with ThrottleLimit set to two
             $Job1 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 } -ThrottleLimit 2
@@ -312,14 +312,14 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
             $job4 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
 
             Wait-ForExpectedRSCount ($rsStartCount + 4)
-            Write-Output ((Get-Runspace).Count -eq ($rsStartCount + 4))
+            Write-Output (@(Get-Runspace).Count -eq ($rsStartCount + 4))
 
             # Stop two jobs
             $job1 | Remove-Job -Force
             $job3 | Remove-Job -Force
 
             Wait-ForExpectedRSCount ($rsStartCount + 2)
-            Write-Output ((Get-Runspace).Count -eq ($rsStartCount + 2))
+            Write-Output (@(Get-Runspace).Count -eq ($rsStartCount + 2))
         }
         finally
         {
@@ -327,7 +327,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         }
 
         Wait-ForExpectedRSCount $rsStartCount
-        Write-Output ((Get-Runspace).Count -eq $rsStartCount)
+        Write-Output (@(Get-Runspace).Count -eq $rsStartCount)
 '@
 
         $result = & "$PSHOME/pwsh" -c $script
@@ -345,7 +345,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
         $null = $job1,$job2,$job3,$job4 | Receive-Job -Wait -AutoRemoveJob
 
-        (Get-Job | where PSJobTypeName -eq "ThreadJob").Count | Should -Be 0
+        @(Get-Job | where PSJobTypeName -eq "ThreadJob").Count | Should -Be 0
     }
 
     It 'ThreadJob jobs should run in FullLanguage mode by default' {
