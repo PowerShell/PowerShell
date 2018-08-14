@@ -770,7 +770,7 @@ namespace System.Management.Automation
                     { typeof(BigInteger),                                  new[] { "bigint" } },
                     { typeof(SecureString),                                new[] { "securestring" } },
                     { typeof(TimeSpan),                                    new[] { "timespan" } },
-                    { typeof(UInt16),                                      new[] { "uint16" } },
+                    { typeof(UInt16),                                      new[] { "ushort", "uint16" } },
                     { typeof(UInt32),                                      new[] { "uint", "uint32" } },
                     { typeof(UInt64),                                      new[] { "ulong", "uint64" } },
                     { typeof(Uri),                                         new[] { "uri" } },
