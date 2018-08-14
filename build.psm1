@@ -1245,7 +1245,8 @@ function Start-PSPester {
 
                     $passThruCommand = { & $powershell $PSFlags -c $command }
                     if ($Sudo.IsPresent) {
-                        $passThruCommand =  { & sudo $powershell $PSFlags -c $command }
+                        # -E says to preserve the environment
+                        $passThruCommand =  { & sudo -E $powershell $PSFlags -c $command }
                     }
 
                     $writeCommand = { Write-Host $_ }
