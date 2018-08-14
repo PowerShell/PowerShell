@@ -230,7 +230,7 @@ elseif($Stage -eq 'Build')
     $ExperimentalFeatureTests = Get-ExperimentalFeatureTests
 
     # Running tests which do not require sudo.
-    $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam
+    $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam -Title 'Pester No Sudo'
 
     # Running tests that do not require sudo, with specified experimental features enabled
     $noSudoResultsWithExpFeatures = @()
@@ -249,7 +249,7 @@ elseif($Stage -eq 'Build')
             # If a non-empty string or array is specified for the feature name, we only run those test files.
             $noSudoPesterParam['Path'] = $testFiles
         }
-        $passThruResult = Start-PSPester @noSudoPesterParam
+        $passThruResult = Start-PSPester @noSudoPesterParam -Title "Pester Experimental No Sudo - $featureName"
         $noSudoResultsWithExpFeatures += $passThruResult
     }
 
@@ -260,7 +260,7 @@ elseif($Stage -eq 'Build')
     $sudoPesterParam['ExcludeTag'] = @()
     $sudoPesterParam['Sudo'] = $true
     $sudoPesterParam['OutputFile'] = $testResultsSudo
-    $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam
+    $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam -Title 'Pester Sudo'
 
     # Running tests that require sudo, with specified experimental features enabled
     $sudoResultsWithExpFeatures = @()
@@ -279,7 +279,7 @@ elseif($Stage -eq 'Build')
             # If a non-empty string or array is specified for the feature name, we only run those test files.
             $sudoPesterParam['Path'] = $testFiles
         }
-        $passThruResult = Start-PSPester @sudoPesterParam
+        $passThruResult = Start-PSPester @sudoPesterParam -Title "Pester Experimental Sudo - $featureName"
         $sudoResultsWithExpFeatures += $passThruResult
     }
 

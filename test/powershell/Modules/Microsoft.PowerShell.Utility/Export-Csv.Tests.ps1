@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
+
 Describe "Export-Csv" -Tags "CI" {
     BeforeAll {
         $testObject = @("test","object","array")
@@ -100,7 +103,7 @@ Describe "Export-Csv" -Tags "CI" {
         $results.P1 | Should -BeExactly "first"
     }
 
-    It "Should not overwrite read-only file without -Force parameter" {
+    It "Should not overwrite read-only file without -Force parameter" -Skip:(Test-IsRoot) {
         $P1 | Export-Csv -Path $testCsv
         Set-ItemProperty -Path $testCsv -Name IsReadOnly -Value $true
 
