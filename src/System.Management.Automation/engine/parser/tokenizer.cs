@@ -3259,22 +3259,17 @@ namespace System.Management.Automation.Language
 
                     if (suffix == 'u' || suffix == 'U')
                     {
-                        if (UInt32.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out uint u))
+                        if (UInt64.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
                         {
-                            ulong testresult = u * (ulong)multiplier;
-                            if (testresult > UInt32.MaxValue)
+                            ulong testValue = u * (ulong)multiplier;
+                            if (testValue > UInt32.MaxValue)
                             {
-                                result = testresult;
+                                result = testValue;
                             }
                             else
                             {
-                                result = (uint)testresult;
+                                result = (uint)testValue;
                             }
-                            return true;
-                        }
-                        else if (UInt64.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u2))
-                        {
-                            result = u2 * (ulong)multiplier;
                             return true;
                         }
                         else
