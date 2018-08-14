@@ -83,7 +83,7 @@ NuspecTemplate = @'
         <authors>Microsoft</authors>
         <owners>Microsoft,PowerShell</owners>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
-        <description>Native binaries for PowerShell Core</description>
+        <description>PowerShell runtime for hosting PowerShell Core</description>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
         <licenseUrl>https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt</licenseUrl>
