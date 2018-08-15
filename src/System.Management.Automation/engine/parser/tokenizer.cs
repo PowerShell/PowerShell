@@ -3540,15 +3540,15 @@ namespace System.Management.Automation.Language
                 switch (c) {
                     case 'l':
                     case 'L':
-                        suffix |= NumberSuffix.Long;
+                        suffix |= NumberSuffixFlags.Long;
                         break;
                     case 'd':
                     case 'D':
-                        suffix |= NumberSuffix.Decimal;
+                        suffix |= NumberSuffixFlags.Decimal;
                         break;
                     case 'u':
                     case 'U':
-                        suffix |= NumberSuffix.Unsigned;
+                        suffix |= NumberSuffixFlags.Unsigned;
                         break;
                 }
 
@@ -3559,7 +3559,7 @@ namespace System.Management.Automation.Language
                     switch (c) {
                         case 'l':
                         case 'L':
-                            suffix |= NumberSuffix.Long;
+                            suffix |= NumberSuffixFlags.Long;
                             break;
                     }
 
