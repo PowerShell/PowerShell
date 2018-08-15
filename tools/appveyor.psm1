@@ -604,8 +604,7 @@ function Invoke-AppveyorFinish
                 }
                 elseif ($env:TF_BUILD) {
                     # In VSTS
-                    $name = Split-Path -Leaf $_
-                    Write-Host "##vso[artifact.upload containerfolder=testresult;artifactname=$name;]$_"
+                    Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts;]$_"
                 }
             }
             else
