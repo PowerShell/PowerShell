@@ -62,13 +62,15 @@ namespace System.Management.Automation.Language
         Hashtable = 2,
     }
 
+    /// <summary>
+    /// Defines the permissible suffixes for numerical tokens
+    /// </summary>
     [Flags]
     public enum NumberSuffixFlags {
         None     = 0x0,
         Long     = 0x1,
-        Double   = 0x2,
-        Decimal  = 0x4,
-        Unsigned = 0x8,
+        Decimal  = 0x2,
+        Unsigned = 0x4,
     }
 
     /// <summary>
@@ -3246,7 +3248,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static bool TryGetNumberValue(string strNum, bool hex, bool real, string suffix, long multiplier, out object result)
+        private static bool TryGetNumberValue(string strNum, bool hex, bool real, NumberSuffixFlags suffix, long multiplier, out object result)
         {
             checked
             {
@@ -3428,7 +3430,7 @@ namespace System.Management.Automation.Language
                 || (AllowSignedNumbers && (firstChar == '+' || firstChar.IsDash())), "Number must start with '.', '-', or digit.");
 
             bool hex, real;
-            string suffix;
+            NumberSuffixFlags suffix;
             long multiplier;
 
             string strNum = ScanNumberHelper(firstChar, out hex, out real, out suffix, out multiplier);
@@ -3469,11 +3471,11 @@ namespace System.Management.Automation.Language
         /// OR
         /// return the string format of the number
         /// </returns>
-        private string ScanNumberHelper(char firstChar, out bool hex, out bool real, out string suffix, out long multiplier)
+        private string ScanNumberHelper(char firstChar, out bool hex, out bool real, out NumberSuffixFlags suffix, out long multiplier)
         {
             hex = false;
             real = false;
-            suffix = String.Empty;
+            suffix = NumberSuffixFlags.None;
             multiplier = 1;
 
             bool notNumber = false;
@@ -3543,19 +3545,35 @@ namespace System.Management.Automation.Language
             if (c.IsTypeSuffix())
             {
                 SkipChar();
-                suffix += c;
-                c = PeekChar();
-            }
-            if (c.IsTypeSuffix())
-            {
-                SkipChar();
-                suffix += c;
-                c = PeekChar();
-            }
+                switch c {
+                    case 'l':
+                    case 'L':
+                        suffix |= NumberSuffix.Long;
+                        break;
+                    case 'd':
+                    case 'D':
+                        suffix |= NumberSuffix.Decimal;
+                        break;
+                    case 'u':
+                    case 'U':
+                        suffix |= NumberSuffix.Unsigned;
+                        break;
+                }
 
-            // Due to the suffix being a string instead of char, it must be null-terminated for console
-            // to behave correctly. If someone knows why, I will be happy to add a proper explanation.
-            suffix += "\0";
+                c = PeekChar();
+                if (c.IsTypeSuffix())
+                {
+                    SkipChar();
+                    switch c {
+                        case 'l':
+                        case 'L':
+                            suffix |= NumberSuffix.Long;
+                            break;
+                    }
+
+                    c = PeekChar();
+                }
+            }
 
             if (c.IsMultiplierStart())
             {
@@ -4378,7 +4396,7 @@ namespace System.Management.Automation.Language
                     if (InExpressionMode() && (char.IsDigit(c1) || c1 == '.'))
                     {
                         bool hex, real;
-                        string suffix;
+                        NumberSuffixFlags suffix;
                         long multiplier;
 
                         // check if the next token is actually a number
