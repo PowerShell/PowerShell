@@ -3257,6 +3257,40 @@ namespace System.Management.Automation.Language
                         return false;
                     }
 
+                    if (real)
+                    {
+                        if (Double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double d))
+                        {
+                            // TryParse incorrectly return +0 when the result should be -0, so check for that case
+                            if (d == 0.0 && strNum[0] == '-')
+                            {
+                                d = -0.0;
+                            }
+                            if (suffix == 'l' || suffix == 'L')
+                            {
+                                result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
+                            }
+                            if (suffix == 'u' || suffix == 'U') {
+                                ulong testresult = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture)) * (ulong)multiplier;
+
+                                if (testresult > UInt32.MaxValue) {
+                                    result = testresult;
+                                }
+                                else {
+                                    result = (uint)testresult;
+                                }
+                            }
+                            else
+                            {
+                                result = d * multiplier;
+                            }
+                            return true;
+                        }
+
+                        result = null;
+                        return false;
+                    }
+
                     if (suffix == 'u' || suffix == 'U')
                     {
                         if (UInt64.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
@@ -3277,40 +3311,6 @@ namespace System.Management.Automation.Language
                             result = null;
                             return false;
                         }
-                    }
-
-                    if (real)
-                    {
-                        if (Double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double d))
-                        {
-                            // TryParse incorrectly return +0 when the result should be -0, so check for that case
-                            if (d == 0.0 && strNum[0] == '-')
-                            {
-                                d = -0.0;
-                            }
-                            if (suffix == 'l' || suffix == 'L')
-                            {
-                                result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
-                            }
-                            else if (suffix == 'u' || suffix == 'U') {
-                                ulong testresult = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture)) * (ulong)multiplier;
-
-                                if (testresult > UInt32.MaxValue) {
-                                    result = testresult;
-                                }
-                                else {
-                                    result = (uint)testresult;
-                                }
-                            }
-                            else
-                            {
-                                result = d * multiplier;
-                            }
-                            return true;
-                        }
-
-                        result = null;
-                        return false;
                     }
 
                     if (hex && !strNum[0].IsHexDigit())
