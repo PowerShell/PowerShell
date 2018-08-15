@@ -3270,13 +3270,16 @@ namespace System.Management.Automation.Language
                             {
                                 result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
                             }
-                            if (suffix[0] == 'u' || suffix[0] == 'U') {
+                            if (suffix[0] == 'u' || suffix[0] == 'U')
+                            {
                                 ulong testresult = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture)) * (ulong)multiplier;
 
-                                if (testresult > UInt32.MaxValue || String.Compare(suffix, "ul", true) == 0) {
+                                if (testresult > UInt32.MaxValue || String.Compare(suffix, "ul", true) == 0)
+                                {
                                     result = testresult;
                                 }
-                                else {
+                                else
+                                {
                                     result = (uint)testresult;
                                 }
                             }
@@ -3337,7 +3340,8 @@ namespace System.Management.Automation.Language
 
                     // If suffix is a value not caught by the above cases but is still present
                     // we should probably... not work with whatever 'll' would be.
-                    if (suffix != "\0") {
+                    if (suffix != "\0")
+                    {
                         result = null;
                         return false;
                     }
@@ -3460,7 +3464,7 @@ namespace System.Management.Automation.Language
         {
             hex = false;
             real = false;
-            suffix = "";
+            suffix = String.Empty;
             multiplier = 1;
 
             bool notNumber = false;
@@ -3533,7 +3537,8 @@ namespace System.Management.Automation.Language
                 suffix += c;
                 c = PeekChar();
             }
-            if (c.IsTypeSuffix()) {
+            if (c.IsTypeSuffix())
+            {
                 SkipChar();
                 suffix += c;
                 c = PeekChar();
