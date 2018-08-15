@@ -3335,6 +3335,13 @@ namespace System.Management.Automation.Language
                         return false;
                     }
 
+                    // If suffix is a value not caught by the above cases but is still present
+                    // we should probably... not work with whatever 'll' would be.
+                    if (suffix != "\0") {
+                        result = null;
+                        return false;
+                    }
+
                     // From here on - the user hasn't specified the type, so we need to figure it out.
 
                     BigInteger bigValue;
