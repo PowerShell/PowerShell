@@ -3237,7 +3237,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static bool TryGetNumberValue(string strNum, bool hex, bool real, char suffix, long multiplier, out object result)
+        private static bool TryGetNumberValue(string strNum, bool hex, bool real, string suffix, long multiplier, out object result)
         {
             checked
             {
@@ -3245,7 +3245,7 @@ namespace System.Management.Automation.Language
                 {
                     NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
                                          NumberStyles.AllowExponent;
-                    if (suffix == 'd' || suffix == 'D')
+                    if (suffix == "d" || suffix == "D")
                     {
                         if (Decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal d))
                         {
@@ -3266,14 +3266,14 @@ namespace System.Management.Automation.Language
                             {
                                 d = -0.0;
                             }
-                            if (suffix == 'l' || suffix == 'L')
+                            if (suffix == "l" || suffix == "L")
                             {
                                 result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
                             }
-                            if (suffix == 'u' || suffix == 'U') {
+                            if (suffix[0] == 'u' || suffix[0] == 'U') {
                                 ulong testresult = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture)) * (ulong)multiplier;
 
-                                if (testresult > UInt32.MaxValue) {
+                                if (testresult > UInt32.MaxValue || String.Compare(suffix, "ul", true) == 0) {
                                     result = testresult;
                                 }
                                 else {
@@ -3291,12 +3291,12 @@ namespace System.Management.Automation.Language
                         return false;
                     }
 
-                    if (suffix == 'u' || suffix == 'U')
+                    if (suffix[0] == 'u' || suffix[0] == 'U')
                     {
                         if (UInt64.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
                         {
                             ulong testValue = u * (ulong)multiplier;
-                            if (testValue > UInt32.MaxValue)
+                            if (testValue > UInt32.MaxValue || String.Compare(suffix, "ul", true) == 0)
                             {
                                 result = testValue;
                             }
@@ -3324,7 +3324,7 @@ namespace System.Management.Automation.Language
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
                     long longValue;
-                    if (suffix == 'l' || suffix == 'L')
+                    if (suffix == "l" || suffix == "L")
                     {
                         if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
                         {
@@ -3408,7 +3408,7 @@ namespace System.Management.Automation.Language
                 || (AllowSignedNumbers && (firstChar == '+' || firstChar.IsDash())), "Number must start with '.', '-', or digit.");
 
             bool hex, real;
-            char suffix;
+            string suffix;
             long multiplier;
 
             string strNum = ScanNumberHelper(firstChar, out hex, out real, out suffix, out multiplier);
@@ -3449,11 +3449,11 @@ namespace System.Management.Automation.Language
         /// OR
         /// return the string format of the number
         /// </returns>
-        private string ScanNumberHelper(char firstChar, out bool hex, out bool real, out char suffix, out long multiplier)
+        private string ScanNumberHelper(char firstChar, out bool hex, out bool real, out string suffix, out long multiplier)
         {
             hex = false;
             real = false;
-            suffix = '\0';
+            suffix = "\0";
             multiplier = 1;
 
             bool notNumber = false;
@@ -3523,7 +3523,12 @@ namespace System.Management.Automation.Language
             if (c.IsTypeSuffix())
             {
                 SkipChar();
-                suffix = c;
+                suffix += c;
+                c = PeekChar();
+            }
+            if (c.IsTypeSuffix()) {
+                SkipChar();
+                suffix += c;
                 c = PeekChar();
             }
 
@@ -4348,7 +4353,7 @@ namespace System.Management.Automation.Language
                     if (InExpressionMode() && (char.IsDigit(c1) || c1 == '.'))
                     {
                         bool hex, real;
-                        char suffix;
+                        string suffix;
                         long multiplier;
 
                         // check if the next token is actually a number
