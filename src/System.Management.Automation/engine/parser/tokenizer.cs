@@ -3576,7 +3576,13 @@ namespace System.Management.Automation.Language
                     switch (c) {
                         case 'l':
                         case 'L':
-                            suffix |= NumberSuffixFlags.Long;
+                            if (suffix == NumberSuffixFlags.Unsigned)
+                            {
+                                suffix |= NumberSuffixFlags.Long;
+                            }
+                            else {
+                                notNumber = true;
+                            }
                             break;
                         default:
                             notNumber = true;
