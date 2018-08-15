@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -5862,20 +5863,15 @@ namespace Microsoft.PowerShell.Commands
             return shouldProcessModule;
         }
 
-        private static object s_lockObject = new object();
-
         private void ClearAnalysisCaches()
         {
-            lock (s_lockObject)
-            {
-                s_binaryAnalysisCache.Clear();
-                s_scriptAnalysisCache.Clear();
-            }
+            s_scriptAnalysisCache.Clear();
+            s_binaryAnalysisCache.Clear();
         }
 
         // Analyzes a binary module implementation for its cmdlets.
-        private static Dictionary<string, Tuple<BinaryAnalysisResult, Version>> s_binaryAnalysisCache =
-            new Dictionary<string, Tuple<BinaryAnalysisResult, Version>>();
+        private static ConcurrentDictionary<string, Tuple<BinaryAnalysisResult, Version>> s_binaryAnalysisCache =
+            new ConcurrentDictionary<string, Tuple<BinaryAnalysisResult, Version>>();
 
 #if CORECLR
         /// <summary>
@@ -5889,12 +5885,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Tuple<BinaryAnalysisResult, Version> tuple;
 
-            lock (s_lockObject)
-            {
-                s_binaryAnalysisCache.TryGetValue(path, out tuple);
-            }
-
-            if (tuple != null)
+            if (s_binaryAnalysisCache.TryGetValue(path, out tuple))
             {
                 assemblyVersion = tuple.Item2;
                 return tuple.Item1;
@@ -5910,10 +5901,7 @@ namespace Microsoft.PowerShell.Commands
 
             var resultToReturn = analysisResult ?? new BinaryAnalysisResult();
 
-            lock (s_lockObject)
-            {
-                s_binaryAnalysisCache[path] = Tuple.Create(resultToReturn, assemblyVersion);
-            }
+            s_binaryAnalysisCache[path] = Tuple.Create(resultToReturn, assemblyVersion);
 
             return resultToReturn;
         }
@@ -5925,12 +5913,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Tuple<BinaryAnalysisResult, Version> tuple = null;
 
-            lock (s_lockObject)
-            {
-                s_binaryAnalysisCache.TryGetValue(path, out tuple);
-            }
-
-            if (tuple != null)
+            if (s_binaryAnalysisCache.TryGetValue(path, out tuple))
             {
                 assemblyVersion = tuple.Item2;
                 return tuple.Item1;
@@ -5975,10 +5958,7 @@ namespace Microsoft.PowerShell.Commands
                 result.DetectedCmdlets = detectedCmdlets;
                 result.DetectedAliases = detectedAliases;
 
-                lock (s_lockObject)
-                {
-                    s_binaryAnalysisCache[path] = Tuple.Create(result, assemblyVersion);
-                }
+                s_binaryAnalysisCache[path] = Tuple.Create(result, assemblyVersion);
 
                 return result;
             }
@@ -6066,29 +6046,37 @@ namespace Microsoft.PowerShell.Commands
         }
 #endif
 
-        // Analyzes a script module implementation for its exports.
-        private static Dictionary<string, PSModuleInfo> s_scriptAnalysisCache = new Dictionary<string, PSModuleInfo>();
+        /// <summary>
+        /// Cache of module infos from analyzed script modules.
+        /// </summary>
+        private static ConcurrentDictionary<string, ScriptModuleCacheEntry> s_scriptAnalysisCache = new ConcurrentDictionary<string, ScriptModuleCacheEntry>();
 
-        private PSModuleInfo AnalyzeScriptFile(string filename, bool force, ExecutionContext context)
+        /// <summary>
+        /// Analyzes a script module implementation for its exports.
+        /// </summary>
+        /// <param name="filePath">the path to the module to analyze</param>
+        /// <param name="force">if true, ignore the AnalysisCache and re-analyze the script module</param>
+        /// <param name="context">the execution context the script module belongs to</param>
+        /// <returns></returns>
+        private PSModuleInfo AnalyzeScriptFile(string filePath, bool force, ExecutionContext context)
         {
-            // We need to return a cloned version here.
-            // This is because the Get-Module -List -All modifies the returned module info and we do not want the original one changed.
-            PSModuleInfo module = null;
+            // Find when the file backing the module last changed
+            DateTime lastModuleWriteTimeUtc = GetFileLastWriteTimeUtc(filePath);
 
-            lock (s_lockObject)
+            // If we have a cache entry and it's up to date, return that
+            if (s_scriptAnalysisCache.TryGetValue(filePath, out ScriptModuleCacheEntry cacheEntry) && lastModuleWriteTimeUtc == cacheEntry.lastFileWriteTimeUtc)
             {
-                s_scriptAnalysisCache.TryGetValue(filename, out module);
+                // We need to return a cloned version here.
+                // This is because the Get-Module -List -All modifies the returned module info and we do not want the original one changed.
+                return cacheEntry.moduleInfo.Clone();
             }
 
-            if (module != null)
-                return module.Clone();
-
             // fake/empty manifestInfo for processing in (!loadElements) mode
-            module = new PSModuleInfo(filename, null, null);
+            var module = new PSModuleInfo(filePath, null, null);
 
             if (!force)
             {
-                var exportedCommands = AnalysisCache.GetExportedCommands(filename, true, context);
+                var exportedCommands = AnalysisCache.GetExportedCommands(filePath, true, context);
 
                 // If we have this info cached, return from the cache.
                 if (exportedCommands != null)
@@ -6116,17 +6104,14 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    lock (s_lockObject)
-                    {
-                        s_scriptAnalysisCache[filename] = module;
-                    }
+                    s_scriptAnalysisCache[filePath] = new ScriptModuleCacheEntry(lastModuleWriteTimeUtc, module);
 
                     return module;
                 }
             }
 
             // We don't have this cached, analyze the file.
-            var scriptAnalysis = ScriptAnalysis.Analyze(filename, context);
+            var scriptAnalysis = ScriptAnalysis.Analyze(filePath, context);
 
             if (scriptAnalysis == null)
             {
@@ -6168,7 +6153,7 @@ namespace Microsoft.PowerShell.Commands
             // Add any files in PsScriptRoot if it added itself to the path
             if (scriptAnalysis.AddsSelfToPath)
             {
-                string baseDirectory = System.IO.Path.GetDirectoryName(filename);
+                string baseDirectory = System.IO.Path.GetDirectoryName(filePath);
 
                 try
                 {
@@ -6195,7 +6180,7 @@ namespace Microsoft.PowerShell.Commands
                     Path.HasExtension(moduleToProcess) &&
                     (!Path.IsPathRooted(moduleToProcess)))
                 {
-                    string moduleDirectory = System.IO.Path.GetDirectoryName(filename);
+                    string moduleDirectory = System.IO.Path.GetDirectoryName(filePath);
                     moduleToProcess = Path.Combine(moduleDirectory, moduleToProcess);
 
                     PSModuleInfo fileBasedModule = CreateModuleInfoForGetModule(moduleToProcess, true);
@@ -6269,10 +6254,7 @@ namespace Microsoft.PowerShell.Commands
                 ModuleIntrinsics.Tracer.WriteLine("Caching skipped for {0} because it had errors while loading.", module.Name);
             }
 
-            lock (s_lockObject)
-            {
-                s_scriptAnalysisCache[filename] = module;
-            }
+            s_scriptAnalysisCache[filePath] = new ScriptModuleCacheEntry(lastModuleWriteTimeUtc, module);
 
             return module;
         }
@@ -6491,7 +6473,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        string binaryPath = fileName;
+                       string binaryPath = fileName;
                         modulePath = fileName;
                         if (binaryPath == null)
                         {
@@ -7332,6 +7314,55 @@ namespace Microsoft.PowerShell.Commands
 
             return null;
         }
+
+        /// <summary>
+        /// Get the last (UTC) write time for the file at the given path if it exists.
+        /// If the file does not exist, return DateTime.MinValue
+        /// </summary>
+        /// <param name="path">the path to the file with the last write time to check</param>
+        /// <returns>the last UTC timestamp the file was written, or DateTime.MinValue if the file does not exist</returns>
+        internal static DateTime GetFileLastWriteTimeUtc(string path)
+        {
+            try
+            {
+                return File.GetLastAccessTimeUtc(path);
+            }
+            catch (Exception e)
+            {
+                ModuleIntrinsics.Tracer.WriteLine("Exception checking LastWriteTimeUtc on module {0}: {1}", path, e.Message);
+                return DateTime.MinValue;
+            }
+        }
+
+        /// <summary>
+        /// A cache entry for script module analysis,
+        /// to store the result of an analysis so it does not need to be performed again
+        /// unless necessary
+        /// </summary>
+        private class ScriptModuleCacheEntry
+        {
+            /// <summary>
+            /// Create a new script module cache entry
+            /// </summary>
+            /// <param name="lastFileWriteTimeUtc">the last time the file defining the module was written</param>
+            /// <param name="moduleInfo">the module info describing the module; the analysis result we are caching</param>
+            public ScriptModuleCacheEntry(DateTime lastFileWriteTimeUtc, PSModuleInfo moduleInfo)
+            {
+                this.lastFileWriteTimeUtc = lastFileWriteTimeUtc;
+                this.moduleInfo = moduleInfo;
+            }
+
+            /// <summary>
+            /// The last time the file defining the module was written to when we cached the analysis result
+            /// </summary>
+            public readonly DateTime lastFileWriteTimeUtc;
+
+            /// <summary>
+            /// The actual analysis result describing the script module we analyzed
+            /// </summary>
+            public readonly PSModuleInfo moduleInfo;
+        }
+
     } // end ModuleCmdletBase
 
     /// <summary>
