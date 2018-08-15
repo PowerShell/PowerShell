@@ -66,7 +66,7 @@ namespace System.Management.Automation.Language
     /// Defines the permissible suffixes for numerical tokens.
     /// </summary>
     [Flags]
-    public enum NumberSuffixFlags
+    enum NumberSuffixFlags
     {
         /// <summary>
         /// No type suffix.
