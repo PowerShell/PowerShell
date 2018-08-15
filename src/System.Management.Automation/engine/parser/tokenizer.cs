@@ -3537,7 +3537,7 @@ namespace System.Management.Automation.Language
             if (c.IsTypeSuffix())
             {
                 SkipChar();
-                switch c {
+                switch (c) {
                     case 'l':
                     case 'L':
                         suffix |= NumberSuffix.Long;
@@ -3556,7 +3556,7 @@ namespace System.Management.Automation.Language
                 if (c.IsTypeSuffix())
                 {
                     SkipChar();
-                    switch c {
+                    switch (c) {
                         case 'l':
                         case 'L':
                             suffix |= NumberSuffix.Long;
