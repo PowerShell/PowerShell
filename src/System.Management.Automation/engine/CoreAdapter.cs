@@ -1929,7 +1929,7 @@ namespace System.Management.Automation
 
             if (method is ConstructorInfo ctor)
             {
-                if (ctor.DeclaringType.IsByRef)
+                if (ctor.DeclaringType.IsByRefLike)
                 {
                     throw new MethodException(
                         nameof(ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType),

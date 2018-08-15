@@ -39,6 +39,7 @@ namespace DotNetInterop
 
     public ref struct MyByRefLikeType
     {
+        public MyByRefLikeType(int i) { }
         public static int Index;
     }
 }
@@ -59,6 +60,22 @@ namespace DotNetInterop
     It "The 'new' method call should fail gracefully when used on a ByRef-like type" {
         { [System.Span[string]]::new() } | Should -Throw -ErrorId "CannotInstantiateBoxedByRefLikeType"
         { [DotNetInterop.MyByRefLikeType]::new() } | Should -Throw -ErrorId "CannotInstantiateBoxedByRefLikeType"
+    }
+
+    It "Calling constructor of a ByRef-like type via dotnet adapter should fail gracefully - <Number>" -TestCases @(
+        @{ Number = 1; Script = { [System.Span[string]]::new.Invoke("abc") } }
+        @{ Number = 2; Script = { [DotNetInterop.MyByRefLikeType]::new.Invoke(2) } }
+    ) {
+        param($Script)
+        $expectedError = $null
+        try {
+            & $Script
+        } catch {
+            $expectedError = $_
+        }
+
+        $expectedError | Should -Not -BeNullOrEmpty
+        $expectedError.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "CannotInstantiateBoxedByRefLikeType"
     }
 
     It "Cast to a ByRef-like type should fail gracefully" {
