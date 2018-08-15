@@ -668,7 +668,8 @@ foo``u{2195}abc
             @{ Script = "32.1u"; Expected = "32" }
             @{ Script = "4294967295u"; Expected = $([UInt32]::MaxValue) }
             @{ Script = "401ul"; Expected = "401" }
-            @{ Script = "1024.5ul"; Expected = "1025" }
+            # Banker's rounding on casting, of course.
+            @{ Script = "1024.5ul"; Expected = "1024" }
             @{ Script = "4294967301u"; Expected = "4294967301" }
             @{ Script = "18446744073709551615u"; Expected = $([UInt64]::MaxValue)}
             #Tests for exponential notation.
