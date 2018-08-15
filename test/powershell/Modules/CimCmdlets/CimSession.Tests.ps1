@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+Import-Module HelpersRemoting
+
 try {
     if ( ! $IsWindows ) {
         $PSDefaultParameterValues['it:pending'] = $true
@@ -17,7 +20,7 @@ try {
 
         It "A cim session can be created" {
             $sessionName = [guid]::NewGuid()
-            $session = New-CimSession -ComputerName . -Name $sessionName
+            $session = New-RemoteSession -Name $sessionName -CimSession
             $sessions += $session
             $session.Name | Should -BeExactly $sessionName
             $session.InstanceId  | Should -BeOfType "System.Guid"
@@ -25,7 +28,7 @@ try {
 
         It "A Cim session can be retrieved" {
             $sessionName = [guid]::NewGuid()
-            $session = New-CimSession -ComputerName . -Name $sessionName
+            $session = New-RemoteSession -Name $sessionName -CimSession
             $sessions += $session
             (Get-CimSession -Name $sessionName).InstanceId | Should -Be $session.InstanceId
             (Get-CimSession -Id $session.Id).InstanceId | Should -Be $session.InstanceId
@@ -34,7 +37,7 @@ try {
 
         It "A cim session can be removed" {
             $sessionName = [guid]::NewGuid()
-            $session = New-CimSession -ComputerName . -Name $sessionName
+            $session = New-RemoteSession -Name $sessionName -CimSession
             $sessions += $session
             $session.Name | Should -BeExactly $sessionName
             $session | Remove-CimSession
