@@ -3256,7 +3256,7 @@ namespace System.Management.Automation.Language
                 {
                     NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
                                          NumberStyles.AllowExponent;
-                    if (suffix == "d" || suffix == "D")
+                    if (suffix == NumberSuffixFlags.Decimal)
                     {
                         if (Decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal d))
                         {
@@ -3277,15 +3277,15 @@ namespace System.Management.Automation.Language
                             {
                                 d = -0.0;
                             }
-                            if (suffix == "l" || suffix == "L")
+                            if (suffix == NumberSuffixFlags.Long)
                             {
                                 result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
                             }
-                            if (suffix[0] == 'u' || suffix[0] == 'U')
+                            if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
                             {
                                 ulong testresult = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture)) * (ulong)multiplier;
 
-                                if (testresult > UInt32.MaxValue || String.Compare(suffix, "ul", true) == 0)
+                                if (testresult > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
                                 {
                                     result = testresult;
                                 }
@@ -3305,12 +3305,12 @@ namespace System.Management.Automation.Language
                         return false;
                     }
 
-                    if (suffix[0] == 'u' || suffix[0] == 'U')
+                    if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
                     {
                         if (UInt64.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
                         {
                             ulong testValue = u * (ulong)multiplier;
-                            if (testValue > UInt32.MaxValue || String.Compare(suffix, "ul", true) == 0)
+                            if (testValue > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
                             {
                                 result = testValue;
                             }
@@ -3338,21 +3338,13 @@ namespace System.Management.Automation.Language
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
                     long longValue;
-                    if (suffix == "l" || suffix == "L")
+                    if (suffix == NumberSuffixFlags.Long)
                     {
                         if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
                         {
                             result = longValue * multiplier;
                             return true;
                         }
-                        result = null;
-                        return false;
-                    }
-
-                    // If suffix is a value not caught by the above cases but is still present
-                    // we should probably... not work with whatever 'll' would be.
-                    if (suffix != "\0")
-                    {
                         result = null;
                         return false;
                     }
