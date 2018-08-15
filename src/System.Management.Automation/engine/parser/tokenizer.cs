@@ -67,9 +67,26 @@ namespace System.Management.Automation.Language
     /// </summary>
     [Flags]
     public enum NumberSuffixFlags {
-        None     = 0x0,
+        /// <summary>
+        /// No type suffix
+        /// </summary>
+        None      = 0x0,
+
+        /// <summary>
+        /// 'l' or 'L' type suffix for long values
+        /// Can follow after Unsigned to create ulong-parsed values
+        /// </summary>
         Long     = 0x1,
+
+        /// <summary>
+        /// 'd' or 'D' type suffic for decimal values
+        /// </summary>
         Decimal  = 0x2,
+
+        /// <summary>
+        /// 'u' or 'U' type suffix for unsigned integer values
+        /// Can be followed by Long
+        /// </summary>
         Unsigned = 0x4,
     }
 
