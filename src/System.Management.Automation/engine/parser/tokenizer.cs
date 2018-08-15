@@ -3292,6 +3292,16 @@ namespace System.Management.Automation.Language
                             {
                                 result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
                             }
+                            else if (suffix == 'u' || suffix == 'U') {
+                                ulong testresult = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture)) * (ulong)multiplier;
+
+                                if (testresult > UInt32.MaxValue) {
+                                    result = testresult;
+                                }
+                                else {
+                                    result = (uint)testresult;
+                                }
+                            }
                             else
                             {
                                 result = d * multiplier;
