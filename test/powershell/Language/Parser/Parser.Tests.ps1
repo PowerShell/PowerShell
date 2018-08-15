@@ -664,6 +664,8 @@ foo``u{2195}abc
             #Tests for uint notation.
             @{ Script = "0u"; Expected = [UInt32]::MinValue }
             @{ Script = "15u"; Expected = "15" }
+            @{ Script = "1.5u"; Expected = "2" }
+            @{ Script = "32.1u"; Expected = "32" }
             @{ Script = "4294967295u"; Expected = $([UInt32]::MaxValue) }
             @{ Script = "4294967301u"; Expected = "4294967301" }
             @{ Script = "18446744073709551615u"; Expected = $([UInt64]::MaxValue)}
