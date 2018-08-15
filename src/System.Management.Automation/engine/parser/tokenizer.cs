@@ -62,6 +62,15 @@ namespace System.Management.Automation.Language
         Hashtable = 2,
     }
 
+    [Flags]
+    public enum NumberSuffixFlags {
+        None     = 0x0,
+        Long     = 0x1,
+        Double   = 0x2,
+        Decimal  = 0x4,
+        Unsigned = 0x8,
+    }
+
     /// <summary>
     /// Defines the schema/behaviour for a dynamic keyword.
     /// a constrained
