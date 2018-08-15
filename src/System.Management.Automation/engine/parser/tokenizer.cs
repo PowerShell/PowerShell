@@ -3453,7 +3453,7 @@ namespace System.Management.Automation.Language
         {
             hex = false;
             real = false;
-            suffix = "\0";
+            suffix = "";
             multiplier = 1;
 
             bool notNumber = false;
@@ -3531,6 +3531,10 @@ namespace System.Management.Automation.Language
                 suffix += c;
                 c = PeekChar();
             }
+
+            // Due to the suffix being a string instead of char, it must be null-terminated for console
+            // to behave correctly. If someone knows why, I will be happy to add a proper explanation.
+            suffix += "\0";
 
             if (c.IsMultiplierStart())
             {
