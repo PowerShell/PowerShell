@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
             if (moduleSpecification.Version != null && moduleSpecification.MaximumVersion != null &&
                 moduleSpecification.Version > ModuleCmdletBase.GetMaximumVersion(moduleSpecification.MaximumVersion))
             {
-                message = StringUtil.Format(Modules.ModuleSpecificationMemberIsLessThanOther, "MaximumVersion", "ModuleVersion");
+                message = StringUtil.Format(Modules.ModuleSpecificationMemberIsLessThanOther, moduleSpecification.Version, moduleSpecification.MaximumVersion);
                 return new ArgumentException(message);
             }
             return null;
