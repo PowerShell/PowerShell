@@ -5090,7 +5090,13 @@ namespace System.Management.Automation.Language
                         var adapterData = property.adapterData as DotNetAdapter.PropertyCacheEntry;
                         Diagnostics.Assert(adapterData != null, "We have an unknown PSProperty that we aren't correctly optimizing.");
 
-                        if (!adapterData.member.DeclaringType.IsGenericTypeDefinition)
+                        if (adapterData.member.DeclaringType.IsGenericTypeDefinition || adapterData.propertyType.IsByRefLike)
+                        {
+                            // This is kinda lame - we really should throw an error, but accessing property getter
+                            // doesn't throw error in PowerShell since V2, even in strict mode.
+                            expr = ExpressionCache.NullConstant;
+                        }
+                        else
                         {
                             // For static property access, the target expr must be null.  For non-static, we must convert
                             // because target.Expression is typeof(object) because this is a dynamic site.
@@ -5112,11 +5118,6 @@ namespace System.Management.Automation.Language
                                                    "A DotNetAdapter.PropertyCacheEntry has something other than PropertyInfo or FieldInfo.");
                                 expr = Expression.Field(targetExpr, (FieldInfo)adapterData.member);
                             }
-                        }
-                        else
-                        {
-                            // This is kinda lame - we really should throw an error, but V2 did the same thing (even in strict mode).
-                            expr = ExpressionCache.NullConstant;
                         }
                     }
 
@@ -6032,14 +6033,37 @@ namespace System.Management.Automation.Language
 
                         if (data.member.DeclaringType.IsGenericTypeDefinition)
                         {
-                            Expression innerException = Expression.New(CachedReflectionInfo.SetValueException_ctor,
+                            Expression innerException = Expression.New(
+                                CachedReflectionInfo.SetValueException_ctor,
                                 Expression.Constant("PropertyAssignmentException"),
                                 Expression.Constant(null, typeof(Exception)),
                                 Expression.Constant(ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType),
                                 Expression.NewArrayInit(typeof(object), Expression.Constant(data.member.DeclaringType.FullName)));
-                            expr = Compiler.ThrowRuntimeErrorWithInnerException("PropertyAssignmentException",
-                                                                         Expression.Constant(ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType), innerException,
-                                                                         this.ReturnType, Expression.Constant(data.member.DeclaringType.FullName));
+
+                            expr = Compiler.ThrowRuntimeErrorWithInnerException(
+                                "PropertyAssignmentException",
+                                Expression.Constant(ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType),
+                                innerException,
+                                this.ReturnType,
+                                Expression.Constant(data.member.DeclaringType.FullName));
+
+                            return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
+                        }
+
+                        if (data.propertyType.IsByRefLike)
+                        {
+                            expr = Expression.Throw(
+                                Expression.New(
+                                    CachedReflectionInfo.SetValueException_ctor,
+                                    Expression.Constant(nameof(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField)),
+                                    Expression.Constant(null, typeof(Exception)),
+                                    Expression.Constant(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField),
+                                    Expression.NewArrayInit(
+                                        typeof(object),
+                                        Expression.Constant(data.member.Name),
+                                        Expression.Constant(data.propertyType))),
+                                this.ReturnType);
+
                             return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
                         }
 
@@ -6769,6 +6793,45 @@ namespace System.Management.Automation.Language
             List<Expression> initTemps = new List<Expression>();
             List<Expression> copyOutTemps = new List<Expression>();
 
+            ConstructorInfo constructorInfo = null;
+            MethodInfo methodInfo = mi as MethodInfo;
+            if (methodInfo != null)
+            {
+                Type returnType = methodInfo.ReturnType;
+                if (returnType.IsByRefLike)
+                {
+                    return Expression.Throw(
+                        Expression.New(
+                            CachedReflectionInfo.MethodException_ctor,
+                            Expression.Constant(nameof(ExtendedTypeSystem.CannotCallMethodWithByRefLikeReturnType)),
+                            Expression.Constant(null, typeof(Exception)),
+                            Expression.Constant(ExtendedTypeSystem.CannotCallMethodWithByRefLikeReturnType),
+                            Expression.NewArrayInit(
+                                typeof(object),
+                                Expression.Constant(methodInfo.Name),
+                                Expression.Constant(returnType))),
+                        typeof(object));
+                }
+            }
+            else
+            {
+                constructorInfo = (ConstructorInfo)mi;
+                Type declaringType = constructorInfo.DeclaringType;
+                if (declaringType.IsByRefLike)
+                {
+                    return Expression.Throw(
+                        Expression.New(
+                            CachedReflectionInfo.MethodException_ctor,
+                            Expression.Constant(nameof(ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType)),
+                            Expression.Constant(null, typeof(Exception)),
+                            Expression.Constant(ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType),
+                            Expression.NewArrayInit(
+                                typeof(object),
+                                Expression.Constant(declaringType))),
+                        typeof(object));
+                }
+            }
+
             var parameters = mi.GetParameters();
             var argExprs = new Expression[parameters.Length];
             for (int i = 0; i < parameters.Length; ++i)
@@ -6844,13 +6907,6 @@ namespace System.Management.Automation.Language
                         argExprs[i] = args[i].CastOrConvertMethodArgument(parameters[i].ParameterType, paramName, mi.Name, temps, initTemps);
                     }
                 }
-            }
-
-            ConstructorInfo constructorInfo = null;
-            var methodInfo = mi as MethodInfo;
-            if (methodInfo == null)
-            {
-                constructorInfo = (ConstructorInfo)mi;
             }
 
             Expression call;
@@ -7266,16 +7322,35 @@ namespace System.Management.Automation.Language
             var instanceType = targetValue as Type ?? targetValue.GetType();
 
             BindingRestrictions restrictions;
+            if (instanceType.IsByRefLike)
+            {
+                // ByRef-like types are not boxable and should be used only on stack
+                restrictions = BindingRestrictions.GetExpressionRestriction(
+                    Expression.Call(CachedReflectionInfo.PSCreateInstanceBinder_IsTargetTypeByRefLike, target.Expression));
+
+                return target.ThrowRuntimeError(
+                    restrictions,
+                    nameof(ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType),
+                    ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType,
+                    Expression.Call(
+                        CachedReflectionInfo.PSCreateInstanceBinder_GetTargetTypeName,
+                        target.Expression)).WriteToDebugLog(this);
+            }
+
             if (_publicTypeOnly && !TypeResolver.IsPublic(instanceType))
             {
                 // If 'publicTypeOnly' specified, we only support creating instance for public types.
                 restrictions = BindingRestrictions.GetExpressionRestriction(
                         Expression.Call(CachedReflectionInfo.PSCreateInstanceBinder_IsTargetTypeNonPublic, target.Expression));
-                return target.ThrowRuntimeError(restrictions, "MethodNotFound", ParserStrings.MethodNotFound,
-                                                Expression.Call(
-                                                    CachedReflectionInfo.PSCreateInstanceBinder_GetTargetTypeName,
-                                                    target.Expression),
-                                                Expression.Constant("new")).WriteToDebugLog(this);
+
+                return target.ThrowRuntimeError(
+                    restrictions,
+                    nameof(ParserStrings.MethodNotFound),
+                    ParserStrings.MethodNotFound,
+                    Expression.Call(
+                        CachedReflectionInfo.PSCreateInstanceBinder_GetTargetTypeName,
+                        target.Expression),
+                    Expression.Constant("new")).WriteToDebugLog(this);
             }
 
             var ctors = instanceType.GetConstructors();
@@ -7304,7 +7379,19 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Check if the target type is not public
+        /// Check if the target type is ByRef-like.
+        /// </summary>
+        internal static bool IsTargetTypeByRefLike(object target)
+        {
+            var targetValue = PSObject.Base(target);
+            if (targetValue == null) { return false; }
+
+            var instanceType = targetValue as Type ?? targetValue.GetType();
+            return instanceType.IsByRefLike;
+        }
+
+        /// <summary>
+        /// Check if the target type is not public.
         /// </summary>
         internal static bool IsTargetTypeNonPublic(object target)
         {
@@ -7316,7 +7403,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Return the full name of the target type
+        /// Return the full name of the target type.
         /// </summary>
         internal static string GetTargetTypeName(object target)
         {
