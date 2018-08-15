@@ -693,6 +693,11 @@ function Restore-PSPackage
             $RestoreArguments += "quiet"
         }
 
+        if ($IsMacOS)
+        {
+            $RestoreArguments += '--disable-parallel'
+        }
+
         $ProjectDirs | ForEach-Object {
             Write-Log "Run dotnet restore $_ $RestoreArguments"
             Start-NativeExecution { dotnet restore $_ $RestoreArguments }
