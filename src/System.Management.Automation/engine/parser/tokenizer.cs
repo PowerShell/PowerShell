@@ -3578,6 +3578,9 @@ namespace System.Management.Automation.Language
                         case 'L':
                             suffix |= NumberSuffixFlags.Long;
                             break;
+                        default:
+                            notNumber = true;
+                            break;
                     }
 
                     c = PeekChar();
