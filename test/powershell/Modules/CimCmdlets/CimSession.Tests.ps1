@@ -19,7 +19,7 @@ try {
         }
 
         It "A cim session can be created" {
-            $sessionName = [guid]::NewGuid()
+            $sessionName = [guid]::NewGuid().Guid
             $session = New-RemoteSession -Name $sessionName -CimSession
             $sessions += $session
             $session.Name | Should -BeExactly $sessionName
@@ -27,7 +27,7 @@ try {
         }
 
         It "A Cim session can be retrieved" {
-            $sessionName = [guid]::NewGuid()
+            $sessionName = [guid]::NewGuid().Guid
             $session = New-RemoteSession -Name $sessionName -CimSession
             $sessions += $session
             (Get-CimSession -Name $sessionName).InstanceId | Should -Be $session.InstanceId
@@ -36,7 +36,7 @@ try {
         }
 
         It "A cim session can be removed" {
-            $sessionName = [guid]::NewGuid()
+            $sessionName = [guid]::NewGuid().Guid
             $session = New-RemoteSession -Name $sessionName -CimSession
             $sessions += $session
             $session.Name | Should -BeExactly $sessionName
