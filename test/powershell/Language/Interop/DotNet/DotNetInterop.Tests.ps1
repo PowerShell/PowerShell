@@ -16,6 +16,12 @@ namespace DotNetInterop
             set { DoNothing(value); }
         }
 
+        public Span<int> Room
+        {
+            get { return default(Span<int>); }
+            set { DoNothing(value); }
+        }
+
         private static void DoNothing(Span<int> param)
         {
         }
@@ -41,6 +47,8 @@ namespace DotNetInterop
         {
             Add-Type -TypeDefinition $code -IgnoreWarnings
         }
+
+        $testObj = [DotNetInterop.Test]::new()
     }
 
     It "New-Object should fail gracefully when used for a ByRef-like type" {
@@ -74,36 +82,61 @@ namespace DotNetInterop
         $expectedError.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "InvalidCastToByRefLikeType"
     }
 
-    It "Getting value of a ByRef-like type instance property should not throw and should return null, even in strict mode" {
+    It "Getting value of a ByRef-like type instance property should not throw and should return null, even in strict mode - <Mechanism>" -TestCases @(
+        @{ Mechanism = "Compiler/Binder"; Script = { [System.Text.Encoding]::ASCII.Preamble } }
+        @{ Mechanism = "Dotnet-Adapter";  Script = { [System.Text.Encoding]::ASCII.PSObject.Properties["Preamble"].Value } }
+    ) {
+        param($Script)
+
         try {
             Set-StrictMode -Version latest
-            [System.Text.Encoding]::ASCII.Preamble | Should -Be $null
+            & $Script | Should -Be $null
         } finally {
             Set-StrictMode -Off
         }
     }
 
-    It "Getting value of a ByRef-like type static property should fail gracefully" {
-        { [DotNetInterop.Test]::Space } | Should -Throw -ErrorId "CannotAccessByRefLikePropertyOrField"
+    It "Setting value of a ByRef-like type instance property should fail gracefully - <Mechanism>" -TestCases @(
+        @{ Mechanism = "Compiler/Binder"; Script = { $testObj.Room = [int[]](1,2,3) } }
+        @{ Mechanism = "Dotnet-Adapter";  Script = { $testObj.PSObject.Properties["Room"].Value = [int[]](1,2,3) } }
+    ) {
+        param($Script)
+        $Script | Should -Throw -ErrorId "CannotAccessByRefLikePropertyOrField"
     }
 
-    It "Setting value of a ByRef-like type property should fail gracefully" {
-        { [DotNetInterop.Test]::Space = "blah" } | Should -Throw -ErrorId "CannotAccessByRefLikePropertyOrField"
+    It "<Action> value of a ByRef-like type static property should fail gracefully" -TestCases @(
+        @{ Action = "Getting"; Script = { [DotNetInterop.Test]::Space } }
+        @{ Action = "Setting"; Script = { [DotNetInterop.Test]::Space = "blah" } }
+    ) {
+        param($Script)
+        $Script | Should -Throw -ErrorId "CannotAccessByRefLikePropertyOrField"
     }
 
     It "Invoke a method with optional ByRef-like parameter could work" {
-        $test = [DotNetInterop.Test]::new()
-        $test.PrintMySpan("Hello") | Should -BeExactly "Hello"
+        $testObj.PrintMySpan("Hello") | Should -BeExactly "Hello"
     }
 
-    It "Invoke a method with ByRef-like parameter should fail gracefully" {
-        $test = [DotNetInterop.Test]::new()
-        { $test.PrintMySpan("Hello", 1) } | Should -Throw -ErrorId "MethodArgumentConversionInvalidCastArgument"
+    It "Invoke a method with ByRef-like parameter should fail gracefully - <Mechanism>" -TestCases @(
+        @{ Mechanism = "Compiler/Binder"; Script = { $testObj.PrintMySpan("Hello", 1) } }
+        @{ Mechanism = "Dotnet-Adapter";  Script = { $testObj.psobject.Methods["PrintMySpan"].Invoke("Hello", 1) } }
+    ) {
+        param($Script)
+        $Script | Should -Throw -ErrorId "MethodArgumentConversionInvalidCastArgument"
     }
 
-    It "Invoke a method with ByRef-like return type should fail gracefully" {
-        $test = [DotNetInterop.Test]::new()
-        { $test.GetSpan([int[]]@(1,2,3)) } | Should -Throw -ErrorId "CannotCallMethodWithByRefLikeReturnType"
+    It "Invoke a method with ByRef-like return type should fail gracefully - Compiler/Binder" {
+        { $testObj.GetSpan([int[]]@(1,2,3)) } | Should -Throw -ErrorId "CannotCallMethodWithByRefLikeReturnType"
+    }
+
+    It "Invoke a method with ByRef-like return type should fail gracefully - Dotnet-Adapter" {
+        $expectedError = $null
+        try {
+            $testObj.psobject.Methods["GetSpan"].Invoke([int[]]@(1,2,3))
+        } catch {
+            $expectedError = $_
+        }
+        $expectedError | Should -Not -BeNullOrEmpty
+        $expectedError.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "CannotCallMethodWithByRefLikeReturnType"
     }
 
     It "Access static property of a ByRef-like type" {
