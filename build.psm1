@@ -1331,7 +1331,12 @@ function Publish-TestResults
     {
         $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
         Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$resolvedPath;]"
-        Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
+        Build.Reason'], 'PullRequest
+
+        if($env:BUILD_REASON -ne 'PullRequest')
+        {
+            Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
+        }
     }
 }
 
