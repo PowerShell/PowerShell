@@ -63,29 +63,30 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// Defines the permissible suffixes for numerical tokens
+    /// Defines the permissible suffixes for numerical tokens.
     /// </summary>
     [Flags]
-    public enum NumberSuffixFlags {
+    public enum NumberSuffixFlags
+    {
         /// <summary>
-        /// No type suffix
+        /// No type suffix.
         /// </summary>
         None      = 0x0,
 
         /// <summary>
-        /// 'l' or 'L' type suffix for long values
-        /// Can follow after Unsigned to create ulong-parsed values
+        /// 'l' or 'L' type suffix for long values.
+        /// Can follow after Unsigned to create ulong-parsed values.
         /// </summary>
         Long     = 0x1,
 
         /// <summary>
-        /// 'd' or 'D' type suffic for decimal values
+        /// 'd' or 'D' type suffic for decimal values.
         /// </summary>
         Decimal  = 0x2,
 
         /// <summary>
-        /// 'u' or 'U' type suffix for unsigned integer values
-        /// Can be followed by Long
+        /// 'u' or 'U' type suffix for unsigned integer values.
+        /// Can be followed by Long.
         /// </summary>
         Unsigned = 0x4,
     }
@@ -3470,15 +3471,15 @@ namespace System.Management.Automation.Language
             return NewNumberToken(value);
         }
 
-        /// <param name="firstChar">the first character</param>
-        /// <param name="hex">indicate if it's a hex number</param>
-        /// <param name="real">indicate if it's a real number</param>
-        /// <param name="suffix">indicate the type suffix</param>
-        /// <param name="multiplier">indicate the specified multiplier</param>
+        /// <param name="firstChar">The first character.</param>
+        /// <param name="hex">Indicate if it's a hex number.</param>
+        /// <param name="real">Indicate if it's a real number.</param>
+        /// <param name="suffix">Indicate the numeric type suffix.</param>
+        /// <param name="multiplier">Indicate the specified multiplier<./param>
         /// <returns>
-        /// return null if the token is not a number
+        /// Return null if the token is not a number
         /// OR
-        /// return the string format of the number
+        /// Return the string format of the number.
         /// </returns>
         private string ScanNumberHelper(char firstChar, out bool hex, out bool real, out NumberSuffixFlags suffix, out long multiplier)
         {
@@ -3554,7 +3555,8 @@ namespace System.Management.Automation.Language
             if (c.IsTypeSuffix())
             {
                 SkipChar();
-                switch (c) {
+                switch (c)
+                {
                     case 'l':
                     case 'L':
                         suffix |= NumberSuffixFlags.Long;
@@ -3573,7 +3575,8 @@ namespace System.Management.Automation.Language
                 if (c.IsTypeSuffix())
                 {
                     SkipChar();
-                    switch (c) {
+                    switch (c)
+                    {
                         case 'l':
                         case 'L':
                             if (suffix == NumberSuffixFlags.Unsigned)
