@@ -83,6 +83,39 @@ function Invoke-ImportModule
     return Import-Module @cmdArgs
 }
 
+function Assert-ModuleIsCorrect
+{
+    param(
+        $Module,
+        [string]$Name,
+        [guid]$Guid,
+        [version]$Version,
+        [version]$MinVersion,
+        [version]$MaxVersion,
+        [version]$RequiredVersion
+    )
+
+    $Module      | Should -Not -Be $null
+    $Module.Name | Should -Be $ModuleName
+    $Module.Guid | Should -Be $Guid
+    if ($Version)
+    {
+        $Module.Version | Should -Be $Version
+    }
+    if ($ModuleVersion)
+    {
+        $Module.Version | Should -BeGreaterOrEqual $ModuleVersion
+    }
+    if ($MaximumVersion)
+    {
+        $Module.Version | Should -BeLessOrEqual $MaximumVersion
+    }
+    if ($RequiredVersion)
+    {
+        $Module.Version | Should -Be $RequiredVersion
+    }
+}
+
 $actualVersion = '2.3'
 $actualGuid = [guid]'9b945229-65fd-4629-ae99-88e2618377ff'
 
@@ -184,25 +217,14 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -212,25 +234,14 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -240,25 +251,14 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -266,21 +266,14 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -288,21 +281,14 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -310,21 +296,14 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Does not get the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
@@ -464,25 +443,14 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -492,25 +460,14 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -518,21 +475,14 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -540,21 +490,14 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -562,21 +505,14 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Does not get the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
@@ -688,25 +624,14 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -716,25 +641,14 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -744,25 +658,14 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -770,21 +673,14 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -792,21 +688,14 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -814,21 +703,14 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Does not get the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
@@ -937,25 +819,14 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         $mod = Get-Module -FullyQualifiedName $modSpec
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -965,25 +836,14 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -993,25 +853,14 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -1021,25 +870,14 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -1047,21 +885,14 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -1069,21 +900,14 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -1091,21 +915,14 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Does not get the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
@@ -1246,25 +1063,14 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         $mod = Get-Module -FullyQualifiedName $modSpec
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -1274,25 +1080,14 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -1302,25 +1097,14 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -1330,25 +1114,14 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -1356,21 +1129,14 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         $mod = Invoke-ImportModule -Module $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -1378,21 +1144,14 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -1400,21 +1159,14 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Does not get the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
@@ -1556,25 +1308,14 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         $mod = Get-Module -FullyQualifiedName $modSpec
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -1584,25 +1325,14 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -1612,25 +1342,14 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
@@ -1640,25 +1359,14 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -1666,21 +1374,14 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $modulePath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -1688,21 +1389,14 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module with version constraints from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $successCases {
@@ -1710,21 +1404,14 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         $mod = Invoke-ImportModule -Module $moduleName -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid -PassThru
 
-        $mod.Name | Should -Be $moduleName
-        $mod.Guid | Should -Be $actualGuid
-        $mod.Version | Should -Be $actualVersion
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Does not get the module when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
