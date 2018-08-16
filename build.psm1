@@ -695,6 +695,7 @@ function Restore-PSPackage
 
         if ($IsMacOS)
         {
+            # We are hitting an issue where parallel restore in CI on mac fails
             $RestoreArguments += '--disable-parallel'
         }
 
