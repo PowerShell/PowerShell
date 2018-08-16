@@ -3345,7 +3345,11 @@ namespace System.Management.Automation.Language
                         if (UInt64.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
                         {
                             ulong testValue = u * (ulong)multiplier;
-                            if (testValue > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
+                            if (suffix.HasFlag(NumberSuffixFlags.Short))
+                            {
+                                result = (ushort)testValue;
+                            }
+                            else if (testValue > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
                             {
                                 result = testValue;
                             }
