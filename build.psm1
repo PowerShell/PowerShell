@@ -140,9 +140,11 @@ function Get-EnvironmentInformation
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
         $environment += @{'IsSLES' = $LinuxInfo.ID -match 'sles'}
+        $environment += @{'IsRedHat' = $LinuxInfo.ID -match 'rhel'}
+        $environment += @{'IsRedHat7' = $Environment.IsRedHat -and $LinuxInfo.VERSION_ID -match '7' }
         $environment += @{'IsOpenSUSE13' = $Environmenst.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
         $environment += @{'IsOpenSUSE42.1' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'}
-        $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora}
+        $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $Environment.IsSLES -or $Environment.IsOpenSUSE}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
@@ -150,6 +152,15 @@ function Get-EnvironmentInformation
         if ($environment.IsFedora -and (Test-Path ENV:\LD_LIBRARY_PATH)) {
             Remove-Item -Force ENV:\LD_LIBRARY_PATH
             Get-ChildItem ENV:
+        }
+
+        if( -not(
+            $environment.IsDebian -or
+            $environment.IsUbuntu -or
+            $environmment.IsRedHatFamily -or
+            $environmment.IsSUSEFamily)
+        ) {
+            throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
         }
     }
 
@@ -602,7 +613,11 @@ Fix steps:
 
     if ($Environment.IsWindows) {
         ## need RCEdit to modify the binaries embedded resources
-        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
+        $rcedit = "~/.rcedit/rcedit-x64.exe"
+        if (-not (Test-Path -Type Leaf $rcedit)) {
+            $rcedit = Get-Command "rcedit-x64.exe" -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1 | % Name
+        }
+        if (-not $rcedit) {
             throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
         }
 
@@ -632,7 +647,7 @@ Fix steps:
             $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
         }
 
-        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon $iconPath `
+        Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
             --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
             --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
             --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
@@ -1007,7 +1022,9 @@ function Start-PSPester {
         [Parameter(ParameterSetName='PassThru',HelpMessage='Run commands on Linux with sudo.')]
         [switch]$Sudo,
         [switch]$IncludeFailingTest,
-        [string]$ExperimentalFeatureName
+        [string]$ExperimentalFeatureName,
+        [Parameter(HelpMessage='Title to publish the results as.')]
+        [string]$Title = 'PowerShell Core Tests'
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
@@ -1245,7 +1262,8 @@ function Start-PSPester {
 
                     $passThruCommand = { & $powershell $PSFlags -c $command }
                     if ($Sudo.IsPresent) {
-                        $passThruCommand =  { & sudo $powershell $PSFlags -c $command }
+                        # -E says to preserve the environment
+                        $passThruCommand =  { & sudo -E $powershell $PSFlags -c $command }
                     }
 
                     $writeCommand = { Write-Host $_ }
@@ -1283,9 +1301,37 @@ function Start-PSPester {
         }
     }
 
+    Publish-TestResults -Path $OutputFile -Title $Title
+
     if($ThrowOnFailure)
     {
         Test-PSPesterResults -TestResultsFile $OutputFile
+    }
+}
+
+function Publish-TestResults
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $Title,
+
+        [Parameter(Mandatory)]
+        [ValidateScript({Test-Path -Path $_})]
+        [string]
+        $Path,
+
+        [ValidateSet('NUnit','XUnit')]
+        [string]
+        $Type='NUnit'
+    )
+
+    # In VSTS publish Test Results
+    if($env:TF_BUILD)
+    {
+        $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
+        Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$resolvedPath;]"
+        Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
     }
 }
 
@@ -1513,7 +1559,24 @@ function Start-PSxUnit {
 
         # Run sequential tests first, and then run the tests that can execute in parallel
         dotnet xunit -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
-        dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
+
+        Publish-TestResults -Path $SequentialTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+
+        $extraParams = @()
+
+        # we are having intermittent issues on macOS with these tests failing.
+        # VSTS has suggested forcing them to be sequential
+        if($env:TF_BUILD -and $IsMacOS)
+        {
+            Write-Log 'Forcing parallel xunit tests to run sequentially.'
+            $extraParams += @(
+                '-parallel'
+                'none'
+            )
+        }
+
+        dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild @extraParams
+        Publish-TestResults -Path $ParallelTestResultsFile -Type 'XUnit' -Title 'Xunit Parallel'
     }
     finally {
         Pop-Location
@@ -2447,16 +2510,9 @@ function Copy-PSGalleryModules
             $version
         }
 
-        # Remove semantic version in the destination directory
-        $destVer = if ($version -match "(\d+.\d+.\d+)-.+") {
-            $matches[1]
-        } else {
-            $version
-        }
-
         # Nuget seems to always use lowercase in the cache
         $src = "$nugetCache/$($name.ToLower())/$srcVer"
-        $dest = "$Destination/$name/$destVer"
+        $dest = "$Destination/$name"
 
         Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null

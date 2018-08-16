@@ -1644,128 +1644,126 @@
             </Directory>
             <Directory Id="dir9956A485678594F33C936BA160AD06C4" Name="Modules">
                 <Directory Id="dir9C2FC7DD1B408AD4F70123DF50131CBD" Name="PackageManagement">
-                    <Directory Id="dirBE29553BD60B3A0392916BB9B7487287" Name="1.1.7.0">
-                        <Component Id="cmp06B11EAFDD3914ACF2D8C164DC8690DD" Guid="{9A900A1C-06C8-4BA9-A0D0-C8A0B9A19517}">
-                            <File Id="fil2D65FE7CFB67DD71931A988AEFADDC63" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\PackageProviderFunctions.psm1" />
-                        </Component>
-                        <Component Id="cmp787372192BA1121F4B941CA05CFF1F8D" Guid="{C156BC5A-7F4C-4497-9373-778AE2FF45F8}">
-                            <File Id="fil44BB0218DD18A617A67E32117259D12F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\PackageManagement.psm1" />
-                        </Component>
-                        <Component Id="cmpA4695300ACEBB66F3B6D188C1CF484A1" Guid="{E5465897-01C3-4A0B-8328-F68AA23AAFD9}">
-                            <File Id="fil7B147FD2F611E77B06B50505D9E2389A" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\PackageManagement.Resources.psd1" />
-                        </Component>
-                        <Component Id="cmp828E83274EBD6F1D0900B0C68CD90D01" Guid="{B74A45D3-612C-4D77-803F-0B4CA599F356}">
-                            <File Id="filCEA007D808F869C1ED3CB083CEA4FA49" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\PackageManagement.psd1" />
-                        </Component>
-                        <Component Id="cmp158336AF77111C07EAF1E7F26E50B79B" Guid="{AC589B09-567F-4087-9936-7AF452696D8E}">
-                            <File Id="fil3CBD54D5F2019D43EF9D363E6C5E01F9" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\PackageManagement.cat" />
-                        </Component>
-                        <Component Id="cmp43F326A44F323E46301C02FCE333E2CD" Guid="{E700AC25-2DCC-453A-94E7-E25E6FCE6D8E}">
-                            <File Id="fil456F3E843B7DF2A6DDDD5B581E898DE3" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\PackageManagement.format.ps1xml" />
-                        </Component>
-                        <Directory Id="dir893313D3F16953EAC4468BEA47FE52DA" Name="coreclr">
-                            <Directory Id="dir9DE000C35C01667E62C1ABEA44C3D7FE" Name="netstandard1.6">
-                                <Component Id="cmp655982C69DB4BC1CE326EAF5D68A3DCB" Guid="{E505C9DE-728A-4FC3-9952-D5C2D7F2CB6D}">
-                                    <File Id="fil94A674CF03C80AEFA30757550708B323" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netstandard1.6\Microsoft.PackageManagement.CoreProviders.dll" />
-                                </Component>
-                                <Component Id="cmp26529023C562468C8D4D4C84578378B9" Guid="{C1C453BA-46E4-434E-8B5B-803B2E55FFF7}">
-                                    <File Id="fil8F5FD9CB9EE996B490D2EAA107618E37" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netstandard1.6\Microsoft.PackageManagement.ArchiverProviders.dll" />
-                                </Component>
-                                <Component Id="cmp5AF7DE3D47027F5EACF224FA05A2672B" Guid="{14D187FB-A93A-407C-80EF-DBCAAB45F647}">
-                                    <File Id="fil4C52CED2A1A959EC863ED5FB5B46550E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netstandard1.6\Microsoft.PackageManagement.NuGetProvider.dll" />
-                                </Component>
-                                <Component Id="cmp6FE11EF389730F5DE77BA89A5290A108" Guid="{48C23A24-2B80-4806-9ED7-249FB27CE8FF}">
-                                    <File Id="fil871FAC39E99931D328F18C8476EA090C" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netstandard1.6\Microsoft.PowerShell.PackageManagement.dll" />
-                                </Component>
-                                <Component Id="cmp2854D82014BA8ED0C2BFCF7DA818A3CB" Guid="{23A0F3EC-6BAC-4E99-8567-FC44237D4B77}">
-                                    <File Id="filD38978073701E7F5A0F1756086BA8669" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netstandard1.6\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
-                                </Component>
-                                <Component Id="cmp0D26FBA5B552D62AFDEF42B14306981D" Guid="{FB9DA200-BBB2-44D2-8C8E-AFEF84C76E1F}">
-                                    <File Id="fil207E1CFAE58FDB0F7A3A86B07FD06197" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netstandard1.6\Microsoft.PackageManagement.dll" />
-                                </Component>
-                            </Directory>
-                            <Directory Id="dirEC1C291763D0DBEEE1BF1EEA2203088E" Name="netcoreapp2.0">
-                                <Component Id="cmpE58806FE8A0F94FADA382E7396E78F70" Guid="{913CC9DC-2DFA-4309-BF57-71E71E685B91}">
-                                    <File Id="fil6D648D2EF7D486A3B401AE3778702817" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netcoreapp2.0\Microsoft.PackageManagement.CoreProviders.dll" />
-                                </Component>
-                                <Component Id="cmpE2B032EE97969EAD8DD8476CE0CA1D83" Guid="{321F3971-D145-46A4-9FAD-3F15B23BF5E4}">
-                                    <File Id="fil65F4172D1FB8C192FAD68860F71AFEA2" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netcoreapp2.0\Microsoft.PackageManagement.ArchiverProviders.dll" />
-                                </Component>
-                                <Component Id="cmp5BDC1C0DC8B4E61B5550A56E08F4C804" Guid="{291D5C4E-B82B-451F-9BDF-DF70CA2B1BE7}">
-                                    <File Id="fil3A913D88E04F9D3D2A29793D92B4957D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netcoreapp2.0\Microsoft.PackageManagement.NuGetProvider.dll" />
-                                </Component>
-                                <Component Id="cmp4A3FB1103BEAE46CFA7897AA34E9534B" Guid="{CD47D831-9DF1-43E1-BE91-C1218390E4AC}">
-                                    <File Id="fil5DBDAD7C628E555A9DC3F2A8DFCA4603" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netcoreapp2.0\Microsoft.PowerShell.PackageManagement.dll" />
-                                </Component>
-                                <Component Id="cmp61687198EA94E47A25D70969125875F4" Guid="{8BCDBE19-6579-475E-8560-548B5D288B21}">
-                                    <File Id="fil77E2A0FC58BF0D2CBF31611A63FC869B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netcoreapp2.0\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
-                                </Component>
-                                <Component Id="cmpDC564CB5D61E140D4E290EB630476348" Guid="{4FE1C6EA-A3DF-4448-94D0-A6A4FBB3EF82}">
-                                    <File Id="filF78D36D7347B9AD345D2156A17E21F5B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\coreclr\netcoreapp2.0\Microsoft.PackageManagement.dll" />
-                                </Component>
-                            </Directory>
-                        </Directory>
-                        <Directory Id="dirC752FFF559E0A1836495B2A5BE8C3241" Name="fullclr">
-                            <Component Id="cmp42FAF33EAFB96E137B4CD3588D244007" Guid="{6B56B9AE-1303-4E6E-BFDD-30F22E758EAD}">
-                                <File Id="filFAF533DFDCB775BAD0751DFEB7DE1D04" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\fullclr\Microsoft.PackageManagement.CoreProviders.dll" />
+                    <Component Id="cmp06B11EAFDD3914ACF2D8C164DC8690DD" Guid="{9A900A1C-06C8-4BA9-A0D0-C8A0B9A19517}">
+                        <File Id="fil2D65FE7CFB67DD71931A988AEFADDC63" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageProviderFunctions.psm1" />
+                    </Component>
+                    <Component Id="cmp787372192BA1121F4B941CA05CFF1F8D" Guid="{C156BC5A-7F4C-4497-9373-778AE2FF45F8}">
+                        <File Id="fil44BB0218DD18A617A67E32117259D12F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.psm1" />
+                    </Component>
+                    <Component Id="cmpA4695300ACEBB66F3B6D188C1CF484A1" Guid="{E5465897-01C3-4A0B-8328-F68AA23AAFD9}">
+                        <File Id="fil7B147FD2F611E77B06B50505D9E2389A" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.Resources.psd1" />
+                    </Component>
+                    <Component Id="cmp828E83274EBD6F1D0900B0C68CD90D01" Guid="{B74A45D3-612C-4D77-803F-0B4CA599F356}">
+                        <File Id="filCEA007D808F869C1ED3CB083CEA4FA49" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.psd1" />
+                    </Component>
+                    <Component Id="cmp158336AF77111C07EAF1E7F26E50B79B" Guid="{AC589B09-567F-4087-9936-7AF452696D8E}">
+                        <File Id="fil3CBD54D5F2019D43EF9D363E6C5E01F9" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.cat" />
+                    </Component>
+                    <Component Id="cmp43F326A44F323E46301C02FCE333E2CD" Guid="{E700AC25-2DCC-453A-94E7-E25E6FCE6D8E}">
+                        <File Id="fil456F3E843B7DF2A6DDDD5B581E898DE3" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.format.ps1xml" />
+                    </Component>
+                    <Directory Id="dir893313D3F16953EAC4468BEA47FE52DA" Name="coreclr">
+                        <Directory Id="dir9DE000C35C01667E62C1ABEA44C3D7FE" Name="netstandard1.6">
+                            <Component Id="cmp655982C69DB4BC1CE326EAF5D68A3DCB" Guid="{E505C9DE-728A-4FC3-9952-D5C2D7F2CB6D}">
+                                <File Id="fil94A674CF03C80AEFA30757550708B323" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.CoreProviders.dll" />
                             </Component>
-                            <Component Id="cmp4737D9777EE045FB126E652C2D404C5F" Guid="{10D9963A-A68A-4A6C-953B-D6EC522FCF0F}">
-                                <File Id="fil7854F1EA38C0A65FAC85835F9796CE8D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\fullclr\Microsoft.PackageManagement.ArchiverProviders.dll" />
+                            <Component Id="cmp26529023C562468C8D4D4C84578378B9" Guid="{C1C453BA-46E4-434E-8B5B-803B2E55FFF7}">
+                                <File Id="fil8F5FD9CB9EE996B490D2EAA107618E37" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.ArchiverProviders.dll" />
                             </Component>
-                            <Component Id="cmpC91745807893F2BAB69354046640E314" Guid="{E8BFA366-60DD-4C03-8909-31281D6E2A09}">
-                                <File Id="fil76343E288E10F5CBCA84886D61BC2A7F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\fullclr\Microsoft.PackageManagement.NuGetProvider.dll" />
+                            <Component Id="cmp5AF7DE3D47027F5EACF224FA05A2672B" Guid="{14D187FB-A93A-407C-80EF-DBCAAB45F647}">
+                                <File Id="fil4C52CED2A1A959EC863ED5FB5B46550E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.NuGetProvider.dll" />
                             </Component>
-                            <Component Id="cmpC8E4E2561F8C38E712D24319BA77F032" Guid="{1670AC4B-2291-48F7-9C40-749DF308A009}">
-                                <File Id="fil4FB5A407BEA219A3277C79F09DA9C280" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\fullclr\Microsoft.PowerShell.PackageManagement.dll" />
+                            <Component Id="cmp6FE11EF389730F5DE77BA89A5290A108" Guid="{48C23A24-2B80-4806-9ED7-249FB27CE8FF}">
+                                <File Id="fil871FAC39E99931D328F18C8476EA090C" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PowerShell.PackageManagement.dll" />
                             </Component>
-                            <Component Id="cmpB07BB3051FDA277D2039A55E27FEA96B" Guid="{94A87B1B-065A-4929-B9D7-4C632AE8DAEC}">
-                                <File Id="fil7AF679A98B4B46C97E87D4CE593ECEAA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\fullclr\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
+                            <Component Id="cmp2854D82014BA8ED0C2BFCF7DA818A3CB" Guid="{23A0F3EC-6BAC-4E99-8567-FC44237D4B77}">
+                                <File Id="filD38978073701E7F5A0F1756086BA8669" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
                             </Component>
-                            <Component Id="cmp2F5329662DB4F6F54C5E633BFA65695C" Guid="{253E761F-239B-4082-A22B-E158A59113D2}">
-                                <File Id="fil6D648FAF650FD6F6FCD14C603425B8E3" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\fullclr\Microsoft.PackageManagement.MsiProvider.dll" />
-                            </Component>
-                            <Component Id="cmp4D0E30F65EE31C892999F1911FC677A4" Guid="{CAE027CF-D546-4713-9295-B061BE191095}">
-                                <File Id="filBC661E979549386B61C7EE7730A59BFF" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\fullclr\Microsoft.PackageManagement.MsuProvider.dll" />
-                            </Component>
-                            <Component Id="cmpA0367FACA97742E87276CF7C5A1BAB8F" Guid="{097EC67B-0EF5-411C-99DB-EBF284D58043}">
-                                <File Id="fil388F09CF70A7CD5CFBE656C0C7E8923F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\fullclr\Microsoft.PackageManagement.dll" />
+                            <Component Id="cmp0D26FBA5B552D62AFDEF42B14306981D" Guid="{FB9DA200-BBB2-44D2-8C8E-AFEF84C76E1F}">
+                                <File Id="fil207E1CFAE58FDB0F7A3A86B07FD06197" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.dll" />
                             </Component>
                         </Directory>
-                        <Directory Id="dirFC1317A25C1C86853684C8199074961E" Name="DSCResources">
-                            <Component Id="cmpC9B4657EEFE76C4A1368686E81ED1D2A" Guid="{22829073-BEF7-42CC-A642-FAC5DBED7973}">
-                                <File Id="fil0305DF95FD0AA03664A76D11091725EC" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\DSCResources\PackageManagementDscUtilities.strings.psd1" />
+                        <Directory Id="dirEC1C291763D0DBEEE1BF1EEA2203088E" Name="netcoreapp2.0">
+                            <Component Id="cmpE58806FE8A0F94FADA382E7396E78F70" Guid="{913CC9DC-2DFA-4309-BF57-71E71E685B91}">
+                                <File Id="fil6D648D2EF7D486A3B401AE3778702817" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.CoreProviders.dll" />
                             </Component>
-                            <Component Id="cmpE704B28ADB879BD9E25A1CC78C7E09C2" Guid="{178F70AD-9156-4E27-A515-7960B60CD5C0}">
-                                <File Id="fil68ECF3E44764D95709BC1D621D364371" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\DSCResources\PackageManagementDscUtilities.psm1" />
+                            <Component Id="cmpE2B032EE97969EAD8DD8476CE0CA1D83" Guid="{321F3971-D145-46A4-9FAD-3F15B23BF5E4}">
+                                <File Id="fil65F4172D1FB8C192FAD68860F71AFEA2" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.ArchiverProviders.dll" />
                             </Component>
-                            <Directory Id="dir761FBF007A8A2B602364040C5C52F6CF" Name="MSFT_PackageManagement">
-                                <Component Id="cmp8580EA4589D3F5C323542A87F5FB0FD3" Guid="{D86E02C0-A19D-4DEB-A35F-72F7572CC57F}">
-                                    <File Id="fil03CA1AA13C3578B3AADDE540379AA581" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.schema.mof" />
-                                </Component>
-                                <Component Id="cmpBE8C89B274100F02DA3BAB773B4AE344" Guid="{77779DCB-9E9D-4FEC-93A2-F3CEB5C7E75C}">
-                                    <File Id="filCB2D18FF3214AC76A5212AF1C6F65AAB" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.psm1" />
-                                </Component>
-                                <Component Id="cmp8293CA494C20B4C65697C26070705F4C" Guid="{6F2ADDE9-A023-4D2D-AB0C-1163D5A375D1}">
-                                    <File Id="filDF52BC0CDE6430B94B5A12FEDBF8E9F9" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.strings.psd1" />
-                                </Component>
-                                <Component Id="cmp370775BFDBD56591078650F88017417B" Guid="{9AABD821-42EA-4B48-9F90-5F0EA5FA3903}">
-                                    <File Id="filED33AC3DDDA7E84EF556FAB4102E16BF" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.schema.mfl" />
-                                </Component>
-                            </Directory>
-                            <Directory Id="dirFBB1F40E0CE4F3C132F7CB457FAACE6E" Name="MSFT_PackageManagementSource">
-                                <Component Id="cmp5F19EA04916CEB86DE8A81778AD1662C" Guid="{999648EC-4286-4D3E-972D-8C8F78A8EEEE}">
-                                    <File Id="fil5EA25D0E5935C9263CC9ECBC48E44A89" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.psm1" />
-                                </Component>
-                                <Component Id="cmpBE63AA34D940A66625AF45E4E9596FDB" Guid="{38B34CE8-0ADA-4318-9D08-A5E19EE4DA35}">
-                                    <File Id="fil0D7A433E7D3EED82747A66F5F050C25E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.schema.mof" />
-                                </Component>
-                                <Component Id="cmp7EA4B489F964BF6AF14575521155FDCA" Guid="{575C239F-21BD-44AC-A860-42C46275F5C7}">
-                                    <File Id="fil2AD4C7A1F25EAD8DF1462480C35CD4A8" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.schema.mfl" />
-                                </Component>
-                                <Component Id="cmp1A39F07A4B64F18BB6A87D7B88ED735A" Guid="{265501A0-B6E3-4C9D-B8DB-504AA2CD3D6D}">
-                                    <File Id="filB4BDCBF5E07CC5C86CF480FEE9D66B4F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\1.1.7.0\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.strings.psd1" />
-                                </Component>
-                            </Directory>
+                            <Component Id="cmp5BDC1C0DC8B4E61B5550A56E08F4C804" Guid="{291D5C4E-B82B-451F-9BDF-DF70CA2B1BE7}">
+                                <File Id="fil3A913D88E04F9D3D2A29793D92B4957D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.NuGetProvider.dll" />
+                            </Component>
+                            <Component Id="cmp4A3FB1103BEAE46CFA7897AA34E9534B" Guid="{CD47D831-9DF1-43E1-BE91-C1218390E4AC}">
+                                <File Id="fil5DBDAD7C628E555A9DC3F2A8DFCA4603" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PowerShell.PackageManagement.dll" />
+                            </Component>
+                            <Component Id="cmp61687198EA94E47A25D70969125875F4" Guid="{8BCDBE19-6579-475E-8560-548B5D288B21}">
+                                <File Id="fil77E2A0FC58BF0D2CBF31611A63FC869B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
+                            </Component>
+                            <Component Id="cmpDC564CB5D61E140D4E290EB630476348" Guid="{4FE1C6EA-A3DF-4448-94D0-A6A4FBB3EF82}">
+                                <File Id="filF78D36D7347B9AD345D2156A17E21F5B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.dll" />
+                            </Component>
+                        </Directory>
+                    </Directory>
+                    <Directory Id="dirC752FFF559E0A1836495B2A5BE8C3241" Name="fullclr">
+                        <Component Id="cmp42FAF33EAFB96E137B4CD3588D244007" Guid="{6B56B9AE-1303-4E6E-BFDD-30F22E758EAD}">
+                            <File Id="filFAF533DFDCB775BAD0751DFEB7DE1D04" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.CoreProviders.dll" />
+                        </Component>
+                        <Component Id="cmp4737D9777EE045FB126E652C2D404C5F" Guid="{10D9963A-A68A-4A6C-953B-D6EC522FCF0F}">
+                            <File Id="fil7854F1EA38C0A65FAC85835F9796CE8D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.ArchiverProviders.dll" />
+                        </Component>
+                        <Component Id="cmpC91745807893F2BAB69354046640E314" Guid="{E8BFA366-60DD-4C03-8909-31281D6E2A09}">
+                            <File Id="fil76343E288E10F5CBCA84886D61BC2A7F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.NuGetProvider.dll" />
+                        </Component>
+                        <Component Id="cmpC8E4E2561F8C38E712D24319BA77F032" Guid="{1670AC4B-2291-48F7-9C40-749DF308A009}">
+                            <File Id="fil4FB5A407BEA219A3277C79F09DA9C280" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PowerShell.PackageManagement.dll" />
+                        </Component>
+                        <Component Id="cmpB07BB3051FDA277D2039A55E27FEA96B" Guid="{94A87B1B-065A-4929-B9D7-4C632AE8DAEC}">
+                            <File Id="fil7AF679A98B4B46C97E87D4CE593ECEAA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
+                        </Component>
+                        <Component Id="cmp2F5329662DB4F6F54C5E633BFA65695C" Guid="{253E761F-239B-4082-A22B-E158A59113D2}">
+                            <File Id="fil6D648FAF650FD6F6FCD14C603425B8E3" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MsiProvider.dll" />
+                        </Component>
+                        <Component Id="cmp4D0E30F65EE31C892999F1911FC677A4" Guid="{CAE027CF-D546-4713-9295-B061BE191095}">
+                            <File Id="filBC661E979549386B61C7EE7730A59BFF" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MsuProvider.dll" />
+                        </Component>
+                        <Component Id="cmpA0367FACA97742E87276CF7C5A1BAB8F" Guid="{097EC67B-0EF5-411C-99DB-EBF284D58043}">
+                            <File Id="fil388F09CF70A7CD5CFBE656C0C7E8923F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.dll" />
+                        </Component>
+                    </Directory>
+                    <Directory Id="dirFC1317A25C1C86853684C8199074961E" Name="DSCResources">
+                        <Component Id="cmpC9B4657EEFE76C4A1368686E81ED1D2A" Guid="{22829073-BEF7-42CC-A642-FAC5DBED7973}">
+                            <File Id="fil0305DF95FD0AA03664A76D11091725EC" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\PackageManagementDscUtilities.strings.psd1" />
+                        </Component>
+                        <Component Id="cmpE704B28ADB879BD9E25A1CC78C7E09C2" Guid="{178F70AD-9156-4E27-A515-7960B60CD5C0}">
+                            <File Id="fil68ECF3E44764D95709BC1D621D364371" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\PackageManagementDscUtilities.psm1" />
+                        </Component>
+                        <Directory Id="dir761FBF007A8A2B602364040C5C52F6CF" Name="MSFT_PackageManagement">
+                            <Component Id="cmp8580EA4589D3F5C323542A87F5FB0FD3" Guid="{D86E02C0-A19D-4DEB-A35F-72F7572CC57F}">
+                                <File Id="fil03CA1AA13C3578B3AADDE540379AA581" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.schema.mof" />
+                            </Component>
+                            <Component Id="cmpBE8C89B274100F02DA3BAB773B4AE344" Guid="{77779DCB-9E9D-4FEC-93A2-F3CEB5C7E75C}">
+                                <File Id="filCB2D18FF3214AC76A5212AF1C6F65AAB" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.psm1" />
+                            </Component>
+                            <Component Id="cmp8293CA494C20B4C65697C26070705F4C" Guid="{6F2ADDE9-A023-4D2D-AB0C-1163D5A375D1}">
+                                <File Id="filDF52BC0CDE6430B94B5A12FEDBF8E9F9" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.strings.psd1" />
+                            </Component>
+                            <Component Id="cmp370775BFDBD56591078650F88017417B" Guid="{9AABD821-42EA-4B48-9F90-5F0EA5FA3903}">
+                                <File Id="filED33AC3DDDA7E84EF556FAB4102E16BF" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.schema.mfl" />
+                            </Component>
+                        </Directory>
+                        <Directory Id="dirFBB1F40E0CE4F3C132F7CB457FAACE6E" Name="MSFT_PackageManagementSource">
+                            <Component Id="cmp5F19EA04916CEB86DE8A81778AD1662C" Guid="{999648EC-4286-4D3E-972D-8C8F78A8EEEE}">
+                                <File Id="fil5EA25D0E5935C9263CC9ECBC48E44A89" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.psm1" />
+                            </Component>
+                            <Component Id="cmpBE63AA34D940A66625AF45E4E9596FDB" Guid="{38B34CE8-0ADA-4318-9D08-A5E19EE4DA35}">
+                                <File Id="fil0D7A433E7D3EED82747A66F5F050C25E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.schema.mof" />
+                            </Component>
+                            <Component Id="cmp7EA4B489F964BF6AF14575521155FDCA" Guid="{575C239F-21BD-44AC-A860-42C46275F5C7}">
+                                <File Id="fil2AD4C7A1F25EAD8DF1462480C35CD4A8" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.schema.mfl" />
+                            </Component>
+                            <Component Id="cmp1A39F07A4B64F18BB6A87D7B88ED735A" Guid="{265501A0-B6E3-4C9D-B8DB-504AA2CD3D6D}">
+                                <File Id="filB4BDCBF5E07CC5C86CF480FEE9D66B4F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.strings.psd1" />
+                            </Component>
                         </Directory>
                     </Directory>
                 </Directory>
@@ -1783,71 +1781,65 @@
                     </Component>
                 </Directory>
                 <Directory Id="dirCD3821C7435BC404299DC70CDCA758DB" Name="PowerShellGet">
-                    <Directory Id="dirC8A14CC9934CC5E17EF02EC7C1218061" Name="1.6.0">
-                        <Component Id="cmp232D2B3A8A4EED3B5ADF58EC63FF7B45" Guid="{23DB8E58-22E0-4DFE-BFF8-2EE3EC47953C}">
-                            <File Id="filB457F6E9D5208DB6E7EA0FF45BAFA5F2" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\1.6.0\PSGet.Format.ps1xml" />
+                    <Component Id="cmp232D2B3A8A4EED3B5ADF58EC63FF7B45" Guid="{23DB8E58-22E0-4DFE-BFF8-2EE3EC47953C}">
+                        <File Id="filB457F6E9D5208DB6E7EA0FF45BAFA5F2" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PSGet.Format.ps1xml" />
+                    </Component>
+                    <Component Id="cmpBB6B236FBCC263B050EBE1689F14704C" Guid="{DB885F4B-1554-4A0E-881E-EA6D26C71DF2}">
+                        <File Id="fil82923630520622CE85EC435E63CAA2FA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PowerShellGet.psd1" />
+                    </Component>
+                    <Component Id="cmp7F68CE7B059C4186F9CB6A6A1AF12FF5" Guid="{1C8D84F5-D1AC-4EDD-B133-8B631FBBEB76}">
+                        <File Id="filB5CAA0D6BA87C2F13C9F10B044819ED9" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PowerShellGet.cat" />
+                    </Component>
+                    <Component Id="cmp381E89167DA05FCF68069AAD913B1164" Guid="{6F126C87-7491-439B-8B1F-DDB7D0190FE7}">
+                        <File Id="fil702A092A2C6119A3FE304F1F741F1CBA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PSGet.Resource.psd1" />
+                    </Component>
+                    <Component Id="cmp28DD1A3217445D277BA9D417D049F112" Guid="{FD310C23-BBD1-4EDC-88B3-18D36BC30588}">
+                        <File Id="fil8901A55622E6797F2B582C0876924EFB" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PSModule.psm1" />
+                    </Component>
+                    <Directory Id="dirB4B2CF8B8AD101DA66B2B93856278212" Name="en-US">
+                        <Component Id="cmp3D2B6FD47B4DB9D0EC54CC68485EBD8C" Guid="{799CCD6C-EE4F-4B95-BEB1-90322B97D3F9}">
+                            <File Id="fil082451A3AFB941EBE29DE06389971414" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\en-US\PSGet.Resource.psd1" />
                         </Component>
-                        <Component Id="cmpBB6B236FBCC263B050EBE1689F14704C" Guid="{DB885F4B-1554-4A0E-881E-EA6D26C71DF2}">
-                            <File Id="fil82923630520622CE85EC435E63CAA2FA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\1.6.0\PowerShellGet.psd1" />
-                        </Component>
-                        <Component Id="cmp7F68CE7B059C4186F9CB6A6A1AF12FF5" Guid="{1C8D84F5-D1AC-4EDD-B133-8B631FBBEB76}">
-                            <File Id="filB5CAA0D6BA87C2F13C9F10B044819ED9" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\1.6.0\PowerShellGet.cat" />
-                        </Component>
-                        <Component Id="cmp381E89167DA05FCF68069AAD913B1164" Guid="{6F126C87-7491-439B-8B1F-DDB7D0190FE7}">
-                            <File Id="fil702A092A2C6119A3FE304F1F741F1CBA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\1.6.0\PSGet.Resource.psd1" />
-                        </Component>
-                        <Component Id="cmp28DD1A3217445D277BA9D417D049F112" Guid="{FD310C23-BBD1-4EDC-88B3-18D36BC30588}">
-                            <File Id="fil8901A55622E6797F2B582C0876924EFB" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\1.6.0\PSModule.psm1" />
-                        </Component>
-                        <Directory Id="dirB4B2CF8B8AD101DA66B2B93856278212" Name="en-US">
-                            <Component Id="cmp3D2B6FD47B4DB9D0EC54CC68485EBD8C" Guid="{799CCD6C-EE4F-4B95-BEB1-90322B97D3F9}">
-                                <File Id="fil082451A3AFB941EBE29DE06389971414" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\1.6.0\en-US\PSGet.Resource.psd1" />
-                            </Component>
-                        </Directory>
                     </Directory>
                 </Directory>
                 <Directory Id="dir4CBF1818EDFE2128996EC43510CDC960" Name="PSReadLine">
-                    <Directory Id="dir710B3A9EE03C4840B10B61E81D57BF0E" Name="2.0.0">
-                        <Component Id="cmp5E6D0C75A767F360277D22D90E4689FF" Guid="{208B315F-BB7A-47C7-A98A-494340B7C403}">
-                            <File Id="fil9EDEBBED87BC553EAF70CAA9C389FCDE" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\2.0.0\Microsoft.PowerShell.PSReadLine2.dll" />
+                    <Component Id="cmp5E6D0C75A767F360277D22D90E4689FF" Guid="{208B315F-BB7A-47C7-A98A-494340B7C403}">
+                        <File Id="fil9EDEBBED87BC553EAF70CAA9C389FCDE" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\Microsoft.PowerShell.PSReadLine2.dll" />
+                    </Component>
+                    <Component Id="cmpEBD2A06C98666C198856C61BA4B13F43" Guid="{41C8F9C3-8310-4DCE-9E6D-C4E9051387F6}">
+                        <File Id="filC4ADB8E1417AA5CA721F811C3402CCD1" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\PSReadLine.psd1" />
+                    </Component>
+                    <Component Id="cmpF6FB4E4E08340DE8FF0D29CA196F679E" Guid="{5E26EDDD-ABF0-44BD-920A-3A45900FD351}">
+                        <File Id="filE00D73DAFF62310A20C5B04B2113D950" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\PSReadLine.psm1" />
+                    </Component>
+                    <Component Id="cmp1EA05378B8F54EAAA1A6CFB54EBC7C44" Guid="{1EA05378-B8F5-4EAA-A1A6-CFB54EBC7C44}">
+                        <File Id="fil1EA05378B8F54EAAA1A6CFB54EBC7C44" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\Changes.txt" />
+                    </Component>
+                    <Component Id="cmpFF8AA91D1C7E4249A091B4B064889DC4" Guid="{FF8AA91D-1C7E-4249-A091-B4B064889DC4}">
+                        <File Id="filFF8AA91D1C7E4249A091B4B064889DC4" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\License.txt" />
+                    </Component>
+                    <Component Id="cmp0502127EF5FF4E21AAE6773586B6F4C6" Guid="{0502127E-F5FF-4E21-AAE6-773586B6F4C6}">
+                        <File Id="fil0502127EF5FF4E21AAE6773586B6F4C6" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\PSReadLine.format.ps1xml" />
+                    </Component>
+                    <Component Id="cmp223B3A51B7A544AB8C865A0ADA54D6E1" Guid="{223B3A51-B7A5-44AB-8C86-5A0ADA54D6E1}">
+                        <File Id="fil223B3A51B7A544AB8C865A0ADA54D6E1" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\SamplePSReadLineProfile.ps1" />
+                    </Component>
+                    <Directory Id="dirE7E29AC662774C07BE283A6BB0AA504F" Name="en-US">
+                        <Component Id="cmp9532D3121A384F288795C997B27FF700" Guid="{9532D312-1A38-4F28-8795-C997B27FF700}">
+                            <File Id="fil9532D3121A384F288795C997B27FF700" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\en-US\about_PSReadLine.help.txt" />
                         </Component>
-                        <Component Id="cmpEBD2A06C98666C198856C61BA4B13F43" Guid="{41C8F9C3-8310-4DCE-9E6D-C4E9051387F6}">
-                            <File Id="filC4ADB8E1417AA5CA721F811C3402CCD1" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\2.0.0\PSReadLine.psd1" />
+                        <Component Id="cmp9141E7964B3A4F7380DD03DD5BBF10A4" Guid="{9141E796-4B3A-4F73-80DD-03DD5BBF10A4}">
+                            <File Id="fil9141E7964B3A4F7380DD03DD5BBF10A4" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\en-US\Microsoft.PowerShell.PSReadLine2.dll-help.xml" />
                         </Component>
-                        <Component Id="cmpF6FB4E4E08340DE8FF0D29CA196F679E" Guid="{5E26EDDD-ABF0-44BD-920A-3A45900FD351}">
-                            <File Id="filE00D73DAFF62310A20C5B04B2113D950" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\2.0.0\PSReadLine.psm1" />
-                        </Component>
-                        <Component Id="cmp1EA05378B8F54EAAA1A6CFB54EBC7C44" Guid="{1EA05378-B8F5-4EAA-A1A6-CFB54EBC7C44}">
-                            <File Id="fil1EA05378B8F54EAAA1A6CFB54EBC7C44" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\2.0.0\Changes.txt" />
-                        </Component>
-                        <Component Id="cmpFF8AA91D1C7E4249A091B4B064889DC4" Guid="{FF8AA91D-1C7E-4249-A091-B4B064889DC4}">
-                            <File Id="filFF8AA91D1C7E4249A091B4B064889DC4" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\2.0.0\License.txt" />
-                        </Component>
-                        <Component Id="cmp0502127EF5FF4E21AAE6773586B6F4C6" Guid="{0502127E-F5FF-4E21-AAE6-773586B6F4C6}">
-                            <File Id="fil0502127EF5FF4E21AAE6773586B6F4C6" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\2.0.0\PSReadLine.format.ps1xml" />
-                        </Component>
-                        <Component Id="cmp223B3A51B7A544AB8C865A0ADA54D6E1" Guid="{223B3A51-B7A5-44AB-8C86-5A0ADA54D6E1}">
-                            <File Id="fil223B3A51B7A544AB8C865A0ADA54D6E1" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\2.0.0\SamplePSReadLineProfile.ps1" />
-                        </Component>
-                        <Directory Id="dirE7E29AC662774C07BE283A6BB0AA504F" Name="en-US">
-                            <Component Id="cmp9532D3121A384F288795C997B27FF700" Guid="{9532D312-1A38-4F28-8795-C997B27FF700}">
-                                <File Id="fil9532D3121A384F288795C997B27FF700" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\2.0.0\en-US\about_PSReadLine.help.txt" />
-                            </Component>
-                            <Component Id="cmp9141E7964B3A4F7380DD03DD5BBF10A4" Guid="{9141E796-4B3A-4F73-80DD-03DD5BBF10A4}">
-                                <File Id="fil9141E7964B3A4F7380DD03DD5BBF10A4" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\2.0.0\en-US\Microsoft.PowerShell.PSReadLine2.dll-help.xml" />
-                            </Component>
-                        </Directory>
                     </Directory>
                 </Directory>
                 <Directory Id="dir37EBACBC570E49108415C3BA316EB66D" Name="ThreadJob">
-                    <Directory Id="dirCB93DAC4CEB64A8583295B9AC4A79883" Name="1.1.1">
                         <Component Id="cmp9ADDEE83EFD3497C804FDC6B93A58031" Guid="{9ADDEE83EFD3497C804FDC6B93A58031}">
-                            <File Id="fil15E1EF74BF8C4AFFA6E9B53D8CF6E15E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\1.1.1\ThreadJob.dll" />
+                            <File Id="fil15E1EF74BF8C4AFFA6E9B53D8CF6E15E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\ThreadJob.dll" />
                         </Component>
                         <Component Id="cmp57A7DBFA4541443CB3AB8A4B82DB53E0" Guid="{57A7DBFA4541443CB3AB8A4B82DB53E0}">
-                            <File Id="fil57D698A50A2A40E58B0B954F55AEEA37" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\1.1.1\ThreadJob.psd1" />
+                            <File Id="fil57D698A50A2A40E58B0B954F55AEEA37" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\ThreadJob.psd1" />
                         </Component>
-                    </Directory>
                 </Directory>
                 <Directory Id="dirECE37E3EC3637A365744D075BD8132E9" Name="Microsoft.PowerShell.Management">
                     <Component Id="cmp6DAFD01CAA3A4C67185922F445EDE495" Guid="{D4374EC0-26FC-4607-AF6B-35721698E8A5}">
@@ -1900,21 +1892,19 @@
                     </Component>
                 </Directory>
                 <Directory Id="dirF4C1D24EC4E2B72B03218A284F0BD975" Name="Microsoft.PowerShell.Archive">
-                    <Directory Id="dirC5DD38091A6977718610953A5913ABB1" Name="1.1.0.0">
-                        <Component Id="cmp6B826BD459C25EE579C14CBEE0736B72" Guid="{B91F48FD-3C9B-4159-B872-851A4BFA7B77}">
-                            <File Id="fil089890BEE23E37E2D6A7B1502B9DA5DD" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\1.1.0.0\Microsoft.PowerShell.Archive.psm1" />
+                    <Component Id="cmp6B826BD459C25EE579C14CBEE0736B72" Guid="{B91F48FD-3C9B-4159-B872-851A4BFA7B77}">
+                        <File Id="fil089890BEE23E37E2D6A7B1502B9DA5DD" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\Microsoft.PowerShell.Archive.psm1" />
+                    </Component>
+                    <Component Id="cmp602F5EE10622966A340229F781C43067" Guid="{57E3C108-0EE8-427E-B647-C330D3DE14D9}">
+                        <File Id="fil92485858136AFC3B6F86A6196A97251C" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\Microsoft.PowerShell.Archive.cat" />
+                    </Component>
+                    <Component Id="cmpF18C82D82ADC7C5A329A044C731B0A2D" Guid="{F0E07E01-5048-42A5-B45C-3549D0883D89}">
+                        <File Id="filDD904BE67F30CB668CED21F140488D6E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\Microsoft.PowerShell.Archive.psd1" />
+                    </Component>
+                    <Directory Id="dirBBEA3D01421FF3A1123118F421784204" Name="en-US">
+                        <Component Id="cmp02EEC2FAD935D373F51F425B4D743DE3" Guid="{66146703-0159-4A2D-AA15-0C4576145141}">
+                            <File Id="fil536F74DF49E5C1C4C380F00487FB132E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\en-US\ArchiveResources.psd1" />
                         </Component>
-                        <Component Id="cmp602F5EE10622966A340229F781C43067" Guid="{57E3C108-0EE8-427E-B647-C330D3DE14D9}">
-                            <File Id="fil92485858136AFC3B6F86A6196A97251C" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\1.1.0.0\Microsoft.PowerShell.Archive.cat" />
-                        </Component>
-                        <Component Id="cmpF18C82D82ADC7C5A329A044C731B0A2D" Guid="{F0E07E01-5048-42A5-B45C-3549D0883D89}">
-                            <File Id="filDD904BE67F30CB668CED21F140488D6E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\1.1.0.0\Microsoft.PowerShell.Archive.psd1" />
-                        </Component>
-                        <Directory Id="dirBBEA3D01421FF3A1123118F421784204" Name="en-US">
-                            <Component Id="cmp02EEC2FAD935D373F51F425B4D743DE3" Guid="{66146703-0159-4A2D-AA15-0C4576145141}">
-                                <File Id="fil536F74DF49E5C1C4C380F00487FB132E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\1.1.0.0\en-US\ArchiveResources.psd1" />
-                            </Component>
-                        </Directory>
                     </Directory>
                 </Directory>
             </Directory>

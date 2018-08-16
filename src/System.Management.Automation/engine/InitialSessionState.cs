@@ -79,7 +79,7 @@ namespace System.Management.Automation.Runspaces
     public abstract class InitialSessionStateEntry
     {
         /// <summary>
-        /// ctor so that each derived class has a name
+        /// The ctor so that each derived class has a name.
         /// </summary>
         /// <param name="name"></param>
         protected InitialSessionStateEntry(string name)
@@ -88,12 +88,12 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// The name of this entry
+        /// The name of this entry.
         /// </summary>
         public string Name { get; internal set; }
 
         /// <summary>
-        /// The SnapIn to load from initially
+        /// The SnapIn to load from initially.
         /// </summary>
         public PSSnapInInfo PSSnapIn { get; private set; }
 
@@ -103,7 +103,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// The SnapIn to load from initially
+        /// The SnapIn to load from initially.
         /// </summary>
         public PSModuleInfo Module { get; private set; }
 
@@ -113,14 +113,14 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Shallow-clone this object
+        /// Shallow-clone this object.
         /// </summary>
         /// <returns>The cloned object...</returns>
         public abstract InitialSessionStateEntry Clone();
     }
 
     /// <summary>
-    /// Class to constrain session state entries
+    /// Class to constrain session state entries.
     /// </summary>
     public abstract class ConstrainedSessionStateEntry : InitialSessionStateEntry
     {
@@ -200,7 +200,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Loads all the types specified in the typeTable
+        /// Loads all the types specified in the typeTable.
         /// </summary>
         /// <param name="typeTable"></param>
         public SessionStateTypeEntry(TypeTable typeTable)
@@ -214,7 +214,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Loads all entries from the typeData
+        /// Loads all entries from the typeData.
         /// </summary>
         /// <param name="typeData"></param>
         /// <param name="isRemove"></param>
@@ -230,7 +230,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Shallow-clone this object
+        /// Shallow-clone this object.
         /// </summary>
         /// <returns>The cloned object</returns>
         public override InitialSessionStateEntry Clone()
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Runspaces
     public sealed class SessionStateFormatEntry : InitialSessionStateEntry
     {
         /// <summary>
-        /// Loads the entire formats file
+        /// Loads the entire formats file.
         /// </summary>
         /// <param name="fileName"></param>
         public SessionStateFormatEntry(string fileName)
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Loads all the format data specified in the formatTable
+        /// Loads all the format data specified in the formatTable.
         /// </summary>
         /// <param name="formattable"></param>
         public SessionStateFormatEntry(FormatTable formattable)
@@ -319,7 +319,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Loads all the format data specified in the typeDefinition
+        /// Loads all the format data specified in the typeDefinition.
         /// </summary>
         /// <param name="typeDefinition"></param>
         public SessionStateFormatEntry(ExtendedTypeDefinition typeDefinition)
@@ -335,7 +335,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow-clone this object...
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
             SessionStateFormatEntry entry;
@@ -370,8 +370,8 @@ namespace System.Management.Automation.Runspaces
         public FormatTable Formattable { get; }
 
         /// <summary>
-        /// The FormatData specified with constructor. This can be null if
-        /// FileName or FormatTable constructor is used
+        /// The FormatData specified with constructor.
+        /// This can be null if the FileName or FormatTable constructors are used.
         /// </summary>
         public ExtendedTypeDefinition FormatData { get; }
 
@@ -400,7 +400,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Create a named entry for the assembly to load, specifying
-        /// just the name
+        /// just the name.
         /// </summary>
         /// <param name="name">The name of the assembly to load</param>
         public SessionStateAssemblyEntry(string name)
@@ -410,7 +410,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Shallow-clone this object
+        /// Shallow-clone this object.
         /// </summary>
         /// <returns>The cloned object</returns>
         public override InitialSessionStateEntry Clone()
@@ -428,7 +428,7 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    /// List a cmdlet to add to this session state entry
+    /// List a cmdlet to add to this session state entry.
     /// </summary>
     public sealed class SessionStateCmdletEntry : SessionStateCommandEntry
     {
@@ -506,7 +506,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow-clone this object...
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
             SessionStateProviderEntry entry = new SessionStateProviderEntry(Name, ImplementingType, HelpFileName, this.Visibility);
@@ -572,10 +572,10 @@ namespace System.Management.Automation.Runspaces
     public sealed class SessionStateAliasEntry : SessionStateCommandEntry
     {
         /// <summary>
-        ///  Define an alias entry to add to the initial session state
+        ///  Define an alias entry to add to the initial session state.
         /// </summary>
-        /// <param name="name">Name of the alias</param>
-        /// <param name="definition">The name of the command it resolves to</param>
+        /// <param name="name">The name of the alias entry to add.</param>
+        /// <param name="definition">The name of the command it resolves to.</param>
         public SessionStateAliasEntry(string name, string definition)
             : base(name, SessionStateEntryVisibility.Public)
         {
@@ -584,10 +584,10 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state
+        ///  Define an alias entry to add to the initial session state.
         /// </summary>
-        /// <param name="name">Name of the alias</param>
-        /// <param name="definition">The name of the command it resolves to</param>
+        /// <param name="name">The name of the alias entry to add.</param>
+        /// <param name="definition">The name of the command it resolves to.</param>
         /// <param name="description">A description of the purpose of the alias.</param>
         public SessionStateAliasEntry(string name, string definition, string description)
             : base(name, SessionStateEntryVisibility.Public)
@@ -598,12 +598,12 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state
+        ///  Define an alias entry to add to the initial session state.
         /// </summary>
-        /// <param name="name">Name of the alias</param>
-        /// <param name="definition">The name of the command it resolves to</param>
+        /// <param name="name">The name of the alias entry to add.</param>
+        /// <param name="definition">The name of the command it resolves to.</param>
         /// <param name="description">A description of the purpose of the alias.</param>
-        /// <param name="options">Options defining the scope visibility, readonly and constant</param>
+        /// <param name="options">Options defining the scope visibility, readonly and constant.</param>
         public SessionStateAliasEntry(string name, string definition, string description, ScopedItemOptions options)
             : base(name, SessionStateEntryVisibility.Public)
         {
@@ -614,12 +614,12 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///  Define an alias entry to add to the initial session state
+        ///  Define an alias entry to add to the initial session state.
         /// </summary>
-        /// <param name="name">Name of the alias</param>
-        /// <param name="definition">The name of the command it resolves to</param>
+        /// <param name="name">The name of the alias entry to add.</param>
+        /// <param name="definition">The name of the command it resolves to.</param>
         /// <param name="description">A description of the purpose of the alias.</param>
-        /// <param name="options">Options defining the scope visibility, readonly and constant</param>
+        /// <param name="options">Options defining the scope visibility, readonly and constant.</param>
         /// <param name="visibility"></param>
         internal SessionStateAliasEntry(string name, string definition, string description,
             ScopedItemOptions options, SessionStateEntryVisibility visibility)
@@ -665,7 +665,7 @@ namespace System.Management.Automation.Runspaces
         /// Used to define a permitted script in this session state. If the path is
         /// "*", then any path is permitted.
         /// </summary>
-        /// <param name="path">The full path to the application</param>
+        /// <param name="path">The full path to the application.</param>
         public SessionStateApplicationEntry(string path)
             : base(path, SessionStateEntryVisibility.Public)
         {
@@ -729,9 +729,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Represents a function definition in an Initial session state object.
         /// </summary>
-        /// <param name="name">The name of the function</param>
-        /// <param name="definition">The definition of the function</param>
-        /// <param name="helpFile">The name of the help file associated with the function</param>
+        /// <param name="name">The name of the function.</param>
+        /// <param name="definition">The definition of the function.</param>
+        /// <param name="helpFile">The name of the help file associated with the function.</param>
         public SessionStateFunctionEntry(string name, string definition, string helpFile)
             : this(name, definition, ScopedItemOptions.None, helpFile)
         {
@@ -740,8 +740,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Represents a function definition in an Initial session state object.
         /// </summary>
-        /// <param name="name">The name of the function</param>
-        /// <param name="definition">The definition of the function</param>
+        /// <param name="name">The name of the function.</param>
+        /// <param name="definition">The definition of the function.</param>
         public SessionStateFunctionEntry(string name, string definition)
             : this(name, definition, ScopedItemOptions.None, null)
         {
@@ -777,7 +777,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Shallow-clone this object...
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
             SessionStateFunctionEntry entry = new SessionStateFunctionEntry(Name, Definition, Options, Visibility, ScriptBlock, HelpFile);
@@ -988,9 +988,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Clone this collection
+        /// Clone this collection.
         /// </summary>
-        /// <returns>The cloned object</returns>
+        /// <returns>The cloned collection.</returns>
         public InitialSessionStateEntryCollection<T> Clone()
         {
             InitialSessionStateEntryCollection<T> result;
@@ -1007,7 +1007,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Reset the collection
+        /// Reset the collection.
         /// </summary>
         public void Reset()
         {
@@ -1042,13 +1042,10 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        //To find the entries based on name.
-        //Why collection - Different SnapIn/modules and same entity names.
-        //If used on command collection entry, then for the same name, one can have multiple output
         /// <summary>
         /// To find the entries based on name.
         /// Why collection - Different SnapIn/modules and same entity names.
-        /// If used on command collection entry, then for the same name, one can have multiple output
+        /// If used on command collection entry, then for the same name, one can have multiple output.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -1318,9 +1315,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates an initial session state from a PSSC configuration file
+        /// Creates an initial session state from a PSSC configuration file.
         /// </summary>
-        /// <param name="path">The path to the PSSC session configuration file</param>
+        /// <param name="path">The path to the PSSC session configuration file.</param>
         /// <returns></returns>
         public static InitialSessionState CreateFromSessionConfigurationFile(string path)
         {
@@ -1328,9 +1325,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates an initial session state from a PSSC configuration file
+        /// Creates an initial session state from a PSSC configuration file.
         /// </summary>
-        /// <param name="path">The path to the PSSC session configuration file</param>
+        /// <param name="path">The path to the PSSC session configuration file.</param>
         /// <param name="roleVerifier">
         /// The verifier that PowerShell should call to determine if groups in the Role entry apply to the
         /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that
@@ -1345,7 +1342,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Creates an <see cref="InitialSessionState"/> instance that exposes only the minimal
-        /// set of commands needed by give set of <paramref name="sessionCapabilities"/>
+        /// set of commands needed by give set of <paramref name="sessionCapabilities"/>.
         /// All commands that are not needed are made private in order to minimize the attack surface.
         /// </summary>
         /// <param name="sessionCapabilities">
@@ -1573,7 +1570,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Creates the default PowerShell one with default cmdlets, provider etc.
-        /// The default cmdlets, provider, etc are loaded via Modules
+        /// The default cmdlets, provider, etc are loaded via Modules.
         /// For loading Microsoft.PowerShell.Core module only.
         /// </summary>
         /// <returns></returns>
@@ -1696,7 +1693,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Want to get away from SnapIn and console file. Have modules and assemblies instead.
-        /// Specify the registered SnapIn name or name collection
+        /// Specify the registered SnapIn name or name collection.
         /// </summary>
         /// <param name="snapInName"></param>
         /// <returns></returns>
@@ -1716,10 +1713,6 @@ namespace System.Management.Automation.Runspaces
             return new InitialSessionState();
         }
 
-        //This one is for module. Can take only one module, and not collection
-        //public static InitialSessionState Create(Module);
-
-        //Specify the unregistered module/snapIn path or path collection
         /// <summary>
         /// </summary>
         /// <param name="snapInPath"></param>
@@ -1743,12 +1736,12 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Specifies the language mode to be used for this session state instance
+        /// Specifies the language mode to be used for this session state instance.
         /// </summary>
         public PSLanguageMode LanguageMode { get; set; } = PSLanguageMode.NoLanguage;
 
         /// <summary>
-        /// Specifies the directory to be used for collection session transcripts
+        /// Specifies the directory to be used for collection session transcripts.
         /// </summary>
         public string TranscriptDirectory { get; set; } = null;
 
@@ -1762,8 +1755,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// User name for the user drive.  This will be part of the root path
-        /// for the User PSDrive.
+        /// User name for the user drive.  This will be part of the root path for the User PSDrive.
         /// </summary>
         internal string UserDriveUserName
         {
@@ -1805,20 +1797,20 @@ namespace System.Management.Automation.Runspaces
         private bool _wasExecutionPolicySet = false;
 
         /// <summary>
-        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode
+        /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode.
         /// </summary>
         public bool UseFullLanguageModeInDebugger { get; set; } = false;
 
 #if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
-        /// ApartmentState of the thread used to execute commands
+        /// ApartmentState of the thread used to execute commands.
         /// </summary>
         public ApartmentState ApartmentState { get; set; } = Runspace.DefaultApartmentState;
 
 #endif
 
         /// <summary>
-        /// This property determines whether a new thread is create for each invocation of a command
+        /// This property determines whether a new thread is created for each invocation of a command.
         /// </summary>
         public PSThreadOptions ThreadOptions { get; set; } = PSThreadOptions.Default;
 
@@ -1889,11 +1881,11 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Imports all the modules from the specified module
-        /// path by default
+        /// Imports all the modules from the specified module path by default.
         /// </summary>
-        /// <param name="path">path from which all modules need
-        /// to be imported</param>
+        /// <param name="path">
+        /// Path from which all modules need to be imported.
+        /// </param>
         public void ImportPSModulesFromPath(string path)
         {
             string expandedpath = Environment.ExpandEnvironmentVariables(path);
@@ -1904,7 +1896,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Add a list of core modules to import when the runspace is created.
         /// </summary>
-        /// <param name="name">The modules to add</param>
+        /// <param name="name">The modules to add.</param>
         /// <returns></returns>
         internal void ImportPSCoreModule(string[] name)
         {
@@ -2576,7 +2568,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Process a command modification for a specific parameter
+        /// Process a command modification for a specific parameter.
         /// </summary>
         /// <param name="commandModification">The hashtable of command modifications for this command</param>
         /// <param name="metadata">The metadata for the command being processed</param>
@@ -3390,9 +3382,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Update the type metadata loaded into this runspace
+        /// Update the type metadata loaded into this runspace.
         /// </summary>
-        /// <param name="context">The execution context for the runspace to update</param>
+        /// <param name="context">The execution context for the runspace to update.</param>
         /// <param name="updateOnly">if true, re-initialize the metadata collection...</param>
         internal void UpdateTypes(ExecutionContext context, bool updateOnly)
         {
@@ -3506,10 +3498,10 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Update the formatting information for a runspace
+        /// Update the formatting information for a runspace.
         /// </summary>
-        /// <param name="context">The execution context for the runspace to be updated</param>
-        /// <param name="update">True if we only want to add stuff, false if we want to reinitialize</param>
+        /// <param name="context">The execution context for the runspace to be updated.</param>
+        /// <param name="update">True if we only want to add stuff, false if we want to reinitialize.</param>
         internal void UpdateFormats(ExecutionContext context, bool update)
         {
             if (DisableFormatUpdates || this.Formats.Count == 0)
@@ -3617,7 +3609,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Need to have SnapIn support till we move to modules
+        /// Need to have SnapIn support till we move to modules.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="warning"></param>
@@ -4664,7 +4656,7 @@ end
                     new SessionStateAliasEntry("type", "Get-Content"),
                     // Native commands we keep because the functions act correctly on Linux
                     new SessionStateAliasEntry("clear", "Clear-Host"),
-//#if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore or not appropriate for PSCore6 due to conflicts
+// #if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore or not appropriate for PSCore6 due to conflicts
 #if !CORECLR
                     new SessionStateAliasEntry("gwmi", "Get-WmiObject", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("iwmi", "Invoke-WMIMethod", string.Empty, ReadOnly),
@@ -4893,7 +4885,9 @@ end
             }
 
             if (assembly != null)
+            {
                 return assembly;
+            }
 
             s_PSSnapInTracer.WriteLine("Loading assembly from path: {0}", psSnapInInfo.AssemblyName);
 
@@ -4936,9 +4930,15 @@ end
             return attribute != null;
         }
 
-        internal static void AnalyzePSSnapInAssembly(Assembly assembly, string name, PSSnapInInfo psSnapInInfo, PSModuleInfo moduleInfo,
-                    out Dictionary<string, SessionStateCmdletEntry> cmdlets, out Dictionary<string, List<SessionStateAliasEntry>> aliases,
-                    out Dictionary<string, SessionStateProviderEntry> providers, out string helpFile)
+        internal static void AnalyzePSSnapInAssembly(
+            Assembly assembly,
+            string name,
+            PSSnapInInfo psSnapInInfo,
+            PSModuleInfo moduleInfo,
+            out Dictionary<string, SessionStateCmdletEntry> cmdlets,
+            out Dictionary<string, List<SessionStateAliasEntry>> aliases,
+            out Dictionary<string, SessionStateProviderEntry> providers,
+            out string helpFile)
         {
             helpFile = null;
             if (assembly == null)
@@ -5134,8 +5134,12 @@ end
             }
         }
 
-        private static void AnalyzeModuleAssemblyWithReflection(Assembly assembly, string name, PSSnapInInfo psSnapInInfo,
-            PSModuleInfo moduleInfo, string helpFile,
+        private static void AnalyzeModuleAssemblyWithReflection(
+            Assembly assembly,
+            string name,
+            PSSnapInInfo psSnapInInfo,
+            PSModuleInfo moduleInfo,
+            string helpFile,
             ref Dictionary<string, SessionStateCmdletEntry> cmdlets,
             ref Dictionary<string, List<SessionStateAliasEntry>> aliases,
             ref Dictionary<string, SessionStateProviderEntry> providers)

@@ -10,7 +10,7 @@ using System.Reflection;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// The metadata associated with a parameter
+    /// The metadata associated with a parameter.
     /// </summary>
     internal class CompiledCommandParameter
     {
@@ -18,11 +18,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs an instance of the CompiledCommandAttribute using the specified
-        /// runtime-defined parameter
+        /// runtime-defined parameter.
         /// </summary>
         /// <param name="runtimeDefinedParameter">
-        /// A runtime defined parameter that contains the definition of the parameter and its
-        /// metadata.
+        /// A runtime defined parameter that contains the definition of the parameter and its metadata.
         /// </param>
         /// <param name="processingDynamicParameters">
         /// True if dynamic parameters are being processed, or false otherwise.
@@ -197,7 +196,7 @@ namespace System.Management.Automation
         internal string Name { get; private set; }
 
         /// <summary>
-        /// The PSTypeName from a PSTypeNameAttribute
+        /// The PSTypeName from a PSTypeNameAttribute.
         /// </summary>
         internal string PSTypeName { get; private set; }
 
@@ -217,7 +216,7 @@ namespace System.Management.Automation
         internal bool IsDynamic { get; private set; }
 
         /// <summary>
-        /// Gets the parameter collection type information
+        /// Gets the parameter collection type information.
         /// </summary>
         internal ParameterCollectionTypeInformation CollectionTypeInformation { get; private set; }
 
@@ -228,46 +227,46 @@ namespace System.Management.Automation
         internal Collection<Attribute> CompiledAttributes { get; private set; }
 
         /// <summary>
-        /// Gets the collection of data generation attributes on this parameter
+        /// Gets the collection of data generation attributes on this parameter.
         /// </summary>
         internal ArgumentTransformationAttribute[] ArgumentTransformationAttributes { get; private set; }
 
         /// <summary>
-        /// Gets the collection of data validation attributes on this parameter
+        /// Gets the collection of data validation attributes on this parameter.
         /// </summary>
         internal ValidateArgumentsAttribute[] ValidationAttributes { get; private set; }
 
         /// <summary>
-        /// Get and private set the obsolete attribute on this parameter
+        /// Get and private set the obsolete attribute on this parameter.
         /// </summary>
         internal ObsoleteAttribute ObsoleteAttribute { get; private set; }
 
         /// <summary>
-        /// If true, null can be bound to the parameter even if the parameter is mandatory
+        /// If true, null can be bound to the parameter even if the parameter is mandatory.
         /// </summary>
         internal bool AllowsNullArgument { get; private set; }
 
         /// <summary>
         /// If true, null cannot be bound to the parameter (ValidateNotNull
-        /// and/or ValidateNotNullOrEmpty has been specified)
+        /// and/or ValidateNotNullOrEmpty has been specified).
         /// </summary>
         internal bool CannotBeNull { get; private set; }
 
         /// <summary>
         /// If true, an empty string can be bound to the string parameter
-        /// even if the parameter is mandatory
+        /// even if the parameter is mandatory.
         /// </summary>
         internal bool AllowsEmptyStringArgument { get; private set; }
 
         /// <summary>
         /// If true, an empty collection can be bound to the collection/array parameter
-        /// even if the parameter is mandatory
+        /// even if the parameter is mandatory.
         /// </summary>
         internal bool AllowsEmptyCollectionArgument { get; private set; }
 
         /// <summary>
         /// Gets or sets the value that tells whether this parameter
-        /// is for the "all" parameter set
+        /// is for the "all" parameter set.
         /// </summary>
         internal bool IsInAllSets { get; set; }
 
@@ -298,12 +297,12 @@ namespace System.Management.Automation
         internal Action<object, object> Setter { get; set; }
 
         /// <summary>
-        /// A dictionary of the parameter sets and the parameter set specific data for this parameter
+        /// A dictionary of the parameter sets and the parameter set specific data for this parameter.
         /// </summary>
         internal Dictionary<string, ParameterSetSpecificMetadata> ParameterSetData { get; private set; }
 
         /// <summary>
-        /// The alias names for this parameter
+        /// The alias names for this parameter.
         /// </summary>
         internal string[] Aliases { get; private set; }
 
@@ -342,7 +341,7 @@ namespace System.Management.Automation
             }
 
             return false;
-        } // DoesParameterSetTakePipelineInput
+        }
 
         /// <summary>
         /// Gets the parameter set data for this parameter for the specified parameter set
@@ -379,7 +378,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the parameter set data for this parameter for the specified parameter sets
+        /// Gets the parameter set data for this parameter for the specified parameter sets.
         /// </summary>
         /// <param name="parameterSetFlags">
         /// The parameter sets to get the parameter set data for.
@@ -429,10 +428,9 @@ namespace System.Management.Automation
                 return;
 
             CompiledAttributes.Add(attribute);
-            // Now process the attribute based on it's type
 
-            ParameterAttribute paramAttr = attribute as ParameterAttribute;
-            if (paramAttr != null)
+            // Now process the attribute based on it's type
+            if (attribute is ParameterAttribute paramAttr)
             {
                 ProcessParameterAttribute(memberName, paramAttr);
                 return;
@@ -579,7 +577,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Contains the collection type information for a parameter
+    /// Contains the collection type information for a parameter.
     /// </summary>
     internal class ParameterCollectionTypeInformation
     {
@@ -668,17 +666,16 @@ namespace System.Management.Automation
                 // elementType remains null
                 return;
             }
-        } // ctor
+        }
 
         /// <summary>
-        /// The collection type of the parameter
+        /// The collection type of the parameter.
         /// </summary>
         internal ParameterCollectionType ParameterCollectionType { get; private set; }
 
         /// <summary>
-        /// The type of the elements in the collection
+        /// The type of the elements in the collection.
         /// </summary>
         internal Type ElementType { get; private set; }
     }
 }
-

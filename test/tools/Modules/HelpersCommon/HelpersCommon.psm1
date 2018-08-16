@@ -236,3 +236,24 @@ function Send-VstsLogFile {
     Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
     Write-Verbose "Log file captured as $name" -Verbose
 }
+
+# Tests if the Linux or macOS user is root
+function Test-IsRoot
+{
+    if($IsLinux -or $IsMacOS)
+    {
+        $uid = &id -u
+        if($uid -eq 0)
+        {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+# Tests if we are running is a VSTS Linux Build
+function Test-IsVstsLinux
+{
+    return ($env:TF_BUILD -and $IsLinux)
+}

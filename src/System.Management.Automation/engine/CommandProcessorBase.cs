@@ -25,7 +25,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes the base command processor class with the command metadata
+        /// Initializes the base command processor class with the command metadata.
         /// </summary>
         /// <param name="commandInfo">
         /// The metadata about the command to run.
@@ -64,12 +64,12 @@ namespace System.Management.Automation
 
         private InternalCommand _command;
 
-        // marker of whether BeginProcessing() has already run,
-        // also used by CommandProcessor
+        // Marker of whether BeginProcessing() has already run,
+        // also used by CommandProcessor.
         internal bool RanBeginAlready;
 
-        // marker of whether this command has already been added to
-        // a PipelineProcessor.  It is an error to add the same command
+        // Marker of whether this command has already been added to
+        // a PipelineProcessor. It is an error to add the same command
         // more than once.
         internal bool AddedToPipelineAlready
         {
@@ -107,9 +107,8 @@ namespace System.Management.Automation
         /// <summary>
         /// If this flag is true, the commands in this Pipeline will redirect
         /// the global error output pipe to the command's error output pipe.
-        ///
-        /// (see the comment in Pipeline.RedirectShellErrorOutputPipe for an
-        /// explanation of why this flag is needed)
+        /// (See the comment in Pipeline.RedirectShellErrorOutputPipe for an
+        /// explanation of why this flag is needed).
         /// </summary>
         internal bool RedirectShellErrorOutputPipe { get; set; } = false;
 
@@ -176,7 +175,8 @@ namespace System.Management.Automation
         /// <param name="scriptBlock">The script block being dotted</param>
         /// <param name="languageMode">The current language mode</param>
         /// <param name="invocationInfo">The invocation info about the command</param>
-        protected static void ValidateCompatibleLanguageMode(ScriptBlock scriptBlock,
+        protected static void ValidateCompatibleLanguageMode(
+            ScriptBlock scriptBlock,
             PSLanguageMode languageMode,
             InvocationInfo invocationInfo)
         {
@@ -228,7 +228,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Etw activity for this pipeline
+        /// Etw activity for this pipeline.
         /// </summary>
         internal Guid PipelineActivityId { get; set; } = Guid.Empty;
 
@@ -255,7 +255,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a command processor for "get-help [helpTarget]"
+        /// Creates a command processor for "get-help [helpTarget]".
         /// </summary>
         /// <param name="context">context for the command processor</param>
         /// <param name="helpTarget">help target</param>
@@ -307,7 +307,7 @@ namespace System.Management.Automation
         internal SessionStateInternal CommandSessionState { get; set; }
 
         /// <summary>
-        /// Gets sets the session state scope for this command processor object
+        /// Gets or sets the session state scope for this command processor object.
         /// </summary>
         protected internal SessionStateScope CommandScope { get; protected set; }
 
@@ -392,7 +392,7 @@ namespace System.Management.Automation
         internal abstract void Prepare(IDictionary psDefaultParameterValues);
 
         /// <summary>
-        /// Write warning message for an obsolete command
+        /// Write warning message for an obsolete command.
         /// </summary>
         /// <param name="obsoleteAttr"></param>
         private void HandleObsoleteCommand(ObsoleteAttribute obsoleteAttr)
@@ -560,7 +560,7 @@ namespace System.Management.Automation
         /// Internally it calls EndProcessing() of the InternalCommand.
         /// </summary>
         /// <exception cref="PipelineStoppedException">
-        /// a terminating error occurred, or the pipeline was otherwise stopped
+        /// A terminating error occurred, or the pipeline was otherwise stopped.
         /// </exception>
         internal virtual void Complete()
         {
@@ -589,7 +589,7 @@ namespace System.Management.Automation
         } // Complete
 
         /// <summary>
-        /// Calls the virtual Complete method after setting the appropriate session state scope
+        /// Calls the virtual Complete method after setting the appropriate session state scope.
         /// </summary>
         internal void DoComplete()
         {
@@ -652,9 +652,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// for diagnostic purposes
+        /// For diagnostic purposes.
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             if (CommandInfo != null)
@@ -942,7 +941,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Finalizer for class CommandProcessorBase
+        /// Finalizer for class CommandProcessorBase.
         /// </summary>
         ~CommandProcessorBase()
         {
@@ -952,4 +951,3 @@ namespace System.Management.Automation
         #endregion IDispose
     }
 }
-

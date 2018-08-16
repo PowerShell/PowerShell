@@ -1096,8 +1096,13 @@ namespace System.Management.Automation.Language
             var positionalArgCount = ast.PositionalArguments.Count;
             if (positionalArgCount > 0)
             {
-                throw InterpreterError.NewInterpreterException(null, typeof(MethodException), ast.Extent,
-                    "MethodCountCouldNotFindBest", ExtendedTypeSystem.MethodArgumentCountException, ".ctor",
+                throw InterpreterError.NewInterpreterException(
+                    null,
+                    typeof(MethodException),
+                    ast.Extent,
+                    "MethodCountCouldNotFindBest",
+                    ExtendedTypeSystem.MethodArgumentCountException,
+                    ".ctor",
                     positionalArgCount);
             }
         }
@@ -1108,8 +1113,13 @@ namespace System.Management.Automation.Language
             {
                 var namedArg = ast.NamedArguments[0];
                 var argumentName = namedArg.ArgumentName;
-                throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                    "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                throw InterpreterError.NewInterpreterException(
+                    namedArg,
+                    typeof(RuntimeException),
+                    namedArg.Extent,
+                    "PropertyNotFoundForType",
+                    ParserStrings.PropertyNotFoundForType,
+                    argumentName,
                     typeof(CmdletBindingAttribute));
             }
         }
@@ -1168,8 +1178,13 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                        "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                    throw InterpreterError.NewInterpreterException(
+                        namedArg,
+                        typeof(RuntimeException),
+                        namedArg.Extent,
+                        "PropertyNotFoundForType",
+                        ParserStrings.PropertyNotFoundForType,
+                        argumentName,
                         typeof(CmdletBindingAttribute));
                 }
             }
@@ -1255,8 +1270,13 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                        "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                    throw InterpreterError.NewInterpreterException(
+                        namedArg,
+                        typeof(RuntimeException),
+                        namedArg.Extent,
+                        "PropertyNotFoundForType",
+                        ParserStrings.PropertyNotFoundForType,
+                        argumentName,
                         typeof(CmdletBindingAttribute));
                 }
             }
@@ -1322,8 +1342,13 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                        "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                    throw InterpreterError.NewInterpreterException(
+                        namedArg,
+                        typeof(RuntimeException),
+                        namedArg.Extent,
+                        "PropertyNotFoundForType",
+                        ParserStrings.PropertyNotFoundForType,
+                        argumentName,
                         typeof(CmdletBindingAttribute));
                 }
             }
