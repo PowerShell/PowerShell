@@ -2504,7 +2504,7 @@ function Copy-PSGalleryModules
         Write-Log "Name='$Name', Version='$version', Destination='$Destination'"
 
         # Remove the build revision from the src (nuget drops it).
-        $srcVer = if ($version -match "(\d+.\d+.\d+).\d+") {
+        $srcVer = if ($version -match "(\d+.\d+.\d+).0") {
             $matches[1]
         } else {
             $version
