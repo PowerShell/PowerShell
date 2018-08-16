@@ -368,7 +368,7 @@ function Invoke-AppVeyorTest
             Tag = @()
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
         }
-        Start-PSPester @arguments
+        Start-PSPester @arguments -Title 'Pester Unelevated'
         Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
         # Fail the build, if tests failed
@@ -390,7 +390,7 @@ function Invoke-AppVeyorTest
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $arguments['Path'] = $testFiles
             }
-            Start-PSPester @arguments
+            Start-PSPester @arguments -Title "Pester Experimental Unelevated - $featureName"
 
             Write-Host -ForegroundColor Green "Upload CoreCLR Non-Admin test results for experimental feature '$featureName'"
             Update-AppVeyorTestResults -resultsFile $expFeatureTestResultFile
@@ -407,7 +407,7 @@ function Invoke-AppVeyorTest
             Tag = @('RequireAdminOnWindows')
             ExcludeTag = $ExcludeTag
         }
-        Start-PSPester @arguments
+        Start-PSPester @arguments -Title 'Pester Elevated'
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
@@ -441,7 +441,7 @@ function Invoke-AppVeyorTest
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $arguments['Path'] = $testFiles
             }
-            Start-PSPester @arguments
+            Start-PSPester @arguments -Title "Pester Experimental Elevated - $featureName"
 
             Write-Host -ForegroundColor Green "Upload CoreCLR Admin test results for experimental feature '$featureName'"
             Update-AppVeyorTestResults -resultsFile $expFeatureTestResultFile
