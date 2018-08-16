@@ -157,7 +157,7 @@ function Get-EnvironmentInformation
         if( -not(
             $environment.IsDebian -or
             $environment.IsUbuntu -or
-            $environmment.IsRedHatFamily -or
+            $environment.IsRedHatFamily -or
             $environment.IsSUSEFamily)
         ) {
             throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
