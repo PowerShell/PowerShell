@@ -80,15 +80,21 @@ namespace System.Management.Automation.Language
         Long     = 0x1,
 
         /// <summary>
+        /// Short value ('s' or 'S') type suffix.
+        /// Can follow after Unsigned to create ushort-parsed values.
+        /// </summary>
+        Short    = 0x2,
+
+        /// <summary>
         /// Decimal value ('d' or 'D') type suffix.
         /// </summary>
-        Decimal  = 0x2,
+        Decimal  = 0x4,
 
         /// <summary>
         /// Unsigned Integer ('u' or 'U') type suffix.
         /// Can be followed by a Long designation as well.
         /// </summary>
-        Unsigned = 0x4,
+        Unsigned = 0x8,
     }
 
     /// <summary>
@@ -3295,10 +3301,17 @@ namespace System.Management.Automation.Language
                             {
                                 d = -0.0;
                             }
+
                             if (suffix == NumberSuffixFlags.Long)
                             {
                                 result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
                             }
+
+                            if (suffix == NumberSuffixFlags.Short)
+                            {
+                                result = (short)((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * multiplier);
+                            }
+
                             if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
                             {
                                 ulong testresult = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture)) * (ulong)multiplier;
@@ -3306,6 +3319,10 @@ namespace System.Management.Automation.Language
                                 if (testresult > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
                                 {
                                     result = testresult;
+                                }
+                                else if (suffix.HasFlag(NumberSuffixFlags.Short))
+                                {
+                                    result = (ushort)testresult;
                                 }
                                 else
                                 {
@@ -3355,6 +3372,16 @@ namespace System.Management.Automation.Language
                         strNum = strNum.Substring(1);
                     }
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
+
+                    if (suffix == NumberSuffixFlags.Short)
+                    {
+                        short shortValue;
+                        if (short.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out shortValue))
+                        {
+                            result = (short)(shortValue * multiplier);
+                            return true;
+                        }
+                    }
 
                     long longValue;
                     if (suffix == NumberSuffixFlags.Long)
@@ -3570,28 +3597,37 @@ namespace System.Management.Automation.Language
                     case 'U':
                         suffix |= NumberSuffixFlags.Unsigned;
                         break;
+                    case 's':
+                    case 'S':
+                        suffix |= NumberSuffixFlags.Short;
+                        break;
                 }
 
                 c = PeekChar();
                 if (c.IsTypeSuffix())
                 {
                     SkipChar();
-                    switch (c)
+
+                    if (suffix == NumberSuffixFlags.Unsigned)
                     {
-                        case 'l':
-                        case 'L':
-                            if (suffix == NumberSuffixFlags.Unsigned)
-                            {
+                        switch (c)
+                        {
+                            case 'l':
+                            case 'L':
                                 suffix |= NumberSuffixFlags.Long;
-                            }
-                            else
-                            {
+                                break;
+                            case 's':
+                            case 'S':
+                                suffix |= NumberSuffixFlags.Short;
+                                break;
+                            default:
                                 notNumber = true;
-                            }
-                            break;
-                        default:
-                            notNumber = true;
-                            break;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        notNumber = true;
                     }
 
                     c = PeekChar();
