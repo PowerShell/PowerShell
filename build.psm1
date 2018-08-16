@@ -693,15 +693,28 @@ function Restore-PSPackage
             $RestoreArguments += "quiet"
         }
 
-        if ($IsMacOS)
-        {
-            # We are hitting an issue where parallel restore in CI on mac fails
-            $RestoreArguments += '--disable-parallel'
-        }
-
         $ProjectDirs | ForEach-Object {
             Write-Log "Run dotnet restore $_ $RestoreArguments"
-            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
+            $retryCount = 0
+            $maxTries = 5
+            while($retryCount -lt $maxTries)
+            {
+                try
+                {
+                    Start-NativeExecution { dotnet restore $_ $RestoreArguments }
+                }
+                catch
+                {
+                    Write-Log "Failed to restore $_, retrying..."
+                    $retryCount++
+                    if($retryCount -ge $maxTries)
+                    {
+                        throw
+                    }
+                }
+
+                break
+            }
         }
     }
 }
