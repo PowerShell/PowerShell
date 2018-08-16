@@ -74,19 +74,19 @@ namespace System.Management.Automation.Language
         None      = 0x0,
 
         /// <summary>
-        /// 'l' or 'L' type suffix for long values.
+        /// Long value ('l' or 'L') type suffix.
         /// Can follow after Unsigned to create ulong-parsed values.
         /// </summary>
         Long     = 0x1,
 
         /// <summary>
-        /// 'd' or 'D' type suffic for decimal values.
+        /// Decimal value ('d' or 'D') type suffix.
         /// </summary>
         Decimal  = 0x2,
 
         /// <summary>
-        /// 'u' or 'U' type suffix for unsigned integer values.
-        /// Can be followed by Long.
+        /// Unsigned Integer ('u' or 'U') type suffix.
+        /// Can be followed by a Long designation as well.
         /// </summary>
         Unsigned = 0x4,
     }
@@ -3336,6 +3336,7 @@ namespace System.Management.Automation.Language
                             {
                                 result = (uint)testValue;
                             }
+
                             return true;
                         }
                         else
@@ -3475,7 +3476,7 @@ namespace System.Management.Automation.Language
         /// <param name="hex">Indicate if it's a hex number.</param>
         /// <param name="real">Indicate if it's a real number.</param>
         /// <param name="suffix">Indicate the numeric type suffix.</param>
-        /// <param name="multiplier">Indicate the specified multiplier<./param>
+        /// <param name="multiplier">Indicate the specified multiplier.</param>
         /// <returns>
         /// Return null if the token is not a number
         /// OR
@@ -3583,7 +3584,8 @@ namespace System.Management.Automation.Language
                             {
                                 suffix |= NumberSuffixFlags.Long;
                             }
-                            else {
+                            else
+                            {
                                 notNumber = true;
                             }
                             break;
