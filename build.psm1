@@ -117,7 +117,14 @@ function Get-EnvironmentInformation
     {
         $environment += @{'IsAdmin' = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)}
         # Can't use $env:HOME - not available on older systems (e.g. in AppVeyor)
-        $environment += @{'nugetPackagesRoot' = "${env:HOMEDRIVE}${env:HOMEPATH}\.nuget\packages"}
+        if(!$env:HOMEPATH)
+        {
+            $environment += @{'nugetPackagesRoot' = "${env:USERPROFILE}\.nuget\packages"}
+        }
+        else
+        {
+            $environment += @{'nugetPackagesRoot' = "${env:HOMEDRIVE}${env:HOMEPATH}\.nuget\packages"}
+        }
     }
     else
     {

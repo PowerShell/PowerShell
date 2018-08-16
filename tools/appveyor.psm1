@@ -124,6 +124,14 @@ Function Set-BuildVariable
     {
         Set-AppveyorBuildVariable @PSBoundParameters
     }
+    elseif($env:TF_BUILD)
+    {
+        #In VSTS
+        Write-Host "##vso[task.setvariable variable=$Name;]$Value"
+        # The variable will not show up until the next task.
+        # Setting in the current session for the same behavior as AppVeyor
+        Set-Item env:/$name -Value $Value
+    }
     else
     {
         Set-Item env:/$name -Value $Value
@@ -221,7 +229,7 @@ function Invoke-AppVeyorInstall
         Update-AppveyorBuild -message $buildName
     }
 
-    if ($env:APPVEYOR)
+    if ($env:APPVEYOR -or $env:TF_BUILD)
     {
         #
         # Generate new credential for appveyor (only) remoting tests.
@@ -593,6 +601,11 @@ function Invoke-AppveyorFinish
                 if($env:Appveyor)
                 {
                     Push-AppveyorArtifact $_
+                }
+                elseif ($env:TF_BUILD) {
+                    # In VSTS
+                    $name = Split-Path -Leaf $_
+                    Write-Host "##vso[artifact.upload containerfolder=testresult;artifactname=$name;]$_"
                 }
             }
             else
