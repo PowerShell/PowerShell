@@ -3272,7 +3272,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static bool TryGetNumberValue(string strNum, bool hex, bool real, NumberSuffixFlags suffix, long multiplier, out object result)
+        private static bool TryGetNumberValue(ReadOnlySpan<char> strNum, bool hex, bool real, NumberSuffixFlags suffix, long multiplier, out object result)
         {
             checked
             {
@@ -3373,7 +3373,7 @@ namespace System.Management.Automation.Language
                         {
                             multiplier = -multiplier;
                         }
-                        strNum = strNum.Substring(1);
+                        strNum = strNum.Slice(1);
                     }
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
