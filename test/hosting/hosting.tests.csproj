@@ -18,7 +18,9 @@
     <PackageReference Include="xunit" Version="2.4.0" />
     <!-- DotNetCliToolReference element specifies the CLI tool that the user wants to restore in the context of the project. -->
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.0.2" />
+    <!-- The version of Microsoft.PowerShell.SDK should be the version we are releasing, so the tests use the correct SDK before publishing to NuGet.org -->
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.1.0-rc.1" />
+    <PackageReference Include="Xunit.SkippableFact" Version="1.3.6" />
   </ItemGroup>
 
 </Project>
