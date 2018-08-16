@@ -59,15 +59,7 @@ steps:
 
   - powershell: |
       Import-Module .\tools\Appveyor.psm1
-      if ($env:Purpose -eq 'ElevatedPesterTests_xUnit_Packaging'){ Restore-PSOptions; Invoke-AppveyorFinish }
+      Restore-PSOptions
+      Invoke-AppveyorFinish
     displayName: Finish
-    condition: succeededOrFailed()
-
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    displayName: Publish Windows Stable Test Results **\TEST*.xml
-    inputs:
-      testRunner: NUnit
-      testResultsFiles: '**\test*.xml'
-      testRunTitle: Windows
-      mergeTestResults: true
+    condition: eq(variables['Purpose'], 'ElevatedPesterTests_xUnit_Packaging')
