@@ -415,25 +415,14 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         $mod = Import-Module -FullyQualifiedName $modSpec -PassThru
 
-        $mod.Name    | Should -Be $moduleName
-        $mod.Version | Should -Be $actualVersion
-        $mod.Guid    | Should -Be $actualGuid
-        if ($ModuleVersion)
-        {
-            $mod.Version | Should -BeGreaterOrEqual $ModuleVersion
-        }
-        if ($MaximumVersion)
-        {
-            $mod.Version | Should -BeLessOrEqual $MaximumVersion
-        }
-        if ($RequiredVersion)
-        {
-            $mod.Version | Should -Be $RequiredVersion
-        }
-        if ($Guid)
-        {
-            $mod.Guid | Should -Be $actualGuid
-        }
+        Assert-ModuleIsCorrect `
+            -Module $mod `
+            -Name $moduleName `
+            -Version $actualVersion `
+            -Guid $actualGuid `
+            -MinVersion $ModuleVersion `
+            -MaxVersion $MaximumVersion `
+            -RequiredVersion $RequiredVersion
     }
 
     It "Loads the module by FullyQualifiedName from the module path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {
