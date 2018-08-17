@@ -3369,20 +3369,51 @@ namespace System.Management.Automation.Language
 
                         if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
                         {
-                            if (suffix.HasFlag(NumberSuffixFlags.Short))
+                            if (suffix.HasFlag(NumberSuffixFlags.Short) && Utils.TryConvertUInt16(bigValue, out ushort us))
                             {
-                                result = (ushort)testValue;
+                                result = us;
                             }
-                            else if (testValue > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
+                            else if ((bigValue > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long)) && Utils.TryConvertUInt64(bigValue, out ulong ul))
                             {
-                                result = testValue;
+                                result = ul;
+                            }
+                            else if (Utils.TryConvertUInt32(bigValue, out uint u))
+                            {
+                                result = u;
                             }
                             else
                             {
-                                result = (uint)testValue;
+                                result = null;
+                                return false;
                             }
 
                             return true;
+                        }
+
+                        if (suffix == NumberSuffixFlags.Short)
+                        {
+                            if (Utils.TryConvertInt16(bigValue, out short s))
+                            {
+                                result = s;
+                                return true;
+                            }
+                            else
+                            {
+                                result = null;
+                                return false;
+                            }
+                        }
+
+                        long longValue;
+                        if (suffix == NumberSuffixFlags.Long)
+                        {
+                            if (Utils.TryConvertInt64(bigValue, out longValue))
+                            {
+                                result = longValue;
+                                return true;
+                            }
+                            result = null;
+                            return false;
                         }
                     }
                     else
@@ -3391,43 +3422,17 @@ namespace System.Management.Automation.Language
                         return false;
                     }
 
-                    if (suffix == NumberSuffixFlags.Short)
-                    {
-                        short shortValue;
-                        if (short.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out shortValue))
-                        {
-                            result = (short)(shortValue * multiplier);
-                            return true;
-                        }
-                    }
-
-                    long longValue;
-                    if (suffix == NumberSuffixFlags.Long)
-                    {
-                        if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
-                        {
-                            result = longValue * multiplier;
-                            return true;
-                        }
-                        result = null;
-                        return false;
-                    }
-
                     // From here on - the user hasn't specified the type, so we need to figure it out.
 
-                    BigInteger bigValue;
                     TypeCode whichTryParseWorked;
-                    int intValue;
                     decimal decimalValue;
-                    if (int.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out intValue))
+                    if (Utils.TryConvertInt32(bigValue, out int i))
                     {
                         whichTryParseWorked = TypeCode.Int32;
-                        bigValue = intValue;
                     }
-                    else if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
+                    else if (Utils.TryConvertInt64(bigValue, out long l))
                     {
                         whichTryParseWorked = TypeCode.Int64;
-                        bigValue = longValue;
                     }
                     else if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimalValue))
                     {
