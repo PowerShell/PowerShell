@@ -3325,14 +3325,22 @@ namespace System.Management.Automation.Language
                                 }
                                 else if (suffix.HasFlag(NumberSuffixFlags.Short))
                                 {
-                                    result = (ushort)convertUnsigned;
+                                    if (convertUnsigned <= UInt16.MaxValue && convertUnsigned >= UInt16.MinValue)
+                                    {
+                                        result = (ushort)convertUnsigned;
+                                    }
+                                    else
+                                    {
+                                        result = null;
+                                        return false;
+                                    }
                                 }
                                 else
                                 {
                                     result = (uint)convertUnsigned;
                                 }
                             }
-                            else
+                            else // Parsed as double but with unresolvable type suffixes.
                             {
                                 result = null;
                                 return false;
