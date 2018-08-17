@@ -668,8 +668,21 @@ foo``u{2195}abc
             @{ Script = "32.1u"; Expected = "32" }
             @{ Script = "4294967295u"; Expected = $([UInt32]::MaxValue) }
             @{ Script = "401ul"; Expected = "401" }
-            # Banker's rounding on casting, of course.
+            #Tests for short notation
+            @{ Script = "10s"; Expected = "10" }
+            @{ Script = "-10s"; Expected = "10" }
+            @{ Script = "32767s"; Expected = $([Int16]::MaxValue) }
+            @{ Script = "10us"; Expected = "10" }
+            @{ Script = "65535us"; Expected = $([UInt16]::MaxValue) }
+            #Tests for decimal notation
+            @{ Script = "-79228162514264337593543950335d"; Expected = $([decimal]::MinValue) }
+            @{ Script = "-100.5d"; Expected = "-100.5" }
+            @{ Script = "15d"; Expected = "15" }
+            @{ Script = "210.12d"; Expected = "210.12" }
+            @{ Script = "79228162514264337593543950335d"; Expected = $([decimal]::MaxValue) }
+            #Banker's rounding on casting, of course.
             @{ Script = "1024.5ul"; Expected = "1024" }
+            @{ Script = "1024.5us"; Expected = "1024" }
             @{ Script = "4294967301u"; Expected = "4294967301" }
             @{ Script = "18446744073709551615u"; Expected = $([UInt64]::MaxValue)}
             #Tests for exponential notation.
@@ -692,10 +705,36 @@ foo``u{2195}abc
             @{ Script = "0kb"; Expected = "0" }
             @{ Script = "1kb"; Expected = "1024" }
             @{ Script = "-2KB"; Expected = "-2048" }
+            @{ Script = "2usKB"; Expected = "2048" }
+            @{ Script = "20lkb"; Expected = "20480" }
+            @{ Script = "244ulkb"; Expected = "249856" }
         )
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
             ExecuteCommand $Script | Should -Be $Expected
+        }
+<#
+Numbers that ends with a non-numerical suffix like 7p
+Numbers that have a u but then have a non-numerical suffix like 20ux
+Numbers that use numerical literals but in a bad order or combination like 300ls or 78su
+Something with the behaviour like the 500sgb literal described in the PR desrciption
+#>
+        $testInvalidNumerals = @(
+            @{ Script = "16p" }
+            @{ Script = "20ux" }
+            @{ Script = "18uu" }
+            @{ Script = "21ss" }
+            @{ Script = "100ll" }
+            @{ Script = "150su" }
+            @{ Script = "10ds" }
+            @{ Script = "16sl" }
+            @{ Script = "188lu" }
+            @{ Script = "500sgb" }
+        )
+        It "<Script> should throw an error" -TestCases $testInvalidNumerals {
+            param($Script)
+
+            [ScriptBlock]::Create($Script) | Should -Throw
         }
     }
 
