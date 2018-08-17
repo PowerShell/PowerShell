@@ -157,7 +157,7 @@ function Get-EnvironmentInformation
         if( -not(
             $environment.IsDebian -or
             $environment.IsUbuntu -or
-            $environmment.IsRedHatFamily -or
+            $environment.IsRedHatFamily -or
             $environment.IsSUSEFamily)
         ) {
             throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
@@ -694,25 +694,28 @@ function Restore-PSPackage
         }
 
         $ProjectDirs | ForEach-Object {
-            Write-Log "Run dotnet restore $_ $RestoreArguments"
+            $project = $_
+            Write-Log "Run dotnet restore $project $RestoreArguments"
             $retryCount = 0
             $maxTries = 5
             while($retryCount -lt $maxTries)
             {
                 try
                 {
-                    Start-NativeExecution { dotnet restore $_ $RestoreArguments }
+                    Start-NativeExecution { dotnet restore $project $RestoreArguments }
                 }
                 catch
                 {
-                    Write-Log "Failed to restore $_, retrying..."
+                    Write-Log "Failed to restore $project, retrying..."
                     $retryCount++
                     if($retryCount -ge $maxTries)
                     {
                         throw
                     }
+                    continue
                 }
 
+                Write-Log "Done restoring $project"
                 break
             }
         }
