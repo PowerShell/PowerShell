@@ -200,6 +200,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
+            PathInfo current = CurrentLocation;
             string originalPath = path;
             string driveName = null;
             ProviderInfo provider = null;
@@ -553,6 +554,15 @@ namespace System.Management.Automation
             // Set the $PWD variable to the new location
 
             this.SetVariable(SpecialVariables.PWDVarPath, this.CurrentLocation, false, true, CommandOrigin.Internal);
+
+            // If an action has been defined for location changes, invoke it now.
+            if (PublicSessionState.InvokeCommand.LocationChangedAction != null)
+            {
+                var eventArgs = new LocationChangedEventArgs(PublicSessionState, current, CurrentLocation);
+                PublicSessionState.InvokeCommand.LocationChangedAction.Invoke(ExecutionContext.CurrentRunspace, eventArgs);
+                s_tracer.WriteLine("Invoked LocationChangedAction");
+            }
+
             return this.CurrentLocation;
         } // SetLocation
 
@@ -1046,5 +1056,36 @@ namespace System.Management.Automation
 
         #endregion push-Pop current working directory
     }           // SessionStateInternal class
+
+    ///<summary>
+    /// Arguments for the LocationChangedEvent
+    ///</summary>
+    public class LocationChangedEventArgs : EventArgs
+    {
+        ///<summary>
+        /// Construct an instance of this object.
+        ///</summary>
+        public LocationChangedEventArgs(SessionState sessionState, PathInfo oldPath, PathInfo newPath)
+        {
+            SessionState = sessionState;
+            OldPath = oldPath;
+            NewPath = newPath;
+        }
+
+        ///<summary>
+        /// The path we changed from
+        ///</summary>
+        public PathInfo OldPath { get; internal set;}
+
+        ///<summary>
+        /// The path we changed to.
+        ///</summary>
+        public PathInfo NewPath { get; internal set;}
+
+        ///<summary>
+        /// The session state instance for the current runspace.
+        ///</summary>
+        public SessionState SessionState {get; internal set; }
+    }
 }
 
