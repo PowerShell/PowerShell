@@ -356,9 +356,9 @@ namespace System.Management.Automation
         /// </summary>
         public System.EventHandler<CommandLookupEventArgs> PostCommandLookupAction { get; set; }
 
-        ///<summary>
-        /// This action is invoked everytime the runspace location (cwd) is changed.
-        ///</summary>
+        /// <summary>
+        /// Gets or sets the action that is invoked everytime the runspace location (cwd) is changed.
+        /// </summary>
         public System.EventHandler<LocationChangedEventArgs> LocationChangedAction { get; set; }
 
         /// <summary>

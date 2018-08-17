@@ -164,10 +164,10 @@ Describe "Set-Location" -Tags "CI" {
                 (Get-Variable newPath).Value = $_.newPath
             }
             Set-Location ..
-            $newPath.Path | Should Be $pwd.Path
-            $oldPath.Path | Should Be $initialPath.Path
-            $eventSessionState | Should Be $ExecutionContext.SessionState
-            $eventRunspace | Should Be ([runspace]::DefaultRunspace)
+            $newPath.Path | Should -Be $pwd.Path
+            $oldPath.Path | Should -Be $initialPath.Path
+            $eventSessionState | Should -Be $ExecutionContext.SessionState
+            $eventRunspace | Should -Be ([runspace]::DefaultRunspace)
         }
 
         It 'Errors in the LocationChangedAction should be catchable but not fail the cd' {
@@ -177,7 +177,7 @@ Describe "Set-Location" -Tags "CI" {
             # Verify that the exception occurred
             { Set-Location $location } | Should Throw "Boom"
             # But the location should still have changed
-            $PWD.Path | Should Be $location.Path
+            $PWD.Path | Should -Be $location.Path
         }
     }
 }

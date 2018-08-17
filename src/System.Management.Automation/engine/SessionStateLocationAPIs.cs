@@ -1057,35 +1057,46 @@ namespace System.Management.Automation
         #endregion push-Pop current working directory
     }           // SessionStateInternal class
 
-    ///<summary>
-    /// Arguments for the LocationChangedEvent
-    ///</summary>
+    /// <summary>
+    /// Event argument for the LocationChangedAction containing
+    /// information about the old location we were in and the new
+    /// location we changed to.
+    /// </summary>
     public class LocationChangedEventArgs : EventArgs
     {
-        ///<summary>
-        /// Construct an instance of this object.
-        ///</summary>
-        public LocationChangedEventArgs(SessionState sessionState, PathInfo oldPath, PathInfo newPath)
+        /// <summary>
+        ///  Initializes a new instance of the LocationChangedEventArgs class.
+        /// </summary>
+        /// <param name="sessionState">
+        /// The public session state instance associated with this runspace.
+        ///</param>
+        /// <param name="oldPath">
+        /// The path we changed locations from.
+        ///</param>
+        /// <param name="newPath">
+        /// The path we change locations to.
+        ///</param>
+        internal LocationChangedEventArgs(SessionState sessionState, PathInfo oldPath, PathInfo newPath)
         {
             SessionState = sessionState;
             OldPath = oldPath;
             NewPath = newPath;
         }
 
-        ///<summary>
-        /// The path we changed from
-        ///</summary>
-        public PathInfo OldPath { get; internal set;}
+        /// <summary>
+        /// Gets the path we changed location from.
+        /// </summary>
+        public PathInfo OldPath { get; internal set; }
 
-        ///<summary>
-        /// The path we changed to.
-        ///</summary>
-        public PathInfo NewPath { get; internal set;}
+        /// <summary>
+        /// Gets the path we changed location to.
+        /// </summary>
+        public PathInfo NewPath { get; internal set; }
 
-        ///<summary>
-        /// The session state instance for the current runspace.
-        ///</summary>
-        public SessionState SessionState {get; internal set; }
+        /// <summary>
+        /// Gets the session state instance for the current runspace.
+        /// </summary>
+        public SessionState SessionState { get; internal set; }
     }
 }
 
