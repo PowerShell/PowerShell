@@ -87,9 +87,9 @@ function Assert-ModuleIsCorrect
 {
     param(
         $Module,
-        [string]$Name,
-        [guid]$Guid,
-        [version]$Version,
+        [string]$Name = $moduleName,
+        [guid]$Guid = $actualGuid,
+        [version]$Version = $actualVersion,
         [version]$MinVersion,
         [version]$MaxVersion,
         [version]$RequiredVersion
@@ -186,8 +186,8 @@ $guidFailCases = [System.Collections.ArrayList]::new()
 foreach ($case in $failCases)
 {
     [void]$guidFailCases.Add($case + @{ Guid = $null })
-    [void]$guidFailCases.Add(($case + @{ Guid = $actualGuid }))
-    [void]$guidFailCases.Add(($case + @{ Guid = [guid]::NewGuid() }))
+    [void]$guidFailCases.Add($case + @{ Guid = $actualGuid })
+    [void]$guidFailCases.Add($case + @{ Guid = [guid]::NewGuid() })
 }
 
 Describe "Module loading with version constraints" -Tags "Feature" {
@@ -219,9 +219,6 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -236,9 +233,6 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -253,9 +247,6 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -268,9 +259,6 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -283,9 +271,6 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -298,9 +283,6 @@ Describe "Module loading with version constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -417,9 +399,6 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -434,9 +413,6 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -451,9 +427,6 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -466,9 +439,6 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -481,9 +451,6 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -496,9 +463,6 @@ Describe "Versioned directory loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -615,9 +579,6 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -632,9 +593,6 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -649,9 +607,6 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -664,9 +619,6 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -679,9 +631,6 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -694,9 +643,6 @@ Describe "Rooted module loading with module constraints" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -810,9 +756,6 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -827,9 +770,6 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -844,9 +784,6 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -861,9 +798,6 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -876,9 +810,6 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -891,9 +822,6 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -906,9 +834,6 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1054,9 +979,6 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1071,9 +993,6 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1088,9 +1007,6 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1105,9 +1021,6 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1120,9 +1033,6 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1135,9 +1045,6 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1150,9 +1057,6 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1299,9 +1203,6 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1316,9 +1217,6 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1333,9 +1231,6 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1350,9 +1245,6 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1365,9 +1257,6 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1380,9 +1269,6 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
@@ -1395,9 +1281,6 @@ Describe "Preloaded rooted module specification checking" -Tags "Feature" {
 
         Assert-ModuleIsCorrect `
             -Module $mod `
-            -Name $moduleName `
-            -Version $actualVersion `
-            -Guid $actualGuid `
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
