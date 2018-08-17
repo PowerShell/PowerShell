@@ -713,12 +713,7 @@ foo``u{2195}abc
             param ( $Script, $Expected )
             ExecuteCommand $Script | Should -Be $Expected
         }
-<#
-Numbers that ends with a non-numerical suffix like 7p
-Numbers that have a u but then have a non-numerical suffix like 20ux
-Numbers that use numerical literals but in a bad order or combination like 300ls or 78su
-Something with the behaviour like the 500sgb literal described in the PR desrciption
-#>
+
         $testInvalidNumerals = @(
             @{ Script = "16p" }
             @{ Script = "20ux" }
