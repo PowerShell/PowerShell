@@ -3306,13 +3306,11 @@ namespace System.Management.Automation.Language
                             {
                                 result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
                             }
-
-                            if (suffix == NumberSuffixFlags.Short)
+                            else if (suffix == NumberSuffixFlags.Short)
                             {
                                 result = (short)((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * multiplier);
                             }
-
-                            if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
+                            else if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
                             {
                                 ulong testresult = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture)) * (ulong)multiplier;
 
@@ -3333,6 +3331,7 @@ namespace System.Management.Automation.Language
                             {
                                 result = d * multiplier;
                             }
+
                             return true;
                         }
 
