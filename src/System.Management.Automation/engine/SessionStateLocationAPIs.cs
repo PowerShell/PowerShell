@@ -1065,17 +1065,17 @@ namespace System.Management.Automation
     public class LocationChangedEventArgs : EventArgs
     {
         /// <summary>
-        ///  Initializes a new instance of the LocationChangedEventArgs class.
+        /// Initializes a new instance of the LocationChangedEventArgs class.
         /// </summary>
         /// <param name="sessionState">
         /// The public session state instance associated with this runspace.
-        ///</param>
+        /// </param>
         /// <param name="oldPath">
         /// The path we changed locations from.
-        ///</param>
+        /// </param>
         /// <param name="newPath">
         /// The path we change locations to.
-        ///</param>
+        /// </param>
         internal LocationChangedEventArgs(SessionState sessionState, PathInfo oldPath, PathInfo newPath)
         {
             SessionState = sessionState;
