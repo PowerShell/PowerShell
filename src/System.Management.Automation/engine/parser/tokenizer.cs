@@ -3301,18 +3301,23 @@ namespace System.Management.Automation.Language
                             {
                                 d = -0.0;
                             }
+                            /*
+                            Joel: inside of a switch(val) you would have case int i case double d etc
+                            Then finally a default clause where you return false
+                             */
+                            d *= multiplier;
 
                             if (suffix == NumberSuffixFlags.Long)
                             {
-                                result = Convert.ToInt64(d * multiplier);
+                                result = Convert.ToInt64(d);
                             }
                             else if (suffix == NumberSuffixFlags.Short)
                             {
-                                result = Convert.ToInt16(d * multiplier);
+                                result = Convert.ToInt16(d);
                             }
                             else if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
                             {
-                                ulong testresult = Convert.ToUInt64(d * multiplier);
+                                ulong testresult = Convert.ToUInt64(d);
 
                                 if (testresult > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
                                 {
@@ -3329,7 +3334,7 @@ namespace System.Management.Automation.Language
                             }
                             else
                             {
-                                result = d * multiplier;
+                                result = d;
                             }
 
                             return true;
