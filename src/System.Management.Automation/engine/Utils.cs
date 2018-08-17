@@ -33,29 +33,36 @@ namespace System.Management.Automation
     /// </summary>
     internal static class Utils
     {
-        internal static bool TryConvertInt16(double value, out short? result)
+        internal static bool TryConvertInt16(double value, out short result)
         {
-            result = null;
+            if (value <= Int16.MaxValue && value >= Int16.MinValue) {
+                result = (short)Math.Round(value);
+                return true;
+            }
+
+            result = 0;
             return false;
         }
-        internal static bool TryConvertInt64(double value, out long? result)
+        internal static bool TryConvertInt64(double value, out long result)
         {
-            result = null;
+            if (value <= Int64.MaxValue && value >= Int64.MinValue)
+            {
+                result = (long)Math.Round(value);
+                return true;
+            }
+
+            result = 0;
             return false;
         }
-        internal static bool TryConvertUInt16(double value, out ushort? result)
+        internal static bool TryConvertUInt64(double value, out ulong result)
         {
-            result = null;
-            return false;
-        }
-        internal static bool TryConvertUInt32(double value, out uint? result)
-        {
-            result = null;
-            return false;
-        }
-        internal static bool TryConvertUInt64(double value, out ulong? result)
-        {
-            result = null;
+            if (value <= UInt64.MaxValue && value >= UInt64.MinValue)
+            {
+                result = (ulong)Math.Round(value);
+                return true;
+            }
+
+            result = 0;
             return false;
         }
 

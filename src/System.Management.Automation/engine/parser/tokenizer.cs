@@ -3302,36 +3302,40 @@ namespace System.Management.Automation.Language
                                 d = -0.0;
                             }
 
+                            // Multiply prior to conversions to properly determine return data types, if any.
                             d *= multiplier;
 
-                            if (suffix == NumberSuffixFlags.Long)
+                            if (suffix == NumberSuffixFlags.None)
                             {
-                                result = Convert.ToInt64(d);
+                                result = d;
                             }
-                            else if (suffix == NumberSuffixFlags.Short)
+                            if (suffix == NumberSuffixFlags.Long && Utils.TryConvertInt64(d, out long convertLong))
                             {
-                                result = Convert.ToInt16(d);
+                                result = convertLong;
                             }
-                            else if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
+                            else if (suffix == NumberSuffixFlags.Short && Utils.TryConvertInt16(d, out short convertShort))
                             {
-                                ulong testresult = Convert.ToUInt64(d);
-
-                                if (testresult > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
+                                result = convertShort;
+                            }
+                            else if (suffix.HasFlag(NumberSuffixFlags.Unsigned) && Utils.TryConvertUInt64(d, out ulong convertUnsigned))
+                            {
+                                if (convertUnsigned > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
                                 {
-                                    result = testresult;
+                                    result = convertUnsigned;
                                 }
                                 else if (suffix.HasFlag(NumberSuffixFlags.Short))
                                 {
-                                    result = (ushort)testresult;
+                                    result = (ushort)convertUnsigned;
                                 }
                                 else
                                 {
-                                    result = (uint)testresult;
+                                    result = (uint)convertUnsigned;
                                 }
                             }
                             else
                             {
-                                result = d;
+                                result = null;
+                                return false;
                             }
 
                             return true;
