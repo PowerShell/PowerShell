@@ -3309,25 +3309,25 @@ namespace System.Management.Automation.Language
                             {
                                 result = d;
                             }
-                            if (suffix == NumberSuffixFlags.Long && Utils.TryConvertInt64(d, out long convertLong))
+                            if (suffix == NumberSuffixFlags.Long && Utils.TryConvertInt64(d, out long l))
                             {
-                                result = convertLong;
+                                result = l;
                             }
-                            else if (suffix == NumberSuffixFlags.Short && Utils.TryConvertInt16(d, out short convertShort))
+                            else if (suffix == NumberSuffixFlags.Short && Utils.TryConvertInt16(d, out short s))
                             {
-                                result = convertShort;
+                                result = s;
                             }
-                            else if (suffix.HasFlag(NumberSuffixFlags.Unsigned) && Utils.TryConvertUInt64(d, out ulong convertUnsigned))
+                            else if (suffix.HasFlag(NumberSuffixFlags.Unsigned) && Utils.TryConvertUInt64(d, out ulong u))
                             {
-                                if (convertUnsigned > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
+                                if (u > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
                                 {
-                                    result = convertUnsigned;
+                                    result = u;
                                 }
                                 else if (suffix.HasFlag(NumberSuffixFlags.Short))
                                 {
-                                    if (convertUnsigned <= UInt16.MaxValue && convertUnsigned >= UInt16.MinValue)
+                                    if (u <= UInt16.MaxValue && u >= UInt16.MinValue)
                                     {
-                                        result = (ushort)convertUnsigned;
+                                        result = (ushort)u;
                                     }
                                     else
                                     {
@@ -3337,7 +3337,7 @@ namespace System.Management.Automation.Language
                                 }
                                 else
                                 {
-                                    result = (uint)convertUnsigned;
+                                    result = (uint)u;
                                 }
                             }
                             else // Parsed as double but with unresolvable type suffixes.
