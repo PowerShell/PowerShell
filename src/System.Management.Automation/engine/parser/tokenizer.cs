@@ -3304,15 +3304,15 @@ namespace System.Management.Automation.Language
 
                             if (suffix == NumberSuffixFlags.Long)
                             {
-                                result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
+                                result = Convert.ToInt64(d * multiplier);
                             }
                             else if (suffix == NumberSuffixFlags.Short)
                             {
-                                result = (short)((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * multiplier);
+                                result = Convert.ToInt16(d * multiplier);
                             }
                             else if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
                             {
-                                ulong testresult = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture)) * (ulong)multiplier;
+                                ulong testresult = Convert.ToUInt64(d * multiplier);
 
                                 if (testresult > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long))
                                 {
