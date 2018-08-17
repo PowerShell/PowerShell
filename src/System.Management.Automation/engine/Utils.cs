@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Security;
+using System.Numerics;
 using System.Reflection;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
@@ -43,6 +44,28 @@ namespace System.Management.Automation
             result = 0;
             return false;
         }
+        internal static bool TryConvertInt16(BigInteger value, out short result)
+        {
+            if (value <= Int16.MaxValue && value >= Int16.MinValue)
+            {
+                result = (short)value;
+                return true;
+            }
+
+            result = 0;
+            return false;
+        }
+        internal static bool TryConvertInt32(BigInteger value, out int result)
+        {
+            if (value <= Int32.MaxValue && value >= Int32.MinValue)
+            {
+                result = (int)value;
+                return true;
+            }
+
+            result = 0;
+            return false;
+        }
         internal static bool TryConvertInt64(double value, out long result)
         {
             if (value <= Int64.MaxValue && value >= Int64.MinValue)
@@ -54,11 +77,77 @@ namespace System.Management.Automation
             result = 0;
             return false;
         }
+        internal static bool TryConvertInt64(BigInteger value, out long result)
+        {
+            if (value <= Int64.MaxValue && value >= Int64.MinValue)
+            {
+                result = (long)value;
+                return true;
+            }
+
+            result = 0;
+            return false;
+        }
+        internal static bool TryConvertUInt16(ulong value, out ushort result)
+        {
+            if (value <= UInt16.MaxValue && value >= UInt16.MinValue)
+            {
+                result = (ushort)value;
+                return true;
+            }
+
+            result = 0;
+            return false;
+        }
+        internal static bool TryConvertUInt16(BigInteger value, out ushort result)
+        {
+            if (value <= UInt16.MaxValue && value >= UInt16.MinValue)
+            {
+                result = (ushort)value;
+                return true;
+            }
+
+            result = 0;
+            return false;
+        }
+        internal static bool TryConvertUInt32(ulong value, out uint result)
+        {
+            if (value <= UInt32.MaxValue && value >= UInt32.MinValue)
+            {
+                result = (uint)value;
+                return true;
+            }
+
+            result = 0;
+            return false;
+        }
+        internal static bool TryConvertUInt32(BigInteger value, out uint result)
+        {
+            if (value <= UInt32.MaxValue && value >= UInt32.MinValue)
+            {
+                result = (uint)value;
+                return true;
+            }
+
+            result = 0;
+            return false;
+        }
         internal static bool TryConvertUInt64(double value, out ulong result)
         {
             if (value <= UInt64.MaxValue && value >= UInt64.MinValue)
             {
                 result = (ulong)Math.Round(value);
+                return true;
+            }
+
+            result = 0;
+            return false;
+        }
+        internal static bool TryConvertUInt64(BigInteger value, out ulong result)
+        {
+            if (value <= UInt64.MaxValue && value >= UInt64.MinValue)
+            {
+                result = (ulong)value;
                 return true;
             }
 

@@ -3353,11 +3353,22 @@ namespace System.Management.Automation.Language
                         return false;
                     }
 
-                    if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
+                    if (hex && !strNum[0].IsHexDigit())
                     {
-                        if (UInt64.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
+                        if (strNum[0] == '-')
                         {
-                            ulong testValue = u * (ulong)multiplier;
+                            multiplier = -multiplier;
+                        }
+                        strNum = strNum.Slice(1);
+                    }
+                    style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
+
+                    if (BigInteger.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out BigInteger bigValue))
+                    {
+                        bigValue *= multiplier;
+
+                        if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
+                        {
                             if (suffix.HasFlag(NumberSuffixFlags.Short))
                             {
                                 result = (ushort)testValue;
@@ -3373,22 +3384,12 @@ namespace System.Management.Automation.Language
 
                             return true;
                         }
-                        else
-                        {
-                            result = null;
-                            return false;
-                        }
                     }
-
-                    if (hex && !strNum[0].IsHexDigit())
+                    else
                     {
-                        if (strNum[0] == '-')
-                        {
-                            multiplier = -multiplier;
-                        }
-                        strNum = strNum.Slice(1);
+                        result = null;
+                        return false;
                     }
-                    style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
                     if (suffix == NumberSuffixFlags.Short)
                     {
