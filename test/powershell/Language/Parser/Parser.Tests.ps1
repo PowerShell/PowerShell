@@ -670,7 +670,7 @@ foo``u{2195}abc
             @{ Script = "401ul"; Expected = "401" }
             #Tests for short notation
             @{ Script = "10s"; Expected = "10" }
-            @{ Script = "-10s"; Expected = "10" }
+            @{ Script = "-10s"; Expected = "-10" }
             @{ Script = "32767s"; Expected = $([Int16]::MaxValue) }
             @{ Script = "10us"; Expected = "10" }
             @{ Script = "65535us"; Expected = $([UInt16]::MaxValue) }
@@ -729,7 +729,7 @@ foo``u{2195}abc
         It "<Script> should throw an error" -TestCases $testInvalidNumerals {
             param($Script)
 
-            [ScriptBlock]::Create($Script) | Should -Throw
+            {[ScriptBlock]::Create($Script).Invoke()} | Should -Throw
         }
     }
 
