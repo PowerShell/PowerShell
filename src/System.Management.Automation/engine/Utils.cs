@@ -33,6 +33,32 @@ namespace System.Management.Automation
     /// </summary>
     internal static class Utils
     {
+        internal static bool TryConvertInt16(double value, out short? result)
+        {
+            result = null;
+            return false;
+        }
+        internal static bool TryConvertInt64(double value, out long? result)
+        {
+            result = null;
+            return false;
+        }
+        internal static bool TryConvertUInt16(double value, out ushort? result)
+        {
+            result = null;
+            return false;
+        }
+        internal static bool TryConvertUInt32(double value, out uint? result)
+        {
+            result = null;
+            return false;
+        }
+        internal static bool TryConvertUInt64(double value, out ulong? result)
+        {
+            result = null;
+            return false;
+        }
+
         // From System.Web.Util.HashCodeCombiner
         internal static int CombineHashCodes(int h1, int h2)
         {

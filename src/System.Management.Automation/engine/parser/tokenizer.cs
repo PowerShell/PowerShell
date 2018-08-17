@@ -3301,10 +3301,7 @@ namespace System.Management.Automation.Language
                             {
                                 d = -0.0;
                             }
-                            /*
-                            Joel: inside of a switch(val) you would have case int i case double d etc
-                            Then finally a default clause where you return false
-                             */
+
                             d *= multiplier;
 
                             if (suffix == NumberSuffixFlags.Long)
