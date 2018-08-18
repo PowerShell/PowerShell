@@ -116,8 +116,7 @@ function Get-EnvironmentInformation
     if ($Environment.IsWindows)
     {
         $environment += @{'IsAdmin' = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)}
-        # Can't use $env:HOME - not available on older systems (e.g. in AppVeyor)
-        $environment += @{'nugetPackagesRoot' = "${env:HOMEDRIVE}${env:HOMEPATH}\.nuget\packages"}
+        $environment += @{'nugetPackagesRoot' = "${env:USERPROFILE}\.nuget\packages"}
     }
     else
     {
@@ -876,14 +875,15 @@ function New-PSOptions {
         $RootInfo['IsValid'] = $true
     }
 
-    return @{ RootInfo = [PSCustomObject]$RootInfo
-              Top = $Top
-              Configuration = $Configuration
-              Framework = $Framework
-              Runtime = $Runtime
-              Output = $Output
-              CrossGen = $CrossGen.IsPresent
-              PSModuleRestore = $PSModuleRestore.IsPresent }
+    return New-PSOptionsObject `
+                -RootInfo ([PSCustomObject]$RootInfo) `
+                -Top $Top `
+                -Runtime $Runtime `
+                -Crossgen $Crossgen.IsPresent `
+                -Configuration $Configuration `
+                -PSModuleRestore $PSModuleRestore.IsPresent `
+                -Framework $Framework `
+                -Output $Output
 }
 
 # Get the Options of the last build
@@ -2994,6 +2994,102 @@ function Restore-PSOptions {
     }
 
     Set-PSOptions -Options $options
+}
+
+# Save PSOptions to be restored by Restore-PSOptions
+function Save-PSOptions {
+    param(
+        [ValidateScript({$parent = Split-Path $_;if($parent){Test-Path $parent}else{return $true}})]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
+
+        [ValidateNotNullOrEmpty()]
+        [object]
+        $Options = (Get-PSOptions -DefaultToNew)
+    )
+
+    $Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath $PSOptionsPath
+}
+
+# Restore PSOptions
+# Optionally remove the PSOptions file
+function Restore-PSOptions {
+    param(
+        [ValidateScript({Test-Path $_})]
+        [string]
+        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
+        [switch]
+        $Remove
+    )
+
+    $options = Get-Content -Path $PSOptionsPath | ConvertFrom-Json
+
+    if($Remove)
+    {
+        # Remove PSOptions.
+        # The file is only used to set the PSOptions.
+        Remove-Item -Path $psOptionsPath -Force
+    }
+
+    $newOptions = New-PSOptionsObject `
+                    -RootInfo $options.RootInfo `
+                    -Top $options.Top `
+                    -Runtime $options.Runtime `
+                    -Crossgen $options.Crossgen `
+                    -Configuration $options.Configuration `
+                    -PSModuleRestore $options.PSModuleRestore `
+                    -Framework $options.Framework `
+                    -Output $options.Output
+
+    Set-PSOptions -Options $newOptions
+}
+
+function New-PSOptionsObject
+{
+    param(
+        [PSCustomObject]
+        $RootInfo,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Top,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Runtime,
+
+        [Parameter(Mandatory)]
+        [Bool]
+        $CrossGen,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Configuration,
+
+        [Parameter(Mandatory)]
+        [Bool]
+        $PSModuleRestore,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Framework,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Output
+    )
+
+    return @{
+        RootInfo = $RootInfo
+        Top = $Top
+        Configuration = $Configuration
+        Framework = $Framework
+        Runtime = $Runtime
+        Output = $Output
+        CrossGen = $CrossGen
+        PSModuleRestore = $PSModuleRestore
+    }
 }
 
 $script:RESX_TEMPLATE = @'

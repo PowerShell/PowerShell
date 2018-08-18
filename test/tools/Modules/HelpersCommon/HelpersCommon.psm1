@@ -260,3 +260,9 @@ function Test-IsVstsLinux
 {
     return ($env:TF_BUILD -and $IsLinux)
 }
+
+# Tests if we are running is a VSTS Linux Build
+function Test-IsVstsWindows
+{
+    return ($env:TF_BUILD -and $IsWindows)
+}
