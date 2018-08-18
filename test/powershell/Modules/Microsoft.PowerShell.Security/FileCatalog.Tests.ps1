@@ -237,9 +237,12 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
                 # When -Path is not specified, it should use current directory
                 $null = New-FileCatalog -CatalogFilePath $catalogPath -CatalogVersion 1.0
                 $result = Test-FileCatalog -CatalogFilePath $catalogPath
+
                 if($result -ne 'Valid')
                 {
+                    # We will fail, Write why.
                     $detailResult =  Test-FileCatalog -CatalogFilePath $catalogPath -Detailed
+                    $detailResult | ConvertTo-Json | Write-Verbose -Verbose
                 }
             }
             finally
@@ -247,12 +250,6 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
                 Pop-Location
                 Remove-Item "$catalogPath" -Force -ErrorAction SilentlyContinue
                 Remove-Item "$env:temp\UserConfigProv\" -Force -ErrorAction SilentlyContinue -Recurse
-            }
-
-            # We will fail, Write why.
-            if($detailResult)
-            {
-                $detailResult | ConvertTo-Json | Write-Verbose -Verbose
             }
 
             $result | Should -Be "Valid"

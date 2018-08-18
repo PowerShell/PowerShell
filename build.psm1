@@ -116,15 +116,7 @@ function Get-EnvironmentInformation
     if ($Environment.IsWindows)
     {
         $environment += @{'IsAdmin' = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)}
-        # Can't use $env:HOME - not available on older systems (e.g. in AppVeyor)
-        if(!$env:HOMEPATH)
-        {
-            $environment += @{'nugetPackagesRoot' = "${env:USERPROFILE}\.nuget\packages"}
-        }
-        else
-        {
-            $environment += @{'nugetPackagesRoot' = "${env:HOMEDRIVE}${env:HOMEPATH}\.nuget\packages"}
-        }
+        $environment += @{'nugetPackagesRoot' = "${env:USERPROFILE}\.nuget\packages"}
     }
     else
     {
@@ -3037,7 +3029,7 @@ function Restore-PSOptions {
     {
         # Remove PSOptions.
         # The file is only used to set the PSOptions.
-        Remove-Item -Path $psOptionsPath
+        Remove-Item -Path $psOptionsPath -Force
     }
 
     $newOptions = New-PSOptionsObject `
