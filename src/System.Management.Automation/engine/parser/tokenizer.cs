@@ -3370,14 +3370,18 @@ namespace System.Management.Automation.Language
                             strNum = strNum.Slice(1);
                         }
 
-                        // If first hex digit is 8 or higher, BigInt assumes negative, so we prepend 0
-                        Span<char> hexStrNum = new char[strNum.Length + 1];
-                        hexStrNum[0] = '0';
 
-                        // Copy the original number into the new span at position 1 (after the 0)
-                        strNum.CopyTo(hexStrNum.Slice(1));
+                        // If we're not at a length that would include a signing bit (every 8 chars length), prepend 0
+                        if ((strNum.Length & 7) != 0)
+                        {
+                            Span<char> hexStrNum = new char[strNum.Length + 1];
+                            hexStrNum[0] = '0';
 
-                        strNum = hexStrNum;
+                            // Copy the original number into the new span at position 1 (after the 0)
+                            strNum.CopyTo(hexStrNum.Slice(1));
+
+                            strNum = hexStrNum;
+                        }
                     }
 
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
