@@ -66,7 +66,7 @@ namespace System.Management.Automation.Language
     /// Defines the permissible suffixes for numerical tokens.
     /// </summary>
     [Flags]
-    enum NumberSuffixFlags
+    internal enum NumberSuffixFlags
     {
         /// <summary>
         /// No type suffix.
@@ -3280,6 +3280,7 @@ namespace System.Management.Automation.Language
                 {
                     NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
                                          NumberStyles.AllowExponent;
+
                     if (suffix == NumberSuffixFlags.Decimal)
                     {
                         if (Decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal d))
@@ -3288,6 +3289,7 @@ namespace System.Management.Automation.Language
                             return true;
                         }
 
+                        // Has double suffix but cannot be parsed as double.
                         result = null;
                         return false;
                     }
@@ -3325,9 +3327,9 @@ namespace System.Management.Automation.Language
                                 }
                                 else if (suffix.HasFlag(NumberSuffixFlags.Short))
                                 {
-                                    if (u <= UInt16.MaxValue && u >= UInt16.MinValue)
+                                    if (Utils.TryConvertUInt16(u, out ushort us))
                                     {
-                                        result = (ushort)u;
+                                        result = us;
                                     }
                                     else
                                     {
@@ -3346,26 +3348,39 @@ namespace System.Management.Automation.Language
                                 return false;
                             }
 
+                            // All successful parsing / casting attempts end up here.
                             return true;
                         }
 
+                        // Real but cannot be parsed as double.
                         result = null;
                         return false;
                     }
 
-                    if (hex && !strNum[0].IsHexDigit())
+                    if (hex)
                     {
-                        if (strNum[0] == '-')
-                        {
-                            multiplier = -multiplier;
+                        if (!strNum[0].IsHexDigit()) {
+                            if (strNum[0] == '-')
+                            {
+                                multiplier = -multiplier;
+                            }
+                            strNum = strNum.Slice(1);
                         }
-                        strNum = strNum.Slice(1);
+
+                        // If first hex digit is 8 or higher, BigInt assumes negative, so we prepend 0
+                        Span<char> hexStrNum = new char[strNum.Length + 1];
+                        hexStrNum[0] = '0';
+                        // Copy the original number into the new span at position 1 (after the 0)
+                        strNum.CopyTo(hexStrNum.Slice(1));
+
+                        strNum = hexStrNum;
                     }
 
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
                     if (BigInteger.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out BigInteger bigValue))
                     {
+                        // Include the multiplier now, when we know we can handle it without going out of bounds.
                         bigValue *= multiplier;
 
                         if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
@@ -3374,7 +3389,7 @@ namespace System.Management.Automation.Language
                             {
                                 result = us;
                             }
-                            else if ((bigValue > UInt32.MaxValue || suffix.HasFlag(NumberSuffixFlags.Long)) && Utils.TryConvertUInt64(bigValue, out ulong ul))
+                            else if ((suffix.HasFlag(NumberSuffixFlags.Long) || bigValue > UInt32.MaxValue) && Utils.TryConvertUInt64(bigValue, out ulong ul))
                             {
                                 result = ul;
                             }
@@ -3384,6 +3399,7 @@ namespace System.Management.Automation.Language
                             }
                             else
                             {
+                                // Number is suffixed as unsigned but is outside possible bounds
                                 result = null;
                                 return false;
                             }
@@ -3398,11 +3414,10 @@ namespace System.Management.Automation.Language
                                 result = s;
                                 return true;
                             }
-                            else
-                            {
-                                result = null;
-                                return false;
-                            }
+
+                            // Number has short suffix but is outside bounds for Int16.
+                            result = null;
+                            return false;
                         }
 
                         long longValue;
@@ -3413,36 +3428,33 @@ namespace System.Management.Automation.Language
                                 result = longValue;
                                 return true;
                             }
+
+                            // Number has long suffix but is outside bounds for Int64.
                             result = null;
                             return false;
                         }
 
                         // From here on - the user hasn't specified the type, so we need to figure it out.
-
-                        TypeCode whichTryParseWorked;
-                        decimal decimalValue;
                         if (Utils.TryConvertInt32(bigValue, out int i))
                         {
-                            whichTryParseWorked = TypeCode.Int32;
+                            result = i;
                         }
-                        else if (Utils.TryConvertInt64(bigValue, out long l))
+                        else if (Utils.TryConvertInt64(bigValue, out longValue))
                         {
-                            whichTryParseWorked = TypeCode.Int64;
+                            result = longValue;
                         }
-                        else if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimalValue))
+                        else if (Utils.TryConvertDecimal(bigValue, out decimal dec))
                         {
-                            whichTryParseWorked = TypeCode.Decimal;
-                            bigValue = (BigInteger)decimalValue;
+                            result = dec;
                         }
                         else
                         {
                             // The result must be double if we get here.
                             if (!hex)
                             {
-                                double doubleValue;
-                                if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out doubleValue))
+                                if (Utils.TryConvertDouble(bigValue, out double d))
                                 {
-                                    result = doubleValue * multiplier;
+                                    result = d;
                                     return true;
                                 }
                             }
@@ -3451,28 +3463,11 @@ namespace System.Management.Automation.Language
                             return false;
                         }
 
-                        bigValue *= multiplier;
-                        if (bigValue >= int.MinValue && bigValue <= int.MaxValue && whichTryParseWorked <= TypeCode.Int32)
-                        {
-                            result = (int)bigValue;
-                        }
-                        else if (bigValue >= long.MinValue && bigValue <= long.MaxValue && whichTryParseWorked <= TypeCode.Int64)
-                        {
-                            result = (long)bigValue;
-                        }
-                        else if (bigValue >= (BigInteger)decimal.MinValue && bigValue <= (BigInteger)decimal.MaxValue && whichTryParseWorked <= TypeCode.Decimal)
-                        {
-                            result = (decimal)bigValue;
-                        }
-                        else
-                        {
-                            result = (double)bigValue;
-                        }
-
                         return true;
                     }
-                    else // Could not parse as arbitrary size integer.
+                    else
                     {
+                        // Could not parse as an integer of any size.
                         result = null;
                         return false;
                     }
@@ -3662,6 +3657,15 @@ namespace System.Management.Automation.Language
             {
                 SkipChar();
 
+                /*switch (c)
+                {
+                    case 'k':
+                    case 'K':
+                        break;
+                    case 'm':
+                    case 'M':
+                        break;
+                }*/
                 if (c == 'k' || c == 'K') { multiplier = 1024; }
                 else if (c == 'm' || c == 'M') { multiplier = 1024 * 1024; }
                 else if (c == 'g' || c == 'G') { multiplier = 1024 * 1024 * 1024; }
