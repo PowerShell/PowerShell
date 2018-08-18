@@ -3381,11 +3381,6 @@ namespace System.Management.Automation.Language
 
                             strNum = hexStrNum;
                         }
-                        else if (strNum.Length <= 16 && suffix.HasFlag(NumberSuffixFlags.Unsigned) && strNum[0] == '0')
-                        {
-                            // If we have a definite sign bit and it is 0 with a length that could be uint, make it so!
-                            suffix |= NumberSuffixFlags.Unsigned;
-                        }
                     }
 
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
