@@ -3370,9 +3370,8 @@ namespace System.Management.Automation.Language
                             strNum = strNum.Slice(1);
                         }
 
-
-                        // Permit sign bits at 8 length or 16 and above
-                        if ((strNum.Length < 16 && strNum.Length != 8) && strNum[0] != '0')
+                        // If we're not at a length that would include a signing bit (every 8 chars length), prepend 0 if needed.
+                        if ((strNum.Length & 7) != 0 && strNum[0] != '0')
                         {
                             Span<char> hexStrNum = new char[strNum.Length + 1];
                             hexStrNum[0] = '0';
@@ -3382,9 +3381,9 @@ namespace System.Management.Automation.Language
 
                             strNum = hexStrNum;
                         }
-
-                        if (!suffix.HasFlag(NumberSuffixFlags.Unsigned) && strNum.Length <= 16 && (int)strNum[0] < 8) {
-                            // If the leading bit is a sign bit and would come out positive -> uint
+                        else if (strNum.Length <= 16 && suffix.HasFlag(NumberSuffixFlags.Unsigned) && strNum[0] == '0')
+                        {
+                            // If we have a definite sign bit and it is 0 with a length that could be uint, make it so!
                             suffix |= NumberSuffixFlags.Unsigned;
                         }
                     }
