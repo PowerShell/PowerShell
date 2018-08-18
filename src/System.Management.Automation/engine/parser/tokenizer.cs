@@ -3456,7 +3456,7 @@ namespace System.Management.Automation.Language
                         }
                         else
                         {
-                            // The result must be double if we get here.
+                            // If we're not being digit-critical (i.e., hex) just call it a double
                             if (!hex)
                             {
                                 if (Utils.TryConvertDouble(bigValue, out double d))
@@ -3464,6 +3464,12 @@ namespace System.Management.Automation.Language
                                     result = d;
                                     return true;
                                 }
+                            }
+                            else
+                            {
+                                // If you _really_ want a bigint that badly, then TAKE IT.
+                                result = bigValue;
+                                return true;
                             }
 
                             result = null;
