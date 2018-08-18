@@ -3309,7 +3309,7 @@ namespace System.Management.Automation.Language
                             {
                                 result = d;
                             }
-                            if (suffix == NumberSuffixFlags.Long && Utils.TryConvertInt64(d, out long l))
+                            else if (suffix == NumberSuffixFlags.Long && Utils.TryConvertInt64(d, out long l))
                             {
                                 result = l;
                             }
@@ -3361,6 +3361,7 @@ namespace System.Management.Automation.Language
                         }
                         strNum = strNum.Slice(1);
                     }
+
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
                     if (BigInteger.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out BigInteger bigValue))
@@ -3415,66 +3416,66 @@ namespace System.Management.Automation.Language
                             result = null;
                             return false;
                         }
-                    }
-                    else
-                    {
-                        result = null;
-                        return false;
-                    }
 
-                    // From here on - the user hasn't specified the type, so we need to figure it out.
+                        // From here on - the user hasn't specified the type, so we need to figure it out.
 
-                    TypeCode whichTryParseWorked;
-                    decimal decimalValue;
-                    if (Utils.TryConvertInt32(bigValue, out int i))
-                    {
-                        whichTryParseWorked = TypeCode.Int32;
-                    }
-                    else if (Utils.TryConvertInt64(bigValue, out long l))
-                    {
-                        whichTryParseWorked = TypeCode.Int64;
-                    }
-                    else if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimalValue))
-                    {
-                        whichTryParseWorked = TypeCode.Decimal;
-                        bigValue = (BigInteger)decimalValue;
-                    }
-                    else
-                    {
-                        // The result must be double if we get here.
-                        if (!hex)
+                        TypeCode whichTryParseWorked;
+                        decimal decimalValue;
+                        if (Utils.TryConvertInt32(bigValue, out int i))
                         {
-                            double doubleValue;
-                            if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out doubleValue))
+                            whichTryParseWorked = TypeCode.Int32;
+                        }
+                        else if (Utils.TryConvertInt64(bigValue, out long l))
+                        {
+                            whichTryParseWorked = TypeCode.Int64;
+                        }
+                        else if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimalValue))
+                        {
+                            whichTryParseWorked = TypeCode.Decimal;
+                            bigValue = (BigInteger)decimalValue;
+                        }
+                        else
+                        {
+                            // The result must be double if we get here.
+                            if (!hex)
                             {
-                                result = doubleValue * multiplier;
-                                return true;
+                                double doubleValue;
+                                if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out doubleValue))
+                                {
+                                    result = doubleValue * multiplier;
+                                    return true;
+                                }
                             }
+
+                            result = null;
+                            return false;
                         }
 
+                        bigValue *= multiplier;
+                        if (bigValue >= int.MinValue && bigValue <= int.MaxValue && whichTryParseWorked <= TypeCode.Int32)
+                        {
+                            result = (int)bigValue;
+                        }
+                        else if (bigValue >= long.MinValue && bigValue <= long.MaxValue && whichTryParseWorked <= TypeCode.Int64)
+                        {
+                            result = (long)bigValue;
+                        }
+                        else if (bigValue >= (BigInteger)decimal.MinValue && bigValue <= (BigInteger)decimal.MaxValue && whichTryParseWorked <= TypeCode.Decimal)
+                        {
+                            result = (decimal)bigValue;
+                        }
+                        else
+                        {
+                            result = (double)bigValue;
+                        }
+
+                        return true;
+                    }
+                    else // Could not parse as arbitrary size integer.
+                    {
                         result = null;
                         return false;
                     }
-
-                    bigValue *= multiplier;
-                    if (bigValue >= int.MinValue && bigValue <= int.MaxValue && whichTryParseWorked <= TypeCode.Int32)
-                    {
-                        result = (int)bigValue;
-                    }
-                    else if (bigValue >= long.MinValue && bigValue <= long.MaxValue && whichTryParseWorked <= TypeCode.Int64)
-                    {
-                        result = (long)bigValue;
-                    }
-                    else if (bigValue >= (BigInteger)decimal.MinValue && bigValue <= (BigInteger)decimal.MaxValue && whichTryParseWorked <= TypeCode.Decimal)
-                    {
-                        result = (decimal)bigValue;
-                    }
-                    else
-                    {
-                        result = (double)bigValue;
-                    }
-
-                    return true;
                 }
                 catch (Exception)
                 {
