@@ -3342,8 +3342,9 @@ namespace System.Management.Automation.Language
                                     result = (uint)u;
                                 }
                             }
-                            else // Parsed as double but with unresolvable type suffixes.
+                            else
                             {
+                                // Parsed as double but with unresolvable type suffixes.
                                 result = null;
                                 return false;
                             }
@@ -3359,17 +3360,20 @@ namespace System.Management.Automation.Language
 
                     if (hex)
                     {
-                        if (!strNum[0].IsHexDigit()) {
+                        if (!strNum[0].IsHexDigit())
+                        {
                             if (strNum[0] == '-')
                             {
                                 multiplier = -multiplier;
                             }
+
                             strNum = strNum.Slice(1);
                         }
 
                         // If first hex digit is 8 or higher, BigInt assumes negative, so we prepend 0
                         Span<char> hexStrNum = new char[strNum.Length + 1];
                         hexStrNum[0] = '0';
+
                         // Copy the original number into the new span at position 1 (after the 0)
                         strNum.CopyTo(hexStrNum.Slice(1));
 
@@ -3563,6 +3567,7 @@ namespace System.Management.Automation.Language
                     {
                         notNumber = true;
                     }
+
                     hex = true;
                 }
                 else
@@ -3657,20 +3662,29 @@ namespace System.Management.Automation.Language
             {
                 SkipChar();
 
-                /*switch (c)
+                switch (c)
                 {
                     case 'k':
                     case 'K':
+                        multiplier = 1024;
                         break;
                     case 'm':
                     case 'M':
+                        multiplier = 1024 * 1024;
                         break;
-                }*/
-                if (c == 'k' || c == 'K') { multiplier = 1024; }
-                else if (c == 'm' || c == 'M') { multiplier = 1024 * 1024; }
-                else if (c == 'g' || c == 'G') { multiplier = 1024 * 1024 * 1024; }
-                else if (c == 't' || c == 'T') { multiplier = 1024L * 1024 * 1024 * 1024; }
-                else if (c == 'p' || c == 'P') { multiplier = 1024L * 1024 * 1024 * 1024 * 1024; }
+                    case 'g':
+                    case 'G':
+                        multiplier = 1024 * 1024 * 1024;
+                        break;
+                    case 't':
+                    case 'T':
+                        multiplier = 1024L * 1024 * 1024 * 1024;
+                        break;
+                    case 'p':
+                    case 'P':
+                        multiplier = 1024L * 1024 * 1024 * 1024 * 1024;
+                        break;
+                }
 
                 char c1 = PeekChar();
                 if (c1 == 'b' || c1 == 'B')
