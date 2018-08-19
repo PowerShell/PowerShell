@@ -3428,7 +3428,8 @@ namespace System.Management.Automation.Language
                         }
 
                         long longValue;
-                        if (suffix == NumberSuffixFlags.Long)
+                        // If we have specifically asked for a Long value either with suffix or hex of proper length
+                        if (suffix == NumberSuffixFlags.Long || (hex && strNum.Length == 16))
                         {
                             if (Utils.TryConvertInt64(bigValue, out longValue))
                             {
