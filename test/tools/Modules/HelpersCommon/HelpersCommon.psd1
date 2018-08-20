@@ -26,6 +26,7 @@ FunctionsToExport = @(
         'Test-IsElevated'
         'Test-IsRoot'
         'Test-IsVstsLinux'
+        'Test-IsVstsWindows'
         'Test-TesthookIsSet'
         'Wait-FileToBePresent'
         'Wait-UntilTrue'

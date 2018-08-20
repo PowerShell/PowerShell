@@ -31,8 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="libpsl" Version="6.0.0-*" />
-    <PackageReference Include="psrp" Version="1.4.5-*" />
     <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
   </ItemGroup>

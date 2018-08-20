@@ -233,8 +233,11 @@ function Send-VstsLogFile {
         Copy-Item -Path $Path -Destination $logFile
     }
 
-    Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
-    Write-Verbose "Log file captured as $name" -Verbose
+    if($env:BUILD_REASON -ne 'PullRequest')
+    {
+        Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
+        Write-Verbose "Log file captured as $name" -Verbose
+    }
 }
 
 # Tests if the Linux or macOS user is root
@@ -256,4 +259,10 @@ function Test-IsRoot
 function Test-IsVstsLinux
 {
     return ($env:TF_BUILD -and $IsLinux)
+}
+
+# Tests if we are running is a VSTS Linux Build
+function Test-IsVstsWindows
+{
+    return ($env:TF_BUILD -and $IsWindows)
 }
