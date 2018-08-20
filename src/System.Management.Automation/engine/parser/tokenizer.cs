@@ -3376,6 +3376,33 @@ namespace System.Management.Automation.Language
 
                             break;
                     }
+                    else if (suffix == NumberSuffixFlags.Short)
+                    {
+                        if (short.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out short s))
+                        {
+                            result = s * (short)multiplier;
+                            return true;
+                        }
+                        result = null;
+                        return false;
+                    }
+                    else if (suffix.HasFlag(NumberSuffixFlags.Unsigned) && ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
+                    {
+                        u *= (ulong)multiplier;
+                        if (suffix.HasFlag(NumberSuffixFlags.Short) && u <= ushort.MaxValue)
+                        {
+                            result = (ushort)u;
+                        }
+                        else if (suffix.HasFlag(NumberSuffixFlags.Long) || u > uint.MaxValue)
+                        {
+                            result = u;
+                        }
+                        else
+                        {
+                            result = (uint)u;
+                        }
+                        return true;
+                    }
 
                     // From here on - the user hasn't specified the type, so we need to figure it out.
 
