@@ -477,6 +477,16 @@ namespace System.Management.Automation.Language
         Signature, // i.e. class or method declaration
     }
 
+    [Flags]
+    internal enum NumberSuffixFlags
+    {
+        None = 0x0,
+        Unsigned = 0x1,
+        Short = 0x2,
+        Long = 0x4,
+        Decimal = 0x8
+    }
+
     //
     // Class used to do a partial snapshot of the state of the tokenizer.
     // This is used for nested scans on the same string.
@@ -3237,7 +3247,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static bool TryGetNumberValue(string strNum, bool hex, bool real, char suffix, long multiplier, out object result)
+        private static bool TryGetNumberValue(string strNum, bool hex, bool real, NumberSuffixFlags suffix, long multiplier, out object result)
         {
             checked
             {
@@ -3245,7 +3255,7 @@ namespace System.Management.Automation.Language
                 {
                     NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
                                          NumberStyles.AllowExponent;
-                    if (suffix == 'd' || suffix == 'D')
+                    if (suffix == NumberSuffixFlags.Decimal)
                     {
                         decimal d;
                         if (Decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
@@ -3268,13 +3278,33 @@ namespace System.Management.Automation.Language
                             {
                                 d = -0.0;
                             }
-                            if (suffix == 'l' || suffix == 'L')
+
+                            if (suffix == NumberSuffixFlags.Long)
                             {
-                                result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
+                                result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture) * multiplier);
+                            }
+                            else if (suffix == NumberSuffixFlags.Short)
+                            {
+                                result = ((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * (short)multiplier);
+                            }
+                            else if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
+                            {
+                                if (suffix.HasFlag(NumberSuffixFlags.Long))
+                                {
+                                    result = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier);
+                                }
+                                else if (suffix.HasFlag(NumberSuffixFlags.Short))
+                                {
+                                    result = ((ushort)Convert.ChangeType(d, typeof(ushort), CultureInfo.InvariantCulture) * (ushort)multiplier);
+                                }
+                                else
+                                {
+                                    result = ((uint)Convert.ChangeType(d, typeof(uint), CultureInfo.InvariantCulture) * (uint)multiplier);
+                                }
                             }
                             else
                             {
-                                result = d * multiplier;
+                                result = d;
                             }
                             return true;
                         }
@@ -3294,7 +3324,7 @@ namespace System.Management.Automation.Language
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
                     long longValue;
-                    if (suffix == 'l' || suffix == 'L')
+                    if (suffix == NumberSuffixFlags.Long)
                     {
                         if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
                         {
@@ -3303,6 +3333,33 @@ namespace System.Management.Automation.Language
                         }
                         result = null;
                         return false;
+                    }
+                    else if (suffix == NumberSuffixFlags.Short)
+                    {
+                        if (short.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out short s))
+                        {
+                            result = s * (short)multiplier;
+                            return true;
+                        }
+                        result = null;
+                        return false;
+                    }
+                    else if (suffix.HasFlag(NumberSuffixFlags.Unsigned) && ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
+                    {
+                        u *= (ulong)multiplier;
+                        if (suffix.HasFlag(NumberSuffixFlags.Short) && u <= ushort.MaxValue)
+                        {
+                            result = (ushort)u;
+                        }
+                        else if (suffix.HasFlag(NumberSuffixFlags.Long) || u > uint.MaxValue)
+                        {
+                            result = u;
+                        }
+                        else
+                        {
+                            result = (uint)u;
+                        }
+                        return true;
                     }
 
                     // From here on - the user hasn't specified the type, so we need to figure it out.
@@ -3377,7 +3434,7 @@ namespace System.Management.Automation.Language
                 || (AllowSignedNumbers && (firstChar == '+' || firstChar.IsDash())), "Number must start with '.', '-', or digit.");
 
             bool hex, real;
-            char suffix;
+            NumberSuffixFlags suffix;
             long multiplier;
 
             string strNum = ScanNumberHelper(firstChar, out hex, out real, out suffix, out multiplier);
@@ -3418,11 +3475,11 @@ namespace System.Management.Automation.Language
         /// OR
         /// return the string format of the number
         /// </returns>
-        private string ScanNumberHelper(char firstChar, out bool hex, out bool real, out char suffix, out long multiplier)
+        private string ScanNumberHelper(char firstChar, out bool hex, out bool real, out NumberSuffixFlags suffix, out long multiplier)
         {
             hex = false;
             real = false;
-            suffix = '\0';
+            suffix = NumberSuffixFlags.None;
             multiplier = 1;
 
             bool notNumber = false;
@@ -3492,8 +3549,58 @@ namespace System.Management.Automation.Language
             if (c.IsTypeSuffix())
             {
                 SkipChar();
-                suffix = c;
+                switch (c)
+                {
+                    case 'u':
+                    case 'U':
+                        suffix |= NumberSuffixFlags.Unsigned;
+                        break;
+                    case 's':
+                    case 'S':
+                        suffix |= NumberSuffixFlags.Short;
+                        break;
+                    case 'l':
+                    case 'L':
+                        suffix |= NumberSuffixFlags.Long;
+                        break;
+                    case 'd':
+                    case 'D':
+                        suffix |= NumberSuffixFlags.Decimal;
+                        break;
+                    default:
+                        notNumber = true;
+                        break;
+                }
+
                 c = PeekChar();
+
+                if (c.IsTypeSuffix())
+                {
+                    SkipChar();
+                    if (suffix == NumberSuffixFlags.Unsigned)
+                    {
+                        switch (c)
+                        {
+                            case 'l':
+                            case 'L':
+                                suffix |= NumberSuffixFlags.Long;
+                                break;
+                            case 's':
+                            case 'S':
+                                suffix |= NumberSuffixFlags.Short;
+                                break;
+                            default:
+                                notNumber = true;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        notNumber = true;
+                    }
+
+                    c = PeekChar();
+                }
             }
 
             if (c.IsMultiplierStart())
