@@ -3371,7 +3371,7 @@ namespace System.Management.Automation.Language
                         }
 
                         // If we're not at a length that would include a signing bit (every 8 chars length), prepend 0 if needed.
-                        if ((strNum.Length & 7) != 0 && strNum[0] != '0')
+                        if (suffix.HasFlag(NumberSuffixFlags.Unsigned) || ((strNum.Length & 7) != 0 && strNum[0] != '0'))
                         {
                             Span<char> hexStrNum = new char[strNum.Length + 1];
                             hexStrNum[0] = '0';
