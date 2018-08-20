@@ -833,6 +833,23 @@ foo``u{2195}abc
             param($Script)
              {[ScriptBlock]::Create($Script).Invoke()} | Should -Throw
         }
+
+        $testInvalidNumerals = @(
+            @{ Script = "16p" }
+            @{ Script = "20ux" }
+            @{ Script = "18uu" }
+            @{ Script = "21ss" }
+            @{ Script = "100ll" }
+            @{ Script = "150su" }
+            @{ Script = "10ds" }
+            @{ Script = "16sl" }
+            @{ Script = "188lu" }
+            @{ Script = "500sgb" }
+        )
+        It "<Script> should throw an error" -TestCases $testInvalidNumerals {
+            param($Script)
+             {[ScriptBlock]::Create($Script).Invoke()} | Should -Throw
+        }
     }
 
 	It "This is a simple test of the concatenation of two arrays. (line 2460)"{
@@ -972,6 +989,24 @@ foo``u{2195}abc
         }
 
         $testCases = @(
+            @{ script = "#requires"; firstToken = $null; lastToken = $null },
+            @{ script = "#requires -Version 5.0`n10"; firstToken = "10"; lastToken = "10" },
+            @{ script = "Write-Host 'Hello'`n#requires -Version 5.0`n7"; firstToken = "Write-Host"; lastToken = "7" },
+            @{ script = "Write-Host 'Hello'`n#requires -Version 5.0"; firstToken = "Write-Host"; lastToken = "Hello"}
+        )
+
+        It "Correctly resets the first and last tokens in the tokenizer after nested scan in script" -TestCases $testCases {
+            param($script, $firstToken, $lastToken)
+
+            $ps.AddScript($script)
+            $ps.AddScript("(`$^,`$`$)")
+            $tokens = $ps.Invoke(@(), $settings)
+
+            $tokens[0] | Should -BeExactly $firstToken
+            $tokens[1] | Should -BeExactly $lastToken
+        }
+    }
+}       $testCases = @(
             @{ script = "#requires"; firstToken = $null; lastToken = $null },
             @{ script = "#requires -Version 5.0`n10"; firstToken = "10"; lastToken = "10" },
             @{ script = "Write-Host 'Hello'`n#requires -Version 5.0`n7"; firstToken = "Write-Host"; lastToken = "7" },
