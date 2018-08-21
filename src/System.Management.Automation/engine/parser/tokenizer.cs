@@ -3255,6 +3255,8 @@ namespace System.Management.Automation.Language
                 {
                     NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
                                          NumberStyles.AllowExponent;
+
+                    // Decimal parser does not accept hex literals, and 'd' is a valid hex character, so will never be read as Decimal literal
                     if (suffix == NumberSuffixFlags.Decimal)
                     {
                         decimal d;
