@@ -3287,7 +3287,7 @@ namespace System.Management.Automation.Language
                                     result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture) * multiplier);
                                     break;
                                 case NumberSuffixFlags.Short:
-                                    result = ((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * (short)multiplier);
+                                    result = (short)((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * multiplier);
                                     break;
                                 default:
                                     if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
