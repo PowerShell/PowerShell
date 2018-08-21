@@ -67,22 +67,8 @@
         <FileSearch Name="ucrtbase.dll"/>
       </DirectorySearch>
     </Property>	
-    <Property Id="VCREDISTINSTALLEDX64" Secure="yes">
-      <RegistrySearch Id="VCRedist_RegSearch_x64" Root="HKLM" Name="Version" Type="raw" Win64="yes"
-                      Key="SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum"/>
-    </Property>
-    <Property Id="VCREDISTINSTALLEDX86" Secure="yes">
-      <RegistrySearch Id="VCRedist_RegSearch_x86" Root="HKLM" Name="Version" Type="raw" Win64="no"
-                      Key="SOFTWARE\Microsoft\DevDiv\VC\Servicing\14.0\RuntimeMinimum"/>
-    </Property>
     <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed. You can download it here: https://www.microsoft.com/download/details.aspx?id=50410">
       <![CDATA[Installed OR UCRTINSTALLED]]>
-    </Condition>
-    <Condition Message="$(env.ProductName) requires the Visual Studio C++ 2015 x64 redistributables to be installed. You can download it here: https://www.microsoft.com/download/details.aspx?id=48145">
-      <![CDATA[Installed OR ("$(var.ProductTargetArchitecture)" = "x64" AND VCREDISTINSTALLEDX64 AND VCREDISTINSTALLEDX64 >= "14.0.23918")]]>
-    </Condition>
-    <Condition Message="$(env.ProductName) requires the Visual Studio C++ 2015 x86 redistributables to be installed. You can download it here: https://www.microsoft.com/download/details.aspx?id=48145">
-      <![CDATA[Installed OR (VCREDISTINSTALLEDX86 AND VCREDISTINSTALLEDX86 >= "14.0.23918")]]>
     </Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
