@@ -3298,7 +3298,7 @@ namespace System.Management.Automation.Language
                                         }
                                         else if (suffix.HasFlag(NumberSuffixFlags.Short))
                                         {
-                                            result = ((ushort)Convert.ChangeType(d, typeof(ushort), CultureInfo.InvariantCulture) * (ushort)multiplier);
+                                            result = (ushort)((ushort)Convert.ChangeType(d, typeof(ushort), CultureInfo.InvariantCulture) * multiplier);
                                         }
                                         else
                                         {
@@ -3340,11 +3340,10 @@ namespace System.Management.Automation.Language
 
                             result = null;
                             return false;
-
                         case NumberSuffixFlags.Short:
                             if (short.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out short s))
                             {
-                                result = s * (short)multiplier;
+                                result = (short)(s * multiplier);
                                 return true;
                             }
 
