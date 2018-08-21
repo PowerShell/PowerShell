@@ -29,9 +29,9 @@ You can download and install a PowerShell package for any of the following platf
 | -------------------------------------------| ------------------------| ----------------------| ------------------------------|
 | [Windows (x64)][corefx-win]                | [.msi][rl-windows-64]   | [.msi][pv-windows-64] | [Instructions][in-windows]    |
 | [Windows (x86)][corefx-win]                | [.msi][rl-windows-86]   | [.msi][pv-windows-86] | [Instructions][in-windows]    |
-| [Ubuntu 18.04][corefx-linux]               |                         | [.deb][pv-ubuntu18]   | [Instructions][in-ubuntu18]   |
-| [Ubuntu 16.04][corefx-linux]               | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]   | [Instructions][in-ubuntu16]   |
-| [Ubuntu 14.04][corefx-linux]               | [.deb][rl-ubuntu14]     | [.deb][pv-ubuntu14]   | [Instructions][in-ubuntu14]   |
+| [Ubuntu 18.04][corefx-linux]               |                         | [Snapcraft][pv-snap]  | [Instructions][in-snap]       |
+| [Ubuntu 16.04][corefx-linux]               | [Snapcraft][rl-snap]    | [Snapcraft][pv-snap]  | [Instructions][in-snap]       |
+| [Ubuntu 14.04][corefx-linux]               | [Snapcraft][rl-snap]    | [Snapcraft][pv-snap]  | [Instructions][in-snap]       |
 | [Debian 8.7+][corefx-linux]                | [.deb][rl-debian8]      | [.deb][pv-debian8]    | [Instructions][in-deb8]       |
 | [Debian 9][corefx-linux]                   | [.deb][rl-debian9]      | [.deb][pv-debian9]    | [Instructions][in-deb9]       |
 | [CentOS 7][corefx-linux]                   | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-centos]     |
@@ -40,6 +40,7 @@ You can download and install a PowerShell package for any of the following platf
 | [Fedora 27, Fedora 28][corefx-linux]       | [.rpm][rl-centos]       | [.rpm][pv-centos]     | [Instructions][in-fedora]     |
 | [macOS 10.12+][corefx-macos]               | [.pkg][rl-macos]        | [.pkg][pv-macos]      | [Instructions][in-macos]      |
 | Docker                                     |                         |                       | [Instructions][in-docker]     |
+| Many Linux distributions                   | [Snapcraft][rl-snap]    | [Snapcraft][pv-snap]  |                               |
 
 You can download and install a PowerShell package for any of the following platforms, **which are supported by the community.**
 
@@ -47,7 +48,6 @@ You can download and install a PowerShell package for any of the following platf
 | -------------------------| ------------------------| ----------------------------- | ------------------------------|
 | Arch Linux               |                         |                               | [Instructions][in-archlinux]  |
 | Kali Linux               | [.deb][rl-ubuntu16]     | [.deb][pv-ubuntu16]           | [Instructions][in-kali]       |
-| Many Linux distributions | [Snapcraft][rl-snap]    | [Snapcraft][pv-snap]          |                               |
 
 You can also download the PowerShell binary archives for Windows, macOS and Linux.
 
@@ -95,6 +95,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [pv-snap]: https://snapcraft.io/powershell-preview
 
 [in-windows]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
+[in-snap]: https://docs.microsoft.com/en-gb/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#snap-package
 [in-ubuntu14]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1404
 [in-ubuntu16]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1604
 [in-ubuntu18]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6#ubuntu-1804
