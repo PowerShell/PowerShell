@@ -406,12 +406,28 @@ class PSLogItem
                 $osLogIds.UseOldIds()
             }
 
-            $item.Message = $parts[$osLogIds.Message]
+            if($parts.Length -gt ($osLogIds.Message +1))
+            {
+                # The message got split into multiple parts, put it back together
+                $item.Message = $parts[$osLogIds.Message..($parts.Length-1)] -join ' '
+            }
+            else
+            {
+                $item.Message = $parts[$osLogIds.Message] -join ' '
+            }
 
             # [com.microsoft.powershell.logid]
             $splitChars = ('[', '.', ']')
 
             $item.LogId = $parts[$osLogIds.Id]
+
+            if($item.LogId -notmatch '^\[com\.microsoft\.powershell')
+            {
+                Write-Verbose "Skipping logId: $($item.LogId)" -Verbose
+                $result = $null
+                break
+            }
+
             $subparts = $item.LogId.Split($splitChars, [StringSplitOptions]::RemoveEmptyEntries)
             if ($subparts.Length -eq 4)
             {
@@ -789,12 +805,13 @@ function Get-PSOsLog
 
     if ($TotalCount -eq 0)
     {
-        Get-Content @contentParms | ConvertFrom-OsLog -After $After -Id $Id
+        Get-Content @contentParms | Where-Object {![string]::IsNullOrEmpty($_)} | ConvertFrom-OsLog -After $After -Id $Id
     }
     else
     {
         [string] $filter = [string]::Format("com.microsoft.powershell.{0}: (", $id)
-        Get-Content @contentParms -filter {$_.Contains($filter)} | ConvertFrom-OsLog -Id $Id -After $After | Select-Object -First $maxItems
+        Write-Warning "this code path `Get-PSOsLog -TotalCount` should not be used if the message field is needed!"
+        Get-Content @contentParms -filter {$_.Contains($filter)} | Where-Object {![string]::IsNullOrEmpty($_)} | ConvertFrom-OsLog -Id $Id -After $After | Select-Object -First $maxItems
     }
 }
 
@@ -875,16 +892,19 @@ function Export-PSOsLog
     Wait-UntilSuccess {
         # Leaving this in an turned on by default until the tests are stabilized.
         Write-Verbose "Exporting macOS logs..." -Verbose
-        $log = @(Start-NativeExecution -command {log show --info @extraParams} | Select-String -SimpleMatch 'com.microsoft.powershell')
+        $log = @(Start-NativeExecution -command {log show --info @extraParams})
 
-        if($log.Count -ge $MinimumCount){
+        # Only count line with `[com.microsoft.powershell` as matching rows
+        $logToCount = $log | Select-String -SimpleMatch '[com.microsoft.powershell'
+
+        if($logToCount.Count -ge $MinimumCount){
             Write-Output $log
         }
         else {
             throw "did not recieve at least $MinimumCount records but $($log.Count) instead."
         }
     } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds -LogErrorSb {
-        $log = Start-NativeExecution -command {log show --info @extraParams} | Select-String -SimpleMatch 'com.microsoft.powershell'
+        $log = Start-NativeExecution -command {log show --info @extraParams}
         Send-VstsLogFile -Contents $log -LogName 'Export-PSOsLog-Failure'
     }
 }
