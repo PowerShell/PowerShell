@@ -702,6 +702,7 @@ foo``u{2195}abc
             @{ Script = "100ll" }
             @{ Script = "150su" }
             @{ Script = "10ds" }
+            @{ Script = "10ud" }
             @{ Script = "16sl" }
             @{ Script = "188lu" }
             @{ Script = "500sgb" }
