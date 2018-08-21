@@ -33,7 +33,7 @@
 - Make native globbing on Unix return an absolute path when it is given an absolute path (#7106)
 - Improve the performance of `Group-Object` (#7410) (Thanks @powercode!)
 - Remove one unneeded verbose output from `ConvertTo-Json` (#7487) (Thanks @devblackops!)
-- Enable `Get-ChildItem` to produce `Mode` property even if cannot determine if hardlink (#7355)
+- Enable `Get-ChildItem` to produce `Mode` property even if cannot determine if hard link (#7355)
 
 ### Code Cleanup
 
