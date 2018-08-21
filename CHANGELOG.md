@@ -17,21 +17,21 @@
 
 ### General Cmdlet Updates and Fixes
 
-- Fix parameter name in the `Get-Variable` CmdLet error message (#7384) (Thanks @sethvs!)
+- Fix parameter name in the `Get-Variable` cmdlet error message (#7384) (Thanks @sethvs!)
 - Fix `Move-Item -Path` with wildcard character (#7397) (Thanks @kwkam!)
 - Ignore `Newtonsoft.Json` metadata properties in `ConvertFrom-Json` (#7308) (Thanks @louistio!)
-- Fix several issues in Markdown CmdLets (#7329)
+- Fix several issues in Markdown cmdlets (#7329)
 - Add support for parsing Link Header with variable whitespace (#7322)
-- Change parameters order in `Get-Help` and help in order to get first `-Full` and
-  then `-Functionality` when using Get-Help `-Fu␉` and help `-Fu␉` (#7370) (Thanks @sethvs!)
-- Add support for passing files and markdown directly to `Show-Markdown` (#7354)
+- Change parameter order in `Get-Help` and help in order to get first `-Full` and
+  then `-Functionality` when using Get-Help `-Fu` followed by pressing tab and help `-Fu` followed by pressing tab (#7370) (Thanks @sethvs!)
+- Add support for passing files and Markdown directly to `Show-Markdown` (#7354)
 - Add `-SkipIndex` parameter to `Select-Object` (#7483) (Thanks @powercode!)
 - Improve performance of `Import-CSV` up to 10 times (#7413) (Thanks @powercode!)
 - Update `Enable-PSRemoting` so configuration name is unique for Preview releases (#7202)
 - Improve performance on JSON to PSObject conversion (#7482) (Thanks @powercode!)
 - Fix error message for `Add-Type` when `-AssemblyName` with wildcard is not found (#7444)
-- Make Native globbing on Unix return an absolute path when it is given an absolute path (#7106)
-- Improve the performance of `Group-Object`  (#7410) (Thanks @powercode!)
+- Make native globbing on Unix return an absolute path when it is given an absolute path (#7106)
+- Improve the performance of `Group-Object` (#7410) (Thanks @powercode!)
 - Remove one unneeded verbose output from `ConvertTo-Json` (#7487) (Thanks @devblackops!)
 - Enable `Get-ChildItem` to produce `Mode` property even if cannot determine if hardlink (#7355)
 
