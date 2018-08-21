@@ -6,13 +6,13 @@
 
 - Fix to not duplicate the `System32` module path when starting `pwsh` from `pwsh` (#7414)
 - Fix sequence point update for `switch/if/for/while/do-while/do-until` statements (#7305)
-- Set the cursor to the place where a user hits tab key (#7299) (Thanks @jianyunt!)
+- Set the cursor to the place where a user hits tab key (#7299)
 - Adding `LanguagePrimitives.TryCompare` to provide faster comparisons (#7438) (Thanks @powercode!)
 - Improving performance of `LanguagePrimitives.TryConvertTo` (#7418) (Thanks @powercode!)
-- Set `PowerShellVersion` to `3.0` for built-in modules to make Windows PowerShell work when starting from PSCore (#7365)
+- Set `PowerShellVersion` to `3.0` for built-in modules to make Windows PowerShell work when starting from PowerShell Core (#7365)
 - Avoid extra unnecessary allocations in `PSMemberInfoInternalCollection<T>` (#7435) (Thanks @iSazonov!)
 - Enforce the `CompatiblePSEditions` check for modules from the legacy `System32` module path (#7183)
-- Make sure that `SettingFile` arg is parsed before we load the settings (#7449)
+- Make sure that `SettingFile` argument is parsed before we load the settings (#7449)
 - Default to `DefaultConsoleWidth` when DotNet says `WindowWidth` is 0 (#7465)
 
 ### General Cmdlet Updates and Fixes
@@ -72,9 +72,9 @@
 - Update NuGet packaging code for the new markdown assembly (#7431)
 - Update version of modules shipped with PowerShell (#7531)
 - Retry restore on failure (#7544 & #7550)
-- Update PSGet version
+- Update `PowerShellGet` version
 - Update NuGet package metadata (#7517)
-- Update reference to use packages from NuGet.org (#7525)
+- Update reference to use packages from `NuGet.org` (#7525)
 - `Start-DevPowerShell`: add `-Configuration` and handle `-ArgumentList` more properly (#7300) (Thanks @jazzdelightsme!)
 - Add preview icon to macOS launcher (#7448) (Thanks @thezim!)
 - Add `Microsoft.PowerShell.MarkdownRender` to `signing.xml` (#7472)
