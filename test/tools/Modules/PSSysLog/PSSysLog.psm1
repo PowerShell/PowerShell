@@ -423,7 +423,7 @@ class PSLogItem
 
             if($item.LogId -notmatch '^\[com\.microsoft\.powershell')
             {
-                Write-Verbose "logId: $($item.LogId)" -Verbose
+                Write-Verbose "Skipping logId: $($item.LogId)" -Verbose
                 $result = $null
                 break
             }
