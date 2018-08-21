@@ -864,7 +864,7 @@ foo``u{2195}abc
             @{ Script = "0x10us"; Expected = "UInt16" }
             @{ Script = "0x10s"; Expected = "Int16" }
             @{ Script = "0x10l"; Expected = "Int64" }
-            # This will change and should not be accepted by the parser.
+            # No decimal hex literals (d is a valid hex char, and decimal parsing does not accept hex values)
             @{ Script = "0x10d"; Expected = "Int32" }
         )
         It "<Script> should result in an [<Expected>] value" -TestCases $testLiteralTypes {
