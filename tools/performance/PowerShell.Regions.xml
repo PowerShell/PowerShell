@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes'?>
+<?Copyright (c) Microsoft Corporation. All rights reserved.?>
+<InstrumentationManifest>
+   <Instrumentation>
+      <Regions>
+         <RegionRoot Guid="{41b77e93-5bf5-4244-9591-7cd70c20ae98}" Name="PowerShell" FriendlyName="PowerShell">
+            <Region Guid="{8e8b111e-c2b7-40e5-b652-6504163c89a0}" Name="PowerShell-Startup" FriendlyName="PowerShell Startup">
+               <Start>
+                  <Event Provider="{A0C1853B-5C40-4B15-8766-3CF1C58F985A}" Id="40961" Version="1" />
+               </Start>
+               <Stop>
+                  <Event Provider="{A0C1853B-5C40-4B15-8766-3CF1C58F985A}" Id="40962" Version="1" />
+               </Stop>
+            </Region>
+            <Region Guid="{659ff11f-ad6f-4cae-b6be-f3fc58fa9a18}" Name="Load-User-Profiles" FriendlyName="Loading user profiles">
+               <Start>
+                   <!-- This is the telemetry event we report on startup -->
+                   <Duration Provider="{816ebd75-f7ab-59c0-e2f0-bddfeed66ac2}" Id="30" Version="0" Duration="ProfileLoadTime" Multiplier="1000000" />
+               </Start>
+               <Stop>
+                   <!-- This is the same event as in Start, which is extremely close, but not precisely when we recorded  -->
+                   <Event Provider="{816ebd75-f7ab-59c0-e2f0-bddfeed66ac2}" Id="30" Version="0"/>
+               </Stop>
+            </Region>
+            <Region Guid="{5d05192d-21ff-42ec-a041-0a0249337cd2}" Name="PowerShell-Parser" FriendlyName="Parser">
+               <Start>
+                  <Event Provider="{eba789d9-533b-58d4-cd1f-2e6520e3a9c2}" Id="1" Version="0" />
+               </Start>
+               <Stop>
+                  <Event Provider="{eba789d9-533b-58d4-cd1f-2e6520e3a9c2}" Id="2" Version="0" />
+               </Stop>
+               <Match>
+                   <Event TID="true" />
+               </Match>
+               <Naming>
+                   <PayloadBased NameField="FileName" />
+               </Naming>
+               <Region Guid="{eca842f1-501e-4fee-b7df-a142768c4ad3}" Name="Resolve Symbols" FriendlyName="Resolve Symbols">
+                   <Start>
+                      <Event Provider="{eba789d9-533b-58d4-cd1f-2e6520e3a9c2}" Id="3" Version="0" />
+                   </Start>
+                   <Stop>
+                      <Event Provider="{eba789d9-533b-58d4-cd1f-2e6520e3a9c2}" Id="4" Version="0" />
+                   </Stop>
+                   <Match>
+                       <Event TID="true" />
+                   </Match>
+               </Region>
+               <Region Guid="{1ce3dcde-19fc-456a-ade3-4c151927dd4c}" Name="Semantic Checks" FriendlyName="Semantic Checks">
+                   <Start>
+                      <Event Provider="{eba789d9-533b-58d4-cd1f-2e6520e3a9c2}" Id="5" Version="0" />
+                   </Start>
+                   <Stop>
+                      <Event Provider="{eba789d9-533b-58d4-cd1f-2e6520e3a9c2}" Id="6" Version="0" />
+                   </Stop>
+                   <Match>
+                       <Event TID="true" />
+                   </Match>
+                </Region>
+            </Region>
+            <Region Guid="{5aaa40ce-eca9-43a4-af3d-c7b7df367d27}" Name="PowerShell-SecurityChecks" FriendlyName="Security Checks">
+               <Start>
+                  <Event Provider="{eba789d9-533b-58d4-cd1f-2e6520e3a9c2}" Id="7" Version="0" />
+               </Start>
+               <Stop>
+                  <Event Provider="{eba789d9-533b-58d4-cd1f-2e6520e3a9c2}" Id="8" Version="0" />
+               </Stop>
+               <Match>
+                   <Event TID="true" />
+               </Match>
+               <Naming>
+                   <PayloadBased NameField="FileName" />
+               </Naming>
+            </Region>
+            <Region Guid="{ca0599aa-f074-44a8-b725-d5c077f87dd0}" Name="PowerShell-ScriptCompilation" FriendlyName="Compile Script">
+               <Start>
+                  <Event Provider="{eba789d9-533b-58d4-cd1f-2e6520e3a9c2}" Id="9" Version="0" />
+               </Start>
+               <Stop>
+                  <Event Provider="{eba789d9-533b-58d4-cd1f-2e6520e3a9c2}" Id="10" Version="0" />
+               </Stop>
+               <Match>
+                   <Event TID="true" />
+               </Match>
+               <Naming>
+                   <PayloadBased NameField="FileName" />
+               </Naming>
+            </Region>
+            <Region Guid="{6a40c960-b798-48e4-bd07-b1379948bb5d}" Name="PowerShell-CommandDiscovery" FriendlyName="Command Discovery">
+               <Start>
+                  <Event Provider="{ea9e8155-5042-5537-0b73-8c0e6b53f398}" Id="1" Version="0" />
+               </Start>
+               <Stop>
+                  <Event Provider="{ea9e8155-5042-5537-0b73-8c0e6b53f398}" Id="2" Version="0" />
+               </Stop>
+               <Match>
+                   <Event TID="true" />
+               </Match>
+               <Naming>
+                   <PayloadBased NameField="CommandName" />
+               </Naming>
+            </Region>
+               <Region Guid="{3c4f9c88-5dbc-4005-879c-32f3df8d9f90}" Name="PowerShell-Module-Autoloading" FriendlyName="Module Autoloading">
+                   <Start>
+                      <Event Provider="{ea9e8155-5042-5537-0b73-8c0e6b53f398}" Id="3" Version="0" />
+                   </Start>
+                   <Stop>
+                      <Event Provider="{ea9e8155-5042-5537-0b73-8c0e6b53f398}" Id="4" Version="0" />
+                   </Stop>
+                   <Match>
+                       <Event TID="true" />
+                   </Match>
+                   <Naming>
+                       <PayloadBased NameField="CommandName" />
+                   </Naming>
+               </Region>
+               <Region Guid="{47b337ef-df01-43ea-b411-f6206c7f0ff8}" Name="PowerShell-Module-Autodiscovery" FriendlyName="Module Auto Discovery">
+                   <Start>
+                      <Event Provider="{ea9e8155-5042-5537-0b73-8c0e6b53f398}" Id="5" Version="0" />
+                   </Start>
+                   <Stop>
+                      <Event Provider="{ea9e8155-5042-5537-0b73-8c0e6b53f398}" Id="6" Version="0" />
+                   </Stop>
+                   <Match>
+                       <Event TID="true" />
+                   </Match>
+                   <Naming>
+                       <PayloadBased NameField="CommandName" />
+                   </Naming>
+                   <Region Guid="{7b18786f-8721-4261-84a6-ddc23a78b088}" Name="PowerShell-SearchForModuleFiles" FriendlyName="Search for module files">
+                       <Start>
+                          <Event Provider="{ea9e8155-5042-5537-0b73-8c0e6b53f398}" Id="7" Version="0" />
+                       </Start>
+                       <Stop>
+                          <Event Provider="{ea9e8155-5042-5537-0b73-8c0e6b53f398}" Id="8" Version="0" />
+                       </Stop>
+                       <Match>
+                           <Event TID="true" />
+                       </Match>
+                   </Region>
+                   <Region Guid="{02b2288e-3618-4ed4-8a15-d2ed3b54b781}" Name="PowerShell-GetModuleExportedCommands" FriendlyName="Get module exported commands">
+                       <Start>
+                          <Event Provider="{ea9e8155-5042-5537-0b73-8c0e6b53f398}" Id="9" Version="0" />
+                       </Start>
+                       <Stop>
+                          <Event Provider="{ea9e8155-5042-5537-0b73-8c0e6b53f398}" Id="10" Version="0" />
+                       </Stop>
+                       <Match>
+                           <Event TID="true" />
+                       </Match>
+                       <Naming>
+                           <PayloadBased NameField="ModulePath" />
+                       </Naming>
+                   </Region>
+               </Region>
+            <Region Guid="{1874d1b3-e60d-48f9-a3cd-6943c82a125b}" Name="PowerShell-Runspaces" FriendlyName="Runspace Open">
+               <Start>
+                  <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="1" Version="0" />
+               </Start>
+               <Stop>
+                  <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="2" Version="0" />
+               </Stop>
+               <Match>
+                   <Event TID="true" />
+               </Match>
+               <Region Guid="{c825b361-d105-46a3-9218-7804cdc8edc2}" Name="Load Assemblies" FriendlyName="Load Assemblies">
+                   <Start>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="3" Version="0" />
+                   </Start>
+                   <Stop>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="4" Version="0" />
+                   </Stop>
+                   <Match>
+                       <Event TID="true" />
+                   </Match>
+                   <Region Guid="{4a60e08a-b956-4496-99e5-e66b88eadf9d}" Name="Load Assembly" FriendlyName="Load Assembly">
+                       <Start>
+                          <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="17" Version="0" />
+                       </Start>
+                       <Stop>
+                          <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="28" Version="0" />
+                       </Stop>
+                       <Naming>
+                           <PayloadBased NameField="Name" />
+                       </Naming>
+                       <Match>
+                           <Event TID="true" />
+                       </Match>
+                   </Region>
+               </Region>
+               <Region Guid="{29528eb8-b872-4661-9532-6fbc20c42514}" Name="Process Formats" FriendlyName="Process Formats">
+                   <Start>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="5" Version="0" />
+                   </Start>
+                   <Stop>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="6" Version="0" />
+                   </Stop>
+                   <Match>
+                       <Event TID="true" />
+                   </Match>
+                   <Region Guid="{dd55e27f-d493-4ab3-8ec5-6ae1d317c969}" Name="Process Format" FriendlyName="Format PS1XML">
+                       <Start>
+                          <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="19" Version="0" />
+                       </Start>
+                       <Stop>
+                          <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="20" Version="0" />
+                       </Stop>
+                       <Naming>
+                           <PayloadBased NameField="fileName" />
+                       </Naming>
+                       <Match>
+                           <Event TID="true" />
+                       </Match>
+                   </Region>
+               </Region>
+               <Region Guid="{a3e73e17-a1f1-4ac1-97bf-97761801a38e}" Name="Process Types" FriendlyName="Process Types">
+                   <Start>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="7" Version="0" />
+                   </Start>
+                   <Stop>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="8" Version="0" />
+                   </Stop>
+                   <Match>
+                       <Event TID="true" />
+                   </Match>
+                   <Region Guid="{68d491ca-8bca-441e-a65c-f1aef4589ddf}" Name="Process Type" FriendlyName="Type PS1XML">
+                       <Start>
+                          <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="21" Version="0" />
+                       </Start>
+                       <Stop>
+                          <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="22" Version="0" />
+                       </Stop>
+                       <Naming>
+                           <PayloadBased NameField="fileName" />
+                       </Naming>
+                       <Match>
+                           <Event TID="true" />
+                       </Match>
+                   </Region>
+               </Region>
+               <Region Guid="{38039aeb-36cf-4fb3-a5a7-c7da18663e2b}" Name="Load Providers" FriendlyName="Load Providers">
+                   <Start>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="9" Version="0" />
+                   </Start>
+                   <Stop>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="10" Version="0" />
+                   </Stop>
+                   <Match>
+                       <Event TID="true" />
+                   </Match>
+                   <Region Guid="{9f929beb-0a2a-4ddf-b017-390d141e1f00}" Name="Load Provider" FriendlyName="Load Provider">
+                       <Start>
+                          <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="23" Version="0" />
+                       </Start>
+                       <Stop>
+                          <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="24" Version="0" />
+                       </Stop>
+                       <Naming>
+                           <PayloadBased NameField="Name" />
+                       </Naming>
+                       <Match>
+                           <Event TID="true" />
+                       </Match>
+                   </Region>
+               </Region>
+               <Region Guid="{6d99b787-8ae3-4e06-aa79-5666a587cf9a}" Name="Load Commands" FriendlyName="Load Commands">
+                   <Start>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="11" Version="0" />
+                   </Start>
+                   <Stop>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="12" Version="0" />
+                   </Stop>
+                   <Match>
+                       <Event TID="true" />
+                   </Match>
+                   <Region Guid="{bde0893f-e255-4877-ac71-285455b2f26c}" Name="Load Command" FriendlyName="Load Command">
+                       <Start>
+                          <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="25" Version="0" />
+                       </Start>
+                       <Stop>
+                          <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="26" Version="0" />
+                       </Stop>
+                       <Naming>
+                           <PayloadBased NameField="Name" />
+                       </Naming>
+                       <Match>
+                           <Event TID="true" />
+                       </Match>
+                   </Region>
+               </Region>
+               <Region Guid="{bbcdbdde-5e0e-4343-a0af-8acec4acc58b}" Name="Load Variables" FriendlyName="Load Variables">
+                   <Start>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="13" Version="0" />
+                   </Start>
+                   <Stop>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="14" Version="0" />
+                   </Stop>
+                   <Match>
+                       <Event TID="true" />
+                   </Match>
+               </Region>
+               <Region Guid="{f16a63bc-e226-434b-979e-3501082ef28f}" Name="Load Environment Variables" FriendlyName="Load Environment Variables">
+                   <Start>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="15" Version="0" />
+                   </Start>
+                   <Stop>
+                      <Event Provider="{15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}" Id="16" Version="0" />
+                   </Stop>
+                   <Match>
+                       <Event TID="true" />
+                   </Match>
+               </Region>
+            </Region>
+         </RegionRoot>
+      </Regions>
+   </Instrumentation>
+</InstrumentationManifest>
+
