@@ -3279,34 +3279,37 @@ namespace System.Management.Automation.Language
                                 d = -0.0;
                             }
 
-                            if (suffix == NumberSuffixFlags.Long)
+                            switch (suffix)
                             {
-                                result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture) * multiplier);
+                                case NumberSuffixFlags.Long:
+                                    result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.Short:
+                                    result = ((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * (short)multiplier);
+                                    break;
+                                default:
+                                    if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
+                                    {
+                                        if (suffix.HasFlag(NumberSuffixFlags.Long))
+                                        {
+                                            result = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier);
+                                        }
+                                        else if (suffix.HasFlag(NumberSuffixFlags.Short))
+                                        {
+                                            result = ((ushort)Convert.ChangeType(d, typeof(ushort), CultureInfo.InvariantCulture) * (ushort)multiplier);
+                                        }
+                                        else
+                                        {
+                                            result = ((uint)Convert.ChangeType(d, typeof(uint), CultureInfo.InvariantCulture) * (uint)multiplier);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        result = d * multiplier;
+                                    }
+                                    break;
                             }
-                            else if (suffix == NumberSuffixFlags.Short)
-                            {
-                                result = ((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * (short)multiplier);
-                            }
-                            else if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
-                            {
-                                if (suffix.HasFlag(NumberSuffixFlags.Long))
-                                {
-                                    result = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier);
-                                }
-                                else if (suffix.HasFlag(NumberSuffixFlags.Short))
-                                {
-                                    result = ((ushort)Convert.ChangeType(d, typeof(ushort), CultureInfo.InvariantCulture) * (ushort)multiplier);
-                                }
-                                else
-                                {
-                                    result = ((uint)Convert.ChangeType(d, typeof(uint), CultureInfo.InvariantCulture) * (uint)multiplier);
-                                }
-                            }
-                            else
-                            {
-                                result = d;
-                            }
-                            return true;
+                        return true;
                         }
 
                         result = null;
@@ -3324,42 +3327,47 @@ namespace System.Management.Automation.Language
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
                     long longValue;
-                    if (suffix == NumberSuffixFlags.Long)
+                    switch (suffix)
                     {
-                        if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
-                        {
-                            result = longValue * multiplier;
-                            return true;
-                        }
-                        result = null;
-                        return false;
-                    }
-                    else if (suffix == NumberSuffixFlags.Short)
-                    {
-                        if (short.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out short s))
-                        {
-                            result = s * (short)multiplier;
-                            return true;
-                        }
-                        result = null;
-                        return false;
-                    }
-                    else if (suffix.HasFlag(NumberSuffixFlags.Unsigned) && ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
-                    {
-                        u *= (ulong)multiplier;
-                        if (suffix.HasFlag(NumberSuffixFlags.Short) && u <= ushort.MaxValue)
-                        {
-                            result = (ushort)u;
-                        }
-                        else if (suffix.HasFlag(NumberSuffixFlags.Long) || u > uint.MaxValue)
-                        {
-                            result = u;
-                        }
-                        else
-                        {
-                            result = (uint)u;
-                        }
-                        return true;
+                        case NumberSuffixFlags.Long:
+                            if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
+                            {
+                                result = longValue * multiplier;
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+
+                        case NumberSuffixFlags.Short:
+                            if (short.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out short s))
+                            {
+                                result = s * (short)multiplier;
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        default:
+                            if (suffix.HasFlag(NumberSuffixFlags.Unsigned) && ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
+                            {
+                                u *= (ulong)multiplier;
+                                if (suffix.HasFlag(NumberSuffixFlags.Short) && u <= ushort.MaxValue)
+                                {
+                                    result = (ushort)u;
+                                }
+                                else if (suffix.HasFlag(NumberSuffixFlags.Long) || u > uint.MaxValue)
+                                {
+                                    result = u;
+                                }
+                                else
+                                {
+                                    result = (uint)u;
+                                }
+                                return true;
+                            }
+
+                            break;
                     }
 
                     // From here on - the user hasn't specified the type, so we need to figure it out.
