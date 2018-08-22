@@ -448,6 +448,7 @@ function Start-PSBuild {
 
     function Stop-DevPowerShell {
         if (-not (Test-Path $script:Options.Output)) {
+            Write-Warning "Could not find dev powershell at '$($script:Options.Output)'"
             return
         }
         $pwshDev = Resolve-Path $script:Options.Output
