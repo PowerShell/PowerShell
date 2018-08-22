@@ -13,7 +13,8 @@
     <AssemblyOriginatorKeyFile>../../src/signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
-
+g_user_value
+  %%%%
   <ItemGroup>
     <PackageReference Include="xunit" Version="2.4.0" />
     <!-- DotNetCliToolReference element specifies the CLI tool that the user wants to restore in the context of the project. -->
