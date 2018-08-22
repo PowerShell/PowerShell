@@ -649,48 +649,72 @@ foo``u{2195}abc
 	Context "Numerical Notations Tests (starting at line 2374 to line 2452)" {
         $testData = @(
 			#Test various numbers using the standard notation.
-            @{ Script = "0"; Expected = "0" }
-			@{ Script = "-2"; Expected = "-2" }
-			@{ Script = "2"; Expected = "2" }
-			@{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue) }
-			@{ Script = $([int32]::MinValue); Expected = $([int32]::MinValue) }
+            @{ Script = "0"; Expected = "0"; ExpectedType = [int] }
+			@{ Script = "-2"; Expected = "-2"; ExpectedType = [int] }
+			@{ Script = "2"; Expected = "2"; ExpectedType = [int] }
+			@{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue); ExpectedType = [int] }
+			@{ Script = $([int32]::MinValue); Expected = $([int32]::MinValue); ExpectedType = [int] }
 			#Tests for hexadecimal notation.
-			@{ Script = "0x0"; Expected = "0" }
-			@{ Script = "0xF"; Expected = "15" }
-			@{ Script = "0x80000000"; Expected = $([int32]::MinValue) }
-			@{ Script = "0xFFFFFFFF"; Expected = "-1" }
-			@{ Script = "0x7fffffff"; Expected = $([int32]::MaxValue) }
-            @{ Script = "0x100000000"; Expected = [int64]0x100000000 }
+			@{ Script = "0x0"; Expected = "0"; ExpectedType = [int] }
+			@{ Script = "0xF"; Expected = "15"; ExpectedType = [int] }
+			@{ Script = "0x80000000"; Expected = $([int32]::MinValue); ExpectedType = [int] }
+			@{ Script = "0xFFFFFFFF"; Expected = "-1"; ExpectedType = [int] }
+			@{ Script = "0x7fffffff"; Expected = $([int32]::MaxValue); ExpectedType = [int] }
+            @{ Script = "0x100000000"; Expected = "4294967296"; ExpectedType = [int64] }
+            @{ Script = "0x8000000000000000"; Expected = [long]::MinValue; ExpectedType = [long] }
+			@{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue); ExpectedType = [int] }
             #Tests for short notation
-            @{ Script = "10s"; Expected = "10" }
-            @{ Script = "-10s"; Expected = "-10" }
-            @{ Script = "32767s"; Expected = $([Int16]::MaxValue) }
-            @{ Script = "10us"; Expected = "10" }
-            @{ Script = "65535us"; Expected = $([UInt16]::MaxValue) }
+            @{ Script = "10s"; Expected = "10"; ExpectedType = [short] }
+            @{ Script = "-10s"; Expected = "-10"; ExpectedType = [short] }
+            @{ Script = "32767s"; Expected = $([Int16]::MaxValue); ExpectedType = [short] }
+            @{ Script = "0x13s";Expected = "0x13"; ExpectedType = [short] }
+            #Tests for unsigned notations
+            @{ Script = "10us"; Expected = "10"; ExpectedType = [ushort] }
+            @{ Script = "65535us"; Expected = $([UInt16]::MaxValue); ExpectedType = [ushort] }
+            @{ Script = "0x10u";Expected = "0x10"; ExpectedType = [uint] }
+            @{ Script = "10u";Expected = "10"; ExpectedType = [uint] }
+            @{ Script = "11ul";Expected = "11"; ExpectedType = [ulong] }
+            @{ Script = "0x11ul";Expected = "0x11"; ExpectedType = [ulong] }
+            @{ Script = "12us";Expected = "12"; ExpectedType = [ushort] }
+            @{ Script = "0x12us";Expected = "0x12"; ExpectedType = [ushort] }
+            #Tests for long notation
+            @{ Script = "0x8000000000000000l"; Expected = [long]::MinValue; ExpectedType = [long] }
+            @{ Script = "0x431l"; Expected = "0x431"; ExpectedType = [long]}
+            @{ Script = "14l";Expected = "14"; ExpectedType = [long] }
+            @{ Script = "-51l"; Expected = "-51"; ExpectedType = [long] }
+            #Tests for decimal notation
+            @{ Script = "15d";Expected = "15"; ExpectedType = [decimal] }
+            @{ Script = "0x14d";Expected = "0x14"; ExpectedType = [decimal] }
+            @{ Script = $([decimal]::MinValue); Expected = [decimal]::MinValue; ExpectedType = [decimal] }
+            @{ Script = "0x14d";Expected = "0x14"; ExpectedType = [decimal] }
+            @{ Script = "-25";Expected = "0x14"; ExpectedType = [decimal] }
+            @{ Script = $([decimal]::MinValue); Expected = [decimal]::MinValue; ExpectedType = [decimal] }
+            @{ Script = "0x15d";Expected = "349"; ExpectedType = [int] } # No decimal hex literals; d is a hex character
 			#Tests for exponential notation.
-			@{ Script = "0e0"; Expected = "0" }
-			@{ Script = "0e1"; Expected = "0" }
-			@{ Script = "1e2"; Expected = "100" }
-			@{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue) }
-			@{ Script = "0e2"; Expected = "0" }
-			@{ Script = "-2e2"; Expected = "-200" }
-			@{ Script = "-0e2"; Expected = "0" }
-			@{ Script = "3e0"; Expected = "3" }
+			@{ Script = "0e0"; Expected = "0"; ExpectedType = [double] }
+			@{ Script = "0e1"; Expected = "0"; ExpectedType = [double] }
+			@{ Script = "1e2"; Expected = "100"; ExpectedType = [double] }
+			@{ Script = "0e2"; Expected = "0"; ExpectedType = [double] }
+			@{ Script = "-2e2"; Expected = "-200"; ExpectedType = [double] }
+			@{ Script = "2e-2"; Expected = "0.02"; ExpectedType = [double] }
+			@{ Script = "-0e2"; Expected = "0"; ExpectedType = [double] }
+			@{ Script = "3e0"; Expected = "3"; ExpectedType = [double] }
 			#Tests for floating point notation.
-			@{ Script = ".01"; Expected = "0.01" }
-			@{ Script = "0.0"; Expected = "0" }
-			@{ Script = "-0.1"; Expected = "-0.1" }
-			@{ Script = "9.12"; Expected = "9.12" }
-			@{ Script = $([single]::MinValue); Expected = $([float]::MinValue).ToString() }
-			@{ Script = $([float]::MaxValue); Expected = $([float]::MaxValue).ToString() }
+			@{ Script = ".01"; Expected = "0.01"; ExpectedType = [double] }
+        @{ Script = "0.0"; Expected = "0"; ExpectedType = [double] }
+			@{ Script = "-0.1"; Expected = "-0.1"; ExpectedType = [double] }
+			@{ Script = "9.12"; Expected = "9.12"; ExpectedType = [double] }
+			@{ Script = $([single]::MinValue); Expected = $([float]::MinValue).ToString(); ExpectedType = [single] }
+			@{ Script = $([float]::MaxValue); Expected = $([float]::MaxValue).ToString(); ExpectedType = [float] }
 			#Tests for the K suffix for numbers.
-			@{ Script = "0kb"; Expected = "0" }
-			@{ Script = "1kb"; Expected = "1024" }
-			@{ Script = "-2KB"; Expected = "-2048" }
+			@{ Script = "0kb"; Expected = "0"; ExpectedType = [int] }
+			@{ Script = "1kb"; Expected = "1024"; ExpectedType = [int] }
+			@{ Script = "-2KB"; Expected = "-2048"; ExpectedType = [int] }
         )
-        It "<Script> should return <Expected>" -TestCases $testData {
-            param ( $Script, $Expected )
+        It "<Script> should return <Expected>, with type <ExpectedType>" -TestCases $testData {
+            param ( $Script, $Expected, $ExpectedType )
             ExecuteCommand $Script | Should -Be $Expected
+            ExecuteCommand $Script | Should -BeOfType $ExpectedType
         }
 
         $testInvalidNumerals = @(
@@ -710,26 +734,6 @@ foo``u{2195}abc
         It "<Script> should throw an error" -TestCases $testInvalidNumerals {
             param($Script)
              {[ScriptBlock]::Create($Script).Invoke()} | Should -Throw
-        }
-
-        $testLiteralTypes = @(
-            @{ Script = "10u"; Expected = "UInt32" }
-            @{ Script = "10ul"; Expected = "UInt64" }
-            @{ Script = "10us"; Expected = "UInt16" }
-            @{ Script = "10s"; Expected = "Int16" }
-            @{ Script = "10l"; Expected = "Int64" }
-            @{ Script = "10d"; Expected = "Decimal" }
-            @{ Script = "0x10u"; Expected = "UInt32" }
-            @{ Script = "0x10ul"; Expected = "UInt64" }
-            @{ Script = "0x10us"; Expected = "UInt16" }
-            @{ Script = "0x10s"; Expected = "Int16" }
-            @{ Script = "0x10l"; Expected = "Int64" }
-            # No decimal hex literals (d is a valid hex char, and decimal parsing does not accept hex values)
-            @{ Script = "0x10d"; Expected = "Int32" }
-        )
-        It "<Script> should result in an [<Expected>] value" -TestCases $testLiteralTypes {
-            param($Script, $Expected)
-            ExecuteCommand $Script | Should -BeOfType $Expected
         }
     }
 
