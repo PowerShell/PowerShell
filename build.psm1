@@ -615,8 +615,15 @@ Fix steps:
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
         # symlinks.
-        New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" >$null
-        New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" >$null
+        if (!(Test-Path -Path "$publishPath/libssl.so.1.0.0"))
+        {
+            $null = New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
+        }
+
+        if (!(Test-Path -Path "$publishPath/libcrypto.so.1.0.0"))
+        {
+            $null = New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
+        }
     }
 
     if ($Environment.IsWindows) {
