@@ -686,7 +686,7 @@ foo``u{2195}abc
             @{ Script = "15d";Expected = "15"; ExpectedType = [decimal] }
             @{ Script = "333d";Expected = "333"; ExpectedType = [decimal] }
             @{ Script = $([decimal]::MinValue); Expected = [decimal]::MinValue; ExpectedType = [decimal] }
-            @{ Script = "-25.5d";Expected = "-25"; ExpectedType = [decimal] }
+            @{ Script = "-25.5d";Expected = "-25.5"; ExpectedType = [decimal] }
             @{ Script = $([decimal]::MinValue); Expected = [decimal]::MinValue; ExpectedType = [decimal] }
             @{ Script = "0x15d";Expected = "349"; ExpectedType = [int] } # No decimal hex literals; d is a hex character
 			#Tests for exponential notation.
