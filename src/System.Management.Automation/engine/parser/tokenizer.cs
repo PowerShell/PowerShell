@@ -3257,6 +3257,7 @@ namespace System.Management.Automation.Language
                                          NumberStyles.AllowExponent;
 
                     // Decimal parser does not accept hex literals, and 'd' is a valid hex character, so will never be read as Decimal literal
+                    // e.g., 0x1d == 29
                     if (suffix == NumberSuffixFlags.Decimal)
                     {
                         decimal d;
@@ -3357,14 +3358,14 @@ namespace System.Management.Automation.Language
                                 {
                                     result = (ushort)u;
                                 }
-                                else if (suffix.HasFlag(NumberSuffixFlags.Long) || u > uint.MaxValue)
+                                else if (!suffix.HasFlag(NumberSuffixFlags.Long) && u <= uint.MaxValue)
                                 {
-                                    // ulong
-                                    result = u;
+                                    result = (uint)u;
                                 }
                                 else
                                 {
-                                    result = (uint)u;
+                                    // ulong
+                                    result = u;
                                 }
                                 return true;
                             }
