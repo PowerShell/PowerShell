@@ -1105,11 +1105,10 @@ function New-AfterScripts
 
         if ($Environment.IsDebian9)
         {
-            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
-            # platform specific changes. This is the only set of platforms needed for this currently
-            # as Ubuntu has these specific library files in the platform and macOS builds for itself
-            # against the correct versions.
-            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" >$null
+        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+        # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
+        # symlinks.
+        New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" >$null
             New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" >$null
         }
     }
