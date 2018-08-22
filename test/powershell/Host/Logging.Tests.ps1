@@ -135,6 +135,7 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
 
         if ($IsSupportedEnvironment)
         {
+            # TODO: Update to use a PowerShell specific syslog file
             if (Test-Path -Path '/var/log/syslog')
             {
                 $SysLogFile = '/var/log/syslog'
@@ -150,6 +151,10 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
                 $IsSupportedEnvironment = $false
             }
             [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+            $scriptBlockCreatedRegExTemplate = @'
+Creating Scriptblock text \(1 of 1\):#012{0}(#012)*ScriptBlock ID: [0-9a-z\-]*#012Path:.*
+'@
+
         }
     }
 
@@ -175,6 +180,35 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
             # Force reporting of the first unexpected item to help diagnosis
             $items[2] | Should -Be $null
         }
+    }
+
+    It 'Verifies scriptblock logging' -Skip:(!$IsSupportedEnvironment) {
+        $configFile = WriteLogSettings -LogId $logId -ScriptBlockLogging -LogLevel Verbose
+        $script = @'
+$pid
+& ([scriptblock]::create("Write-Verbose 'testheader123' ;Write-verbose 'after'"))
+'@
+        $testFileName = 'test01.ps1'
+        $testScriptPath = Join-Path -Path $TestDrive -ChildPath $testFileName
+        $script | Out-File -FilePath $testScriptPath -Force
+        $null = & $powershell -NoProfile -SettingsFile $configFile -Command $testScriptPath
+
+        # Get log entries from the last 100 that match our id and are after the time we launched Powershell
+        $items = Get-PSSysLog -Path $SyslogFile -Id $logId -Tail 100 -Verbose -TotalCount 18
+
+        $items | Should -Not -Be $null
+        $items.Count | Should -BeGreaterThan 2
+        $createdEvents = $items | where-object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
+        $createdEvents.Count | should -BeGreaterOrEqual 3
+
+        # Verify we log that we are executing a file
+        $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
+
+        # Verify we log that we are the script to create the scriptblock
+        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,'#012')))
+
+        # Verify we log that we are excuting the created scriptblock
+        $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
     }
 
     It 'Verifies logging level filtering works' -Skip:(!$IsSupportedEnvironment) {
