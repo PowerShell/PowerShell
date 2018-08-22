@@ -3364,6 +3364,7 @@ namespace System.Management.Automation.Language
                                 }
                                 else if (suffix.HasFlag(NumberSuffixFlags.Long) || u > uint.MaxValue)
                                 {
+                                    // ulong
                                     result = u;
                                 }
                                 else
