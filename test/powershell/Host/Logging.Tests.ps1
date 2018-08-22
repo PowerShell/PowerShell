@@ -135,6 +135,7 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
 
         if ($IsSupportedEnvironment)
         {
+            # TODO: Update to use a PowerShell specific syslog file
             if (Test-Path -Path '/var/log/syslog')
             {
                 $SysLogFile = '/var/log/syslog'
