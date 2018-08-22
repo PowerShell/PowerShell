@@ -852,26 +852,6 @@ foo``u{2195}abc
             param($Script)
              {[ScriptBlock]::Create($Script).Invoke()} | Should -Throw
         }
-
-        $testLiteralTypes = @(
-            @{ Script = "10u"; Expected = "UInt32" }
-            @{ Script = "10ul"; Expected = "UInt64" }
-            @{ Script = "10us"; Expected = "UInt16" }
-            @{ Script = "10s"; Expected = "Int16" }
-            @{ Script = "10l"; Expected = "Int64" }
-            @{ Script = "10d"; Expected = "Decimal" }
-            @{ Script = "0x10u"; Expected = "UInt32" }
-            @{ Script = "0x10ul"; Expected = "UInt64" }
-            @{ Script = "0x10us"; Expected = "UInt16" }
-            @{ Script = "0x10s"; Expected = "Int16" }
-            @{ Script = "0x10l"; Expected = "Int64" }
-            # No decimal hex literals (d is a valid hex char, and decimal parsing does not accept hex values)
-            @{ Script = "0x10d"; Expected = "Int32" }
-        )
-        It "<Script> should result in an [<Expected>] value" -TestCases $testLiteralTypes {
-            param($Script, $Expected)
-            ExecuteCommand $Script | Should -BeOfType $Expected
-        }
     }
 
 	It "This is a simple test of the concatenation of two arrays. (line 2460)"{
