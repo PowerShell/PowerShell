@@ -3362,14 +3362,14 @@ namespace System.Management.Automation.Language
                                 {
                                     result = (ushort)u;
                                 }
-                                else if (suffix.HasFlag(NumberSuffixFlags.Long) || u > uint.MaxValue)
+                                else if (!suffix.HasFlag(NumberSuffixFlags.Long) && u <= uint.MaxValue)
                                 {
-                                    // ulong
-                                    result = u;
+                                    result = (uint)u;
                                 }
                                 else
                                 {
-                                    result = (uint)u;
+                                    // ulong
+                                    result = u;
                                 }
                                 return true;
                             }
