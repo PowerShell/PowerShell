@@ -3294,13 +3294,13 @@ namespace System.Management.Automation.Language
                                     result = (short)((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * multiplier);
                                     break;
                                 case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Long:
-                                    result = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier);
+                                    result = (ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
                                     break;
                                 case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Short:
                                     result = (ushort)((ushort)Convert.ChangeType(d, typeof(ushort), CultureInfo.InvariantCulture) * multiplier);
                                     break;
                                 case NumberSuffixFlags.Unsigned:
-                                    ulong testresult = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier);
+                                    ulong testresult = (ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
                                     if (testresult < uint.MaxValue)
                                     {
                                         result = (uint)testresult;
