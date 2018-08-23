@@ -13,6 +13,11 @@ namespace Microsoft.PowerShell
         [DllImport("kernel32.dll", SetLastError = false, EntryPoint = "GetStartupInfoW")]
         internal static extern void GetStartupInfo(out StartUpInfo lpStartupInfo);
 
+        /// <remarks>
+        /// IntPtr is being used for the string fields to make the marshaller faster and
+        /// simpler. With IntPtr, all fields are blittable, and since we don't use the
+        /// string fields at all, nothing is lost.
+        /// </remarks>
         [StructLayout(LayoutKind.Sequential)]
         internal struct StartUpInfo
         {
