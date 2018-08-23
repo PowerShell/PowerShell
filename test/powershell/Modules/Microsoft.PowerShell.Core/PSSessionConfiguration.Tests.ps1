@@ -847,6 +847,7 @@ namespace PowershellTestConfigNamespace
         It "Enable-PSSession Cmdlet creates a default PSSession configuration untied to a specific PowerShell version." {
             $dotPos = $PSVersionTable.PSVersion.ToString().IndexOf(".")
             $endpointName = "PowerShell." + $PSVersionTable.PSVersion.ToString().Substring(0, $dotPos)
+            # any pre-release (a version with a dash) is a preview release
             if ($PSVersionTable.GitCommitId.Contains("-"))
             {
                 $endpointName += "-preview"
