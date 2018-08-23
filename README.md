@@ -78,12 +78,12 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 
 [pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/PowerShell-6.1.0-rc.1-win-x64.msi
 [pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/PowerShell-6.1.0-rc.1-win-x86.msi
-[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0-rc.1-1.ubuntu.18.04_amd64.deb
-[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0-rc.1-1.ubuntu.16.04_amd64.deb
-[pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0-rc.1-1.ubuntu.14.04_amd64.deb
-[pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0-rc.1-1.debian.8_amd64.deb
-[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0-rc.1-1.debian.9_amd64.deb
-[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview-6.1.0-rc.1-1.rhel.7.x86_64.rpm
+[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0.rc.1-1.ubuntu.18.04_amd64.deb
+[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0.rc.1-1.ubuntu.16.04_amd64.deb
+[pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0.rc.1-1.ubuntu.14.04_amd64.deb
+[pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0.rc.1-1.debian.8_amd64.deb
+[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0.rc.1-1.debian.9_amd64.deb
+[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview-6.1.0.rc.1-1.rhel.7.x86_64.rpm
 [pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-6.1.0-rc.1-osx-x64.pkg
 [pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/PowerShell-6.1.0-rc.1-win-arm32.zip
 [pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/PowerShell-6.1.0-rc.1-win-arm64.zip
