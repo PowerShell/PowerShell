@@ -667,7 +667,7 @@ foo``u{2195}abc
             @{ Script = "0x8000000000000000"; Expected = [long]::MinValue; ExpectedType = [long] }
 			@{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue); ExpectedType = [int] }
 			@{ Script = "0x0kb"; Expected = "0"; ExpectedType = [int] }
-			@{ Script = "0x10kb"; Expected = "10240"; ExpectedType = [int] }
+			@{ Script = "0x10kb"; Expected = "16384"; ExpectedType = [int] }
 			@{ Script = "-0x2MB"; Expected = "-2097152"; ExpectedType = [int] }
             #Tests for short notation
             @{ Script = "10s"; Expected = "10"; ExpectedType = [short] }
@@ -688,7 +688,7 @@ foo``u{2195}abc
             @{ Script = "0x12us";Expected = "18"; ExpectedType = [ushort] }
 			@{ Script = "10uskb"; Expected = "10240"; ExpectedType = [ushort] }
 			@{ Script = "1ulkb"; Expected = "1024"; ExpectedType = [ulong] }
-			@{ Script = "2uKB"; Expected = "-2048"; ExpectedType = [uint] }
+			@{ Script = "2uKB"; Expected = "2048"; ExpectedType = [uint] }
             #Tests for long notation
             @{ Script = "0x8000000000000000l"; Expected = [long]::MinValue; ExpectedType = [long] }
             @{ Script = "0x431l"; Expected = "1073"; ExpectedType = [long]}
@@ -717,7 +717,7 @@ foo``u{2195}abc
 			@{ Script = "-0e2"; Expected = "0"; ExpectedType = [double] }
 			@{ Script = "3e0"; Expected = "3"; ExpectedType = [double] }
 			@{ Script = "3e0"; Expected = "3"; ExpectedType = [double] }
-			@{ Script = "3e0kb"; Expected = "30720"; ExpectedType = [double] }
+			@{ Script = "3e1kb"; Expected = "30720"; ExpectedType = [double] }
 			#Tests for floating point notation.
 			@{ Script = ".01"; Expected = "0.01"; ExpectedType = [double] }
             @{ Script = "0.0"; Expected = "0"; ExpectedType = [double] }
@@ -726,7 +726,7 @@ foo``u{2195}abc
 			@{ Script = $([single]::MinValue); Expected = $([float]::MinValue).ToString(); ExpectedType = [double] }
 			@{ Script = $([float]::MaxValue); Expected = $([float]::MaxValue).ToString(); ExpectedType = [double] }
 			@{ Script = "0.0kb"; Expected = "0"; ExpectedType = [double] }
-			@{ Script = "1.5kb"; Expected = "1024"; ExpectedType = [double] }
+			@{ Script = "1.5kb"; Expected = "1536"; ExpectedType = [double] }
             @{ Script = "-2.6kb"; Expected = "-2662.4"; ExpectedType = [double] }
             #Tests for multiplier values
             @{ Script = "1kb"; Expected = "1024"; ExpectedType = [int] }
