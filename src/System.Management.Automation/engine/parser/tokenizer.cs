@@ -3284,37 +3284,41 @@ namespace System.Management.Automation.Language
 
                             switch (suffix)
                             {
+                                case NumberSuffixFlags.None:
+                                    result = d * multiplier;
+                                    break;
                                 case NumberSuffixFlags.Long:
                                     result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture) * multiplier);
                                     break;
                                 case NumberSuffixFlags.Short:
                                     result = (short)((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * multiplier);
                                     break;
-                                default:
-                                    if (suffix.HasFlag(NumberSuffixFlags.Unsigned))
+                                case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Long:
+                                    result = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier);
+                                    break;
+                                case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Short:
+                                    result = (ushort)((ushort)Convert.ChangeType(d, typeof(ushort), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.Unsigned:
+                                    ulong testresult = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier);
+                                    if (testresult < uint.MaxValue)
                                     {
-                                        if (suffix.HasFlag(NumberSuffixFlags.Long))
-                                        {
-                                            result = ((ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier);
-                                        }
-                                        else if (suffix.HasFlag(NumberSuffixFlags.Short))
-                                        {
-                                            result = (ushort)((ushort)Convert.ChangeType(d, typeof(ushort), CultureInfo.InvariantCulture) * multiplier);
-                                        }
-                                        else
-                                        {
-                                            result = ((uint)Convert.ChangeType(d, typeof(uint), CultureInfo.InvariantCulture) * (uint)multiplier);
-                                        }
+                                        result = (uint)testresult;
                                     }
                                     else
                                     {
-                                        result = d * multiplier;
+                                        result = testresult;
                                     }
                                     break;
+                                default:
+                                    result = null;
+                                    return false;
                             }
-                        return true;
+
+                            return true;
                         }
 
+                        // TryParse on (real) number fails.
                         result = null;
                         return false;
                     }
