@@ -727,7 +727,18 @@ foo``u{2195}abc
 			@{ Script = $([float]::MaxValue); Expected = $([float]::MaxValue).ToString(); ExpectedType = [double] }
 			@{ Script = "0.0kb"; Expected = "0"; ExpectedType = [double] }
 			@{ Script = "1.5kb"; Expected = "1024"; ExpectedType = [double] }
-			@{ Script = "-2.6kb"; Expected = "-2662.4"; ExpectedType = [double] }
+            @{ Script = "-2.6kb"; Expected = "-2662.4"; ExpectedType = [double] }
+            #Tests for multiplier values
+            @{ Script = "1kb"; Expected = "1024"; ExpectedType = [int] }
+            @{ Script = "1mb"; Expected = "1048576"; ExpectedType = [int] }
+            @{ Script = "1gb"; Expected = "1073741824"; ExpectedType = [int] }
+            @{ Script = "1tb"; Expected = "1099511627776"; ExpectedType = [long] }
+            @{ Script = "1pb"; Expected = "1125899906842624"; ExpectedType = [long] }
+            @{ Script = "1KB"; Expected = "1024"; ExpectedType = [int] }
+            @{ Script = "1MB"; Expected = "1048576"; ExpectedType = [int] }
+            @{ Script = "1GB"; Expected = "1073741824"; ExpectedType = [int] }
+            @{ Script = "1TB"; Expected = "1099511627776"; ExpectedType = [long] }
+            @{ Script = "1PB"; Expected = "1125899906842624"; ExpectedType = [long] }
         )
 
         It "<Script> should return <ExpectedValue>, with type <ExpectedType>" -TestCases $testData {
