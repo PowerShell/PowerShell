@@ -4242,6 +4242,22 @@ namespace System.Management.Automation.Language
                 }
             }
 
+            // Check return type after the argument conversion, so any no-conversion error can be thrown.
+            if (getter.ReturnType.IsByRefLike)
+            {
+                return errorSuggestion ?? new DynamicMetaObject(
+                    Expression.Block(
+                        Expression.IfThen(
+                            Compiler.IsStrictMode(3),
+                            Compiler.ThrowRuntimeError(
+                                nameof(ParserStrings.CannotIndexWithByRefLikeReturnType),
+                                ParserStrings.CannotIndexWithByRefLikeReturnType,
+                                Expression.Constant(target.LimitType, typeof(Type)),
+                                Expression.Constant(getter.ReturnType, typeof(Type)))),
+                        GetNullResult()),
+                    target.CombineRestrictions(indexes));
+            }
+
             if (getterParams.Length == 1 && getterParams[0].ParameterType == typeof(int) && CanIndexFromEndWithNegativeIndex(target))
             {
                 // PowerShell supports negative indexing for some types (specifically, types implementing IList or IList<T>).
@@ -6061,7 +6077,7 @@ namespace System.Management.Automation.Language
                                     Expression.NewArrayInit(
                                         typeof(object),
                                         Expression.Constant(data.member.Name),
-                                        Expression.Constant(data.propertyType))),
+                                        Expression.Constant(data.propertyType, typeof(Type)))),
                                 this.ReturnType);
 
                             return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
@@ -6809,7 +6825,7 @@ namespace System.Management.Automation.Language
                             Expression.NewArrayInit(
                                 typeof(object),
                                 Expression.Constant(methodInfo.Name),
-                                Expression.Constant(returnType))),
+                                Expression.Constant(returnType, typeof(Type)))),
                         typeof(object));
                 }
             }
@@ -6827,7 +6843,7 @@ namespace System.Management.Automation.Language
                             Expression.Constant(ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType),
                             Expression.NewArrayInit(
                                 typeof(object),
-                                Expression.Constant(declaringType))),
+                                Expression.Constant(declaringType, typeof(Type)))),
                         typeof(object));
                 }
             }

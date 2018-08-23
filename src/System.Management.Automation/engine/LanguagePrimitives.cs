@@ -4244,7 +4244,6 @@ namespace System.Management.Automation
         }
 
         private static Dictionary<ConversionTypePair, ConversionData> s_converterCache = new Dictionary<ConversionTypePair, ConversionData>(256);
-        private static ConversionData<object> s_noConversion = new ConversionData<object>(ConvertNoConversion, ConversionRank.None);
 
         private static ConversionData CacheConversion<T>(Type fromType, Type toType, PSConverter<T> converter, ConversionRank rank)
         {
@@ -4692,7 +4691,8 @@ namespace System.Management.Automation
                     resultType,
                     recursion,
                     debase ? (PSObject)valueToConvert : null,
-                    formatProvider, backupTypeTable);
+                    formatProvider,
+                    backupTypeTable);
             }
         }
 

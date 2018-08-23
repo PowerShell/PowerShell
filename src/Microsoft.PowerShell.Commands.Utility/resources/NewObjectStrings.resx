@@ -139,7 +139,7 @@
     <value>Creating instances of attribute and delegated Windows RT types is not supported.</value>
   </data>
   <data name="CannotInstantiateBoxedByRefLikeType" xml:space="preserve">
-    <value>Cannot create instances of the ByRef-like type "{0}". ByRef-like types cannot be boxed and should be used only on stack.</value>
+    <value>Cannot create instances of the ByRef-like type "{0}". ByRef-like types are not supported in PowerShell.</value>
   </data>
   <data name="CannotCreateTypeConstrainedLanguage" xml:space="preserve">
     <value>Cannot create type. Only core types are supported in this language mode.</value>

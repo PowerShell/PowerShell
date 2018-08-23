@@ -5518,7 +5518,7 @@ namespace System.Management.Automation.Language
                                             Expression.NewArrayInit(
                                                 typeof(object),
                                                 Expression.Constant(propertyInfo.Name),
-                                                Expression.Constant(propertyInfo.PropertyType))),
+                                                Expression.Constant(propertyInfo.PropertyType, typeof(Type)))),
                                         typeof(object));
                                 }
 

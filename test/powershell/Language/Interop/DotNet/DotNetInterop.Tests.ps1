@@ -10,6 +10,12 @@ namespace DotNetInterop
 {
     public class Test
     {
+        public Span<int> this[int i]
+        {
+            get { return default(Span<int>); }
+            set { DoNothing(value); }
+        }
+
         public static Span<int> Space
         {
             get { return default(Span<int>); }
@@ -159,5 +165,22 @@ namespace DotNetInterop
     It "Access static property of a ByRef-like type" {
         [DotNetInterop.MyByRefLikeType]::Index = 10
         [DotNetInterop.MyByRefLikeType]::Index | Should -Be 10
+    }
+
+    It "Get access of an indexer that returns ByRef-like type should return null in no-strict mode" {
+        $testObj[1] | Should -Be $null
+    }
+
+    It "Get access of an indexer that returns ByRef-like type should fail gracefully in strict mode" {
+        try {
+            Set-StrictMode -Version latest
+            { $testObj[1] } | Should -Throw -ErrorId "CannotIndexWithByRefLikeReturnType"
+        } finally {
+            Set-StrictMode -Off
+        }
+    }
+
+    It "Set access of an indexer that accepts ByRef-like type should fail gracefully" {
+        { $testObj[1] = 1 } | Should -Throw -ErrorId "InvalidCastToByRefLikeType"
     }
 }
