@@ -175,7 +175,7 @@ Describe "Set-Location" -Tags "CI" {
             Set-Location ..
             $ExecutionContext.InvokeCommand.LocationChangedAction = { throw "Boom" }
             # Verify that the exception occurred
-            { Set-Location $location } | Should Throw "Boom"
+            { Set-Location $location } | Should -Throw "Boom"
             # But the location should still have changed
             $PWD.Path | Should -Be $location.Path
         }
