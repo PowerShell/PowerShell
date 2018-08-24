@@ -441,6 +441,11 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
                 script = "Write-Verbose 'testheader123' ;Write-verbose 'after'"
                 expectedText="Write-Verbose 'testheader123' ;Write-verbose 'after'`r`n"
             }
+            @{
+                name = 'script block with Null'
+                script = "Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"
+                expectedText="Write-Verbose 'testheader123␀' ;Write-verbose 'after'`r`n"
+            }
         )
 
         if ($IsSupportedEnvironment)
