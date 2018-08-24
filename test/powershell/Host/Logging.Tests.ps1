@@ -97,7 +97,10 @@ function WriteLogSettings
         $values['LogLevel'] = $LogLevel.ToString()
     }
 
-    $values["Microsoft.PowerShell:ExecutionPolicy"] = "RemoteSigned"
+    if($IsWindows)
+    {
+        $values["Microsoft.PowerShell:ExecutionPolicy"] = "RemoteSigned"
+    }
 
     if($ScriptBlockLogging.IsPresent)
     {
