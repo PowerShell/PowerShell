@@ -375,6 +375,11 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
                 expectedText="Write-Verbose 'testheader123' ;Write-verbose 'after'`r`n"
             }
         )
+
+        if ($IsSupportedEnvironment)
+        {
+            & "$PSHome\RegisterManifest.ps1"
+        }
     }
 
     BeforeEach {
