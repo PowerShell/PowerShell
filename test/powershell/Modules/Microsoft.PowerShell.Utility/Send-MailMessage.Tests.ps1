@@ -134,38 +134,74 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
        }
     }
 
-    $ItArgs = $PesterArgs.Clone()
-    $ItArgs['Name'] = "Can send mail message from user to self " + $ItArgs['Name']
+    Context "Default Parameter Set" {
+        $ItArgs = $PesterArgs.Clone()
+        $ItArgs['Name'] = "Can send mail message from user to self " + $ItArgs['Name']
 
-    It @ItArgs {
-        $body = "Greetings from me."
-        $subject = "Test message"
-        Send-MailMessage -To $address -From $address -Subject $subject -Body $body -SmtpServer 127.0.0.1
-        Test-Path -Path $mailBox | Should -BeTrue
-        $mail = read-mail $mailBox
-        $mail.From | Should -BeExactly $address
-        $mail.To.Count | Should -BeExactly 1
-        $mail.To[0] | Should -BeExactly $address
-        $mail.Subject | Should -BeExactly $subject
-        $mail.Body.Count | Should -BeExactly 1
-        $mail.Body[0] | Should -BeExactly $body
+        It @ItArgs {
+            $body = "Greetings from me."
+            $subject = "Test message"
+            Send-MailMessage -To $address -From $address -Subject $subject -Body $body -SmtpServer 127.0.0.1
+            Test-Path -Path $mailBox | Should -BeTrue
+            $mail = read-mail $mailBox
+            $mail.From | Should -BeExactly $address
+            $mail.To.Count | Should -BeExactly 1
+            $mail.To[0] | Should -BeExactly $address
+            $mail.Subject | Should -BeExactly $subject
+            $mail.Body.Count | Should -BeExactly 1
+            $mail.Body[0] | Should -BeExactly $body
+        }
+
+        $ItArgs = $PesterArgs.Clone()
+        $ItArgs['Name'] = "Can send mail message from user to self using pipeline " + $ItArgs['Name']
+
+        It @ItArgs {
+            $body = "Greetings from me again."
+            $subject = "Second test message"
+            $object = [PSCustomObject]@{"To" = $address; "From" = $address; "Subject" = $subject; "Body" = $body; $SmtpServer = '127.0.0.1'}
+            $object | Send-MailMessage
+            Test-Path -Path $mailBox | Should -BeTrue
+            $mail = read-mail $mailBox
+            $mail.From | Should -BeExactly $address
+            $mail.To.Count | Should -BeExactly 1
+            $mail.To[0] | Should -BeExactly $address
+            $mail.Subject | Should -BeExactly $subject
+            $mail.Body.Count | Should -BeExactly 1
+            $mail.Body[0] | Should -BeExactly $body
+        }
     }
 
-    $ItArgs = $PesterArgs.Clone()
-    $ItArgs['Name'] = "Can send mail message from user to self using pipeline " + $ItArgs['Name']
+    Context "NoSubject Parameter Set" {
+        $ItArgs = $PesterArgs.Clone()
+        $ItArgs['Name'] = "Can send mail message without a subject using named parameters " + $ItArgs['Name']
 
-    It @ItArgs {
-        $body = "Greetings from me again."
-        $subject = "Second test message"
-        $object = [PSCustomObject]@{"To" = $address; "From" = $address; "Subject" = $subject; "Body" = $body; $SmtpServer = '127.0.0.1'}
-        $object | Send-MailMessage
-        Test-Path -Path $mailBox | Should -BeTrue
-        $mail = read-mail $mailBox
-        $mail.From | Should -BeExactly $address
-        $mail.To.Count | Should -BeExactly 1
-        $mail.To[0] | Should -BeExactly $address
-        $mail.Subject | Should -BeExactly $subject
-        $mail.Body.Count | Should -BeExactly 1
-        $mail.Body[0] | Should -BeExactly $body
+        It @ItArgs {
+            $body = "Mail without a subject using named parameters."
+            Send-MailMessage -NoSubject -To $address -From $address -Body $body -SmtpServer 127.0.0.1
+            Test-Path -Path $mailBox | Should -BeTrue
+            $mail = read-mail $mailBox
+            $mail.From | Should -BeExactly $address
+            $mail.To.Count | Should -BeExactly 1
+            $mail.To[0] | Should -BeExactly $address
+            $mail.Subject | Should -BeNullOrEmpty
+            $mail.Body.Count | Should -BeExactly 1
+            $mail.Body[0] | Should -BeExactly $body
+        }
+
+        $ItArgs = $PesterArgs.Clone()
+        $ItArgs['Name'] = "Can send mail message without a subject using positional parameters " + $ItArgs['Name']
+
+        It @ItArgs {
+            $body = "Mail without a subject using positional parameters."
+            Send-MailMessage -NoSubject $address $body "127.0.0.1" -From $address
+            Test-Path -Path $mailBox | Should -BeTrue
+            $mail = read-mail $mailBox
+            $mail.From | Should -BeExactly $address
+            $mail.To.Count | Should -BeExactly 1
+            $mail.To[0] | Should -BeExactly $address
+            $mail.Subject | Should -BeNullOrEmpty
+            $mail.Body.Count | Should -BeExactly 1
+            $mail.Body[0] | Should -BeExactly $body
+        }
     }
 }
