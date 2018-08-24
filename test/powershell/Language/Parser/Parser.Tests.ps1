@@ -798,7 +798,7 @@ foo``u{2195}abc
                 @{ Script = "1ulpb"; ExpectedValue = "1125899906842624"; ExpectedType = [ulong] }
         )
 
-        It "<Script> should return <ExpectedValue>, with type <ExpectedType>" -TestCases $NumericParsingCases {
+        It "<Script> should return <ExpectedValue>, with type <ExpectedType>" -TestCases $testData {
             param ( $Script, $ExpectedValue, $ExpectedType )
             ExecuteCommand $Script | Should -Be $ExpectedValue
             ExecuteCommand $Script | Should -BeOfType $ExpectedType
