@@ -652,11 +652,11 @@ foo``u{2195}abc
                 #Standard
                 @{ Script = "0"; ExpectedValue = "0"; ExpectedType = [int] }
                 @{ Script = "10"; ExpectedValue = "10"; ExpectedType = [int] }
-                @{ Script = "-10"; ExpectedValue = "10"; ExpectedType = [int] }
+                @{ Script = "-10"; ExpectedValue = "-10"; ExpectedType = [int] }
                 #<Real>
                 @{ Script = "0.0"; ExpectedValue = "0"; ExpectedType = [double] }
                 @{ Script = "6.5"; ExpectedValue = "6.5"; ExpectedType = [double] }
-                @{ Script = "-6.5"; ExpectedValue = "6.5"; ExpectedType = [double] }
+                @{ Script = "-6.5"; ExpectedValue = "-6.5"; ExpectedType = [double] }
                 #Exponential
                 @{ Script = "0e0"; ExpectedValue = "0"; ExpectedType = [double] }
                 @{ Script = "5e-2"; ExpectedValue = "0.05"; ExpectedType = [double] }
@@ -751,7 +751,7 @@ foo``u{2195}abc
                 @{ Script = "0e0u"; ExpectedValue = "0"; ExpectedType = [uint] }
                 @{ Script = "3e2u"; ExpectedValue = "300"; ExpectedType = [uint] }
                 #Hexadecimal
-                @{ Script = "0x0lu"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "0x0u"; ExpectedValue = "0"; ExpectedType = [uint] }
                 @{ Script = "0x41u"; ExpectedValue = "65"; ExpectedType = [uint] }
                 #Multipliers
                 @{ Script = "1ukb"; ExpectedValue = "1024"; ExpectedType = [uint] }
