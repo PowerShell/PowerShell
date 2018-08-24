@@ -1032,7 +1032,8 @@ function Get-OsLogPersistence
 
 
 #region eventlog support
-#utility function to clear a particular log
+
+# utility function to clear a particular log
 function Clear-PSEventLog
 {
    param([Parameter(Mandatory=$true)][string]$Name)
@@ -1040,6 +1041,7 @@ function Clear-PSEventLog
    wevtutil cl $Name 2>$null
 }
 
+# Waits on a windows event with a property with a particular value
 function Wait-PSWinEvent
 {
     param(
