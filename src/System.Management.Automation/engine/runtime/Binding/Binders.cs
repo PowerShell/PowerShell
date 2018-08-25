@@ -3946,6 +3946,11 @@ namespace System.Management.Automation.Language
                 return InvokeIndexer(target, indexes, errorSuggestion, defaultMember.MemberName).WriteToDebugLog(this);
             }
 
+            if (typeof(ITuple).IsAssignableFrom(target.LimitType))
+            {
+                return InvokeIndexer(target, indexes, errorSuggestion, "Item").WriteToDebugLog(this);
+            }
+
             return errorSuggestion ?? CannotIndexTarget(target, indexes).WriteToDebugLog(this);
         }
 
@@ -4046,7 +4051,12 @@ namespace System.Management.Automation.Language
             }
 
             // target implements IList<T>?
-            return limitType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>));
+            if (limitType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>)))
+            {
+                return true;
+            }
+
+            return typeof(ITuple).IsAssignableFrom(limitType);
         }
 
         private DynamicMetaObject IndexWithNegativeChecks(
@@ -4249,6 +4259,12 @@ namespace System.Management.Automation.Language
                 // the call.
                 PropertyInfo lengthProperty = target.LimitType.GetProperty("Count") ??
                                               target.LimitType.GetProperty("Length"); // for string
+
+                // Default ITuple implementations explicitly implement ITuple.Length.
+                if (lengthProperty == null && typeof(ITuple).IsAssignableFrom(target.LimitType))
+                {
+                    lengthProperty = typeof(ITuple).GetProperty(nameof(ITuple.Length));
+                }
 
                 if (lengthProperty != null)
                 {
