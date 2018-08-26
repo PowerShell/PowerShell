@@ -3928,6 +3928,8 @@ namespace System.Management.Automation.Language
                 return GetIndexArray(target, indexes, errorSuggestion).WriteToDebugLog(this);
             }
 
+            var defaultMember = target.LimitType.GetCustomAttributes<DefaultMemberAttribute>(true).FirstOrDefault();
+            PropertyInfo lengthProperty = null;
             foreach (var i in target.LimitType.GetInterfaces())
             {
                 if (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
@@ -3938,17 +3940,20 @@ namespace System.Management.Automation.Language
                         return result.WriteToDebugLog(this);
                     }
                 }
+
+                if (defaultMember == null)
+                {
+                    defaultMember = i.GetCustomAttribute<DefaultMemberAttribute>(inherit: true);
+                    if (defaultMember != null)
+                    {
+                        lengthProperty = i.GetProperty("Length") ?? i.GetProperty("Count");
+                    }
+                }
             }
 
-            var defaultMember = target.LimitType.GetCustomAttributes<DefaultMemberAttribute>(true).FirstOrDefault();
             if (defaultMember != null)
             {
-                return InvokeIndexer(target, indexes, errorSuggestion, defaultMember.MemberName).WriteToDebugLog(this);
-            }
-
-            if (typeof(ITuple).IsAssignableFrom(target.LimitType))
-            {
-                return InvokeIndexer(target, indexes, errorSuggestion, "Item").WriteToDebugLog(this);
+                return InvokeIndexer(target, indexes, errorSuggestion, defaultMember.MemberName, lengthProperty).WriteToDebugLog(this);
             }
 
             return errorSuggestion ?? CannotIndexTarget(target, indexes).WriteToDebugLog(this);
@@ -4207,7 +4212,8 @@ namespace System.Management.Automation.Language
         private DynamicMetaObject InvokeIndexer(DynamicMetaObject target,
                                                 DynamicMetaObject[] indexes,
                                                 DynamicMetaObject errorSuggestion,
-                                                string methodName)
+                                                string methodName,
+                                                PropertyInfo lengthProperty)
         {
             MethodInfo getter = PSInvokeMemberBinder.FindBestMethod(target, indexes, "get_" + methodName, false, _constraints);
 
@@ -4257,13 +4263,10 @@ namespace System.Management.Automation.Language
                 // PowerShell supports negative indexing for some types (specifically, types implementing IList or IList<T>).
                 // For those types, generate special code to check for negative indices, otherwise just generate
                 // the call.
-                PropertyInfo lengthProperty = target.LimitType.GetProperty("Count") ??
-                                              target.LimitType.GetProperty("Length"); // for string
-
-                // Default ITuple implementations explicitly implement ITuple.Length.
-                if (lengthProperty == null && typeof(ITuple).IsAssignableFrom(target.LimitType))
+                if (lengthProperty == null)
                 {
-                    lengthProperty = typeof(ITuple).GetProperty(nameof(ITuple.Length));
+                    lengthProperty = target.LimitType.GetProperty("Count") ??
+                                     target.LimitType.GetProperty("Length"); // for string
                 }
 
                 if (lengthProperty != null)
