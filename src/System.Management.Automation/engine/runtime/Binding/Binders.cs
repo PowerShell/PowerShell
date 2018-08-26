@@ -3946,7 +3946,7 @@ namespace System.Management.Automation.Language
                     defaultMember = i.GetCustomAttribute<DefaultMemberAttribute>(inherit: true);
                     if (defaultMember != null)
                     {
-                        lengthProperty = i.GetProperty("Length") ?? i.GetProperty("Count");
+                        lengthProperty = i.GetProperty("Count") ?? i.GetProperty("Length");
                     }
                 }
             }
