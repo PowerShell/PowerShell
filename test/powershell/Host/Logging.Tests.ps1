@@ -97,6 +97,11 @@ function WriteLogSettings
         $values['LogLevel'] = $LogLevel.ToString()
     }
 
+    if($IsWindows)
+    {
+        $values["Microsoft.PowerShell:ExecutionPolicy"] = "RemoteSigned"
+    }
+
     if($ScriptBlockLogging.IsPresent)
     {
         $powerShellPolicies = @{
@@ -222,7 +227,7 @@ $pid
     }
 }
 
-Describe 'Basic os_log tests on MacOS' -Tag @('Feature','RequireSudoOnUnix') {
+Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsMacOS
         [bool] $persistenceEnabled = $false
@@ -356,5 +361,59 @@ $pid
             }
             throw
         }
+    }
+}
+
+Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') {
+    BeforeAll {
+        [bool] $IsSupportedEnvironment = $IsWindows
+        [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+        $scriptBlockLoggingCases = @(
+            @{
+                name = 'normal script block'
+                script = "Write-Verbose 'testheader123' ;Write-verbose 'after'"
+                expectedText="Write-Verbose 'testheader123' ;Write-verbose 'after'`r`n"
+            }
+        )
+
+        if ($IsSupportedEnvironment)
+        {
+            & "$PSHome\RegisterManifest.ps1"
+        }
+    }
+
+    BeforeEach {
+        if ($IsSupportedEnvironment)
+        {
+            # generate a unique log application id
+            [string] $logId = [Guid]::NewGuid().ToString('N')
+
+            $logName = 'PowerShellCore'
+
+            # get log items after current time.
+            [DateTime] $after = [DateTime]::Now
+            Clear-PSEventLog -Name "$logName/Operational"
+        }
+    }
+
+    It 'Verifies scriptblock logging: <name>' -Skip:(!$IsSupportedEnvironment) -TestCases $scriptBlockLoggingCases {
+        param(
+            [string] $script,
+            [string] $expectedText,
+            [string] $name
+        )
+        $configFile = WriteLogSettings -ScriptBlockLogging -LogId $logId
+        $testFileName = 'test01.ps1'
+        $testScriptPath = Join-Path -Path $TestDrive -ChildPath $testFileName
+        $script | Out-File -FilePath $testScriptPath -Force
+        $null = & $powershell -NoProfile -SettingsFile $configFile -Command $testScriptPath
+
+        $created = Wait-PSWinEvent -FilterHashtable @{ ProviderName=$logName; Id = 4104 } `
+            -PropertyName Message -PropertyValue $expectedText
+
+        $created | Should -Not -BeNullOrEmpty
+        $created.Properties[0].Value | Should -Be 1
+        $created.Properties[1].Value | Should -Be 1
+        $created.Properties[2].Value | Should -Be $expectedText
     }
 }
