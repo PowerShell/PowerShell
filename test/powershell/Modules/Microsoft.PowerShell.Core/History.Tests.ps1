@@ -116,13 +116,13 @@ Describe "History cmdlet test cases" -Tags "CI" {
         $duration = [timespan] "1:2:21"
         $end = $start + $duration
         $history = [PSCustomObject] @{
-                CommandLine="command"
-                ExecutionStatus=[Management.Automation.Runspaces.PipelineState]::Completed
-                StartExecutionTime=$start
-                EndExecutionTime=$end
+            CommandLine        = "command"
+            ExecutionStatus    = [Management.Automation.Runspaces.PipelineState]::Completed
+            StartExecutionTime = $start
+            EndExecutionTime   = $end
         }
         $history | Add-History
         $h = Get-History -count 1
-        $h.Duration | Should Be $duration
+        $h.Duration | Should -Be $duration
     }
 }
