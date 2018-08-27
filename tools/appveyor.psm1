@@ -124,6 +124,14 @@ Function Set-BuildVariable
     {
         Set-AppveyorBuildVariable @PSBoundParameters
     }
+    elseif($env:TF_BUILD)
+    {
+        #In VSTS
+        Write-Host "##vso[task.setvariable variable=$Name;]$Value"
+        # The variable will not show up until the next task.
+        # Setting in the current session for the same behavior as AppVeyor
+        Set-Item env:/$name -Value $Value
+    }
     else
     {
         Set-Item env:/$name -Value $Value
@@ -221,7 +229,7 @@ function Invoke-AppVeyorInstall
         Update-AppveyorBuild -message $buildName
     }
 
-    if ($env:APPVEYOR)
+    if ($env:APPVEYOR -or $env:TF_BUILD)
     {
         #
         # Generate new credential for appveyor (only) remoting tests.
@@ -360,7 +368,7 @@ function Invoke-AppVeyorTest
             Tag = @()
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
         }
-        Start-PSPester @arguments
+        Start-PSPester @arguments -Title 'Pester Unelevated'
         Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
         # Fail the build, if tests failed
@@ -382,7 +390,7 @@ function Invoke-AppVeyorTest
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $arguments['Path'] = $testFiles
             }
-            Start-PSPester @arguments
+            Start-PSPester @arguments -Title "Pester Experimental Unelevated - $featureName"
 
             Write-Host -ForegroundColor Green "Upload CoreCLR Non-Admin test results for experimental feature '$featureName'"
             Update-AppVeyorTestResults -resultsFile $expFeatureTestResultFile
@@ -399,7 +407,7 @@ function Invoke-AppVeyorTest
             Tag = @('RequireAdminOnWindows')
             ExcludeTag = $ExcludeTag
         }
-        Start-PSPester @arguments
+        Start-PSPester @arguments -Title 'Pester Elevated'
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
@@ -433,7 +441,7 @@ function Invoke-AppVeyorTest
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $arguments['Path'] = $testFiles
             }
-            Start-PSPester @arguments
+            Start-PSPester @arguments -Title "Pester Experimental Elevated - $featureName"
 
             Write-Host -ForegroundColor Green "Upload CoreCLR Admin test results for experimental feature '$featureName'"
             Update-AppVeyorTestResults -resultsFile $expFeatureTestResultFile
@@ -593,6 +601,10 @@ function Invoke-AppveyorFinish
                 if($env:Appveyor)
                 {
                     Push-AppveyorArtifact $_
+                }
+                elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
+                    # In VSTS
+                    Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts;]$_"
                 }
             }
             else

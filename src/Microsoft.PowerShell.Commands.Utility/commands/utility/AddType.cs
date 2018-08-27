@@ -947,6 +947,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
+                parseOptions = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Latest);
                 compilationOptions = GetDefaultCompilationOptions();
             }
 

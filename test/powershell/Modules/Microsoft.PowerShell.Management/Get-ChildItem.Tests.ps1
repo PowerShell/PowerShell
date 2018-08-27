@@ -161,7 +161,8 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem -Path $searchRoot -Directory -Recurse).Count | Should -Be 1
         }
 
-        It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Skip:(!$IsWindows) {
+        # VSTS machines don't have a page file
+        It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Pending {
             # Don't remove!!! It is special test for hidden and opened file with exclusive lock.
             $file = Get-ChildItem -path "$env:SystemDrive\\pagefile.sys" -Hidden
             $file | Should not be $null

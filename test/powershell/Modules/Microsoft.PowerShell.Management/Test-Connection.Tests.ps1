@@ -79,7 +79,7 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         # In VSTS, address is 0.0.0.0
-        It "Force IPv4 with implicit PingOptions" -Skip:(Test-IsVstsLinux) {
+        It "Force IPv4 with implicit PingOptions" -Skip:((Test-IsVstsLinux) -or (Test-IsVstsWindows)) {
             $result = Test-Connection $realName -Count 1 -IPv4
 
             $result.Replies[0].Address              | Should -BeExactly $realAddress
@@ -90,7 +90,7 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         # In VSTS, address is 0.0.0.0
-        It "Force IPv4 with explicit PingOptions" -Skip:(Test-IsVstsLinux) {
+        It "Force IPv4 with explicit PingOptions" -Skip:((Test-IsVstsLinux) -or (Test-IsVstsWindows)) {
             $result1 = Test-Connection $realName -Count 1 -IPv4 -MaxHops 10 -DontFragment
 
             $result2 = Test-Connection $realName -Count 1 -IPv4 -MaxHops 1 -DontFragment
@@ -196,8 +196,9 @@ Describe "Test-Connection" -tags "CI" {
 }
 
     # TODO: We skip the MTUSizeDetect tests on Unix because we expect 'TtlExpired' but get 'TimeOut' internally from .Net Core
+    # Skipping on VSTS in Windows due to `TimedOut`
     Context "MTUSizeDetect" {
-        It "MTUSizeDetect works" -Pending:(!$isWindows) {
+        It "MTUSizeDetect works" -Pending:(!$isWindows -or (Test-IsVstsWindows)) {
             $result = Test-Connection $realName -MTUSizeDetect
 
             $result | Should -BeOfType "System.Net.NetworkInformation.PingReply"
@@ -206,7 +207,7 @@ Describe "Test-Connection" -tags "CI" {
             $result.MTUSize | Should -BeGreaterThan 0
         }
 
-        It "Quiet works" -Pending:(!$isWindows) {
+        It "Quiet works" -Pending:(!$isWindows -or (Test-IsVstsWindows)) {
             $result = Test-Connection $realName -MTUSizeDetect -Quiet
 
             $result | Should -BeOfType "Int32"
@@ -216,7 +217,7 @@ Describe "Test-Connection" -tags "CI" {
 
     Context "TraceRoute" {
         # Hangs in VSTS Linux
-        It "TraceRoute works" -skip:(Test-IsVstsLinux) {
+        It "TraceRoute works" -skip:((Test-IsVstsLinux) -or (Test-IsVstsWindows)) {
             $result = Test-Connection $realName -TraceRoute
             $replies = $result.Replies
             # Check target host reply.
@@ -243,7 +244,7 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         # Hangs in VSTS Linux
-        It "Quiet works" -skip:(Test-IsVstsLinux) {
+        It "Quiet works" -skip:((Test-IsVstsLinux) -or (Test-IsVstsWindows)) {
             $result = Test-Connection $realName -TraceRoute -Quiet
 
             $result | Should -BeTrue

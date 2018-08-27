@@ -36,6 +36,7 @@ function CreateParameters
         [string] $ComputerName,
         [string[]] $Name,
         [string] $ConfigurationName,
+        [switch] $CimSession,
         [System.Management.Automation.Remoting.PSSessionOption] $SessionOption,
         [System.Management.Automation.Runspaces.PSSession[]] $Session)
 
@@ -56,7 +57,14 @@ function CreateParameters
     }
 
     if ($Name) {
-        $parameters["Name"] = $Name
+        if($CimSession.IsPresent)
+        {
+            $parameters["Name"] = [String] $Name
+        }
+        else
+        {
+            $parameters["Name"] = $Name
+        }
     }
 
     if ($ConfigurationName) {
@@ -88,7 +96,7 @@ function New-RemoteSession
         [switch] $CimSession,
         [System.Management.Automation.Remoting.PSSessionOption] $SessionOption)
 
-    $parameters = CreateParameters -Name $Name -ConfigurationName $ConfigurationName -SessionOption $SessionOption
+    $parameters = CreateParameters -Name $Name -ConfigurationName $ConfigurationName -SessionOption $SessionOption -CimSession:$CimSession.IsPresent
 
     if ($CimSession) {
         $session = New-CimSession @parameters

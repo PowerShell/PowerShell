@@ -116,8 +116,7 @@ function Get-EnvironmentInformation
     if ($Environment.IsWindows)
     {
         $environment += @{'IsAdmin' = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)}
-        # Can't use $env:HOME - not available on older systems (e.g. in AppVeyor)
-        $environment += @{'nugetPackagesRoot' = "${env:HOMEDRIVE}${env:HOMEPATH}\.nuget\packages"}
+        $environment += @{'nugetPackagesRoot' = "${env:USERPROFILE}\.nuget\packages"}
     }
     else
     {
@@ -598,16 +597,27 @@ Fix steps:
         Pop-Location
     }
 
-    if ($Environment.IsRedHatFamily) {
+    if ($Environment.IsRedHatFamily -or $Environment.IsDebian9) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
         # as Ubuntu has these specific library files in the platform and macOS builds for itself
         # against the correct versions.
+
+        if ($Environment.IsDebian9){
+            # NOTE: Debian 8 doesn't need these symlinks
+            $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2"
+            $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2"
+        }
+        else { #IsRedHatFamily
+            $sslTarget = "/lib64/libssl.so.10"
+            $cryptoTarget = "/lib64/libcrypto.so.10"
+        }
+
         if ( ! (test-path "$publishPath/libssl.so.1.0.0")) {
-            $null = New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
+            $null = New-Item -Force -ItemType SymbolicLink -Target $sslTarget -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
         }
         if ( ! (test-path "$publishPath/libcrypto.so.1.0.0")) {
-            $null = New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
+            $null = New-Item -Force -ItemType SymbolicLink -Target $cryptoTarget -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
         }
     }
 
@@ -876,14 +886,15 @@ function New-PSOptions {
         $RootInfo['IsValid'] = $true
     }
 
-    return @{ RootInfo = [PSCustomObject]$RootInfo
-              Top = $Top
-              Configuration = $Configuration
-              Framework = $Framework
-              Runtime = $Runtime
-              Output = $Output
-              CrossGen = $CrossGen.IsPresent
-              PSModuleRestore = $PSModuleRestore.IsPresent }
+    return New-PSOptionsObject `
+                -RootInfo ([PSCustomObject]$RootInfo) `
+                -Top $Top `
+                -Runtime $Runtime `
+                -Crossgen $Crossgen.IsPresent `
+                -Configuration $Configuration `
+                -PSModuleRestore $PSModuleRestore.IsPresent `
+                -Framework $Framework `
+                -Output $Output
 }
 
 # Get the Options of the last build
@@ -2994,6 +3005,102 @@ function Restore-PSOptions {
     }
 
     Set-PSOptions -Options $options
+}
+
+# Save PSOptions to be restored by Restore-PSOptions
+function Save-PSOptions {
+    param(
+        [ValidateScript({$parent = Split-Path $_;if($parent){Test-Path $parent}else{return $true}})]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
+
+        [ValidateNotNullOrEmpty()]
+        [object]
+        $Options = (Get-PSOptions -DefaultToNew)
+    )
+
+    $Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath $PSOptionsPath
+}
+
+# Restore PSOptions
+# Optionally remove the PSOptions file
+function Restore-PSOptions {
+    param(
+        [ValidateScript({Test-Path $_})]
+        [string]
+        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
+        [switch]
+        $Remove
+    )
+
+    $options = Get-Content -Path $PSOptionsPath | ConvertFrom-Json
+
+    if($Remove)
+    {
+        # Remove PSOptions.
+        # The file is only used to set the PSOptions.
+        Remove-Item -Path $psOptionsPath -Force
+    }
+
+    $newOptions = New-PSOptionsObject `
+                    -RootInfo $options.RootInfo `
+                    -Top $options.Top `
+                    -Runtime $options.Runtime `
+                    -Crossgen $options.Crossgen `
+                    -Configuration $options.Configuration `
+                    -PSModuleRestore $options.PSModuleRestore `
+                    -Framework $options.Framework `
+                    -Output $options.Output
+
+    Set-PSOptions -Options $newOptions
+}
+
+function New-PSOptionsObject
+{
+    param(
+        [PSCustomObject]
+        $RootInfo,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Top,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Runtime,
+
+        [Parameter(Mandatory)]
+        [Bool]
+        $CrossGen,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Configuration,
+
+        [Parameter(Mandatory)]
+        [Bool]
+        $PSModuleRestore,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Framework,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Output
+    )
+
+    return @{
+        RootInfo = $RootInfo
+        Top = $Top
+        Configuration = $Configuration
+        Framework = $Framework
+        Runtime = $Runtime
+        Output = $Output
+        CrossGen = $CrossGen
+        PSModuleRestore = $PSModuleRestore
+    }
 }
 
 $script:RESX_TEMPLATE = @'

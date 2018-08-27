@@ -1102,6 +1102,14 @@ function New-AfterScripts
         $AfterRemoveScript = [io.path]::GetTempFileName()
         $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
         $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+
+        if ($Environment.IsDebian9) {
+            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+            # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
+            # symlinks.
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" >$null
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" >$null
+        }
     }
 
     return [PSCustomObject] @{
@@ -1563,10 +1571,6 @@ function New-UnifiedNugetPackage
                     {
                         $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
                     }
-
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure'), [tuple]::Create('version', '1.0.0-alpha08'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'PowerShell.Core.Instrumentation'), [tuple]::Create('version', '6.0.0-RC2'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'libpsl'), [tuple]::Create('version', '6.0.0-rc'))) > $null
                 }
 
                 'Microsoft.PowerShell.MarkdownRender' {
