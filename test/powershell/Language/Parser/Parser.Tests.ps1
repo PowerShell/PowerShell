@@ -653,6 +653,7 @@ foo``u{2195}abc
                 @{ Script = "0"; ExpectedValue = "0"; ExpectedType = [int] }
                 @{ Script = "10"; ExpectedValue = "10"; ExpectedType = [int] }
                 @{ Script = "-10"; ExpectedValue = "-10"; ExpectedType = [int] }
+                @{ Script = "+10"; ExpectedValue = "10"; ExpectedType = [int] }
                 #<Real>
                 @{ Script = "0.0"; ExpectedValue = "0"; ExpectedType = [double] }
                 @{ Script = "6.5"; ExpectedValue = "6.5"; ExpectedType = [double] }
@@ -679,6 +680,7 @@ foo``u{2195}abc
                 @{ Script = "0d"; ExpectedValue = "0"; ExpectedType = [decimal] }
                 @{ Script = "100d"; ExpectedValue = "100"; ExpectedType = [decimal] }
                 @{ Script = "-100d"; ExpectedValue = "-100"; ExpectedType = [decimal] }
+                @{ Script = "+100d"; ExpectedValue = "100"; ExpectedType = [decimal] }
                 #<Real>
                 @{ Script = "0.0d"; ExpectedValue = "0.0"; ExpectedType = [decimal] }
                 @{ Script = "1.5d"; ExpectedValue = "1.5"; ExpectedType = [decimal] }
@@ -699,6 +701,7 @@ foo``u{2195}abc
                 @{ Script = "0s"; ExpectedValue = "0"; ExpectedType = [short] }
                 @{ Script = "10s"; ExpectedValue = "10"; ExpectedType = [short] }
                 @{ Script = "-10s"; ExpectedValue = "-10"; ExpectedType = [short] }
+                @{ Script = "+10s"; ExpectedValue = "10"; ExpectedType = [short] }
                 #Conversion from <Real>
                 @{ Script = "0.0s"; ExpectedValue = "0"; ExpectedType = [short] }
                 @{ Script = "3.72s"; ExpectedValue = "4"; ExpectedType = [short] }
@@ -721,8 +724,9 @@ foo``u{2195}abc
                 @{ Script = "0l"; ExpectedValue = "0"; ExpectedType = [long] }
                 @{ Script = "10l"; ExpectedValue = "10"; ExpectedType = [long] }
                 @{ Script = "-10l"; ExpectedValue = "-10"; ExpectedType = [long] }
+                @{ Script = "+10l"; ExpectedValue = "10"; ExpectedType = [long] }
                 #Conversion from <Real>
-                @{ Script = "0l"; ExpectedValue = "0"; ExpectedType = [long] }
+                @{ Script = "0.0l"; ExpectedValue = "0"; ExpectedType = [long] }
                 @{ Script = "2.5l"; ExpectedValue = "2"; ExpectedType = [long] }
                 @{ Script = "-2.5l"; ExpectedValue = "-2"; ExpectedType = [long] }
                 #Exponential
@@ -744,8 +748,9 @@ foo``u{2195}abc
                 #Standard
                 @{ Script = "0u"; ExpectedValue = "0"; ExpectedType = [uint] }
                 @{ Script = "10u"; ExpectedValue = "10"; ExpectedType = [uint] }
+                @{ Script = "+10u"; ExpectedValue = "10"; ExpectedType = [uint] }
                 #Conversion from <Real>
-                @{ Script = "0u"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "0.0u"; ExpectedValue = "0"; ExpectedType = [uint] }
                 @{ Script = "2.5u"; ExpectedValue = "2"; ExpectedType = [uint] }
                 #Exponential
                 @{ Script = "0e0u"; ExpectedValue = "0"; ExpectedType = [uint] }
@@ -764,6 +769,7 @@ foo``u{2195}abc
                 #Standard
                 @{ Script = "0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
                 @{ Script = "10us"; ExpectedValue = "10"; ExpectedType = [ushort] }
+                @{ Script = "+10us"; ExpectedValue = "10"; ExpectedType = [ushort] }
                 #Conversion from <Real>
                 @{ Script = "0.0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
                 @{ Script = "3.72us"; ExpectedValue = "4"; ExpectedType = [ushort] }
@@ -781,8 +787,9 @@ foo``u{2195}abc
                 #Standard
                 @{ Script = "0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
                 @{ Script = "10ul"; ExpectedValue = "10"; ExpectedType = [ulong] }
+                @{ Script = "+10ul"; ExpectedValue = "10"; ExpectedType = [ulong] }
                 #Conversion from <Real>
-                @{ Script = "0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
+                @{ Script = "0.0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
                 @{ Script = "2.5ul"; ExpectedValue = "2"; ExpectedType = [ulong] }
                 #Exponential
                 @{ Script = "0e0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
