@@ -109,6 +109,7 @@ Describe "Object cmdlets" -Tags "CI" {
             $text -match "min" | Should -BeTrue
             $text -match "max" | Should -BeTrue
             $text -match 'Average' | Should -BeFalse
+            $text -match 'Sum' | Should -BeFalse
         }
     }
 }
