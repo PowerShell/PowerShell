@@ -4037,31 +4037,20 @@ namespace System.Management.Automation.Language
                 bindingRestrictions);
         }
 
-        internal static bool CanIndexFromEndWithNegativeIndex(DynamicMetaObject target)
+        internal static bool CanIndexFromEndWithNegativeIndex(
+            DynamicMetaObject target,
+            MethodInfo indexer,
+            ParameterInfo[] getterParams)
         {
-            var limitType = target.LimitType;
-            if (limitType.IsArray || limitType == typeof(string) || limitType == typeof(StringBuilder))
+            if (getterParams.Length != 1 || getterParams[0].ParameterType != typeof(int))
             {
-                return true;
+                return false;
             }
 
-            if (typeof(IList).IsAssignableFrom(limitType))
-            {
-                return true;
-            }
-
-            if (typeof(OrderedDictionary).IsAssignableFrom(limitType))
-            {
-                return true;
-            }
-
-            // target implements IList<T>?
-            if (limitType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>)))
-            {
-                return true;
-            }
-
-            return typeof(ITuple).IsAssignableFrom(limitType);
+            // Get the base method definition of the indexer to determine if the int
+            // parameter is a generic type parameter. Module.ResolveMethod is used
+            // because the indexer could be a method from a constructed generic type.
+            return indexer.Module.ResolveMethod(indexer.MetadataToken).ContainsGenericParameters;
         }
 
         private DynamicMetaObject IndexWithNegativeChecks(
@@ -4070,8 +4059,6 @@ namespace System.Management.Automation.Language
             PropertyInfo lengthProperty,
             Func<Expression, Expression, Expression> generateIndexOperation)
         {
-            Diagnostics.Assert(CanIndexFromEndWithNegativeIndex(target), "Unexpected target type to index from end with negative value");
-
             // Generate:
             //    try {
             //       len = obj.Length
@@ -4258,7 +4245,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (getterParams.Length == 1 && getterParams[0].ParameterType == typeof(int) && CanIndexFromEndWithNegativeIndex(target))
+            if (CanIndexFromEndWithNegativeIndex(target, getter, getterParams))
             {
                 // PowerShell supports negative indexing for some types (specifically, types implementing IList or IList<T>).
                 // For those types, generate special code to check for negative indices, otherwise just generate
