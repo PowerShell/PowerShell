@@ -3941,6 +3941,9 @@ namespace System.Management.Automation.Language
                     }
                 }
 
+                // If the type explicitly implements an indexer specified by an interface
+                // then the DefaultMemberAttribute will not carry over to the implementation.
+                // This check will catch those cases.
                 if (defaultMember == null)
                 {
                     defaultMember = i.GetCustomAttribute<DefaultMemberAttribute>(inherit: true);
