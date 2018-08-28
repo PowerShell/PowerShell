@@ -4053,7 +4053,8 @@ namespace System.Management.Automation.Language
             // Get the base method definition of the indexer to determine if the int
             // parameter is a generic type parameter. Module.ResolveMethod is used
             // because the indexer could be a method from a constructed generic type.
-            return indexer.Module.ResolveMethod(indexer.MetadataToken).ContainsGenericParameters;
+            MethodBase baseMethod = indexer.Module.ResolveMethod(indexer.MetadataToken);
+            return !baseMethod.GetParameters()[0].ParameterType.IsGenericParameter;
         }
 
         private DynamicMetaObject IndexWithNegativeChecks(
