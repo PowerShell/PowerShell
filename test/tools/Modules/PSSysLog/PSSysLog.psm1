@@ -1030,4 +1030,105 @@ function Get-OsLogPersistence
 
 #region os_log support
 
-Export-ModuleMember -Function Get-PSSysLog, Get-PSOsLog, Export-PSOsLog, Get-OsLogPersistence, Set-OsLogPersistence
+
+#region eventlog support
+
+# utility function to clear a particular log
+function Clear-PSEventLog
+{
+   param([Parameter(Mandatory=$true)][string]$Name)
+
+   wevtutil cl $Name 2>$null
+}
+
+# Waits on a windows event with a property with a particular value
+function Wait-PSWinEvent
+{
+    param(
+        [Parameter()]
+        $FilterHashtable,
+
+        [Parameter(ParameterSetName = "ByPropertyName")]
+        $propertyName,
+
+        [Parameter(ParameterSetName = "ByPropertyIndex")]
+        $propertyIndex,
+
+        [Parameter()]
+        $propertyValue,
+
+        [Parameter()]
+        $timeout = 30,
+
+        [Parameter()]
+        $pause = 1,
+
+        [Parameter()]
+        [Switch]
+        $All
+    )
+
+    $startTime = [DateTime]::Now
+    $lastFoundCount = 0;
+
+    do
+    {
+        sleep $pause
+
+        $recordsToReturn = @()
+
+        foreach ($thisRecord in (get-winevent -FilterHashtable $filterHashtable -Oldest 2>$null))
+        {
+            if($PsCmdlet.ParameterSetName -eq "ByPropertyName")
+            {
+                if ($thisRecord."$propertyName" -like "*$propertyValue*")
+                {
+                    if($All)
+                    {
+                        $recordsToReturn += $thisRecord
+                    }
+                    else
+                    {
+                        return $thisRecord
+                    }
+                }
+            }
+
+            if($PsCmdlet.ParameterSetName -eq "ByPropertyIndex")
+            {
+                if ($thisRecord.Properties[$propertyIndex].Value -eq $propertyValue)
+                {
+                    if($All)
+                    {
+                        $recordsToReturn += $thisRecord
+                    }
+                    else
+                    {
+                        return $thisRecord
+                    }
+                }
+            }
+        }
+
+        if($recordsToReturn.Count -gt 0)
+        {
+            if($recordsToReturn.Count -eq $lastFoundCount)
+            {
+               return $recordsToReturn
+            }
+
+            $lastFoundCount = $recordsToReturn.Count
+        }
+    } while (([DateTime]::Now - $startTime).TotalSeconds -lt $timeout)
+}
+#endregion eventlog support
+
+Export-ModuleMember -Function @(
+    'Clear-PSEventLog'
+    'Export-PSOsLog'
+    'Get-OsLogPersistence'
+    'Get-PSOsLog'
+    'Get-PSSysLog'
+    'Set-OsLogPersistence'
+    'Wait-PSWinEvent'
+)

@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "DotNetAPI" -Tags "CI" {
     $posh_E  = 2.718281828459045
     $posh_pi = 3.14159265358979
@@ -23,5 +24,9 @@ Describe "DotNetAPI" -Tags "CI" {
 	[System.Guid]$guidVal = [System.Guid]::NewGuid()
 
 	$guidVal | Should -BeOfType Guid
+    }
+
+    It "Should access types in System.Console" {
+        [System.Console]::TreatControlCAsInput | Should -BeFalse
     }
 }
