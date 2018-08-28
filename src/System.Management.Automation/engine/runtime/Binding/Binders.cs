@@ -4267,18 +4267,13 @@ namespace System.Management.Automation.Language
 
             if (CanIndexFromEndWithNegativeIndex(target, getter, getterParams))
             {
-                // PowerShell supports negative indexing for for types that meet the following criteria:
-                //
-                // - Indexer method accepts one parameter that is typed as int
-                //
-                // - The int parameter is not a type argument from a constructed generic type (this is
-                //   to exclude indexers for types that could use a negative index as a valid key
-                //   like System.Linq.ILookup)
-                //
-                // - Declares a "Count" or "Length" property
-                //
-                // - Does not inherit from IDictionary<> as that is handled earlier in the binder
-                //
+                // PowerShell supports negative indexing for types that meet the following criteria:
+                //      - Indexer method accepts one parameter that is typed as int
+                //      - The int parameter is not a type argument from a constructed generic type
+                //        (this is to exclude indexers for types that could use a negative index as
+                //        a valid key like System.Linq.ILookup)
+                //      - Declares a "Count" or "Length" property
+                //      - Does not inherit from IDictionary<> as that is handled earlier in the binder
                 // For those types, generate special code to check for negative indices, otherwise just generate
                 // the call.
                 if (lengthProperty == null)
