@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\Test.Common.props"/>
+
+  <PropertyGroup>
+    <Description>Very tiny windows service to do service testing</Description>
+    <AssemblyName>TestService</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="2.0.0" />
+  </ItemGroup>
+
+</Project>
