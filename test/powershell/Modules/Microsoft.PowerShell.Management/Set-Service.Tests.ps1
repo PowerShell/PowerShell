@@ -348,7 +348,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
 
     Context "Set-Service test cases on the services with dependent relationship" {
         BeforeEach {
-            Set-Service -Status Running $testservicename2 | Should -Not -Throw
+            { Set-Service -Status Running $testservicename2 } | Should -Not -Throw
             (Get-Service $testservicename1).Status | Should -BeExactly "Running"
             (Get-Service $testservicename2).Status | Should -BeExactly "Running"
         }
