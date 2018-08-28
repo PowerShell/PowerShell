@@ -354,20 +354,20 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
 
         It "Set-Service can stop a service with dependency" {
-            $script = { Set-Service -Status Stopped $testservicename2 }
+            $script = { Set-Service -Status Stopped $testservicename2 -ErrorAction Stop }
             { & $script } | Should -Not -Throw
             (Get-Service $testservicename2).Status | Should -BeExactly "Stopped"
         }
 
         It "Set-Service cannot stop a service with running dependent service" {
-            $script = { Set-Service -Status Stopped $testservicename1 }
+            $script = { Set-Service -Status Stopped $testservicename1 -ErrorAction Stop }
             { & $script } | Should -Throw
             (Get-Service $testservicename1).Status | Should -BeExactly "Running"
             (Get-Service $testservicename2).Status | Should -BeExactly "Running"
         }
 
         It "Set-Service can stop a service with running dependent service by parameter -Force" {
-            $script = { Set-Service -Status Stopped -Force $testservicename1 }
+            $script = { Set-Service -Status Stopped -Force $testservicename1 -ErrorAction Stop }
             { & $script } | Should -Not -Throw
             (Get-Service $testservicename1).Status | Should -BeExactly "Stopped"
             (Get-Service $testservicename2).Status | Should -BeExactly "Stopped"
