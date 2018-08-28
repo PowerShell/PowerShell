@@ -23,7 +23,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm", 'tar-musl')]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm", 'tar-musl', 'fxdependent')]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -39,7 +39,7 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ("zip" -eq $Type) {
+        if ("zip" -eq $Type -or "fxdependent" -eq $Type) {
             # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
@@ -81,7 +81,12 @@ function Start-PSPackage {
             }
         }
 
-        Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
+        if($Type -eq 'fxdependent') {
+            $NameSuffix = "win-fxdependent"
+            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
+        } else {
+            Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
+        }
 
         $Script:Options = Get-PSOptions
 
@@ -105,14 +110,24 @@ function Start-PSPackage {
             $PSModuleRestoreCorrect = $true
         }
 
+        if($Type -eq 'fxdependent') {
+            ## We do not check for runtime and crossgen for framework dependent package.
+            $precheckFailed = -not $Script:Options -or                          ## Start-PSBuild hasn't been executed yet
+                        -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
+                        $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
+                        $Script:Options.Framework -ne "netcoreapp2.1"           ## Last build wasn't for CoreCLR
+        }
+        else {
+            $precheckFailed = -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
+                        -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
+                        -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
+                        $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
+                        $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
+                        $Script:Options.Framework -ne "netcoreapp2.1"           ## Last build wasn't for CoreCLR
+        }
+
         # Make sure the most recent build satisfies the package requirement
-        if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
-            -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
-            -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
-            $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
-            $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-            $Script:Options.Framework -ne "netcoreapp2.1")          ## Last build wasn't for CoreCLR
-        {
+        if ($precheckFailed) {
             # It's possible that the most recent build doesn't satisfy the package requirement but
             # an earlier build does.
             # It's also possible that the last build actually satisfies the package requirement but
@@ -124,12 +139,21 @@ function Start-PSPackage {
             # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
             # are generated, it'll be hard to verify if they were built from the correct content.
             $params = @('-Clean')
-            $params += '-CrossGen'
+
+            if ($Type -ne 'fxdependent') {
+                $params += '-CrossGen'
+            }
+
             if (!$IncludeSymbols.IsPresent) {
                 $params += '-PSModuleRestore'
             }
 
-            $params += '-Runtime', $Runtime
+            if($Type -eq 'fxdependent') {
+                $params += '-Runtime', 'fxdependent'
+            } else {
+                $params += '-Runtime', $Runtime
+            }
+
             $params += '-Configuration', $Configuration
 
             throw "Please ensure you have run 'Start-PSBuild $params'!"
@@ -240,6 +264,32 @@ function Start-PSPackage {
 
                 if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
                     New-ZipPackage @Arguments
+                }
+            }
+            "fxdependent" {
+                if($IsWindows) {
+                    $Arguments = @{
+                        PackageNameSuffix = $NameSuffix
+                        PackageSourcePath = $Source
+                        PackageVersion = $Version
+                        Force = $Force
+                    }
+
+                    if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
+                        New-ZipPackage @Arguments
+                    }
+                } elseif ($IsLinux) {
+                    $Arguments = @{
+                        PackageSourcePath = $Source
+                        Name = $Name
+                        PackageNameSuffix = 'fxdependent'
+                        Version = $Version
+                        Force = $Force
+                    }
+
+                    if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                        New-TarballPackage @Arguments
+                    }
                 }
             }
             "msi" {
@@ -383,6 +433,9 @@ function New-TarballPackage {
         [ValidatePattern("^powershell")]
         [string] $Name,
 
+        # Suffix of the Name
+        [string] $PackageNameSuffix,
+
         [Parameter(Mandatory)]
         [string] $Version,
 
@@ -392,7 +445,12 @@ function New-TarballPackage {
         [switch] $Force
     )
 
-    $packageName = "$Name-$Version-{0}-$Architecture.tar.gz"
+    if($PackageNameSuffix) {
+        $packageName = "$Name-$Version-{0}-$Architecture-$PackageNameSuffix.tar.gz"
+    } else {
+        $packageName = "$Name-$Version-{0}-$Architecture.tar.gz"
+    }
+
     if ($Environment.IsWindows) {
         throw "Must be on Linux or macOS to build 'tar.gz' packages!"
     } elseif ($Environment.IsLinux) {
@@ -499,7 +557,9 @@ function Expand-PSSignedBuild
 {
     param(
         [Parameter(Mandatory)]
-        [string]$BuildZip
+        [string]$BuildZip,
+
+        [Switch]$SkipPwshExeCheck
     )
 
     $psModulePath = Split-Path -path $PSScriptRoot
@@ -511,7 +571,14 @@ function Expand-PSSignedBuild
     # That zip file is used for compliance scan.
     Remove-Item -Path (Join-Path -Path $buildPath -ChildPath '*.zip') -Recurse
 
-    $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
+    if($SkipPwshExeCheck)
+    {
+        $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.dll')
+    }
+    else
+    {
+        $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
+    }
 
     Restore-PSModuleToBuild -PublishPath $buildPath
 
@@ -522,7 +589,7 @@ function Expand-PSSignedBuild
 
     $options.PSModuleRestore = $true
 
-    if(Test-Path -Path $windowsExecutablePath)
+    if (Test-Path -Path $windowsExecutablePath)
     {
         $options.Output = $windowsExecutablePath
     }

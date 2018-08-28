@@ -11,7 +11,7 @@ param (
 
     [string] $destination = "$env:WORKSPACE",
 
-    [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64")]
+    [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64", "fxdependent")]
     [string]$Runtime = 'win7-x64',
 
     [switch] $Wait,
@@ -79,13 +79,21 @@ try{
     if($PSCmdlet.ParameterSetName -eq 'packageSigned')
     {
         Write-Verbose "Expanding signed build..." -verbose
-        Expand-PSSignedBuild -BuildZip $BuildZip
+        if($Runtime -eq 'fxdependent')
+        {
+            Expand-PSSignedBuild -BuildZip $BuildZip -SkipPwshExeCheck
+        }
+        else
+        {
+            Expand-PSSignedBuild -BuildZip $BuildZip
+        }
+
         Remove-Item -Path $BuildZip
     }
     else
     {
         Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -verbose
-        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm"}
+        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm" -and $Runtime -ne "fxdependent"}
         if(!$Symbols.IsPresent)
         {
             $buildParams['PSModuleRestore'] = $true
@@ -94,14 +102,22 @@ try{
         Start-PSBuild -Clean -Runtime $Runtime -Configuration Release @releaseTagParam @buildParams
     }
 
-    $pspackageParams = @{'Type'='msi'; 'WindowsRuntime'=$Runtime}
-    if(!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch "arm")
+    if($Runtime -eq 'fxdependent')
+    {
+        $pspackageParams = @{'Type'='fxdependent'}
+    }
+    else
+    {
+        $pspackageParams = @{'Type'='msi'; 'WindowsRuntime'=$Runtime}
+    }
+
+    if(!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch "arm" -and $Runtime -ne 'fxdependent')
     {
         Write-Verbose "Starting powershell packaging(msi)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
-    if(!$ComponentRegistration.IsPresent)
+    if(!$ComponentRegistration.IsPresent -and $Runtime -ne 'fxdependent')
     {
         $pspackageParams['Type']='zip'
         $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
@@ -111,6 +127,19 @@ try{
         Write-Verbose "Exporting packages ..." -verbose
 
         Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb | ForEach-Object {
+            $file = $_.FullName
+            Write-Verbose "Copying $file to $destination" -verbose
+            Copy-Item -Path $file -Destination "$destination\" -Force
+        }
+    }
+    elseif (!$ComponentRegistration.IsPresent -and $Runtime -eq 'fxdependent')
+    {
+        ## Add symbols for just like zip package.
+        $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
+        Start-PSPackage @pspackageParams @releaseTagParam
+
+        ## Copy the fxdependent Zip package to destination.
+        Get-ChildItem $location\PowerShell-*.zip | ForEach-Object {
             $file = $_.FullName
             Write-Verbose "Copying $file to $destination" -verbose
             Copy-Item -Path $file -Destination "$destination\" -Force
