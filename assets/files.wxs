@@ -187,8 +187,8 @@
             <Component Id="cmp2B60F4AC2E8D95A558C3E121A6252D37" Guid="{C361734D-C0E0-47E2-B867-82878D0F0E4C}">
                 <File Id="fil8E8E3BF1C97D92DFEB4FC97D778F238F" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Runtime.CompilerServices.VisualC.dll" />
             </Component>
-            <Component Id="cmp9C01EB4ABD5E45E99A578811CBA32639" Guid="{09C9310D-56AD-4F7A-90C8-DF0F7E8A7251}">
-                <File Id="filDDE80F6ACEC54B56BA33E587A072DE27" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26628.05.dll" />
+            <Component Id="cmpf65fc69858294501b4f61951193b392c" Guid="{09C9310D-56AD-4F7A-90C8-DF0F7E8A7251}">
+                <File Id="filDDE80F6ACEC54B56BA33E587A072DE27" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26725.06.dll" />
             </Component>
             <Component Id="cmp5977DC14DE00AD6E597A2FEBB8C3B58B" Guid="{8E01E3C2-0596-46D8-95DD-BCA308A88941}">
                 <File Id="filEE7925E7A712381B024DAE39831F7AEB" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Threading.dll" />
@@ -484,8 +484,8 @@
             <Component Id="cmp644DFED4A59040568D091F0EA5F691E6" Guid="{C63BB7F7-682A-4EF4-AEFE-5A7BE5475AAA}">
                 <File Id="fil69EA4231E04E7B76EE0676A3C7EB4F91" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Security.Cryptography.Pkcs.dll" />
             </Component>
-            <Component Id="cmp2C8A6F940411401A9A6EFF6CD7F4A8C8" Guid="{8B8505AA-27B2-4244-A1C3-1E5952D64B64}">
-                <File Id="fil87A274531F374FB186928D7A3B28F54F" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26628.05.dll" />
+            <Component Id="cmp47ff9204b9544467a6f71e951716f8a4" Guid="{8B8505AA-27B2-4244-A1C3-1E5952D64B64}">
+                <File Id="fil87A274531F374FB186928D7A3B28F54F" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26725.06.dll" />
             </Component>
             <Component Id="cmpCC989C2FC3319628C5A0897A9CDB4C7D" Guid="{2FC1414C-925B-4653-B376-0DC7114DAA4C}">
                 <File Id="fil2FBB26045517B5A73BF6024C55539694" KeyPath="yes" Source="$(env.ProductSourcePath)\api-ms-win-core-processthreads-l1-1-0.dll" />
@@ -1643,130 +1643,6 @@
                 </Component>
             </Directory>
             <Directory Id="dir9956A485678594F33C936BA160AD06C4" Name="Modules">
-                <Directory Id="dir9C2FC7DD1B408AD4F70123DF50131CBD" Name="PackageManagement">
-                    <Component Id="cmp06B11EAFDD3914ACF2D8C164DC8690DD" Guid="{9A900A1C-06C8-4BA9-A0D0-C8A0B9A19517}">
-                        <File Id="fil2D65FE7CFB67DD71931A988AEFADDC63" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageProviderFunctions.psm1" />
-                    </Component>
-                    <Component Id="cmp787372192BA1121F4B941CA05CFF1F8D" Guid="{C156BC5A-7F4C-4497-9373-778AE2FF45F8}">
-                        <File Id="fil44BB0218DD18A617A67E32117259D12F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.psm1" />
-                    </Component>
-                    <Component Id="cmpA4695300ACEBB66F3B6D188C1CF484A1" Guid="{E5465897-01C3-4A0B-8328-F68AA23AAFD9}">
-                        <File Id="fil7B147FD2F611E77B06B50505D9E2389A" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.Resources.psd1" />
-                    </Component>
-                    <Component Id="cmp828E83274EBD6F1D0900B0C68CD90D01" Guid="{B74A45D3-612C-4D77-803F-0B4CA599F356}">
-                        <File Id="filCEA007D808F869C1ED3CB083CEA4FA49" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.psd1" />
-                    </Component>
-                    <Component Id="cmp158336AF77111C07EAF1E7F26E50B79B" Guid="{AC589B09-567F-4087-9936-7AF452696D8E}">
-                        <File Id="fil3CBD54D5F2019D43EF9D363E6C5E01F9" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.cat" />
-                    </Component>
-                    <Component Id="cmp43F326A44F323E46301C02FCE333E2CD" Guid="{E700AC25-2DCC-453A-94E7-E25E6FCE6D8E}">
-                        <File Id="fil456F3E843B7DF2A6DDDD5B581E898DE3" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.format.ps1xml" />
-                    </Component>
-                    <Directory Id="dir893313D3F16953EAC4468BEA47FE52DA" Name="coreclr">
-                        <Directory Id="dir9DE000C35C01667E62C1ABEA44C3D7FE" Name="netstandard1.6">
-                            <Component Id="cmp655982C69DB4BC1CE326EAF5D68A3DCB" Guid="{E505C9DE-728A-4FC3-9952-D5C2D7F2CB6D}">
-                                <File Id="fil94A674CF03C80AEFA30757550708B323" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.CoreProviders.dll" />
-                            </Component>
-                            <Component Id="cmp26529023C562468C8D4D4C84578378B9" Guid="{C1C453BA-46E4-434E-8B5B-803B2E55FFF7}">
-                                <File Id="fil8F5FD9CB9EE996B490D2EAA107618E37" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.ArchiverProviders.dll" />
-                            </Component>
-                            <Component Id="cmp5AF7DE3D47027F5EACF224FA05A2672B" Guid="{14D187FB-A93A-407C-80EF-DBCAAB45F647}">
-                                <File Id="fil4C52CED2A1A959EC863ED5FB5B46550E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.NuGetProvider.dll" />
-                            </Component>
-                            <Component Id="cmp6FE11EF389730F5DE77BA89A5290A108" Guid="{48C23A24-2B80-4806-9ED7-249FB27CE8FF}">
-                                <File Id="fil871FAC39E99931D328F18C8476EA090C" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PowerShell.PackageManagement.dll" />
-                            </Component>
-                            <Component Id="cmp2854D82014BA8ED0C2BFCF7DA818A3CB" Guid="{23A0F3EC-6BAC-4E99-8567-FC44237D4B77}">
-                                <File Id="filD38978073701E7F5A0F1756086BA8669" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
-                            </Component>
-                            <Component Id="cmp0D26FBA5B552D62AFDEF42B14306981D" Guid="{FB9DA200-BBB2-44D2-8C8E-AFEF84C76E1F}">
-                                <File Id="fil207E1CFAE58FDB0F7A3A86B07FD06197" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netstandard1.6\Microsoft.PackageManagement.dll" />
-                            </Component>
-                        </Directory>
-                        <Directory Id="dirEC1C291763D0DBEEE1BF1EEA2203088E" Name="netcoreapp2.0">
-                            <Component Id="cmpE58806FE8A0F94FADA382E7396E78F70" Guid="{913CC9DC-2DFA-4309-BF57-71E71E685B91}">
-                                <File Id="fil6D648D2EF7D486A3B401AE3778702817" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.CoreProviders.dll" />
-                            </Component>
-                            <Component Id="cmpE2B032EE97969EAD8DD8476CE0CA1D83" Guid="{321F3971-D145-46A4-9FAD-3F15B23BF5E4}">
-                                <File Id="fil65F4172D1FB8C192FAD68860F71AFEA2" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.ArchiverProviders.dll" />
-                            </Component>
-                            <Component Id="cmp5BDC1C0DC8B4E61B5550A56E08F4C804" Guid="{291D5C4E-B82B-451F-9BDF-DF70CA2B1BE7}">
-                                <File Id="fil3A913D88E04F9D3D2A29793D92B4957D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.NuGetProvider.dll" />
-                            </Component>
-                            <Component Id="cmp4A3FB1103BEAE46CFA7897AA34E9534B" Guid="{CD47D831-9DF1-43E1-BE91-C1218390E4AC}">
-                                <File Id="fil5DBDAD7C628E555A9DC3F2A8DFCA4603" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PowerShell.PackageManagement.dll" />
-                            </Component>
-                            <Component Id="cmp61687198EA94E47A25D70969125875F4" Guid="{8BCDBE19-6579-475E-8560-548B5D288B21}">
-                                <File Id="fil77E2A0FC58BF0D2CBF31611A63FC869B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
-                            </Component>
-                            <Component Id="cmpDC564CB5D61E140D4E290EB630476348" Guid="{4FE1C6EA-A3DF-4448-94D0-A6A4FBB3EF82}">
-                                <File Id="filF78D36D7347B9AD345D2156A17E21F5B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\coreclr\netcoreapp2.0\Microsoft.PackageManagement.dll" />
-                            </Component>
-                        </Directory>
-                    </Directory>
-                    <Directory Id="dirC752FFF559E0A1836495B2A5BE8C3241" Name="fullclr">
-                        <Component Id="cmp42FAF33EAFB96E137B4CD3588D244007" Guid="{6B56B9AE-1303-4E6E-BFDD-30F22E758EAD}">
-                            <File Id="filFAF533DFDCB775BAD0751DFEB7DE1D04" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.CoreProviders.dll" />
-                        </Component>
-                        <Component Id="cmp4737D9777EE045FB126E652C2D404C5F" Guid="{10D9963A-A68A-4A6C-953B-D6EC522FCF0F}">
-                            <File Id="fil7854F1EA38C0A65FAC85835F9796CE8D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.ArchiverProviders.dll" />
-                        </Component>
-                        <Component Id="cmpC91745807893F2BAB69354046640E314" Guid="{E8BFA366-60DD-4C03-8909-31281D6E2A09}">
-                            <File Id="fil76343E288E10F5CBCA84886D61BC2A7F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.NuGetProvider.dll" />
-                        </Component>
-                        <Component Id="cmpC8E4E2561F8C38E712D24319BA77F032" Guid="{1670AC4B-2291-48F7-9C40-749DF308A009}">
-                            <File Id="fil4FB5A407BEA219A3277C79F09DA9C280" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PowerShell.PackageManagement.dll" />
-                        </Component>
-                        <Component Id="cmpB07BB3051FDA277D2039A55E27FEA96B" Guid="{94A87B1B-065A-4929-B9D7-4C632AE8DAEC}">
-                            <File Id="fil7AF679A98B4B46C97E87D4CE593ECEAA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MetaProvider.PowerShell.dll" />
-                        </Component>
-                        <Component Id="cmp2F5329662DB4F6F54C5E633BFA65695C" Guid="{253E761F-239B-4082-A22B-E158A59113D2}">
-                            <File Id="fil6D648FAF650FD6F6FCD14C603425B8E3" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MsiProvider.dll" />
-                        </Component>
-                        <Component Id="cmp4D0E30F65EE31C892999F1911FC677A4" Guid="{CAE027CF-D546-4713-9295-B061BE191095}">
-                            <File Id="filBC661E979549386B61C7EE7730A59BFF" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.MsuProvider.dll" />
-                        </Component>
-                        <Component Id="cmpA0367FACA97742E87276CF7C5A1BAB8F" Guid="{097EC67B-0EF5-411C-99DB-EBF284D58043}">
-                            <File Id="fil388F09CF70A7CD5CFBE656C0C7E8923F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\fullclr\Microsoft.PackageManagement.dll" />
-                        </Component>
-                    </Directory>
-                    <Directory Id="dirFC1317A25C1C86853684C8199074961E" Name="DSCResources">
-                        <Component Id="cmpC9B4657EEFE76C4A1368686E81ED1D2A" Guid="{22829073-BEF7-42CC-A642-FAC5DBED7973}">
-                            <File Id="fil0305DF95FD0AA03664A76D11091725EC" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\PackageManagementDscUtilities.strings.psd1" />
-                        </Component>
-                        <Component Id="cmpE704B28ADB879BD9E25A1CC78C7E09C2" Guid="{178F70AD-9156-4E27-A515-7960B60CD5C0}">
-                            <File Id="fil68ECF3E44764D95709BC1D621D364371" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\PackageManagementDscUtilities.psm1" />
-                        </Component>
-                        <Directory Id="dir761FBF007A8A2B602364040C5C52F6CF" Name="MSFT_PackageManagement">
-                            <Component Id="cmp8580EA4589D3F5C323542A87F5FB0FD3" Guid="{D86E02C0-A19D-4DEB-A35F-72F7572CC57F}">
-                                <File Id="fil03CA1AA13C3578B3AADDE540379AA581" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.schema.mof" />
-                            </Component>
-                            <Component Id="cmpBE8C89B274100F02DA3BAB773B4AE344" Guid="{77779DCB-9E9D-4FEC-93A2-F3CEB5C7E75C}">
-                                <File Id="filCB2D18FF3214AC76A5212AF1C6F65AAB" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.psm1" />
-                            </Component>
-                            <Component Id="cmp8293CA494C20B4C65697C26070705F4C" Guid="{6F2ADDE9-A023-4D2D-AB0C-1163D5A375D1}">
-                                <File Id="filDF52BC0CDE6430B94B5A12FEDBF8E9F9" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.strings.psd1" />
-                            </Component>
-                            <Component Id="cmp370775BFDBD56591078650F88017417B" Guid="{9AABD821-42EA-4B48-9F90-5F0EA5FA3903}">
-                                <File Id="filED33AC3DDDA7E84EF556FAB4102E16BF" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.schema.mfl" />
-                            </Component>
-                        </Directory>
-                        <Directory Id="dirFBB1F40E0CE4F3C132F7CB457FAACE6E" Name="MSFT_PackageManagementSource">
-                            <Component Id="cmp5F19EA04916CEB86DE8A81778AD1662C" Guid="{999648EC-4286-4D3E-972D-8C8F78A8EEEE}">
-                                <File Id="fil5EA25D0E5935C9263CC9ECBC48E44A89" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.psm1" />
-                            </Component>
-                            <Component Id="cmpBE63AA34D940A66625AF45E4E9596FDB" Guid="{38B34CE8-0ADA-4318-9D08-A5E19EE4DA35}">
-                                <File Id="fil0D7A433E7D3EED82747A66F5F050C25E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.schema.mof" />
-                            </Component>
-                            <Component Id="cmp7EA4B489F964BF6AF14575521155FDCA" Guid="{575C239F-21BD-44AC-A860-42C46275F5C7}">
-                                <File Id="fil2AD4C7A1F25EAD8DF1462480C35CD4A8" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.schema.mfl" />
-                            </Component>
-                            <Component Id="cmp1A39F07A4B64F18BB6A87D7B88ED735A" Guid="{265501A0-B6E3-4C9D-B8DB-504AA2CD3D6D}">
-                                <File Id="filB4BDCBF5E07CC5C86CF480FEE9D66B4F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.strings.psd1" />
-                            </Component>
-                        </Directory>
-                    </Directory>
-                </Directory>
                 <Directory Id="dir47C9B30879BAE4DA41C8786181D82A02" Name="Microsoft.PowerShell.Utility">
                     <Component Id="cmp2DF9FE0BD560EB7DC8489A259330C2C6" Guid="{1C027D01-228F-4878-8E05-A6EC7602253B}">
                         <File Id="fil70CD54BF55F5335B82B2BED64BDB246D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1" />
@@ -1779,67 +1655,6 @@
                     <Component Id="cmp9723892C7119DFDFD3A6FAE8027B053F" Guid="{C3A2E60E-7F0F-44D0-B54E-2E4B73CE7602}">
                         <File Id="fil52D468AAC368F8F9427B5AB0D5DF94F3" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psm1" />
                     </Component>
-                </Directory>
-                <Directory Id="dirCD3821C7435BC404299DC70CDCA758DB" Name="PowerShellGet">
-                    <Component Id="cmp232D2B3A8A4EED3B5ADF58EC63FF7B45" Guid="{23DB8E58-22E0-4DFE-BFF8-2EE3EC47953C}">
-                        <File Id="filB457F6E9D5208DB6E7EA0FF45BAFA5F2" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PSGet.Format.ps1xml" />
-                    </Component>
-                    <Component Id="cmpBB6B236FBCC263B050EBE1689F14704C" Guid="{DB885F4B-1554-4A0E-881E-EA6D26C71DF2}">
-                        <File Id="fil82923630520622CE85EC435E63CAA2FA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PowerShellGet.psd1" />
-                    </Component>
-                    <Component Id="cmp7F68CE7B059C4186F9CB6A6A1AF12FF5" Guid="{1C8D84F5-D1AC-4EDD-B133-8B631FBBEB76}">
-                        <File Id="filB5CAA0D6BA87C2F13C9F10B044819ED9" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PowerShellGet.cat" />
-                    </Component>
-                    <Component Id="cmp381E89167DA05FCF68069AAD913B1164" Guid="{6F126C87-7491-439B-8B1F-DDB7D0190FE7}">
-                        <File Id="fil702A092A2C6119A3FE304F1F741F1CBA" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PSGet.Resource.psd1" />
-                    </Component>
-                    <Component Id="cmp28DD1A3217445D277BA9D417D049F112" Guid="{FD310C23-BBD1-4EDC-88B3-18D36BC30588}">
-                        <File Id="fil8901A55622E6797F2B582C0876924EFB" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PSModule.psm1" />
-                    </Component>
-                    <Directory Id="dirB4B2CF8B8AD101DA66B2B93856278212" Name="en-US">
-                        <Component Id="cmp3D2B6FD47B4DB9D0EC54CC68485EBD8C" Guid="{799CCD6C-EE4F-4B95-BEB1-90322B97D3F9}">
-                            <File Id="fil082451A3AFB941EBE29DE06389971414" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\en-US\PSGet.Resource.psd1" />
-                        </Component>
-                    </Directory>
-                </Directory>
-                <Directory Id="dir4CBF1818EDFE2128996EC43510CDC960" Name="PSReadLine">
-                    <Component Id="cmp5E6D0C75A767F360277D22D90E4689FF" Guid="{208B315F-BB7A-47C7-A98A-494340B7C403}">
-                        <File Id="fil9EDEBBED87BC553EAF70CAA9C389FCDE" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\Microsoft.PowerShell.PSReadLine2.dll" />
-                    </Component>
-                    <Component Id="cmpEBD2A06C98666C198856C61BA4B13F43" Guid="{41C8F9C3-8310-4DCE-9E6D-C4E9051387F6}">
-                        <File Id="filC4ADB8E1417AA5CA721F811C3402CCD1" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\PSReadLine.psd1" />
-                    </Component>
-                    <Component Id="cmpF6FB4E4E08340DE8FF0D29CA196F679E" Guid="{5E26EDDD-ABF0-44BD-920A-3A45900FD351}">
-                        <File Id="filE00D73DAFF62310A20C5B04B2113D950" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\PSReadLine.psm1" />
-                    </Component>
-                    <Component Id="cmp1EA05378B8F54EAAA1A6CFB54EBC7C44" Guid="{1EA05378-B8F5-4EAA-A1A6-CFB54EBC7C44}">
-                        <File Id="fil1EA05378B8F54EAAA1A6CFB54EBC7C44" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\Changes.txt" />
-                    </Component>
-                    <Component Id="cmpFF8AA91D1C7E4249A091B4B064889DC4" Guid="{FF8AA91D-1C7E-4249-A091-B4B064889DC4}">
-                        <File Id="filFF8AA91D1C7E4249A091B4B064889DC4" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\License.txt" />
-                    </Component>
-                    <Component Id="cmp0502127EF5FF4E21AAE6773586B6F4C6" Guid="{0502127E-F5FF-4E21-AAE6-773586B6F4C6}">
-                        <File Id="fil0502127EF5FF4E21AAE6773586B6F4C6" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\PSReadLine.format.ps1xml" />
-                    </Component>
-                    <Component Id="cmp223B3A51B7A544AB8C865A0ADA54D6E1" Guid="{223B3A51-B7A5-44AB-8C86-5A0ADA54D6E1}">
-                        <File Id="fil223B3A51B7A544AB8C865A0ADA54D6E1" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\SamplePSReadLineProfile.ps1" />
-                    </Component>
-                    <Directory Id="dirE7E29AC662774C07BE283A6BB0AA504F" Name="en-US">
-                        <Component Id="cmp9532D3121A384F288795C997B27FF700" Guid="{9532D312-1A38-4F28-8795-C997B27FF700}">
-                            <File Id="fil9532D3121A384F288795C997B27FF700" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\en-US\about_PSReadLine.help.txt" />
-                        </Component>
-                        <Component Id="cmp9141E7964B3A4F7380DD03DD5BBF10A4" Guid="{9141E796-4B3A-4F73-80DD-03DD5BBF10A4}">
-                            <File Id="fil9141E7964B3A4F7380DD03DD5BBF10A4" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSReadLine\en-US\Microsoft.PowerShell.PSReadLine2.dll-help.xml" />
-                        </Component>
-                    </Directory>
-                </Directory>
-                <Directory Id="dir37EBACBC570E49108415C3BA316EB66D" Name="ThreadJob">
-                        <Component Id="cmp9ADDEE83EFD3497C804FDC6B93A58031" Guid="{9ADDEE83EFD3497C804FDC6B93A58031}">
-                            <File Id="fil15E1EF74BF8C4AFFA6E9B53D8CF6E15E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\ThreadJob.dll" />
-                        </Component>
-                        <Component Id="cmp57A7DBFA4541443CB3AB8A4B82DB53E0" Guid="{57A7DBFA4541443CB3AB8A4B82DB53E0}">
-                            <File Id="fil57D698A50A2A40E58B0B954F55AEEA37" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\ThreadJob.psd1" />
-                        </Component>
                 </Directory>
                 <Directory Id="dirECE37E3EC3637A365744D075BD8132E9" Name="Microsoft.PowerShell.Management">
                     <Component Id="cmp6DAFD01CAA3A4C67185922F445EDE495" Guid="{D4374EC0-26FC-4607-AF6B-35721698E8A5}">
@@ -1891,22 +1706,6 @@
                         <File Id="fil9EE564F904ED2FAFAB47A1188006EB6F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PSDiagnostics\PSDiagnostics.psd1" />
                     </Component>
                 </Directory>
-                <Directory Id="dirF4C1D24EC4E2B72B03218A284F0BD975" Name="Microsoft.PowerShell.Archive">
-                    <Component Id="cmp6B826BD459C25EE579C14CBEE0736B72" Guid="{B91F48FD-3C9B-4159-B872-851A4BFA7B77}">
-                        <File Id="fil089890BEE23E37E2D6A7B1502B9DA5DD" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\Microsoft.PowerShell.Archive.psm1" />
-                    </Component>
-                    <Component Id="cmp602F5EE10622966A340229F781C43067" Guid="{57E3C108-0EE8-427E-B647-C330D3DE14D9}">
-                        <File Id="fil92485858136AFC3B6F86A6196A97251C" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\Microsoft.PowerShell.Archive.cat" />
-                    </Component>
-                    <Component Id="cmpF18C82D82ADC7C5A329A044C731B0A2D" Guid="{F0E07E01-5048-42A5-B45C-3549D0883D89}">
-                        <File Id="filDD904BE67F30CB668CED21F140488D6E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\Microsoft.PowerShell.Archive.psd1" />
-                    </Component>
-                    <Directory Id="dirBBEA3D01421FF3A1123118F421784204" Name="en-US">
-                        <Component Id="cmp02EEC2FAD935D373F51F425B4D743DE3" Guid="{66146703-0159-4A2D-AA15-0C4576145141}">
-                            <File Id="fil536F74DF49E5C1C4C380F00487FB132E" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Archive\en-US\ArchiveResources.psd1" />
-                        </Component>
-                    </Directory>
-                </Directory>
             </Directory>
             <Directory Id="dir20D076755BAF7EA1D1A980368C4F81A2" Name="assets">
                 <Component Id="cmpF877117B22A73BEA3855701E9BEB20D2" Guid="{14AFE4AD-F727-4154-9FC0-BCB8E238E6F4}">
@@ -1917,6 +1716,110 @@
                 </Component>
                 <Component Id="cmp9B83A74D65192F635590641BFEF9F840" Guid="{BCE9433B-3470-4EFE-B735-081B17B5C82B}">
                     <File Id="fil0D65BAB239F3AF9916D653C31460B0A6" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\Powershell_av_colors.ico" />
+                </Component>
+            </Directory>
+            <Directory Id="dirC93D10F1DE914404E3248A7E28901CDC" Name="cs">
+                <Component Id="cmp8CAF71174AEF09BEBBC46FBC901FF5DD" Guid="{29FD7D9F-CB72-4DF5-B1BC-5DDD110E35BB}">
+                    <File Id="fil3169ED0305E61C348D259FF7FD737CF6" KeyPath="yes" Source="$(env.ProductSourcePath)\cs\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmp1C0D095085408CA5B6AE3C1FCDDC2080" Guid="{3178382F-86F2-4C4C-81ED-0FBF4F9EFB11}">
+                    <File Id="fil1411A1AAE919B104B50C9201EF1B6B38" KeyPath="yes" Source="$(env.ProductSourcePath)\cs\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dirEA0127D6607E68B508B9DB9CE315A2CE" Name="de">
+                <Component Id="cmpF2941A91B17EEA22CD6DAB34693D9AC0" Guid="{BE73377F-7647-468E-B130-76A36977B4F9}">
+                    <File Id="fil2178442EC4F9ACE23B92A2FBDC696A04" KeyPath="yes" Source="$(env.ProductSourcePath)\de\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmp0E8354647101C56EF81E9BDB164B586E" Guid="{20B69672-51E1-46F8-9030-15B9E7995CA2}">
+                    <File Id="fil47A3772B9113EA8666F027298BC3EF98" KeyPath="yes" Source="$(env.ProductSourcePath)\de\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dir5B65D7353FBDCD17AB60A674B3FDF93B" Name="es">
+                <Component Id="cmpBEB5F3CF75675537751F0D0B32125BF1" Guid="{0488C929-AB3A-4033-912A-7C17EC9410C3}">
+                    <File Id="fil51D32B754EC53F17637FE1C6C050E861" KeyPath="yes" Source="$(env.ProductSourcePath)\es\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmpFB3B0ED1FFF7496CAF70B2F12EBC5CAE" Guid="{494BD2E2-2E8A-48FE-A9EA-03AA2312B54D}">
+                    <File Id="filE823DFCBDDC210A2E54DD02B718A238E" KeyPath="yes" Source="$(env.ProductSourcePath)\es\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dir23063512FA8C884E1B4F08FDF0A44516" Name="fr">
+                <Component Id="cmp1DEB513A065956086898BCDACC5887B6" Guid="{95058EF3-8C81-4F2B-A465-C2A60142411E}">
+                    <File Id="filA4820C5E1C54EF0522B56C5228E56E4B" KeyPath="yes" Source="$(env.ProductSourcePath)\fr\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmpBAF5257E7B0B1D023F465B43792BC250" Guid="{BE9DF92A-8FC1-4254-93FF-22840D6663AF}">
+                    <File Id="fil428E14D54AFC722EBD7358A6DD1B2945" KeyPath="yes" Source="$(env.ProductSourcePath)\fr\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dir42B03840AE19D1498CC524F2B6C0389D" Name="it">
+                <Component Id="cmp3EC91B8BF4282E77113321E5D1ED27B2" Guid="{DFCDE87B-D5FF-40B8-B520-BF719148F434}">
+                    <File Id="filE037EA8B9CB8C5B2CC63D285AF0F7EA0" KeyPath="yes" Source="$(env.ProductSourcePath)\it\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmp6E798DAF34F45B4588AEA3E3F33A3FAE" Guid="{890A2DB6-8C52-4CA4-A8C7-25AFF95E1C9D}">
+                    <File Id="fil0D6224D3C3B04FD37AF5B74948564B18" KeyPath="yes" Source="$(env.ProductSourcePath)\it\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dir086D21BE309BE4C7081FC60E3524890F" Name="ja">
+                <Component Id="cmp867E4E51FE7BC09AAD5D59FD76716FBC" Guid="{1A35A14A-1698-4C8D-AA92-239C1C4DA5F5}">
+                    <File Id="fil19525C54C67E8D48BCC702E14B52EA49" KeyPath="yes" Source="$(env.ProductSourcePath)\ja\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmpD7A394A1A96413EC3644F59D3099C0F5" Guid="{AC5F894B-3EB7-4A9A-A83C-73AB02F97B8B}">
+                    <File Id="filA9FBE1ED9CA363903BE686498346C3E5" KeyPath="yes" Source="$(env.ProductSourcePath)\ja\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dir43D6CAD5F3ED1060009918D06D84FB18" Name="ko">
+                <Component Id="cmpAA026CCA623F0E8FB5BAE9F201C5B89D" Guid="{ABEAEF0D-B77C-4161-866F-3C711C97B5C4}">
+                    <File Id="filDA3E9F706B7BCF498078BD9DD0DB9864" KeyPath="yes" Source="$(env.ProductSourcePath)\ko\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmp341C4F1E70E4484001218F1B20F62FCF" Guid="{57543956-7846-4986-A225-AF4B1D8E625D}">
+                    <File Id="fil6F4BFC01E8ECA4EFAC9A7F6390929204" KeyPath="yes" Source="$(env.ProductSourcePath)\ko\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dirE8201C74A7184D11233BAD63C6DB37BD" Name="pl">
+                <Component Id="cmpA656A18FE14D3C8EB02C31AE474054E3" Guid="{24699144-EC00-45E9-B2E5-D6E6478093B6}">
+                    <File Id="filEC35707E0244457E3057C898F49AE300" KeyPath="yes" Source="$(env.ProductSourcePath)\pl\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmp070651CCF2761B3EF1985884AEB8AC64" Guid="{A9D15F3C-958C-4BD4-8ED2-353D28D4D1A9}">
+                    <File Id="fil1F11C15015FC10565D94EA9CE331FBEC" KeyPath="yes" Source="$(env.ProductSourcePath)\pl\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dir47ED939BFA870848E0764E862CD6B4D7" Name="pt-BR">
+                <Component Id="cmp3D20E940BDBF41630242C63011A80CE5" Guid="{290F488F-ACFF-4715-9BE7-CC89EA1274F4}">
+                    <File Id="filB2E147AAA953C1BC337C762F24CE7CC2" KeyPath="yes" Source="$(env.ProductSourcePath)\pt-BR\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmp7C2E3035EE02569D9F11970586140F28" Guid="{B2A80BEF-4F0D-4F3B-8CFE-D9DF6BA31974}">
+                    <File Id="filEC4AFB0ACAD3BAFA5ECE2CBE5F2C1C58" KeyPath="yes" Source="$(env.ProductSourcePath)\pt-BR\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dir37B8DFAE26D5F8E9948851F7D19F9E20" Name="ru">
+                <Component Id="cmpFDCD51BD80926ABECCE27D0D66A47C8F" Guid="{40939DF1-4A99-49B2-98F2-A497EE9262EB}">
+                    <File Id="fil17D60D330E84C683ACC6FDD873870F59" KeyPath="yes" Source="$(env.ProductSourcePath)\ru\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmp85FE3DB247B4FB3E04D8E4CED6D66853" Guid="{4E06DACA-71D5-46C6-8F0A-1224BC768A57}">
+                    <File Id="fil3ACB034F8F8170A71A19D07949C58BC1" KeyPath="yes" Source="$(env.ProductSourcePath)\ru\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dirA7E9CC01273A7FED89FC8D3A368E00CC" Name="tr">
+                <Component Id="cmp286FCD0B19BF06446A7274672A2491CA" Guid="{72478D31-A36A-48CC-8BF3-6164D687A368}">
+                    <File Id="filD7DA32C466BD1DFBEF461910E7C1094A" KeyPath="yes" Source="$(env.ProductSourcePath)\tr\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmp137236E8DF48EE210ABFCB127CC1E46C" Guid="{C9AE9436-E24E-48D0-A4DE-9F82DC29B1BA}">
+                    <File Id="filA09D06D77F9E063E8032EABA2EB33925" KeyPath="yes" Source="$(env.ProductSourcePath)\tr\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dir47E993970F74AA9F393D23500827D12C" Name="zh-Hans">
+                <Component Id="cmp34C4A21743AC68583599BF2B139F39F2" Guid="{36C49B4C-1884-4134-A583-0ECC77BD2A8A}">
+                    <File Id="fil2C2935F62D28B01377F140E574AB1BD0" KeyPath="yes" Source="$(env.ProductSourcePath)\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmp2AB68868B57E7E15FCD69157375E39D1" Guid="{15E76FDA-54D8-4C72-A299-5C737B3B0203}">
+                    <File Id="fil4B1471C0FFA523DE31FEDB764D49795B" KeyPath="yes" Source="$(env.ProductSourcePath)\zh-Hans\Microsoft.CodeAnalysis.resources.dll" />
+                </Component>
+            </Directory>
+            <Directory Id="dirB1FFB91EED6FD71EA866548CEA3A5298" Name="zh-Hant">
+                <Component Id="cmpBC28FE8B65954B00AECA9C534639596D" Guid="{247D5128-9957-44BD-8B31-58265EE0C90B}">
+                    <File Id="filC145F3B67ECB39B9A2B9B5142F9F3637" KeyPath="yes" Source="$(env.ProductSourcePath)\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll" />
+                </Component>
+                <Component Id="cmp16789176DD8EDBC99C26E1230DB2BDDF" Guid="{D394EBC3-8768-47A0-865D-A465D3686C36}">
+                    <File Id="fil3779A5AC06BDD2A3AB680DBA83FEAFD1" KeyPath="yes" Source="$(env.ProductSourcePath)\zh-Hant\Microsoft.CodeAnalysis.resources.dll" />
                 </Component>
             </Directory>
         </DirectoryRef>
@@ -1985,7 +1888,7 @@
             <ComponentRef Id="cmp23FD946C6681D6747F1B638ECBE8C8BC" />
             <ComponentRef Id="cmp4B935A8190C2D7D1F0E0DB9E5AAD7F30" />
             <ComponentRef Id="cmp2B60F4AC2E8D95A558C3E121A6252D37" />
-            <ComponentRef Id="cmp9C01EB4ABD5E45E99A578811CBA32639" />
+            <ComponentRef Id="cmpf65fc69858294501b4f61951193b392c" />
             <ComponentRef Id="cmp5977DC14DE00AD6E597A2FEBB8C3B58B" />
             <ComponentRef Id="cmp689C7CE34E0246D8B56D370E898354CE" />
             <ComponentRef Id="cmp634E012FEF6122735D91DE4B1BCC1116" />
@@ -2084,7 +1987,7 @@
             <ComponentRef Id="cmpE66ABF016916C709133CA0DB9366469F" />
             <ComponentRef Id="cmpECCD26D8C540FA35F5C633B318EB742E" />
             <ComponentRef Id="cmp644DFED4A59040568D091F0EA5F691E6" />
-            <ComponentRef Id="cmp2C8A6F940411401A9A6EFF6CD7F4A8C8" />
+            <ComponentRef Id="cmp47ff9204b9544467a6f71e951716f8a4" />
             <ComponentRef Id="cmpCC989C2FC3319628C5A0897A9CDB4C7D" />
             <ComponentRef Id="cmpC9085D713FC071587C61ACFE51384BDD" />
             <ComponentRef Id="cmpB942FEF3BC11F835DF30CDDD845486AD" />
@@ -2209,9 +2112,6 @@
             <ComponentRef Id="cmpEC5CF579D39FC75DC38E051E55A5CAD5" />
             <ComponentRef Id="cmp0B896DBA6AFF2FD27FCD0E0968E23992" />
             <ComponentRef Id="cmpC6A24F97E0D6739A51FE9CC80148F511" />
-            <ComponentRef Id="cmp9ADDEE83EFD3497C804FDC6B93A58031" />
-            <ComponentRef Id="cmp57A7DBFA4541443CB3AB8A4B82DB53E0" />
-            <ComponentRef Id="cmp5E6D0C75A767F360277D22D90E4689FF" />
             <ComponentRef Id="cmp9544B34C5A30F75D0F45F5718A1795F0" />
             <ComponentRef Id="cmpBDF0DC73F4F799A46B1DE220E58C1920" />
             <ComponentRef Id="cmp8EC2515ECF0A11A1228D21FE3D995FB0" />
@@ -2470,59 +2370,9 @@
             <ComponentRef Id="cmp26B40BF8FB886FB1A3D06A497B75D87C" />
             <ComponentRef Id="cmpB924CBBD7AE45EF70866F140D8E133E9" />
             <ComponentRef Id="cmpDC2EF4541FA5A2E63F36A8CD6C5FA51B" />
-            <ComponentRef Id="cmp06B11EAFDD3914ACF2D8C164DC8690DD" />
-            <ComponentRef Id="cmp787372192BA1121F4B941CA05CFF1F8D" />
-            <ComponentRef Id="cmpA4695300ACEBB66F3B6D188C1CF484A1" />
-            <ComponentRef Id="cmp828E83274EBD6F1D0900B0C68CD90D01" />
-            <ComponentRef Id="cmp158336AF77111C07EAF1E7F26E50B79B" />
-            <ComponentRef Id="cmp43F326A44F323E46301C02FCE333E2CD" />
-            <ComponentRef Id="cmp655982C69DB4BC1CE326EAF5D68A3DCB" />
-            <ComponentRef Id="cmp26529023C562468C8D4D4C84578378B9" />
-            <ComponentRef Id="cmp5AF7DE3D47027F5EACF224FA05A2672B" />
-            <ComponentRef Id="cmp6FE11EF389730F5DE77BA89A5290A108" />
-            <ComponentRef Id="cmp2854D82014BA8ED0C2BFCF7DA818A3CB" />
-            <ComponentRef Id="cmp0D26FBA5B552D62AFDEF42B14306981D" />
-            <ComponentRef Id="cmpE58806FE8A0F94FADA382E7396E78F70" />
-            <ComponentRef Id="cmpE2B032EE97969EAD8DD8476CE0CA1D83" />
-            <ComponentRef Id="cmp5BDC1C0DC8B4E61B5550A56E08F4C804" />
-            <ComponentRef Id="cmp4A3FB1103BEAE46CFA7897AA34E9534B" />
-            <ComponentRef Id="cmp61687198EA94E47A25D70969125875F4" />
-            <ComponentRef Id="cmpDC564CB5D61E140D4E290EB630476348" />
-            <ComponentRef Id="cmp42FAF33EAFB96E137B4CD3588D244007" />
-            <ComponentRef Id="cmp4737D9777EE045FB126E652C2D404C5F" />
-            <ComponentRef Id="cmpC91745807893F2BAB69354046640E314" />
-            <ComponentRef Id="cmpC8E4E2561F8C38E712D24319BA77F032" />
-            <ComponentRef Id="cmpB07BB3051FDA277D2039A55E27FEA96B" />
-            <ComponentRef Id="cmp2F5329662DB4F6F54C5E633BFA65695C" />
-            <ComponentRef Id="cmp4D0E30F65EE31C892999F1911FC677A4" />
-            <ComponentRef Id="cmpA0367FACA97742E87276CF7C5A1BAB8F" />
-            <ComponentRef Id="cmpC9B4657EEFE76C4A1368686E81ED1D2A" />
-            <ComponentRef Id="cmpE704B28ADB879BD9E25A1CC78C7E09C2" />
-            <ComponentRef Id="cmp8580EA4589D3F5C323542A87F5FB0FD3" />
-            <ComponentRef Id="cmpBE8C89B274100F02DA3BAB773B4AE344" />
-            <ComponentRef Id="cmp8293CA494C20B4C65697C26070705F4C" />
-            <ComponentRef Id="cmp370775BFDBD56591078650F88017417B" />
-            <ComponentRef Id="cmp5F19EA04916CEB86DE8A81778AD1662C" />
-            <ComponentRef Id="cmpBE63AA34D940A66625AF45E4E9596FDB" />
-            <ComponentRef Id="cmp7EA4B489F964BF6AF14575521155FDCA" />
-            <ComponentRef Id="cmp1A39F07A4B64F18BB6A87D7B88ED735A" />
             <ComponentRef Id="cmp2DF9FE0BD560EB7DC8489A259330C2C6" />
             <ComponentRef Id="cmpA4E56A46B68CE37D7731DB1F96458D10" />
             <ComponentRef Id="cmp9723892C7119DFDFD3A6FAE8027B053F" />
-            <ComponentRef Id="cmp232D2B3A8A4EED3B5ADF58EC63FF7B45" />
-            <ComponentRef Id="cmpBB6B236FBCC263B050EBE1689F14704C" />
-            <ComponentRef Id="cmp7F68CE7B059C4186F9CB6A6A1AF12FF5" />
-            <ComponentRef Id="cmp381E89167DA05FCF68069AAD913B1164" />
-            <ComponentRef Id="cmp28DD1A3217445D277BA9D417D049F112" />
-            <ComponentRef Id="cmp3D2B6FD47B4DB9D0EC54CC68485EBD8C" />
-            <ComponentRef Id="cmpEBD2A06C98666C198856C61BA4B13F43" />
-            <ComponentRef Id="cmpF6FB4E4E08340DE8FF0D29CA196F679E" />
-            <ComponentRef Id="cmp1EA05378B8F54EAAA1A6CFB54EBC7C44" />
-            <ComponentRef Id="cmpFF8AA91D1C7E4249A091B4B064889DC4" />
-            <ComponentRef Id="cmp0502127EF5FF4E21AAE6773586B6F4C6" />
-            <ComponentRef Id="cmp223B3A51B7A544AB8C865A0ADA54D6E1" />
-            <ComponentRef Id="cmp9532D3121A384F288795C997B27FF700" />
-            <ComponentRef Id="cmp9141E7964B3A4F7380DD03DD5BBF10A4" />
             <ComponentRef Id="cmp6DAFD01CAA3A4C67185922F445EDE495" />
             <ComponentRef Id="cmp4AF592F1EDC8794BF4A3CCC2DCB717DB" />
             <ComponentRef Id="cmpA65CEF99B64C1E95632B68EDFBF3739E" />
@@ -2535,13 +2385,35 @@
             <ComponentRef Id="cmpDEDA23DDAB66342DB2C554F6B963C617" />
             <ComponentRef Id="cmpF79A92F228AF5EA2BA60CC33BE9DC6A0" />
             <ComponentRef Id="cmp603C5B38651EE30C8E23FD7C8A4B828D" />
-            <ComponentRef Id="cmp6B826BD459C25EE579C14CBEE0736B72" />
-            <ComponentRef Id="cmp602F5EE10622966A340229F781C43067" />
-            <ComponentRef Id="cmpF18C82D82ADC7C5A329A044C731B0A2D" />
-            <ComponentRef Id="cmp02EEC2FAD935D373F51F425B4D743DE3" />
             <ComponentRef Id="cmpF877117B22A73BEA3855701E9BEB20D2" />
             <ComponentRef Id="cmp10D3A59B81B93BFAD6049D86D593B832" />
             <ComponentRef Id="cmp9B83A74D65192F635590641BFEF9F840" />
+            <ComponentRef Id="cmp8CAF71174AEF09BEBBC46FBC901FF5DD" />
+            <ComponentRef Id="cmp1C0D095085408CA5B6AE3C1FCDDC2080" />
+            <ComponentRef Id="cmpF2941A91B17EEA22CD6DAB34693D9AC0" />
+            <ComponentRef Id="cmp0E8354647101C56EF81E9BDB164B586E" />
+            <ComponentRef Id="cmpBEB5F3CF75675537751F0D0B32125BF1" />
+            <ComponentRef Id="cmpFB3B0ED1FFF7496CAF70B2F12EBC5CAE" />
+            <ComponentRef Id="cmp1DEB513A065956086898BCDACC5887B6" />
+            <ComponentRef Id="cmpBAF5257E7B0B1D023F465B43792BC250" />
+            <ComponentRef Id="cmp3EC91B8BF4282E77113321E5D1ED27B2" />
+            <ComponentRef Id="cmp6E798DAF34F45B4588AEA3E3F33A3FAE" />
+            <ComponentRef Id="cmp867E4E51FE7BC09AAD5D59FD76716FBC" />
+            <ComponentRef Id="cmpD7A394A1A96413EC3644F59D3099C0F5" />
+            <ComponentRef Id="cmpAA026CCA623F0E8FB5BAE9F201C5B89D" />
+            <ComponentRef Id="cmp341C4F1E70E4484001218F1B20F62FCF" />
+            <ComponentRef Id="cmpA656A18FE14D3C8EB02C31AE474054E3" />
+            <ComponentRef Id="cmp070651CCF2761B3EF1985884AEB8AC64" />
+            <ComponentRef Id="cmp3D20E940BDBF41630242C63011A80CE5" />
+            <ComponentRef Id="cmp7C2E3035EE02569D9F11970586140F28" />
+            <ComponentRef Id="cmpFDCD51BD80926ABECCE27D0D66A47C8F" />
+            <ComponentRef Id="cmp85FE3DB247B4FB3E04D8E4CED6D66853" />
+            <ComponentRef Id="cmp286FCD0B19BF06446A7274672A2491CA" />
+            <ComponentRef Id="cmp137236E8DF48EE210ABFCB127CC1E46C" />
+            <ComponentRef Id="cmp34C4A21743AC68583599BF2B139F39F2" />
+            <ComponentRef Id="cmp2AB68868B57E7E15FCD69157375E39D1" />
+            <ComponentRef Id="cmpBC28FE8B65954B00AECA9C534639596D" />
+            <ComponentRef Id="cmp16789176DD8EDBC99C26E1230DB2BDDF" />
         </ComponentGroup>
     </Fragment>
 </Wix>
