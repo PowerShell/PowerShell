@@ -4045,6 +4045,28 @@ namespace System.Management.Automation.Language
             MethodInfo indexer,
             ParameterInfo[] getterParams)
         {
+            Type limitType = target.LimitType;
+            if (limitType.IsArray || limitType == typeof(string) || limitType == typeof(StringBuilder))
+            {
+                return true;
+            }
+
+            if (typeof(IList).IsAssignableFrom(limitType))
+            {
+                return true;
+            }
+
+            if (typeof(OrderedDictionary).IsAssignableFrom(limitType))
+            {
+                return true;
+            }
+
+            // target implements IList<T>?
+            if (limitType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>)))
+            {
+                return true;
+            }
+
             if (getterParams.Length != 1 || getterParams[0].ParameterType != typeof(int))
             {
                 return false;
