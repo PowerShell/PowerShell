@@ -74,5 +74,5 @@ phases:
         Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$_"
       }
     displayName: Publish Test Results
-    condition: succeededOrFailed()
+    condition: ne(variables['Build.Reason'], 'PullRequest')
     continueOnError: true
