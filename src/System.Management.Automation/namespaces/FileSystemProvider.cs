@@ -7618,9 +7618,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The target of the reparse point</returns>
         public static IEnumerable<string> GetTarget(PSObject instance)
         {
-            FileSystemInfo fileSysInfo = instance.BaseObject as FileSystemInfo;
-
-            if (fileSysInfo != null)
+            if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
 #if !UNIX
                 using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericRead))
@@ -7635,8 +7633,8 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 return InternalGetTarget(fileSysInfo.FullName);
             }
-            else
-                return null;
+
+            return null;
         }
 
         /// <summary>
