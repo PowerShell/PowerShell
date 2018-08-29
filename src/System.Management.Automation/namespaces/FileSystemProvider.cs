@@ -7623,7 +7623,7 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
                 using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericRead))
                 {
-                    string linkTarget = InternalGetTarget(handle);
+                    string linkTarget = WinInternalGetTarget(handle);
 
                     if (linkTarget != null)
                     {
