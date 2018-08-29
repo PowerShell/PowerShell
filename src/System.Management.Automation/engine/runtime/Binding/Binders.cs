@@ -3946,7 +3946,7 @@ namespace System.Management.Automation.Language
                 // This check will catch those cases.
                 if (defaultMember == null)
                 {
-                    defaultMember = i.GetCustomAttribute<DefaultMemberAttribute>(inherit: true);
+                    defaultMember = i.GetCustomAttributes<DefaultMemberAttribute>(inherit: false).FirstOrDefault();
                     if (defaultMember != null)
                     {
                         lengthProperty = i.GetProperty("Count") ?? i.GetProperty("Length");
@@ -4045,6 +4045,17 @@ namespace System.Management.Automation.Language
             MethodInfo indexer,
             ParameterInfo[] getterParams)
         {
+            // PowerShell supports negative indexing for types that meet the following criteria:
+            //      - Indexer method accepts one parameter that is typed as int
+            //      - The int parameter is not a type argument from a constructed generic type
+            //        (this is to exclude indexers for types that could use a negative index as
+            //        a valid key like System.Linq.ILookup)
+            //      - Declares a "Count" or "Length" property
+            //      - Does not inherit from IDictionary<> as that is handled earlier in the binder
+            // For those types, generate special code to check for negative indices, otherwise just generate
+            // the call. Before we test for the above criteria explicitly, we will determine if the
+            // target is of a type known to be compatible. This is done to avoid the call to Module.ResolveMethod
+            // when possible.
             Type limitType = target.LimitType;
             if (limitType.IsArray || limitType == typeof(string) || limitType == typeof(StringBuilder))
             {
@@ -4289,15 +4300,6 @@ namespace System.Management.Automation.Language
 
             if (CanIndexFromEndWithNegativeIndex(target, getter, getterParams))
             {
-                // PowerShell supports negative indexing for types that meet the following criteria:
-                //      - Indexer method accepts one parameter that is typed as int
-                //      - The int parameter is not a type argument from a constructed generic type
-                //        (this is to exclude indexers for types that could use a negative index as
-                //        a valid key like System.Linq.ILookup)
-                //      - Declares a "Count" or "Length" property
-                //      - Does not inherit from IDictionary<> as that is handled earlier in the binder
-                // For those types, generate special code to check for negative indices, otherwise just generate
-                // the call.
                 if (lengthProperty == null)
                 {
                     // Count is declared by most supported types, Length will catch some edge cases like strings.
