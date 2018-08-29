@@ -154,6 +154,8 @@ function Set-DailyBuildBadge
 # One of push, pull_request, api, cron.
 $isPR = $env:TRAVIS_EVENT_TYPE -eq 'pull_request'
 
+$commitMessage = [string]::Empty
+
 # For PRs, Travis-ci strips out [ and ] so read the message directly from git
 if($env:TRAVIS_EVENT_TYPE -eq 'pull_request' -or $env:BUILD_REASON)
 {
@@ -162,18 +164,12 @@ if($env:TRAVIS_EVENT_TYPE -eq 'pull_request' -or $env:BUILD_REASON)
     {
         # We are in Travis-CI
         $commitId = $env:TRAVIS_PULL_REQUEST_SHA
-    }
-    elseif($env:BUILD_REASON)
-    {
-        # We are in VSTS
-        $commitId = $env:BUILD_SOURCEVERSION
-        Write-Verbose "VSTS commitId: $commitId" -Verbose
-    }
 
-    # If the current job is a pull request, the env variable 'TRAVIS_PULL_REQUEST_SHA' contains
-    # the commit SHA of the HEAD commit of the PR.
-    $commitMessage = git log --format=%B -n 1 $commitId
-    Write-Verbose "commitMessage: $commitMessage" -verbose
+        # If the current job is a pull request, the env variable 'TRAVIS_PULL_REQUEST_SHA' contains
+        # the commit SHA of the HEAD commit of the PR.
+        $commitMessage = git log --format=%B -n 1 $commitId
+        Write-Verbose "commitMessage: $commitMessage" -verbose
+    }
 }
 else
 {
@@ -181,8 +177,8 @@ else
 }
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
-$hasFeatureTag = $commitMessage -match '\[feature\]'
-$hasPackageTag = $commitMessage -match '\[package\]'
+$hasFeatureTag = $commitMessage -match '\[feature\]' -or $env:FORCE_FEATURE -eq 'True'
+$hasPackageTag = $commitMessage -match '\[package\]' -or $env:FORCE_PACKAGE -eq 'True'
 $createPackages = -not $isPr -or $hasPackageTag
 $hasRunFailingTestTag = $commitMessage -match '\[includeFailingTest\]'
 $isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api' -or $env:BUILD_REASON -eq 'Schedule'
