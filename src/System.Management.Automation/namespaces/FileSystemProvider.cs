@@ -7962,18 +7962,6 @@ namespace Microsoft.PowerShell.Commands
             return succeeded && (handleInfo.NumberOfLinks > 1);
         }
 
-        private static string InternalGetTarget(SafeFileHandle handle)
-        {
-            if (Platform.IsWindows)
-            {
-                return WinInternalGetTarget(handle);
-            }
-            else
-            {
-                return Platform.NonWindowsInternalGetTarget(handle);
-            }
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static string WinInternalGetTarget(SafeFileHandle handle)
         {
