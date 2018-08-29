@@ -91,20 +91,44 @@ function Add-UserToGroup
 Function Test-DailyBuild
 {
     $trueString = 'True'
-    if(($env:PS_DAILY_BUILD -eq $trueString) -or ($env:APPVEYOR_SCHEDULED_BUILD -eq $trueString) -or ($env:APPVEYOR_REPO_TAG_NAME))
+    # PS_DAILY_BUILD says that we have previously determined that this is a daily build
+    # APPVEYOR_SCHEDULED_BUILD is True means that we are in an AppVeyor Scheduled build
+    # APPVEYOR_REPO_TAG_NAME means we are building a tag in AppVeyor
+    # BUILD_REASON is Schedule means we are in a VSTS Scheduled build
+    if(($env:PS_DAILY_BUILD -eq $trueString) -or ($env:APPVEYOR_SCHEDULED_BUILD -eq $trueString) -or ($env:APPVEYOR_REPO_TAG_NAME) -or $env:BUILD_REASON -eq 'Schedule')
     {
         return $true
     }
 
     # if [Feature] is in the commit message,
     # Run Daily tests
-    if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '\[feature\]')
+    $commitMessage = Get-CommitMessage
+    Write-Verbose "commitMessage: $commitMessage" -verbose
+
+    if($commitMessage -match '\[feature\]')
     {
         Set-AppveyorBuildVariable -Name PS_DAILY_BUILD -Value $trueString
         return $true
     }
 
     return $false
+}
+
+# Returns the commit message for the current build
+function Get-CommitMessage
+{
+    if ($env:APPVEYOR_REPO_COMMIT_MESSAGE)
+    {
+        return $env:APPVEYOR_REPO_COMMIT_MESSAGE
+    }
+    elseif ($env:BUILD_REASON)
+    {
+        # We are in VSTS
+        $commitId = $env:BUILD_SOURCEVERSION
+        Write-Verbose "VSTS commitId: $commitId" -verbose
+        return &git log --format=%B -n 1 $commitId
+    }
+    Write-Verbose "Unknown CI System.  Could not find commitID" -verbose
 }
 
 # Sets a build variable
@@ -205,28 +229,34 @@ function Invoke-AppVeyorInstall
     }
 
     if(Test-DailyBuild){
-        $buildName = "[Daily]"
+        if($env:APPVEYOR)
+        {
+            $buildName = "[Daily]"
 
-        # Add daily to title if it's not already there
-        # It can be there already for rerun requests
-        if($env:APPVEYOR_PULL_REQUEST_TITLE -and $env:APPVEYOR_PULL_REQUEST_TITLE  -notmatch '^\[Daily\]')
-        {
-            $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
-        }
-        elseif($env:APPVEYOR_PULL_REQUEST_TITLE)
-        {
-            $buildName = $env:APPVEYOR_PULL_REQUEST_TITLE
-        }
-        elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
-        {
-            $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
-        }
-        else
-        {
-            $buildName = $env:APPVEYOR_REPO_COMMIT_MESSAGE
-        }
+            # Add daily to title if it's not already there
+            # It can be there already for rerun requests
+            if($env:APPVEYOR_PULL_REQUEST_TITLE -and $env:APPVEYOR_PULL_REQUEST_TITLE  -notmatch '^\[Daily\]')
+            {
+                $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
+            }
+            elseif($env:APPVEYOR_PULL_REQUEST_TITLE)
+            {
+                $buildName = $env:APPVEYOR_PULL_REQUEST_TITLE
+            }
+            elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
+            {
+                $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
+            }
+            else
+            {
+                $buildName = $env:APPVEYOR_REPO_COMMIT_MESSAGE
+            }
 
-        Update-AppveyorBuild -message $buildName
+            Update-AppveyorBuild -message $buildName
+        }
+        elseif ($env:BUILD_REASON -eq 'Schedule') {
+            Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
+        }
     }
 
     if ($env:APPVEYOR -or $env:TF_BUILD)
