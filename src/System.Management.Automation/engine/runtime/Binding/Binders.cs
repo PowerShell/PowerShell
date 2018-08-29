@@ -4056,6 +4056,12 @@ namespace System.Management.Automation.Language
             // the call. Before we test for the above criteria explicitly, we will determine if the
             // target is of a type known to be compatible. This is done to avoid the call to Module.ResolveMethod
             // when possible.
+
+            if (getterParams.Length != 1 || getterParams[0].ParameterType != typeof(int))
+            {
+                return false;
+            }
+
             Type limitType = target.LimitType;
             if (limitType.IsArray || limitType == typeof(string) || limitType == typeof(StringBuilder))
             {
@@ -4076,11 +4082,6 @@ namespace System.Management.Automation.Language
             if (limitType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>)))
             {
                 return true;
-            }
-
-            if (getterParams.Length != 1 || getterParams[0].ParameterType != typeof(int))
-            {
-                return false;
             }
 
             // Get the base method definition of the indexer to determine if the int
