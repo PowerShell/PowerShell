@@ -79,8 +79,9 @@ namespace System.Management.Automation
         /// <returns>List of inferred typenames.</returns>
         public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell, TypeInferenceRuntimePermissions evalPersmissions)
         {
-            var context = new TypeInferenceContext(powerShell);
-            return InferTypeOf(ast, context, evalPersmissions);
+            using (var context = new TypeInferenceContext(powerShell)) {
+                return InferTypeOf(ast, context, evalPersmissions);
+            }
         }
 
         /// <summary>
@@ -121,14 +122,16 @@ namespace System.Management.Automation
         }
     }
 
-    internal class TypeInferenceContext
+    internal class TypeInferenceContext : IDisposable
     {
         public static readonly PSTypeName[] EmptyPSTypeNameArray = Utils.EmptyArray<PSTypeName>();
+        private readonly bool _ownsPowerShell;
         private readonly PowerShell _powerShell;
 
         public TypeInferenceContext()
         : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
         {
+            _ownsPowerShell = true;
         }
 
         /// <summary>
@@ -469,6 +472,12 @@ namespace System.Management.Automation
             var psMethod = member as PSMethod;
             var methodCacheEntry = psMethod?.adapterData as DotNetAdapter.MethodCacheEntry;
             return methodCacheEntry != null && methodCacheEntry.methodInformationStructures[0].method.IsConstructor;
+        }
+
+        public void Dispose()
+        {
+            if (_ownsPowerShell)
+                _powerShell?.Dispose();
         }
     }
 
