@@ -7622,17 +7622,17 @@ namespace Microsoft.PowerShell.Commands
 
             if (fileSysInfo != null)
             {
-                if (Platform.IsWindows)
+#if !UNIX
+                using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericRead))
                 {
-                    using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericRead))
-                    {
-                        string linkTarget = InternalGetTarget(handle);
+                    string linkTarget = InternalGetTarget(handle);
 
-                        if (linkTarget != null)
-                            return (new string[] { linkTarget });
+                    if (linkTarget != null)
+                    {
+                        return (new string[] { linkTarget });
                     }
                 }
-
+#endif
                 return InternalGetTarget(fileSysInfo.FullName);
             }
             else
