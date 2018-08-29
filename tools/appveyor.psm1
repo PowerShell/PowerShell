@@ -105,7 +105,7 @@ Function Test-DailyBuild
     $commitMessage = Get-CommitMessage
     Write-Verbose "commitMessage: $commitMessage" -verbose
 
-    if($commitMessage -match '\[feature\]')
+    if($commitMessage -match '\[feature\]' -or $env:TF_BUILD)
     {
         Set-AppveyorBuildVariable -Name PS_DAILY_BUILD -Value $trueString
         return $true
@@ -121,14 +121,6 @@ function Get-CommitMessage
     {
         return $env:APPVEYOR_REPO_COMMIT_MESSAGE
     }
-    elseif ($env:BUILD_REASON)
-    {
-        # We are in VSTS
-        $commitId = $env:BUILD_SOURCEVERSION
-        Write-Verbose "VSTS commitId: $commitId" -verbose
-        return &git log --format=%B -n 1 $commitId
-    }
-    Write-Verbose "Unknown CI System.  Could not find commitID" -verbose
 }
 
 # Sets a build variable
