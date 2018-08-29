@@ -8,9 +8,9 @@ Describe "Object cmdlets" -Tags "CI" {
         }
 
         It "AsString returns a string" {
-           $processes = Get-Process | Group-Object -Property ProcessName -AsHashTable -AsString
-           $result = $processes.Keys | ForEach-Object {$_.GetType()}
-           $result[0].Name | Should -Be "String"
+            $processes = Get-Process | Group-Object -Property ProcessName -AsHashTable -AsString
+            $result = $processes.Keys | ForEach-Object {$_.GetType()}
+            $result[0].Name | Should -Be "String"
         }
     }
 
@@ -45,18 +45,18 @@ Describe "Object cmdlets" -Tags "CI" {
             $secondObject | Add-Member -NotePropertyName Header -NotePropertyValue $secondValue
 
             $testCases = @(
-                @{ data = @("abc","ABC","Def"); min = "abc"; max = "Def"},
+                @{ data = @("abc", "ABC", "Def"); min = "abc"; max = "Def"},
                 @{ data = @([datetime]::Today, [datetime]::Today.AddDays(-1)); min = ([datetime]::Today.AddDays(-1)).ToString() ; max = [datetime]::Today.ToString() }
-                @{ data = @(1,2,3,"ABC"); min = 1; max = "ABC"},
-                @{ data = @(4,2,3,"ABC",1); min = 1; max = "ABC"},
-                @{ data = @(4,2,3,"ABC",1,"DEF"); min = 1; max = "DEF"},
-                @{ data = @("111 Test","19"); min = "111 Test"; max = "19"},
+                @{ data = @(1, 2, 3, "ABC"); min = 1; max = "ABC"},
+                @{ data = @(4, 2, 3, "ABC", 1); min = 1; max = "ABC"},
+                @{ data = @(4, 2, 3, "ABC", 1, "DEF"); min = 1; max = "DEF"},
+                @{ data = @("111 Test", "19"); min = "111 Test"; max = "19"},
                 @{ data = @("19", "111 Test"); min = "111 Test"; max = "19"},
-                @{ data = @("111 Test",19); min = "111 Test"; max = 19},
+                @{ data = @("111 Test", 19); min = "111 Test"; max = 19},
                 @{ data = @(19, "111 Test"); min = "111 Test"; max = 19},
-                @{ data = @(100,2,3, "A", 1); min = 1; max = "A"},
-                @{ data = @(4,2,3, "ABC", 1, "DEF"); min = 1; max = "DEF"},
-                @{ data = @("abc",[Datetime]::Today,"def"); min = [Datetime]::Today.ToString(); max = "def"}
+                @{ data = @(100, 2, 3, "A", 1); min = 1; max = "A"},
+                @{ data = @(4, 2, 3, "ABC", 1, "DEF"); min = 1; max = "DEF"},
+                @{ data = @("abc", [Datetime]::Today, "def"); min = [Datetime]::Today.ToString(); max = "def"}
             )
         }
 
@@ -85,18 +85,31 @@ Describe "Object cmdlets" -Tags "CI" {
         }
 
         It 'returns a GenericMeasureInfoObject' {
-            $gmi = 1,2,3 | measure-object -max -min
+            $gmi = 1, 2, 3 | measure-object -max -min
             $gmi | Should -BeOfType Microsoft.PowerShell.Commands.GenericMeasureInfo
         }
 
         It 'should return correct error for non-numeric input' {
-            $gmi = "abc",[Datetime]::Now | measure  -sum -max -ErrorVariable err -ErrorAction silentlycontinue
+            $gmi = "abc", [Datetime]::Now | measure  -sum -max -ErrorVariable err -ErrorAction silentlycontinue
             $err | ForEach-Object { $_.FullyQualifiedErrorId | Should -Be 'NonNumericInputObject,Microsoft.PowerShell.Commands.MeasureObjectCommand' }
         }
 
         It 'should have the correct count' {
-            $gmi = "abc",[Datetime]::Now | measure  -sum -max -ErrorVariable err -ErrorAction silentlycontinue
+            $gmi = "abc", [Datetime]::Now | measure  -sum -max -ErrorVariable err -ErrorAction silentlycontinue
             $gmi.Count | Should -Be 2
+        }
+
+        It 'should only display fields that are set' {
+            $text = 1, 2, 3 | Measure-Object -Sum -Average | Format-List | Out-String
+            $text -match "min|max" | Should -BeFalse
+            $text -match 'Sum' | Should -BeTrue
+            $text -match 'Average' | Should -BeTrue
+
+            $text = 1, 2, 3 | Measure-Object -Minimum -Maximum | Format-List | Out-String
+            $text -match "min" | Should -BeTrue
+            $text -match "max" | Should -BeTrue
+            $text -match 'Average' | Should -BeFalse
+            $text -match 'Sum' | Should -BeFalse
         }
     }
 }

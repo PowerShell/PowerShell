@@ -1,5 +1,100 @@
 # Changelog
 
+## v6.1.0-rc.1 - 2018-08-22
+
+### Engine Updates and Fixes
+
+- Fix to not duplicate the `System32` module path when starting `pwsh` from `pwsh` (#7414)
+- Fix sequence point update for `switch/if/for/while/do-while/do-until` statements (#7305)
+- Set the cursor to the place where a user hits tab key (#7299)
+- Adding `LanguagePrimitives.TryCompare` to provide faster comparisons (#7438) (Thanks @powercode!)
+- Improving performance of `LanguagePrimitives.TryConvertTo` (#7418) (Thanks @powercode!)
+- Set `PowerShellVersion` to `3.0` for built-in modules to make Windows PowerShell work when starting from PowerShell Core (#7365)
+- Avoid extra unnecessary allocations in `PSMemberInfoInternalCollection<T>` (#7435) (Thanks @iSazonov!)
+- Enforce the `CompatiblePSEditions` check for modules from the legacy `System32` module path (#7183)
+- Make sure that `SettingFile` argument is parsed before we load the settings (#7449)
+- Default to `DefaultConsoleWidth` when DotNet says `WindowWidth` is 0 (#7465)
+
+### General Cmdlet Updates and Fixes
+
+- Fix parameter name in the `Get-Variable` cmdlet error message (#7384) (Thanks @sethvs!)
+- Fix `Move-Item -Path` with wildcard character (#7397) (Thanks @kwkam!)
+- Ignore `Newtonsoft.Json` metadata properties in `ConvertFrom-Json` (#7308) (Thanks @louistio!)
+- Fix several issues in Markdown cmdlets (#7329)
+- Add support for parsing Link Header with variable whitespace (#7322)
+- Change parameter order in `Get-Help` and help in order to get first `-Full` and
+  then `-Functionality` when using Get-Help `-Fu` followed by pressing tab and help `-Fu` followed by pressing tab (#7370) (Thanks @sethvs!)
+- Add support for passing files and Markdown directly to `Show-Markdown` (#7354)
+- Add `-SkipIndex` parameter to `Select-Object` (#7483) (Thanks @powercode!)
+- Improve performance of `Import-CSV` up to 10 times (#7413) (Thanks @powercode!)
+- Update `Enable-PSRemoting` so configuration name is unique for Preview releases (#7202)
+- Improve performance on JSON to PSObject conversion (#7482) (Thanks @powercode!)
+- Fix error message for `Add-Type` when `-AssemblyName` with wildcard is not found (#7444)
+- Make native globbing on Unix return an absolute path when it is given an absolute path (#7106)
+- Improve the performance of `Group-Object` (#7410) (Thanks @powercode!)
+- Remove one unneeded verbose output from `ConvertTo-Json` (#7487) (Thanks @devblackops!)
+- Enable `Get-ChildItem` to produce `Mode` property even if cannot determine if hard link (#7355)
+
+### Code Cleanup
+
+- Remove empty XML comment lines (#7401) (Thanks @iSazonov!)
+- Cleanup Docker files (#7328)
+- Correct the comment for `WSManReceiveDataResult.Unmarshal` (#7364)
+- Format Utility `csproj` with updated `codeformatter` (#7263) (Thanks @iSazonov!)
+- Bulk update format for files in Management folder with `codeformatter` (#7346) (Thanks @iSazonov!)
+- Cleanup: replace `Utils.FileExists()/DirectoryExists()/ItemExists()` with DotNet methods (#7129) (Thanks @iSazonov!)
+- Update `Utils.IsComObject` to use `Marshal.IsComObject` since CAS is no longer supported in DotNet Core (#7344)
+- Fix some style issues in engine code (#7246) (Thanks @iSazonov!)
+
+### Test
+
+- Use `-BeExactly` and `-HaveCount` instead of `-Be` in `BugFix.Tests.ps1` (#7386) (Thanks @sethvs!)
+- Use `-BeExactly` and `-HaveCount` instead of `-Be` in `TabCompletion.Tests.ps1` (#7380) (Thanks @sethvs!)
+- Update CI scripts to support running tests for experimental features (#7419)
+- Use `-HaveCount` instead of `-Be` in `Where-Object.Tests.ps1` (#7379) (Thanks @sethvs!)
+- Fix ThreadJob tests so that they will run more reliably (#7360)
+- Make logging tests for macOS pending (#7433)
+
+### Build and Packaging Improvements
+
+- Update Build script owners (#7321)
+- Make `MUSL` NuGet package optional (#7316)
+- Enable `pwsh-preview` to work on Windows (#7345)
+- Fix SDK dependencies
+- Add back the `powershell-core` NuGet source for hosting tests
+- Fix typo in environment checker (#7547 & #7549)
+- Only remove the revision if it is `0` from module version when restoring modules (#7538)
+- Update `WCF` and `NJsonSchema` NuGet packages to latest released patch version (#7411) (Thanks @bergmeister!)
+- Add Linux and macOS VSTS CI (#7490, #7527, #7535, #7515 & #7516)
+- Updated ThreadJob to version `1.1.2` (#7522)
+- Add xUnit project to `PowerShell.sln` and make it runnable from within VisualStudio (#7254) (Thanks @bergmeister!)
+- Update NuGet packaging code for the new markdown assembly (#7431)
+- Update version of modules shipped with PowerShell (#7531)
+- Retry restore on failure (#7544 & #7550)
+- Update `PowerShellGet` version
+- Update NuGet package metadata (#7517)
+- Update reference to use packages from `NuGet.org` (#7525)
+- `Start-DevPowerShell`: add `-Configuration` and handle `-ArgumentList` more properly (#7300) (Thanks @jazzdelightsme!)
+- Add preview icon to macOS launcher (#7448) (Thanks @thezim!)
+- Add `Microsoft.PowerShell.MarkdownRender` to `signing.xml` (#7472)
+- Fix building on RedHat Enterprise Linux (#7489)
+- Build: Also search PATH for `rcedit`  (#7503) (Thanks @kwkam!)
+- Save modules to un-versioned folder to enable servicing (#7518 & #7523)
+- Fix macOS launcher app to allow release and preview versions (#7306) (Thanks @thezim!)
+
+### Documentation and Help Content
+
+- Fix docs comments in utility folder (#7192) (Thanks @iSazonov!)
+- Fix a typo in `issue-management.md` (#7393) (Thanks @alexandair!)
+- Fix casing of `GitHub` in `best-practice.md` (#7392) (Thanks @alexandair!)
+- Fix typos in `docs/maintainers/README.md` (#7390) (Thanks @alexandair!)
+- Add maintainer's best practice document and update maintainer list (#7311)
+- Update Docker link to `PowerShell-Docker` (#7351) (Thanks @JoshuaCooper!)
+- Add `Snapcraft` to spelling dictionary (#7318)
+- Update `README.md` and `metadata.json` for release `v6.0.4` (#7497)
+- Add `Former Repository Maintainers` section in `maintainers/README.md` (#7475)
+- Update the `HelpUri` for `Get-ExperimentalFeature` (#7466)
+
 ## v6.1.0-preview.4 - 2018-07-19
 
 ### Breaking Changes

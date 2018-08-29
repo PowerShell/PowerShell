@@ -148,11 +148,8 @@ namespace Microsoft.PowerShell
 
             try
             {
-                // We need to read the settings file before we create the console host
                 string[] tempArgs = new string[args.GetLength(0)];
                 args.CopyTo(tempArgs, 0);
-
-                CommandLineParameterParser.EarlyParse(tempArgs);
 
                 // We might be able to ignore console host creation error if we are running in
                 // server mode, which does not require a console.

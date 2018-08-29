@@ -602,7 +602,7 @@ function Invoke-AppveyorFinish
                 {
                     Push-AppveyorArtifact $_
                 }
-                elseif ($env:TF_BUILD) {
+                elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
                     # In VSTS
                     Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts;]$_"
                 }

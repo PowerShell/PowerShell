@@ -4243,8 +4243,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static Dictionary<ConversionTypePair, ConversionData> s_converterCache
-            = new Dictionary<ConversionTypePair, ConversionData>(256);
+        private static Dictionary<ConversionTypePair, ConversionData> s_converterCache = new Dictionary<ConversionTypePair, ConversionData>(256);
 
         private static ConversionData CacheConversion<T>(Type fromType, Type toType, PSConverter<T> converter, ConversionRank rank)
         {
@@ -4687,9 +4686,13 @@ namespace System.Management.Automation
                 bool debase;
                 var conversion = FigureConversion(valueToConvert, resultType, out debase);
 
-                return conversion.Invoke(debase ? PSObject.Base(valueToConvert) : valueToConvert,
-                                            resultType, recursion, debase ? (PSObject)valueToConvert : null,
-                                            formatProvider, backupTypeTable);
+                return conversion.Invoke(
+                    debase ? PSObject.Base(valueToConvert) : valueToConvert,
+                    resultType,
+                    recursion,
+                    debase ? (PSObject)valueToConvert : null,
+                    formatProvider,
+                    backupTypeTable);
             }
         }
 
@@ -4704,6 +4707,14 @@ namespace System.Management.Automation
         internal static Tuple<string, string> GetInvalidCastMessages(object valueToConvert, Type resultType)
         {
             string errorId, errorMsg;
+            if (resultType.IsByRefLike)
+            {
+                typeConversion.WriteLine("Cannot convert to ByRef-Like types as they should be used on stack only.");
+                errorId = nameof(ExtendedTypeSystem.InvalidCastToByRefLikeType);
+                errorMsg = StringUtil.Format(ExtendedTypeSystem.InvalidCastToByRefLikeType, resultType);
+                return Tuple.Create(errorId, errorMsg);
+            }
+
             if (PSObject.Base(valueToConvert) == null)
             {
                 if (resultType.IsEnum)
@@ -5441,6 +5452,12 @@ namespace System.Management.Automation
             {
                 return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertAssignableFrom,
                                                toType == fromType ? ConversionRank.Identity : ConversionRank.Assignable);
+            }
+
+            if (fromType.IsByRefLike || toType.IsByRefLike)
+            {
+                // ByRef-like types are not boxable and should be used on stack only.
+                return CacheConversion(fromType, toType, ConvertNoConversion, ConversionRank.None);
             }
 
             if (typeof(PSObject).IsAssignableFrom(fromType) && typeof(InternalPSObject) != fromType)

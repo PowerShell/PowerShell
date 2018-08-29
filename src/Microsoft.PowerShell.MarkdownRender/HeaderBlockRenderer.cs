@@ -16,38 +16,43 @@ namespace Microsoft.PowerShell.MarkdownRender
     {
         protected override void Write(VT100Renderer renderer, HeadingBlock obj)
         {
-            // Format header and then add blank line to improve readability.
-            switch (obj.Level)
+            string headerText = obj?.Inline?.FirstChild?.ToString();
+
+            if (!string.IsNullOrEmpty(headerText))
             {
-                case 1:
-                    renderer.WriteLine(renderer.EscapeSequences.FormatHeader1(obj.Inline.FirstChild.ToString()));
-                    renderer.WriteLine();
-                    break;
+                // Format header and then add blank line to improve readability.
+                switch (obj.Level)
+                {
+                    case 1:
+                        renderer.WriteLine(renderer.EscapeSequences.FormatHeader1(headerText));
+                        renderer.WriteLine();
+                        break;
 
-                case 2:
-                    renderer.WriteLine(renderer.EscapeSequences.FormatHeader2(obj.Inline.FirstChild.ToString()));
-                    renderer.WriteLine();
-                    break;
+                    case 2:
+                        renderer.WriteLine(renderer.EscapeSequences.FormatHeader2(headerText));
+                        renderer.WriteLine();
+                        break;
 
-                case 3:
-                    renderer.WriteLine(renderer.EscapeSequences.FormatHeader3(obj.Inline.FirstChild.ToString()));
-                    renderer.WriteLine();
-                    break;
+                    case 3:
+                        renderer.WriteLine(renderer.EscapeSequences.FormatHeader3(headerText));
+                        renderer.WriteLine();
+                        break;
 
-                case 4:
-                    renderer.WriteLine(renderer.EscapeSequences.FormatHeader4(obj.Inline.FirstChild.ToString()));
-                    renderer.WriteLine();
-                    break;
+                    case 4:
+                        renderer.WriteLine(renderer.EscapeSequences.FormatHeader4(headerText));
+                        renderer.WriteLine();
+                        break;
 
-                case 5:
-                    renderer.WriteLine(renderer.EscapeSequences.FormatHeader5(obj.Inline.FirstChild.ToString()));
-                    renderer.WriteLine();
-                    break;
+                    case 5:
+                        renderer.WriteLine(renderer.EscapeSequences.FormatHeader5(headerText));
+                        renderer.WriteLine();
+                        break;
 
-                case 6:
-                    renderer.WriteLine(renderer.EscapeSequences.FormatHeader6(obj.Inline.FirstChild.ToString()));
-                    renderer.WriteLine();
-                    break;
+                    case 6:
+                        renderer.WriteLine(renderer.EscapeSequences.FormatHeader6(headerText));
+                        renderer.WriteLine();
+                        break;
+                }
             }
         }
     }
