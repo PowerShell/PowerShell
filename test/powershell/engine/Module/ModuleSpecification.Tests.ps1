@@ -228,7 +228,7 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
             $testCases = @(
                 @{
                     TestName = "Version+RequiredVersion"
-                    ModuleSpecification = @{ Name = "BadVersionModule"; ModuleVersion = "3.1"; RequiredVersion = "3.1" }
+                    ModuleSpecification = @{ ModuleName = "BadVersionModule"; ModuleVersion = "3.1"; RequiredVersion = "3.1" }
                 },
                 @{
                     TestName = "NoName"
@@ -236,11 +236,11 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
                 },
                 @{
                     TestName = "BadField"
-                    ModuleSpecification = @{ Name = "StrangeFieldModule"; RequiredVersion = "7.4"; Duck = "1.2" }
+                    ModuleSpecification = @{ ModuleName = "StrangeFieldModule"; RequiredVersion = "7.4"; Duck = "1.2" }
                 },
                 @{
                     TestName = "BadType"
-                    ModuleSpecification = @{ Name = "BadTypeModule"; RequiredVersion = "Hello!" }
+                    ModuleSpecification = @{ ModuleName = "BadTypeModule"; RequiredVersion = "Hello!" }
                 }
             )
         }
