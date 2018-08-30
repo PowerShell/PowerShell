@@ -489,7 +489,28 @@ function Invoke-AppVeyorAfterTest
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
-        $codeCoverageArtifacts | ForEach-Object { Push-AppveyorArtifact $_ }
+        $codeCoverageArtifacts | ForEach-Object {
+            Push-Artifact -Path $_
+        }
+    }
+}
+
+# Wrapper to push artifact
+function Push-Artifact
+{
+    param(
+        [Parameter(Mandatory)]
+        [ValidateScript({Test-Path -Path $_})]
+        $Path
+    )
+
+    if($env:Appveyor)
+    {
+        Push-AppveyorArtifact $Path
+    }
+    elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
+        # In VSTS
+        Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts;]$Path"
     }
 }
 
@@ -527,7 +548,13 @@ function Get-ReleaseTag
     if($env:APPVEYOR_BUILD_NUMBER)
     {
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-        $releaseTag = $releaseTag+'.'+$env:APPVEYOR_BUILD_NUMBER
+        $releaseTag = $releaseTag + '.' + $env:APPVEYOR_BUILD_NUMBER
+    }
+    elseif($env:BUILD_BUILID)
+    {
+        #In VSTS
+        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
+        $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
     }
 
     return $releaseTag
@@ -620,14 +647,7 @@ function Invoke-AppveyorFinish
             Write-Host "Pushing $_ as Appveyor artifact"
             if(Test-Path $_)
             {
-                if($env:Appveyor)
-                {
-                    Push-AppveyorArtifact $_
-                }
-                elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
-                    # In VSTS
-                    Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts;]$_"
-                }
+                Push-Artifact -Path $_
             }
             else
             {
