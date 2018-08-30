@@ -256,8 +256,7 @@ function Get-NewOfficalPackage
             # Get the name of the package
             $name = $package.Include
 
-            # don't pull 'Microsoft.Management.Infrastructure' from nuget
-            if ($name -and $name -ne 'Microsoft.Management.Infrastructure')
+            if ($name)
             {
                 # Get the current package from nuget
                 $versions = find-package -Name $name -Source https://nuget.org/api/v2/  -ErrorAction SilentlyContinue -AllVersions |
@@ -314,6 +313,10 @@ function Get-NewOfficalPackage
 ##############################
 #.SYNOPSIS
 # Returns True if NewVersion is newer than Version
+# Pre release are ignored if the current version is not pre-release
+# If the current version is pre-release, this function only determines if the version portion is NewReleaseTag
+# The calling function is responsible for sorting prelease version by publish date (as find-package gives them to you)
+# and returning the newest.
 #
 #.PARAMETER Version
 # The current Version
@@ -373,7 +376,7 @@ function Test-IncludePackageVersion
 
 ##############################
 #.SYNOPSIS
-# Get a RegEx based on a version tht will match the major and minor
+# Get a RegEx based on a version that will match the major and minor
 #
 #.PARAMETER Version
 # The version to match
@@ -389,7 +392,6 @@ function Get-MatchingMajorMinorRegEx
     $parts = $Version -split '\.'
 
     $regEx = "^$($parts[0])\.$($parts[1])\..*"
-    Write-Verbose "version: $Version; regEx: $regEx"
     return $regEx
 }
 
