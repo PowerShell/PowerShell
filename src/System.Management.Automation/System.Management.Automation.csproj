@@ -102,6 +102,8 @@
     <Compile Remove="engine\TransactionManager.cs" />
     <Compile Remove="engine\hostifaces\NativeCultureResolver.cs" />
     <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
+    <Compile Remove="engine\remoting\commands\ResumeJob.cs" />
+    <Compile Remove="engine\remoting\commands\SuspendJob.cs" />
     <Compile Remove="logging\eventlog\EventLogLogProvider.cs" />
     <Compile Remove="namespaces\SafeTransactionHandle.cs" />
     <Compile Remove="namespaces\SafeRegistryHandle.cs" />
@@ -132,12 +134,12 @@
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
     <Compile Remove="engine\ExtraAdapter.cs" />
     <Compile Remove="engine\ManagementObjectAdapter.cs" />
-    <Compile Remove="engine\remoting\commands\ReceivePSSession.cs" />
-    <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
     <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
+    <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
+    <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
     <Compile Remove="engine\remoting\commands\EnterPSHostProcessCommand.cs" />
     <Compile Remove="engine\remoting\commands\NewPSSessionOptionCommand.cs" />
-    <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
+    <Compile Remove="engine\remoting\commands\ReceivePSSession.cs" />
     <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
   </ItemGroup>
 
