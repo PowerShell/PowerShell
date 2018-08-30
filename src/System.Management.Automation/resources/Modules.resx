@@ -163,7 +163,7 @@
     <value>The '{0}' module cannot be imported because its manifest contains one or more members that are not valid. The valid manifest members are ({1}). Remove the members that are not valid ({2}), then try to import the module again.</value>
   </data>
   <data name="InvalidModuleSpecificationMember" xml:space="preserve">
-    <value>The hashtable describing a module contains one or more members that are not valid. The valid members are ({0}). Remove the members that are not valid ({1}), then try again.</value>
+    <value>The hashtable describing a module contains one or more members that are not valid.  The valid members are ({0}). Remove the members that are not valid ({1}), then try again.</value>
   </data>
   <data name="ModuleSpecificationMemberIsLessThanOther" xml:space="preserve">
     <value>The hashtable describing a module cannot have its ModuleVersion ({0}) greater than its MaximumVersion ({1}).</value>
