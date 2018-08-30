@@ -24,4 +24,20 @@ Describe 'Tests for indexers' -Tags "CI" {
         $service = Get-WmiObject -List -Amended Win32_Service
         $service.Properties["Hello There"] | Should -BeNullOrEmpty
     }
+
+    It 'ITuple implementations can be indexed' {
+        $tuple = [Tuple]::Create(10, 'Hello')
+        $tuple[0] | Should -Be 10
+        $tuple[1] | Should -BeExactly 'Hello'
+    }
+
+    It 'ITuple objects can be spliced' {
+        $tuple = [Tuple]::Create(10, 'Hello')
+        $tuple[0..1] | Should -Be @(10, 'Hello')
+    }
+
+    It 'Index of -1 should return the last item for ITuple objects' {
+        $tuple = [Tuple]::Create(10, 'Hello')
+        $tuple[-1] | Should -BeExactly 'Hello'
+    }
 }
