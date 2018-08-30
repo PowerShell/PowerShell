@@ -1096,3 +1096,20 @@ interactivetesting
 allowprerelease
 prereleases
 url
+ - tools/performance/README.md
+analyze
+wpa
+wpaProfile
+PerfView
+etl
+perfview
+wpr
+wprui.exe
+perfview.exe
+GC.Regions.xml
+JIT.Regions.xml
+PowerShell.Regions.xml
+PowerShell.stacktags
+PowerShell.wpaProfile
+PowerShell.wprp
+Invoke-PerfviewPS
