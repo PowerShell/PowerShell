@@ -259,7 +259,7 @@ function Get-PackageNamesOnAzureBlob
 
     $responce = Invoke-RestMethod -Method Get -Uri $($ContainerUrl + $SAS + 'restype=container&comp=list')
 
-    $xmlResponce = [xml]$responce.Remove(0,3) # remove some bad chars in the beginning that break XML parsing
+    $xmlResponce = [xml]$responce.Substring($responce.IndexOf('<EnumerationResults')) # remove some bad chars in the beginning that break XML parsing
     ($xmlResponce.EnumerationResults.Blobs.Blob).Name
 }
 
