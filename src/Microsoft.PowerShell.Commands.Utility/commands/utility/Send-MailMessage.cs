@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Commands
         private String _subject;
 
         /// <summary>
-        /// Specifies that the mail message is sent without a subject.
+        /// Gets or sets the intended exclusion of the email subject.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "NoSubject")]
         public SwitchParameter NoSubject { get; set; }
