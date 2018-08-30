@@ -171,14 +171,15 @@ can't find the `netstandard.dll` "implementation" assembly for the version of th
 
 ### The fix for missing netstandard.dll
 
-If you install (or already have) the .NET Core 2.x SDK for Windows, you can
+If you install (or already have) the .NET Core SDK for Windows, you can
 find the `netstandard.dll` implementation assembly for .NET 4.6.1 in the following directory:
-`C:\Program Files\dotnet\sdk\2.0.0\Microsoft\Microsoft.NET.Build.Extensions\net461\lib`.
+`C:\Program Files\dotnet\sdk\<version-number>\Microsoft\Microsoft.NET.Build.Extensions\net461\lib`.
+Note that, the version number in the path may vary depending on the installed SDK.
 
 If you copy `netstandard.dll` from this directory to the directory containing
 `MyModule.dll`, the `Write-TimestampedMessage` command will work.  Let's try that.
 
-1. Install the [.NET Core SDK 2.0 for Windows][net-core-sdk], if it isn't already installed.
+1. Install [.NET Core SDK for Windows][net-core-sdk], if it isn't already installed.
 
 1. Start a new Windows PowerShell console. Remember that once a binary assembly is
    loaded into PowerShell it can't be unloaded. Restarting PowerShell is necessary to
@@ -187,7 +188,7 @@ If you copy `netstandard.dll` from this directory to the directory containing
 1. Copy the `netstandard.dll` implementation assembly for .NET 4.6.1 to the module's directory.
    ```powershell
    cd 'path-to-where-you-copied-module.dll'
-   Copy-Item 'C:\Program Files\dotnet\sdk\2.0.0\Microsoft\Microsoft.NET.Build.Extensions\net461\lib\netstandard.dll' .
+   Copy-Item 'C:\Program Files\dotnet\sdk\<version-number>\Microsoft\Microsoft.NET.Build.Extensions\net461\lib\netstandard.dll' .
    ```
 
 1. Import the module and execute the command:
