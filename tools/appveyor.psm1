@@ -107,7 +107,7 @@ Function Test-DailyBuild
 
     if($commitMessage -match '\[feature\]' -or $env:TF_BUILD)
     {
-        Set-AppveyorBuildVariable -Name PS_DAILY_BUILD -Value $trueString
+        Set-BuildVariable -Name PS_DAILY_BUILD -Value $trueString
         return $true
     }
 
