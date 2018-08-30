@@ -212,15 +212,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies that the mail message is sent without a subject.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "NoSubject")]
-        public SwitchParameter NoSubject
-        {
-            get { return _nosubject; }
-            set
-            {
-                _nosubject = value;
-            }
-        }
-        private SwitchParameter _nosubject;
+        public SwitchParameter NoSubject { get; set; }
 
         /// <summary>
         /// Specifies the To address for this e-mail message.
@@ -376,7 +368,10 @@ namespace Microsoft.PowerShell.Commands
             _mMailMessage.DeliveryNotificationOptions = _deliverynotification;
 
             // Set the subject of the mail message
-            _mMailMessage.Subject = _subject;
+            if (!NoSubject.IsPresent)
+            {
+                _mMailMessage.Subject = _subject;
+            }
 
             // Set the body of the mail message
             _mMailMessage.Body = _body;
