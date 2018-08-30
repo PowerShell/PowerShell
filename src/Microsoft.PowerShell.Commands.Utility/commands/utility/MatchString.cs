@@ -955,6 +955,19 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// ContextTracker that does not work for the case when pre- and post context is 0.
+        /// </summary>
+        private class NoContextTracker : IContextTracker
+        {
+            private readonly IList<MatchInfo> _matches = new List<MatchInfo>(1);
+
+            IList<MatchInfo> IContextTracker.EmitQueue => _matches;
+            void IContextTracker.TrackLine(string line){}
+            void IContextTracker.TrackMatch(MatchInfo match) => _matches.Add(match);
+            void IContextTracker.TrackEOF() {}
+        }
+
+        /// <summary>
         /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "Object")]
@@ -1244,6 +1257,8 @@ namespace Microsoft.PowerShell.Commands
         private int _preContext = 0;
         private int _postContext = 0;
 
+        private IContextTracker GetContextTracker() => (_preContext == 0 && _postContext == 0) ? _noContextTracker : new ContextTracker(_preContext, _postContext);
+
         // This context tracker is only used for strings which are piped
         // directly into the cmdlet. File processing doesn't need
         // to track state between calls to ProcessRecord, and so
@@ -1251,8 +1266,8 @@ namespace Microsoft.PowerShell.Commands
         // use a single global tracker for both is that in the case of
         // a mixed list of strings and FileInfo, the context tracker
         // would get reset after each file.
-        private ContextTracker _globalContextTracker = null;
-
+        private IContextTracker _globalContextTracker = null;
+        private IContextTracker _noContextTracker;
         /// <summary>
         /// This is used to handle the case were we're done processing input objects.
         /// If true, process record will just return.
@@ -1260,6 +1275,8 @@ namespace Microsoft.PowerShell.Commands
         private bool _doneProcessing;
 
         private int _inputRecordNumber;
+
+
 
         /// <summary>
         /// Read command line parameters.
@@ -1283,9 +1300,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-
-            _globalContextTracker = new ContextTracker(_preContext, _postContext);
+            _noContextTracker = new NoContextTracker();
+            _globalContextTracker = GetContextTracker();
         }
+
+        private readonly List<string> _inputObjectFileList = new List<string>(1){string.Empty};
 
         /// <summary>
         /// Process the input.
@@ -1297,46 +1316,54 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             if (_doneProcessing)
+            {
                 return;
+            }
 
+            // We may only have directories when we have resolved wildcards
+            var expandedPathsMaybeDirectory = false;
             List<string> expandedPaths = null;
             if (Path != null)
             {
                 expandedPaths = ResolveFilePaths(Path, _isLiteralPath);
                 if (expandedPaths == null)
+                {
                     return;
+                }
+
+                expandedPathsMaybeDirectory = true;
             }
             else
             {
-                FileInfo fileInfo = _inputObject.BaseObject as FileInfo;
-                if (fileInfo != null)
+                if (_inputObject.BaseObject is FileInfo fileInfo)
                 {
-                    expandedPaths = new List<string>();
-                    expandedPaths.Add(fileInfo.FullName);
+                    _inputObjectFileList[0] = fileInfo.FullName;
+                    expandedPaths = _inputObjectFileList;
                 }
             }
 
             if (expandedPaths != null)
             {
-                foreach (string filename in expandedPaths)
+                foreach (var filename in expandedPaths)
                 {
-                    if (Directory.Exists(filename))
+                    if (expandedPathsMaybeDirectory && Directory.Exists(filename))
                     {
                         continue;
                     }
 
-                    bool foundMatch = ProcessFile(filename);
+                    var foundMatch = ProcessFile(filename);
                     if (_quiet && foundMatch)
+                    {
                         return;
+                    }
                 }
 
                 // No results in any files.
                 if (_quiet)
                 {
-                    if (_list)
-                        WriteObject(null);
-                    else
-                        WriteObject(false);
+                    var res = _list ? null : Boxed.False;
+                    WriteObject(res);
+
                 }
             }
             else
@@ -1393,7 +1420,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if a match was found; otherwise false.</returns>
         private bool ProcessFile(string filename)
         {
-            ContextTracker contextTracker = new ContextTracker(_preContext, _postContext);
+            var contextTracker = GetContextTracker();
 
             bool foundMatch = false;
 
@@ -1487,7 +1514,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="contextTracker">The context tracker to operate on.</param>
         /// <returns>Whether or not any objects were emitted.</returns>
-        private bool FlushTrackerQueue(ContextTracker contextTracker)
+        private bool FlushTrackerQueue(IContextTracker contextTracker)
         {
             // Do we even have any matches to emit?
             if (contextTracker.EmitQueue.Count < 1)
