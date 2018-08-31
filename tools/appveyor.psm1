@@ -283,6 +283,12 @@ function Invoke-AppVeyorInstall
         $appveyorRemoteCredential = [PSCredential]::new("$env:COMPUTERNAME\$userName", $ss)
 	    $appveyorRemoteCredential | Export-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" -Force
 
+        # Non-Admin Account
+        $nonAdminUserName = 'psnonadmin'
+        New-LocalUser -username $nonAdminUserName -password $password
+        $appveyorNonAdminCredential = [PSCredential]::new("$env:COMPUTERNAME\$userName", $ss)
+	    $appveyorNonAdminCredential | Export-Clixml -Path "$env:TEMP\PsNonAdminCred.xml" -Force
+
         # Check that LocalAccountTokenFilterPolicy policy is set, since it is needed for remoting
         # using above local admin account.
         Write-Verbose "Checking for LocalAccountTokenFilterPolicy in AppVeyor."

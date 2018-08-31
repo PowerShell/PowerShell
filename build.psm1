@@ -1089,6 +1089,15 @@ function Start-PSPester {
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
     if ($Unelevate)
     {
+        $Script:psNonAdminCred = $null
+        $nonAdminCredsPath = "$env:TEMP\PsNonAdminCred.xml"
+
+        # AppVeyor doesn't work well with a non-admin user
+        if ((Test-Path -Path $nonAdminCredsPath) -and !$env:AppVeyor)
+        {
+            try { $Script:psNonAdminCred = Import-Clixml -Path $nonAdminCredsPath } catch { }
+        }
+
         if (-not $Environment.IsWindows)
         {
             throw '-Unelevate is currently not supported on non-Windows platforms'
@@ -1150,7 +1159,17 @@ function Start-PSPester {
 
     if ($Unelevate)
     {
-        $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
+        if($Script:psNonAdminCred)
+        {
+            $outputBufferFolder = Join-Path -Path $env:SystemDrive -ChildPath ([System.IO.Path]::GetRandomFileName())
+            $null = New-Item -ItemType Directory -Path $outputBufferFolder
+            icacls $outputBufferFolder /grant Everyone:F
+            $outputBufferFilePath = Join-Path -Path $outputBufferFolder -ChildPath ([System.IO.Path]::GetRandomFileName())
+        }
+        else
+        {
+            $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
+        }
     }
 
     $command += "Invoke-Pester "
@@ -1286,6 +1305,7 @@ function Start-PSPester {
                 }
                 if ($lines | Where-Object { $_ -eq '__UNELEVATED_TESTS_THE_END__'})
                 {
+                    Write-Log "Got end of unelevated tests"
                     break
                 }
 
@@ -1399,7 +1419,17 @@ function script:Start-UnelevatedProcess
         throw "Start-UnelevatedProcess is currently not supported on non-Windows platforms"
     }
 
-    runas.exe /trustlevel:0x20000 "$process $arguments"
+    # the current consumer of this function does not depend on
+    if ($Script:psNonAdminCred)
+    {
+        Write-Log "Running with non-admin user..."
+        Start-Process -FilePath $process -ArgumentList $arguments -Credential $Script:psNonAdminCred
+    }
+    else
+    {
+        Write-Log "Using runas to launch unelevated..."
+        runas.exe /trustlevel:0x20000 "$process $arguments"
+    }
 }
 
 function Show-PSPesterError
