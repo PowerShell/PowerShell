@@ -14,9 +14,9 @@ namespace Microsoft.PowerShell.Commands.Utility
     /// <summary>
     /// Join-Object implementation.
     /// </summary>
-    [Cmdlet(VerbsCommon.Join, "Object", RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "default")]
+    [Cmdlet(VerbsCommon.Join, "String", RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "default")]
     [OutputType(typeof(string))]
-    public sealed class JoinObjectCommand : PSCmdlet
+    public sealed class JoinStringCommand : PSCmdlet
     {
         private const int Capacity = 50;
 
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands.Utility
         /// </summary>
         [Parameter(Position = 0)]
         [ArgumentCompleter(typeof(PropertyNameCompleter))]
-        public object PropertyName { get; set; }
+        public object Property { get; set; }
 
         /// <summary>
         /// Gets or sets the delimiter to join the output with.
@@ -43,13 +43,13 @@ namespace Microsoft.PowerShell.Commands.Utility
         /// Gets or sets text to include before the joined input text.
         /// </summary>
         [Parameter]
-        public string PreScript { get; set; }
+        public string Prefix { get; set; }
 
         /// <summary>
         /// Gets or sets text to include after the joined input text.
         /// </summary>
         [Parameter]
-        public string PostScript { get; set; }
+        public string Suffix { get; set; }
 
         /// <summary>
         /// Gets or sets if the output items should we wrapped in single quotes.
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands.Utility
 
             const int defaultOutputStringCapacity = 256;
             var builder = new StringBuilder(defaultOutputStringCapacity);
-            builder.Append(PreScript);
+            builder.Append(Prefix);
 
             if (Delimiter == null)
             {
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                 return;
             }
 
-            if (PropertyName == null)
+            if (Property == null)
             {
 
                 AppendValue(LanguagePrimitives.ConvertTo<string>(_inputObjects[0]));
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                     AppendValue(LanguagePrimitives.ConvertTo<string>(_inputObjects[index]));
                 }
             }
-            else if (PropertyName is string propertyName)
+            else if (Property is string propertyName)
             {
                 string GetPropertyValueString(PSObject input, string name)
                 {
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                     AppendValue(GetPropertyValueString(_inputObjects[index], propertyName));
                 }
             }
-            else if (PropertyName is ScriptBlock sb)
+            else if (Property is ScriptBlock sb)
             {
                 string GetScriptBlockResultString(PSObject input)
                 {
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                 throw new ArgumentException();
             }
 
-            builder.Append(PostScript);
+            builder.Append(Suffix);
             WriteObject(builder.ToString(), false);
         }
     }
