@@ -30,7 +30,6 @@ function New-XmlElement
         [Parameter(Mandatory)]
         [System.Xml.XmlDocument]$XmlDoc,
         [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
         [System.Xml.XmlNode]$Node,
         [Switch]$PassThru,
         [string]$NamespaceUri
