@@ -198,13 +198,11 @@ namespace Microsoft.PowerShell.Commands.Utility
         {
             get
             {
-                switch (Environment.NewLine)
-                {
-                    case "\r": return "`r";
-                    case "\n": return "`n";
-                    case "\r\n": return "`r`n";
-                    default: return Environment.NewLine.Replace("\r", "`r").Replace("\n", "`n");
-                }
+#if UNIX
+                return Platform.IsMacOS ? "`r" : "`n";
+#else
+                return "`r`n";
+#endif
             }
         }
     }
