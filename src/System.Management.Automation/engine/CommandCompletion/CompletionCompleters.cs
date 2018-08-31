@@ -6953,35 +6953,35 @@ namespace System.Management.Automation
                 }
             }
 
-            using (var typeInferenceContext = new TypeInferenceContext())
+            var typeInferenceContext = new TypeInferenceContext();
+            IEnumerable<PSTypeName> prevType;
+            if (i == 0)
             {
-                IEnumerable<PSTypeName> prevType;
-                if (i == 0)
+                var parameterAst = (CommandParameterAst)commandAst.Find(ast => ast is CommandParameterAst cpa && cpa.ParameterName == "PropertyName", false);
+                var pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion);
+                if (!pseudoBinding.BoundArguments.TryGetValue(_parameterNameOfInput, out var pair) || !pair.ArgumentSpecified)
                 {
-                    var parameterAst = (CommandParameterAst)commandAst.Find(ast => ast is CommandParameterAst cpa && cpa.ParameterName == "PropertyName", false);
-                    var pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion);
-                    if (!pseudoBinding.BoundArguments.TryGetValue(_parameterNameOfInput, out var pair) || !pair.ArgumentSpecified)
-                    {
-                        return null;
-                    }
-
-                    var astPair = pair as AstPair;
-                    if (astPair?.Argument == null)
-                    {
-                        return null;
-                    }
-
-                    prevType = AstTypeInference.InferTypeOf(astPair.Argument, TypeInferenceRuntimePermissions.AllowSafeEval);
-                }
-                else
-                {
-                    prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], TypeInferenceRuntimePermissions.AllowSafeEval);
+                    return null;
                 }
 
-                var result = new List<CompletionResult>();
-                CompletionCompleters.CompleteMemberByInferredType(typeInferenceContext, prevType, result, wordToComplete + "*", filter: CompletionCompleters.IsPropertyMember, isStatic: false);
-                return result;
+                var astPair = pair as AstPair;
+                if (astPair?.Argument == null)
+                {
+                    return null;
+                }
+
+                prevType = AstTypeInference.InferTypeOf(astPair.Argument, typeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
             }
+            else
+            {
+                prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], typeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+            }
+
+            var result = new List<CompletionResult>();
+
+            CompletionCompleters.CompleteMemberByInferredType(typeInferenceContext, prevType, result, wordToComplete + "*", filter: CompletionCompleters.IsPropertyMember, isStatic: false);
+            return result;
         }
+
     }
 }
