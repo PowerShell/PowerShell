@@ -18,10 +18,10 @@ namespace Microsoft.PowerShell.Commands.Utility
     [OutputType(typeof(string))]
     public sealed class JoinObjectCommand : PSCmdlet
     {
-        private const int DefaultInputObjectBufferSize = 50;
+        private const int Capacity = 50;
 
         // ReSharper disable once CollectionNeverQueried.Local
-        private readonly List<PSObject> _inputObjects = new List<PSObject>(DefaultInputObjectBufferSize);
+        private readonly List<PSObject> _inputObjects = new List<PSObject>(Capacity);
         private DynamicPropertyGetter _propGetter = new DynamicPropertyGetter();
 
         /// <summary>
@@ -102,12 +102,15 @@ namespace Microsoft.PowerShell.Commands.Utility
                 }
             }
 
+            if (_inputObjects.Count == 0)
+            {
+                return;
+            }
+
             if (PropertyName == null)
             {
-                if (_inputObjects.Count > 0)
-                {
-                    AppendValue(LanguagePrimitives.ConvertTo<string>(_inputObjects[0]));
-                }
+
+                AppendValue(LanguagePrimitives.ConvertTo<string>(_inputObjects[0]));
 
                 for (var index = 1; index < _inputObjects.Count; index++)
                 {
@@ -122,10 +125,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                     return LanguagePrimitives.ConvertTo<string>(_propGetter.GetValue(input, name));
                 }
 
-                if (_inputObjects.Count > 0)
-                {
-                    AppendValue(GetPropertyValueString(_inputObjects[0], propertyName));
-                }
+                AppendValue(GetPropertyValueString(_inputObjects[0], propertyName));
 
                 for (var index = 1; index < _inputObjects.Count; index++)
                 {
@@ -147,10 +147,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                     return LanguagePrimitives.ConvertTo<string>(result);
                 }
 
-                if (_inputObjects.Count > 0)
-                {
-                    AppendValue(GetScriptBlockResultString(_inputObjects[0]));
-                }
+                AppendValue(GetScriptBlockResultString(_inputObjects[0]));
 
                 for (var index = 1; index < _inputObjects.Count; index++)
                 {
