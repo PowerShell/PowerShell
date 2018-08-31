@@ -229,18 +229,22 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
                 @{
                     TestName = "Version+RequiredVersion"
                     ModuleSpecification = @{ ModuleName = "BadVersionModule"; ModuleVersion = "3.1"; RequiredVersion = "3.1" }
+                    ErrorId = 'ArgumentException'
                 },
                 @{
                     TestName = "NoName"
                     ModuleSpecification = @{ ModuleVersion = "0.2" }
+                    ErrorId = 'MissingMemberException'
                 },
                 @{
                     TestName = "BadField"
                     ModuleSpecification = @{ ModuleName = "StrangeFieldModule"; RequiredVersion = "7.4"; Duck = "1.2" }
+                    ErrorId = 'ArgumentException'
                 },
                 @{
                     TestName = "BadType"
                     ModuleSpecification = @{ ModuleName = "BadTypeModule"; RequiredVersion = "Hello!" }
+                    ErrorId = 'PSInvalidCastException'
                 }
             )
         }
@@ -252,7 +256,7 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
         It "Cannot create from invalid module hashtables: <TestName>" -TestCases $testCases {
             param([string]$TestName, [hashtable]$ModuleSpecification)
 
-            { [ModuleSpecification]::new($ModuleSpecification) } | Should -Throw
+            { [ModuleSpecification]::new($ModuleSpecification) } | Should -Throw -ErrorId $ErrorId
         }
     }
 }
