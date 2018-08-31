@@ -6946,6 +6946,93 @@ namespace System.Management.Automation.Language
 
     #endregion Statements
 
+    /// <summary>
+    /// The ast representing a named method argument.  For example, in <c>[Math]::Abs(value = -25)]</c>, this ast
+    /// represents <c>value = -25</c>.
+    /// </summary>
+    public class NamedMethodArgumentAst : Ast
+    {
+        /// <summary>
+        /// Construct the ast for a named method argument.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the named method argument, starting with the name, ending with the expression, or if the expression
+        /// is omitted from the source, then ending at the end of the name.
+        /// </param>
+        /// <param name="argumentName">The name of the argument specified.  May not be null or empty.</param>
+        /// <param name="argument">The argument expression.  May not be null even if the expression is omitted from the source.</param>
+        /// <param name="expressionOmitted">
+        /// True when an explicit argument is not provided in the source, e.g. <c>[Parameter(Mandatory)]</c>.  In this case,
+        /// an ast for the argument expression must still be provided.
+        /// </param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/>, <paramref name="argumentName"/>, or <paramref name="argument"/> is null, or if
+        /// <paramref name="argumentName"/> is an empty string.
+        /// </exception>
+        public NamedMethodArgumentAst(IScriptExtent extent, string argumentName, ExpressionAst argument, bool expressionOmitted)
+            : base(extent)
+        {
+            if (string.IsNullOrEmpty(argumentName))
+            {
+                throw PSTraceSource.NewArgumentNullException("argumentName");
+            }
+
+            if (argument == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("argument");
+            }
+
+            this.Argument = argument;
+            SetParent(argument);
+            this.ArgumentName = argumentName;
+            this.ExpressionOmitted = expressionOmitted;
+        }
+
+        /// <summary>
+        /// The named argument specified by this ast, is never null or empty.
+        /// </summary>
+        public string ArgumentName { get; private set; }
+
+        /// <summary>
+        /// The ast of the value of the argument specified by this ast.  This property is never null.
+        /// </summary>
+        public ExpressionAst Argument { get; private set; }
+
+        /// <summary>
+        /// If the source omitted an expression, this returns true, otherwise false.  This allows a caller to distinguish
+        /// the difference between <c>$Object.Method(Accept)</c> and <c>$Object.Method(Accept=$true)</c>
+        /// </summary>
+        public bool ExpressionOmitted { get; private set; }
+
+        /// <summary>
+        /// Copy the NamedMethodArgumentAst instance
+        /// </summary>
+        public override Ast Copy()
+        {
+            var newArgument = CopyElement(this.Argument);
+            return new NamedMethodArgumentAst(this.Extent, this.ArgumentName, newArgument, this.ExpressionOmitted);
+        }
+
+        #region Visitors
+
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            return visitor.VisitNamedMethodArgument(this);
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            var action = visitor.VisitNamedMethodArgument(this);
+            if (action == AstVisitAction.SkipChildren)
+                return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+            if (action == AstVisitAction.Continue)
+                action = Argument.InternalVisit(visitor);
+            return visitor.CheckForPostAction(this, action);
+        }
+
+        #endregion Visitors
+    }
+
     #region Expressions
 
     /// <summary>
