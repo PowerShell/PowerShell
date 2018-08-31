@@ -72,7 +72,10 @@ namespace Microsoft.PowerShell.Commands.Utility
         /// <inheritdoc />
         protected override void ProcessRecord()
         {
-            _inputObjects.Add(InputObject);
+            if (InputObject != null && InputObject != AutomationNull.Value)
+            {
+                _inputObjects.Add(InputObject);
+            }
         }
 
         /// <inheritdoc />
