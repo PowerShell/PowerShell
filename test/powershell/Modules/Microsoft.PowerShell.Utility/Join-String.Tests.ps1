@@ -18,7 +18,7 @@ Describe "Join-String" -Tags "CI" {
     It "Should return a single string" {
         $actual = $testObject | Join-String
 
-        $actual.Count       | Should -Be 1
+        $actual.Count | Should -Be 1
         $actual | Should -BeOfType System.String
     }
 
@@ -95,5 +95,4 @@ Describe "Join-String" -Tags "CI" {
 			$n -in $completionTexts | Should -BeTrue
 		}
 	}
-
 }

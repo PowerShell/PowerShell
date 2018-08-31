@@ -6938,8 +6938,7 @@ namespace System.Management.Automation
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
         {
-            var pipelineAst = commandAst.Parent as PipelineAst;
-            if (pipelineAst == null)
+            if (!(commandAst.Parent is PipelineAst pipelineAst))
             {
                 return null;
             }
@@ -6964,13 +6963,12 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                var astPair = pair as AstPair;
-                if (astPair?.Argument == null)
+                if (pair is AstPair astPair && astPair.Argument != null)
                 {
-                    return null;
+                    prevType = AstTypeInference.InferTypeOf(astPair.Argument, typeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
                 }
 
-                prevType = AstTypeInference.InferTypeOf(astPair.Argument, typeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+                return null;
             }
             else
             {

@@ -18,10 +18,11 @@ namespace Microsoft.PowerShell.Commands.Utility
     [OutputType(typeof(string))]
     public sealed class JoinStringCommand : PSCmdlet
     {
-        private const int Capacity = 50;
+        /// <remarks>50 is an estimate of an upper range value for the number of inputs
+        /// that is used in the most common scenarios.</remarks>
+        private const int InputObjectBufferDefaultCapacity = 50;
 
-        // ReSharper disable once CollectionNeverQueried.Local
-        private readonly List<PSObject> _inputObjects = new List<PSObject>(Capacity);
+        private readonly List<PSObject> _inputObjects = new List<PSObject>(InputObjectBufferDefaultCapacity);
         private DynamicPropertyGetter _propGetter = new DynamicPropertyGetter();
 
         /// <summary>
