@@ -12,14 +12,16 @@ using System.Text;
 namespace Microsoft.PowerShell.Commands.Utility
 {
     /// <summary>
-    /// Group-Object implementation.
+    /// Join-Object implementation.
     /// </summary>
     [Cmdlet(VerbsCommon.Join, "Object", RemotingCapability = RemotingCapability.None, DefaultParameterSetName = "default")]
     [OutputType(typeof(string))]
-    public class JoinObjectCommand : PSCmdlet
+    public sealed class JoinObjectCommand : PSCmdlet
     {
+        private const int DefaultInputObjectBufferSize = 50;
+
         // ReSharper disable once CollectionNeverQueried.Local
-        private readonly List<PSObject> _inputObjects = new List<PSObject>(50);
+        private readonly List<PSObject> _inputObjects = new List<PSObject>(DefaultInputObjectBufferSize);
         private DynamicPropertyGetter _propGetter = new DynamicPropertyGetter();
 
         /// <summary>
@@ -78,7 +80,8 @@ namespace Microsoft.PowerShell.Commands.Utility
         {
             var quoteChar = Quote ? '\'' : DoubleQuote ? '"' : char.MinValue;
 
-            var builder = new StringBuilder(256);
+            const int defaultOutputStringCapacity = 256;
+            var builder = new StringBuilder(defaultOutputStringCapacity);
             builder.Append(PreScript);
 
             if (Delimiter == null)
