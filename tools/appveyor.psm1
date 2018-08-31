@@ -626,6 +626,7 @@ function Invoke-AppveyorFinish
     }
     catch {
         Write-Host -Foreground Red $_
+        Write-Host -Foreground Red $_.ScriptStackTrace
         throw $_
     }
 }
