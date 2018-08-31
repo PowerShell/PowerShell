@@ -530,20 +530,51 @@ namespace System.Management.Automation
 
                 foreach (var kv in hashtableAst.KeyValuePairs)
                 {
-                    if (SafeExprEvaluator.TrySafeEval(kv.Item1, _context.ExecutionContext, out object nameValue))
+                    string name = null;
+                    string typeName = null;
+                    if (kv.Item1 is StringConstantExpressionAst stringConstantExpressionAst)
                     {
-                        var name = nameValue.ToString();
-                        var typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name ?? "System.Object";
+                        name = stringConstantExpressionAst.Value;
+                    }
+                    else if (kv.Item1 is ConstantExpressionAst constantExpressionAst)
+                    {
+                        name = constantExpressionAst.Value.ToString();
+                    }
+                    else if (SafeExprEvaluator.TrySafeEval(kv.Item1, _context.ExecutionContext, out object nameValue))
+                    {
+                        name = nameValue.ToString();
+                    }
+                    if (name != null)
+                    {
                         object value = null;
                         if (kv.Item2 is PipelineAst pipelineAst
-                            && pipelineAst.PipelineElements[0] is CommandExpressionAst commandExpressionAst
-                            && SafeExprEvaluator.TrySafeEval(commandExpressionAst.Expression, _context.ExecutionContext, out object safeValue))
+                            && pipelineAst.PipelineElements.Count == 1
+                            && pipelineAst.PipelineElements[0] is CommandExpressionAst commandExpressionAst)
                         {
-                            value = safeValue;
+                            switch (commandExpressionAst.Expression)
+                            {
+                                case ConstantExpressionAst constantExpression:
+                                {
+                                    value = constantExpression.Value;
+                                    break;
+                                }
+                                default:
+                                {
+                                    typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name;
+                                    if (typeName == null)
+                                    {
+                                        if (SafeExprEvaluator.TrySafeEval(commandExpressionAst.Expression, _context.ExecutionContext, out object safeValue))
+                                        {
+                                            value = safeValue;
+                                        }
+                                    }
+
+                                    break;
+                                }
+                            }
                         }
 
-                        var pstypeName = value != null ? new PSTypeName(value.GetType()) : new PSTypeName(typeName);
-
+                        var pstypeName = value != null ? new PSTypeName(value.GetType()) : new PSTypeName(typeName ?? "System.Object");
                         properties.Add(new PSMemberNameAndType(name, pstypeName, value));
                     }
                 }
