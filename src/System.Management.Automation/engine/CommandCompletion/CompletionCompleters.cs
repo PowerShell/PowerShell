@@ -6910,7 +6910,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Completes with the property names of the InputObject.
     /// </summary>
-    public class PropertyNameCompleter : IArgumentCompleter
+    internal class PropertyNameCompleter : IArgumentCompleter
     {
         private readonly string _parameterNameOfInput;
 
