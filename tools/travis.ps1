@@ -155,11 +155,25 @@ function Set-DailyBuildBadge
 $isPR = $env:TRAVIS_EVENT_TYPE -eq 'pull_request'
 
 # For PRs, Travis-ci strips out [ and ] so read the message directly from git
-if($env:TRAVIS_EVENT_TYPE -eq 'pull_request')
+if($env:TRAVIS_EVENT_TYPE -eq 'pull_request' -or $env:BUILD_REASON)
 {
+    $commitId = $null
+    if ($env:TRAVIS_EVENT_TYPE)
+    {
+        # We are in Travis-CI
+        $commitId = $env:TRAVIS_PULL_REQUEST_SHA
+    }
+    elseif($env:BUILD_REASON)
+    {
+        # We are in VSTS
+        $commitId = $env:BUILD_SOURCEVERSION
+        Write-Verbose "VSTS commitId: $commitId" -Verbose
+    }
+
     # If the current job is a pull request, the env variable 'TRAVIS_PULL_REQUEST_SHA' contains
     # the commit SHA of the HEAD commit of the PR.
-    $commitMessage = git log --format=%B -n 1 $env:TRAVIS_PULL_REQUEST_SHA
+    $commitMessage = git log --format=%B -n 1 $commitId
+    Write-Verbose "commitMessage: $commitMessage" -verbose
 }
 else
 {
@@ -171,13 +185,18 @@ $hasFeatureTag = $commitMessage -match '\[feature\]'
 $hasPackageTag = $commitMessage -match '\[package\]'
 $createPackages = -not $isPr -or $hasPackageTag
 $hasRunFailingTestTag = $commitMessage -match '\[includeFailingTest\]'
-$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
+$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api' -or $env:BUILD_REASON -eq 'Schedule'
 # only update the build badge for the cron job
-$cronBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron'
+$cronBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:BUILD_REASON -eq 'Schedule'
 $isFullBuild = $isDailyBuild -or $hasFeatureTag
 
 if($Stage -eq 'Bootstrap')
 {
+    if($cronBuild -and $env:TF_BUILD)
+    {
+        Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
+    }
+
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
