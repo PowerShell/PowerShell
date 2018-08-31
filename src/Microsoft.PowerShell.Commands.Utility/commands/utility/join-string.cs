@@ -81,6 +81,11 @@ namespace Microsoft.PowerShell.Commands.Utility
         /// <inheritdoc />
         protected override void EndProcessing()
         {
+            if (_inputObjects.Count == 0)
+            {
+                return;
+            }
+
             var quoteChar = Quote ? '\'' : DoubleQuote ? '"' : char.MinValue;
 
             const int defaultOutputStringCapacity = 256;
@@ -92,7 +97,6 @@ namespace Microsoft.PowerShell.Commands.Utility
                 Delimiter = LanguagePrimitives.ConvertTo<string>(GetVariableValue("OFS"));
             }
 
-
             void AppendValue(string val)
             {
                 if (quoteChar != char.MinValue)
@@ -103,11 +107,6 @@ namespace Microsoft.PowerShell.Commands.Utility
                 {
                     builder.Append(val);
                 }
-            }
-
-            if (_inputObjects.Count == 0)
-            {
-                return;
             }
 
             if (Property == null)
