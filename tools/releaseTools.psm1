@@ -223,6 +223,9 @@ function Get-ChangeLog
 #.PARAMETER Path
 #The path to check for csproj files with packagse
 #
+#.PARAMETER IncludeAll
+#Include packages that don't need to be updated
+#
 #.OUTPUTS
 #Objects which represet the csproj package ref, with the current and new version
 ##############################
@@ -230,11 +233,13 @@ function Get-NewOfficalPackage
 {
     param(
         [String]
-        $Path = (Join-path -Path $PSScriptRoot -ChildPath '..')
+        $Path = (Join-path -Path $PSScriptRoot -ChildPath '..\src'),
+        [Switch]
+        $IncludeAll
     )
     # Calculate the filter to find the CSProj files
     $filter = Join-Path -Path $Path -ChildPath '*.csproj'
-    $csproj = Get-ChildItem $filter -Recurse
+    $csproj = Get-ChildItem $filter -Recurse -Exclude 'PSGalleryModules.csproj'
 
     $csproj | ForEach-Object{
         $file = $_
@@ -246,30 +251,148 @@ function Get-NewOfficalPackage
         $packages=$csprojXml.Project.ItemGroup.PackageReference
 
         # check to see if there is a newer package for each refernce
-        foreach($package in $packages)
+        foreach ($package in $packages)
         {
             # Get the name of the package
             $name = $package.Include
 
-            # don't pull 'Microsoft.Management.Infrastructure' from nuget
-            if($name -and $name -ne 'Microsoft.Management.Infrastructure')
+            if ($name)
             {
                 # Get the current package from nuget
-                $newPackage = find-package -Name $name -Source https://nuget.org/api/v2/  -ErrorAction SilentlyContinue
+                $versions = find-package -Name $name -Source https://nuget.org/api/v2/  -ErrorAction SilentlyContinue -AllVersions |
+                    Add-Member -Type ScriptProperty -Name Published -Value { $this.Metadata['published']} -PassThru |
+                        Where-Object { Test-IncludePackageVersion -NewVersion $_.Version -Version $package.version}
+
+                $revsionRegEx = Get-MatchingMajorMinorRegEx -Version $package.version
+                $newPackage = $versions |
+                    Sort-Object -Descending |
+                        Select-Object -First 1
+
+                # Get the newest matching revision
+                $newRevision = $versions |
+                    Where-Object {$_.Version -match $revsionRegEx } |
+                        Sort-Object -Descending |
+                            Select-Object -First 1
 
                 # If the current package has a different version from the version in the csproj, print the details
-                if($newPackage -and $newPackage.Version.ToString() -ne $package.version)
+                if ($newRevision -and $newRevision.Version.ToString() -ne $package.version -or $newPackage -and $newPackage.Version.ToString() -ne $package.version -or $IncludeAll.IsPresent)
                 {
+                    if ($newRevision)
+                    {
+                        $newRevisionString = $newRevision.Version
+                    }
+                    else
+                    {
+                        # We don't have a new Revision, report the current version
+                        $newRevisionString = $package.Version
+                    }
+
+                    if ($newPackage)
+                    {
+                        $newVersionString = $newPackage.Version
+                    }
+                    else
+                    {
+                        # We don't have a new Version, report the current version
+                        $newVersionString = $package.Version
+                    }
+
                     [pscustomobject]@{
-                        Csproj = $file
+                        Csproj = (Split-Path -Path $file -Leaf)
                         PackageName = $name
                         CsProjVersion = $Package.Version
-                        NuGetVersion = $newPackage.Version
+                        NuGetRevision = $newRevisionString
+                        NuGetVersion = $newVersionString
                     }
                 }
             }
         }
     }
+}
+
+##############################
+#.SYNOPSIS
+# Returns True if NewVersion is newer than Version
+# Pre release are ignored if the current version is not pre-release
+# If the current version is pre-release, this function only determines if the version portion is NewReleaseTag
+# The calling function is responsible for sorting prelease version by publish date (as find-package gives them to you)
+# and returning the newest.
+#
+#.PARAMETER Version
+# The current Version
+#
+#.PARAMETER NewVersion
+# The potention replacement version
+#
+#.OUTPUTS
+# True if NewVersion should be considere as a replacement
+##############################
+function Test-IncludePackageVersion
+{
+    param(
+        [string]
+        $NewVersion,
+        [string]
+        $Version
+    )
+
+    $simpleCompare = $Version -notlike '*-*'
+
+    if($simpleCompare -and $NewVersion -like '*-*')
+    {
+        # We are using a stable and the new version is pre-release
+        return $false
+    }
+    elseif($simpleCompare -and [Version]$NewVersion -ge [Version] $Version)
+    {
+        # Simple comparison says the new version is newer
+        return $true
+    }
+    elseif($simpleCompare)
+    {
+        # Simple comparison was done, but it was not newer
+        return $false
+    }
+    elseif($NewVersion -notlike '*-*')
+    {
+        # Our current version is a pre-release but the new is not
+        # make sure the new version is newer than the version part of the current version
+        $versionOnly = ($Version -Split '\-')[0]
+        if([Version]$NewVersion -ge [Version] $versionOnly)
+        {
+            return $true
+        }
+        else
+        {
+            return $false
+        }
+    }
+    else
+    {
+        # Not sure, include it
+        return $true
+    }
+}
+
+##############################
+#.SYNOPSIS
+# Get a RegEx based on a version that will match the major and minor
+#
+#.PARAMETER Version
+# The version to match
+#
+##############################
+function Get-MatchingMajorMinorRegEx
+{
+    param(
+        [Parameter(Mandatory)]
+        $Version
+    )
+
+    $parts = $Version -split '\.'
+
+    $regEx = "^$($parts[0])\.$($parts[1])\..*"
+    return $regEx
 }
 
 ##############################
