@@ -5137,6 +5137,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 typeNameUsed.Add(psTypeName.Name);
                 var members = context.GetMembersByInferredType(psTypeName, isStatic, filter);
                 foreach (var member in members)
@@ -6905,7 +6906,6 @@ namespace System.Management.Automation
             return parenExpressionAst.Pipeline.Accept(this);
         }
     }
-
 
     /// <summary>
     /// Completes with the property names of the InputObject.

@@ -88,8 +88,8 @@ namespace Microsoft.PowerShell.Commands.Utility
 
             var quoteChar = Quote ? '\'' : DoubleQuote ? '"' : char.MinValue;
 
-            const int defaultOutputStringCapacity = 256;
-            var builder = new StringBuilder(defaultOutputStringCapacity);
+            const int DefaultOutputStringCapacity = 256;
+            var builder = new StringBuilder(DefaultOutputStringCapacity);
             builder.Append(Prefix);
 
             if (Delimiter == null)
@@ -111,7 +111,6 @@ namespace Microsoft.PowerShell.Commands.Utility
 
             if (Property == null)
             {
-
                 AppendValue(LanguagePrimitives.ConvertTo<string>(_inputObjects[0]));
 
                 for (var index = 1; index < _inputObjects.Count; index++)
