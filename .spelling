@@ -3,48 +3,6 @@
 # global dictionary is at the start, file overrides afterwards
 # one word per line, to define a file override use ' - filename'
 # where filename is relative to this configuration file
-<<<<<<< HEAD
-
-#region Global Dictionary
-2ae5d07
-2.x
-2.x.
-acl
-ActiveDirectory
-aditya
-adityapatwardhan
-alpha.15
-alpha.7
-alpha.8
-alpha.9
-AlternateStream
-amd64
-analyzing
-AppImage
-AppVeyor
-argumentlist
-arm32
-arm64
-artifact
-artifacts
-ASP.NET
-AssemblyLoadContext
-authenticode
-authenticodesignature
-behavior
-behaviors
-beta.7
-booleans
-catalog
-cataloged
-CentOS
-childitem
-chucklu
-cimsession
-cimsupport
-cmake
-cmd
-=======
 powershell
 changelog
 v6.1.0
@@ -52,7 +10,6 @@ rc.1
 powercode
 isazonov
 dotnet
->>>>>>> Update spelling file
 cmdlet
 sethvs
 wildcard
