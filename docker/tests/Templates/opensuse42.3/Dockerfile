@@ -36,4 +36,4 @@ RUN tar zxf $PACKAGENAME -C /opt/microsoft/powershell
 RUN ln -s /opt/microsoft/powershell/pwsh $POWERSHELL_LINKFILE
 
 RUN $TESTDOWNLOADCOMMAND
-RUN pwsh -c "Import-Module /PowerShell/build.psm1;\$dir='/usr/local/share/powershell/Modules';New-Item -Type Directory -Path \$dir -ErrorAction SilentlyContinue;Restore-PSPester -Destination \$dir;exit (Invoke-Pester $TESTLIST -PassThru).FailedCount"
+RUN pwsh -c "Import-Module /PowerShell/build.psm1;\$dir='/usr/local/share/powershell/Modules';\$null=New-Item -Type Directory -Path \$dir -ErrorAction SilentlyContinue;Restore-PSPester -Destination \$dir;exit (Invoke-Pester $TESTLIST -PassThru).FailedCount"

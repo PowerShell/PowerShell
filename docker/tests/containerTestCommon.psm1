@@ -213,9 +213,12 @@ function Get-ContainerPowerShellVersion
     return (Get-Content -Encoding Ascii $testContext.resolvedLogPath)[0]
 }
 
-
+# Function defines a config mapping for testing Preview packages.
+# The list of supported OS for each release can be found here:
+# https://github.com/PowerShell/PowerShell-Docs/blob/staging/reference/docs-conceptual/PowerShell-Core-Support.md#supported-platforms
 function Get-DefaultPreviewConfigForPackageValidation
 {
+    # format: <DockerfileFolderName>=<PartOfPackageFilename>
     @{  'centos7'='rhel.7';
         'debian.8'='debian.8';
         'debian.9'='debian.9';
@@ -230,8 +233,12 @@ function Get-DefaultPreviewConfigForPackageValidation
     }
 }
 
+# Function defines a config mapping for testing Stable packages.
+# The list of supported OS for each release can be found here:
+# https://github.com/PowerShell/PowerShell-Docs/blob/staging/reference/docs-conceptual/PowerShell-Core-Support.md#supported-platforms
 function Get-DefaultStableConfigForPackageValidation
 {
+    # format: <DockerfileFolderName>=<PartOfPackageFilename>
     @{  'centos7'='rhel.7';
         'debian.8'='debian.8';
         'debian.9'='debian.9';
@@ -257,9 +264,9 @@ function Get-PackageNamesOnAzureBlob
     )
 
 
-    $responce = Invoke-RestMethod -Method Get -Uri $($ContainerUrl + $SAS + 'restype=container&comp=list')
+    $response = Invoke-RestMethod -Method Get -Uri $($ContainerUrl + $SAS + 'restype=container&comp=list')
 
-    $xmlResponce = [xml]$responce.Substring($responce.IndexOf('<EnumerationResults')) # remove some bad chars in the beginning that break XML parsing
+    $xmlResponce = [xml]$response.Substring($response.IndexOf('<EnumerationResults')) # remove some bad chars in the beginning that break XML parsing
     ($xmlResponce.EnumerationResults.Blobs.Blob).Name
 }
 
