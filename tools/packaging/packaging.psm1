@@ -2635,7 +2635,7 @@ function Test-FileWxs
         $newXml = Get-Content -raw $newXmlFileName
         $newXml = $newXml -replace 'amd64', '$(var.FileArchitecture)'
         $newXml = $newXml -replace 'x86', '$(var.FileArchitecture)'
-        $newXml | out-file -Path $newXmlFileName -Encoding ascii
+        $newXml | Out-File -FilePath $newXmlFileName -Encoding ascii
         Write-Log -message "Update xml saved to $newXmlFileName"
         if($env:appveyor)
         {
@@ -2648,7 +2648,7 @@ function Test-FileWxs
                 Write-Warning -Message "Pushing MSI File fragment failed."
             }
         }
-        elseif($env:TF_BUILD)
+        elseif($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest')
         {
             Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$newXmlFileName"
         }
