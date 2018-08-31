@@ -788,3 +788,5 @@ PowerShell.stacktags
 PowerShell.wpaProfile
 PowerShell.wprp
 Invoke-PerfviewPS
+ - demos/WindowsPowerShellModules/README.md
+2.x.
