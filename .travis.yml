@@ -48,7 +48,7 @@ script:
   # spellcheck
   # Ignore 'Pester' folder because it's third party
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report;
+      mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
     fi
 
 after_failure:
