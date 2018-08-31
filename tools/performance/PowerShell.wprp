@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes'?>
+<WindowsPerformanceRecorder
+    Author="PowerShell Performance"
+    Comments="PowerShell Performance"
+    Company="Microsoft Corporation"
+    Copyright="Microsoft Corporation"
+    Team="PowerShell Performance"
+    Version="1.0"
+    >
+  <Profiles>
+    <SystemCollector Id="SystemCollector">
+      <!-- 1MB * 100 buffers = 100 MB -->
+      <BufferSize Value="1024"/>
+      <Buffers Value="100"/>
+    </SystemCollector>
+
+    <EventCollector Id="EventCollector" Name="EventCollector">
+      <BufferSize Value="1024" />
+      <Buffers Value="100" />
+    </EventCollector>
+
+    <SystemProvider Id="SystemProviderVerbose">
+      <Keywords>
+        <!-- CPU -->
+        <Keyword Value="ProcessThread"/>
+        <Keyword Value="Loader"/>
+        <Keyword Value="Power"/>
+        <Keyword Value="CSwitch"/>
+        <Keyword Value="ReadyThread"/>
+        <Keyword Value="SampledProfile"/>
+        <Keyword Value="DPC"/>
+        <Keyword Value="Interrupt"/>
+        <Keyword Value="IdleStates"/>
+        <Keyword Value="DiskIO"/>
+        <Keyword Value="FileIO"/>
+      </Keywords>
+      <Stacks>
+        <Stack Value="CSwitch"/>
+        <Stack Value="ReadyThread"/>
+        <Stack Value="SampledProfile"/>
+      </Stacks>
+    </SystemProvider>
+
+    <EventProvider Id="Microsoft-Windows-PowerShell" Name="Microsoft-Windows-PowerShell"/>
+    <EventProvider Id="Microsoft-PowerShell-Parser" Name="*Microsoft-PowerShell-Parser"/>
+    <EventProvider Id="Microsoft-PowerShell-Runspaces" Name="*Microsoft-PowerShell-Runspaces"/>
+    <EventProvider Id="Microsoft-PowerShell-CommandDiscovery" Name="*Microsoft-PowerShell-CommandDiscovery"/>
+    <EventProvider Id="Microsoft-PowerShell-Telemetry" Name="*Microsoft-PowerShell-Telemetry"/>
+    <EventProvider Id="Microsoft-Windows-DotNETRuntime" Name="e13c0d23-ccbc-4e12-931b-d9cc2eee27e4">
+        <Keywords>
+            <!--
+            ###############
+            ### Enabled ###
+            ###############
+            GC                            = 0x000000001 # Logging when garbage collections and finalization happen.
+            Binder                        = 0x000000004
+            Loader                        = 0x000000008 # Logging when modules actually get loaded and unloaded.
+            Jit                           = 0x000000010 # Logging when Just in time (JIT) compilation occurs.
+            NGen                          = 0x000000020 # Logging when precompiled native (NGEN) images are loaded.
+            StopEnumeration               = 0x000000080 # Indicates that on detach or process shutdown, a rundown of all existing methods should be done
+            Security                      = 0x000000400 # Events associated with validating security restrictions.
+            AppDomainResourceManagement   = 0x000000800 # Events for logging resource consumption on an app-domain level granularity
+            Contention                    = 0x000004000 # Log when lock contention occurs.  (Monitor.Enters actually blocks)
+            Exception                     = 0x000008000 # Log exception processing.
+            Threading                     = 0x000010000 # Log events associated with the threadpool, and other threading events.
+            JittedMethodILToNativeMap     = 0x000020000 # Dump the native to IL mapping of any method that is JIT compiled.  (V4.5 runtimes and above).
+            OverrideAndSuppressNGenEvents = 0x000040000 # If enabled will suppress the rundown of NGEN events on V4.0 runtime (has no effect on Pre-V4.0 runtimes).
+            Type                          = 0x000080000 # Enables the 'BulkType' event
+            GCHeapSurvivalAndMovement     = 0x000400000 # Enables events associate with object movement or survival with each GC.
+            GCHeapAndTypeNames            = 0x001000000 # Indicates that you want type names looked up and put into the events (not just meta-data tokens).
+            Stack                         = 0x040000000 # Also log the stack trace of events for which this is valuable.
+            ThreadTransfer                = 0x080000000 # This allows tracing work item transfer events (thread pool enqueue/dequeue/ioenqueue/iodequeue/a.o.)
+            Codesymbols                   = 0x400000000 # Events that will dump PDBs of dynamically generated assemblies to the ETW stream.
+
+
+            ###################
+            ### Not enabled ###
+            ###################
+            GCHandle                      = 0x000000002 # Events when GC handles are set or destroyed.
+            StartEnumeration              = 0x000000040 # Indicates that on attach or module load , a rundown of all existing methods should be done
+            JitTracing                    = 0x000001000 # Logging of the internal workings of the Just In Time compiler.  This is fairly verbose.
+            Interop                       = 0x000002000 # Log information about code thunks that transition between managed and unmanaged code.
+            GCHeapDump                    = 0x000100000 # Enables the events associated with dumping the GC heap
+            /// Enables allocation sampling with the 'fast'.  Sample to limit to 100 allocations per second per type.
+            /// This is good for most detailed performance investigations.   Note that this DOES update the allocation
+            /// path to be slower and only works if the process start with this on.
+            GCSampledObjectAllocationHigh = 0x000200000
+            GCHeapCollect                 = 0x000800000 # Triggers a GC.  Can pass a 64 bit value that will be logged with the GC Start event so you know which GC you actually triggered.
+            PerfTrack                     = 0x020000000
+            Debugger                      = 0x100000000 # .NET Debugger events
+            Monitoring                    = 0x200000000 # Events intended for monitoring on an ongoing basis.
+
+            /// Enables allocation sampling with the 'slow' rate, Sample to limit to 5 allocations per second per type.
+            /// This is reasonable for monitoring.    Note that this DOES update the allocation path to be slower
+            /// and only works if the process start with this on.
+            GCSampledObjectAllocationLow  = 0x002000000
+            /// Turns on capturing the stack and type of object allocation made by the .NET Runtime.   This is only
+            /// supported after V4.5.3 (Late 2014)   This can be very verbose and you should seriously using  GCSampledObjectAllocationHigh
+            /// instead (and GCSampledObjectAllocationLow for production scenarios).
+            GCAllObjectAllocation         = GCSampledObjectAllocationHigh | GCSampledObjectAllocationLow,
+            -->
+            <Keyword Value="4C14FCCBD"/>
+        </Keywords>
+    </EventProvider>
+
+    <Profile
+        Id="PowerShellPerformance.Verbose.File"
+        Name="PowerShellPerformance"
+        Description="PowerShell Performance Trace"
+        LoggingMode="File"
+        DetailLevel="Verbose"
+        >
+      <ProblemCategories>
+        <ProblemCategory Value="Computation"/>
+      </ProblemCategories>
+      <Collectors>
+        <SystemCollectorId Value="SystemCollector">
+          <SystemProviderId Value="SystemProviderVerbose"/>
+        </SystemCollectorId>
+        <EventCollectorId Value="EventCollector">
+          <EventProviders>
+            <EventProviderId Value="Microsoft-Windows-PowerShell" />
+            <EventProviderId Value="Microsoft-PowerShell-Parser" />
+            <EventProviderId Value="Microsoft-PowerShell-Runspaces" />
+            <EventProviderId Value="Microsoft-PowerShell-CommandDiscovery" />
+            <EventProviderId Value="Microsoft-PowerShell-Telemetry" />
+            <EventProviderId Value="Microsoft-Windows-DotNETRuntime" />
+          </EventProviders>
+        </EventCollectorId>
+      </Collectors>
+    </Profile>
+  </Profiles>
+  <TraceMergeProperties>
+    <TraceMergeProperty
+        Id="TraceMerge_Default"
+        Name="TraceMerge_Default"
+        >
+      <CustomEvents>
+        <CustomEvent Value="ImageId"/>
+        <CustomEvent Value="BuildInfo"/>
+        <CustomEvent Value="VolumeMapping"/>
+        <CustomEvent Value="EventMetadata"/>
+        <CustomEvent Value="PerfTrackMetadata"/>
+        <CustomEvent Value="WinSAT"/>
+      </CustomEvents>
+    </TraceMergeProperty>
+  </TraceMergeProperties>
+</WindowsPerformanceRecorder>
+

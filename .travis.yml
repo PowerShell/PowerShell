@@ -48,7 +48,7 @@ script:
   # spellcheck
   # Ignore 'Pester' folder because it's third party
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report;
+      mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
     fi
 
 after_failure:
@@ -63,7 +63,7 @@ after_success:
 # which is expensive and unneeded for build agents.
 env:
   global:
-    - CACHE_VERSION=netcoreapp.2.1-sdk.2.1.302
+    - CACHE_VERSION=netcoreapp.2.1-sdk.2.1.401
     - POWERSHELL_TELEMETRY_OPTOUT=1
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
 

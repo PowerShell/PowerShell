@@ -1,7 +1,7 @@
 # Docker image file that describes an Ubuntu14.04 image with PowerShell installed from Microsoft APT Repo
 
-FROM microsoft/powershell:ubuntu14.04
-LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" 
+FROM mcr.microsoft.com/powershell:ubuntu14.04
+LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
 
 # Install dependencies and clean up
 RUN apt-get update \
@@ -27,7 +27,7 @@ RUN apt-get update \
 	dpkg-dev \
 	libfuse-dev \
 	fuse \
-	python \	
+	python \
     && rm -rf /var/lib/apt/lists/*
 
 COPY PowerShellPackage.ps1 /

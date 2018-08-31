@@ -163,7 +163,7 @@
     <value>The '{0}' module cannot be imported because its manifest contains one or more members that are not valid. The valid manifest members are ({1}). Remove the members that are not valid ({2}), then try to import the module again.</value>
   </data>
   <data name="InvalidModuleSpecificationMember" xml:space="preserve">
-    <value>The hashtable describing a module contains one or more members that are not valid.  The valid members are ({0}). Remove the members that are not valid ({1}), then try again.</value>
+    <value>The hashtable describing a module contains one or more members that are not valid. The valid members are ({0}). Remove the members that are not valid ({1}), then try again.</value>
   </data>
   <data name="ModuleTooDeeplyNested" xml:space="preserve">
     <value>Cannot load the module '{0}' because the module nesting limit has been exceeded. Modules can only be nested to {1} levels. Evaluate and change the order in which you are loading modules to prevent exceeding the nesting limit, and then try running your script again.</value>
@@ -340,10 +340,10 @@
     <value>{0} (Path: '{1}')</value>
   </data>
   <data name="InvalidProcessorArchitecture" xml:space="preserve">
-    <value>The current processor architecture is: {0}.  The module '{1}' requires the following architecture: {2}.</value>
+    <value>The current processor architecture is: {0}. The module '{1}' requires the following architecture: {2}.</value>
   </data>
   <data name="InvalidDotNetFrameworkVersion" xml:space="preserve">
-    <value>The module '{0}' requires the following version of the .NET Framework: {1}.  The required version is not installed.</value>
+    <value>The module '{0}' requires the following version of the .NET Framework: {1}. The required version is not installed.</value>
   </data>
   <data name="InvalidPowerShellHostName" xml:space="preserve">
     <value>The name of the current PowerShell host is: '{0}'. The module '{1}' requires the following PowerShell host: '{2}'.</value>
@@ -436,7 +436,7 @@
     <value>End of {0} hashtable</value>
   </data>
   <data name="PrivateDataValueTypeShouldBeHashTableError" xml:space="preserve">
-    <value>The PrivateData parameter value must be a hash table to create the module manifest with the following parameter values Tags, ProjectUri, LicenseUri, IconUri or ReleaseNotes.  Either remove the Tags, ProjectUri, LicenseUri, IconUri, or ReleaseNotes parameter values or wrap the contents of PrivateData in a hashtable.</value>
+    <value>The PrivateData parameter value must be a hash table to create the module manifest with the following parameter values Tags, ProjectUri, LicenseUri, IconUri or ReleaseNotes. Either remove the Tags, ProjectUri, LicenseUri, IconUri, or ReleaseNotes parameter values or wrap the contents of PrivateData in a hashtable.</value>
   </data>
   <data name="PrivateDataValueTypeShouldBeHashTableWarning" xml:space="preserve">
     <value>The PrivateData should be defined as a hashtable, but this module manifest defines it as an object. Please consider wrapping the contents of PrivateData in a hashtable. This will enable you to add the Tags, ProjectUri, LicenseUri, IconUri, and ReleaseNotes properties to the module manifest at a later time.</value>
@@ -526,10 +526,10 @@
     <value>The required module '{0}' was not loaded because no valid module file was found in any module directory.</value>
   </data>
   <data name="MixedModuleOverCimSessionWarning" xml:space="preserve">
-    <value>Some commands from module {0} cannot be imported over a CimSession.  To get all the commands, verify that the remote server has PowerShell remote management enabled, and then try adding the PSSession parameter to an Import-Module cmdlet.</value>
+    <value>Some commands from module {0} cannot be imported over a CimSession. To get all the commands, verify that the remote server has PowerShell remote management enabled, and then try adding the PSSession parameter to an Import-Module cmdlet.</value>
   </data>
   <data name="PsModuleOverCimSessionError" xml:space="preserve">
-    <value>The module {0} cannot be imported over a CimSession.  Try using the PSSession parameter of the Import-Module cmdlet.</value>
+    <value>The module {0} cannot be imported over a CimSession. Try using the PSSession parameter of the Import-Module cmdlet.</value>
   </data>
   <data name="InvalidProcessorArchitectureInManifest" xml:space="preserve">
     <value>The processor architecture value of {0} is not supported. Run the New-ModuleManifest command again, specifying one of the following supported enumeration values for processor architecture: None, MSIL, X86, Amd64, Arm</value>
@@ -553,19 +553,19 @@
     <value>Failure from remote command: {0}: {{0}}</value>
   </data>
   <data name="RemoteDiscoveryFailedToGenerateProxyForRemoteModule" xml:space="preserve">
-    <value>Failed to generate proxies for remote module '{0}'.  {{0}}</value>
+    <value>Failed to generate proxies for remote module '{0}'. {{0}}</value>
   </data>
   <data name="RemoteDiscoveryFailedToProcessRemoteModule" xml:space="preserve">
-    <value>Failed to process the remote module {0}.  {1}</value>
+    <value>Failed to process the remote module {0}. {1}</value>
   </data>
   <data name="RemoteDiscoveryFailureFromDiscoveryProvider" xml:space="preserve">
-    <value>Failed to receive module data from the remote CimSession.  {0}</value>
+    <value>Failed to receive module data from the remote CimSession. {0}</value>
   </data>
   <data name="RequiredModuleNotFoundWrongGuidVersion" xml:space="preserve">
     <value>The required module '{0}' with GUID '{1}' and version '{2}' was not loaded because no valid module file was found in any module directory.</value>
   </data>
   <data name="RemoteDiscoveryProviderNotFound" xml:space="preserve">
-    <value>A CIM provider for module discovery was not found on the CIM server.  {0}</value>
+    <value>A CIM provider for module discovery was not found on the CIM server. {0}</value>
     <comment>{0} is a placeholder for a more detailed error message</comment>
   </data>
   <data name="CannotDetectNetFrameworkVersion" xml:space="preserve">

@@ -9,7 +9,7 @@ environment:
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     Purpose: ElevatedPesterTests_xUnit_Packaging
 
-# cache version - netcoreapp.2.1-sdk.2.1.302
+# cache version - netcoreapp.2.1-sdk.2.1.401
 cache:
   - '%HOMEDRIVE%%HOMEPATH%\.nuget\packages -> appveyor.yml'
 

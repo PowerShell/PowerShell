@@ -3928,6 +3928,8 @@ namespace System.Management.Automation.Language
                 return GetIndexArray(target, indexes, errorSuggestion).WriteToDebugLog(this);
             }
 
+            var defaultMember = target.LimitType.GetCustomAttributes<DefaultMemberAttribute>(true).FirstOrDefault();
+            PropertyInfo lengthProperty = null;
             foreach (var i in target.LimitType.GetInterfaces())
             {
                 if (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
@@ -3938,12 +3940,23 @@ namespace System.Management.Automation.Language
                         return result.WriteToDebugLog(this);
                     }
                 }
+
+                // If the type explicitly implements an indexer specified by an interface
+                // then the DefaultMemberAttribute will not carry over to the implementation.
+                // This check will catch those cases.
+                if (defaultMember == null)
+                {
+                    defaultMember = i.GetCustomAttributes<DefaultMemberAttribute>(inherit: false).FirstOrDefault();
+                    if (defaultMember != null)
+                    {
+                        lengthProperty = i.GetProperty("Count") ?? i.GetProperty("Length");
+                    }
+                }
             }
 
-            var defaultMember = target.LimitType.GetCustomAttributes<DefaultMemberAttribute>(true).FirstOrDefault();
             if (defaultMember != null)
             {
-                return InvokeIndexer(target, indexes, errorSuggestion, defaultMember.MemberName).WriteToDebugLog(this);
+                return InvokeIndexer(target, indexes, errorSuggestion, defaultMember.MemberName, lengthProperty).WriteToDebugLog(this);
             }
 
             return errorSuggestion ?? CannotIndexTarget(target, indexes).WriteToDebugLog(this);
@@ -4027,9 +4040,29 @@ namespace System.Management.Automation.Language
                 bindingRestrictions);
         }
 
-        internal static bool CanIndexFromEndWithNegativeIndex(DynamicMetaObject target)
+        internal static bool CanIndexFromEndWithNegativeIndex(
+            DynamicMetaObject target,
+            MethodInfo indexer,
+            ParameterInfo[] getterParams)
         {
-            var limitType = target.LimitType;
+            // PowerShell supports negative indexing for types that meet the following criteria:
+            //      - Indexer method accepts one parameter that is typed as int
+            //      - The int parameter is not a type argument from a constructed generic type
+            //        (this is to exclude indexers for types that could use a negative index as
+            //        a valid key like System.Linq.ILookup)
+            //      - Declares a "Count" or "Length" property
+            //      - Does not inherit from IDictionary<> as that is handled earlier in the binder
+            // For those types, generate special code to check for negative indices, otherwise just generate
+            // the call. Before we test for the above criteria explicitly, we will determine if the
+            // target is of a type known to be compatible. This is done to avoid the call to Module.ResolveMethod
+            // when possible.
+
+            if (getterParams.Length != 1 || getterParams[0].ParameterType != typeof(int))
+            {
+                return false;
+            }
+
+            Type limitType = target.LimitType;
             if (limitType.IsArray || limitType == typeof(string) || limitType == typeof(StringBuilder))
             {
                 return true;
@@ -4046,7 +4079,16 @@ namespace System.Management.Automation.Language
             }
 
             // target implements IList<T>?
-            return limitType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>));
+            if (limitType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>)))
+            {
+                return true;
+            }
+
+            // Get the base method definition of the indexer to determine if the int
+            // parameter is a generic type parameter. Module.ResolveMethod is used
+            // because the indexer could be a method from a constructed generic type.
+            MethodBase baseMethod = indexer.Module.ResolveMethod(indexer.MetadataToken);
+            return !baseMethod.GetParameters()[0].ParameterType.IsGenericParameter;
         }
 
         private DynamicMetaObject IndexWithNegativeChecks(
@@ -4055,8 +4097,6 @@ namespace System.Management.Automation.Language
             PropertyInfo lengthProperty,
             Func<Expression, Expression, Expression> generateIndexOperation)
         {
-            Diagnostics.Assert(CanIndexFromEndWithNegativeIndex(target), "Unexpected target type to index from end with negative value");
-
             // Generate:
             //    try {
             //       len = obj.Length
@@ -4197,7 +4237,8 @@ namespace System.Management.Automation.Language
         private DynamicMetaObject InvokeIndexer(DynamicMetaObject target,
                                                 DynamicMetaObject[] indexes,
                                                 DynamicMetaObject errorSuggestion,
-                                                string methodName)
+                                                string methodName,
+                                                PropertyInfo lengthProperty)
         {
             MethodInfo getter = PSInvokeMemberBinder.FindBestMethod(target, indexes, "get_" + methodName, false, _constraints);
 
@@ -4258,13 +4299,14 @@ namespace System.Management.Automation.Language
                     target.CombineRestrictions(indexes));
             }
 
-            if (getterParams.Length == 1 && getterParams[0].ParameterType == typeof(int) && CanIndexFromEndWithNegativeIndex(target))
+            if (CanIndexFromEndWithNegativeIndex(target, getter, getterParams))
             {
-                // PowerShell supports negative indexing for some types (specifically, types implementing IList or IList<T>).
-                // For those types, generate special code to check for negative indices, otherwise just generate
-                // the call.
-                PropertyInfo lengthProperty = target.LimitType.GetProperty("Count") ??
-                                              target.LimitType.GetProperty("Length"); // for string
+                if (lengthProperty == null)
+                {
+                    // Count is declared by most supported types, Length will catch some edge cases like strings.
+                    lengthProperty = target.LimitType.GetProperty("Count") ??
+                                     target.LimitType.GetProperty("Length");
+                }
 
                 if (lengthProperty != null)
                 {
