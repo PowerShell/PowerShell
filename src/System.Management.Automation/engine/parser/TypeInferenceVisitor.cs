@@ -547,11 +547,9 @@ namespace System.Management.Automation
                     if (name != null)
                     {
                         object value = null;
-                        if (kv.Item2 is PipelineAst pipelineAst
-                            && pipelineAst.PipelineElements.Count == 1
-                            && pipelineAst.PipelineElements[0] is CommandExpressionAst commandExpressionAst)
+                        if (kv.Item2 is PipelineAst pipelineAst && pipelineAst.GetPureExpression() is ExpressionAst expression)
                         {
-                            switch (commandExpressionAst.Expression)
+                            switch (expression)
                             {
                                 case ConstantExpressionAst constantExpression:
                                 {
@@ -563,7 +561,7 @@ namespace System.Management.Automation
                                     typeName = InferTypes(kv.Item2).FirstOrDefault()?.Name;
                                     if (typeName == null)
                                     {
-                                        if (SafeExprEvaluator.TrySafeEval(commandExpressionAst.Expression, _context.ExecutionContext, out object safeValue))
+                                        if (SafeExprEvaluator.TrySafeEval(expression, _context.ExecutionContext, out object safeValue))
                                         {
                                             value = safeValue;
                                         }
@@ -647,6 +645,8 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitConvertExpression(ConvertExpressionAst convertExpressionAst)
         {
+            // The reflection type of PSCustomObject is PSObject, so this covers both the
+            // [PSObject] @{ Key = "Value" } and the [PSCustomObject] @{ Key = "Value" } case.
             var type = convertExpressionAst.Type.TypeName.GetReflectionType();
 
             if (type == typeof(PSObject) && convertExpressionAst.Child is HashtableAst hashtableAst)
