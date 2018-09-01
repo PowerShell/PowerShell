@@ -18,13 +18,13 @@ In this section, you will learn how to
 - find syntax of PowerShell cmdlets
 - and more
 
-As mentioned above, PowerShell commands are designed to have Verb-Noun structure, for instance Get-Process, Set-Location, Clear-Host, etc.
+As mentioned above, PowerShell commands are designed to have Verb-Noun structure, for instance `Get-Process`, `Set-Location`, `Clear-Host`, etc.
 Let’s exercise some of the basic PowerShell commands, also known as **cmdlets**.
 
 Please note that we will use the PowerShell prompt sign **PS />** as it appears on Linux in the following examples.
-It is shown as **PS C:\\>** on  Windows.
+It is shown as `PS C:\>` on  Windows.
 
-**1. Get-Process**: Gets the processes that are running on the local computer or a remote computer.
+1. `Get-Process`: Gets the processes that are running on the local computer or a remote computer.
 
 By default, you will get data back similar to the following:
 
@@ -42,6 +42,7 @@ Handles   NPM(K)    PM(K)     WS(K)     CPU(s)     Id    ProcessName
 ```
 
 Only interested in the instance of firefox process that are running on your computer?
+
 Try this:
 
 ```PowerShell
@@ -65,17 +66,17 @@ Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
 
 ```
 
-**2. Clear-Host**: Clears the display in the host program.
+2. `Clear-Host`: Clears the display in the host program.
 
 ```PowerShell
 PS /> Get-Process
 PS /> Clear-Host
 ```
-
 Type too much just for clearing the screen?
+
 Here is how the alias can help.
 
-**3. Get-Alias**: Gets the aliases for the current session.
+3. `Get-Alias`: Gets the aliases for the current session.
 
 ```PowerShell
 PS /> Get-Alias
@@ -93,42 +94,42 @@ Alias           gmo -> Get-Module
 Alias           ri -> Remove-Item
 Alias           type -> Get-Content
 …
+```
 
-As you can see "cls" is an alias of Clear-Host.
+As you can see `cls` is an alias of `Clear-Host`.
+
 Now try it:
-
+```
 PS /> Get-Process
 PS /> cls
 ```
 
-**4. cd - Set-Location**: Sets the current working location to a specified location.
+4. `cd -> Set-Location`: Sets the current working location to a specified location.
 
 ```PowerShell
 PS /> Set-Location /home
 PS /home>
 ```
 
-**5. dir - Get-ChildItem**: Gets the items and child items in one or more specified locations.
+5. `dir -> Get-ChildItem`: Gets the items and child items in one or more specified locations.
 
 ```PowerShell
-Get all files under the current directory:
-
+# Get all files under the current directory:
 PS /> Get-ChildItem
 
-Get all files under the current directory as well as its subdirectories:
+# Get all files under the current directory as well as its subdirectories:
 PS /> cd $home
 PS /home/jen> dir -Recurse
 
-List all files with "txt" file extension.
-
+# List all files with "txt" file extension.
 PS /> cd $home
 PS /home/jen> dir –Path *.txt -Recurse
 ```
 
-**6. New-Item**: Creates a new item.
+*6. `New-Item`: Creates a new item.
 
 ```PowerShell
-An empty file is created if you type the following:
+# An empty file is created if you type the following:
 PS /home/jen> New-Item -Path ./test.txt
 
 
@@ -140,9 +141,11 @@ Mode                LastWriteTime         Length  Name
 -a----         7/7/2016   7:17 PM              0  test.txt
 ```
 
-You can use the **-Value** parameter to add some data to your file.
-For example, the following command adds the phrase "Hello world!" as a file content to the test.txt.
-Because the test.txt file exists already, we use **-Force** parameter to replace the existing content.
+You can use the `-Value` parameter to add some data to your file.
+
+For example, the following command adds the phrase `Hello world!` as a file content to the `test.txt`.
+
+Because the test.txt file exists already, we use `-Force` parameter to replace the existing content.
 
 ```PowerShell
 PS /home/jen> New-Item -Path ./test.txt -Value "Hello world!" -Force
@@ -157,13 +160,14 @@ Mode                LastWriteTime         Length  Name
 ```
 
 There are other ways to add some data to a file.
-For example, you can use Set-Content to set the file contents:
+
+For example, you can use `Set-Content` to set the file contents:
 
 ```PowerShell
 PS /home/jen>Set-Content -Path ./test.txt -Value "Hello world again!"
 ```
 
-Or simply use ">" as below:
+Or simply use `>` as below:
 
 ```powershell
 # create an empty file
@@ -174,9 +178,9 @@ Or simply use ">" as below:
 
 ```
 
-The pound sign (#) above is used for comments in PowerShell.
+The pound sign `#` above is used for comments in PowerShell.
 
-**7. type - Get-Content**: Gets the content of the item at the specified location.
+7. `type -> Get-Content`: Gets the content of the item at the specified location.
 
 ```PowerShell
 PS /home/jen> Get-Content -Path ./test.txt
@@ -185,17 +189,17 @@ PS /home/jen> type -Path ./test.txt
 Hello world again!
 ```
 
-**8. del - Remove-Item**: Deletes the specified items.
+8. `del -> Remove-Item`: Deletes the specified items.
 
-This cmdlet will delete the file /home/jen/test.txt:
+This cmdlet will delete the file `/home/jen/test.txt`:
 
 ```PowerShell
 PS /home/jen> Remove-Item ./test.txt
 ```
 
-**9. $PSVersionTable**: Displays the version of PowerShell you are currently using.
+9. `$PSVersionTable`: Displays the version of PowerShell you are currently using.
 
-Type **$PSVersionTable** in your PowerShell session, you will see something like below.
+Type `$PSVersionTable` in your PowerShell session, you will see something like below.
 "PSVersion" indicates the PowerShell version that you are using.
 
 ```PowerShell
@@ -213,7 +217,7 @@ SerializationVersion           1.1.0.1
 
 ```
 
-**10. Exit**: To exit the PowerShell session, type "exit".
+10. `Exit`: To exit the PowerShell session, type `exit`.
 
 ```PowerShell
 PS /home/jen> exit
@@ -221,16 +225,17 @@ PS /home/jen> exit
 
 ## Need Help?
 
-The most important command in PowerShell is possibly the Get-Help, which allows you to quickly learn PowerShell without having to search around the internet.
-The Get-Help cmdlet also shows you how PowerShell commands work with examples.
+The most important command in PowerShell is possibly the `Get-Help`, which allows you to quickly learn PowerShell without having to search around the internet.
 
-It shows the syntax and other technical information of the Get-Process cmdlet.
+The `Get-Help` cmdlet also shows you how PowerShell commands work with examples.
+
+It shows the syntax and other technical information of the `Get-Process` cmdlet.
 
 ```PowerShell
 PS /> Get-Help -Name Get-Process
 ```
 
-It displays the examples how to use the Get-Process cmdlet.
+It displays the examples how to use the `Get-Process` cmdlet.
 
 ```PowerShell
 PS />Get-Help -Name Get-Process -Examples
@@ -240,7 +245,7 @@ If you use **-Full** parameter, for example, `Get-Help -Name Get-Process -Full`,
 
 ## Discover Commands Available on Your System
 
-You want to discover what PowerShell cmdlets available on your system? Just run "Get-Command" as below:
+You want to discover what PowerShell cmdlets available on your system? Just run `Get-Command` as below:
 
 ```PowerShell
 PS /> Get-Command
@@ -252,19 +257,19 @@ If you want to know whether a particular cmdlet exists on your system, you can d
 PS /> Get-Command Get-Process
 ```
 
-If you want to know the syntax of Get-Process cmdlet, type:
+If you want to know the syntax of `Get-Process` cmdlet, type:
 
 ```PowerShell
 PS /> Get-Command Get-Process -Syntax
 ```
 
-If you want to know how to use the Get-Process, type:
+If you want to know how to use the `Get-Process`, type:
 
 ```PowerShell
 PS /> Get-Help Get-Process -Example
 ```
 
-## PowerShell Pipeline '|'
+## PowerShell Pipeline `|`
 
 Sometimes when you run Get-ChildItem or "dir", you want to get a list of files and folders in a descending order.
 To achieve that, type:
