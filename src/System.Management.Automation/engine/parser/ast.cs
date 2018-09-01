@@ -6885,6 +6885,7 @@ namespace System.Management.Automation.Language
                                 FunctionName.Text,
                                 StringConstantType.BareWord)
                         },
+                    null,
                     true);
 
                 cea.Add(
@@ -7684,6 +7685,12 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class InvokeMemberExpressionAst : MemberExpressionAst, ISupportsAssignment
     {
+        private static readonly ReadOnlyCollection<ExpressionAst> s_emptyPositionalArguments =
+            Utils.EmptyReadOnlyCollection<ExpressionAst>();
+        private static readonly ReadOnlyCollection<NamedMethodArgumentAst> s_emptyNamedMethodArguments =
+            Utils.EmptyReadOnlyCollection<NamedMethodArgumentAst>();
+
+
         /// <summary>
         /// Construct an instance of a method invocation expression.
         /// </summary>
@@ -7693,27 +7700,53 @@ namespace System.Management.Automation.Language
         /// </param>
         /// <param name="expression">The expression before the invocation operator ('.' or '::').</param>
         /// <param name="method">The method to invoke.</param>
-        /// <param name="arguments">The arguments to pass to the method.</param>
+        /// <param name="positionalArguments">The arguments to pass to the method.</param>
+        /// <param name="namedArguments">The named arguments to pass to the method.</param>
         /// <param name="static">
         /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.'.
         /// </param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
         /// </exception>
-        public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static)
+        public InvokeMemberExpressionAst(IScriptExtent extent,
+                                         ExpressionAst expression,
+                                         CommandElementAst method,
+                                         IEnumerable<ExpressionAst> positionalArguments,
+                                         IEnumerable<NamedMethodArgumentAst> namedArguments,
+                                         bool @static)
             : base(extent, expression, method, @static)
         {
-            if (arguments != null && arguments.Any())
+            if (positionalArguments != null && positionalArguments.Any())
             {
-                this.Arguments = new ReadOnlyCollection<ExpressionAst>(arguments.ToArray());
-                SetParents(Arguments);
+                this.PositionalArguments = new ReadOnlyCollection<ExpressionAst>(positionalArguments.ToArray());
+                SetParents(PositionalArguments);
+            }
+            else
+            {
+                this.PositionalArguments = s_emptyPositionalArguments;
+            }
+
+            if (namedArguments != null)
+            {
+                this.NamedArguments = new ReadOnlyCollection<NamedMethodArgumentAst>(namedArguments.ToArray());
+                SetParents(NamedArguments);
+            }
+            else
+            {
+                this.NamedArguments = s_emptyNamedMethodArguments;
             }
         }
 
         /// <summary>
         /// The non-empty collection of arguments to pass when invoking the method, or null if no arguments were specified.
         /// </summary>
-        public ReadOnlyCollection<ExpressionAst> Arguments { get; private set; }
+        public ReadOnlyCollection<ExpressionAst> PositionalArguments { get; private set; }
+
+        /// <summary>
+        /// The asts for the named attribute arguments.
+        /// </summary>
+        public ReadOnlyCollection<NamedMethodArgumentAst> NamedArguments { get; private set; }
+
 
         /// <summary>
         /// Copy the InvokeMemberExpressionAst instance
@@ -7722,8 +7755,9 @@ namespace System.Management.Automation.Language
         {
             var newExpression = CopyElement(this.Expression);
             var newMethod = CopyElement(this.Member);
-            var newArguments = CopyElements(this.Arguments);
-            return new InvokeMemberExpressionAst(this.Extent, newExpression, newMethod, newArguments, this.Static);
+            var newPositionalArguments = CopyElements(this.PositionalArguments);
+            var newNamedArguments = CopyElements(this.NamedArguments);
+            return new InvokeMemberExpressionAst(this.Extent, newExpression, newMethod, newPositionalArguments, newNamedArguments, this.Static);
         }
 
         #region Visitors
@@ -7748,12 +7782,21 @@ namespace System.Management.Automation.Language
             var action = Expression.InternalVisit(visitor);
             if (action == AstVisitAction.Continue)
                 action = Member.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && Arguments != null)
+            if (action == AstVisitAction.Continue)
             {
-                for (int index = 0; index < Arguments.Count; index++)
+                for (int index = 0; index < PositionalArguments.Count; index++)
                 {
-                    var arg = Arguments[index];
-                    action = arg.InternalVisit(visitor);
+                    var expressionAst = PositionalArguments[index];
+                    action = expressionAst.InternalVisit(visitor);
+                    if (action != AstVisitAction.Continue) break;
+                }
+            }
+            if (action == AstVisitAction.Continue)
+            {
+                for (int index = 0; index < NamedArguments.Count; index++)
+                {
+                    var namedMethodArgumentAst = NamedArguments[index];
+                    action = namedMethodArgumentAst.InternalVisit(visitor);
                     if (action != AstVisitAction.Continue) break;
                 }
             }
@@ -7795,6 +7838,7 @@ namespace System.Management.Automation.Language
                 new VariableExpressionAst(baseKeywordExtent, "this", false),
                 new StringConstantExpressionAst(baseKeywordExtent, ".ctor", StringConstantType.BareWord),
                 arguments,
+                null,
                 @static: false)
         {
         }
