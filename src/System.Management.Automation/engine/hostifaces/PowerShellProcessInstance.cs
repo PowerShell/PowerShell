@@ -11,7 +11,6 @@ using System.Diagnostics;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
-    ///
     /// </summary>
     public sealed class PowerShellProcessInstance : IDisposable
     {
@@ -30,7 +29,6 @@ namespace System.Management.Automation.Runspaces
         #region Constructors
 
         /// <summary>
-        ///
         /// </summary>
         static PowerShellProcessInstance()
         {
@@ -44,7 +42,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="powerShellVersion"></param>
         /// <param name="credential"></param>
@@ -131,7 +128,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
         /// </summary>
         public PowerShellProcessInstance() : this(null, null, null, false)
         {
@@ -156,7 +152,6 @@ namespace System.Management.Automation.Runspaces
 
         #region Dispose
         /// <summary>
-        ///
         /// </summary>
         public void Dispose()
         {
@@ -164,7 +159,6 @@ namespace System.Management.Automation.Runspaces
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
@@ -199,7 +193,6 @@ namespace System.Management.Automation.Runspaces
 
         #region Public Properties
         /// <summary>
-        ///
         /// </summary>
         public Process Process { get; }
 

@@ -116,6 +116,16 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
         class C9b { [System.Collections.Generic.List[C9b]] f() { return [C9b]::new() } }
         $c9b = [C9b]::new().f()
         It "Expected a System.Collections.Generic.List[C9b] returned" {  $c9b -is [System.Collections.Generic.List[C9b]] | Should -BeTrue }
+        It 'Methods returning object should return $null if no output was produced' {
+            class Foo {
+                [object] Bar1() { return & {} }
+                static [object] Bar2() { return & {} }
+            }
+            # Test instance method
+            [Foo]::new().Bar1() | Should -BeNullOrEmpty
+            # Test static method
+            [foo]::Bar2() | Should -BeNullOrEmpty
+        }
     }
 
     It 'Positive ParseProperty Attributes Test' {

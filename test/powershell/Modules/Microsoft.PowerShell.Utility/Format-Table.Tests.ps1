@@ -800,4 +800,18 @@ A Name                                  B
             $output = $obj | Format-Table -Wrap | Out-String
             $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
         }
+
+        It "Should not return null when the Console width is equal to 0" {
+            [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $true)
+            try
+            {
+                # Fill the console window with the string, so that it reaches its max width.
+                # Check if the max width is equal to default value (120), to test test hook set.
+                $testObject = @{ test = '1' * 200}
+                Format-table -inputobject $testObject | Out-String -Stream | ForEach-Object{$_.length} | Sort-Object -Bottom 1 | Should -Be 120
+            }
+            finally {
+                [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $false)
+            }
+        }
     }

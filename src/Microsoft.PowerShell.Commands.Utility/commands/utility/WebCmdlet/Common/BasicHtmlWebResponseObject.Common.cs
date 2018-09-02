@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Response object for html content without DOM parsing
+    /// Response object for html content without DOM parsing.
     /// </summary>
     public class BasicHtmlWebResponseObject : WebResponseObject
     {
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
-        /// Constructor for BasicHtmlWebResponseObject
+        /// Constructor for BasicHtmlWebResponseObject.
         /// </summary>
         /// <param name="response"></param>
         public BasicHtmlWebResponseObject(HttpResponseMessage response)
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         { }
 
         /// <summary>
-        /// Constructor for HtmlWebResponseObject with memory stream
+        /// Constructor for HtmlWebResponseObject with memory stream.
         /// </summary>
         /// <param name="response"></param>
         /// <param name="contentStream"></param>
@@ -57,12 +57,12 @@ namespace Microsoft.PowerShell.Commands
         #region Properties
 
         /// <summary>
-        /// gets or protected sets the Content property
+        /// Gets the Content property.
         /// </summary>
         public new string Content { get; private set; }
 
         /// <summary>
-        /// Gets the Encoding that was used to decode the Content
+        /// Gets the Encoding that was used to decode the Content.
         /// </summary>
         /// <value>
         /// The Encoding used to decode the Content; otherwise, a null reference if the content is not text.
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         private WebCmdletElementCollection _inputFields;
 
         /// <summary>
-        /// gets the Fields property
+        /// Gets the Fields property.
         /// </summary>
         public WebCmdletElementCollection InputFields
         {
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         private WebCmdletElementCollection _links;
 
         /// <summary>
-        /// gets the Links property
+        /// Gets the Links property.
         /// </summary>
         public WebCmdletElementCollection Links
         {
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
         private WebCmdletElementCollection _images;
 
         /// <summary>
-        /// gets the Images property
+        /// Gets the Images property.
         /// </summary>
         public WebCmdletElementCollection Images
         {

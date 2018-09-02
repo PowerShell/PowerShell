@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// The object on which to subscribe
+        /// The object on which to subscribe.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         public PSObject InputObject
@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         private PSObject _inputObject = null;
 
         /// <summary>
-        /// The event name to subscribe
+        /// The event name to subscribe.
         /// </summary>
         [Parameter(Mandatory = true, Position = 1)]
         public string EventName
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion parameters
 
         /// <summary>
-        /// Returns the object that generates events to be monitored
+        /// Returns the object that generates events to be monitored.
         /// </summary>
         protected override Object GetSourceObject()
         {
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the event name to be monitored on the input object
+        /// Returns the event name to be monitored on the input object.
         /// </summary>
         protected override String GetSourceObjectEventName()
         {

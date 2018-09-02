@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -43,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// The literal path of the file to unblock
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ByLiteralPath", ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
@@ -119,18 +120,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         AlternateDataStreamUtilities.DeleteFileStream(path, "Zone.Identifier");
                     }
-                    catch (Win32Exception accessException)
+                    catch (Exception e)
                     {
-                        // NativeErrorCode=2 - File not found.
-                        // If the block stream not found the 'path' was not blocked and we successfully return.
-                        if (accessException.NativeErrorCode != 2)
-                        {
-                            WriteError(new ErrorRecord(accessException, "RemoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
-                        }
-                        else
-                        {
-                            WriteVerbose(StringUtil.Format(UtilityCommonStrings.NoZoneIdentifierFileStream, path));
-                        }
+                        WriteError(new ErrorRecord(e, "RemoveItemUnableToAccessFile", ErrorCategory.ResourceUnavailable, path));
                     }
                 }
             }

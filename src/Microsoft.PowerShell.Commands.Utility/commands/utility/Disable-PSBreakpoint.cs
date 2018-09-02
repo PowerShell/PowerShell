@@ -6,7 +6,7 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements Disable-PSBreakpoint
+    /// This class implements Disable-PSBreakpoint.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Breakpoint", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113294")]
     [OutputType(typeof(Breakpoint))]

@@ -15,7 +15,6 @@ namespace System.Management.Automation.Security
 {
     /// <summary>
     /// How the policy is being enforced.
-    ///
     /// </summary>
     // Internal Note: Current code that consumes this enum assumes that anything but 'Enforce' means
     // that the script is allowed, and that a system lockdown policy that is anything but 'None' means

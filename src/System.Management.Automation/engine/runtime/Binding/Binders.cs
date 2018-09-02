@@ -14,6 +14,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -619,7 +620,7 @@ namespace System.Management.Automation.Language
                     GetRestrictions(target))).WriteToDebugLog(this);
             }
 
-            if (Utils.IsComObject(targetValue))
+            if (Marshal.IsComObject(targetValue))
             {
                 // Pretend that all com objects are enumerable, even if they aren't.  We do this because it's technically impossible
                 // to know if a com object is enumerable without just trying to cast it to IEnumerable.  We could generate a rule like:
@@ -715,7 +716,12 @@ namespace System.Management.Automation.Language
 
         private static IEnumerator NotEnumerableRule(CallSite site, object obj)
         {
-            if (!(obj is PSObject) && !(obj is IEnumerable) && !(obj is IEnumerator) && !(obj is DataTable) && !Utils.IsComObject(obj))
+            if (obj == null)
+            {
+                return null;
+            }
+
+            if (!(obj is PSObject) && !(obj is IEnumerable) && !(obj is IEnumerator) && !(obj is DataTable) && !Marshal.IsComObject(obj))
             {
                 return null;
             }
@@ -3922,6 +3928,8 @@ namespace System.Management.Automation.Language
                 return GetIndexArray(target, indexes, errorSuggestion).WriteToDebugLog(this);
             }
 
+            var defaultMember = target.LimitType.GetCustomAttributes<DefaultMemberAttribute>(true).FirstOrDefault();
+            PropertyInfo lengthProperty = null;
             foreach (var i in target.LimitType.GetInterfaces())
             {
                 if (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
@@ -3932,12 +3940,23 @@ namespace System.Management.Automation.Language
                         return result.WriteToDebugLog(this);
                     }
                 }
+
+                // If the type explicitly implements an indexer specified by an interface
+                // then the DefaultMemberAttribute will not carry over to the implementation.
+                // This check will catch those cases.
+                if (defaultMember == null)
+                {
+                    defaultMember = i.GetCustomAttributes<DefaultMemberAttribute>(inherit: false).FirstOrDefault();
+                    if (defaultMember != null)
+                    {
+                        lengthProperty = i.GetProperty("Count") ?? i.GetProperty("Length");
+                    }
+                }
             }
 
-            var defaultMember = target.LimitType.GetCustomAttributes<DefaultMemberAttribute>(true).FirstOrDefault();
             if (defaultMember != null)
             {
-                return InvokeIndexer(target, indexes, errorSuggestion, defaultMember.MemberName).WriteToDebugLog(this);
+                return InvokeIndexer(target, indexes, errorSuggestion, defaultMember.MemberName, lengthProperty).WriteToDebugLog(this);
             }
 
             return errorSuggestion ?? CannotIndexTarget(target, indexes).WriteToDebugLog(this);
@@ -4021,9 +4040,29 @@ namespace System.Management.Automation.Language
                 bindingRestrictions);
         }
 
-        internal static bool CanIndexFromEndWithNegativeIndex(DynamicMetaObject target)
+        internal static bool CanIndexFromEndWithNegativeIndex(
+            DynamicMetaObject target,
+            MethodInfo indexer,
+            ParameterInfo[] getterParams)
         {
-            var limitType = target.LimitType;
+            // PowerShell supports negative indexing for types that meet the following criteria:
+            //      - Indexer method accepts one parameter that is typed as int
+            //      - The int parameter is not a type argument from a constructed generic type
+            //        (this is to exclude indexers for types that could use a negative index as
+            //        a valid key like System.Linq.ILookup)
+            //      - Declares a "Count" or "Length" property
+            //      - Does not inherit from IDictionary<> as that is handled earlier in the binder
+            // For those types, generate special code to check for negative indices, otherwise just generate
+            // the call. Before we test for the above criteria explicitly, we will determine if the
+            // target is of a type known to be compatible. This is done to avoid the call to Module.ResolveMethod
+            // when possible.
+
+            if (getterParams.Length != 1 || getterParams[0].ParameterType != typeof(int))
+            {
+                return false;
+            }
+
+            Type limitType = target.LimitType;
             if (limitType.IsArray || limitType == typeof(string) || limitType == typeof(StringBuilder))
             {
                 return true;
@@ -4040,7 +4079,16 @@ namespace System.Management.Automation.Language
             }
 
             // target implements IList<T>?
-            return limitType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>));
+            if (limitType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>)))
+            {
+                return true;
+            }
+
+            // Get the base method definition of the indexer to determine if the int
+            // parameter is a generic type parameter. Module.ResolveMethod is used
+            // because the indexer could be a method from a constructed generic type.
+            MethodBase baseMethod = indexer.Module.ResolveMethod(indexer.MetadataToken);
+            return !baseMethod.GetParameters()[0].ParameterType.IsGenericParameter;
         }
 
         private DynamicMetaObject IndexWithNegativeChecks(
@@ -4049,8 +4097,6 @@ namespace System.Management.Automation.Language
             PropertyInfo lengthProperty,
             Func<Expression, Expression, Expression> generateIndexOperation)
         {
-            Diagnostics.Assert(CanIndexFromEndWithNegativeIndex(target), "Unexpected target type to index from end with negative value");
-
             // Generate:
             //    try {
             //       len = obj.Length
@@ -4191,7 +4237,8 @@ namespace System.Management.Automation.Language
         private DynamicMetaObject InvokeIndexer(DynamicMetaObject target,
                                                 DynamicMetaObject[] indexes,
                                                 DynamicMetaObject errorSuggestion,
-                                                string methodName)
+                                                string methodName,
+                                                PropertyInfo lengthProperty)
         {
             MethodInfo getter = PSInvokeMemberBinder.FindBestMethod(target, indexes, "get_" + methodName, false, _constraints);
 
@@ -4236,13 +4283,30 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (getterParams.Length == 1 && getterParams[0].ParameterType == typeof(int) && CanIndexFromEndWithNegativeIndex(target))
+            // Check return type after the argument conversion, so any no-conversion error can be thrown.
+            if (getter.ReturnType.IsByRefLike)
             {
-                // PowerShell supports negative indexing for some types (specifically, types implementing IList or IList<T>).
-                // For those types, generate special code to check for negative indices, otherwise just generate
-                // the call.
-                PropertyInfo lengthProperty = target.LimitType.GetProperty("Count") ??
-                                              target.LimitType.GetProperty("Length"); // for string
+                return errorSuggestion ?? new DynamicMetaObject(
+                    Expression.Block(
+                        Expression.IfThen(
+                            Compiler.IsStrictMode(3),
+                            Compiler.ThrowRuntimeError(
+                                nameof(ParserStrings.CannotIndexWithByRefLikeReturnType),
+                                ParserStrings.CannotIndexWithByRefLikeReturnType,
+                                Expression.Constant(target.LimitType, typeof(Type)),
+                                Expression.Constant(getter.ReturnType, typeof(Type)))),
+                        GetNullResult()),
+                    target.CombineRestrictions(indexes));
+            }
+
+            if (CanIndexFromEndWithNegativeIndex(target, getter, getterParams))
+            {
+                if (lengthProperty == null)
+                {
+                    // Count is declared by most supported types, Length will catch some edge cases like strings.
+                    lengthProperty = target.LimitType.GetProperty("Count") ??
+                                     target.LimitType.GetProperty("Length");
+                }
 
                 if (lengthProperty != null)
                 {
@@ -4842,7 +4906,7 @@ namespace System.Management.Automation.Language
 
             lock (binderList)
             {
-                if (!binderList.Any())
+                if (binderList.Count == 0)
                 {
                     // Force one binder to be created if one hasn't been created already.
                     PSGetMemberBinder.Get(memberName, (Type)null, @static: false);
@@ -4988,7 +5052,7 @@ namespace System.Management.Automation.Language
             if (target.Value is PSObject && (PSObject.Base(target.Value) != target.Value))
             {
                 Object baseObject = PSObject.Base(target.Value);
-                if (baseObject != null && Utils.IsComObject(baseObject))
+                if (baseObject != null && Marshal.IsComObject(baseObject))
                 {
                     // We unwrap only if the 'base' is a COM object. It's unnecessary to unwrap in other cases,
                     // especially in the case of strings, we would lose instance members on the PSObject.
@@ -5084,7 +5148,13 @@ namespace System.Management.Automation.Language
                         var adapterData = property.adapterData as DotNetAdapter.PropertyCacheEntry;
                         Diagnostics.Assert(adapterData != null, "We have an unknown PSProperty that we aren't correctly optimizing.");
 
-                        if (!adapterData.member.DeclaringType.IsGenericTypeDefinition)
+                        if (adapterData.member.DeclaringType.IsGenericTypeDefinition || adapterData.propertyType.IsByRefLike)
+                        {
+                            // This is kinda lame - we really should throw an error, but accessing property getter
+                            // doesn't throw error in PowerShell since V2, even in strict mode.
+                            expr = ExpressionCache.NullConstant;
+                        }
+                        else
                         {
                             // For static property access, the target expr must be null.  For non-static, we must convert
                             // because target.Expression is typeof(object) because this is a dynamic site.
@@ -5106,11 +5176,6 @@ namespace System.Management.Automation.Language
                                                    "A DotNetAdapter.PropertyCacheEntry has something other than PropertyInfo or FieldInfo.");
                                 expr = Expression.Field(targetExpr, (FieldInfo)adapterData.member);
                             }
-                        }
-                        else
-                        {
-                            // This is kinda lame - we really should throw an error, but V2 did the same thing (even in strict mode).
-                            expr = ExpressionCache.NullConstant;
                         }
                     }
 
@@ -5859,7 +5924,7 @@ namespace System.Management.Automation.Language
                 (value.Value is PSObject && (PSObject.Base(value.Value) != value.Value)))
             {
                 Object baseObject = PSObject.Base(target.Value);
-                if (baseObject != null && Utils.IsComObject(baseObject))
+                if (baseObject != null && Marshal.IsComObject(baseObject))
                 {
                     // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
                     // especially in the case that 'target' is a string, we would lose instance members on the PSObject.
@@ -6026,14 +6091,37 @@ namespace System.Management.Automation.Language
 
                         if (data.member.DeclaringType.IsGenericTypeDefinition)
                         {
-                            Expression innerException = Expression.New(CachedReflectionInfo.SetValueException_ctor,
+                            Expression innerException = Expression.New(
+                                CachedReflectionInfo.SetValueException_ctor,
                                 Expression.Constant("PropertyAssignmentException"),
                                 Expression.Constant(null, typeof(Exception)),
                                 Expression.Constant(ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType),
                                 Expression.NewArrayInit(typeof(object), Expression.Constant(data.member.DeclaringType.FullName)));
-                            expr = Compiler.ThrowRuntimeErrorWithInnerException("PropertyAssignmentException",
-                                                                         Expression.Constant(ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType), innerException,
-                                                                         this.ReturnType, Expression.Constant(data.member.DeclaringType.FullName));
+
+                            expr = Compiler.ThrowRuntimeErrorWithInnerException(
+                                "PropertyAssignmentException",
+                                Expression.Constant(ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType),
+                                innerException,
+                                this.ReturnType,
+                                Expression.Constant(data.member.DeclaringType.FullName));
+
+                            return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
+                        }
+
+                        if (data.propertyType.IsByRefLike)
+                        {
+                            expr = Expression.Throw(
+                                Expression.New(
+                                    CachedReflectionInfo.SetValueException_ctor,
+                                    Expression.Constant(nameof(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField)),
+                                    Expression.Constant(null, typeof(Exception)),
+                                    Expression.Constant(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField),
+                                    Expression.NewArrayInit(
+                                        typeof(object),
+                                        Expression.Constant(data.member.Name),
+                                        Expression.Constant(data.propertyType, typeof(Type)))),
+                                this.ReturnType);
+
                             return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
                         }
 
@@ -6380,7 +6468,7 @@ namespace System.Management.Automation.Language
                 args.Any(mo => mo.Value is PSObject && (PSObject.Base(mo.Value) != mo.Value)))
             {
                 Object baseObject = PSObject.Base(target.Value);
-                if (baseObject != null && Utils.IsComObject(baseObject))
+                if (baseObject != null && Marshal.IsComObject(baseObject))
                 {
                     // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
                     // especially in the case that 'target' is a string, we would lose instance members on the PSObject.
@@ -6763,6 +6851,45 @@ namespace System.Management.Automation.Language
             List<Expression> initTemps = new List<Expression>();
             List<Expression> copyOutTemps = new List<Expression>();
 
+            ConstructorInfo constructorInfo = null;
+            MethodInfo methodInfo = mi as MethodInfo;
+            if (methodInfo != null)
+            {
+                Type returnType = methodInfo.ReturnType;
+                if (returnType.IsByRefLike)
+                {
+                    return Expression.Throw(
+                        Expression.New(
+                            CachedReflectionInfo.MethodException_ctor,
+                            Expression.Constant(nameof(ExtendedTypeSystem.CannotCallMethodWithByRefLikeReturnType)),
+                            Expression.Constant(null, typeof(Exception)),
+                            Expression.Constant(ExtendedTypeSystem.CannotCallMethodWithByRefLikeReturnType),
+                            Expression.NewArrayInit(
+                                typeof(object),
+                                Expression.Constant(methodInfo.Name),
+                                Expression.Constant(returnType, typeof(Type)))),
+                        typeof(object));
+                }
+            }
+            else
+            {
+                constructorInfo = (ConstructorInfo)mi;
+                Type declaringType = constructorInfo.DeclaringType;
+                if (declaringType.IsByRefLike)
+                {
+                    return Expression.Throw(
+                        Expression.New(
+                            CachedReflectionInfo.MethodException_ctor,
+                            Expression.Constant(nameof(ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType)),
+                            Expression.Constant(null, typeof(Exception)),
+                            Expression.Constant(ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType),
+                            Expression.NewArrayInit(
+                                typeof(object),
+                                Expression.Constant(declaringType, typeof(Type)))),
+                        typeof(object));
+                }
+            }
+
             var parameters = mi.GetParameters();
             var argExprs = new Expression[parameters.Length];
             for (int i = 0; i < parameters.Length; ++i)
@@ -6838,13 +6965,6 @@ namespace System.Management.Automation.Language
                         argExprs[i] = args[i].CastOrConvertMethodArgument(parameters[i].ParameterType, paramName, mi.Name, temps, initTemps);
                     }
                 }
-            }
-
-            ConstructorInfo constructorInfo = null;
-            var methodInfo = mi as MethodInfo;
-            if (methodInfo == null)
-            {
-                constructorInfo = (ConstructorInfo)mi;
             }
 
             Expression call;
@@ -7260,16 +7380,35 @@ namespace System.Management.Automation.Language
             var instanceType = targetValue as Type ?? targetValue.GetType();
 
             BindingRestrictions restrictions;
+            if (instanceType.IsByRefLike)
+            {
+                // ByRef-like types are not boxable and should be used only on stack
+                restrictions = BindingRestrictions.GetExpressionRestriction(
+                    Expression.Call(CachedReflectionInfo.PSCreateInstanceBinder_IsTargetTypeByRefLike, target.Expression));
+
+                return target.ThrowRuntimeError(
+                    restrictions,
+                    nameof(ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType),
+                    ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType,
+                    Expression.Call(
+                        CachedReflectionInfo.PSCreateInstanceBinder_GetTargetTypeName,
+                        target.Expression)).WriteToDebugLog(this);
+            }
+
             if (_publicTypeOnly && !TypeResolver.IsPublic(instanceType))
             {
                 // If 'publicTypeOnly' specified, we only support creating instance for public types.
                 restrictions = BindingRestrictions.GetExpressionRestriction(
                         Expression.Call(CachedReflectionInfo.PSCreateInstanceBinder_IsTargetTypeNonPublic, target.Expression));
-                return target.ThrowRuntimeError(restrictions, "MethodNotFound", ParserStrings.MethodNotFound,
-                                                Expression.Call(
-                                                    CachedReflectionInfo.PSCreateInstanceBinder_GetTargetTypeName,
-                                                    target.Expression),
-                                                Expression.Constant("new")).WriteToDebugLog(this);
+
+                return target.ThrowRuntimeError(
+                    restrictions,
+                    nameof(ParserStrings.MethodNotFound),
+                    ParserStrings.MethodNotFound,
+                    Expression.Call(
+                        CachedReflectionInfo.PSCreateInstanceBinder_GetTargetTypeName,
+                        target.Expression),
+                    Expression.Constant("new")).WriteToDebugLog(this);
             }
 
             var ctors = instanceType.GetConstructors();
@@ -7298,7 +7437,19 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Check if the target type is not public
+        /// Check if the target type is ByRef-like.
+        /// </summary>
+        internal static bool IsTargetTypeByRefLike(object target)
+        {
+            var targetValue = PSObject.Base(target);
+            if (targetValue == null) { return false; }
+
+            var instanceType = targetValue as Type ?? targetValue.GetType();
+            return instanceType.IsByRefLike;
+        }
+
+        /// <summary>
+        /// Check if the target type is not public.
         /// </summary>
         internal static bool IsTargetTypeNonPublic(object target)
         {
@@ -7310,7 +7461,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Return the full name of the target type
+        /// Return the full name of the target type.
         /// </summary>
         internal static string GetTargetTypeName(object target)
         {

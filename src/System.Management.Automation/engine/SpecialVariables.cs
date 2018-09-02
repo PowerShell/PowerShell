@@ -225,20 +225,7 @@ namespace System.Management.Automation
         internal const string PSVersionTable = "PSVersionTable";
         internal const string PSEdition = "PSEdition";
         internal const string ShellId = "ShellId";
-
-        internal static List<string> AllScopeSessionVariables = new List<string>
-        {
-            ExecutionContext,
-            Home,
-            Host,
-            PID,
-            PSCulture,
-            PSHome,
-            PSUICulture,
-            PSVersionTable,
-            PSEdition,
-            ShellId
-        };
+        internal const string EnabledExperimentalFeatures = "EnabledExperimentalFeatures";
 
         #endregion AllScope variables created in every session
 
@@ -304,6 +291,7 @@ namespace System.Management.Automation
                                                                   SpecialVariables.PSEdition,
                                                                   SpecialVariables.ShellId,
                                                                   SpecialVariables.True,
+                                                                  SpecialVariables.EnabledExperimentalFeatures,
                                                               };
 
         private static readonly HashSet<string> s_classMethodsAccessibleVariables = new HashSet<string>

@@ -11,18 +11,16 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The implementation of the "import-localizeddata" cmdlet
+    /// The implementation of the "import-localizeddata" cmdlet.
     /// </summary>
-    ///
     [Cmdlet(VerbsData.Import, "LocalizedData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113342")]
     public sealed class ImportLocalizedData : PSCmdlet
     {
         #region Parameters
 
         /// <summary>
-        /// The path from which to import the aliases
+        /// The path from which to import the aliases.
         /// </summary>
-        ///
         [Parameter(Position = 0)]
         [Alias("Variable")]
         [ValidateNotNullOrEmpty]
@@ -43,7 +41,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The scope to import the aliases to.
         /// </summary>
-        ///
         [Parameter(Position = 1)]
         public string UICulture
         {
@@ -62,7 +59,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The scope to import the aliases to.
         /// </summary>
-        ///
         [Parameter]
         public string BaseDirectory
         {
@@ -81,7 +77,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The scope to import the aliases to.
         /// </summary>
-        ///
         [Parameter]
         public string FileName
         {
@@ -98,8 +93,7 @@ namespace Microsoft.PowerShell.Commands
         private string _fileName;
 
         /// <summary>
-        /// The command allowed in the data file.  If unspecified, then ConvertFrom-StringData
-        /// is allowed.
+        /// The command allowed in the data file.  If unspecified, then ConvertFrom-StringData is allowed.
         /// </summary>
         [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
@@ -125,7 +119,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The main processing loop of the command.
         /// </summary>
-        ///
         protected override void ProcessRecord()
         {
             string path = GetFilePath();
@@ -213,7 +206,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         variable.Value = result;
                     }
-                } // end _bindingvariable != null
+                }
 
                 // If binding variable is null, write the object to stream
                 else
@@ -232,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return;
-        } // ProcessRecord
+        }
 
         private string GetFilePath()
         {
@@ -373,6 +366,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Command code
-    } // class ImportLocalizedData
-}//Microsoft.PowerShell.Commands
-
+    }
+}

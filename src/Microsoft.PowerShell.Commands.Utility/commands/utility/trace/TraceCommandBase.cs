@@ -10,29 +10,23 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A base class for cmdlets that has helper methods for globbing
-    /// trace source instances
+    /// A base class for cmdlets that has helper methods for globbing trace source instances.
     /// </summary>
     public class TraceCommandBase : PSCmdlet
     {
         /// <summary>
-        /// Gets the matching PSTraceSource instances for the
-        /// specified patterns.
+        /// Gets the matching PSTraceSource instances for the specified patterns.
         /// </summary>
-        ///
         /// <param name="patternsToMatch">
         /// The patterns used to match the PSTraceSource name.
         /// </param>
-        ///
         /// <param name="writeErrorIfMatchNotFound">
         /// If true and the pattern does not contain wildcard patterns and no
         /// match is found, then WriteError will be called.
         /// </param>
-        ///
         /// <returns>
         /// A collection of the matching PSTraceSource instances.
         /// </returns>
-        ///
         internal Collection<PSTraceSource> GetMatchingTraceSource(
             string[] patternsToMatch,
             bool writeErrorIfMatchNotFound)
@@ -42,27 +36,21 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the matching PSTraceSource instances for the
-        /// specified patterns.
+        /// Gets the matching PSTraceSource instances for the specified patterns.
         /// </summary>
-        ///
         /// <param name="patternsToMatch">
         /// The patterns used to match the PSTraceSource name.
         /// </param>
-        ///
         /// <param name="writeErrorIfMatchNotFound">
         /// If true and the pattern does not contain wildcard patterns and no
         /// match is found, then WriteError will be called.
         /// </param>
-        ///
         /// <param name="notMatched">
         /// The patterns for which a match was not found.
         /// </param>
-        ///
         /// <returns>
         /// A collection of the matching PSTraceSource instances.
         /// </returns>
-        ///
         internal Collection<PSTraceSource> GetMatchingTraceSource(
             string[] patternsToMatch,
             bool writeErrorIfMatchNotFound,

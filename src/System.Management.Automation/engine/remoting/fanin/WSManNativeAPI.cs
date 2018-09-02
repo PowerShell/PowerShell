@@ -288,17 +288,14 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManUserNameAuthenticationCredentials : BaseWSManAuthenticationCredentials
         {
             /// <summary>
-            ///
             /// </summary>
             [StructLayout(LayoutKind.Sequential)]
             internal struct WSManUserNameCredentialStruct
             {
                 /// <summary>
-                ///
                 /// </summary>
                 internal WSManAuthenticationMechanism authenticationMechanism;
                 /// <summary>
-                ///
                 /// </summary>
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string userName;
@@ -387,22 +384,18 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        ///
         /// </summary>
         internal class WSManCertificateThumbprintCredentials : BaseWSManAuthenticationCredentials
         {
             /// <summary>
-            ///
             /// </summary>
             [StructLayout(LayoutKind.Sequential)]
             private struct WSManThumbprintStruct
             {
                 /// <summary>
-                ///
                 /// </summary>
                 internal WSManAuthenticationMechanism authenticationMechanism;
                 /// <summary>
-                ///
                 /// </summary>
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string certificateThumbprint;
@@ -1123,7 +1116,6 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            ///
             /// </summary>
             public void Dispose()
             {
@@ -1206,7 +1198,6 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        ///
         /// </summary>
         internal struct WSManCommandArgSet : IDisposable
         {
@@ -1561,7 +1552,6 @@ namespace System.Management.Automation.Remoting.Client
             private MarshalledObject _data;
 
             /// <summary>
-            ///
             /// </summary>
             /// <param name="proxyAccessType"></param>
             /// <param name="authCredentials"></param>
@@ -1911,8 +1901,8 @@ namespace System.Management.Automation.Remoting.Client
             /// <summary>
             /// Constructs a WSManReceiveDataResult from the unmanaged pointer.
             /// This involves copying data from unmanaged memory to managed heap.
-            /// Currently PowerShell supports only text data on the wire, so this
-            /// method asserts if the data is not text.
+            /// Currently PowerShell supports only binary data on the wire, so this
+            /// method asserts if the data is not binary.
             /// </summary>
             /// <param name="unmanagedData">
             /// Pointer to unmanaged data.
@@ -1935,7 +1925,7 @@ namespace System.Management.Automation.Remoting.Client
                         result1.data.binaryData.bufferLength);
                 }
                 Dbg.Assert(result1.data.type == (uint)WSManDataType.WSMAN_DATA_TYPE_BINARY,
-                    "ReceiveDataResult can receive only text data");
+                    "ReceiveDataResult can receive only binary data");
 
                 WSManReceiveDataResult result = new WSManReceiveDataResult();
                 result.data = dataRecvd;
@@ -2520,7 +2510,6 @@ namespace System.Management.Automation.Remoting.Client
             [In, Out]  ref IntPtr shellOperationHandle);
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="wsManSessionHandle"></param>
         /// <param name="flags"></param>
@@ -2541,7 +2530,6 @@ namespace System.Management.Automation.Remoting.Client
             [In, Out]  ref IntPtr shellOperationHandle);
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="wsManSessionHandle"></param>
         /// <param name="flags"></param>
@@ -2554,7 +2542,6 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr asyncCallback);
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="wsManSessionHandle"></param>
         /// <param name="flags"></param>

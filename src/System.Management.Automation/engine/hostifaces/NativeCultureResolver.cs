@@ -455,7 +455,6 @@ namespace Microsoft.PowerShell
         /// include ERR_INSUFFICIENT_BUFFER.
         /// </returns>
         /// <remarks>
-        ///
         /// </remarks>
         [DllImport("kernel32.dll", SetLastError = false, CharSet = CharSet.Unicode)]
         private static extern int GetUserDefaultLocaleName(

@@ -16,7 +16,6 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// helper class for secure string related functionality
     /// </summary>
-    ///
     internal static class SecureStringHelper
     {
         // Some random hex characters to identify the beginning of a
@@ -29,11 +28,8 @@ namespace Microsoft.PowerShell
         /// The binary data must be byte[] version of unicode char[],
         /// otherwise the results are unpredictable.
         /// </summary>
-        ///
         /// <param name="data"> input data </param>
-        ///
         /// <returns> a SecureString  </returns>
-        ///
         private static SecureString New(byte[] data)
         {
             if ((data.Length % 2) != 0)
@@ -69,11 +65,8 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// get the contents of a SecureString as byte[]
         /// </summary>
-        ///
         /// <param name="s"> input string </param>
-        ///
         /// <returns> contents of s (char[]) converted to byte[] </returns>
-        ///
         [ArchitectureSensitive]
         internal static byte[] GetData(SecureString s)
         {
@@ -106,11 +99,8 @@ namespace Microsoft.PowerShell
         /// method can be changed to use a better encoding
         /// such as base64.
         /// </summary>
-        ///
         /// <param name="data"> binary data to encode  </param>
-        ///
         /// <returns> a string representing encoded data </returns>
-        ///
         internal static string ByteArrayToString(byte[] data)
         {
             StringBuilder sb = new StringBuilder();
@@ -127,11 +117,8 @@ namespace Microsoft.PowerShell
         /// Convert a string obtained using ByteArrayToString()
         /// back to byte[] format.
         /// </summary>
-        ///
         /// <param name="s"> encoded input string  </param>
-        ///
         /// <returns> bin data as byte[] </returns>
-        ///
         internal static byte[] ByteArrayFromString(string s)
         {
             //
@@ -157,11 +144,8 @@ namespace Microsoft.PowerShell
         /// return contents of the SecureString after encrypting
         /// using DPAPI and encoding the encrypted blob as a string
         /// </summary>
-        ///
         /// <param name="input"> SecureString to protect </param>
-        ///
         /// <returns> a string (see summary)  </returns>
-        ///
         internal static string Protect(SecureString input)
         {
             Utils.CheckSecureStringArg(input, "input");
@@ -189,11 +173,8 @@ namespace Microsoft.PowerShell
         ///
         /// The string must be obtained earlier by a call to Protect()
         /// </summary>
-        ///
         /// <param name="input"> encrypted string </param>
-        ///
         /// <returns> SecureString  </returns>
-        ///
         internal static SecureString Unprotect(string input)
         {
             Utils.CheckArgForNullOrEmpty(input, "input");
@@ -220,15 +201,10 @@ namespace Microsoft.PowerShell
         /// return contents of the SecureString after encrypting
         /// using the specified key and encoding the encrypted blob as a string
         /// </summary>
-        ///
         /// <param name="input"> input string to encrypt </param>
-        ///
         /// <param name="key"> encryption key </param>
-        ///
         /// <returns> a string (see summary)  </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal static EncryptionResult Encrypt(SecureString input, SecureString key)
         {
             EncryptionResult output = null;
@@ -255,15 +231,10 @@ namespace Microsoft.PowerShell
         /// return contents of the SecureString after encrypting
         /// using the specified key and encoding the encrypted blob as a string
         /// </summary>
-        ///
         /// <param name="input"> input string to encrypt </param>
-        ///
         /// <param name="key"> encryption key </param>
-        ///
         /// <returns> a string (see summary)  </returns>
-        ///
         /// <remarks>  </remarks>
-        ///
         internal static EncryptionResult Encrypt(SecureString input, byte[] key)
         {
             return Encrypt(input, key, null);
@@ -325,15 +296,10 @@ namespace Microsoft.PowerShell
         ///
         /// The string must be obtained earlier by a call to Encrypt()
         /// </summary>
-        ///
         /// <param name="input"> encrypted string </param>
-        ///
         /// <param name="key"> encryption key </param>
-        ///
         /// <param name="IV"> encryption initialization vector. If this is set to null, the method uses internally computed strong random number as IV </param>
-        ///
         /// <returns> SecureString  </returns>
-        ///
         internal static SecureString Decrypt(string input, SecureString key, byte[] IV)
         {
             SecureString output = null;
@@ -362,15 +328,10 @@ namespace Microsoft.PowerShell
         ///
         /// The string must be obtained earlier by a call to Encrypt()
         /// </summary>
-        ///
         /// <param name="input"> encrypted string </param>
-        ///
         /// <param name="key"> encryption key </param>
-        ///
         /// <param name="IV"> encryption initialization vector. If this is set to null, the method uses internally computed strong random number as IV </param>
-        ///
         /// <returns> SecureString  </returns>
-        ///
         internal static SecureString Decrypt(string input, byte[] key, byte[] IV)
         {
             Utils.CheckArgForNullOrEmpty(input, "input");
@@ -422,7 +383,6 @@ namespace Microsoft.PowerShell
     /// Helper class to return encryption results, and the IV used to
     /// do the encryption
     /// </summary>
-    ///
     internal class EncryptionResult
     {
         internal EncryptionResult(string encrypted, string IV)

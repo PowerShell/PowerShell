@@ -967,7 +967,12 @@ namespace System.Management.Automation
                 strongName, moduleName, psVersion, assemblyVersion, types, formats, null,
                 s_coreSnapin.Description, s_coreSnapin.DescriptionIndirect, null, null,
                 s_coreSnapin.VendorIndirect, null);
+#if !UNIX
+            // NOTE: On Unix, logging has to be deferred until after command-line parsing
+            // complete. On Windows, deferring the call is not needed
+            // and this is in the startup code path.
             SetSnapInLoggingInformation(coreMshSnapin);
+#endif
 
             return coreMshSnapin;
         }
@@ -1257,7 +1262,6 @@ namespace System.Management.Automation
                                            "CoreMshSnapInResources,Description", "CoreMshSnapInResources,Vendor");
 
         /// <summary>
-        ///
         /// </summary>
         private static IList<DefaultPSSnapInInformation> DefaultMshSnapins
         {

@@ -15,7 +15,6 @@ namespace System.Management.Automation
     /// This is the interface between the NativeCommandProcessor and the
     /// parameter binders required to bind parameters to a minishell.
     /// </summary>
-    ///
     internal class MinishellParameterBinderController : NativeCommandParameterBinderController
     {
         #region ctor
@@ -24,11 +23,9 @@ namespace System.Management.Automation
         /// Initializes the parameter binder controller for
         /// the specified native command and engine context
         /// </summary>
-        ///
         /// <param name="command">
         /// The command that the parameters will be bound to.
         /// </param>
-        ///
         internal MinishellParameterBinderController(
             NativeCommand command)
             : base(command)
@@ -42,11 +39,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Override of parent class which should not be used.
         /// </summary>
-        ///
         /// <param name="parameters">
         /// The parameters to bind.
         /// </param>
-        ///
         /// <remarks>
         /// For any parameters that do not have a name, they are added to the command
         /// line arguments for the command
@@ -77,24 +72,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Binds the specified parameters to the native command
         /// </summary>
-        ///
         /// <param name="parameters">
         /// The parameters to bind.
         /// </param>
-        ///
         /// <param name="outputRedirected">
         /// true if minishell output is redirected.
         /// </param>
-        ///
         /// <param name="hostName">
         /// name of the calling host.
         /// </param>
-        ///
         /// <remarks>
         /// For any parameters that do not have a name, they are added to the command
         /// line arguments for the command
         /// </remarks>
-        ///
         internal Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> parameters, bool outputRedirected, string hostName)
         {
             MinishellParameters seen = 0;

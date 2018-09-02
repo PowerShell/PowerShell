@@ -21,8 +21,8 @@ using Newtonsoft.Json.Converters;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The ConvertTo-Json command
-    /// This command convert an object to a Json string representation
+    /// The ConvertTo-Json command.
+    /// This command converts an object to a Json string representation.
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217032", RemotingCapability = RemotingCapability.None)]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region parameters
         /// <summary>
-        /// gets or sets the InputObject property
+        /// Gets or sets the InputObject property.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowNull]
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         private const int maxDepthAllowed = 100;
 
         /// <summary>
-        /// gets or sets the Depth property
+        /// Gets or sets the Depth property.
         /// </summary>
         [Parameter]
         [ValidateRange(1, int.MaxValue)]
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
         #region overrides
 
         /// <summary>
-        /// Prerequisite checks
+        /// Prerequisite checks.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
         private List<object> _inputObjects = new List<object>();
 
         /// <summary>
-        /// Caching the input objects for the convertto-json command
+        /// Caching the input objects for the convertto-json command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Do the conversion to json and write output
+        /// Do the conversion to json and write output.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -144,7 +144,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Return an alternate representation of the specified object that serializes the same JSON, except
         /// that properties that cannot be evaluated are treated as having the value null.
-        ///
         /// Primitive types are returned verbatim.  Aggregate types are processed recursively.
         /// </summary>
         /// <param name="obj">The object to be processed</param>
@@ -183,13 +182,11 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (obj is Newtonsoft.Json.Linq.JObject jObject)
             {
-                rv = jObject.ToObject<Dictionary<object,object>>();
+                rv = jObject.ToObject<Dictionary<object, object>>();
             }
             else
             {
                 TypeInfo t = obj.GetType().GetTypeInfo();
-                WriteVerbose(StringUtil.Format(UtilityCommonStrings.ConvertToJsonProcessValueVerboseMessage, t.Name, depth));
-
 
                 if (t.IsPrimitive)
                 {
@@ -445,6 +442,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Exception used for Stopping.
         /// </summary>
-        private class StoppingException : System.Exception {}
+        private class StoppingException : System.Exception { }
     }
 }

@@ -92,7 +92,6 @@ namespace System.Management.Automation
     /// <see cref="ValidateArgumentsAttribute.Validate"/>
     /// abstract method, after which they can apply the
     /// attribute to their parameters.
-    ///
     /// <see cref="ValidateArgumentsAttribute"/> validates the argument
     /// as a whole.  If the argument value is potentially an enumeration,
     /// you can derive from <see cref="ValidateEnumeratedArgumentsAttribute"/>
@@ -143,7 +142,6 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
         /// </param>
-        ///
         /// <returns>bool true if the validate succeeded</returns>
         /// <exception cref="ValidationMetadataException">
         /// Whenever any exception occurs during data validate.
@@ -620,11 +618,54 @@ namespace System.Management.Automation
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance that is associated with an experimental feature.
+        /// </summary>
+        public ParameterAttribute(string experimentName, ExperimentAction experimentAction)
+        {
+            ExperimentalAttribute.ValidateArguments(experimentName, experimentAction);
+            ExperimentName = experimentName;
+            ExperimentAction = experimentAction;
+        }
+
         private string _parameterSetName = ParameterAttribute.AllParameterSets;
 
         private string _helpMessage;
         private string _helpMessageBaseName;
         private string _helpMessageResourceId;
+
+        #region Experimental Feature Related Properties
+
+        /// <summary>
+        /// Get name of the experimental feature this attribute is associated with.
+        /// </summary>
+        public string ExperimentName { get; }
+
+        /// <summary>
+        /// Get action for engine to take when the experimental feature is enabled.
+        /// </summary>
+        public ExperimentAction ExperimentAction { get; }
+
+        internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
+        internal bool ToShow => EffectiveAction == ExperimentAction.Show;
+
+        /// <summary>
+        /// Get effective action to take at run time.
+        /// </summary>
+        private ExperimentAction EffectiveAction
+        {
+            get
+            {
+                if (_effectiveAction == ExperimentAction.None)
+                {
+                    _effectiveAction = ExperimentalFeature.GetActionToTake(ExperimentName, ExperimentAction);
+                }
+                return _effectiveAction;
+            }
+        }
+        private ExperimentAction _effectiveAction = default(ExperimentAction);
+
+        #endregion
 
         /// <summary>
         /// Gets and sets the parameter position. If not set, the parameter is named.
@@ -759,7 +800,6 @@ namespace System.Management.Automation
     public class PSTypeNameAttribute : Attribute
     {
         /// <summary>
-        ///
         /// </summary>
         public string PSTypeName { get; private set; }
 
@@ -1259,7 +1299,9 @@ namespace System.Management.Automation
         /// The text representation of the object being validated and the validating regex is passed as
         /// the first and second formatting parameters to the ErrorMessage formatting pattern.
         /// <example>
+        /// <code>
         /// [ValidatePattern("\s+", ErrorMessage="The text '{0}' did not pass validation of regex '{1}'")]
+        /// </code>
         /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }
@@ -1320,9 +1362,10 @@ namespace System.Management.Automation
         ///
         /// The item being validated and the validating scriptblock is passed as the first and second
         /// formatting argument.
-        ///
         /// <example>
+        /// <code>
         /// [ValidateScript("$_ % 2", ErrorMessage = "The item '{0}' did not pass validation of script '{1}'")]
+        /// </code>
         /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }
@@ -1567,9 +1610,10 @@ namespace System.Management.Automation
         ///
         /// The item being validated and a text representation of the validation set
         /// is passed as the first and second formatting argument to the ErrorMessage formatting pattern.
-        ///
         /// <example>
+        /// <code>
         /// [ValidateSet("A","B","C", ErrorMessage="The item '{0}' is not part of the set '{1}'.")
+        /// </code>
         /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }

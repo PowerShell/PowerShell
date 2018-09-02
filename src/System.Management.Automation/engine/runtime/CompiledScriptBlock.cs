@@ -348,6 +348,26 @@ namespace System.Management.Automation
             }
         }
 
+        internal ExperimentalAttribute ExperimentalAttribute
+        {
+            get
+            {
+                if (_expAttribute == ExperimentalAttribute.None)
+                {
+                    lock (this)
+                    {
+                        if (_expAttribute == ExperimentalAttribute.None)
+                        {
+                            _expAttribute = Ast.GetExperimentalAttributes().FirstOrDefault();
+                        }
+                    }
+                }
+
+                return _expAttribute;
+            }
+        }
+        private ExperimentalAttribute _expAttribute = ExperimentalAttribute.None;
+
         public MergedCommandParameterMetadata GetParameterMetadata(ScriptBlock scriptBlock)
         {
             if (_parameterMetadata == null)
@@ -367,7 +387,9 @@ namespace System.Management.Automation
         public override string ToString()
         {
             if (_scriptText != null)
+            {
                 return _scriptText;
+            }
 
             var sbAst = _ast as ScriptBlockAst;
             if (sbAst != null)
@@ -1226,6 +1248,11 @@ namespace System.Management.Automation
         internal ObsoleteAttribute ObsoleteAttribute
         {
             get { return _scriptBlockData.ObsoleteAttribute; }
+        }
+
+        internal ExperimentalAttribute ExperimentalAttribute
+        {
+            get { return _scriptBlockData.ExperimentalAttribute; }
         }
 
         internal bool Compile(bool optimized)

@@ -4,10 +4,8 @@
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpFileHelpInfo keeps track of help information to be returned by
     /// command help provider.
-    ///
     /// </summary>
     internal class SyntaxHelpInfo : BaseCommandHelpInfo
     {

@@ -435,7 +435,8 @@ namespace Microsoft.PowerShell.Commands
                 var wmiGuard = session.GetFirst<WmiDeviceGuard>(CIMHelper.DeviceGuardNamespace,
                                                                 CIMHelper.ClassNames.DeviceGuard);
 
-                if (wmiGuard != null) {
+                if (wmiGuard != null)
+                {
                     var smartStatus = EnumConverter<DeviceGuardSmartStatus>.Convert((int?)wmiGuard.VirtualizationBasedSecurityStatus ?? 0);
                     if (smartStatus != null)
                     {

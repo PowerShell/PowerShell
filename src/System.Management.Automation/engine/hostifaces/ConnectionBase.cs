@@ -318,11 +318,9 @@ namespace System.Management.Automation.Runspaces
         /// <param name="syncCall">If true runspace is closed synchronously
         /// else runspaces is closed asynchronously
         /// </param>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// RunspaceState is BeforeOpen or Opening
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If SessionStateProxy has some method call in progress
         /// </exception>
@@ -600,7 +598,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline from a command string
         /// </summary>
-        ///
         /// <param name="command">A valid command string or String.Empty.</param>
         /// <param name="addToHistory">if true command is added to history</param>
         /// <param name="isNested">True for nested pipeline</param>
@@ -818,12 +815,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="pipeline">Pipeline to add to the
         /// list of pipelines in execution</param>
-        ///
         /// <exception cref="InvalidRunspaceStateException">
         /// Thrown if the runspace is not in the Opened state.
         /// <see cref="RunspaceState"/>.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">Thrown if
         /// <paramref name="pipeline"/> is null.
         /// </exception>
@@ -858,7 +853,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="pipeline">Pipeline to remove from the
         /// list of pipelines in execution</param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="pipeline"/> is null.
         /// </exception>

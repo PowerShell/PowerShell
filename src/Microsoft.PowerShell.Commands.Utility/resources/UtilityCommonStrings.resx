@@ -174,10 +174,4 @@
   <data name="TypeNotSupported" xml:space="preserve">
     <value>'{0}' is not supported in this system.</value>
   </data>
-  <data name="NoZoneIdentifierFileStream" xml:space="preserve">
-    <value>The file is not blocked: {0}</value>
-  </data>
-  <data name="ConvertToJsonProcessValueVerboseMessage" xml:space="preserve">
-    <value>Processing object of type [{0}] at depth {1}</value>
-  </data>
 </root>

@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     public class RegisterEngineEventCommand : ObjectEventRegistrationBase
     {
         /// <summary>
-        /// Parameter for an identifier for this event subscription
+        /// Parameter for an identifier for this event subscription.
         /// </summary>
         [Parameter(Mandatory = true, Position = 100)]
         public new string SourceIdentifier
@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the object that generates events to be monitored
+        /// Returns the object that generates events to be monitored.
         /// </summary>
         protected override Object GetSourceObject()
         {
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the event name to be monitored on the input object
+        /// Returns the event name to be monitored on the input object.
         /// </summary>
         protected override String GetSourceObjectEventName()
         {

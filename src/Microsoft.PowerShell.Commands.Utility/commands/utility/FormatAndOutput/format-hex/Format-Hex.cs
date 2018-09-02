@@ -15,9 +15,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Displays the hexidecimal equivalent of the input data.
     /// </summary>
-    [Cmdlet(VerbsCommon.Format, "Hex", SupportsShouldProcess = true, HelpUri ="https://go.microsoft.com/fwlink/?LinkId=526919")]
+    [Cmdlet(VerbsCommon.Format, "Hex", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526919")]
     [OutputType(typeof(Microsoft.PowerShell.Commands.ByteCollection))]
-    [Alias ("fhx")]
+    [Alias("fhx")]
     public sealed class FormatHex : PSCmdlet
     {
         private const int BUFFERSIZE = 16;
@@ -25,28 +25,28 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Path of file(s) to process
+        /// Path of file(s) to process.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Path")]
         [ValidateNotNullOrEmpty()]
         public string[] Path { get; set; }
 
         /// <summary>
-        /// Literal path of file to process
+        /// Literal path of file to process.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty()]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public string[] LiteralPath { get; set; }
 
         /// <summary>
-        /// Ojbect to process
+        /// Ojbect to process.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ByInputObject", ValueFromPipeline = true)]
         public PSObject InputObject { get; set; }
 
         /// <summary>
-        /// Type of character encoding for InputObject
+        /// Type of character encoding for InputObject.
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
         [ArgumentToEncodingTransformationAttribute()]
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
-        /// This parameter is no-op
+        /// This parameter is no-op.
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
         public SwitchParameter Raw { get; set; }

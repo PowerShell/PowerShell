@@ -194,6 +194,14 @@ namespace System.Management.Automation.Configuration
         }
 
         /// <summary>
+        /// Get the names of experimental features enabled in the config file.
+        /// </summary>
+        internal string[] GetExperimentalFeatures()
+        {
+            return ReadValueFromFile<string[]>(ConfigScope.SystemWide, "ExperimentalFeatures", Utils.EmptyArray<string>());
+        }
+
+        /// <summary>
         /// Corresponding settings of the original Group Policies
         /// </summary>
         internal PowerShellPolicies GetPowerShellPolicies(ConfigScope scope)

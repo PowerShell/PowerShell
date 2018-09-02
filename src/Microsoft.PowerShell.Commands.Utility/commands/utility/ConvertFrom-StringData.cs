@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Class comment
+    /// Class comment.
     /// </summary>
     [Cmdlet(VerbsData.ConvertFrom, "StringData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113288", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(Hashtable))]
@@ -18,8 +18,8 @@ namespace Microsoft.PowerShell.Commands
         private string _stringData;
 
         /// <summary>
-        /// The list of properties to display
-        /// These take the form of an PSPropertyExpression
+        /// The list of properties to display.
+        /// These take the form of an PSPropertyExpression.
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
@@ -37,7 +37,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {

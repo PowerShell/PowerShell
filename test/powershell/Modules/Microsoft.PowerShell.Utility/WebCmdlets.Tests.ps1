@@ -739,6 +739,23 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RelationLink["self"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=1&type=${type}"
     }
 
+    It "Validate Invoke-WebRequest handles different whitespace for Link Headers: <type>" -TestCases @(
+        @{ type = "noWhitespace" }
+        @{ type = "extraWhitespace" }
+    ) {
+        param($type)
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{type = $type}
+        $command = "Invoke-WebRequest -Uri '$uri'"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Output.RelationLink.Count | Should -BeExactly 4
+        $baseUri = Get-WebListenerUrl -Test 'Link'
+        $result.Output.RelationLink["last"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=3&type=${type}"
+        $result.Output.RelationLink["first"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=1&type=${type}"
+        $result.Output.RelationLink["self"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=1&type=${type}"
+        $result.Output.RelationLink["next"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=2&type=${type}"
+    }
+
     #region Redirect tests
 
     It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
@@ -2070,6 +2087,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
         $result.Output.linknumber | Should -BeExactly 1
+    }
+
+    It "Validate Invoke-RestMethod handles whitespace for Link Headers if -FollowRelLink is specified: <type>" -TestCases @(
+        @{ type = "noWhitespace" }
+        @{ type = "extraWhitespace" }
+    ) {
+        param($type)
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{type = $type}
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
+        $result = ExecuteWebCommand -command $command
+        1..3 | ForEach-Object { $result.Output[$_ - 1].linknumber | Should -BeExactly $_ }
     }
 
     #region Redirect tests

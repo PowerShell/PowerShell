@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
 {
     #region SendMailMessage
     /// <summary>
-    /// implementation for the Send-MailMessage command
+    /// Implementation for the Send-MailMessage command.
     /// </summary>
     [Cmdlet(VerbsCommunications.Send, "MailMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135256")]
     public sealed class SendMailMessage : PSCmdlet
@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         private String[] _bcc;
 
         /// <summary>
-        /// Specifies the body (content) of the message
+        /// Specifies the body (content) of the message.
         /// </summary>
         [Parameter(Position = 2, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the encoding used for the content of the body and also the subject.
-        /// This is set to ASCII to ensure there are no problems with any email server
+        /// This is set to ASCII to ensure there are no problems with any email server.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("BE")]
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the delivery notifications options for the e-mail message. The various
-        /// option available for this parameter are None, OnSuccess, OnFailure, Delay and Never
+        /// options available for this parameter are None, OnSuccess, OnFailure, Delay and Never.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("DNO")]
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the from address for this e-mail message. The default value for
-        /// this parameter is the email address of the currently logged on user
+        /// this parameter is the email address of the currently logged on user.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the name of the Host used to send the email. This host name will be assigned
-        /// to the Powershell variable PSEmailServer,if this host can not reached an appropriate error
+        /// to the Powershell variable PSEmailServer, if this host can not reached an appropriate error.
         /// message will be displayed.
         /// </summary>
         [Parameter(Position = 3, ValueFromPipelineByPropertyName = true)]
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         private String _smtpserver;
 
         /// <summary>
-        /// Specifies the priority of the email message. The valid values for this are Normal, High and Low
+        /// Specifies the priority of the email message. The valid values for this are Normal, High and Low.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         private PSCredential _credential;
 
         /// <summary>
-        /// Specifies if Secured layer is required or not
+        /// Specifies if Secured layer is required or not.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public SwitchParameter UseSsl
@@ -277,8 +277,8 @@ namespace Microsoft.PowerShell.Commands
         private SmtpClient _mSmtpClient = null;
 
         /// <summary>
-        /// Add the input addresses which are either string or hashtable to the MailMessage
-        /// It returns true if the from parameter has more than one value
+        /// Add the input addresses which are either string or hashtable to the MailMessage.
+        /// It returns true if the from parameter has more than one value.
         /// </summary>
         /// <param name="address"></param>
         /// <param name="param"></param>
@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// ProcessRecord override
+        /// ProcessRecord override.
         /// </summary>
         protected override
         void
@@ -415,7 +415,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// ProcessRecord override
+        /// ProcessRecord override.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -441,7 +441,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// EndProcessing
+        /// EndProcessing.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -485,6 +485,5 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
     }
-
     #endregion
 }

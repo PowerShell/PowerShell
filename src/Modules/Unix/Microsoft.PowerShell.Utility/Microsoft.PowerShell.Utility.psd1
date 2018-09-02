@@ -5,7 +5,7 @@ CompanyName="Microsoft Corporation"
 Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="6.1.0.0"
 CompatiblePSEditions = @("Core")
-PowerShellVersion="6.1"
+PowerShellVersion="3.0"
 CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Out-File", "Out-String", "Get-FormatData", "Export-FormatData", "ConvertFrom-Json", "ConvertTo-Json",
     "Invoke-RestMethod", "Invoke-WebRequest", "Register-ObjectEvent", "Register-EngineEvent",
@@ -24,7 +24,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Send-MailMessage", "Get-TraceSource", "Set-TraceSource", "Trace-Command", "Get-FileHash",
     "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug",
     "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime", "New-TemporaryFile", "Get-Verb", "Format-Hex",
-    "Test-Json", "Remove-Alias"
+    "Test-Json", "Remove-Alias", "ConvertFrom-Markdown", "Show-Markdown", "Set-MarkdownOption", "Get-MarkdownOption"
 FunctionsToExport= "Import-PowerShellDataFile"
 AliasesToExport= "fhx"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"

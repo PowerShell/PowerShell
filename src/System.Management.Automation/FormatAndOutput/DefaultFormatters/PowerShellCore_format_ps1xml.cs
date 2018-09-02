@@ -192,6 +192,14 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_Job());
 
             yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TextMeasureInfo",
+                ViewsOf_Deserialized_Microsoft_PowerShell_Commands_TextMeasureInfo());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.GenericMeasureInfo",
+                ViewsOf_Deserialized_Microsoft_PowerShell_Commands_GenericMeasureInfo());
+
+            yield return new ExtendedTypeDefinition(
                 "Deserialized.Microsoft.PowerShell.Commands.TextMeasureInfo",
                 ViewsOf_Deserialized_Microsoft_PowerShell_Commands_TextMeasureInfo());
 
@@ -230,6 +238,10 @@ namespace System.Management.Automation.Runspaces
                 "System.Management.Automation.PSModuleInfo",
                 ViewsOf_System_Management_Automation_PSModuleInfo());
 
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.ExperimentalFeature",
+                ViewsOf_System_Management_Automation_ExperimentalFeature());
+
             var td46 = new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject",
                 ViewsOf_Microsoft_PowerShell_Commands_BasicHtmlWebResponseObject());
@@ -246,6 +258,10 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.PSRunspaceDebug",
                 ViewsOf_Microsoft_PowerShell_Commands_PSRunspaceDebug());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo",
+                ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
@@ -1062,11 +1078,11 @@ namespace System.Management.Automation.Runspaces
                 ListControl.Create()
                     .StartEntry()
                         .AddItemProperty(@"Count")
-                        .AddItemProperty(@"Average")
-                        .AddItemProperty(@"Sum")
-                        .AddItemProperty(@"Maximum")
-                        .AddItemProperty(@"Minimum")
-                        .AddItemProperty(@"Property")
+                        .AddItemPropertyIfSet(@"Average")
+                        .AddItemPropertyIfSet(@"Sum")
+                        .AddItemPropertyIfSet(@"Maximum")
+                        .AddItemPropertyIfSet(@"Minimum")
+                        .AddItemPropertyIfSet(@"Property")
                     .EndEntry()
                 .EndList());
         }
@@ -1192,11 +1208,24 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Left, width: 10)
                     .AddHeader(Alignment.Left, width: 10)
                     .AddHeader(Alignment.Left, width: 35)
+                    .AddHeader(Alignment.Left, width: 9, label: "PSEdition")
                     .AddHeader(Alignment.Left, label: "ExportedCommands")
                     .StartRowDefinition()
                         .AddPropertyColumn("ModuleType")
                         .AddPropertyColumn("Version")
                         .AddPropertyColumn("Name")
+                        .AddScriptBlockColumn(@"
+                            $result = [System.Collections.ArrayList]::new()
+                            $editions = $_.CompatiblePSEditions
+                            if (-not $editions)
+                            {
+                                $editions = @('Desktop')
+                            }
+                            foreach ($edition in $editions)
+                            {
+                                $result += $edition.Substring(0,4)
+                            }
+                            ($result | Sort-Object) -join ','")
                         .AddScriptBlockColumn("$_.ExportedCommands.Keys")
                     .EndRowDefinition()
                 .EndTable());
@@ -1236,6 +1265,33 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"$_.ExportedCmdlets.Keys", label: "ExportedCmdlets")
                         .AddItemScriptBlock(@"$_.ExportedVariables.Keys", label: "ExportedVariables")
                         .AddItemScriptBlock(@"$_.ExportedAliases.Keys", label: "ExportedAliases")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ExperimentalFeature()
+        {
+            yield return new FormatViewDefinition("ExperimentalFeature",
+                TableControl.Create()
+                    .AddHeader(Alignment.Left, width: 35)
+                    .AddHeader(Alignment.Right, width: 7)
+                    .AddHeader(Alignment.Left, width: 35)
+                    .AddHeader(Alignment.Left)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Name")
+                        .AddPropertyColumn("Enabled")
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("Description")
+                    .EndRowDefinition()
+                .EndTable());
+
+            yield return new FormatViewDefinition("ExperimentalFeature",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemProperty("Name")
+                        .AddItemProperty("Enabled")
+                        .AddItemProperty("Source")
+                        .AddItemProperty("Description")
                     .EndEntry()
                 .EndList());
         }
@@ -1320,6 +1376,26 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("BreakAll")
                     .EndRowDefinition()
                 .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo()
+        {
+            yield return new FormatViewDefinition("Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header1')", label: "Header1")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header2')", label: "Header2")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header3')", label: "Header3")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header4')", label: "Header4")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header5')", label: "Header5")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Header6')", label: "Header6")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Code')", label: "Code")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Link')", label: "Link")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Image')", label: "Image")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('EmphasisBold')", label: "EmphasisBold")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('EmphasisItalics')", label: "EmphasisItalics")
+                    .EndEntry()
+                .EndList());
         }
     }
 }

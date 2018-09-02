@@ -708,8 +708,32 @@ namespace System.Management.Automation.Remoting.Client
                 //
                 stdInWriter.StopWriting();
             }
-            PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCServerProcessExited,
-                                RemotingErrorIdStrings.IPCServerProcessExited);
+
+            // Try to get details about why the process exited
+            // and if they're not available, give information as to why
+            string processDiagnosticMessage;
+            try
+            {
+                var jobProcess = (Process)sender;
+                processDiagnosticMessage = StringUtil.Format(
+                    RemotingErrorIdStrings.ProcessExitInfo,
+                    jobProcess.ExitCode,
+                    jobProcess.StandardOutput.ReadToEnd(),
+                    jobProcess.StandardError.ReadToEnd());
+            }
+            catch (Exception exception)
+            {
+                processDiagnosticMessage = StringUtil.Format(
+                    RemotingErrorIdStrings.ProcessInfoNotRecoverable,
+                    exception.Message);
+            }
+
+            string exitErrorMsg = StringUtil.Format(
+                RemotingErrorIdStrings.IPCServerProcessExited,
+                processDiagnosticMessage);
+            var psrte = new PSRemotingTransportException(
+                PSRemotingErrorId.IPCServerProcessExited,
+                exitErrorMsg);
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, transportMethod));
         }
 

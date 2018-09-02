@@ -374,7 +374,6 @@ namespace System.Management.Automation
         /// For example, 'get-process' in
         ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         Command,
 
@@ -385,7 +384,6 @@ namespace System.Management.Automation
         /// For example, '-name' in
         ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         CommandParameter,
 
@@ -396,7 +394,6 @@ namespace System.Management.Automation
         /// For example, 'foo' in
         ///
         ///     get-process -name foo
-        ///
         /// </remarks>
         CommandArgument,
 
@@ -407,7 +404,6 @@ namespace System.Management.Automation
         /// For example, 12 in
         ///
         ///     $a=12
-        ///
         /// </remarks>
         Number,
 
@@ -418,7 +414,6 @@ namespace System.Management.Automation
         /// For example, "12" in
         ///
         ///     $a="12"
-        ///
         /// </remarks>
         String,
 
@@ -429,7 +424,6 @@ namespace System.Management.Automation
         /// For example, $a in
         ///
         ///     $a="12"
-        ///
         /// </remarks>
         Variable,
 
@@ -440,7 +434,6 @@ namespace System.Management.Automation
         /// For example, Name in
         ///
         ///     $a.Name
-        ///
         /// </remarks>
         Member,
 
@@ -455,7 +448,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a
         ///     }
-        ///
         /// </remarks>
         LoopLabel,
 
@@ -466,7 +458,6 @@ namespace System.Management.Automation
         /// For example, Mandatory in
         ///
         ///     param([Mandatory] $a)
-        ///
         /// </remarks>
         Attribute,
 
@@ -477,7 +468,6 @@ namespace System.Management.Automation
         /// For example, [string] in
         ///
         ///     $a = [string] 12
-        ///
         /// </remarks>
         Type,
 
@@ -488,7 +478,6 @@ namespace System.Management.Automation
         /// For example, + in
         ///
         ///     $a = 1 + 2
-        ///
         /// </remarks>
         Operator,
 
@@ -502,7 +491,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         GroupStart,
 
@@ -516,7 +504,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         GroupEnd,
 
@@ -530,7 +517,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         Keyword,
 
@@ -545,7 +531,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         Comment,
 
@@ -560,7 +545,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         StatementSeparator,
 
@@ -575,7 +559,6 @@ namespace System.Management.Automation
         ///     {
         ///         $a++;
         ///     }
-        ///
         /// </remarks>
         NewLine,
 
@@ -587,7 +570,6 @@ namespace System.Management.Automation
         ///
         ///     get-command -name `
         ///     foo
-        ///
         /// </remarks>
         LineContinuation,
 

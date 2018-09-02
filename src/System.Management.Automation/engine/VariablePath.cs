@@ -71,13 +71,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a scoped item lookup path.
         /// </summary>
-        ///
         /// <param name="path">The path to parse.</param>
         /// <param name="knownFlags">
         /// These flags for anything known about the path (such as, is it a function) before
         /// being scanned.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>

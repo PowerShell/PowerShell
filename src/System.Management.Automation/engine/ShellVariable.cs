@@ -19,11 +19,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a variable with the given name.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
@@ -35,15 +33,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a variable with the given name, and value.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable.
         /// </param>
-        ///
         /// <param name="value">
         /// The value of the variable.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
@@ -55,20 +50,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a variable with the given name, value, and options.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable.
         /// </param>
-        ///
         /// <param name="value">
         /// The value of the variable.
         /// </param>
-        ///
         /// <param name="options">
         /// The constraints of the variable. Note, variables can only be made constant
         /// in the constructor.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
@@ -80,24 +71,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a variable with the given name, value, options, and description.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable.
         /// </param>
-        ///
         /// <param name="value">
         /// The value of the variable.
         /// </param>
-        ///
         /// <param name="options">
         /// The constraints of the variable. Note, variables can only be made constant
         /// in the constructor.
         /// </param>
-        ///
         /// <param name="description">
         /// The description for the variable.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
@@ -110,29 +96,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a variable with the given name, value, options, and description.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable.
         /// </param>
-        ///
         /// <param name="value">
         /// The value of the variable.
         /// </param>
-        ///
         /// <param name="options">
         /// The constraints of the variable. Note, variables can only be made constant
         /// in the constructor.
         /// </param>
-        ///
         /// <param name="attributes">
         /// The attributes for the variable. ValidateArgumentsAttribute and derived types
         /// will be used to validate a value before setting it.
         /// </param>
-        ///
         /// <param name="description">
         /// The description for the variable.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
@@ -150,29 +130,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a variable with the given name, value, options, and attributes
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the variable.
         /// </param>
-        ///
         /// <param name="value">
         /// The value of the variable.
         /// </param>
-        ///
         /// <param name="options">
         /// The constraints of the variable. Note, variables can only be made constant
         /// in the constructor.
         /// </param>
-        ///
         /// <param name="attributes">
         /// The attributes for the variable. ValidateArgumentsAttribute and derived types
         /// will be used to validate a value before setting it.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ValidationMetadataException">
         /// If the validation metadata identified in <paramref name="attributes"/>
         /// throws an exception.
@@ -271,11 +245,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the value of the variable
         /// </summary>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant upon call to set.
         /// </exception>
-        ///
         /// <exception cref="ValidationMetadataException">
         /// <paramref name="value"/> is not valid according to one or more
         /// of the attributes of this shell variable.
@@ -326,7 +298,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the scope options on the variable.
         /// </summary>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// Upon set, if the variable is constant or if <paramref name="value"/>
         /// contains the constant flag.
@@ -406,7 +377,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the collection that contains the attributes for the variable.
         /// </summary>
-        ///
         /// <remarks>
         /// To add or remove attributes, get the collection and then add or remove
         /// attributes to that collection.
@@ -420,16 +390,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Checks if the given value meets the validation attribute constraints on the PSVariable.
         /// </summary>
-        ///
         /// <param name="value">
         /// value which needs to be checked
         /// </param>
-        ///
         /// <remarks>
         /// If <paramref name="value"/> is null or if no attributes are set, then
         /// the value is deemed valid.
         /// </remarks>
-        ///
         /// <exception cref="ValidationMetadataException">
         /// If the validation metadata throws an exception.
         /// </exception>
@@ -456,15 +423,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if the value is valid for the specified attribute
         /// </summary>
-        ///
         /// <param name="value">
         /// The variable value to validate.
         /// </param>
-        ///
         /// <param name="attribute">
         /// The attribute to use to validate that value.
         /// </param>
-        ///
         /// <returns>
         /// True if the value is valid with respect to the attribute, or false otherwise.
         /// </returns>
@@ -501,18 +465,15 @@ namespace System.Management.Automation
         /// Runs all ArgumentTransformationAttributes that are specified in the Attributes
         /// collection on the given value in the order that they are in the collection.
         /// </summary>
-        ///
         /// <param name="attributes">
         /// The attributes to use to transform the value.
         /// </param>
         /// <param name="value">
         /// The value to be transformed.
         /// </param>
-        ///
         /// <returns>
         /// The transformed value.
         /// </returns>
-        ///
         /// <exception cref="ArgumentTransformationMetadataException">
         /// If the argument transformation fails.
         /// </exception>
@@ -564,7 +525,6 @@ namespace System.Management.Automation
         /// Returns true if the PSVariable is constant (only visible in the
         /// current scope), false otherwise.
         /// </summary>
-        ///
         internal bool IsConstant
         {
             get
@@ -577,7 +537,6 @@ namespace System.Management.Automation
         /// Returns true if the PSVariable is readonly (only visible in the
         /// current scope), false otherwise.
         /// </summary>
-        ///
         internal bool IsReadOnly
         {
             get
@@ -590,7 +549,6 @@ namespace System.Management.Automation
         /// Returns true if the PSVariable is private (only visible in the
         /// current scope), false otherwise.
         /// </summary>
-        ///
         internal bool IsPrivate
         {
             get
@@ -603,7 +561,6 @@ namespace System.Management.Automation
         /// Returns true if the PSVariable is propagated to all scopes
         /// when the scope is created.
         /// </summary>
-        ///
         internal bool IsAllScope
         {
             get
@@ -646,20 +603,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Verifies the constraints and attributes before setting the value
         /// </summary>
-        ///
         /// <param name="value">
         /// The value to be set.
         /// </param>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
         /// </exception>
-        ///
         /// <exception cref="ValidationMetadataException">
         /// If the validation metadata throws an exception or the value doesn't
         /// pass the validation metadata.
         /// </exception>
-        ///
         private void SetValue(object value)
         {
             // Check to see if the variable is writable
@@ -840,14 +793,12 @@ namespace System.Management.Automation
     /// This class is used for $null.  It always returns null as a value and accepts
     /// any value when it is set and throws it away.
     /// </summary>
-    ///
     internal class NullVariable : PSVariable
     {
         /// <summary>
         /// Constructor that calls the base class constructor with name "null" and
         /// value null.
         /// </summary>
-        ///
         internal NullVariable() : base(StringLiterals.Null, null, ScopedItemOptions.Constant | ScopedItemOptions.AllScope)
         {
         }

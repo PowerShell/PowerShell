@@ -68,27 +68,6 @@ namespace Microsoft.PowerShell.Commands
              IgnoreCase = true)]
         public string[] Category { get; set; }
 
-        /// <summary>
-        /// List of Component's to search on.
-        /// </summary>
-        /// <value></value>
-        [Parameter]
-        public string[] Component { get; set; } = null;
-
-        /// <summary>
-        /// List of Functionality's to search on.
-        /// </summary>
-        /// <value></value>
-        [Parameter]
-        public string[] Functionality { get; set; } = null;
-
-        /// <summary>
-        /// List of Role's to search on.
-        /// </summary>
-        /// <value></value>
-        [Parameter]
-        public string[] Role { get; set; } = null;
-
         private string _provider = string.Empty;
 
         /// <summary>
@@ -180,6 +159,24 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Parameters", Mandatory = true)]
         public string Parameter { set; get; }
 
+        /// <summary>
+        /// Gets and sets list of Component's to search on.
+        /// </summary>
+        [Parameter]
+        public string[] Component { get; set; }
+
+        /// <summary>
+        /// Gets and sets list of Functionality's to search on.
+        /// </summary>
+        [Parameter]
+        public string[] Functionality { get; set; }
+
+        /// <summary>
+        /// Gets and sets list of Role's to search on.
+        /// </summary>
+        [Parameter]
+        public string[] Role { get; set; }
+        
         /// <summary>
         /// This parameter,if true, will direct get-help cmdlet to
         /// navigate to a URL (stored in the command MAML file under
@@ -599,11 +596,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, HelpDisplayStrings.OnlineHelpUri, uriToLaunch.OriginalString));
                 System.Diagnostics.Process browserProcess = new System.Diagnostics.Process();
-#if UNIX
-                browserProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* macOS */ "open";
-                browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
-                browserProcess.Start();
-#else
+
                 if (Platform.IsNanoServer || Platform.IsIoT)
                 {
                     // We cannot open the URL in browser on headless SKUs.
@@ -612,12 +605,10 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // We can call ShellExecute directly on Full Windows.
                     browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
                     browserProcess.StartInfo.UseShellExecute = true;
                     browserProcess.Start();
                 }
-#endif
             }
             catch (InvalidOperationException ioe)
             {

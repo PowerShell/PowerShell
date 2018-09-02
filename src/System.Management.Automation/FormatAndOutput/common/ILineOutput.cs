@@ -154,7 +154,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal virtual void ExecuteBufferPlayBack(DoPlayBackCall playback) { }
 
-        ///
         /// <summary>
         /// The number of columns the current device has
         /// </summary>

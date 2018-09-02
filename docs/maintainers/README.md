@@ -20,14 +20,17 @@ They have [write access](https://help.github.com/articles/repository-permission-
 
 ## Current Repository Maintainers
 
-* Sergei Vorobev ([vors](https://github.com/vors))
-* Jason Shirk ([lzybkr](https://github.com/lzybkr))
-* Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
-* Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
-* Mike Richmond ([mirichmo](https://github.com/mirichmo))
-* Andy Schwartzmeyer ([andschwa](https://github.com/andschwa))
-* Aditya Patwardhan ([adityapatwardhan](https://github.com/adityapatwardhan))
-* Ilya Sazonov ([iSazonov](https://github.com/iSazonov))
+- Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
+- Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
+- Aditya Patwardhan ([adityapatwardhan](https://github.com/adityapatwardhan))
+- Ilya Sazonov ([iSazonov](https://github.com/iSazonov))
+
+## Former Repository Maintainers
+
+- Jason Shirk ([lzybkr](https://github.com/lzybkr))
+- Sergei Vorobev ([vors](https://github.com/vors))
+- Mike Richmond ([mirichmo](https://github.com/mirichmo))
+- Andy Schwartzmeyer ([andschwa](https://github.com/andschwa))
 
 ## Repository Maintainer Responsibilities
 
@@ -54,7 +57,7 @@ If you are a Repository Maintainer, you:
   However, they should be reminded to create an issue in the future to frontload any potential problems with the work and to minimize duplication of efforts.
 1. **SHOULD** encourage contributors to create meaningful titles for all PRs.
   Edit the title if necessary to provide clarity on the problem
-1. **SHOULD** encourage contributes to write meaningful, descriptive git commits
+1. **SHOULD** encourage contributors to write meaningful, descriptive git commits
 1. **SHOULD NOT** merge pull requests with a failed CI build
   (unless, for instance, the pull request is being submitted to fix broken CI)
 1. **SHOULD NOT** merge pull requests without the label `cla-signed` or `cla-not-required` from the Microsoft CLA bot
@@ -73,6 +76,10 @@ Please see [Issue Management][issue-management]
 
 Please see [Contributing][CONTRIBUTING]
 
+## Maintainer Best Practices
+
+Please see [Best Practices][best-practice]
+
 ## Becoming a Repository Maintainer
 
 Repository Maintainers currently consist mostly of Microsoft employees.
@@ -82,10 +89,11 @@ Eligibility is heavily dependent on the level of contribution and expertise: ind
 At any point in time, the existing Repository Maintainers can unanimously nominate a strong community member to become a Repository Maintainer.
 Nominations are brought to the PowerShell Committee to understand the reasons and justification.
 A simple majority of the PowerShell Committee is required to veto the nomination.
-Once a nominee has been approved, a PR will be submitted by a current Maintainer to update this document to add the nominee's name to
+When a nominee has been approved, a PR will be submitted by a current Maintainer to update this document to add the nominee's name to
 the [Current Repository Maintainers](#Current-Repository-Maintainers) with justification as the description of the PR to serve as the public announcement.
 
 [RFC-repo]: https://github.com/PowerShell/PowerShell-RFC
 [ci-system]: ../testing-guidelines/testing-guidelines.md#ci-system
 [issue-management]: issue-management.md
 [CONTRIBUTING]: ../../.github/CONTRIBUTING.md
+[best-practice]: best-practice.md

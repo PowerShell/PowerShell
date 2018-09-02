@@ -10,30 +10,35 @@ namespace Microsoft.PowerShell
 {
     internal static class ComInterfaces
     {
-        [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "GetStartupInfoA")]
+        [DllImport("kernel32.dll", SetLastError = false, EntryPoint = "GetStartupInfoW")]
         internal static extern void GetStartupInfo(out StartUpInfo lpStartupInfo);
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        /// <remarks>
+        /// IntPtr is being used for the string fields to make the marshaller faster and
+        /// simpler. With IntPtr, all fields are blittable, and since we don't use the
+        /// string fields at all, nothing is lost.
+        /// </remarks>
+        [StructLayout(LayoutKind.Sequential)]
         internal struct StartUpInfo
         {
-            public Int32 cb;
-            public string lpReserved;
-            public string lpDesktop;
-            public string lpTitle;
-            public Int32 dwX;
-            public Int32 dwY;
-            public Int32 dwXSize;
-            public Int32 dwYSize;
-            public Int32 dwXCountChars;
-            public Int32 dwYCountChars;
-            public Int32 dwFillAttribute;
-            public Int32 dwFlags;
-            public Int16 wShowWindow;
-            public Int16 cbReserved2;
-            public IntPtr lpReserved2;
-            public IntPtr hStdInput;
-            public IntPtr hStdOutput;
-            public IntPtr hStdError;
+            public readonly UInt32 cb;
+            private readonly IntPtr lpReserved;
+            public readonly IntPtr lpDesktop;
+            public readonly IntPtr lpTitle;
+            public readonly UInt32 dwX;
+            public readonly UInt32 dwY;
+            public readonly UInt32 dwXSize;
+            public readonly UInt32 dwYSize;
+            public readonly UInt32 dwXCountChars;
+            public readonly UInt32 dwYCountChars;
+            public readonly UInt32 dwFillAttribute;
+            public readonly UInt32 dwFlags;
+            public readonly UInt16 wShowWindow;
+            private readonly UInt16 cbReserved2;
+            private readonly IntPtr lpReserved2;
+            public readonly IntPtr hStdInput;
+            public readonly IntPtr hStdOutput;
+            public readonly IntPtr hStdError;
         }
 
         [ComImport]

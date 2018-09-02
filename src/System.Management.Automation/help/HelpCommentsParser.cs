@@ -479,6 +479,7 @@ namespace System.Management.Automation
         {
             prompt_str = code_str = string.Empty;
             StringBuilder builder = new StringBuilder();
+            string default_prompt_str = "PS > ";
 
             int collectingPart = 1;
             foreach (char c in content)
@@ -495,7 +496,7 @@ namespace System.Management.Automation
                 {
                     if (collectingPart == 1)
                     {
-                        prompt_str = "PS C:\\>";
+                        prompt_str = default_prompt_str;
                     }
                     code_str = builder.ToString().Trim();
                     builder = new StringBuilder();
@@ -507,7 +508,7 @@ namespace System.Management.Automation
 
             if (collectingPart == 1)
             {
-                prompt_str = "PS C:\\>";
+                prompt_str = default_prompt_str;
                 code_str = builder.ToString().Trim();
                 remarks_str = string.Empty;
             }

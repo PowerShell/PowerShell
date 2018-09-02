@@ -3,6 +3,7 @@
 $Environment = Get-EnvironmentInformation
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
+Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.17.10", "ubuntu.18.04", "debian.8", "debian.9")
 
 function Start-PSPackage {
@@ -1102,6 +1103,14 @@ function New-AfterScripts
         $AfterRemoveScript = [io.path]::GetTempFileName()
         $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
         $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+
+        if ($Environment.IsDebian9) {
+            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+            # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
+            # symlinks.
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" >$null
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" >$null
+        }
     }
 
     return [PSCustomObject] @{
@@ -1165,6 +1174,7 @@ function Get-MacOSPackageId
     }
 }
 
+# Dynamically build macOS launcher application.
 function New-MacOSLauncher
 {
     param(
@@ -1175,38 +1185,40 @@ function New-MacOSLauncher
     $IsPreview = Test-IsPreview -Version $Version
     $packageId = Get-MacOSPackageId -IsPreview:$IsPreview
 
-    # Define folder for launch application.
-    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
+    # Define folder for launcher application.
+    $suffix = if ($IsPreview) { "-preview" }
+    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/PowerShell$suffix.app"
 
-    # Update icns file.
-    $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+    # Create folder structure for launcher application.
+    New-Item -Force -ItemType Directory -Path "$macosapp/Contents/MacOS" | Out-Null
+    New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
+
+    # Define icns file information.
+    if ($IsPreview)
+    {
+        $iconfile = "$PSScriptRoot/../../assets/Powershell-preview.icns"
+    }
+    else
+    {
+        $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+    }
     $iconfilebase = (Get-Item -Path $iconfile).BaseName
 
-    # Create Resources folder, ignore error if exists.
-    New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
+    # Copy icns file.
     Copy-Item -Force -Path $iconfile -Destination "$macosapp/Contents/Resources"
 
-    # Set values in plist.
+    # Create plist file.
     $plist = "$macosapp/Contents/Info.plist"
-    Start-NativeExecution {
-        defaults write $plist CFBundleIdentifier $packageId
-        defaults write $plist CFBundleVersion $Version
-        defaults write $plist CFBundleShortVersionString $Version
-        defaults write $plist CFBundleGetInfoString $Version
-        defaults write $plist CFBundleIconFile $iconfilebase
-    }
+    $plistcontent = $packagingStrings.MacOSLauncherPlistTemplate -f $packageId, $Version, $iconfilebase
+    $plistcontent | Out-File -Force -Path $plist -Encoding utf8
 
-    # Convert to XML plist, needed because defaults native
-    # app auto converts it to binary format when it modify
-    # the plist file.
-    Start-NativeExecution {
-        plutil -convert xml1 $plist
-    }
-
-    # Set permissions for plist and shell script. Note that
-    # defaults native app sets 700 when writing to the plist
-    # file from above. Both of these will be reset post fpm.
+    # Create shell script.
+    $executablepath = if ($IsPreview) { "/usr/local/bin/pwsh-preview" } else { "/usr/local/bin/pwsh" }
     $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
+    $shellscriptcontent = $packagingStrings.MacOSLauncherScript -f $executablepath
+    $shellscriptcontent | Out-File -Force -Path $shellscript -Encoding utf8
+
+    # Set permissions for plist and shell script.
     Start-NativeExecution {
         chmod 644 $plist
         chmod 755 $shellscript
@@ -1224,20 +1236,10 @@ function Clear-MacOSLauncher
     # the launcher app in the build structure and updating
     # it which locks out subsequent package builds due to
     # increase permissions.
-    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
-    $plist = "$macosapp/Contents/Info.plist"
-    $tempguid = (New-Guid).Guid
-    Start-NativeExecution {
-        defaults write $plist CFBundleIdentifier $tempguid
-        plutil -convert xml1 $plist
-    }
 
-    # Restore default permissions.
-    $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
-    Start-NativeExecution {
-        chmod 644 $shellscript
-        chmod 644 $plist
-    }
+    # Remove launcher application.
+    $macosfolder = "$PSScriptRoot/macos"
+    Remove-Item -Force -Recurse -Path $macosfolder
 }
 
 function New-StagingFolder
@@ -1412,8 +1414,8 @@ function New-UnifiedNugetPackage
         [Parameter(Mandatory = $true)]
         [string] $LinuxArm32BinPath,
 
-        [Parameter(Mandatory = $true)]
-        [string] $LinuxMuslPath,
+        [Parameter(Mandatory = $false)]
+        [string] $LinuxMuslBinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $LinuxBinPath,
@@ -1440,7 +1442,8 @@ function New-UnifiedNugetPackage
         "Microsoft.PowerShell.SDK.dll",
         "Microsoft.WSMan.Management.dll",
         "Microsoft.WSMan.Runtime.dll",
-        "System.Management.Automation.dll")
+        "System.Management.Automation.dll",
+        "Microsoft.PowerShell.MarkdownRender.dll")
 
     $linuxExceptionList = @(
         "Microsoft.PowerShell.Commands.Diagnostics.dll",
@@ -1480,7 +1483,12 @@ function New-UnifiedNugetPackage
             if ($linuxExceptionList -notcontains $file )
             {
                 CreateNugetPlatformFolder -Platform 'linux-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxArm32BinPath
-                CreateNugetPlatformFolder -Platform 'linux-musl-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxMuslBinPath
+
+                if($linuxMuslBinPath)
+                {
+                    CreateNugetPlatformFolder -Platform 'linux-musl-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxMuslBinPath
+                }
+
                 CreateNugetPlatformFolder -Platform 'linux-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxBinPath
                 CreateNugetPlatformFolder -Platform 'osx' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $osxBinPath
             }
@@ -1496,21 +1504,35 @@ function New-UnifiedNugetPackage
 
                 'Microsoft.PowerShell.Commands.Management' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceProcess.ServiceController'), [tuple]::Create('version', '4.5.0'))) > $null
+                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                    {
+                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                    }
                 }
 
                 'Microsoft.PowerShell.Commands.Utility' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.CodeAnalysis.CSharp'), [tuple]::Create('version', '2.7.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.MarkdownRender'), [tuple]::Create('version', $PackageVersion))) > $null
+
+                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                    {
+                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                    }
                 }
 
                 'Microsoft.PowerShell.ConsoleHost' {
                     $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create( [tuple]::Create('id', 'Microsoft.ApplicationInsights'), [tuple]::Create('version', '2.4.0'))) > $null
+                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                    {
+                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                    }
                 }
 
                 'Microsoft.PowerShell.CoreCLR.Eventing' {
-                    $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Security.Principal.Windows'), [tuple]::Create('version', '4.5.0'))) > $null
+                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                    {
+                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                    }
                 }
 
                 'Microsoft.PowerShell.SDK' {
@@ -1519,18 +1541,10 @@ function New-UnifiedNugetPackage
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.ConsoleHost'), [tuple]::Create('version', $PackageVersion))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Data.SqlClient'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.IO.Packaging'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Net.Http.WinHttpHandler'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Duplex'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Http'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.NetTcp'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Primitives'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Security'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Text.Encodings.Web'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Threading.AccessControl'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Private.ServiceModel'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.NETCore.Windows.ApiSets'), [tuple]::Create('version', '1.0.1'))) > $null
+                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                    {
+                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                    }
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
                 }
@@ -1542,7 +1556,10 @@ function New-UnifiedNugetPackage
                 'Microsoft.WSMan.Management' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Runtime'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceProcess.ServiceController'), [tuple]::Create('version', '4.5.0'))) > $null
+                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                    {
+                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                    }
                 }
 
                 'Microsoft.WSMan.Runtime' {
@@ -1551,16 +1568,18 @@ function New-UnifiedNugetPackage
 
                 'System.Management.Automation' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.CoreCLR.Eventing'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Win32.Registry.AccessControl'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Newtonsoft.Json'), [tuple]::Create('version', '10.0.3'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.IO.FileSystem.AccessControl'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.AccessControl'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.Cryptography.Pkcs'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.Permissions'), [tuple]::Create('version', '4.5.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Text.Encoding.CodePages'), [tuple]::Create('version', '4.3.0'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure'), [tuple]::Create('version', '1.0.0-alpha08'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'PowerShell.Core.Instrumentation'), [tuple]::Create('version', '6.0.0-RC2'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'libpsl'), [tuple]::Create('version', '6.0.0-rc'))) > $null
+                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                    {
+                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                    }
+                }
+
+                'Microsoft.PowerShell.MarkdownRender' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                    {
+                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                    }
                 }
             }
 
@@ -1576,6 +1595,41 @@ function New-UnifiedNugetPackage
         if(Test-Path $tmpPackageRoot)
         {
             Remove-Item $tmpPackageRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+<#
+.SYNOPSIS
+Return the list of packages and versions used by a project
+
+.PARAMETER ProjectName
+The name of the project to get the projects for.
+#>
+function Get-ProjectPackageInformation
+{
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]
+        $ProjectName
+    )
+
+    $csproj = "$PSScriptRoot\..\..\src\$ProjectName\$ProjectName.csproj"
+    [xml] $csprojXml = (Get-content -Raw -Path $csproj)
+
+    # get the package references
+    $packages=$csprojXml.Project.ItemGroup.PackageReference
+
+    # check to see if there is a newer package for each refernce
+    foreach($package in $packages)
+    {
+        if($package.Version -notmatch '\*' -and $package.Include)
+        {
+            # Get the name of the package
+            [PSCustomObject] @{
+                Name = $package.Include
+                Version = $package.Version
+            }
         }
     }
 }
@@ -2400,14 +2454,14 @@ function New-MSIPackage
     [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
     if(!$isPreview)
     {
-        [Environment]::SetEnvironmentVariable("AddPathDefault", '1', "Process")
+        [Environment]::SetEnvironmentVariable("PwshPath", '', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '31ab5147-9a97-4452-8443-d9709f0516e1', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '1d00683b-0f84-4db8-a64f-2f98ad42fe06', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_black.ico', "Process")
     }
     else
     {
-        [Environment]::SetEnvironmentVariable("AddPathDefault", '0', "Process")
+        [Environment]::SetEnvironmentVariable("PwshPath", 'preview', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_av_colors.ico', "Process")
@@ -2501,15 +2555,19 @@ function Test-FileWxs
     $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)',$env:FileArchitecture)
 
     [xml] $filesAssetXml = $filesAssetString
+    [xml] $newFilesAssetXml = $filesAssetString
+    $xmlns=[System.Xml.XmlNamespaceManager]::new($newFilesAssetXml.NameTable)
+    $xmlns.AddNamespace('Wix','http://schemas.microsoft.com/wix/2006/wi')
+
     [xml] $heatFilesXml = Get-Content -Raw -Path $HeatFilesWxsPath
     $assetFiles = $filesAssetXml.GetElementsByTagName('File')
     $heatFiles = $heatFilesXml.GetElementsByTagName('File')
-    $indexedHeatFiles = @()
+    $heatNodesByFile = @{}
 
     # Index the list of files generated by heat
     foreach($file in $heatFiles)
     {
-        $indexedHeatFiles += $file.Source
+        $heatNodesByFile.Add($file.Source, $file)
     }
 
     # Index the files from the asset wxs
@@ -2519,40 +2577,216 @@ function Test-FileWxs
     foreach($file in $assetFiles)
     {
         $name = $file.Source
-        if($indexedHeatFiles -inotcontains $name)
+        if($heatNodesByFile.Keys -inotcontains $name)
         {
             $passed = $false
             Write-Warning "{$name} is no longer in product and should be removed from {$FilesWxsPath}"
+            $componentId = $file.ParentNode.Id
+            $componentXPath = '//Wix:Component[@Id="{0}"]' -f $componentId
+            $componentNode = Get-XmlNodeByXPath -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns -XPath $componentXPath
+            if($componentNode)
+            {
+                # Remove the Component
+                Remove-XmlElement -Element $componentNode -RemoveEmptyParents
+                # Remove teh ComponentRef
+                Remove-ComponentRefNode -Id $componentId -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
+            }
+            else
+            {
+                Write-Warning "Could not remove this node!"
+            }
         }
         $indexedAssetFiles += $name
     }
 
     # verify that no files have been added.
-    foreach($file in $indexedHeatFiles)
+    foreach($file in $heatNodesByFile.Keys)
     {
         if($indexedAssetFiles -inotcontains $file)
         {
             $passed = $false
-            Write-Warning "new file {$file} need to be added to {$FilesWxsPath}"
+            $folder = Split-Path -Path $file
+            $name = Split-Path -Path $file -Leaf
+            $heatNode = $heatNodesByFile[$file]
+            $compGroupNode = Get-ComponentGroupNode -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
+            $filesNode = Get-DirectoryNode -Node $heatNode -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
+            # Create new Component
+            $newComponent = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'Component' -Node $filesNode -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
+            $componentId = New-WixId -Prefix 'cmp'
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponent -Name 'Id' -Value $componentId
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponent -Name 'Guid' -Value "{$(New-Guid)}"
+            # Crete new File in Component
+            $newFile = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'File' -Node $newComponent -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'Id' -Value (New-WixId -Prefix 'fil')
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'KeyPath' -Value "yes"
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'Source' -Value $file
+            # Create new ComponentRef
+            $newComponentRef = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'ComponentRef' -Node $compGroupNode -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponentRef -Name 'Id' -Value $componentId
+
+            Write-Warning "new file in {$folder} with name {$name} in a {$($filesNode.LocalName)} need to be added to {$FilesWxsPath}"
         }
     }
 
     if(!$passed)
     {
+        $newXmlFileName = Join-Path -Path $env:TEMP -ChildPath ([System.io.path]::GetRandomFileName() + '.xml')
+        $newFilesAssetXml.Save($newXmlFileName)
+        $newXml = Get-Content -raw $newXmlFileName
+        $newXml = $newXml -replace 'amd64', '$(var.FileArchitecture)'
+        $newXml = $newXml -replace 'x86', '$(var.FileArchitecture)'
+        $newXml | Out-File -FilePath $newXmlFileName -Encoding ascii
+        Write-Log -message "Update xml saved to $newXmlFileName"
         if($env:appveyor)
         {
             try
             {
-                Push-AppveyorArtifact $HeatFilesWxsPath
+                Push-AppveyorArtifact $newXmlFileName
             }
             catch
             {
                 Write-Warning -Message "Pushing MSI File fragment failed."
             }
         }
+        elseif($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest')
+        {
+            Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$newXmlFileName"
+        }
 
         throw "Current files to not match  {$FilesWxsPath}"
     }
+}
+
+# Removes a ComponentRef node in the files.wxs Xml Doc
+function Remove-ComponentRefNode
+{
+    param(
+        [Parameter(Mandatory)]
+        [System.Xml.XmlDocument]
+        $XmlDoc,
+        [Parameter(Mandatory)]
+        [System.Xml.XmlNamespaceManager]
+        $XmlNsManager,
+        [Parameter(Mandatory)]
+        [string]
+        $Id
+    )
+
+    $compRefXPath = '//Wix:ComponentRef[@Id="{0}"]' -f $Id
+    $node = Get-XmlNodeByXPath -XmlDoc $XmlDoc -XmlNsManager $XmlNsManager -XPath $compRefXPath
+    if($node)
+    {
+        Remove-XmlElement -element $node
+    }
+    else
+    {
+        Write-Warning "could not remove node"
+    }
+}
+
+# Get the ComponentGroup node in the files.wxs Xml Doc
+function Get-ComponentGroupNode
+{
+    param(
+        [Parameter(Mandatory)]
+        [System.Xml.XmlDocument]
+        $XmlDoc,
+        [Parameter(Mandatory)]
+        [System.Xml.XmlNamespaceManager]
+        $XmlNsManager
+    )
+
+    if(!$XmlNsManager.HasNamespace('Wix'))
+    {
+        throw 'Namespace manager must have "wix" defined.'
+    }
+
+    $compGroupXPath = '//Wix:ComponentGroup'
+    $node = Get-XmlNodeByXPath -XmlDoc $XmlDoc -XmlNsManager $XmlNsManager -XPath $compGroupXPath
+    return $node
+}
+
+# Gets the Directory Node the files.wxs Xml Doc
+# Creates it if it does not exist
+function Get-DirectoryNode
+{
+    param(
+        [Parameter(Mandatory)]
+        [System.Xml.XmlElement]
+        $Node,
+        [Parameter(Mandatory)]
+        [System.Xml.XmlDocument]
+        $XmlDoc,
+        [Parameter(Mandatory)]
+        [System.Xml.XmlNamespaceManager]
+        $XmlNsManager
+    )
+
+    if(!$XmlNsManager.HasNamespace('Wix'))
+    {
+        throw 'Namespace manager must have "wix" defined.'
+    }
+
+    $pathStack =  [System.Collections.Stack]::new()
+
+    [System.Xml.XmlElement] $dirNode = $Node.ParentNode.ParentNode
+    $dirNodeType = $dirNode.LocalName
+    if($dirNodeType -eq 'DirectoryRef')
+    {
+        return Get-XmlNodeByXPath -XmlDoc $XmlDoc -XmlNsManager $XmlNsManager -XPath "//Wix:DirectoryRef"
+    }
+    if($dirNodeType -eq 'Directory')
+    {
+        while($dirNode.LocalName -eq 'Directory') {
+            $pathStack.Push($dirNode.Name)
+            $dirNode = $dirNode.ParentNode
+        }
+        $path = "//"
+        [System.Xml.XmlElement] $lastNode = $null
+        while($pathStack.Count -gt 0){
+            $dirName = $pathStack.Pop()
+            $path += 'Wix:Directory[@Name="{0}"]' -f $dirName
+            $node = Get-XmlNodeByXPath -XmlDoc $XmlDoc -XmlNsManager $XmlNsManager -XPath $path
+
+            if(!$node)
+            {
+                if(!$lastNode)
+                {
+                    # Inserting at the root
+                    $lastNode = Get-XmlNodeByXPath -XmlDoc $XmlDoc -XmlNsManager $XmlNsManager -XPath "//Wix:DirectoryRef"
+                }
+
+                $newDirectory = New-XmlElement -XmlDoc $XmlDoc -LocalName 'Directory' -Node $lastNode -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
+                New-XmlAttribute -XmlDoc $XmlDoc -Element $newDirectory -Name 'Name' -Value $dirName
+                New-XmlAttribute -XmlDoc $XmlDoc -Element $newDirectory -Name 'Id' -Value (New-WixId -Prefix 'dir')
+                $lastNode = $newDirectory
+            }
+            else
+            {
+                $lastNode = $node
+            }
+            if ($pathStack.Count -gt 0)
+            {
+                $path += '/'
+            }
+        }
+        return $lastNode
+    }
+
+    throw "unknown element type: $dirNodeType"
+}
+
+# Creates a new Wix Id in the proper format
+function New-WixId
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $Prefix
+    )
+
+    $guidPortion = (New-Guid).Guid.ToUpperInvariant() -replace '\-' ,''
+    "$Prefix$guidPortion"
 }
 
 # Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'

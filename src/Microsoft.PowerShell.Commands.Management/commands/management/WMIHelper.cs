@@ -161,7 +161,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         internal override event EventHandler<OperationStateEventArgs> OperationComplete;
 

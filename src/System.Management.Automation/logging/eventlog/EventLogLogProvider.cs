@@ -20,7 +20,6 @@ namespace System.Management.Automation
     ///
     /// EventLogLogProvider will be packaged in the same dll as Msh Log Engine since EventLog should
     /// always be available.
-    ///
     /// </summary>
     internal class EventLogLogProvider : LogProvider
     {
@@ -213,7 +212,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="exception"></param>
-        ///
         internal override void LogCommandHealthEvent(LogContext logContext, Exception exception)
         {
             int eventId = _commandHealthEventId;
@@ -389,7 +387,6 @@ namespace System.Management.Automation
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="exception"></param>
-        ///
         internal override void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception)
         {
             int eventId = _providerHealthEventId;

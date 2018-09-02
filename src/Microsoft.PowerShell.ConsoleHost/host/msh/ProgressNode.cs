@@ -12,10 +12,8 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    ///
     /// ProgressNode is an augmentation of the ProgressRecord type that adds extra fields for the purposes of tracking
     /// outstanding activities received by the host, and rendering them in the console.
-    ///
     /// </summary>
 
     internal
@@ -23,9 +21,7 @@ namespace Microsoft.PowerShell
     ProgressNode : ProgressRecord
     {
         /// <summary>
-        ///
         /// Indicates the various layouts for rendering a particular node.  Each style is progressively less terse.
-        ///
         /// </summary>
 
         internal
@@ -49,9 +45,7 @@ namespace Microsoft.PowerShell
         };
 
         /// <summary>
-        ///
         /// Constructs an instance from a ProgressRecord.
-        ///
         /// </summary>
 
         internal
@@ -71,30 +65,20 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Renders a single progress node as strings of text according to that node's style. The text is appended to the
         /// supplied list of strings.
-        ///
         /// </summary>
         /// <param name="strCollection">
-        ///
         /// List of strings to which the node's rendering will be appended.
-        ///
         /// </param>
         /// <param name="indentation">
-        ///
         /// The indentation level (in BufferCells) at which the node should be rendered.
-        ///
         /// </param>
         /// <param name="maxWidth">
-        ///
         /// The maximum number of BufferCells that the rendering is allowed to consume.
-        ///
         /// </param>
         /// <param name="rawUI">
-        ///
         /// The PSHostRawUserInterface used to gauge string widths in the rendering.
-        ///
         /// </param>
 
         internal
@@ -129,34 +113,22 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Renders a node in the "Full" style.
-        ///
         /// </summary>
         /// <param name="strCollection">
-        ///
         /// List of strings to which the node's rendering will be appended.
-        ///
         /// </param>
         /// <param name="indentation">
-        ///
         /// The indentation level (in BufferCells) at which the node should be rendered.
-        ///
         /// </param>
         /// <param name="maxWidth">
-        ///
         /// The maximum number of BufferCells that the rendering is allowed to consume.
-        ///
         /// </param>
         /// <param name="rawUI">
-        ///
         /// The PSHostRawUserInterface used to gauge string widths in the rendering.
-        ///
         /// </param>
         /// <param name="isFullPlus">
-        ///
         /// Indicate if the full StatusDescription and CurrentOperation should be displayed.
-        ///
         /// </param>
 
         private
@@ -254,29 +226,19 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Renders a node in the "Compact" style.
-        ///
         /// </summary>
         /// <param name="strCollection">
-        ///
         /// List of strings to which the node's rendering will be appended.
-        ///
         /// </param>
         /// <param name="indentation">
-        ///
         /// The indentation level (in BufferCells) at which the node should be rendered.
-        ///
         /// </param>
         /// <param name="maxWidth">
-        ///
         /// The maximum number of BufferCells that the rendering is allowed to consume.
-        ///
         /// </param>
         /// <param name="rawUI">
-        ///
         /// The PSHostRawUserInterface used to gauge string widths in the rendering.
-        ///
         /// </param>
 
         private
@@ -333,29 +295,19 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Renders a node in the "Minimal" style.
-        ///
         /// </summary>
         /// <param name="strCollection">
-        ///
         /// List of strings to which the node's rendering will be appended.
-        ///
         /// </param>
         /// <param name="indentation">
-        ///
         /// The indentation level (in BufferCells) at which the node should be rendered.
-        ///
         /// </param>
         /// <param name="maxWidth">
-        ///
         /// The maximum number of BufferCells that the rendering is allowed to consume.
-        ///
         /// </param>
         /// <param name="rawUI">
-        ///
         /// The PSHostRawUserInterface used to gauge string widths in the rendering.
-        ///
         /// </param>
 
         private
@@ -393,9 +345,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// The nodes that have this node as their parent.
-        ///
         /// </summary>
 
         internal
@@ -403,7 +353,6 @@ namespace Microsoft.PowerShell
         Children;
 
         /// <summary>
-        ///
         /// The "age" of the node.  A node's age is incremented by PendingProgress.Update each time a new ProgressRecord is
         /// received by the host. A node's age is reset when a corresponding ProgressRecord is received.  Thus, the age of
         /// a node reflects the number of ProgressRecord that have been received since the node was last updated.
@@ -412,7 +361,6 @@ namespace Microsoft.PowerShell
         /// display has finite size, it may be possible to have many more outstanding progress activities than will fit in that
         /// space. The rendering of nodes can be progressively "compressed" into a more terse format, or not rendered at all in
         /// order to fit as many nodes as possible in the available space. The oldest nodes are compressed or skipped first.
-        ///
         /// </summary>
 
         internal
@@ -420,9 +368,7 @@ namespace Microsoft.PowerShell
         Age;
 
         /// <summary>
-        ///
         /// The style in which this node should be rendered.
-        ///
         /// </summary>
 
         internal
@@ -430,9 +376,7 @@ namespace Microsoft.PowerShell
         Style = RenderStyle.FullPlus;
 
         /// <summary>
-        ///
         /// Identifies the source of the progress record.
-        ///
         /// </summary>
 
         internal
@@ -440,9 +384,7 @@ namespace Microsoft.PowerShell
         SourceId;
 
         /// <summary>
-        ///
         /// The number of vertical BufferCells that are required to render the node in its current style.
-        ///
         /// </summary>
         /// <value></value>
 
@@ -476,9 +418,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// The number of vertical BufferCells that are required to render the node in the Full style.
-        ///
         /// </summary>
         /// <value></value>
 
@@ -534,9 +474,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// The number of vertical BufferCells that are required to render the node in the Compact style.
-        ///
         /// </summary>
         /// <value></value>
 

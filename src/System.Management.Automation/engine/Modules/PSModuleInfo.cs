@@ -301,49 +301,37 @@ namespace System.Management.Automation
             ProjectUri = null;
             IconUri = null;
 
-            var privateDataHashTable = _privateData as Hashtable;
-            if (privateDataHashTable != null)
+            if (_privateData is Hashtable hashData && hashData["PSData"] is Hashtable psData)
             {
-                var psData = privateDataHashTable["PSData"] as Hashtable;
-                if (psData != null)
+                var tagsValue = psData["Tags"];
+                if (tagsValue is object[] tags && tags.Length > 0)
                 {
-                    object tagsValue = psData["Tags"];
-                    if (tagsValue != null)
+                    foreach (var tagString in tags.OfType<string>())
                     {
-                        var tags = tagsValue as object[];
-                        if (tags != null && tags.Any())
-                        {
-                            foreach (var tagString in tags.OfType<string>())
-                            {
-                                AddToTags(tagString);
-                            }
-                        }
-                        else
-                        {
-                            AddToTags(tagsValue.ToString());
-                        }
+                        AddToTags(tagString);
                     }
-
-                    var licenseUri = psData["LicenseUri"] as string;
-                    if (licenseUri != null)
-                    {
-                        LicenseUri = GetUriFromString(licenseUri);
-                    }
-
-                    var projectUri = psData["ProjectUri"] as string;
-                    if (projectUri != null)
-                    {
-                        ProjectUri = GetUriFromString(projectUri);
-                    }
-
-                    var iconUri = psData["IconUri"] as string;
-                    if (iconUri != null)
-                    {
-                        IconUri = GetUriFromString(iconUri);
-                    }
-
-                    ReleaseNotes = psData["ReleaseNotes"] as string;
                 }
+                else if (tagsValue is string tag)
+                {
+                    AddToTags(tag);
+                }
+
+                if (psData["LicenseUri"] is string licenseUri)
+                {
+                    LicenseUri = GetUriFromString(licenseUri);
+                }
+
+                if (psData["ProjectUri"] is string projectUri)
+                {
+                    ProjectUri = GetUriFromString(projectUri);
+                }
+
+                if (psData["IconUri"] is string iconUri)
+                {
+                    IconUri = GetUriFromString(iconUri);
+                }
+
+                ReleaseNotes = psData["ReleaseNotes"] as string;
             }
         }
 
@@ -359,6 +347,11 @@ namespace System.Management.Automation
 
             return uri;
         }
+
+        /// <summary>
+        /// Get the experimental features declared in this module.
+        /// </summary>
+        public IEnumerable<ExperimentalFeature> ExperimentalFeatures { get; internal set; } = Utils.EmptyReadOnlyCollection<ExperimentalFeature>();
 
         /// <summary>
         /// Tags of this module.
@@ -486,6 +479,15 @@ namespace System.Management.Automation
             internal set;
         }
 
+        internal Collection<string> DeclaredFunctionExports = null;
+        internal Collection<string> DeclaredCmdletExports = null;
+        internal Collection<string> DeclaredAliasExports = null;
+        internal Collection<string> DeclaredVariableExports = null;
+
+        internal List<string> DetectedFunctionExports = new List<string>();
+        internal List<string> DetectedCmdletExports = new List<string>();
+        internal Dictionary<string, string> DetectedAliasExports = new Dictionary<string, string>();
+
         /// <summary>
         /// Lists the functions exported by this module...
         /// </summary>
@@ -496,17 +498,15 @@ namespace System.Management.Automation
                 Dictionary<string, FunctionInfo> exports = new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
 
                 // If the module is not binary, it may also have functions...
-                if ((DeclaredFunctionExports != null) && (DeclaredFunctionExports.Count > 0))
+                if (DeclaredFunctionExports != null)
                 {
+                    if (DeclaredFunctionExports.Count == 0) { return exports; }
+
                     foreach (string fn in DeclaredFunctionExports)
                     {
                         FunctionInfo tempFunction = new FunctionInfo(fn, ScriptBlock.EmptyScriptBlock, null) { Module = this };
                         exports[fn] = tempFunction;
                     }
-                }
-                else if ((DeclaredFunctionExports != null) && (DeclaredFunctionExports.Count == 0))
-                {
-                    return exports;
                 }
                 else if (SessionState != null)
                 {
@@ -525,7 +525,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    foreach (var detectedExport in _detectedFunctionExports)
+                    foreach (var detectedExport in DetectedFunctionExports)
                     {
                         if (!exports.ContainsKey(detectedExport))
                         {
@@ -636,9 +636,6 @@ namespace System.Management.Automation
             internal set;
         }
 
-        internal Collection<string> DeclaredFunctionExports = null;
-        internal List<string> _detectedFunctionExports = new List<string>();
-
         /// <summary>
         /// Add function to the fixed exports list
         /// </summary>
@@ -647,9 +644,9 @@ namespace System.Management.Automation
         {
             Dbg.Assert(name != null, "AddDetectedFunctionExport should not be called with a null value");
 
-            if (!_detectedFunctionExports.Contains(name))
+            if (!DetectedFunctionExports.Contains(name))
             {
-                _detectedFunctionExports.Add(name);
+                DetectedFunctionExports.Add(name);
             }
         }
 
@@ -662,17 +659,15 @@ namespace System.Management.Automation
             {
                 Dictionary<string, CmdletInfo> exports = new Dictionary<string, CmdletInfo>(StringComparer.OrdinalIgnoreCase);
 
-                if ((DeclaredCmdletExports != null) && (DeclaredCmdletExports.Count > 0))
+                if (DeclaredCmdletExports != null)
                 {
+                    if (DeclaredCmdletExports.Count == 0) { return exports; }
+
                     foreach (string fn in DeclaredCmdletExports)
                     {
                         CmdletInfo tempCmdlet = new CmdletInfo(fn, null, null, null, null) { Module = this };
                         exports[fn] = tempCmdlet;
                     }
-                }
-                else if ((DeclaredCmdletExports != null) && (DeclaredCmdletExports.Count == 0))
-                {
-                    return exports;
                 }
                 else if ((CompiledExports != null) && (CompiledExports.Count > 0))
                 {
@@ -683,7 +678,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    foreach (string detectedExport in _detectedCmdletExports)
+                    foreach (string detectedExport in DetectedCmdletExports)
                     {
                         if (!exports.ContainsKey(detectedExport))
                         {
@@ -696,8 +691,6 @@ namespace System.Management.Automation
                 return exports;
             }
         }
-        internal Collection<string> DeclaredCmdletExports = null;
-        internal List<string> _detectedCmdletExports = new List<string>();
 
         /// <summary>
         /// Add CmdletInfo to the fixed exports list...
@@ -707,9 +700,9 @@ namespace System.Management.Automation
         {
             Dbg.Assert(cmdlet != null, "AddDetectedCmdletExport should not be called with a null value");
 
-            if (!_detectedCmdletExports.Contains(cmdlet))
+            if (!DetectedCmdletExports.Contains(cmdlet))
             {
-                _detectedCmdletExports.Add(cmdlet);
+                DetectedCmdletExports.Add(cmdlet);
             }
         }
 
@@ -827,7 +820,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// CompatiblePSEditions
+        /// Lists the PowerShell editions this module is compatible with. This should
+        /// reflect the module manifest the module was loaded with, or if no manifest was given
+        /// or the key was not in the manifest, this should be an empty collection. This
+        /// property is never null.
         /// </summary>
         public IEnumerable<String> CompatiblePSEditions
         {
@@ -840,6 +836,22 @@ namespace System.Management.Automation
         {
             _compatiblePSEditions.Add(psEdition);
         }
+
+        internal void AddToCompatiblePSEditions(IEnumerable<string> psEditions)
+        {
+            _compatiblePSEditions.AddRange(psEditions);
+        }
+
+        /// <summary>
+        /// Describes whether the module was considered compatible at load time.
+        /// Any module not on the System32 module path should have this as true.
+        /// Modules loaded from the System32 module path will have this as true if they
+        /// have declared edition compatibility with PowerShell Core. Currently, this field
+        /// is true for all non-psd1 module files, when it should not be. Being able to
+        /// load psm1/dll modules from the System32 module path without needing to skip
+        /// the edition check is considered a bug and should be fixed.
+        /// </summary>
+        internal bool IsConsideredEditionCompatible { get; set; } = true;
 
         /// <summary>
         /// ModuleList
@@ -1065,7 +1077,6 @@ namespace System.Management.Automation
                 return exportedVariables;
             }
         }
-        internal Collection<string> DeclaredVariableExports = null;
 
         /// <summary>
         /// Lists the aliases exported by this module.
@@ -1097,9 +1108,9 @@ namespace System.Management.Automation
                     if (SessionState == null)
                     {
                         // Check if we detected any
-                        if (_detectedAliasExports.Count > 0)
+                        if (DetectedAliasExports.Count > 0)
                         {
-                            foreach (var pair in _detectedAliasExports)
+                            foreach (var pair in DetectedAliasExports)
                             {
                                 string detectedExport = pair.Key;
                                 if (!exportedAliases.ContainsKey(detectedExport))
@@ -1129,8 +1140,6 @@ namespace System.Management.Automation
                 return exportedAliases;
             }
         }
-        internal Collection<string> DeclaredAliasExports = null;
-        internal Dictionary<string, string> _detectedAliasExports = new Dictionary<string, string>();
 
         /// <summary>
         /// Add alias to the detected alias list
@@ -1141,7 +1150,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(name != null, "AddDetectedAliasExport should not be called with a null value");
 
-            _detectedAliasExports[name] = value;
+            DetectedAliasExports[name] = value;
         }
 
         /// <summary>
@@ -1156,7 +1165,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         public ReadOnlyCollection<string> ExportedDscResources
         {
@@ -1595,4 +1603,4 @@ namespace System.Management.Automation
             }
         }
     }
-} // System.Management.Automation
+}
