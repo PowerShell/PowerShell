@@ -208,14 +208,14 @@ namespace System.Management.Automation
 
             switch (originalPath)
             {
-                case var originalPathSwitch when originalPathSwitch.Equals("-", StringComparison.OrdinalIgnoreCase):
+                case string originalPathSwitch when originalPathSwitch.Equals("-", StringComparison.OrdinalIgnoreCase):
                     if (_SetLocationHistory.UndoCount <= 0)
                     {
                         throw new InvalidOperationException(SessionStateStrings.LocationUndoStackIsEmpty);
                     }
                     path = _SetLocationHistory.Undo(this.CurrentLocation).Path;
                     break;
-                case var originalPathSwitch when originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
+                case string originalPathSwitch when originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
                     if (_SetLocationHistory.RedoCount <= 0)
                     {
                         throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
@@ -223,8 +223,8 @@ namespace System.Management.Automation
                     path = _SetLocationHistory.Redo(this.CurrentLocation).Path;
                     break;
                 default:
-                    var newPushPathInfo = GetNewPushPathInfo();
-                    _SetLocationHistory.Push(newPushPathInfo);
+                    var pushPathInfo = GetNewPushPathInfo();
+                    _SetLocationHistory.Push(pushPathInfo);
                     break;
             }
 
@@ -819,8 +819,8 @@ namespace System.Management.Automation
             }
 
             // Push the directory/drive pair onto the stack
-            var newPushPathInfo = GetNewPushPathInfo();
-            locationStack.Push(newPushPathInfo);
+            var pushPathInfo = GetNewPushPathInfo();
+            locationStack.Push(pushPathInfo);
         }
 
         private PathInfo GetNewPushPathInfo()

@@ -1411,8 +1411,8 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal class HistoryStack<T>
     {
-        private BoundedStack<T> _boundedUndoStack;
-        private BoundedStack<T> _boundedRedoStack;
+        private readonly BoundedStack<T> _boundedUndoStack;
+        private readonly BoundedStack<T> _boundedRedoStack;
 
         internal HistoryStack(uint capacity)
         {
@@ -1429,13 +1429,23 @@ namespace System.Management.Automation.Internal
             }
         }
 
+        /// <summary>
+        /// Handles bounded history stacks by pushing the current item to the redoStack and returning the item from the popped undoStack.
+        /// </summary>
+        /// <param name="currentItem"></param>
+        /// <returns></returns>
         internal T Undo(T currentItem)
         {
-            var previousItem = _boundedUndoStack.Pop();
+            T previousItem = _boundedUndoStack.Pop();
             _boundedRedoStack.Push(currentItem);
             return previousItem;
         }
 
+        /// <summary>
+        /// Handles bounded history stacks by pushing the current item to the undoStack and returning the item from the popped redoStack.
+        /// </summary>
+        /// <param name="currentItem"></param>
+        /// <returns></returns>
         internal T Redo(T currentItem)
         {
             var nextItem = _boundedRedoStack.Pop();
