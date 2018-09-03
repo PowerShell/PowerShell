@@ -1432,8 +1432,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Handles bounded history stacks by pushing the current item to the redoStack and returning the item from the popped undoStack.
         /// </summary>
-        /// <param name="currentItem"></param>
-        /// <returns></returns>
         internal T Undo(T currentItem)
         {
             T previousItem = _boundedUndoStack.Pop();
@@ -1444,8 +1442,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Handles bounded history stacks by pushing the current item to the undoStack and returning the item from the popped redoStack.
         /// </summary>
-        /// <param name="currentItem"></param>
-        /// <returns></returns>
         internal T Redo(T currentItem)
         {
             var nextItem = _boundedRedoStack.Pop();

@@ -121,15 +121,15 @@ Describe "Set-Location" -Tags "CI" {
         }
 
         It 'Should go to last location back, forth and back again when specifying minus, plus and minus as a path' {
-            $initialLocation = Get-Location
+            $initialLocation = (Get-Location).Path
             Set-Location ([System.IO.Path]::GetTempPath())
             $tempPath = (Get-Location).Path
             Set-Location -
-            (Get-Location).Path | Should -Be ($initialLocation).Path
+            (Get-Location).Path | Should -Be $initialLocation
             Set-Location +
             (Get-Location).Path | Should -Be $tempPath
             Set-Location -
-            (Get-Location).Path | Should -Be ($initialLocation).Path
+            (Get-Location).Path | Should -Be $initialLocation
         }
 
         It 'Should go back to previous locations when specifying minus twice' {

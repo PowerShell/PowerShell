@@ -66,7 +66,7 @@ namespace System.Management.Automation
 
             // Conservative choice to limit the Set-Location history in order to limit memory impact in case of a regression.
             const uint locationHistoryLimit = 20;
-            _SetLocationHistory = new HistoryStack<PathInfo>(locationHistoryLimit);
+            _setLocationHistory = new HistoryStack<PathInfo>(locationHistoryLimit);
 
             GlobalScope = new SessionStateScope(null);
             ModuleScope = GlobalScope;

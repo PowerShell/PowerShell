@@ -209,22 +209,22 @@ namespace System.Management.Automation
             switch (originalPath)
             {
                 case string originalPathSwitch when originalPathSwitch.Equals("-", StringComparison.OrdinalIgnoreCase):
-                    if (_SetLocationHistory.UndoCount <= 0)
+                    if (_setLocationHistory.UndoCount <= 0)
                     {
                         throw new InvalidOperationException(SessionStateStrings.LocationUndoStackIsEmpty);
                     }
-                    path = _SetLocationHistory.Undo(this.CurrentLocation).Path;
+                    path = _setLocationHistory.Undo(this.CurrentLocation).Path;
                     break;
                 case string originalPathSwitch when originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
-                    if (_SetLocationHistory.RedoCount <= 0)
+                    if (_setLocationHistory.RedoCount <= 0)
                     {
                         throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
                     }
-                    path = _SetLocationHistory.Redo(this.CurrentLocation).Path;
+                    path = _setLocationHistory.Redo(this.CurrentLocation).Path;
                     break;
                 default:
                     var pushPathInfo = GetNewPushPathInfo();
-                    _SetLocationHistory.Push(pushPathInfo);
+                    _setLocationHistory.Push(pushPathInfo);
                     break;
             }
 
@@ -781,7 +781,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Location history for Set-Location that supports Undo/Redo using bounded stacks.
         /// </summary>
-        private HistoryStack<PathInfo> _SetLocationHistory;
+        private readonly HistoryStack<PathInfo> _setLocationHistory;
 
         /// <summary>
         /// A stack of the most recently pushed locations
