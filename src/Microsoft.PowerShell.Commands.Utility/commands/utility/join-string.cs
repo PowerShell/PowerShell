@@ -4,6 +4,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -18,19 +20,19 @@ namespace Microsoft.PowerShell.Commands.Utility
     [OutputType(typeof(string))]
     public sealed class JoinStringCommand : PSCmdlet
     {
-        /// <remarks>50 is an estimate of an upper range value for the number of inputs
-        /// that is used in the most common scenarios.</remarks>
-        private const int InputObjectBufferDefaultCapacity = 50;
-
-        private readonly List<PSObject> _inputObjects = new List<PSObject>(InputObjectBufferDefaultCapacity);
-        private DynamicPropertyGetter _propGetter = new DynamicPropertyGetter();
+        /// <summary>A bigger default to not get re-allocations in common use cases.</summary>
+        private const int DefaultOutputStringCapacity = 256;
+        private readonly StringBuilder _outputBuilder = new StringBuilder(DefaultOutputStringCapacity);
+        private string _separator;
+        private char _quoteChar;
+        private bool _firstInputObject = true;
 
         /// <summary>
         /// Gets or sets the property name or script block to use as the value to join.
         /// </summary>
         [Parameter(Position = 0)]
         [ArgumentCompleter(typeof(PropertyNameCompleter))]
-        public object Property { get; set; }
+        public PSPropertyExpression Property { get; set; }
 
         /// <summary>
         /// Gets or sets the delimiter to join the output with.
@@ -38,25 +40,31 @@ namespace Microsoft.PowerShell.Commands.Utility
         [Parameter(Position = 1)]
         [ArgumentCompleter(typeof(JoinItemCompleter))]
         [AllowEmptyString]
-        public string Delimiter { get; set; }
+        public string Separator
+        {
+            get => _separator ?? LanguagePrimitives.ConvertTo<string>(GetVariableValue("OFS"));
+            set => _separator = value;
+        }
 
         /// <summary>
         /// Gets or sets text to include before the joined input text.
         /// </summary>
         [Parameter]
-        public string Prefix { get; set; }
+        [Alias("op")]
+        public string OutputPrefix { get; set; }
 
         /// <summary>
         /// Gets or sets text to include after the joined input text.
         /// </summary>
         [Parameter]
-        public string Suffix { get; set; }
+        [Alias("os")]
+        public string OutputSuffix { get; set; }
 
         /// <summary>
         /// Gets or sets if the output items should we wrapped in single quotes.
         /// </summary>
-        [Parameter(ParameterSetName = "Quote")]
-        public SwitchParameter Quote { get; set; }
+        [Parameter(ParameterSetName = "SingleQuote")]
+        public SwitchParameter SingleQuote { get; set; }
 
         /// <summary>
         /// Gets or sets if the output items should we wrapped in double quotes.
@@ -65,105 +73,66 @@ namespace Microsoft.PowerShell.Commands.Utility
         public SwitchParameter DoubleQuote { get; set; }
 
         /// <summary>
+        /// Gets or sets a format string that is applied to each input object.
+        /// </summary>
+        [Parameter(ParameterSetName = "Format")]
+        [ArgumentCompleter(typeof(JoinItemCompleter))]
+        public string FormatString { get; set; }
+
+        /// <summary>
         /// Gets or sets the input object to join into text.
         /// </summary>
-        [Parameter(ValueFromPipeline = true, Mandatory = true)]
+        [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { get; set; }
+
+        /// <inheritdoc />
+        protected override void BeginProcessing()
+        {
+            _quoteChar = SingleQuote ? '\'' : DoubleQuote ? '"' : char.MinValue;
+        }
 
         /// <inheritdoc />
         protected override void ProcessRecord()
         {
             if (InputObject != null && InputObject != AutomationNull.Value)
             {
-                _inputObjects.Add(InputObject);
+                var inputValue = Property == null
+                                    ? InputObject
+                                    : Property.GetValues(InputObject, false, true).FirstOrDefault()?.Result;
+                var stringValue = LanguagePrimitives.ConvertTo<string>(inputValue);
+
+                if (_firstInputObject)
+                {
+                    _outputBuilder.Append(OutputPrefix);
+                    _firstInputObject = false;
+                }
+                else
+                {
+                    _outputBuilder.Append(Separator);
+                }
+
+                if (_quoteChar != char.MinValue)
+                {
+                    _outputBuilder.Append(_quoteChar);
+                    _outputBuilder.Append(stringValue);
+                    _outputBuilder.Append(_quoteChar);
+                }
+                else if (string.IsNullOrEmpty(FormatString))
+                {
+                    _outputBuilder.Append(stringValue);
+                }
+                else
+                {
+                    _outputBuilder.AppendFormat(CultureInfo.CurrentCulture, FormatString, stringValue);
+                }
             }
         }
 
         /// <inheritdoc />
         protected override void EndProcessing()
         {
-            if (_inputObjects.Count == 0)
-            {
-                return;
-            }
-
-            var quoteChar = Quote ? '\'' : DoubleQuote ? '"' : char.MinValue;
-
-            const int DefaultOutputStringCapacity = 256;
-            var builder = new StringBuilder(DefaultOutputStringCapacity);
-            builder.Append(Prefix);
-
-            if (Delimiter == null)
-            {
-                Delimiter = LanguagePrimitives.ConvertTo<string>(GetVariableValue("OFS"));
-            }
-
-            void AppendValue(string val)
-            {
-                if (quoteChar != char.MinValue)
-                {
-                    builder.Append(quoteChar).Append(val).Append(quoteChar);
-                }
-                else
-                {
-                    builder.Append(val);
-                }
-            }
-
-            if (Property == null)
-            {
-                AppendValue(LanguagePrimitives.ConvertTo<string>(_inputObjects[0]));
-
-                for (var index = 1; index < _inputObjects.Count; index++)
-                {
-                    builder.Append(Delimiter);
-                    AppendValue(LanguagePrimitives.ConvertTo<string>(_inputObjects[index]));
-                }
-            }
-            else if (Property is string propertyName)
-            {
-                string GetPropertyValueString(PSObject input, string name)
-                {
-                    return LanguagePrimitives.ConvertTo<string>(_propGetter.GetValue(input, name));
-                }
-
-                AppendValue(GetPropertyValueString(_inputObjects[0], propertyName));
-
-                for (var index = 1; index < _inputObjects.Count; index++)
-                {
-                    builder.Append(Delimiter);
-                    AppendValue(GetPropertyValueString(_inputObjects[index], propertyName));
-                }
-            }
-            else if (Property is ScriptBlock sb)
-            {
-                string GetScriptBlockResultString(PSObject input)
-                {
-                    var result = sb.DoInvokeReturnAsIs(
-                        useLocalScope: true,
-                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                        dollarUnder: input,
-                        input: AutomationNull.Value,
-                        scriptThis: AutomationNull.Value,
-                        args: Utils.EmptyArray<object>());
-                    return LanguagePrimitives.ConvertTo<string>(result);
-                }
-
-                AppendValue(GetScriptBlockResultString(_inputObjects[0]));
-
-                for (var index = 1; index < _inputObjects.Count; index++)
-                {
-                    builder.Append(Delimiter);
-                    AppendValue(GetScriptBlockResultString(_inputObjects[index]));
-                }
-            }
-            else
-            {
-                throw new ArgumentException();
-            }
-
-            builder.Append(Suffix);
-            WriteObject(builder.ToString(), false);
+            _outputBuilder.Append(OutputSuffix);
+            WriteObject(_outputBuilder.ToString());
         }
     }
 
@@ -175,6 +144,36 @@ namespace Microsoft.PowerShell.Commands.Utility
             string wordToComplete,
             CommandAst commandAst,
             IDictionary fakeBoundParameters)
+        {
+            switch (parameterName)
+            {
+                case "Separator": return CompleteSeparator(wordToComplete);
+                case "FormatString": return CompleteFormatString(wordToComplete);
+            }
+
+            return null;
+        }
+
+        private IEnumerable<CompletionResult> CompleteFormatString(string wordToComplete)
+        {
+            var res = new List<CompletionResult>();
+            void AddMatching(string completionText)
+            {
+                if (completionText.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                {
+                    res.Add(new CompletionResult(completionText));
+                }
+            }
+
+            AddMatching("'[{0}]'");
+            AddMatching("'{0:N2}'");
+            AddMatching("\"`r`n    `${0}\"");
+            AddMatching("\"`r`n    [string] `${0}\"");
+
+            return res;
+        }
+
+        private IEnumerable<CompletionResult> CompleteSeparator(string wordToComplete)
         {
             var res = new List<CompletionResult>(10);
 

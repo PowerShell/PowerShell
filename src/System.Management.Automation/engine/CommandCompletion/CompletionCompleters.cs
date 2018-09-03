@@ -6980,6 +6980,5 @@ namespace System.Management.Automation
             CompletionCompleters.CompleteMemberByInferredType(typeInferenceContext, prevType, result, wordToComplete + "*", filter: CompletionCompleters.IsPropertyMember, isStatic: false);
             return result;
         }
-
     }
 }
