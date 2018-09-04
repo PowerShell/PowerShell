@@ -1297,17 +1297,6 @@ namespace System.Management.Automation
             }
 #else
 
-            if (ValidateExtension(this.Path))
-            {
-                return true;
-            }
-#endif
-
-            return false;
-        }
-        private bool ValidateExtension(string path)
-        {
-            // Now check the extension and see if it's one of the ones in pathext
             string myExtension = System.IO.Path.GetExtension(path);
 
             var pathext = Environment.GetEnvironmentVariable("PATHEXT");
@@ -1320,6 +1309,7 @@ namespace System.Management.Automation
             {
                 extensionList = pathext.Split(Utils.Separators.Semicolon);
             }
+
             foreach (string extension in extensionList)
             {
                 if (String.Equals(extension, myExtension, StringComparison.OrdinalIgnoreCase))
@@ -1327,6 +1317,8 @@ namespace System.Management.Automation
                     return true;
                 }
             }
+#endif
+
             return false;
         }
 
