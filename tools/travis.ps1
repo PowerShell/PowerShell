@@ -170,6 +170,19 @@ if($env:TRAVIS_EVENT_TYPE -eq 'pull_request' -or $env:BUILD_REASON)
         $commitMessage = git log --format=%B -n 1 $commitId
         Write-Verbose "commitMessage: $commitMessage" -verbose
     }
+    elseif($env:TF_BUILD)
+    {
+        if($env:BUILD_SOURCEVERSIONMESSAGE -match 'Merge\s*([0-9A-F]*)')
+        {
+            # We are in VSTS and have a commit ID in the Source Version Message
+            $commitId = $Matches[1]
+            $commitMessage = git log --format=%B -n 1 $commitId
+        }
+        else
+        {
+            Write-Log "Unknown BUILD_SOURCEVERSIONMESSAGE format '$env:BUILD_SOURCEVERSIONMESSAGE'" -Verbose
+        }
+    }
 }
 else
 {
