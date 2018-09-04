@@ -1085,10 +1085,7 @@ namespace System.Management.Automation
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = this.Path;
 
-            // On Windows, check the extension list and see if we should try to execute this directly.
-            // Otherwise, use the platform library to check executability
-            if ((Platform.IsWindows && ValidateExtension(this.Path))
-                || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(this.Path)))
+            if (IsExecutable(this.Path))
             {
                 startInfo.UseShellExecute = false;
                 if (redirectInput)
@@ -1288,6 +1285,21 @@ namespace System.Management.Automation
             }
         }
 
+        // On Windows, check the extension list and see if we should try to execute this directly.
+        // Otherwise, use the platform library to check executability
+        private bool IsExecutable(string path)
+        {
+            if (Platform.IsWindows && ValidateExtension(this.Path))
+            {
+                return true;
+            }
+            if (!Platform.IsWindows && Platform.NonWindowsIsExecutable(this.Path))
+            {
+                return true;
+            }
+
+            return false;
+        }
         private bool ValidateExtension(string path)
         {
             // Now check the extension and see if it's one of the ones in pathext
