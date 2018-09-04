@@ -1289,15 +1289,17 @@ namespace System.Management.Automation
         // Otherwise, use the platform library to check executability
         private bool IsExecutable(string path)
         {
+#if !UNIX
             if (Platform.IsWindows && ValidateExtension(this.Path))
             {
                 return true;
             }
+#else
             if (!Platform.IsWindows && Platform.NonWindowsIsExecutable(this.Path))
             {
                 return true;
             }
-
+#endif
             return false;
         }
         private bool ValidateExtension(string path)
