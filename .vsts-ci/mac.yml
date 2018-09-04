@@ -14,7 +14,7 @@ phases:
 - phase: macOS_CI
 
   queue:
-    name: Hosted macOS Preview
+    name: Hosted macOS
   steps:
   - powershell: |
       Get-ChildItem -Path env:
