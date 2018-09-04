@@ -17,14 +17,14 @@ namespace Microsoft.PowerShell.Commands
         private const string ListAvailableParameterSet = "ListAvailable";
 
         /// <summary>
-        /// Gets and sets the specified culture.
+        /// Gets or sets the specified culture name.
         /// </summary>
         [Parameter(ParameterSetName = NameParameterSet)]
         [ValidateNotNull]
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets and sets a switch to list all available cultures.
+        /// Gets or sets a switch to list all available cultures.
         /// </summary>
         [Parameter(ParameterSetName = ListAvailableParameterSet)]
         public SwitchParameter ListAvailable { get; set; }
