@@ -89,6 +89,7 @@ namespace Microsoft.PowerShell.Commands.Utility
         protected override void BeginProcessing()
         {
             _quoteChar = SingleQuote ? '\'' : DoubleQuote ? '"' : char.MinValue;
+            _outputBuilder.Append(OutputPrefix);
         }
 
         /// <inheritdoc />
@@ -103,7 +104,6 @@ namespace Microsoft.PowerShell.Commands.Utility
 
                 if (_firstInputObject)
                 {
-                    _outputBuilder.Append(OutputPrefix);
                     _firstInputObject = false;
                 }
                 else
