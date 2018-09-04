@@ -1825,7 +1825,7 @@ function Start-PSBootstrap {
                     # We cannot guess if the user wants to run gem install as root on linux and windows,
                     # but macOs usually requires sudo
                     $gemsudo = ''
-                    if($Environment.IsMacOS) {
+                    if($Environment.IsMacOS -or $env:TF_BUILD) {
                         $gemsudo = $sudo
                     }
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.10.0"))
