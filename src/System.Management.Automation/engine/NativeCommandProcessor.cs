@@ -1293,9 +1293,7 @@ namespace System.Management.Automation
             // Now check the extension and see if it's one of the ones in pathext
             string myExtension = System.IO.Path.GetExtension(path);
 
-            string pathext = (string)LanguagePrimitives.ConvertTo(
-                this.Command.Context.GetVariableValue(SpecialVariables.PathExtVarPath),
-                typeof(string), CultureInfo.InvariantCulture);
+            var pathext = Environment.GetEnvironmentVariable("PATHEXT");
             string[] extensionList;
             if (String.IsNullOrEmpty(pathext))
             {
