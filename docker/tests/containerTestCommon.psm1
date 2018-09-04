@@ -213,6 +213,63 @@ function Get-ContainerPowerShellVersion
     return (Get-Content -Encoding Ascii $testContext.resolvedLogPath)[0]
 }
 
+# Function defines a config mapping for testing Preview packages.
+# The list of supported OS for each release can be found here:
+# https://github.com/PowerShell/PowerShell-Docs/blob/staging/reference/docs-conceptual/PowerShell-Core-Support.md#supported-platforms
+function Get-DefaultPreviewConfigForPackageValidation
+{
+    # format: <DockerfileFolderName>=<PartOfPackageFilename>
+    @{  'centos7'='rhel.7';
+        'debian.8'='debian.8';
+        'debian.9'='debian.9';
+        'fedora26'='rhel.7';
+        'fedora27'='rhel.7';
+        'fedora28'='rhel.7';
+        'opensuse42.2'='linux-x64.tar.gz';
+        'opensuse42.3'='linux-x64.tar.gz';
+        'ubuntu14.04'='ubuntu.14.04';
+        'ubuntu16.04'='ubuntu.16.04';
+        'ubuntu18.04'='ubuntu.18.04'
+    }
+}
+
+# Function defines a config mapping for testing Stable packages.
+# The list of supported OS for each release can be found here:
+# https://github.com/PowerShell/PowerShell-Docs/blob/staging/reference/docs-conceptual/PowerShell-Core-Support.md#supported-platforms
+function Get-DefaultStableConfigForPackageValidation
+{
+    # format: <DockerfileFolderName>=<PartOfPackageFilename>
+    @{  'centos7'='rhel.7';
+        'debian.8'='debian.8';
+        'debian.9'='debian.9';
+        'fedora26'='rhel.7';
+        'fedora27'='rhel.7';
+        'opensuse42.2'='linux-x64.tar.gz';
+        'opensuse42.3'='linux-x64.tar.gz';
+        'ubuntu14.04'='ubuntu.14.04';
+        'ubuntu16.04'='ubuntu.16.04'
+    }
+}
+
+# Returns a list of files in a specified Azure container.
+function Get-PackageNamesOnAzureBlob
+{
+    param(
+        [string]
+        $ContainerUrl,
+        
+        # $SAS (shared access signature) param should include beginning '?' and trailing '&'
+        [string]
+        $SAS
+    )
+
+
+    $response = Invoke-RestMethod -Method Get -Uri $($ContainerUrl + $SAS + 'restype=container&comp=list')
+
+    $xmlResponce = [xml]$response.Substring($response.IndexOf('<EnumerationResults')) # remove some bad chars in the beginning that break XML parsing
+    ($xmlResponce.EnumerationResults.Blobs.Blob).Name
+}
+
 # This function is used for basic validation of PS packages during a release;
 # During the process Docker files are filled out and executed with Docker build;
 # During the build PS packages are downloaded onto Docker containers, installed and selected Pester tests from PowerShell Github repo are executed.
@@ -222,65 +279,86 @@ function Test-PSPackage
     param(
         [string]
         [Parameter(Mandatory=$true)]
-        $PSPackageLocation, # e.g. Azure storage
+        $PSPackageLocation, # e.g. Azure container storage url
         [string]
-        $PSVersion = "6.0.2", # e.g. "6.1.0~preview.2"
+        $SAS,# $SAS (shared access signature) param should include beginning '?' and trailing '&'
+        [Hashtable]
+        $Config, # hashtable that maps packages to dockerfiles; for example see Get-DefaultConfigForPackageValidation
         [string]
         $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module",
         [string]
-        $GitLocation = "https://github.com/PowerShell/PowerShell.git"
+        $TestDownloadCommand = "git clone --recursive https://github.com/PowerShell/PowerShell.git",
+        [switch]
+        $Preview = $false
     )
 
-    $PSPackageLocation = $PSPackageLocation.TrimEnd('/','\')
-    Write-Verbose "Ensure that PowerShell packages of version $PSVersion exist at $PSPackageLocation" -Verbose
+    $PSPackageLocation = $PSPackageLocation.TrimEnd('/','\') # code below assumes there is no trailing separator in PSPackageLocation url
+    $RootFolder = Join-Path $PSScriptRoot 'Templates'
 
-    $tempFolder = $env:Temp
-    if (-not $tempFolder) {$tempFolder = "~"}
-    $RootFolder = Join-Path $tempFolder 'PSPackageDockerValidation'
-    $SourceFolder = Join-Path $PSScriptRoot 'Templates'
 
-    if (Test-Path $RootFolder)
+    $packageList = Get-PackageNamesOnAzureBlob -ContainerUrl $PSPackageLocation -SAS $SAS
+    if (!$Config)
     {
-        Remove-Item $RootFolder -Recurse -Force
+        if ($Preview)
+        {
+            $Config = Get-DefaultPreviewConfigForPackageValidation
+        }
+        else
+        {
+            $Config = Get-DefaultStableConfigForPackageValidation
+        }
     }
 
-    Copy-Item -Recurse $SourceFolder $RootFolder
+    # pre-process $Config: verify build directories and packages exist
+    $map = @{}
+    foreach($kp in $Config.GetEnumerator())
+    {
+        $buildDir = Join-Path $RootFolder $kp.Key
+        $packageName = $packageList | Where-Object {$_ -like $('*'+$kp.Value+'*')}
+        
+        if (-not (Test-Path $buildDir))
+        {
+            Write-Error "Directory does Not exist - $buildDir; Check `$Config parameter and '$RootFolder' folder"
+        }
+        elseif (-not ($packageName))
+        {
+            Write-Error "Can not find package that matches filter *$($kp.Value)*; Check `$Config parameter and '$PSPackageLocation'"
+        }
+        else
+        {
+            $map.Add($buildDir, $packageName)
+        }
+    }
 
-    $versionStubName = 'PSVERSIONSTUB'
-    $versionStubValue = $PSVersion
-    $testlistStubName = 'TESTLISTSTUB'
-    $testlistStubValue = $TestList
-    $packageLocationStubName = 'PACKAGELOCATIONSTUB'
-    $packageLocationStubValue = $PSPackageLocation
-    $GitLocationStubName = 'GITLOCATION'
-    $GitLocationStubValue = $GitLocation
+    Write-Verbose "Using configuration:" -Verbose
+    Write-Verbose ($map | Format-List | Out-String) -Verbose
 
     $results = @{}
     $returnValue = $true
 
     # run builds sequentially, but don't block for errors so that configs after failed one can run
-    foreach($dir in Get-ChildItem -Path $RootFolder)
+    foreach($kp in $map.GetEnumerator())
     {
+        $dockerDirPath = $kp.Key
+        $packageFileName = $kp.Value
+
         $buildArgs = @()
 
-        if ($dir.Name -eq "opensuse42.2") # special cases that use dash instead of tilda as preview separator, e.g. 'powershell-6.1.0-preview.2-linux-x64.tar.gz'
+        $buildArgs += "--build-arg","PACKAGENAME=$packageFileName"
+        $buildArgs += "--build-arg","PACKAGELOCATION=$PSPackageLocation"
+        if ($Preview)
         {
-            $versionStubDashValue = $PSVersion -replace '~','-'
-            $buildArgs += "--build-arg","$versionStubName=$versionStubDashValue"
+            $buildArgs += "--build-arg","PREVIEWSUFFIX=-preview"
         }
-        else # majority of configurations - they use tilda as preview separator, e.g. 'powershell-6.1.0~preview.2-1.rhel.7.x86_64.rpm'
-        {
-            $buildArgs += "--build-arg","$versionStubName=$versionStubValue"
-        }
-        
-        $buildArgs += "--build-arg","$testlistStubName=$testlistStubValue"
-        $buildArgs += "--build-arg","$packageLocationStubName=$packageLocationStubValue"
-        $buildArgs += "--build-arg","$GitLocationStubName=$GitLocationStubValue"
+        $buildArgs += "--build-arg","TESTLIST=$TestList"
+        $buildArgs += "--build-arg","TESTDOWNLOADCOMMAND=$TestDownloadCommand"
         $buildArgs += "--no-cache"
-        $buildArgs += $dir.FullName
+        $buildArgs += $dockerDirPath
 
         $dockerResult = Invoke-Docker -Command 'build' -Params $buildArgs -FailureAction warning
-        $results.Add($dir.Name, $dockerResult)
+        
+        $confName = Split-Path -Leaf $dockerDirPath
+        $results.Add($confName, $dockerResult)
         if (-not $dockerResult) {$returnValue = $false}
     }
 
