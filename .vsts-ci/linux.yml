@@ -38,8 +38,8 @@ phases:
     condition: succeededOrFailed()
 
   - powershell: |
-      apt-get update
-      apt-get install -y --no-install-recommends less
+      sudo apt-get update
+      sudo apt-get install -y --no-install-recommends less
     displayName: Install less
     condition: succeededOrFailed()
 
