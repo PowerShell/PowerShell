@@ -177,7 +177,11 @@ else
 }
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
+# or the environment valiable `FORCE_FEATURE` equals `True`
 $hasFeatureTag = $commitMessage -match '\[feature\]' -or $env:FORCE_FEATURE -eq 'True'
+
+# Run a packaging if the commit message contains `[Package]`
+# or the environment valiable `FORCE_PACKAGE` equals `True`
 $hasPackageTag = $commitMessage -match '\[package\]' -or $env:FORCE_PACKAGE -eq 'True'
 $createPackages = -not $isPr -or $hasPackageTag
 $hasRunFailingTestTag = $commitMessage -match '\[includeFailingTest\]'
@@ -190,7 +194,7 @@ if($Stage -eq 'Bootstrap')
 {
     if($cronBuild -and $env:TF_BUILD)
     {
-        Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
+        Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
     }
 
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
