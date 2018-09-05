@@ -243,7 +243,7 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
                 },
                 @{
                     TestName = "BadType"
-                    ModuleSpecification = @{ Name = "BadTypeModule"; RequiredVersion = "Hello!" }
+                    ModuleSpecification = @{ ModuleName = "BadTypeModule"; RequiredVersion = "Hello!" }
                     ErrorId = 'PSInvalidCastException'
                 },
                 @{
