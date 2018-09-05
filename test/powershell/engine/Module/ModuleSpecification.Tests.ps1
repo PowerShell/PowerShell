@@ -245,6 +245,11 @@ Describe "ModuleSpecification objects and logic" -Tag "CI" {
                     TestName = "BadType"
                     ModuleSpecification = @{ ModuleName = "BadTypeModule"; RequiredVersion = "Hello!" }
                     ErrorId = 'PSInvalidCastException'
+                },
+                @{
+                    TestName = "ModuleVersion is greater than MaximumVersion"
+                    ModuleSpecification = @{ ModuleName = "ModuleVersion>MaximumVersion"; ModuleVersion = "3.0"; MaximumVersion = '2.0' }
+                    ErrorId = 'ArgumentException'
                 }
             )
         }
