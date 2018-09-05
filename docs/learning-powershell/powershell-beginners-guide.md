@@ -28,7 +28,7 @@ It is shown as `PS C:\>` on  Windows.
 
 By default, you will get data back similar to the following:
 
-``` PowerShell
+``` powershell
 PS /> Get-Process
 
 Handles   NPM(K)    PM(K)     WS(K)     CPU(s)     Id    ProcessName
@@ -45,7 +45,7 @@ Only interested in the instance of firefox process that are running on your comp
 
 Try this:
 
-```PowerShell
+```powershell
 PS /> Get-Process -Name firefox
 
 Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
@@ -57,7 +57,7 @@ Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
 Want to get back more than one process?
 Then just specify process names and separate them with commas.
 
-```PowerShell
+```powershell
 PS /> Get-Process -Name firefox, powershell
 Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
 -------  ------     -----     -----    ------     --   -----------
@@ -68,7 +68,7 @@ Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
 
 2. `Clear-Host`: Clears the display in the host program.
 
-```PowerShell
+```powershell
 PS /> Get-Process
 PS /> Clear-Host
 ```
@@ -78,7 +78,7 @@ Here is how the alias can help.
 
 3. `Get-Alias`: Gets the aliases for the current session.
 
-```PowerShell
+```powershell
 PS /> Get-Alias
 
 CommandType     Name
@@ -99,21 +99,21 @@ Alias           type -> Get-Content
 As you can see `cls` is an alias of `Clear-Host`.
 
 Now try it:
-```
+```powershell
 PS /> Get-Process
 PS /> cls
 ```
 
 4. `cd -> Set-Location`: Sets the current working location to a specified location.
 
-```PowerShell
+```powershell
 PS /> Set-Location /home
 PS /home>
 ```
 
 5. `dir -> Get-ChildItem`: Gets the items and child items in one or more specified locations.
 
-```PowerShell
+```powershell
 # Get all files under the current directory:
 PS /> Get-ChildItem
 
@@ -128,7 +128,7 @@ PS /home/jen> dir –Path *.txt -Recurse
 
 *6. `New-Item`: Creates a new item.
 
-```PowerShell
+```powershell
 # An empty file is created if you type the following:
 PS /home/jen> New-Item -Path ./test.txt
 
@@ -147,7 +147,7 @@ For example, the following command adds the phrase `Hello world!` as a file cont
 
 Because the test.txt file exists already, we use `-Force` parameter to replace the existing content.
 
-```PowerShell
+```powershell
 PS /home/jen> New-Item -Path ./test.txt -Value "Hello world!" -Force
 
     Directory: /home/jen
@@ -163,7 +163,7 @@ There are other ways to add some data to a file.
 
 For example, you can use `Set-Content` to set the file contents:
 
-```PowerShell
+```powershell
 PS /home/jen>Set-Content -Path ./test.txt -Value "Hello world again!"
 ```
 
@@ -182,7 +182,7 @@ The pound sign `#` above is used for comments in PowerShell.
 
 7. `type -> Get-Content`: Gets the content of the item at the specified location.
 
-```PowerShell
+```powershell
 PS /home/jen> Get-Content -Path ./test.txt
 PS /home/jen> type -Path ./test.txt
 
@@ -193,7 +193,7 @@ Hello world again!
 
 This cmdlet will delete the file `/home/jen/test.txt`:
 
-```PowerShell
+```powershell
 PS /home/jen> Remove-Item ./test.txt
 ```
 
@@ -202,7 +202,7 @@ PS /home/jen> Remove-Item ./test.txt
 Type `$PSVersionTable` in your PowerShell session, you will see something like below.
 "PSVersion" indicates the PowerShell version that you are using.
 
-```PowerShell
+```powershell
 Name                           Value
 ----                           -----
 PSVersion                      6.0.0-alpha
@@ -219,7 +219,7 @@ SerializationVersion           1.1.0.1
 
 10. `Exit`: To exit the PowerShell session, type `exit`.
 
-```PowerShell
+```powershell
 PS /home/jen> exit
 ```
 
@@ -231,13 +231,13 @@ The `Get-Help` cmdlet also shows you how PowerShell commands work with examples.
 
 It shows the syntax and other technical information of the `Get-Process` cmdlet.
 
-```PowerShell
+```powershell
 PS /> Get-Help -Name Get-Process
 ```
 
 It displays the examples how to use the `Get-Process` cmdlet.
 
-```PowerShell
+```powershell
 PS />Get-Help -Name Get-Process -Examples
 ```
 
@@ -247,25 +247,25 @@ If you use **-Full** parameter, for example, `Get-Help -Name Get-Process -Full`,
 
 You want to discover what PowerShell cmdlets available on your system? Just run `Get-Command` as below:
 
-```PowerShell
+```powershell
 PS /> Get-Command
 ```
 
 If you want to know whether a particular cmdlet exists on your system, you can do something like below:
 
-```PowerShell
+```powershell
 PS /> Get-Command Get-Process
 ```
 
 If you want to know the syntax of `Get-Process` cmdlet, type:
 
-```PowerShell
+```powershell
 PS /> Get-Command Get-Process -Syntax
 ```
 
 If you want to know how to use the `Get-Process`, type:
 
-```PowerShell
+```powershell
 PS /> Get-Help Get-Process -Example
 ```
 
@@ -274,13 +274,13 @@ PS /> Get-Help Get-Process -Example
 Sometimes when you run Get-ChildItem or "dir", you want to get a list of files and folders in a descending order.
 To achieve that, type:
 
-```PowerShell
+```powershell
 PS /home/jen> dir | Sort-Object -Descending
 ```
 
 Say you want to get the largest file in a directory
 
-```PowerShell
+```powershell
 PS /home/jen> dir | Sort-Object -Property Length -Descending | Select-Object -First 1
 
 
