@@ -10,7 +10,6 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsData.Compare, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113286",
         RemotingCapability = RemotingCapability.None)]
@@ -18,28 +17,24 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
         /// <summary>
-        ///
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         [AllowEmptyCollection]
         public PSObject[] ReferenceObject { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyCollection]
         public PSObject[] DifferenceObject { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter]
         [ValidateRange(0, Int32.MaxValue)]
         public int SyncWindow { get; set; } = Int32.MaxValue;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -47,7 +42,6 @@ namespace Microsoft.PowerShell.Commands
 
         /* not implemented
         /// <summary>
-        ///
         /// </summary>
         [Parameter]
         public SwitchParameter IgnoreWhiteSpace
@@ -59,7 +53,6 @@ namespace Microsoft.PowerShell.Commands
         */
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter]
         public SwitchParameter ExcludeDifferent
@@ -70,7 +63,6 @@ namespace Microsoft.PowerShell.Commands
         private bool _excludeDifferent /*=false*/;
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter]
         public SwitchParameter IncludeEqual
@@ -86,7 +78,6 @@ namespace Microsoft.PowerShell.Commands
         private bool _isIncludeEqualSpecified /* = false */;
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter]
         public SwitchParameter PassThru
@@ -389,7 +380,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -421,7 +411,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {

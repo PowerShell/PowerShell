@@ -1315,7 +1315,6 @@ namespace System.Management.Automation
         ///             Us^
         ///         }
         ///     }
-        ///
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="configureAst"></param>

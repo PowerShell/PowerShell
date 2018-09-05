@@ -20,15 +20,12 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Class to manage the caching of analysis data.
-    ///
     /// For performance, module command caching is flattened after discovery. Many modules have nested
     /// modules that can only be resolved at runtime - for example,
     /// script modules that declare: $env:PATH += "; $psScriptRoot". When
     /// doing initial analysis, we include these in 'ExportedCommands'.
-    ///
     /// Changes to these type of modules will not be re-analyzed, unless the user re-imports the module,
     /// or runs Get-Module -List.
-    ///
     /// </summary>
     internal class AnalysisCache
     {
@@ -691,10 +688,9 @@ namespace System.Management.Automation
             var keys = Entries.Keys;
             foreach (var key in keys)
             {
-                if (!Utils.FileExists(key))
+                if (!File.Exists(key))
                 {
-                    ModuleCacheEntry unused;
-                    removedSomething |= Entries.TryRemove(key, out unused);
+                    removedSomething |= Entries.TryRemove(key, out ModuleCacheEntry _);
                 }
             }
 
@@ -731,7 +727,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (Utils.FileExists(filename))
+                if (File.Exists(filename))
                 {
                     var fileLastWriteTime = new FileInfo(filename).LastWriteTime;
                     if (fileLastWriteTime > this.LastReadTime)
@@ -1028,7 +1024,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if (Utils.FileExists(s_cacheStoreLocation))
+                    if (File.Exists(s_cacheStoreLocation))
                     {
                         return Deserialize(s_cacheStoreLocation);
                     }

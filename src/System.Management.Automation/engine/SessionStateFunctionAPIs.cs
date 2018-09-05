@@ -35,11 +35,9 @@ namespace System.Management.Automation
         /// the current scope as a reference and filtering the functions in
         /// the other scopes based on the scoping rules.
         /// </summary>
-        ///
         /// <returns>
         /// An IDictionary representing the visible functions.
         /// </returns>
-        ///
         internal IDictionary GetFunctionTable()
         {
             SessionStateScopeEnumerator scopeEnumerator =
@@ -65,23 +63,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an IEnumerable for the function table for a given scope
         /// </summary>
-        ///
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like
         /// "global", "script", "local", or "private, or a numeric ID of a relative scope
         /// to the current scope.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
         /// a number and not "script", "global", "local", or "private"
         /// </exception>
-        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        ///
         internal IDictionary<string, FunctionInfo> GetFunctionTableAtScope(string scopeID)
         {
             Dictionary<string, FunctionInfo> result =
@@ -114,23 +108,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a functions out of session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// name of function to look up
         /// </param>
-        ///
         /// <param name="origin">
         /// Origin of the command that called this API...
         /// </param>
-        ///
         /// <returns>
         /// The value of the specified function.
         /// </returns>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         internal FunctionInfo GetFunction(string name, CommandOrigin origin)
         {
             if (String.IsNullOrEmpty(name))
@@ -155,19 +144,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a functions out of session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// name of function to look up
         /// </param>
-        ///
         /// <returns>
         /// The value of the specified function.
         /// </returns>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         internal FunctionInfo GetFunction(string name)
         {
             return GetFunction(name, CommandOrigin.Internal);
@@ -197,31 +182,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a function in the current scope of session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to set.
         /// </param>
-        ///
         /// <param name="function">
         /// The new value of the function being set.
         /// </param>
-        ///
         /// <param name="origin">
         /// Origin of the caller of this API
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception>
-        ///
         internal FunctionInfo SetFunctionRaw(
             string name,
             ScriptBlock function,
@@ -280,42 +258,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a function in the current scope of session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to set.
         /// </param>
-        ///
         /// <param name="function">
         /// The new value of the function being set.
         /// </param>
-        ///
         /// <param name="originalFunction">
         /// The original function (if any) from which the ScriptBlock is derived.
         /// </param>
-        ///
         /// <param name="options">
         /// The options to set on the function.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        ///
         /// <param name="origin">
         /// Origin of the caller of this API
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception>
-        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -330,47 +299,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a function in the current scope of session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to set.
         /// </param>
-        ///
         /// <param name="function">
         /// The new value of the function being set.
         /// </param>
-        ///
         /// <param name="originalFunction">
         /// The original function (if any) from which the ScriptBlock is derived.
         /// </param>
-        ///
         /// <param name="options">
         /// The options to set on the function.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        ///
         /// <param name="origin">
         /// Origin of the caller of this API
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The name of the help file associated with the function.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception>
-        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -386,50 +344,39 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a function in the current scope of session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to set.
         /// </param>
-        ///
         /// <param name="function">
         /// The new value of the function being set.
         /// </param>
-        ///
         /// <param name="originalFunction">
         /// The original function (if any) from which the ScriptBlock is derived.
         /// </param>
-        ///
         /// <param name="options">
         /// The options to set on the function.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        ///
         /// <param name="origin">
         /// Origin of the caller of this API
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the function.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The name of the help file associated with the function.
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception>
-        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -446,55 +393,42 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a function in the current scope of session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to set.
         /// </param>
-        ///
         /// <param name="function">
         /// The new value of the function being set.
         /// </param>
-        ///
         /// <param name="originalFunction">
         /// The original function (if any) from which the ScriptBlock is derived.
         /// </param>
-        ///
         /// <param name="options">
         /// The options to set on the function.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        ///
         /// <param name="origin">
         /// Origin of the caller of this API
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the function.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The name of the help file associated with the function.
         /// </param>
-        ///
         /// <param name="isPreValidated">
         /// Set to true if it is a regular function (meaning, we do not need to check if the script contains JobDefinition Attribute and then process it)
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception>
-        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -551,42 +485,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a function in the current scope of session state.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to set.
         /// </param>
-        ///
         /// <param name="function">
         /// The new value of the function being set.
         /// </param>
-        ///
         /// <param name="originalFunction">
         /// The original function (if any) from which the ScriptBlock is derived.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        ///
         /// <param name="origin">
         /// The origin of the caller
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// or
         /// If <paramref name="function"/> is not a <see cref="FilterInfo">FilterInfo</see>
         /// or <see cref="FunctionInfo">FunctionInfo</see>
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception>
-        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -675,34 +600,27 @@ namespace System.Management.Automation
         /// BUGBUG: this overload is preserved because a lot of tests use reflection to
         /// call it. The tests should be fixed and this API eventually removed.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to set.
         /// </param>
-        ///
         /// <param name="function">
         /// The new value of the function being set.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// or
         /// If <paramref name="function"/> is not a <see cref="FilterInfo">FilterInfo</see>
         /// or <see cref="FunctionInfo">FunctionInfo</see>
         /// </exception>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception>
-        ///
         internal FunctionInfo SetFunction(string name, ScriptBlock function, bool force)
         {
             return SetFunction(name, function, null, force, CommandOrigin.Internal);
@@ -711,27 +629,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a function from the function table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to remove.
         /// </param>
-        ///
         /// <param name="origin">
         /// THe origin of the caller of this API
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function is removed even if it is ReadOnly.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is constant.
         /// </exception>
-        ///
         internal void RemoveFunction(string name, bool force, CommandOrigin origin)
         {
             if (String.IsNullOrEmpty(name))
@@ -761,23 +673,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a function from the function table.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to remove.
         /// </param>
-        ///
         /// <param name="force">
         /// If true, the function is removed even if it is ReadOnly.
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is constant.
         /// </exception>
-        ///
         internal void RemoveFunction(string name, bool force)
         {
             RemoveFunction(name, force, CommandOrigin.Internal);
@@ -789,19 +696,15 @@ namespace System.Management.Automation
         ///
         /// BUGBUG: This is only used by the implicit remoting functions...
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the function to remove.
         /// </param>
-        ///
         /// <param name="module">
         /// Module the function might be imported from.
         /// </param>
-        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is constant.
         /// </exception>
-        ///
         internal void RemoveFunction(string name, PSModuleInfo module)
         {
             Dbg.Assert(module != null, "Caller should verify that module parameter is not null");

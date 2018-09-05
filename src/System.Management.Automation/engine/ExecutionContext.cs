@@ -233,7 +233,6 @@ namespace System.Management.Automation
         /// providers based on the type of the shell
         /// (single shell or custom shell).
         /// </summary>
-        ///
         internal ProviderNames ProviderNames
         {
             get
@@ -281,7 +280,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Session State with which this instance of engine works
         /// </summary>
-        ///
         internal SessionStateInternal EngineSessionState { get; set; }
 
         /// <summary>
@@ -293,7 +291,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the SessionState facade for the internal session state APIs
         /// </summary>
-        ///
         internal SessionState SessionState
         {
             get
@@ -377,7 +374,6 @@ namespace System.Management.Automation
         /// Gets the location globber for the session state for
         /// this instance of the runspace.
         /// </summary>
-        ///
         internal LocationGlobber LocationGlobber
         {
             get
@@ -391,7 +387,6 @@ namespace System.Management.Automation
         /// <summary>
         /// The assemblies that have been loaded for this runspace
         /// </summary>
-        ///
         internal Dictionary<string, Assembly> AssemblyCache { get; private set; }
 
         #endregion Properties
@@ -402,7 +397,6 @@ namespace System.Management.Automation
         /// The state for current engine that is running.
         /// </summary>
         /// <value></value>
-        ///
         internal EngineState EngineState { get; set; } = EngineState.None;
 
         #endregion
@@ -1415,7 +1409,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs an Execution context object for Automation Engine
         /// </summary>
-        ///
         /// <param name="engine">
         /// Engine that hosts this execution context
         /// </param>
@@ -1509,7 +1502,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Enum that defines state of monad engine.
     /// </summary>
-    ///
     internal enum EngineState
     {
         /// <summary>

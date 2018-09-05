@@ -70,7 +70,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Encoding optional flag.
         /// </summary>
-        ///
         [Parameter(Position = 1)]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompletions(

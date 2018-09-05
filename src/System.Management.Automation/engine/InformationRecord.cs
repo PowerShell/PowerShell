@@ -7,15 +7,11 @@ using System.Collections.Generic;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Defines a data structure used to represent informational context destined for the host or user.
-    ///
     /// </summary>
     /// <remarks>
-    ///
     /// InformationRecords are passed to <see cref="System.Management.Automation.Cmdlet.WriteInformation(Object, string[])"/>,
     /// which, according to host or user preference, forwards that information on to the host for rendering to the user.
-    ///
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Cmdlet.WriteInformation(Object, string[])"/>
 
@@ -23,9 +19,7 @@ namespace System.Management.Automation
     public class InformationRecord
     {
         /// <summary>
-        ///
         /// Initializes a new instance of the InformationRecord class.
-        ///
         /// </summary>
         /// <param name="messageData">The object to be transmitted to the host.</param>
         /// <param name="source">The source of the message (i.e.: script path, function name, etc.)</param>

@@ -226,4 +226,14 @@ public class AttributeTest$guid : PSCmdlet
         New-Item -Path $VBFile -ItemType File -Force > $null
         { Add-Type -Path $VBFile } | Should -Throw -ErrorId "EXTENSION_NOT_SUPPORTED,Microsoft.PowerShell.Commands.AddTypeCommand"
     }
+
+    It "Throw terminating error when specified assembly is not found: <assemblyName>" -TestCases @(
+        @{ assemblyName = "does_not_exist_with_wildcard_*"; errorid = "ErrorLoadingAssembly,Microsoft.PowerShell.Commands.AddTypeCommand"},
+        @{ assemblyName = "../does_not_exist_with_wildcard_*"; errorid = "ErrorLoadingAssembly,Microsoft.PowerShell.Commands.AddTypeCommand"},
+        @{ assemblyName = "${PSHOME}/does_not_exist"; errorid = "System.IO.FileNotFoundException,Microsoft.PowerShell.Commands.AddTypeCommand"},
+        @{ assemblyName = "does_not_exist"; errorid = "PathNotFound,Microsoft.PowerShell.Commands.AddTypeCommand"}
+    ) {
+        param ($assemblyName, $errorid)
+        { Add-Type -AssemblyName $assemblyName } | Should -Throw -ErrorId $errorid
+    }
 }

@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <param name="conversionType">Specifies type of conversion, either VT100 or HTML.</param>
         /// <param name="optionInfo">Specifies the rendering options for VT100 rendering.</param>
         /// <returns>MarkdownInfo object with the converted output.</returns>
-        public static MarkdownInfo Convert(string markdownString, MarkdownConversionType conversionType, MarkdownOptionInfo optionInfo)
+        public static MarkdownInfo Convert(string markdownString, MarkdownConversionType conversionType, PSMarkdownOptionInfo optionInfo)
         {
             var renderInfo = new MarkdownInfo();
             var writer = new StringWriter();

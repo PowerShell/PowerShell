@@ -7439,7 +7439,6 @@ namespace System.Management.Automation.Language
     #region Error related classes
 
     /// <summary>
-    ///
     /// </summary>
     public class ParseError
     {
@@ -7467,7 +7466,6 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -7476,22 +7474,18 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         public IScriptExtent Extent { get; }
 
         /// <summary>
-        ///
         /// </summary>
         public string ErrorId { get; }
 
         /// <summary>
-        ///
         /// </summary>
         public string Message { get; }
 
         /// <summary>
-        ///
         /// </summary>
         public bool IncompleteInput { get; }
     }

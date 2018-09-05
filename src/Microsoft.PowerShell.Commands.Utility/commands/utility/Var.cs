@@ -394,7 +394,6 @@ namespace Microsoft.PowerShell.Commands
         /// The options for the variable to specify if the variable should
         /// be ReadOnly, Constant, and/or Private.
         /// </summary>
-        ///
         [Parameter]
         public ScopedItemOptions Option { get; set; } = ScopedItemOptions.None;
 
@@ -458,7 +457,6 @@ namespace Microsoft.PowerShell.Commands
         /// take the place of the Value parameter if none was specified on the
         /// command line.
         /// </summary>
-        ///
         protected override void ProcessRecord()
         {
             // If Force is not specified, see if the variable already exists
@@ -780,15 +778,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the variables of the given names to the specified value.
         /// </summary>
-        ///
         /// <param name="varNames">
         /// The name(s) of the variables to set.
         /// </param>
-        ///
         /// <param name="varValue">
         /// The value to set the variable to.
         /// </param>
-        ///
         private void SetVariable(string[] varNames, object varValue)
         {
             CommandOrigin origin = MyInvocation.CommandOrigin;

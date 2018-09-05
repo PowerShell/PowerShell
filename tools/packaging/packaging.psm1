@@ -3,6 +3,7 @@
 $Environment = Get-EnvironmentInformation
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
+Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.17.10", "ubuntu.18.04", "debian.8", "debian.9")
 
 function Start-PSPackage {
@@ -1102,6 +1103,14 @@ function New-AfterScripts
         $AfterRemoveScript = [io.path]::GetTempFileName()
         $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
         $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+
+        if ($Environment.IsDebian9) {
+            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+            # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
+            # symlinks.
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" >$null
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" >$null
+        }
     }
 
     return [PSCustomObject] @{
@@ -1185,7 +1194,14 @@ function New-MacOSLauncher
     New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
 
     # Define icns file information.
-    $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+    if ($IsPreview)
+    {
+        $iconfile = "$PSScriptRoot/../../assets/Powershell-preview.icns"
+    }
+    else
+    {
+        $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+    }
     $iconfilebase = (Get-Item -Path $iconfile).BaseName
 
     # Copy icns file.
@@ -1426,7 +1442,8 @@ function New-UnifiedNugetPackage
         "Microsoft.PowerShell.SDK.dll",
         "Microsoft.WSMan.Management.dll",
         "Microsoft.WSMan.Runtime.dll",
-        "System.Management.Automation.dll")
+        "System.Management.Automation.dll",
+        "Microsoft.PowerShell.MarkdownRender.dll")
 
     $linuxExceptionList = @(
         "Microsoft.PowerShell.Commands.Diagnostics.dll",
@@ -1495,6 +1512,8 @@ function New-UnifiedNugetPackage
 
                 'Microsoft.PowerShell.Commands.Utility' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.MarkdownRender'), [tuple]::Create('version', $PackageVersion))) > $null
+
                     foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
                     {
                         $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
@@ -1526,6 +1545,8 @@ function New-UnifiedNugetPackage
                     {
                         $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
                     }
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
                 }
 
                 'Microsoft.PowerShell.Security' {
@@ -1551,10 +1572,14 @@ function New-UnifiedNugetPackage
                     {
                         $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
                     }
+                }
 
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure'), [tuple]::Create('version', '1.0.0-alpha08'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'PowerShell.Core.Instrumentation'), [tuple]::Create('version', '6.0.0-RC2'))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'libpsl'), [tuple]::Create('version', '6.0.0-rc'))) > $null
+                'Microsoft.PowerShell.MarkdownRender' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                    {
+                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                    }
                 }
             }
 
@@ -2429,14 +2454,14 @@ function New-MSIPackage
     [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
     if(!$isPreview)
     {
-        [Environment]::SetEnvironmentVariable("AddPathDefault", '1', "Process")
+        [Environment]::SetEnvironmentVariable("PwshPath", '', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '31ab5147-9a97-4452-8443-d9709f0516e1', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '1d00683b-0f84-4db8-a64f-2f98ad42fe06', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_black.ico', "Process")
     }
     else
     {
-        [Environment]::SetEnvironmentVariable("AddPathDefault", '0', "Process")
+        [Environment]::SetEnvironmentVariable("PwshPath", 'preview', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_av_colors.ico', "Process")
@@ -2530,15 +2555,19 @@ function Test-FileWxs
     $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)',$env:FileArchitecture)
 
     [xml] $filesAssetXml = $filesAssetString
+    [xml] $newFilesAssetXml = $filesAssetString
+    $xmlns=[System.Xml.XmlNamespaceManager]::new($newFilesAssetXml.NameTable)
+    $xmlns.AddNamespace('Wix','http://schemas.microsoft.com/wix/2006/wi')
+
     [xml] $heatFilesXml = Get-Content -Raw -Path $HeatFilesWxsPath
     $assetFiles = $filesAssetXml.GetElementsByTagName('File')
     $heatFiles = $heatFilesXml.GetElementsByTagName('File')
-    $indexedHeatFiles = @()
+    $heatNodesByFile = @{}
 
     # Index the list of files generated by heat
     foreach($file in $heatFiles)
     {
-        $indexedHeatFiles += $file.Source
+        $heatNodesByFile.Add($file.Source, $file)
     }
 
     # Index the files from the asset wxs
@@ -2548,40 +2577,216 @@ function Test-FileWxs
     foreach($file in $assetFiles)
     {
         $name = $file.Source
-        if($indexedHeatFiles -inotcontains $name)
+        if($heatNodesByFile.Keys -inotcontains $name)
         {
             $passed = $false
             Write-Warning "{$name} is no longer in product and should be removed from {$FilesWxsPath}"
+            $componentId = $file.ParentNode.Id
+            $componentXPath = '//Wix:Component[@Id="{0}"]' -f $componentId
+            $componentNode = Get-XmlNodeByXPath -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns -XPath $componentXPath
+            if($componentNode)
+            {
+                # Remove the Component
+                Remove-XmlElement -Element $componentNode -RemoveEmptyParents
+                # Remove teh ComponentRef
+                Remove-ComponentRefNode -Id $componentId -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
+            }
+            else
+            {
+                Write-Warning "Could not remove this node!"
+            }
         }
         $indexedAssetFiles += $name
     }
 
     # verify that no files have been added.
-    foreach($file in $indexedHeatFiles)
+    foreach($file in $heatNodesByFile.Keys)
     {
         if($indexedAssetFiles -inotcontains $file)
         {
             $passed = $false
-            Write-Warning "new file {$file} need to be added to {$FilesWxsPath}"
+            $folder = Split-Path -Path $file
+            $name = Split-Path -Path $file -Leaf
+            $heatNode = $heatNodesByFile[$file]
+            $compGroupNode = Get-ComponentGroupNode -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
+            $filesNode = Get-DirectoryNode -Node $heatNode -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
+            # Create new Component
+            $newComponent = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'Component' -Node $filesNode -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
+            $componentId = New-WixId -Prefix 'cmp'
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponent -Name 'Id' -Value $componentId
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponent -Name 'Guid' -Value "{$(New-Guid)}"
+            # Crete new File in Component
+            $newFile = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'File' -Node $newComponent -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'Id' -Value (New-WixId -Prefix 'fil')
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'KeyPath' -Value "yes"
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'Source' -Value $file
+            # Create new ComponentRef
+            $newComponentRef = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'ComponentRef' -Node $compGroupNode -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
+            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponentRef -Name 'Id' -Value $componentId
+
+            Write-Warning "new file in {$folder} with name {$name} in a {$($filesNode.LocalName)} need to be added to {$FilesWxsPath}"
         }
     }
 
     if(!$passed)
     {
+        $newXmlFileName = Join-Path -Path $env:TEMP -ChildPath ([System.io.path]::GetRandomFileName() + '.xml')
+        $newFilesAssetXml.Save($newXmlFileName)
+        $newXml = Get-Content -raw $newXmlFileName
+        $newXml = $newXml -replace 'amd64', '$(var.FileArchitecture)'
+        $newXml = $newXml -replace 'x86', '$(var.FileArchitecture)'
+        $newXml | Out-File -FilePath $newXmlFileName -Encoding ascii
+        Write-Log -message "Update xml saved to $newXmlFileName"
         if($env:appveyor)
         {
             try
             {
-                Push-AppveyorArtifact $HeatFilesWxsPath
+                Push-AppveyorArtifact $newXmlFileName
             }
             catch
             {
                 Write-Warning -Message "Pushing MSI File fragment failed."
             }
         }
+        elseif($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest')
+        {
+            Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$newXmlFileName"
+        }
 
         throw "Current files to not match  {$FilesWxsPath}"
     }
+}
+
+# Removes a ComponentRef node in the files.wxs Xml Doc
+function Remove-ComponentRefNode
+{
+    param(
+        [Parameter(Mandatory)]
+        [System.Xml.XmlDocument]
+        $XmlDoc,
+        [Parameter(Mandatory)]
+        [System.Xml.XmlNamespaceManager]
+        $XmlNsManager,
+        [Parameter(Mandatory)]
+        [string]
+        $Id
+    )
+
+    $compRefXPath = '//Wix:ComponentRef[@Id="{0}"]' -f $Id
+    $node = Get-XmlNodeByXPath -XmlDoc $XmlDoc -XmlNsManager $XmlNsManager -XPath $compRefXPath
+    if($node)
+    {
+        Remove-XmlElement -element $node
+    }
+    else
+    {
+        Write-Warning "could not remove node"
+    }
+}
+
+# Get the ComponentGroup node in the files.wxs Xml Doc
+function Get-ComponentGroupNode
+{
+    param(
+        [Parameter(Mandatory)]
+        [System.Xml.XmlDocument]
+        $XmlDoc,
+        [Parameter(Mandatory)]
+        [System.Xml.XmlNamespaceManager]
+        $XmlNsManager
+    )
+
+    if(!$XmlNsManager.HasNamespace('Wix'))
+    {
+        throw 'Namespace manager must have "wix" defined.'
+    }
+
+    $compGroupXPath = '//Wix:ComponentGroup'
+    $node = Get-XmlNodeByXPath -XmlDoc $XmlDoc -XmlNsManager $XmlNsManager -XPath $compGroupXPath
+    return $node
+}
+
+# Gets the Directory Node the files.wxs Xml Doc
+# Creates it if it does not exist
+function Get-DirectoryNode
+{
+    param(
+        [Parameter(Mandatory)]
+        [System.Xml.XmlElement]
+        $Node,
+        [Parameter(Mandatory)]
+        [System.Xml.XmlDocument]
+        $XmlDoc,
+        [Parameter(Mandatory)]
+        [System.Xml.XmlNamespaceManager]
+        $XmlNsManager
+    )
+
+    if(!$XmlNsManager.HasNamespace('Wix'))
+    {
+        throw 'Namespace manager must have "wix" defined.'
+    }
+
+    $pathStack =  [System.Collections.Stack]::new()
+
+    [System.Xml.XmlElement] $dirNode = $Node.ParentNode.ParentNode
+    $dirNodeType = $dirNode.LocalName
+    if($dirNodeType -eq 'DirectoryRef')
+    {
+        return Get-XmlNodeByXPath -XmlDoc $XmlDoc -XmlNsManager $XmlNsManager -XPath "//Wix:DirectoryRef"
+    }
+    if($dirNodeType -eq 'Directory')
+    {
+        while($dirNode.LocalName -eq 'Directory') {
+            $pathStack.Push($dirNode.Name)
+            $dirNode = $dirNode.ParentNode
+        }
+        $path = "//"
+        [System.Xml.XmlElement] $lastNode = $null
+        while($pathStack.Count -gt 0){
+            $dirName = $pathStack.Pop()
+            $path += 'Wix:Directory[@Name="{0}"]' -f $dirName
+            $node = Get-XmlNodeByXPath -XmlDoc $XmlDoc -XmlNsManager $XmlNsManager -XPath $path
+
+            if(!$node)
+            {
+                if(!$lastNode)
+                {
+                    # Inserting at the root
+                    $lastNode = Get-XmlNodeByXPath -XmlDoc $XmlDoc -XmlNsManager $XmlNsManager -XPath "//Wix:DirectoryRef"
+                }
+
+                $newDirectory = New-XmlElement -XmlDoc $XmlDoc -LocalName 'Directory' -Node $lastNode -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
+                New-XmlAttribute -XmlDoc $XmlDoc -Element $newDirectory -Name 'Name' -Value $dirName
+                New-XmlAttribute -XmlDoc $XmlDoc -Element $newDirectory -Name 'Id' -Value (New-WixId -Prefix 'dir')
+                $lastNode = $newDirectory
+            }
+            else
+            {
+                $lastNode = $node
+            }
+            if ($pathStack.Count -gt 0)
+            {
+                $path += '/'
+            }
+        }
+        return $lastNode
+    }
+
+    throw "unknown element type: $dirNodeType"
+}
+
+# Creates a new Wix Id in the proper format
+function New-WixId
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $Prefix
+    )
+
+    $guidPortion = (New-Guid).Guid.ToUpperInvariant() -replace '\-' ,''
+    "$Prefix$guidPortion"
 }
 
 # Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'

@@ -29,7 +29,7 @@ Describe "Language Primitive Tests" -Tags "CI" {
     }
 
     It "Casting recursive array to bool should not cause crash" {
-        $a[0] = $a = [PSObject](,1)
+        $a[0] = $a = [PSObject](, 1)
         [System.Management.Automation.LanguagePrimitives]::IsTrue($a) | Should -BeTrue
     }
 
@@ -45,5 +45,61 @@ Describe "Language Primitive Tests" -Tags "CI" {
         $count = 0
         [System.Management.Automation.LanguagePrimitives]::GetEnumerable($dt) | ForEach-Object { $count++ }
         $count | Should -Be 2
+    }
+
+    It "TryCompare should succeed on int and string" {
+        $result = $null
+        [System.Management.Automation.LanguagePrimitives]::TryCompare(1, "1", [ref] $result) | Should -BeTrue
+        $result | Should -Be 0
+    }
+
+    It "TryCompare should fail on int and datetime" {
+        $result = $null
+        [System.Management.Automation.LanguagePrimitives]::TryCompare(1, [datetime]::Now, [ref] $result) | Should -BeFalse
+    }
+
+    It "TryCompare should succeed on int and int and compare correctly smaller" {
+        $result = $null
+        [System.Management.Automation.LanguagePrimitives]::TryCompare(1, 2, [ref] $result) | Should -BeTrue
+        $result | Should -BeExactly -1
+    }
+
+    It "TryCompare should succeed on string and string and compare correctly greater" {
+        $result = $null
+        [System.Management.Automation.LanguagePrimitives]::TryCompare("bbb", "aaa", [ref] $result) | Should -BeTrue
+        $result | Should -BeExactly 1
+    }
+
+    It "TryCompare should succeed on string and string and compare case insensitive correctly" {
+        $result = $null
+        [System.Management.Automation.LanguagePrimitives]::TryCompare("AAA", "aaa", $true, [ref] $result) | Should -BeTrue
+        $result | Should -BeExactly 0
+    }
+
+    It "TryCompare with cultureInfo is culture sensitive" {
+        $result = $null
+        $swedish = [cultureinfo] 'sv-SE'
+        # in Swedish, åäö appears at the end of the alphabet, and should compare greater than o
+        $val = [System.Management.Automation.LanguagePrimitives]::TryCompare("ooo", "ååå", $false, $swedish, [ref] $result)
+        $val | Should -BeTrue
+        $result | Should -BeExactly -1
+    }
+
+    It "TryCompare compares greater than null as Compare" {
+        $result = $null
+
+        $compareResult = [System.Management.Automation.LanguagePrimitives]::Compare($null, 10)
+        $val = [System.Management.Automation.LanguagePrimitives]::TryCompare($null, 10, [ref] $result)
+        $val | Should -BeTrue
+        $result | Should -BeExactly $compareResult
+    }
+
+    It "TryCompare compares less than null as Compare" {
+        $result = $null
+
+        $compareResult = [System.Management.Automation.LanguagePrimitives]::Compare(10, $null)
+        $val = [System.Management.Automation.LanguagePrimitives]::TryCompare(10, $null, [ref] $result)
+        $val | Should -BeTrue
+        $result | Should -BeExactly $compareResult
     }
 }

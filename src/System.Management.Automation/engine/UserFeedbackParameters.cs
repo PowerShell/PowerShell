@@ -107,12 +107,10 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Constructs an instance with the specified command instance
         /// </summary>
-        ///
         /// <param name="commandRuntime">
         /// The instance of the command that the parameters should set the
         /// user feedback properties on when the parameters get bound.
         /// </param>
-        ///
         internal ShouldProcessParameters(MshCommandRuntime commandRuntime)
         {
             if (commandRuntime == null)
@@ -174,12 +172,10 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Constructs an instance with the specified command instance
         /// </summary>
-        ///
         /// <param name="commandRuntime">
         /// The instance of the command that the parameters should set the
         /// user feedback properties on when the parameters get bound.
         /// </param>
-        ///
         internal TransactionParameters(MshCommandRuntime commandRuntime)
         {
             _commandRuntime = commandRuntime;
@@ -191,7 +187,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets or sets the value of the -UseTransaction parameter for all cmdlets.
         /// </summary>
-        ///
         [Parameter]
         [Alias("usetx")]
         public SwitchParameter UseTransaction

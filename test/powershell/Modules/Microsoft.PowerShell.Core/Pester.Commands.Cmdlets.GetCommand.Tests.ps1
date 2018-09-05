@@ -16,13 +16,21 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
         $commandInfo = Get-Command Get-Date -ShowCommandInfo
     }
 
-    It "Test wildcard with drive relative directory path" {
+    # this test doesn't test anything on non-windows platforms
+    It "Test wildcard with drive relative directory path" -Skip:(!$IsWindows) {
         $pathName = Join-Path $TestDrive "WildCardCommandA*"
         $driveOffset = $pathName.IndexOf(":")
-        $pathName = $pathName.Substring($driveOffset + 1)
-        $result = Get-Command -Name $pathName
-        $result | Should -Not -BeNullOrEmpty
-        $result.Name | Should -Be WildCardCommandA.exe
+        $driveName = $pathName.Substring(0,$driveOffset + 1)
+        Push-Location -Path $driveName
+        try {
+            $pathName = $pathName.Substring($driveOffset + 1)
+            $result = Get-Command -Name $pathName
+            $result | Should -Not -BeNullOrEmpty
+            $result.Name | Should -Be WildCardCommandA.exe
+        }
+        catch {
+            Pop-Location
+        }
     }
 
     It "Test wildcard with relative directory path" {

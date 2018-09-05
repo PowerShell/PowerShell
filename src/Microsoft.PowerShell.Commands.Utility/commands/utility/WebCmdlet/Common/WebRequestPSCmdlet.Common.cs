@@ -1218,7 +1218,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     // open the input file
-                    SetRequestContent(request, new FileStream(InFile, FileMode.Open));
+                    SetRequestContent(request, new FileStream(InFile, FileMode.Open, FileAccess.Read, FileShare.Read));
                 }
                 catch (UnauthorizedAccessException)
                 {

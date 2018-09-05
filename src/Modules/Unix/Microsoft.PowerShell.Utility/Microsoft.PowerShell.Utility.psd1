@@ -5,7 +5,7 @@ CompanyName="Microsoft Corporation"
 Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="6.1.0.0"
 CompatiblePSEditions = @("Core")
-PowerShellVersion="6.1"
+PowerShellVersion="3.0"
 CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Out-File", "Out-String", "Get-FormatData", "Export-FormatData", "ConvertFrom-Json", "ConvertTo-Json",
     "Invoke-RestMethod", "Invoke-WebRequest", "Register-ObjectEvent", "Register-EngineEvent",

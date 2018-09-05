@@ -291,7 +291,10 @@ Possible matches are</value>
     <value>Cannot index into a null array.</value>
   </data>
   <data name="CannotIndex" xml:space="preserve">
-    <value>Unable to index into an object of type {0}.</value>
+    <value>Unable to index into an object of type "{0}".</value>
+  </data>
+  <data name="CannotIndexWithByRefLikeReturnType" xml:space="preserve">
+    <value>Unable to index into an object of type "{0}" with the ByRef-like return type "{1}". ByRef-like types are not supported in PowerShell.</value>
   </data>
   <data name="ArrayAssignmentFailed" xml:space="preserve">
     <value>Array assignment to [{0}] failed: {1}.</value>

@@ -11,7 +11,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs an instance of the variable with execution context.
         /// </summary>
-        ///
         /// <param name="context">
         /// Execution context
         /// </param>
@@ -26,7 +25,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the value of the variable.
         /// </summary>
-        ///
         public override object Value
         {
             get

@@ -54,7 +54,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="files"></param>
         /// <param name="errorId"></param>

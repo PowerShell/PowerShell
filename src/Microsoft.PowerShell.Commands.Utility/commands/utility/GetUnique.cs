@@ -9,7 +9,6 @@ using System.Globalization;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Unique", DefaultParameterSetName = "AsString",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113335", RemotingCapability = RemotingCapability.None)]
@@ -17,7 +16,6 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
@@ -52,7 +50,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region Overrides
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {

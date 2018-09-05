@@ -1893,7 +1893,6 @@ namespace System.Management.Automation.Internal
         #region Event Handlers
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1903,7 +1902,6 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

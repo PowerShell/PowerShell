@@ -387,7 +387,9 @@ namespace System.Management.Automation
         public override string ToString()
         {
             if (_scriptText != null)
+            {
                 return _scriptText;
+            }
 
             var sbAst = _ast as ScriptBlockAst;
             if (sbAst != null)

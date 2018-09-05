@@ -1,0 +1,5 @@
+{
+  "ExperimentalFeatures": {
+    "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature" ]
+  }
+}

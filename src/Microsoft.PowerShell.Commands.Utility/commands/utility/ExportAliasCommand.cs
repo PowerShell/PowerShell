@@ -29,7 +29,6 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "export-alias" cmdlet.
     /// </summary>
-    ///
     [Cmdlet(VerbsData.Export, "Alias", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113296")]
     [OutputType(typeof(AliasInfo))]
     public class ExportAliasCommand : PSCmdlet
@@ -39,7 +38,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Path of the file to export the aliases to.
         /// </summary>
-        ///
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
         public string Path
         {
@@ -51,7 +49,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The literal path of the file to export the aliases to.
         /// </summary>
-        ///
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
         [Alias("PSPath", "LP")]
         public string LiteralPath
@@ -75,7 +72,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Name parameter for the command.
         /// </summary>
-        ///
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true)]
         public string[] Name
         {
@@ -87,7 +83,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// If set to true, the alias that is set is passed to the pipeline.
         /// </summary>
-        ///
         [Parameter]
         public SwitchParameter PassThru
         {
@@ -106,7 +101,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Parameter that determines the format of the file created.
         /// </summary>
-        ///
         [Parameter]
         public ExportAliasFormat As { get; set; } = ExportAliasFormat.Csv;
 
@@ -173,7 +167,6 @@ namespace Microsoft.PowerShell.Commands
         /// The scope parameter for the command determines
         /// which scope the aliases are retrieved from.
         /// </summary>
-        ///
         [Parameter]
         public string Scope { get; set; }
 
@@ -184,7 +177,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The main processing loop of the command.
         /// </summary>
-        ///
         protected override void ProcessRecord()
         {
             // First get the alias table (from the proper scope if necessary)

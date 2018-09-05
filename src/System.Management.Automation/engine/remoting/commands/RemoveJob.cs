@@ -45,7 +45,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Find the jobs in repository which match matching the specified names
         /// </summary>
-        ///
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
         /// <param name="writeErrorOnNoMatch">write error if no match is found</param>
@@ -178,7 +177,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Find the jobs in repository which match the specified instanceid
         /// </summary>
-        ///
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
         /// <param name="writeErrorOnNoMatch">write error if no match is found</param>
@@ -294,7 +292,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Find the jobs in repository which match the specified session ids
         /// </summary>
-        ///
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
         /// <param name="writeErrorOnNoMatch">write error if no match is found</param>
@@ -398,7 +395,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Find the jobs in repository which match the specified command
         /// </summary>
-        ///
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
         /// <returns>list of matching jobs</returns>
@@ -451,7 +447,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Find the jobs in repository which match the specified state
         /// </summary>
-        ///
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
         /// <returns>list of matching jobs</returns>
@@ -617,7 +612,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         private String[] _names;
 
@@ -642,7 +636,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         private Guid[] _instanceIds;
 
@@ -668,7 +661,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         private int[] _sessionIds;
 
@@ -691,7 +683,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         private JobState _jobstate;
 
@@ -714,7 +705,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         private String[] _commands;
 
@@ -1007,7 +997,6 @@ namespace Microsoft.PowerShell.Commands
         #region Dispose
 
         /// <summary>
-        ///
         /// </summary>
         public void Dispose()
         {
@@ -1016,7 +1005,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)

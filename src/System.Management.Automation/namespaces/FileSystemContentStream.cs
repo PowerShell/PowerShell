@@ -20,13 +20,11 @@ namespace Microsoft.PowerShell.Commands
     /// The content stream class for the file system provider. It implements both
     /// the IContentReader and IContentWriter interfaces.
     /// </summary>
-    ///
     /// <remarks>
     /// Note, this class does no specific error handling. All errors are allowed to
     /// propagate to the caller so that they can be written to the error pipeline
     /// if necessary.
     /// </remarks>
-    ///
     internal class FileSystemContentReaderWriter : IContentReader, IContentWriter
     {
         #region tracer
@@ -75,44 +73,34 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for the content stream
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the file to get the content from.
         /// </param>
-        ///
         /// <param name="mode">
         /// The file mode to open the file with.
         /// </param>
-        ///
         /// <param name="access">
         /// The file access requested in the file.
         /// </param>
-        ///
         /// <param name="share">
         /// The file share to open the file with
         /// </param>
-        ///
         /// <param name="encoding">
         /// The encoding of the file to be read or written.
         /// </param>
-        ///
         /// <param name="usingByteEncoding">
         /// If true, bytes will be read from the file. If false, the specified encoding
         /// will be used to read the file.
         /// </param>
-        ///
         /// <param name="waitForChanges">
         /// If true, we will perform blocking reads on the file, waiting for new content to be appended
         /// </param>
-        ///
         /// <param name="provider">
         /// The CmdletProvider invoking this stream
         /// </param>
-        ///
         /// <param name="isRawStream">
         /// Indicates raw stream.
         /// </param>
-        ///
         public FileSystemContentReaderWriter(
             string path, FileMode mode, FileAccess access,
             FileShare share, Encoding encoding, bool usingByteEncoding,
@@ -124,49 +112,38 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for the content stream
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the file to get the content from.
         /// </param>
-        ///
         /// <param name="streamName">
         /// The name of the Alternate Data Stream to get the content from. If null or empty, returns
         /// the file's primary content.
         /// </param>
-        ///
         /// <param name="mode">
         /// The file mode to open the file with.
         /// </param>
-        ///
         /// <param name="access">
         /// The file access requested in the file.
         /// </param>
-        ///
         /// <param name="share">
         /// The file share to open the file with
         /// </param>
-        ///
         /// <param name="encoding">
         /// The encoding of the file to be read or written.
         /// </param>
-        ///
         /// <param name="usingByteEncoding">
         /// If true, bytes will be read from the file. If false, the specified encoding
         /// will be used to read the file.
         /// </param>
-        ///
         /// <param name="waitForChanges">
         /// If true, we will perform blocking reads on the file, waiting for new content to be appended
         /// </param>
-        ///
         /// <param name="provider">
         /// The CmdletProvider invoking this stream
         /// </param>
-        ///
         /// <param name="isRawStream">
         /// Indicates raw stream.
         /// </param>
-        ///
         public FileSystemContentReaderWriter(
             string path, string streamName, FileMode mode, FileAccess access, FileShare share,
             Encoding encoding, bool usingByteEncoding, bool waitForChanges, CmdletProvider provider,
@@ -201,53 +178,41 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for the content stream
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the file to get the content from.
         /// </param>
-        ///
         /// <param name="streamName">
         /// The name of the Alternate Data Stream to get the content from. If null or empty, returns
         /// the file's primary content.
         /// </param>
-        ///
         /// <param name="mode">
         /// The file mode to open the file with.
         /// </param>
-        ///
         /// <param name="access">
         /// The file access requested in the file.
         /// </param>
-        ///
         /// <param name="share">
         /// The file share to open the file with
         /// </param>
-        ///
         /// <param name="encoding">
         /// The encoding of the file to be read or written.
         /// </param>
-        ///
         /// <param name="usingByteEncoding">
         /// If true, bytes will be read from the file. If false, the specified encoding
         /// will be used to read the file.
         /// </param>
-        ///
         /// <param name="waitForChanges">
         /// If true, we will perform blocking reads on the file, waiting for new content to be appended
         /// </param>
-        ///
         /// <param name="provider">
         /// The CmdletProvider invoking this stream
         /// </param>
-        ///
         /// <param name="isRawStream">
         /// Indicates raw stream.
         /// </param>
-        ///
         /// <param name="suppressNewline">
         /// False to add a newline to the end of the output string, true if not.
         /// </param>
-        ///
         public FileSystemContentReaderWriter(
             string path, string streamName, FileMode mode, FileAccess access, FileShare share,
             Encoding encoding, bool usingByteEncoding, bool waitForChanges, CmdletProvider provider,
@@ -260,44 +225,34 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for the content stream
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the file to get the content from.
         /// </param>
-        ///
         /// <param name="mode">
         /// The file mode to open the file with.
         /// </param>
-        ///
         /// <param name="access">
         /// The file access requested in the file.
         /// </param>
-        ///
         ///  <param name="share">
         ///    The file share to open the file with
         ///  </param>
-        ///
         /// <param name="delimiter">
         /// The delimiter to use when reading strings. Each time read is called, all contents up to an including
         /// the delimiter is read.
         /// </param>
-        ///
         /// <param name="encoding">
         /// The encoding of the file to be read or written.
         /// </param>
-        ///
         /// <param name="waitForChanges">
         /// If true, we will perform blocking reads on the file, waiting for new content to be appended
         /// </param>
-        ///
         /// <param name="provider">
         /// The CmdletProvider invoking this stream
         /// </param>
-        ///
         /// <param name="isRawStream">
         /// Indicates raw stream.
         /// </param>
-        ///
         public FileSystemContentReaderWriter(
             string path,
             FileMode mode,
@@ -314,49 +269,38 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor for the content stream
         /// </summary>
-        ///
         /// <param name="path">
         /// The path to the file to get the content from.
         /// </param>
-        ///
         /// <param name="streamName">
         /// The name of the Alternate Data Stream to get the content from. If null or empty, returns
         /// the file's primary content.
         /// </param>
-        ///
         /// <param name="mode">
         /// The file mode to open the file with.
         /// </param>
-        ///
         /// <param name="access">
         /// The file access requested in the file.
         /// </param>
-        ///
         ///  <param name="share">
         ///    The file share to open the file with
         ///  </param>
-        ///
         /// <param name="delimiter">
         /// The delimiter to use when reading strings. Each time read is called, all contents up to an including
         /// the delimiter is read.
         /// </param>
-        ///
         /// <param name="encoding">
         /// The encoding of the file to be read or written.
         /// </param>
-        ///
         /// <param name="waitForChanges">
         /// If true, we will perform blocking reads on the file, waiting for new content to be appended
         /// </param>
-        ///
         /// <param name="provider">
         /// The CmdletProvider invoking this stream
         /// </param>
-        ///
         /// <param name="isRawStream">
         /// Indicates raw stream.
         /// </param>
-        ///
         public FileSystemContentReaderWriter(
             string path,
             string streamName,
@@ -377,18 +321,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Reads the specified number of characters or a lines from the file.
         /// </summary>
-        ///
         /// <param name="readCount">
         /// If less than 1, then the entire file is read at once. If 1 or greater, then
         /// readCount is used to determine how many items (ie: lines, bytes, delimited tokens)
         /// to read per call.
         /// </param>
-        ///
         /// <returns>
         /// An array of strings representing the character(s) or line(s) read from
         /// the file.
         /// </returns>
-        ///
         public IList Read(long readCount)
         {
             if (_isRawStream && _waitForChanges)
@@ -1003,15 +944,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Moves the current stream position in the file
         /// </summary>
-        ///
         /// <param name="offset">
         /// The offset from the origin to move the position to.
         /// </param>
-        ///
         /// <param name="origin">
         /// The origin from which the offset is calculated.
         /// </param>
-        ///
         public void Seek(long offset, SeekOrigin origin)
         {
             if (_writer != null) { _writer.Flush(); }
@@ -1071,15 +1009,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Writes the specified object to the file
         /// </summary>
-        ///
         /// <param name="content">
         /// The objects to write to the file
         /// </param>
-        ///
         /// <returns>
         /// The objects written to the file.
         /// </returns>
-        ///
         public IList Write(IList content)
         {
             foreach (object line in content)

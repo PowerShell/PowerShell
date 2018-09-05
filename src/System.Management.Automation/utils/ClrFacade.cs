@@ -137,7 +137,7 @@ namespace System.Management.Automation
         internal static SecurityZone GetFileSecurityZone(string filePath)
         {
             Diagnostics.Assert(Path.IsPathRooted(filePath), "Caller makes sure the path is rooted.");
-            Diagnostics.Assert(Utils.FileExists(filePath), "Caller makes sure the file exists.");
+            Diagnostics.Assert(File.Exists(filePath), "Caller makes sure the file exists.");
             return MapSecurityZone(filePath);
         }
 

@@ -1165,7 +1165,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         public ReadOnlyCollection<string> ExportedDscResources
         {

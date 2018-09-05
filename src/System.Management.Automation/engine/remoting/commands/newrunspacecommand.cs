@@ -50,7 +50,6 @@ namespace Microsoft.PowerShell.Commands
     /// This assumes that a shell by the name E12 exists on the remote server
     /// $rs = New-PSSession -computername s1 -port 8061 -ShellName E12
     /// </summary>
-    ///
     [Cmdlet(VerbsCommon.New, "PSSession", DefaultParameterSetName = "ComputerName",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135237", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
@@ -64,7 +63,6 @@ namespace Microsoft.PowerShell.Commands
         ///      (a) Computer name
         ///      (b) IPv4 address : 132.3.4.5
         ///      (c) IPv6 address: 3ffe:8311:ffff:f70f:0:5efe:172.30.162.18
-        ///
         /// </summary>
         [Parameter(Position = 0,
                    ValueFromPipeline = true,

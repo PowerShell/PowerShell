@@ -8,11 +8,11 @@ Describe "History cmdlet test cases" -Tags "CI" {
             $ps = [PowerShell]::Create("NewRunspace")
             # we need to be sure that history is added, so use the proper
             # Invoke variant
-            $null = $ps.addcommand("Get-Date").Invoke($null,$setting)
+            $null = $ps.addcommand("Get-Date").Invoke($null, $setting)
             $ps.commands.clear()
-            $null = $ps.addscript("1+1").Invoke($null,$setting)
+            $null = $ps.addscript("1+1").Invoke($null, $setting)
             $ps.commands.clear()
-            $null = $ps.addcommand("Get-Location").Invoke($null,$setting)
+            $null = $ps.addcommand("Get-Location").Invoke($null, $setting)
             $ps.commands.clear()
         }
         AfterEach {
@@ -38,18 +38,18 @@ Describe "History cmdlet test cases" -Tags "CI" {
         }
         It "Add-History actually adds to history" {
             # add this invocation to history
-            $ps.AddScript("Get-History|Add-History").Invoke($null,$setting)
+            $ps.AddScript("Get-History|Add-History").Invoke($null, $setting)
             # that's 4 history lines * 2
             $ps.Commands.Clear()
             $result = $ps.AddCommand("Get-History").Invoke()
             $result.Count | Should -Be 8
-            for($i = 0; $i -lt 4; $i++) {
-                $result[$i+4].CommandLine | Should -BeExactly $result[$i].CommandLine
+            for ($i = 0; $i -lt 4; $i++) {
+                $result[$i + 4].CommandLine | Should -BeExactly $result[$i].CommandLine
             }
         }
     }
 
-	It "Tests Invoke-History on a cmdlet that generates output on all streams" {
+    It "Tests Invoke-History on a cmdlet that generates output on all streams" {
         $streamSpammer = '
         function StreamSpammer
         {
@@ -93,7 +93,7 @@ Describe "History cmdlet test cases" -Tags "CI" {
         $outputCount | Should -Be 12
     }
 
-	It "Tests Invoke-History on a private command" {
+    It "Tests Invoke-History on a private command" {
 
         $invocationSettings = New-Object System.Management.Automation.PSInvocationSettings
         $invocationSettings.AddToHistory = $true
@@ -109,5 +109,20 @@ Describe "History cmdlet test cases" -Tags "CI" {
         $ps.Dispose()
 
         $errorResult | Should -BeExactly 'CommandNotFoundException'
+    }
+
+    It "HistoryInfo calculates Duration" {
+        $start = [datetime]::new(2001, 01, 01, 10, 01, 01)
+        $duration = [timespan] "1:2:21"
+        $end = $start + $duration
+        $history = [PSCustomObject] @{
+            CommandLine        = "command"
+            ExecutionStatus    = [Management.Automation.Runspaces.PipelineState]::Completed
+            StartExecutionTime = $start
+            EndExecutionTime   = $end
+        }
+        $history | Add-History
+        $h = Get-History -count 1
+        $h.Duration | Should -Be $duration
     }
 }

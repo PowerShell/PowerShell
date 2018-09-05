@@ -1230,7 +1230,7 @@ namespace System.Management.Automation
                     var parameterTypes = methodInfo.method.GetParameters().Select(parameter => parameter.ParameterType).ToArray();
                     var targetTypeMethod = invocationConstraints.MethodTargetType.GetMethod(methodInfo.method.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, parameterTypes, null);
 
-                    if (targetTypeMethod != null && (targetTypeMethod.IsPublic || targetTypeMethod.IsFamily))
+                    if (targetTypeMethod != null && (targetTypeMethod.IsPublic || targetTypeMethod.IsFamily || targetTypeMethod.IsFamilyOrAssembly))
                     {
                         methodInfo = new MethodInformation(targetTypeMethod, 0);
                         callNonVirtually = true;
@@ -1920,6 +1920,38 @@ namespace System.Management.Automation
 
         internal object Invoke(object target, object[] arguments)
         {
+            // There may be parameters of ByRef-like types, but they will be taken care of
+            // when we resolve overloads to find the best methods -- proper exception will
+            // be thrown when converting arguments to the ByRef-like parameter types.
+            //
+            // So when reaching here, we only care about (1) if the method return type is
+            // BeRef-like; (2) if it's a constrcutor of a ByRef-like type.
+
+            if (method is ConstructorInfo ctor)
+            {
+                if (ctor.DeclaringType.IsByRefLike)
+                {
+                    throw new MethodException(
+                        nameof(ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType),
+                        innerException: null,
+                        ExtendedTypeSystem.CannotInstantiateBoxedByRefLikeType,
+                        ctor.DeclaringType);
+                }
+
+                return ctor.Invoke(arguments);
+            }
+
+            var methodInfo = (MethodInfo) method;
+            if (methodInfo.ReturnType.IsByRefLike)
+            {
+                throw new MethodException(
+                    nameof(ExtendedTypeSystem.CannotCallMethodWithByRefLikeReturnType),
+                    innerException: null,
+                    ExtendedTypeSystem.CannotCallMethodWithByRefLikeReturnType,
+                    methodInfo.Name,
+                    methodInfo.ReturnType);
+            }
+
             if (target is PSObject)
             {
                 if (!method.DeclaringType.IsAssignableFrom(target.GetType()))
@@ -1932,20 +1964,15 @@ namespace System.Management.Automation
             {
                 if (_methodInvoker == null)
                 {
-                    if (!(method is MethodInfo))
-                    {
-                        _useReflection = true;
-                    }
-                    else
-                    {
-                        _methodInvoker = GetMethodInvoker((MethodInfo)method);
-                    }
+                    _methodInvoker = GetMethodInvoker(methodInfo);
                 }
+
                 if (_methodInvoker != null)
                 {
                     return _methodInvoker(target, arguments);
                 }
             }
+
             return method.Invoke(target, arguments);
         }
 
@@ -2455,13 +2482,12 @@ namespace System.Management.Automation
                 // require different delegates
                 // The same is true for generics, COM Types.
                 Type declaringType = property.DeclaringType;
-                Type propertyType = property.PropertyType;
 
                 if (declaringType.IsValueType ||
                     propertyType.IsGenericType ||
                     declaringType.IsGenericType ||
-                    property.DeclaringType.IsCOMObject ||
-                    property.PropertyType.IsCOMObject)
+                    declaringType.IsCOMObject ||
+                    propertyType.IsCOMObject)
                 {
                     this.readOnly = property.GetSetMethod() == null;
                     this.writeOnly = property.GetGetMethod() == null;
@@ -2511,7 +2537,9 @@ namespace System.Management.Automation
             private void InitGetter()
             {
                 if (writeOnly || useReflection)
+                {
                     return;
+                }
 
                 var parameter = Expression.Parameter(typeof(object));
                 Expression instance = null;
@@ -2568,7 +2596,9 @@ namespace System.Management.Automation
             private void InitSetter()
             {
                 if (readOnly || useReflection)
+                {
                     return;
+                }
 
                 var parameter = Expression.Parameter(typeof(object));
                 var value = Expression.Parameter(typeof(object));
@@ -3621,16 +3651,29 @@ namespace System.Management.Automation
         protected override object PropertyGet(PSProperty property)
         {
             PropertyCacheEntry adapterData = (PropertyCacheEntry)property.adapterData;
+
+            if (adapterData.propertyType.IsByRefLike)
+            {
+                throw new GetValueException(
+                    nameof(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField),
+                    innerException: null,
+                    ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField,
+                    adapterData.member.Name,
+                    adapterData.propertyType);
+            }
+
             PropertyInfo propertyInfo = adapterData.member as PropertyInfo;
             if (propertyInfo != null)
             {
                 if (adapterData.writeOnly)
                 {
-                    throw new GetValueException("WriteOnlyProperty",
-                        null,
+                    throw new GetValueException(
+                        nameof(ExtendedTypeSystem.WriteOnlyProperty),
+                        innerException: null,
                         ExtendedTypeSystem.WriteOnlyProperty,
                         propertyInfo.Name);
                 }
+
                 if (adapterData.useReflection)
                 {
                     return propertyInfo.GetValue(property.baseObject, null);
@@ -3664,10 +3707,21 @@ namespace System.Management.Automation
 
             if (adapterData.readOnly)
             {
-                throw new SetValueException(nameof(ExtendedTypeSystem.ReadOnlyProperty),
-                    null,
+                throw new SetValueException(
+                    nameof(ExtendedTypeSystem.ReadOnlyProperty),
+                    innerException: null,
                     ExtendedTypeSystem.ReadOnlyProperty,
                     adapterData.member.Name);
+            }
+
+            if (adapterData.propertyType.IsByRefLike)
+            {
+                throw new SetValueException(
+                    nameof(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField),
+                    innerException: null,
+                    ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField,
+                    adapterData.member.Name,
+                    adapterData.propertyType);
             }
 
             PropertyInfo propertyInfo = adapterData.member as PropertyInfo;
@@ -3755,9 +3809,7 @@ namespace System.Management.Automation
 #pragma warning disable 56500
             try
             {
-                // We cannot call MethodBase's Invoke on a constructor
-                // because it requires a target we don't have.
-                returnValue = ((ConstructorInfo)methodInformation.method).Invoke(arguments);
+                returnValue = methodInformation.Invoke(target: null, arguments);
             }
             catch (TargetInvocationException ex)
             {

@@ -2163,7 +2163,6 @@ namespace System.Management.Automation
         /// Note that AddPowerShellTypesToTheScope() would be call on every foo call, 10 times.
         ///
         /// This method also should be called for 'using module' statements. Then added types would have a different name.
-        ///
         /// </summary>
         /// <param name="types"></param>
         /// <param name="context"></param>

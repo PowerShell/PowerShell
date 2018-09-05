@@ -78,7 +78,6 @@ namespace Microsoft.PowerShell.Commands
         public string[] Variable { get; set; } = null;
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter(ParameterSetName = "Variable")]
         public VariableAccessMode Mode { get; set; } = VariableAccessMode.Write;

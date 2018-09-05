@@ -23,15 +23,12 @@ namespace System.Management.Automation
         /// Constructs a command searching enumerator that resolves the location
         /// of a command using the PATH environment variable.
         /// </summary>
-        ///
         /// <param name="patterns">
         /// The patterns to search for in the path.
         /// </param>
-        ///
         /// <param name="lookupPaths">
         /// The paths to directories in which to lookup the command.
         /// </param>
-        ///
         /// <param name="context">
         /// The execution context for the current engine instance.
         /// </param>
@@ -96,7 +93,6 @@ namespace System.Management.Automation
         /// Ensures that all the paths in the lookupPaths member are absolute
         /// file system paths.
         /// </summary>
-        ///
         private void ResolveCurrentDirectoryInLookupPaths()
         {
             var indexesToRemove = new SortedDictionary<int, int>();
@@ -232,11 +228,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an instance of a command enumerator
         /// </summary>
-        ///
         /// <returns>
         /// An instance of this class as IEnumerator.
         /// </returns>
-        ///
         IEnumerator<string> IEnumerable<string>.GetEnumerator()
         {
             return this;
@@ -245,11 +239,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an instance of a command enumerator
         /// </summary>
-        ///
         /// <returns>
         /// An instance of this class as IEnumerator.
         /// </returns>
-        ///
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this;
@@ -258,11 +250,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Moves the enumerator to the next command match
         /// </summary>
-        ///
         /// <returns>
         /// true if there was another command that matches, false otherwise.
         /// </returns>
-        ///
         public bool MoveNext()
         {
             bool result = false;
@@ -365,12 +355,10 @@ namespace System.Management.Automation
         /// Gets the path to the current command match.
         /// </summary>
         /// <value></value>
-        ///
         /// <exception cref="InvalidOperationException">
         /// The enumerator is positioned before the first element of
         /// the collection or after the last element.
         /// </exception>
-        ///
         string IEnumerator<string>.Current
         {
             get
@@ -407,15 +395,12 @@ namespace System.Management.Automation
         /// Gets the matching files in the specified directories and resets
         /// the currentDirectoryResultsEnumerator to this new set of results.
         /// </summary>
-        ///
         /// <param name="pattern">
         /// The pattern used to find the matching files in the specified directory.
         /// </param>
-        ///
         /// <param name="directory">
         /// The path to the directory to find the files in.
         /// </param>
-        ///
         private void GetNewDirectoryResults(string pattern, string directory)
         {
             IEnumerable<string> result = null;

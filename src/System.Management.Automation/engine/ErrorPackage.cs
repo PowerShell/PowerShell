@@ -38,62 +38,50 @@ namespace System.Management.Automation
         NotSpecified = 0,
 
         /// <summary>
-        ///
         /// </summary>
         OpenError = 1,
 
         /// <summary>
-        ///
         /// </summary>
         CloseError = 2,
 
         /// <summary>
-        ///
         /// </summary>
         DeviceError = 3,
 
         /// <summary>
-        ///
         /// </summary>
         DeadlockDetected = 4,
 
         /// <summary>
-        ///
         /// </summary>
         InvalidArgument = 5,
 
         /// <summary>
-        ///
         /// </summary>
         InvalidData = 6,
 
         /// <summary>
-        ///
         /// </summary>
         InvalidOperation = 7,
 
         /// <summary>
-        ///
         /// </summary>
         InvalidResult = 8,
 
         /// <summary>
-        ///
         /// </summary>
         InvalidType = 9,
 
         /// <summary>
-        ///
         /// </summary>
         MetadataError = 10,
 
         /// <summary>
-        ///
         /// </summary>
         NotImplemented = 11,
 
         /// <summary>
-        ///
         /// </summary>
         NotInstalled = 12,
 
@@ -103,22 +91,18 @@ namespace System.Management.Automation
         ObjectNotFound = 13,
 
         /// <summary>
-        ///
         /// </summary>
         OperationStopped = 14,
 
         /// <summary>
-        ///
         /// </summary>
         OperationTimeout = 15,
 
         /// <summary>
-        ///
         /// </summary>
         SyntaxError = 16,
 
         /// <summary>
-        ///
         /// </summary>
         ParserError = 17,
 
@@ -128,27 +112,22 @@ namespace System.Management.Automation
         PermissionDenied = 18,
 
         /// <summary>
-        ///
         /// </summary>
         ResourceBusy = 19,
 
         /// <summary>
-        ///
         /// </summary>
         ResourceExists = 20,
 
         /// <summary>
-        ///
         /// </summary>
         ResourceUnavailable = 21,
 
         /// <summary>
-        ///
         /// </summary>
         ReadError = 22,
 
         /// <summary>
-        ///
         /// </summary>
         WriteError = 23,
 
@@ -1212,18 +1191,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the value for note from mshObject
         /// </summary>
-        ///
         /// <param name="mshObject">
         /// PSObject from which value is fetched.
         /// </param>
-        ///
         /// <param name="note">
         /// name of note whose value is fetched
         /// </param>
         /// <returns>
         /// value of note
         /// </returns>
-        ///
         private static object GetNoteValue
         (
             PSObject mshObject,
@@ -1246,21 +1222,15 @@ namespace System.Management.Automation
         /// serializedErrorRecord PSObject is in the format returned
         /// by ToPSObjectForRemoting method.
         /// </summary>
-        ///
         /// <param name="serializedErrorRecord">
         /// PSObject to convert to ErrorRecord
         /// </param>
-        ///
-        ///
         /// <returns>
         /// ErrorRecord convert from mshObject.
         /// </returns>
-        ///
-        ///
         /// <exception cref="ArgumentNullException">
         /// Thrown if mshObject parameter is null.
         /// </exception>
-        ///
         internal static ErrorRecord FromPSObjectForRemoting
         (
             PSObject serializedErrorRecord
@@ -1786,7 +1756,6 @@ namespace System.Management.Automation
     /// the custom class to be used in the
     /// <see cref="ErrorDetails(IResourceSupplier,string,string,object[])"/>.
     /// constructor.
-    ///
     /// <see cref="ErrorDetails"/> contains special constructor
     /// <see cref="ErrorDetails(IResourceSupplier,string,string,object[])"/>
     /// reducing the steps which localizable code generally has to duplicate when it

@@ -19,27 +19,21 @@ namespace System.Management.Automation
         /// Constructs a CmdletInfo object from the raw cmdlet data.  This should only
         /// be used for Intrinsic commands.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the cmdlet.
         /// </param>
-        ///
         /// <param name="implementingType">
         /// The type information about the class that implements the cmdlet.
         /// </param>
-        ///
         /// <param name="helpFile">
         /// The name of the help file associated with the cmdlet
         /// </param>
-        ///
         /// <param name="PSSnapin">
         /// The PSSnapInInfo of the PSSnapin the cmdlet comes from.
         /// </param>
-        ///
         /// <param name="context">
         /// The current engine context.
         /// </param>
-        ///
         internal CmdletInfo(
             string name,
             Type implementingType,
@@ -225,7 +219,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the PSSnapin the cmdlet is implemented in.
         /// </summary>
-        ///
         internal string PSSnapInName
         {
             get
@@ -396,7 +389,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the scope options for the alias
         /// </summary>
-        ///
         /// <exception cref="System.Management.Automation.SessionStateUnauthorizedAccessException">
         /// If the trying to set an cmdlet that is constant or
         ///     if the value trying to be set is ScopedItemOptions.Constant
@@ -418,15 +410,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the options for the cmdlet and allows changes ReadOnly options only if force is specified.
         /// </summary>
-        ///
         /// <param name="newOptions">
         /// The new options value.
         /// </param>
-        ///
         /// <param name="force">
         /// If true the change to the options will happen even if the existing options are read-only.
         /// </param>
-        ///
         internal void SetOptions(ScopedItemOptions newOptions, bool force)
         {
             // Check to see if the cmdlet is readonly, if so
@@ -511,26 +500,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the CommandMetadata for this cmdlet
         /// </summary>
-        ///
         /// <exception cref="ArgumentException">
         /// The type name is invalid or the length of the type name
         /// exceeds 1024 characters.
         /// </exception>
-        ///
         /// <exception cref="System.Security.SecurityException">
         /// The caller does not have the required permission to load the assembly
         /// or create the type.
         /// </exception>
-        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        ///
         internal override CommandMetadata CommandMetadata
         {
             get {

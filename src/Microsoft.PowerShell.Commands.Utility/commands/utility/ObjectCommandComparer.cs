@@ -79,31 +79,30 @@ namespace Microsoft.PowerShell.Commands
         {
             ObjectCommandPropertyValue objectCommandPropertyValueObject = inputObject as ObjectCommandPropertyValue;
             if (objectCommandPropertyValueObject == null)
+            {
                 return false;
+            }
 
             object baseObject = PSObject.Base(PropertyValue);
             object inComingbaseObjectPropertyValue = PSObject.Base(objectCommandPropertyValueObject.PropertyValue);
 
-            IComparable baseObjectComparable = baseObject as IComparable;
-
-            if (baseObjectComparable != null)
+            if (baseObject is IComparable)
             {
-                return (LanguagePrimitives.Compare(baseObject, inComingbaseObjectPropertyValue, CaseSensitive, Culture) == 0);
+                var success = LanguagePrimitives.TryCompare(baseObject, inComingbaseObjectPropertyValue, CaseSensitive, Culture, out int result);
+                return success && result == 0;
             }
-            else
-            {
-                if (baseObject == null && inComingbaseObjectPropertyValue == null)
-                {
-                    return true;
-                }
-                if (baseObject != null && inComingbaseObjectPropertyValue != null)
-                {
-                    return baseObject.ToString().Equals(inComingbaseObjectPropertyValue.ToString(), StringComparison.OrdinalIgnoreCase);
-                }
 
-                // One of the property values being compared is null.
-                return false;
+            if (baseObject == null && inComingbaseObjectPropertyValue == null)
+            {
+                return true;
             }
+            if (baseObject != null && inComingbaseObjectPropertyValue != null)
+            {
+                return baseObject.ToString().Equals(inComingbaseObjectPropertyValue.ToString(), StringComparison.OrdinalIgnoreCase);
+            }
+
+            // One of the property values being compared is null.
+            return false;
         }
 
         /// <summary>
@@ -190,35 +189,30 @@ namespace Microsoft.PowerShell.Commands
         {
             // This method will never throw exceptions, two null
             // objects are considered the same
-            if (IsValueNull(first) && IsValueNull(second)) return 0;
+            if (IsValueNull(first) && IsValueNull(second))
+            {
+                return 0;
+            }
 
-            PSObject firstMsh = first as PSObject;
-            if (firstMsh != null)
+            if (first is PSObject firstMsh)
             {
                 first = firstMsh.BaseObject;
             }
 
-            PSObject secondMsh = second as PSObject;
-            if (secondMsh != null)
+            if (second is PSObject secondMsh)
             {
                 second = secondMsh.BaseObject;
             }
 
-            try
+            if (LanguagePrimitives.TryCompare(first, second, !_caseSensitive, _cultureInfo, out int result))
             {
-                return LanguagePrimitives.Compare(first, second, !_caseSensitive, _cultureInfo) * (_ascendingOrder ? 1 : -1);
-            }
-            catch (InvalidCastException)
-            {
-            }
-            catch (ArgumentException)
-            {
-                // Note that this will occur if the objects do not support
-                // IComparable.  We fall back to comparing as strings.
+                return result * (_ascendingOrder ? 1 : -1);
             }
 
+            // Note that this will occur if the objects do not support
+            // IComparable.  We fall back to comparing as strings.
+
             // being here means the first object doesn't support ICompare
-            // or an Exception was raised win Compare
             string firstString = PSObject.AsPSObject(first).ToString();
             string secondString = PSObject.AsPSObject(second).ToString();
 

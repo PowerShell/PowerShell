@@ -30,7 +30,6 @@ namespace Microsoft.WSMan.Management
     public class NewWSManSessionOptionCommand : PSCmdlet
     {
         /// <summary>
-        ///
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]

@@ -35,7 +35,6 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Disconnect a collection of PS sessions:
     /// > Get-PSSession | Disconnect-PSSession
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Disconnect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = DisconnectPSSessionCommand.SessionParameterSet,

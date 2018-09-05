@@ -152,15 +152,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Generate the Catalog Definition File representing files and folders
         /// </summary>
-        ///
         /// <param name="Path"> Path of expected output .cdf file </param>
-        ///
         /// <param name="catalogFilePath"> Path of the output catalog file </param>
-        ///
         /// <param name="cdfFilePath"> Path of the catalog definition file </param>
-        ///
         /// <param name="catalogVersion"> Version of catalog</param>
-        ///
         /// <param name="hashAlgorithm"> hash method used to generate hashes for the Catalog </param>
         /// <returns> HashSet for the relative Path for files in Catalog </returns>
         internal static string GenerateCDFFile(Collection<string> Path, string catalogFilePath, string cdfFilePath, int catalogVersion, string hashAlgorithm)
@@ -252,7 +247,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Generate the Catalog file for Input Catalog Definition File
         /// </summary>
-        ///
         /// <param name="cdfFilePath"> Path to the Input .cdf file </param>
         internal static void GenerateCatalogFile(string cdfFilePath)
         {
@@ -331,7 +325,6 @@ namespace System.Management.Automation
         /// <summary>
         /// To generate Catalog for the folder
         /// </summary>
-        ///
         /// <param name="Path"> Path to folder or File </param>
         /// <param name="catalogFilePath"> Catalog File Path </param>
         /// <param name="catalogVersion"> Catalog File Path </param>
@@ -402,7 +395,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Make a hash for the file
         /// </summary>
-        ///
         /// <param name="filePath"> Path of the file </param>
         /// <param name="hashAlgorithm"> Used to calculate Hash </param>
         /// <returns> HashValue for the file </returns>
@@ -654,7 +646,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Generate the hashes of all the files in given folder
         /// </summary>
-        ///
         /// <param name="folderPaths"> Path to folder or File </param>
         /// <param name="catalogFilePath"> catalog file path it should be skipped when calculating the hashes </param>
         /// <param name="hashAlgorithm"> Used to calculate Hash </param>
@@ -690,11 +681,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Compare Dictionary objects
         /// </summary>
-        ///
         /// <param name="catalogItems"> Hashes extracted from Catalog </param>
-        ///
         /// <param name="pathItems"> Hashes created from folders path </param>
-        ///
         /// <returns> True if both collections are same </returns>
         internal static bool CompareDictionaries(Dictionary<String, String> catalogItems, Dictionary<String, String> pathItems)
         {
@@ -735,7 +723,6 @@ namespace System.Management.Automation
         /// <summary>
         /// To Validate the Integrity of Catalog
         /// </summary>
-        ///
         /// <param name="catalogFolders"> Folder for which catalog is created </param>
         /// <param name="catalogFilePath"> File Name of the Catalog </param>
         /// <param name="excludedPatterns"></param>

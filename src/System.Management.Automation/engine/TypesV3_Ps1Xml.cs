@@ -114,31 +114,6 @@ namespace System.Management.Automation.Runspaces
             var td15 = new TypeData(@"Deserialized.System.Management.Automation.DebuggerStopEventArgs", true);
             td15.TargetTypeForDeserialization = typeof(Microsoft.PowerShell.DeserializingTypeConverter);
             yield return td15;
-
-            var td16 = new TypeData(@"Microsoft.PowerShell.MarkdownRender.MarkdownOptionInfo");
-            td16.Members.Add("Header1",
-                new ScriptPropertyData(@"Header1", GetScriptBlock(@"$this.AsEscapeSequence('Header1')"), setScriptBlock: null));
-            td16.Members.Add("Header2",
-                new ScriptPropertyData(@"Header2", GetScriptBlock(@"$this.AsEscapeSequence('Header2')"), setScriptBlock: null));
-            td16.Members.Add("Header3",
-                new ScriptPropertyData(@"Header3", GetScriptBlock(@"$this.AsEscapeSequence('Header3')"), setScriptBlock: null));
-            td16.Members.Add("Header4",
-                new ScriptPropertyData(@"Header4", GetScriptBlock(@"$this.AsEscapeSequence('Header4')"), setScriptBlock: null));
-            td16.Members.Add("Header5",
-                new ScriptPropertyData(@"Header5", GetScriptBlock(@"$this.AsEscapeSequence('Header5')"), setScriptBlock: null));
-            td16.Members.Add("Header6",
-                new ScriptPropertyData(@"Header6", GetScriptBlock(@"$this.AsEscapeSequence('Header6')"), setScriptBlock: null));
-            td16.Members.Add("Code",
-                new ScriptPropertyData(@"Code", GetScriptBlock(@"$this.AsEscapeSequence('Code')"), setScriptBlock: null));
-            td16.Members.Add("Link",
-                new ScriptPropertyData(@"Link", GetScriptBlock(@"$this.AsEscapeSequence('Link')"), setScriptBlock: null));
-            td16.Members.Add("Image",
-                new ScriptPropertyData(@"Image", GetScriptBlock(@"$this.AsEscapeSequence('Image')"), setScriptBlock: null));
-            td16.Members.Add("EmphasisBold",
-                new ScriptPropertyData(@"EmphasisBold", GetScriptBlock(@"$this.AsEscapeSequence('EmphasisBold')"), setScriptBlock: null));
-            td16.Members.Add("EmphasisItalics",
-                new ScriptPropertyData(@"EmphasisItalics", GetScriptBlock(@"$this.AsEscapeSequence('EmphasisItalics')"), setScriptBlock: null));
-            yield return td16;
         }
     }
 }

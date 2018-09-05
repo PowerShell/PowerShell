@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Management.Automation;
 using Markdig;
 using Markdig.Renderers;
 using Markdig.Syntax;
@@ -10,7 +11,7 @@ using Markdig.Syntax;
 namespace Microsoft.PowerShell.MarkdownRender
 {
     /// <summary>
-    /// Enum to name all the properties of MarkdownOptionInfo.
+    /// Enum to name all the properties of PSMarkdownOptionInfo.
     /// </summary>
     public enum MarkdownOptionInfoProperty
     {
@@ -73,7 +74,7 @@ namespace Microsoft.PowerShell.MarkdownRender
     /// <summary>
     /// Class to represent color preference options for various Markdown elements.
     /// </summary>
-    public sealed class MarkdownOptionInfo
+    public sealed class PSMarkdownOptionInfo
     {
         private const char Esc = (char)0x1b;
         private const string EndSequence = "[0m";
@@ -134,8 +135,13 @@ namespace Microsoft.PowerShell.MarkdownRender
         public string EmphasisItalics { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether VT100 escape sequences should be added. Default it true.
+        /// </summary>
+        public bool EnableVT100Encoding { get; set; }
+
+        /// <summary>
         /// Get the property as an rendered escape sequence.
-        /// This is used for typesps1xml for displaying.
+        /// This is used by formatting system for displaying.
         /// </summary>
         /// <param name="propertyName">Name of the property to get as escape sequence.</param>
         /// <returns>Specified property name as escape sequence.</returns>
@@ -184,11 +190,12 @@ namespace Microsoft.PowerShell.MarkdownRender
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="MarkdownOptionInfo"/> class and sets dark as the default theme.
+        /// Initializes a new instance of the <see cref="PSMarkdownOptionInfo"/> class and sets dark as the default theme.
         /// </summary>
-        public MarkdownOptionInfo()
+        public PSMarkdownOptionInfo()
         {
             SetDarkTheme();
+            EnableVT100Encoding = true;
         }
 
         private const string Header1Dark = "[7m";
@@ -198,6 +205,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         private const string Header5Dark = "[4;96m";
         private const string Header6Dark = "[4;97m";
         private const string CodeDark = "[48;2;155;155;155;38;2;30;30;30m";
+        private const string CodeMacOS = "[107;95m";
         private const string LinkDark = "[4;38;5;117m";
         private const string ImageDark = "[33m";
         private const string EmphasisBoldDark = "[1m";
@@ -226,11 +234,11 @@ namespace Microsoft.PowerShell.MarkdownRender
             Header4 = Header4Dark;
             Header5 = Header5Dark;
             Header6 = Header6Dark;
-            Code = CodeDark;
             Link = LinkDark;
             Image = ImageDark;
             EmphasisBold = EmphasisBoldDark;
             EmphasisItalics = EmphasisItalicsDark;
+            SetCodeColor(isDarkTheme: true);
         }
 
         /// <summary>
@@ -244,11 +252,17 @@ namespace Microsoft.PowerShell.MarkdownRender
             Header4 = Header4Light;
             Header5 = Header5Light;
             Header6 = Header6Light;
-            Code = CodeLight;
             Link = LinkLight;
             Image = ImageLight;
             EmphasisBold = EmphasisBoldLight;
             EmphasisItalics = EmphasisItalicsLight;
+            SetCodeColor(isDarkTheme: false);
+        }
+
+        private void SetCodeColor(bool isDarkTheme)
+        {
+            // MacOS terminal app does not support extended colors for VT100, so we special case for it.
+            Code = Platform.IsMacOS ? CodeMacOS : isDarkTheme ? CodeDark : CodeLight;
         }
     }
 
@@ -262,13 +276,13 @@ namespace Microsoft.PowerShell.MarkdownRender
 
         // For code blocks, [500@ make sure that the whole line has background color.
         private const string LongBackgroundCodeBlock = "[500@";
-        private MarkdownOptionInfo options;
+        private PSMarkdownOptionInfo options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VT100EscapeSequences"/> class.
         /// </summary>
-        /// <param name="optionInfo">MarkdownOptionInfo object to initialize with.</param>
-        public VT100EscapeSequences(MarkdownOptionInfo optionInfo)
+        /// <param name="optionInfo">PSMarkdownOptionInfo object to initialize with.</param>
+        public VT100EscapeSequences(PSMarkdownOptionInfo optionInfo)
         {
             if (optionInfo == null)
             {
@@ -285,7 +299,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <returns>Formatted Header 1 string.</returns>
         public string FormatHeader1(string headerText)
         {
-            return string.Concat(Esc, options.Header1, headerText, endSequence);
+            return FormatHeader(headerText, options.Header1);
         }
 
         /// <summary>
@@ -295,7 +309,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <returns>Formatted Header 2 string.</returns>
         public string FormatHeader2(string headerText)
         {
-            return string.Concat(Esc, options.Header2, headerText, endSequence);
+            return FormatHeader(headerText, options.Header2);
         }
 
         /// <summary>
@@ -305,7 +319,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <returns>Formatted Header 3 string.</returns>
         public string FormatHeader3(string headerText)
         {
-            return string.Concat(Esc, options.Header3, headerText, endSequence);
+            return FormatHeader(headerText, options.Header3);
         }
 
         /// <summary>
@@ -315,7 +329,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <returns>Formatted Header 4 string.</returns>
         public string FormatHeader4(string headerText)
         {
-            return string.Concat(Esc, options.Header4, headerText, endSequence);
+            return FormatHeader(headerText, options.Header4);
         }
 
         /// <summary>
@@ -325,7 +339,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <returns>Formatted Header 5 string.</returns>
         public string FormatHeader5(string headerText)
         {
-            return string.Concat(Esc, options.Header5, headerText, endSequence);
+            return FormatHeader(headerText, options.Header5);
         }
 
         /// <summary>
@@ -335,7 +349,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <returns>Formatted Header 6 string.</returns>
         public string FormatHeader6(string headerText)
         {
-            return string.Concat(Esc, options.Header6, headerText, endSequence);
+            return FormatHeader(headerText, options.Header6);
         }
 
         /// <summary>
@@ -346,13 +360,29 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <returns>Formatted code block string.</returns>
         public string FormatCode(string codeText, bool isInline)
         {
+            bool isVT100Enabled = options.EnableVT100Encoding;
+
             if (isInline)
             {
-                return string.Concat(Esc, options.Code, codeText, endSequence);
+                if (isVT100Enabled)
+                {
+                    return string.Concat(Esc, options.Code, codeText, endSequence);
+                }
+                else
+                {
+                    return codeText;
+                }
             }
             else
             {
-                return string.Concat(Esc, options.Code, codeText, Esc, LongBackgroundCodeBlock, endSequence);
+                if (isVT100Enabled)
+                {
+                    return string.Concat(Esc, options.Code, codeText, Esc, LongBackgroundCodeBlock, endSequence);
+                }
+                else
+                {
+                    return codeText;
+                }
             }
         }
 
@@ -365,13 +395,29 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// <returns>Formatted link string.</returns>
         public string FormatLink(string linkText, string url, bool hideUrl = true)
         {
+            bool isVT100Enabled = options.EnableVT100Encoding;
+
             if (hideUrl)
             {
-                return string.Concat(Esc, options.Link, "\"", linkText, "\"", endSequence);
+                if (isVT100Enabled)
+                {
+                    return string.Concat(Esc, options.Link, "\"", linkText, "\"", endSequence);
+                }
+                else
+                {
+                    return string.Concat("\"", linkText, "\"");
+                }
             }
             else
             {
-                return string.Concat("\"", linkText, "\" (", Esc, options.Link, url, endSequence, ")");
+                if (isVT100Enabled)
+                {
+                    return string.Concat("\"", linkText, "\" (", Esc, options.Link, url, endSequence, ")");
+                }
+                else
+                {
+                    return string.Concat("\"", linkText, "\" (", url, ")");
+                }
             }
         }
 
@@ -384,7 +430,15 @@ namespace Microsoft.PowerShell.MarkdownRender
         public string FormatEmphasis(string emphasisText, bool isBold)
         {
             var sequence = isBold ? options.EmphasisBold : options.EmphasisItalics;
-            return string.Concat(Esc, sequence, emphasisText, endSequence);
+
+            if (options.EnableVT100Encoding)
+            {
+                return string.Concat(Esc, sequence, emphasisText, endSequence);
+            }
+            else
+            {
+                return emphasisText;
+            }
         }
 
         /// <summary>
@@ -401,7 +455,26 @@ namespace Microsoft.PowerShell.MarkdownRender
                 text = "Image";
             }
 
-            return string.Concat(Esc, options.Image, "[", text, "]", endSequence);
+            if (options.EnableVT100Encoding)
+            {
+                return string.Concat(Esc, options.Image, "[", text, "]", endSequence);
+            }
+            else
+            {
+                return string.Concat("[", text, "]");
+            }
+        }
+
+        private string FormatHeader(string headerText, string headerEscapeSequence)
+        {
+            if (options.EnableVT100Encoding)
+            {
+                return string.Concat(Esc, headerEscapeSequence, headerText, endSequence);
+            }
+            else
+            {
+                return headerText;
+            }
         }
     }
 }

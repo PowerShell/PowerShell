@@ -116,8 +116,7 @@ function Get-EnvironmentInformation
     if ($Environment.IsWindows)
     {
         $environment += @{'IsAdmin' = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)}
-        # Can't use $env:HOME - not available on older systems (e.g. in AppVeyor)
-        $environment += @{'nugetPackagesRoot' = "${env:HOMEDRIVE}${env:HOMEPATH}\.nuget\packages"}
+        $environment += @{'nugetPackagesRoot' = "${env:USERPROFILE}\.nuget\packages"}
     }
     else
     {
@@ -140,9 +139,11 @@ function Get-EnvironmentInformation
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
         $environment += @{'IsSLES' = $LinuxInfo.ID -match 'sles'}
+        $environment += @{'IsRedHat' = $LinuxInfo.ID -match 'rhel'}
+        $environment += @{'IsRedHat7' = $Environment.IsRedHat -and $LinuxInfo.VERSION_ID -match '7' }
         $environment += @{'IsOpenSUSE13' = $Environmenst.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
         $environment += @{'IsOpenSUSE42.1' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'}
-        $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora}
+        $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $Environment.IsSLES -or $Environment.IsOpenSUSE}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
@@ -150,6 +151,15 @@ function Get-EnvironmentInformation
         if ($environment.IsFedora -and (Test-Path ENV:\LD_LIBRARY_PATH)) {
             Remove-Item -Force ENV:\LD_LIBRARY_PATH
             Get-ChildItem ENV:
+        }
+
+        if( -not(
+            $environment.IsDebian -or
+            $environment.IsUbuntu -or
+            $environment.IsRedHatFamily -or
+            $environment.IsSUSEFamily)
+        ) {
+            throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
         }
     }
 
@@ -587,22 +597,37 @@ Fix steps:
         Pop-Location
     }
 
-    if ($Environment.IsRedHatFamily) {
+    if ($Environment.IsRedHatFamily -or $Environment.IsDebian9) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
         # as Ubuntu has these specific library files in the platform and macOS builds for itself
         # against the correct versions.
+
+        if ($Environment.IsDebian9){
+            # NOTE: Debian 8 doesn't need these symlinks
+            $sslTarget = "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2"
+            $cryptoTarget = "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2"
+        }
+        else { #IsRedHatFamily
+            $sslTarget = "/lib64/libssl.so.10"
+            $cryptoTarget = "/lib64/libcrypto.so.10"
+        }
+
         if ( ! (test-path "$publishPath/libssl.so.1.0.0")) {
-            $null = New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
+            $null = New-Item -Force -ItemType SymbolicLink -Target $sslTarget -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
         }
         if ( ! (test-path "$publishPath/libcrypto.so.1.0.0")) {
-            $null = New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
+            $null = New-Item -Force -ItemType SymbolicLink -Target $cryptoTarget -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
         }
     }
 
     if ($Environment.IsWindows) {
         ## need RCEdit to modify the binaries embedded resources
-        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
+        $rcedit = "~/.rcedit/rcedit-x64.exe"
+        if (-not (Test-Path -Type Leaf $rcedit)) {
+            $rcedit = Get-Command "rcedit-x64.exe" -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1 | % Name
+        }
+        if (-not $rcedit) {
             throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
         }
 
@@ -632,7 +657,7 @@ Fix steps:
             $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
         }
 
-        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon $iconPath `
+        Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
             --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
             --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
             --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
@@ -679,8 +704,30 @@ function Restore-PSPackage
         }
 
         $ProjectDirs | ForEach-Object {
-            Write-Log "Run dotnet restore $_ $RestoreArguments"
-            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
+            $project = $_
+            Write-Log "Run dotnet restore $project $RestoreArguments"
+            $retryCount = 0
+            $maxTries = 5
+            while($retryCount -lt $maxTries)
+            {
+                try
+                {
+                    Start-NativeExecution { dotnet restore $project $RestoreArguments }
+                }
+                catch
+                {
+                    Write-Log "Failed to restore $project, retrying..."
+                    $retryCount++
+                    if($retryCount -ge $maxTries)
+                    {
+                        throw
+                    }
+                    continue
+                }
+
+                Write-Log "Done restoring $project"
+                break
+            }
         }
     }
 }
@@ -839,14 +886,15 @@ function New-PSOptions {
         $RootInfo['IsValid'] = $true
     }
 
-    return @{ RootInfo = [PSCustomObject]$RootInfo
-              Top = $Top
-              Configuration = $Configuration
-              Framework = $Framework
-              Runtime = $Runtime
-              Output = $Output
-              CrossGen = $CrossGen.IsPresent
-              PSModuleRestore = $PSModuleRestore.IsPresent }
+    return New-PSOptionsObject `
+                -RootInfo ([PSCustomObject]$RootInfo) `
+                -Top $Top `
+                -Runtime $Runtime `
+                -Crossgen $Crossgen.IsPresent `
+                -Configuration $Configuration `
+                -PSModuleRestore $PSModuleRestore.IsPresent `
+                -Framework $Framework `
+                -Output $Output
 }
 
 # Get the Options of the last build
@@ -952,6 +1000,7 @@ function Publish-PSTestTools {
     $tools = @(
         @{Path="${PSScriptRoot}/test/tools/TestExe";Output="testexe"}
         @{Path="${PSScriptRoot}/test/tools/WebListener";Output="WebListener"}
+        @{Path="${PSScriptRoot}/test/tools/TestService";Output="TestService"}
     )
 
     $Options = Get-PSOptions -DefaultToNew
@@ -973,6 +1022,18 @@ function Publish-PSTestTools {
     }
 }
 
+function Get-ExperimentalFeatureTests {
+    $testMetadataFile = Join-Path $PSScriptRoot "test/tools/TestMetadata.json"
+    $metadata = Get-Content -Path $testMetadataFile -Raw | ConvertFrom-Json | ForEach-Object -MemberName ExperimentalFeatures
+    $features = $metadata | Get-Member -MemberType NoteProperty | ForEach-Object -MemberName Name
+
+    $featureTests = @{}
+    foreach ($featureName in $features) {
+        $featureTests[$featureName] = $metadata.$featureName
+    }
+    $featureTests
+}
+
 function Start-PSPester {
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
@@ -983,9 +1044,9 @@ function Start-PSPester {
         [string[]]$ExcludeTag = 'Slow',
         [string[]]$Tag = @("CI","Feature"),
         [switch]$ThrowOnFailure,
-        [string]$binDir = (Split-Path (Get-PSOptions -DefaultToNew).Output),
-        [string]$powershell = (Join-Path $binDir 'pwsh'),
-        [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
+        [string]$BinDir = (Split-Path (Get-PSOptions -DefaultToNew).Output),
+        [string]$powershell = (Join-Path $BinDir 'pwsh'),
+        [string]$Pester = ([IO.Path]::Combine($BinDir, "Modules", "Pester")),
         [Parameter(ParameterSetName='Unelevate',Mandatory=$true)]
         [switch]$Unelevate,
         [switch]$Quiet,
@@ -994,7 +1055,10 @@ function Start-PSPester {
         [switch]$PassThru,
         [Parameter(ParameterSetName='PassThru',HelpMessage='Run commands on Linux with sudo.')]
         [switch]$Sudo,
-        [switch]$IncludeFailingTest
+        [switch]$IncludeFailingTest,
+        [string]$ExperimentalFeatureName,
+        [Parameter(HelpMessage='Title to publish the results as.')]
+        [string]$Title = 'PowerShell Core Tests'
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
@@ -1151,6 +1215,37 @@ function Start-PSPester {
         }
     }
 
+    $PSFlags = @("-noprofile")
+    if (-not [string]::IsNullOrEmpty($ExperimentalFeatureName)) {
+        $configFile = [System.IO.Path]::GetTempFileName()
+        $configFile = [System.IO.Path]::ChangeExtension($configFile, ".json")
+
+        ## Create the config.json file to enable the given experimental feature.
+        ## On Windows, we need to have 'RemoteSigned' declared for ExecutionPolicy because the ExecutionPolicy is 'Restricted' by default.
+        ## On Unix, ExecutionPolicy is not supported, so we don't need to declare it.
+        if ($Environment.IsWindows) {
+            $content = @"
+{
+    "Microsoft.PowerShell:ExecutionPolicy":"RemoteSigned",
+    "ExperimentalFeatures": [
+        "$ExperimentalFeatureName"
+    ]
+}
+"@
+        } else {
+            $content = @"
+{
+    "ExperimentalFeatures": [
+        "$ExperimentalFeatureName"
+    ]
+}
+"@
+        }
+
+        Set-Content -Path $configFile -Value $content -Encoding Ascii -Force
+        $PSFlags = @("-settings", $configFile, "-noprofile")
+    }
+
     # To ensure proper testing, the module path must not be inherited by the spawned process
     try {
         $originalModulePath = $env:PSModulePath
@@ -1158,7 +1253,7 @@ function Start-PSPester {
         $env:POWERSHELL_TELEMETRY_OPTOUT = 1
         if ($Unelevate)
         {
-            Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
+            Start-UnelevatedProcess -process $powershell -arguments ($PSFlags + "-c $Command")
             $currentLines = 0
             while ($true)
             {
@@ -1197,11 +1292,12 @@ function Start-PSPester {
                 $passThruFile = [System.IO.Path]::GetTempFileName()
                 try
                 {
-                    $command += "|Export-Clixml -Path '$passThruFile' -Force"
+                    $command += "| Export-Clixml -Path '$passThruFile' -Force"
 
-                    $passThruCommand = {& $powershell -noprofile -c $command }
+                    $passThruCommand = { & $powershell $PSFlags -c $command }
                     if ($Sudo.IsPresent) {
-                        $passThruCommand =  {& sudo $powershell -noprofile -c $command }
+                        # -E says to preserve the environment
+                        $passThruCommand =  { & sudo -E $powershell $PSFlags -c $command }
                     }
 
                     $writeCommand = { Write-Host $_ }
@@ -1222,11 +1318,11 @@ function Start-PSPester {
             {
                 if ($Terse)
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $command} | ForEach-Object { Write-Terse -line $_ }
+                    Start-NativeExecution -sb {& $powershell $PSFlags -c $command} | ForEach-Object { Write-Terse -line $_ }
                 }
                 else
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $command}
+                    Start-NativeExecution -sb {& $powershell $PSFlags -c $command}
                 }
             }
         }
@@ -1239,9 +1335,41 @@ function Start-PSPester {
         }
     }
 
+    Publish-TestResults -Path $OutputFile -Title $Title
+
     if($ThrowOnFailure)
     {
         Test-PSPesterResults -TestResultsFile $OutputFile
+    }
+}
+
+function Publish-TestResults
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $Title,
+
+        [Parameter(Mandatory)]
+        [ValidateScript({Test-Path -Path $_})]
+        [string]
+        $Path,
+
+        [ValidateSet('NUnit','XUnit')]
+        [string]
+        $Type='NUnit'
+    )
+
+    # In VSTS publish Test Results
+    if($env:TF_BUILD)
+    {
+        $resolvedPath = (Resolve-Path -Path $Path).ProviderPath
+        Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$resolvedPath;]"
+
+        if($env:BUILD_REASON -ne 'PullRequest')
+        {
+            Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$resolvedPath"
+        }
     }
 }
 
@@ -1352,12 +1480,17 @@ function Test-PSPesterResults
     [CmdletBinding(DefaultParameterSetName='file')]
     param(
         [Parameter(ParameterSetName='file')]
-        [string]$TestResultsFile = "pester-tests.xml",
+        [string] $TestResultsFile = "pester-tests.xml",
+
         [Parameter(ParameterSetName='file')]
-        [string]$TestArea = 'test/powershell',
-        [Parameter(ParameterSetName='PesterPassThruObject',Mandatory)]
-        [pscustomobject] $ResultObject
-        )
+        [string] $TestArea = 'test/powershell',
+
+        [Parameter(ParameterSetName='PesterPassThruObject', Mandatory)]
+        [pscustomobject] $ResultObject,
+
+        [Parameter(ParameterSetName='PesterPassThruObject')]
+        [switch] $CanHaveNoResult
+    )
 
     if($PSCmdLet.ParameterSetName -eq 'file')
     {
@@ -1388,7 +1521,7 @@ function Test-PSPesterResults
     }
     elseif ($PSCmdLet.ParameterSetName -eq 'PesterPassThruObject')
     {
-        if ($ResultObject.TotalCount -le 0)
+        if ($ResultObject.TotalCount -le 0 -and -not $CanHaveNoResult)
         {
             throw 'NO TESTS RUN'
         }
@@ -1464,7 +1597,24 @@ function Start-PSxUnit {
 
         # Run sequential tests first, and then run the tests that can execute in parallel
         dotnet xunit -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
-        dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
+
+        Publish-TestResults -Path $SequentialTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+
+        $extraParams = @()
+
+        # we are having intermittent issues on macOS with these tests failing.
+        # VSTS has suggested forcing them to be sequential
+        if($env:TF_BUILD -and $IsMacOS)
+        {
+            Write-Log 'Forcing parallel xunit tests to run sequentially.'
+            $extraParams += @(
+                '-parallel'
+                'none'
+            )
+        }
+
+        dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild @extraParams
+        Publish-TestResults -Path $ParallelTestResultsFile -Type 'XUnit' -Title 'Xunit Parallel'
     }
     finally {
         Pop-Location
@@ -1858,16 +2008,25 @@ function Publish-NuGetFeed
 }
 
 function Start-DevPowerShell {
+    [CmdletBinding(DefaultParameterSetName='ConfigurationParamSet')]
     param(
-        [string[]]$ArgumentList = '',
+        [string[]]$ArgumentList = @(),
         [switch]$LoadProfile,
-        [string]$binDir = (Split-Path (New-PSOptions).Output),
+        [Parameter(ParameterSetName='ConfigurationParamSet')]
+        [ValidateSet("Debug", "Release", "CodeCoverage", '')] # should match New-PSOptions -Configuration values
+        [string]$Configuration,
+        [Parameter(ParameterSetName='BinDirParamSet')]
+        [string]$BinDir,
         [switch]$NoNewWindow,
         [string]$Command,
         [switch]$KeepPSModulePath
     )
 
     try {
+        if (-not $BinDir) {
+            $BinDir = Split-Path (New-PSOptions -Configuration $Configuration).Output
+        }
+
         if ((-not $NoNewWindow) -and ($Environment.IsCoreCLR)) {
             Write-Warning "Start-DevPowerShell -NoNewWindow is currently implied in PowerShellCore edition https://github.com/PowerShell/PowerShell/issues/1543"
             $NoNewWindow = $true
@@ -1888,12 +2047,16 @@ function Start-DevPowerShell {
             $ArgumentList = $ArgumentList + @("-command $Command")
         }
 
-        $env:DEVPATH = $binDir
+        $env:DEVPATH = $BinDir
+
 
         # splatting for the win
         $startProcessArgs = @{
-            FilePath = "$binDir\pwsh"
-            ArgumentList = "$ArgumentList"
+            FilePath = "$BinDir\pwsh"
+        }
+
+        if ($ArgumentList) {
+            $startProcessArgs.ArgumentList = $ArgumentList
         }
 
         if ($NoNewWindow) {
@@ -2379,14 +2542,7 @@ function Copy-PSGalleryModules
         Write-Log "Name='$Name', Version='$version', Destination='$Destination'"
 
         # Remove the build revision from the src (nuget drops it).
-        $srcVer = if ($version -match "(\d+.\d+.\d+).\d+") {
-            $matches[1]
-        } else {
-            $version
-        }
-
-        # Remove semantic version in the destination directory
-        $destVer = if ($version -match "(\d+.\d+.\d+)-.+") {
+        $srcVer = if ($version -match "(\d+.\d+.\d+).0") {
             $matches[1]
         } else {
             $version
@@ -2394,7 +2550,7 @@ function Copy-PSGalleryModules
 
         # Nuget seems to always use lowercase in the cache
         $src = "$nugetCache/$($name.ToLower())/$srcVer"
-        $dest = "$Destination/$name/$destVer"
+        $dest = "$Destination/$name"
 
         Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
@@ -2850,6 +3006,102 @@ function Restore-PSOptions {
     }
 
     Set-PSOptions -Options $options
+}
+
+# Save PSOptions to be restored by Restore-PSOptions
+function Save-PSOptions {
+    param(
+        [ValidateScript({$parent = Split-Path $_;if($parent){Test-Path $parent}else{return $true}})]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
+
+        [ValidateNotNullOrEmpty()]
+        [object]
+        $Options = (Get-PSOptions -DefaultToNew)
+    )
+
+    $Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath $PSOptionsPath
+}
+
+# Restore PSOptions
+# Optionally remove the PSOptions file
+function Restore-PSOptions {
+    param(
+        [ValidateScript({Test-Path $_})]
+        [string]
+        $PSOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath 'psoptions.json'),
+        [switch]
+        $Remove
+    )
+
+    $options = Get-Content -Path $PSOptionsPath | ConvertFrom-Json
+
+    if($Remove)
+    {
+        # Remove PSOptions.
+        # The file is only used to set the PSOptions.
+        Remove-Item -Path $psOptionsPath -Force
+    }
+
+    $newOptions = New-PSOptionsObject `
+                    -RootInfo $options.RootInfo `
+                    -Top $options.Top `
+                    -Runtime $options.Runtime `
+                    -Crossgen $options.Crossgen `
+                    -Configuration $options.Configuration `
+                    -PSModuleRestore $options.PSModuleRestore `
+                    -Framework $options.Framework `
+                    -Output $options.Output
+
+    Set-PSOptions -Options $newOptions
+}
+
+function New-PSOptionsObject
+{
+    param(
+        [PSCustomObject]
+        $RootInfo,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Top,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Runtime,
+
+        [Parameter(Mandatory)]
+        [Bool]
+        $CrossGen,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Configuration,
+
+        [Parameter(Mandatory)]
+        [Bool]
+        $PSModuleRestore,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Framework,
+
+        [Parameter(Mandatory)]
+        [String]
+        $Output
+    )
+
+    return @{
+        RootInfo = $RootInfo
+        Top = $Top
+        Configuration = $Configuration
+        Framework = $Framework
+        Runtime = $Runtime
+        Output = $Output
+        CrossGen = $CrossGen
+        PSModuleRestore = $PSModuleRestore
+    }
 }
 
 $script:RESX_TEMPLATE = @'

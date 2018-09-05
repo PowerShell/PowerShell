@@ -143,26 +143,41 @@ namespace Microsoft.PowerShell.Commands
                         if (e.InnerException != null && e.InnerException is TypeResolver.AmbiguousTypeException)
                         {
                             ThrowTerminatingError(
-                            new ErrorRecord(
-                                e,
-                                "AmbiguousTypeReference",
-                                ErrorCategory.InvalidType, null));
+                                new ErrorRecord(
+                                    e,
+                                    "AmbiguousTypeReference",
+                                    ErrorCategory.InvalidType,
+                                    targetObject: null));
                         }
 
                         mshArgE = PSTraceSource.NewArgumentException(
-                        "TypeName",
-                        NewObjectStrings.TypeNotFound,
-                        TypeName);
+                            "TypeName",
+                            NewObjectStrings.TypeNotFound,
+                            TypeName);
+
                         ThrowTerminatingError(
                             new ErrorRecord(
                                 mshArgE,
                                 "TypeNotFound",
-                                ErrorCategory.InvalidType, null));
+                                ErrorCategory.InvalidType,
+                                targetObject: null));
                     }
                     throw e;
                 }
 
                 Diagnostics.Assert(type != null, "LanguagePrimitives.TryConvertTo failed but returned true");
+
+                if (type.IsByRefLike)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            PSTraceSource.NewInvalidOperationException(
+                                NewObjectStrings.CannotInstantiateBoxedByRefLikeType,
+                                type),
+                            nameof(NewObjectStrings.CannotInstantiateBoxedByRefLikeType),
+                            ErrorCategory.InvalidOperation,
+                            targetObject: null));
+                }
 
                 if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {

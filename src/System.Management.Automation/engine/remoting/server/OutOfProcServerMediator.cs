@@ -524,7 +524,6 @@ namespace System.Management.Automation.Remoting.Server
         #region Static Methods
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="initialCommand"></param>
         internal static void Run(string initialCommand)

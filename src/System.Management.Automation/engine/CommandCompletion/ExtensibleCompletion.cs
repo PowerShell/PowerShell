@@ -84,13 +84,11 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsLifecycle.Register, "ArgumentCompleter", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=528576")]
     public class RegisterArgumentCompleterCommand : PSCmdlet
     {
         /// <summary>
-        ///
         /// </summary>
         [Parameter(ParameterSetName = "NativeSet", Mandatory = true)]
         [Parameter(ParameterSetName = "PowerShellSet")]
@@ -98,26 +96,22 @@ namespace System.Management.Automation
         public string[] CommandName { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter(ParameterSetName = "PowerShellSet", Mandatory = true)]
         public string ParameterName { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter(Mandatory = true)]
         [AllowNull()]
         public ScriptBlock ScriptBlock { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         [Parameter(ParameterSetName = "NativeSet")]
         public SwitchParameter Native { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void EndProcessing()
         {

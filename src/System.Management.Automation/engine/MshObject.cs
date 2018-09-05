@@ -522,6 +522,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Initializes a new instance of PSObject with an PSCustomObject BaseObject
+        /// with an initial capacity for members
+        /// </summary>
+        /// <param name="instanceMemberCapacity">The initial capacity for the instance member collection.</param>
+        public PSObject(int instanceMemberCapacity) : this()
+        {
+            _instanceMembers = new PSMemberInfoInternalCollection<PSMemberInfo>(instanceMemberCapacity);
+        }
+
+        /// <summary>
         /// Initializes a new instance of PSObject wrapping obj (accessible through BaseObject).
         /// </summary>
         /// <param name="obj">object we are wrapping</param>
@@ -930,7 +940,6 @@ namespace System.Management.Automation
         #region static methods
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -939,7 +948,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -948,7 +956,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -957,7 +964,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -966,7 +972,6 @@ namespace System.Management.Automation
             return PSObject.AsPSObject(valueToConvert);
         }
         /// <summary>
-        ///
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
@@ -1805,7 +1810,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="settings"></param>
         /// <param name="noteName"></param>
@@ -2365,7 +2369,6 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    ///
     /// </summary>
     /// <remarks>
     /// Please keep in sync with SerializationMethod from

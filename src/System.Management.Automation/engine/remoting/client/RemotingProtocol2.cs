@@ -378,12 +378,10 @@ namespace System.Management.Automation.Internal
         internal event EventHandler<RemoteDataEventArgs<Exception>> SessionClosed;
 
         /// <summary>
-        ///
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<Exception>> SessionDisconnected;
 
         /// <summary>
-        ///
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<Exception>> SessionReconnected;
 
@@ -1533,7 +1531,6 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks>This method doesn't lock and its the responsibility
         /// of the caller to actually do the locking</remarks>

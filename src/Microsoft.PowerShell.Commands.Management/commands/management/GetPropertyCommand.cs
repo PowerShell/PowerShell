@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         public string[] LiteralPath
         {
             get
@@ -57,7 +57,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The properties to retrieve from the item
         /// </summary>
-        ///
         [Parameter(Position = 1)]
         [Alias("PSProperty")]
         public string[] Name
@@ -78,16 +77,13 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -197,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the literal path parameter to the command
         /// </summary>
         [Parameter(ParameterSetName = "LiteralPath", Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        [Alias("PSPath","LP")]
+        [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
@@ -216,7 +212,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The properties to retrieve from the item
         /// </summary>
-        ///
         [Parameter(Position = 1, Mandatory = true)]
         [Alias("PSProperty")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -238,16 +233,13 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)

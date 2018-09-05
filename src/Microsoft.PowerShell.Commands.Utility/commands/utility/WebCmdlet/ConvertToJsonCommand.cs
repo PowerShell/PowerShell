@@ -187,8 +187,6 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 TypeInfo t = obj.GetType().GetTypeInfo();
-                WriteVerbose(StringUtil.Format(UtilityCommonStrings.ConvertToJsonProcessValueVerboseMessage, t.Name, depth));
-
 
                 if (t.IsPrimitive)
                 {

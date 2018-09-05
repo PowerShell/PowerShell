@@ -13,7 +13,6 @@ using System.Globalization;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Monad Logging in general is a two layer architecture. At the upper layer are the
     /// Msh Log Engine and Logging Api. At the lower layer is the Provider Interface
     /// and Log Providers. This architecture is adopted to achieve independency between
@@ -86,7 +85,6 @@ namespace System.Management.Automation
         /// In the longer turn, we may need to use a "Provider Catalog" for
         /// log provider loading.
         /// </summary>
-        ///
         /// <param name="shellId"></param>
         /// <returns></returns>
         private static IEnumerable<LogProvider> GetLogProvider(string shellId)
@@ -97,7 +95,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Get Log Provider based on Execution Context
         /// </summary>
-        ///
         /// <param name="executionContext"></param>
         /// <returns></returns>
         private static IEnumerable<LogProvider> GetLogProvider(ExecutionContext executionContext)
@@ -115,7 +112,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Get Log Provider based on Log Context
         /// </summary>
-        ///
         /// <param name="logContext"></param>
         /// <returns></returns>
         private static IEnumerable<LogProvider> GetLogProvider(LogContext logContext)
@@ -174,7 +170,6 @@ namespace System.Management.Automation
         /// <summary>
         /// This will set the current log provider to be dummy log.
         /// </summary>
-        ///
         /// <param name="shellId"></param>
         internal static void SetDummyLog(string shellId)
         {
@@ -401,7 +396,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// LogProviderHealthEvent: Log a command health event.
-        ///
         /// </summary>
         /// <param name="executionContext">Execution context for the engine that is running</param>
         /// <param name="exception">Exception associated with this event</param>
@@ -525,7 +519,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// LogPipelineExecutionDetailEvent: Log a pipeline execution detail event.
-        ///
         /// </summary>
         /// <param name="executionContext">Execution Context for the current running engine</param>
         /// <param name="detail">detail to be logged for this pipeline execution detail</param>
@@ -591,7 +584,6 @@ namespace System.Management.Automation
 
         /// <summary>
         /// LogProviderHealthEvent: Log a Provider health event.
-        ///
         /// </summary>
         /// <param name="executionContext">Execution context for the engine that is running</param>
         /// <param name="providerName">Name of the provider</param>
@@ -1100,17 +1092,14 @@ namespace System.Management.Automation
     internal enum CommandState
     {
         /// <summary>
-        ///
         /// </summary>
         Started = 0,
 
         /// <summary>
-        ///
         /// </summary>
         Stopped = 1,
 
         /// <summary>
-        ///
         /// </summary>
         Terminated = 2
     };
@@ -1121,12 +1110,10 @@ namespace System.Management.Automation
     internal enum ProviderState
     {
         /// <summary>
-        ///
         /// </summary>
         Started = 0,
 
         /// <summary>
-        ///
         /// </summary>
         Stopped = 1,
     };

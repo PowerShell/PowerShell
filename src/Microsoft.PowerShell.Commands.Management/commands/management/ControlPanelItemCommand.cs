@@ -604,7 +604,6 @@ $result
         #endregion "Parameters"
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -721,7 +720,6 @@ $result
         #endregion "Parameters"
 
         /// <summary>
-        ///
         /// </summary>
         protected override void ProcessRecord()
         {

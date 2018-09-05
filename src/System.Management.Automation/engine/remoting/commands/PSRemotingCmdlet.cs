@@ -121,7 +121,6 @@ namespace Microsoft.PowerShell.Commands
         }// GetMessage
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="resourceString"></param>
         /// <param name="args"></param>
@@ -463,7 +462,6 @@ namespace Microsoft.PowerShell.Commands
         ///      (a) Computer name
         ///      (b) IPv4 address : 132.3.4.5
         ///      (c) IPv6 address: 3ffe:8311:ffff:f70f:0:5efe:172.30.162.18
-        ///
         /// </summary>
         [Parameter(Position = 0,
                    ValueFromPipelineByPropertyName = true,
@@ -1230,7 +1228,6 @@ namespace Microsoft.PowerShell.Commands
         /// Indicates that if a job/command is invoked remotely the connection should be severed
         /// right have invocation of job/command.
         /// </summary>
-        ///
         protected bool InvokeAndDisconnect { get; set; } = false;
 
         /// <summary>
@@ -3671,27 +3668,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Resolves the specified path to PathInfo objects
         /// </summary>
-        ///
         /// <param name="pathToResolve">
         /// The path to be resolved. Each path may contain glob characters.
         /// </param>
-        ///
         /// <param name="isLiteralPath">
         /// True if wildcard expansion should be suppressed for pathToResolve.
         /// </param>
-        ///
         /// <param name="allowNonexistingPaths">
         /// If true, resolves the path even if it doesn't exist.
         /// </param>
-        ///
         /// <param name="cmdlet">
         /// Calling cmdlet
         /// </param>
-        ///
         /// <returns>
         /// A string representing the resolved path.
         /// </returns>
-        ///
         private static PathInfo ResolvePath(
             string pathToResolve,
             bool isLiteralPath,

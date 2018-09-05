@@ -26,7 +26,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the CommandDiscovery instance for the current engine
         /// </summary>
-        ///
         internal CommandDiscovery CommandDiscovery { get; }
 
         /// <summary>

@@ -192,7 +192,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks>
         /// For 2.0 PowerShell, we still use "1" as the registry version key.
@@ -208,7 +207,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks>
         /// For 3.0 PowerShell, we use "3" as the registry version key only for Engine

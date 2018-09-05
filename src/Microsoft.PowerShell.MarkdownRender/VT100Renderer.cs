@@ -18,8 +18,8 @@ namespace Microsoft.PowerShell.MarkdownRender
         /// Initializes a new instance of the <see cref="VT100Renderer"/> class.
         /// </summary>
         /// <param name="writer">TextWriter to write to.</param>
-        /// <param name="optionInfo">MarkdownOptionInfo object with options.</param>
-        public VT100Renderer(TextWriter writer, MarkdownOptionInfo optionInfo) : base(writer)
+        /// <param name="optionInfo">PSMarkdownOptionInfo object with options.</param>
+        public VT100Renderer(TextWriter writer, PSMarkdownOptionInfo optionInfo) : base(writer)
         {
             EscapeSequences = new VT100EscapeSequences(optionInfo);
 
