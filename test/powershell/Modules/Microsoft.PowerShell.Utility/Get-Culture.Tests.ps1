@@ -54,7 +54,7 @@ Describe "Get-Culture" -Tags "CI" {
         $ciArray[0] | Should -BeOfType [CultureInfo]
     }
 
-    It "Should write an error on unsupported culture name" {
+    It "Should write an error on unsupported culture name" -Skip:(!$isWindows) {
 
         $ci = Get-Culture -Name "abcd" -ErrorAction SilentlyContinue
         $e = $error[0]
