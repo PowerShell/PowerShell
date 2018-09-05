@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the specified culture name.
         /// </summary>
-        [Parameter(ParameterSetName = NameParameterSet)]
+        [Parameter(Position = 0, ParameterSetName = NameParameterSet)]
         [ValidateNotNull]
         public string Name { get; set; }
 
