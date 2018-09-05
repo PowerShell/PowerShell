@@ -17,11 +17,11 @@ namespace Microsoft.PowerShell.Commands
         private const string ListAvailableParameterSet = "ListAvailable";
 
         /// <summary>
-        /// Gets or sets the specified culture name.
+        /// Gets or sets culture names for which CultureInfo values are returned.
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = NameParameterSet)]
+        [Parameter(ParameterSetName = NameParameterSet, Position = 0, ValueFromPipeline = true)]
         [ValidateNotNull]
-        public string Name { get; set; }
+        public string[] Name { get; set; }
 
         /// <summary>
         /// Gets or sets a switch to list all available cultures.
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Output the current Culture info object.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void ProcessRecord()
         {
             switch (ParameterSetName)
             {
@@ -43,8 +43,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        CultureInfo ci = CultureInfo.GetCultureInfo(Name);
-                        WriteObject(ci);
+                        try
+                        {
+                            foreach (var ciName in Name)
+                            {
+                                CultureInfo ci = CultureInfo.GetCultureInfo(ciName);
+                                WriteObject(ci);
+                            }
+                        }
+                        catch (CultureNotFoundException exc)
+                        {
+                            WriteError(new ErrorRecord(exc, "ItemNotFoundException", ErrorCategory.ObjectNotFound, Name));
+                        }
                     }
 
                     break;
