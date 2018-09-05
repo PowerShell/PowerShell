@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the Send-MailMessage command.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Send, "MailMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135256")]
+    [Cmdlet(VerbsCommunications.Send, "MailMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135256", DefaultParameterSetName = "Default")]
     public sealed class SendMailMessage : PSCmdlet
     {
         #region Command Line Parameters
@@ -58,7 +58,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the body (content) of the message.
         /// </summary>
-        [Parameter(Position = 2, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName = true, ParameterSetName = "Default")]
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = "NoSubject")]
         [ValidateNotNullOrEmpty]
         public String Body
         {
@@ -162,7 +163,8 @@ namespace Microsoft.PowerShell.Commands
         /// to the Powershell variable PSEmailServer, if this host can not reached an appropriate error.
         /// message will be displayed.
         /// </summary>
-        [Parameter(Position = 3, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 3, ValueFromPipelineByPropertyName = true, ParameterSetName = "Default")]
+        [Parameter(Position = 2, ValueFromPipelineByPropertyName = true, ParameterSetName = "NoSubject")]
         [Alias("ComputerName")]
         [ValidateNotNullOrEmpty]
         public String SmtpServer
@@ -193,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the subject of the email message.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = "Default")]
         [Alias("sub")]
         [ValidateNotNullOrEmpty]
         public String Subject
@@ -205,6 +207,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private String _subject;
+
+        /// <summary>
+        /// Gets or sets the intended exclusion of the email subject.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "NoSubject")]
+        public SwitchParameter NoSubject { get; set; }
 
         /// <summary>
         /// Specifies the To address for this e-mail message.
@@ -360,7 +368,10 @@ namespace Microsoft.PowerShell.Commands
             _mMailMessage.DeliveryNotificationOptions = _deliverynotification;
 
             // Set the subject of the mail message
-            _mMailMessage.Subject = _subject;
+            if (!NoSubject.IsPresent)
+            {
+                _mMailMessage.Subject = _subject;
+            }
 
             // Set the body of the mail message
             _mMailMessage.Body = _body;
