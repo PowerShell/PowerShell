@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Security;
+using System.Numerics;
 using System.Reflection;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
@@ -33,6 +34,161 @@ namespace System.Management.Automation
     /// </summary>
     internal static class Utils
     {
+        internal static bool TryConvertInt16(double value, out short result)
+        {
+            if (value > Int16.MaxValue || value < Int16.MinValue) {
+                result = 0;
+                return false;
+            }
+
+            result = (short)Math.Round(value);
+            return true;
+        }
+
+        internal static bool TryConvertInt16(BigInteger value, out short result)
+        {
+            if (value > Int16.MaxValue || value < Int16.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (short)value;
+            return true;
+        }
+
+        internal static bool TryConvertInt32(BigInteger value, out int result)
+        {
+            if (value > Int32.MaxValue || value < Int32.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (int)value;
+            return true;
+        }
+
+        internal static bool TryConvertInt64(double value, out long result)
+        {
+            if (value > Int64.MaxValue || value < Int64.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (long)Math.Round(value);
+            return true;
+        }
+
+        internal static bool TryConvertInt64(BigInteger value, out long result)
+        {
+            if (value > Int64.MaxValue || value < Int64.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (long)value;
+            return true;
+        }
+
+        internal static bool TryConvertUInt16(ulong value, out ushort result)
+        {
+            if (value > UInt16.MaxValue || value < UInt16.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (ushort)value;
+            return true;
+        }
+
+        internal static bool TryConvertUInt16(BigInteger value, out ushort result)
+        {
+            if (value > UInt16.MaxValue || value < UInt16.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (ushort)value;
+            return true;
+        }
+
+        internal static bool TryConvertUInt32(ulong value, out uint result)
+        {
+            if (value > UInt32.MaxValue || value < UInt32.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (uint)value;
+            return true;
+        }
+
+        internal static bool TryConvertUInt32(BigInteger value, out uint result)
+        {
+            if (value > UInt32.MaxValue || value < UInt32.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (uint)value;
+            return true;
+        }
+
+        internal static bool TryConvertUInt64(double value, out ulong result)
+        {
+            if (value > UInt64.MaxValue || value < UInt64.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (ulong)Math.Round(value);
+            return true;
+        }
+
+        internal static bool TryConvertUInt64(BigInteger value, out ulong result)
+        {
+            if (value > UInt64.MaxValue || value < UInt64.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (ulong)value;
+            return true;
+        }
+
+        internal static bool TryConvertDecimal(BigInteger value, out decimal result)
+        {
+            if (value > (BigInteger)Decimal.MaxValue || value < (BigInteger)Decimal.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (decimal)value;
+            return true;
+        }
+
+        internal static bool TryConvertDouble(BigInteger value, out double result)
+        {
+            if (value > (BigInteger)Double.MaxValue || value < (BigInteger)Double.MinValue)
+            {
+                result = 0;
+                return false;
+            }
+
+            result = (double)value;
+            return true;
+        }
+
         // From System.Web.Util.HashCodeCombiner
         internal static int CombineHashCodes(int h1, int h2)
         {
