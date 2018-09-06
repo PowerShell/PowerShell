@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM fedora:28
 
 ARG PACKAGENAME
 ARG PACKAGELOCATION
@@ -7,22 +7,20 @@ ARG TESTLIST=/PowerShell/test/powershell/Modules/PackageManagement/PackageManage
 ARG TESTDOWNLOADCOMMAND="git clone --recursive https://github.com/PowerShell/PowerShell.git"
 
 # Install dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        apt-utils \
-        ca-certificates \
+RUN dnf install -y \
         curl \
-        apt-transport-https \
-        locales \
-        git
+        glibc-locale-source \
+        git \
+        compat-openssl10 \
+    && dnf upgrade-minimal -y --security \
+    && dnf clean all
 
 # Setup the locale
 ENV LANG en_US.UTF-8
 ENV LC_ALL $LANG
-RUN locale-gen $LANG && update-locale
+RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
 RUN curl -L -o $PACKAGENAME $PACKAGELOCATION/$PACKAGENAME
-RUN dpkg -i $PACKAGENAME || :
-RUN apt-get install -y -f
+RUN dnf install -y $PACKAGENAME
 RUN $TESTDOWNLOADCOMMAND
 RUN pwsh$PREVIEWSUFFIX -c "Import-Module /PowerShell/build.psm1;\$dir='/usr/local/share/powershell/Modules';\$null=New-Item -Type Directory -Path \$dir -ErrorAction SilentlyContinue;Restore-PSPester -Destination \$dir;exit (Invoke-Pester $TESTLIST -PassThru).FailedCount"
