@@ -18,7 +18,7 @@ phases:
   steps:
   - powershell: |
       Get-ChildItem -Path env:
-    displayName: Capture envirenment
+    displayName: Capture environment
     condition: succeededOrFailed()
 
   - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"

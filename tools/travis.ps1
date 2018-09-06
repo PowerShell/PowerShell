@@ -168,7 +168,7 @@ if($env:TRAVIS_EVENT_TYPE -eq 'pull_request' -or $env:BUILD_REASON)
         # If the current job is a pull request, the env variable 'TRAVIS_PULL_REQUEST_SHA' contains
         # the commit SHA of the HEAD commit of the PR.
         $commitMessage = git log --format=%B -n 1 $commitId
-        Write-Verbose "commitMessage: $commitMessage" -verbose
+        Write-Log -message "commitMessage: $commitMessage"
     }
     elseif($env:TF_BUILD)
     {
@@ -190,11 +190,11 @@ else
 }
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
-# or the environment valiable `FORCE_FEATURE` equals `True`
+# or the environment variable `FORCE_FEATURE` equals `True`
 $hasFeatureTag = $commitMessage -match '\[feature\]' -or $env:FORCE_FEATURE -eq 'True'
 
 # Run a packaging if the commit message contains `[Package]`
-# or the environment valiable `FORCE_PACKAGE` equals `True`
+# or the environment variable `FORCE_PACKAGE` equals `True`
 $hasPackageTag = $commitMessage -match '\[package\]' -or $env:FORCE_PACKAGE -eq 'True'
 $createPackages = -not $isPr -or $hasPackageTag
 $hasRunFailingTestTag = $commitMessage -match '\[includeFailingTest\]'

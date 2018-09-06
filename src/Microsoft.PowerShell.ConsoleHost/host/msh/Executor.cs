@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell
 
                 tempPipeline.Output.DataReady += new EventHandler(OutputObjectStreamHandler);
                 tempPipeline.Error.DataReady += new EventHandler(ErrorObjectStreamHandler);
-                PipelineFinishedWaitHandle waiterThereIsAFlyInMySoup = new PipelineFinishedWaitHandle(tempPipeline);
+                PipelineFinishedWaitHandle pipelineWaiter = new PipelineFinishedWaitHandle(tempPipeline);
 
                 // close the input pipeline so the command will do something
                 // if we are not reading input
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell
                 }
                 tempPipeline.Input.Close();
 
-                waiterThereIsAFlyInMySoup.Wait();
+                pipelineWaiter.Wait();
 
                 //report error if pipeline failed
                 if (tempPipeline.PipelineStateInfo.State == PipelineState.Failed && tempPipeline.PipelineStateInfo.Reason != null)
