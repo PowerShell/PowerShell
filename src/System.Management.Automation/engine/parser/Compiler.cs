@@ -1535,7 +1535,7 @@ namespace System.Management.Automation.Language
 
                 if (attribute is ExperimentalAttribute expAttribute)
                 {
-                    // Only honor the first seen experimental attribute, ignore the others. 
+                    // Only honor the first seen experimental attribute, ignore the others.
                     if (!hasSeenExpAttribute && expAttribute.ToHide) { return null; }
 
                     // Do not add experimental attributes to the attribute list.
@@ -1763,19 +1763,30 @@ namespace System.Management.Automation.Language
         private Action<FunctionContext> CompileTree(Expression<Action<FunctionContext>> lambda, CompileInterpretChoice compileInterpretChoice)
         {
             if (lambda == null)
-                return null;
-
-            if (compileInterpretChoice == CompileInterpretChoice.AlwaysCompile)
             {
-                return lambda.Compile();
+                return null;
             }
 
-            // threshold is # of times the script must run before we decide to compile
-            // NeverCompile sets the threshold to int.MaxValue, so theoretically we might compile
-            // at some point, but it's very unlikely.
-            int threshold = (compileInterpretChoice == CompileInterpretChoice.NeverCompile) ? int.MaxValue : -1;
-            var deleg = new LightCompiler(threshold).CompileTop(lambda).CreateDelegate();
-            return (Action<FunctionContext>)deleg;
+            switch (compileInterpretChoice)
+            {
+                case CompileInterpretChoice.AlwaysCompile:
+
+                    return lambda.Compile(preferInterpretation: false);
+
+                case CompileInterpretChoice.NeverCompile:
+
+                    return lambda.Compile(preferInterpretation: true);
+
+                default:
+                    // Here compileInterpretChoice == CompileInterpretChoice.CompileOnDemand
+                    //
+                    // compilationThreshold is # of times the script must run before we decide to compile
+                    // NeverCompile sets the threshold to int.MaxValue, so theoretically we might compile
+                    // at some point, but it's very unlikely.
+                    // -1 is to use default (32).
+                    var deleg = new LightCompiler(compilationThreshold: -1).CompileTop(lambda).CreateDelegate();
+                    return (Action<FunctionContext>)deleg;
+            }
         }
 
         internal static object GetExpressionValue(ExpressionAst expressionAst, bool isTrustedInput, ExecutionContext context, IDictionary usingValues = null)
