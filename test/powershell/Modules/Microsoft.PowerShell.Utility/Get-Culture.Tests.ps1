@@ -54,9 +54,13 @@ Describe "Get-Culture" -Tags "CI" {
         $ciArray[0] | Should -BeOfType [CultureInfo]
     }
 
-    It "Should write an error on unsupported culture name" -Skip:(!$isWindows) {
+    It "Should write an error on unsupported culture name" {
 
-        $ci = Get-Culture -Name "abcd" -ErrorAction SilentlyContinue
+        # The strange culture name come from the fact
+        # that .Net Core behavior depend on the underlying OS
+        # and can differ on different platforms.
+        # See https://github.com/dotnet/corefx/issues/6374#issuecomment-418827420
+        $ci = Get-Culture -Name "abcdefghijkl" -ErrorAction SilentlyContinue
         $e = $error[0]
         $e.FullyQualifiedErrorId | Should -BeExactly "ItemNotFoundException,Microsoft.PowerShell.Commands.GetCultureCommand"
         $e.Exception | Should -BeOfType [System.Globalization.CultureNotFoundException]
