@@ -708,28 +708,46 @@ namespace System.Management.Automation
 
         #region Internal Helper Methods
 
-        private static Type GetArgumentType(object argument)
+        private static Type GetArgumentType(object argument, bool isByRefParameter)
         {
             if (argument == null)
             {
                 return typeof(LanguagePrimitives.Null);
             }
-            PSReference psref = argument as PSReference;
-            if (psref != null)
+
+            if (isByRefParameter && argument is PSReference psref)
             {
-                return GetArgumentType(PSObject.Base(psref.Value));
+                return GetArgumentType(PSObject.Base(psref.Value), isByRefParameter: false);
             }
+
             return argument.GetType();
         }
 
-        internal static ConversionRank GetArgumentConversionRank(object argument, Type parameterType)
+        internal static ConversionRank GetArgumentConversionRank(object argument, Type parameterType, bool isByRef, bool allowCastingToByRefLikeType)
         {
-            Type fromType = GetArgumentType(argument);
-            ConversionRank rank = LanguagePrimitives.GetConversionRank(fromType, parameterType);
+            Type fromType = null;
+            ConversionRank rank = ConversionRank.None;
+
+            if (allowCastingToByRefLikeType && parameterType.IsByRefLike)
+            {
+                // When resolving best method for use in binders, we can accept implicit/explicit casting conversions to
+                // a ByRef-like target type, because when generating IL from a call site with the binder, the IL includes
+                // the casting operation. However, we don't accept such conversions when it's for invoking the method via
+                // reflection, because reflection just doesn't support ByRef-like type.
+                fromType = GetArgumentType(PSObject.Base(argument), isByRefParameter: false);
+                if (fromType != typeof(LanguagePrimitives.Null))
+                {
+                    LanguagePrimitives.FigureCastConversion(fromType, parameterType, ref rank);
+                }
+                return rank;
+            }
+
+            fromType = GetArgumentType(argument, isByRef);
+            rank = LanguagePrimitives.GetConversionRank(fromType, parameterType);
 
             if (rank == ConversionRank.None)
             {
-                fromType = GetArgumentType(PSObject.Base(argument));
+                fromType = GetArgumentType(PSObject.Base(argument), isByRef);
                 rank = LanguagePrimitives.GetConversionRank(fromType, parameterType);
             }
 
@@ -1186,6 +1204,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="methods">different overloads for a method</param>
         /// <param name="invocationConstraints">invocation constraints</param>
+        /// <param name="allowCastingToByRefLikeType">true if we accept implicit/explicit casting conversion to a ByRef-like parameter type for method resolution</param>
         /// <param name="arguments">arguments to check against the overloads</param>
         /// <param name="errorId">if no best method, the error id to use in the error message</param>
         /// <param name="errorMsg">if no best method, the error message (format string) to use in the error message</param>
@@ -1194,6 +1213,7 @@ namespace System.Management.Automation
         internal static MethodInformation FindBestMethod(
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
+            bool allowCastingToByRefLikeType,
             object[] arguments,
             ref string errorId,
             ref string errorMsg,
@@ -1201,7 +1221,7 @@ namespace System.Management.Automation
             out bool callNonVirtually)
         {
             callNonVirtually = false;
-            var methodInfo = FindBestMethodImpl(methods, invocationConstraints, arguments, ref errorId, ref errorMsg, out expandParamsOnBest);
+            var methodInfo = FindBestMethodImpl(methods, invocationConstraints, allowCastingToByRefLikeType, arguments, ref errorId, ref errorMsg, out expandParamsOnBest);
             if (methodInfo == null)
             {
                 return null;
@@ -1243,6 +1263,7 @@ namespace System.Management.Automation
         private static MethodInformation FindBestMethodImpl(
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
+            bool allowCastingToByRefLikeType,
             object[] arguments,
             ref string errorId,
             ref string errorMsg,
@@ -1364,8 +1385,18 @@ namespace System.Management.Automation
                         Type elementType = parameter.parameterType.GetElementType();
                         if (parameters.Length == arguments.Length)
                         {
-                            ConversionRank arrayConv = GetArgumentConversionRank(arguments[j], parameter.parameterType);
-                            ConversionRank elemConv = GetArgumentConversionRank(arguments[j], elementType);
+                            ConversionRank arrayConv = GetArgumentConversionRank(
+                                arguments[j],
+                                parameter.parameterType,
+                                isByRef: false,
+                                allowCastingToByRefLikeType: false);
+
+                            ConversionRank elemConv = GetArgumentConversionRank(
+                                arguments[j],
+                                elementType,
+                                isByRef: false,
+                                allowCastingToByRefLikeType: false);
+
                             if (elemConv > arrayConv)
                             {
                                 candidate.expandedParameters = ExpandParameters(arguments.Length, parameters, elementType);
@@ -1387,7 +1418,12 @@ namespace System.Management.Automation
                             // Note that we go through here when the param array parameter has no argument.
                             for (int k = j; k < arguments.Length; k++)
                             {
-                                candidate.conversionRanks[k] = GetArgumentConversionRank(arguments[k], elementType);
+                                candidate.conversionRanks[k] = GetArgumentConversionRank(
+                                    arguments[k],
+                                    elementType,
+                                    isByRef: false,
+                                    allowCastingToByRefLikeType: false);
+
                                 if (candidate.conversionRanks[k] == ConversionRank.None)
                                 {
                                     // No longer a candidate
@@ -1404,7 +1440,11 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        candidate.conversionRanks[j] = GetArgumentConversionRank(arguments[j], parameter.parameterType);
+                        candidate.conversionRanks[j] = GetArgumentConversionRank(
+                            arguments[j],
+                            parameter.parameterType,
+                            parameter.isByRef,
+                            allowCastingToByRefLikeType);
 
                         if (candidate.conversionRanks[j] == ConversionRank.None)
                         {
@@ -1540,7 +1580,17 @@ namespace System.Management.Automation
             bool callNonVirtually;
             string errorId = null;
             string errorMsg = null;
-            MethodInformation bestMethod = FindBestMethod(methods, invocationConstraints, arguments, ref errorId, ref errorMsg, out expandParamsOnBest, out callNonVirtually);
+
+            MethodInformation bestMethod = FindBestMethod(
+                methods,
+                invocationConstraints,
+                allowCastingToByRefLikeType: false,
+                arguments,
+                ref errorId,
+                ref errorMsg,
+                out expandParamsOnBest,
+                out callNonVirtually);
+
             if (bestMethod == null)
             {
                 throw new MethodException(errorId, null, errorMsg, methodName, arguments.Length);

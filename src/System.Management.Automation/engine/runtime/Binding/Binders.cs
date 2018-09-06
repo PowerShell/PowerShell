@@ -247,6 +247,7 @@ namespace System.Management.Automation.Language
                                                                Type parameterType,
                                                                string parameterName,
                                                                string methodName,
+                                                               bool allowCastingToByRefLikeType,
                                                                List<ParameterExpression> temps,
                                                                List<Expression> initTemps)
         {
@@ -267,13 +268,26 @@ namespace System.Management.Automation.Language
                 return target.Expression.Cast(parameterType);
             }
 
+            ConversionRank? rank = null;
+            if (parameterType.IsByRefLike && allowCastingToByRefLikeType)
+            {
+                var conversionResult = PSConvertBinder.ConvertToByRefLikeTypeViaCasting(target, parameterType);
+                if (conversionResult != null)
+                {
+                    return conversionResult;
+                }
+                rank = ConversionRank.None;
+            }
+
             var exceptionParam = Expression.Variable(typeof(Exception));
             var targetTemp = Expression.Variable(target.Expression.Type);
-            bool debase;
+            bool debase = false;
 
             // ConstrainedLanguage note - calls to this conversion are covered by the method resolution algorithm
             // (which ignores method arguments with disallowed types)
-            var conversion = LanguagePrimitives.FigureConversion(target.Value, parameterType, out debase);
+            var conversion = rank == ConversionRank.None
+                ? LanguagePrimitives.NoConversion
+                : LanguagePrimitives.FigureConversion(target.Value, parameterType, out debase);
             var invokeConverter = PSConvertBinder.InvokeConverter(conversion, targetTemp, parameterType, debase, ExpressionCache.InvariantCulture);
             var expr =
                 Expression.Block(new[] { targetTemp },
@@ -1621,8 +1635,17 @@ namespace System.Management.Automation.Language
             bool expandParamsOnBest;
             bool callNonVirtually;
             var positionalArgCount = CallInfo.ArgumentCount - CallInfo.ArgumentNames.Count;
-            var bestMethod = Adapter.FindBestMethod(newConstructors, null,
-                    args.Take(positionalArgCount).Select(arg => arg.Value).ToArray(), ref errorId, ref errorMsg, out expandParamsOnBest, out callNonVirtually);
+
+            var bestMethod = Adapter.FindBestMethod(
+                newConstructors,
+                invocationConstraints: null,
+                allowCastingToByRefLikeType: false,
+                args.Take(positionalArgCount).Select(arg => arg.Value).ToArray(),
+                ref errorId,
+                ref errorMsg,
+                out expandParamsOnBest,
+                out callNonVirtually);
+
             if (bestMethod == null)
             {
                 return errorSuggestion ?? new DynamicMetaObject(
@@ -1676,14 +1699,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    bool debase;
-
-                    // ConstrainedLanguage note - calls to this conversion are done by constructors with params arguments.
-                    // Protection against conversions are covered by the method resolution algorithm
-                    // (which ignores method arguments with disallowed types)
-                    var conversion = LanguagePrimitives.FigureConversion(args[argIndex].Value, resultType, out debase);
-                    Diagnostics.Assert(conversion.Rank != ConversionRank.None, "FindBestMethod should have failed if there is no conversion");
-
+                    var conversion = LanguagePrimitives.FigureConversion(args[argIndex].Value, resultType, out bool debase);
                     ctorArgs[argIndex] = PSConvertBinder.InvokeConverter(conversion, args[argIndex].Expression, resultType, debase, ExpressionCache.InvariantCulture);
                 }
             }
@@ -3771,6 +3787,39 @@ namespace System.Management.Automation.Language
             return new DynamicMetaObject(expr, bindingRestrictions);
         }
 
+        /// <summary>
+        /// Convert argument to a ByRef-like type via implicit or explicit conversion.
+        /// </summary>
+        /// <param name="argument">
+        /// The argument to be converted to a ByRef-like type.
+        /// </param>
+        /// <param name="resultType">
+        /// The ByRef-like type to convert to.
+        /// </param>
+        internal static Expression ConvertToByRefLikeTypeViaCasting(DynamicMetaObject argument, Type resultType)
+        {
+            var baseObject = PSObject.Base(argument.Value);
+
+            // Source value cannot be null or AutomationNull, and it cannot be a pure PSObject.
+            if (baseObject != null && !(baseObject is PSObject))
+            {
+                Type fromType = baseObject.GetType();
+                ConversionRank rank = ConversionRank.None;
+
+                LanguagePrimitives.FigureCastConversion(fromType, resultType, ref rank);
+                if (rank != ConversionRank.None)
+                {
+                    var valueToConvert = baseObject == argument.Value
+                        ? argument.Expression
+                        : Expression.Call(CachedReflectionInfo.PSObject_Base, argument.Expression);
+
+                    return Expression.Convert(valueToConvert.Cast(fromType), resultType);
+                }
+            }
+
+            return null;
+        }
+
         internal static Expression InvokeConverter(LanguagePrimitives.ConversionData conversion,
                                                    Expression value,
                                                    Type resultType,
@@ -4270,22 +4319,9 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            Expression[] indexExprs = new Expression[getterParams.Length];
-            for (int i = 0; i < getterParams.Length; ++i)
-            {
-                var parameterType = getterParams[i].ParameterType;
-
-                indexExprs[i] = ConvertIndex(indexes[i], parameterType);
-                if (indexExprs[i] == null)
-                {
-                    // Calling the indexer will fail because we can't convert an index to the correct type.
-                    return errorSuggestion ?? PSConvertBinder.ThrowNoConversion(target, parameterType, this, _version, indexes);
-                }
-            }
-
-            // Check return type after the argument conversion, so any no-conversion error can be thrown.
             if (getter.ReturnType.IsByRefLike)
             {
+                // We cannot return a ByRef-like value in PowerShell, so we disallow getting such an indexer.
                 return errorSuggestion ?? new DynamicMetaObject(
                     Expression.Block(
                         Expression.IfThen(
@@ -4296,7 +4332,22 @@ namespace System.Management.Automation.Language
                                 Expression.Constant(target.LimitType, typeof(Type)),
                                 Expression.Constant(getter.ReturnType, typeof(Type)))),
                         GetNullResult()),
-                    target.CombineRestrictions(indexes));
+                    target.PSGetTypeRestriction());
+            }
+
+            Expression[] indexExprs = new Expression[getterParams.Length];
+            for (int i = 0; i < getterParams.Length; ++i)
+            {
+                var parameterType = getterParams[i].ParameterType;
+                indexExprs[i] = parameterType.IsByRefLike
+                    ? PSConvertBinder.ConvertToByRefLikeTypeViaCasting(indexes[i], parameterType)
+                    : ConvertIndex(indexes[i], parameterType);
+
+                if (indexExprs[i] == null)
+                {
+                    // Calling the indexer will fail because we can't convert an index to the correct type.
+                    return errorSuggestion ?? PSConvertBinder.ThrowNoConversion(target, parameterType, this, _version, indexes);
+                }
             }
 
             if (CanIndexFromEndWithNegativeIndex(target, getter, getterParams))
@@ -4333,10 +4384,8 @@ namespace System.Management.Automation.Language
 
         internal static Expression ConvertIndex(DynamicMetaObject index, Type resultType)
         {
-            bool debase;
-
             // ConstrainedLanguage note - Calls to this conversion are protected by the binding rules that call it.
-            var conversion = LanguagePrimitives.FigureConversion(index.Value, resultType, out debase);
+            var conversion = LanguagePrimitives.FigureConversion(index.Value, resultType, out bool debase);
             return conversion.Rank == ConversionRank.None
                        ? null
                        : PSConvertBinder.InvokeConverter(conversion, index.Expression, resultType, debase, ExpressionCache.InvariantCulture);
@@ -4543,37 +4592,38 @@ namespace System.Management.Automation.Language
             }
 
             var setterParams = setter.GetParameters();
-            if (setterParams.Length != indexes.Length + 1)
-            {
-#if false
-                if (setterParams.Length == 1 && _allowSlicing)
-                {
-                    // We have a slicing operation.
-                    return InvokeSlicingIndexer(target, indexes);
-                }
-#endif
+            int paramLength = setterParams.Length;
 
+            if (paramLength != indexes.Length + 1)
+            {
                 // Calling the indexer will fail because there are either too many or too few indices.
                 return errorSuggestion ?? CannotIndexTarget(target, indexes, value);
             }
 
-#if false
-            if (setterParams.Length == 1)
+            if (setterParams[paramLength - 1].ParameterType.IsByRefLike)
             {
-                // The getter takes a single argument, so first check if we're slicing.
-                var slicingResult = CheckForSlicing(target, indexes);
-                if (slicingResult != null)
-                {
-                    return slicingResult;
-                }
+                // In theory, it's possible to call the setter with a value that can be implicitly/explicitly casted to the target ByRef-like type.
+                // However, the set-property/set-indexer semantics in PowerShell requires returning the value after the setting operation. We cannot
+                // return a ByRef-like value back, so we just disallow setting an indexer that takes a ByRef-like type value.
+                return errorSuggestion ?? new DynamicMetaObject(
+                    Compiler.ThrowRuntimeError(
+                        nameof(ParserStrings.CannotIndexWithByRefLikeReturnType),
+                        ParserStrings.CannotIndexWithByRefLikeReturnType,
+                        Expression.Constant(target.LimitType, typeof(Type)),
+                        Expression.Constant(setterParams[paramLength - 1].ParameterType, typeof(Type))),
+                    target.PSGetTypeRestriction());
             }
-#endif
 
-            Expression[] indexExprs = new Expression[setterParams.Length];
-            for (int i = 0; i < setterParams.Length; ++i)
+            Expression[] indexExprs = new Expression[paramLength];
+            for (int i = 0; i < paramLength; ++i)
             {
                 var parameterType = setterParams[i].ParameterType;
-                indexExprs[i] = PSGetIndexBinder.ConvertIndex(i == setterParams.Length - 1 ? value : indexes[i], parameterType);
+                var argument = (i == paramLength - 1) ? value : indexes[i];
+
+                indexExprs[i] = parameterType.IsByRefLike
+                    ? PSConvertBinder.ConvertToByRefLikeTypeViaCasting(argument, parameterType)
+                    : PSGetIndexBinder.ConvertIndex(argument, parameterType);
+
                 if (indexExprs[i] == null)
                 {
                     // Calling the indexer will fail because we can't convert an index to the correct type.
@@ -4581,7 +4631,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (setterParams.Length == 2 && setterParams[0].ParameterType == typeof(int) && !(target.Value is IDictionary))
+            if (paramLength == 2 && setterParams[0].ParameterType == typeof(int) && !(target.Value is IDictionary))
             {
                 // PowerShell supports negative indexing for some types (specifically, those with a single
                 // int parameter to the indexer, and also have either a Length or Count property.)  For
@@ -6110,6 +6160,9 @@ namespace System.Management.Automation.Language
 
                         if (data.propertyType.IsByRefLike)
                         {
+                            // In theory, it's possible to call the setter with a value that can be implicitly/explicitly casted to the target ByRef-like type.
+                            // However, the set-property/set-indexer semantics in PowerShell requires returning the value after the setting operation. We cannot
+                            // return a ByRef-like value back, so we just disallow setting a member that takes a ByRef-like type value.
                             expr = Expression.Throw(
                                 Expression.New(
                                     CachedReflectionInfo.SetValueException_ctor,
@@ -6227,13 +6280,38 @@ namespace System.Management.Automation.Language
                 var codeProperty = psPropertyInfo as PSCodeProperty;
                 if (codeProperty != null)
                 {
+                    var setterMethod = codeProperty.SetterCodeReference;
+                    var parameters = setterMethod.GetParameters();
+                    var propertyType = parameters[parameters.Length - 1].ParameterType;
+
+                    if (propertyType.IsByRefLike)
+                    {
+                        var expr = Expression.Throw(
+                            Expression.New(
+                                CachedReflectionInfo.SetValueException_ctor,
+                                Expression.Constant(nameof(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField)),
+                                Expression.Constant(null, typeof(Exception)),
+                                Expression.Constant(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField),
+                                Expression.NewArrayInit(
+                                    typeof(object),
+                                    Expression.Constant(codeProperty.Name),
+                                    Expression.Constant(propertyType, typeof(Type)))),
+                            this.ReturnType);
+                        
+                        return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
+                    }
+
                     var temp = Expression.Variable(typeof(object));
                     return new DynamicMetaObject(
                         Expression.Block(
                             new[] { temp },
                             Expression.Assign(temp, value.CastOrConvert(temp.Type)),
-                            PSInvokeMemberBinder.InvokeMethod(codeProperty.SetterCodeReference, null, new[] { target, value },
-                            false, PSInvokeMemberBinder.MethodInvocationType.Setter),
+                            PSInvokeMemberBinder.InvokeMethod(
+                                setterMethod,
+                                target: null,
+                                new[] { target, value },
+                                expandParameters: false,
+                                PSInvokeMemberBinder.MethodInvocationType.Setter),
                             temp),
                         restrictions).WriteToDebugLog(this);
                 }
@@ -6743,8 +6821,16 @@ namespace System.Management.Automation.Language
                 psMethodInvocationConstraints = new PSMethodInvocationConstraints(target.Value.GetType(), argTypes);
             }
 
-            var result = Adapter.FindBestMethod(mi, psMethodInvocationConstraints,
-                                                argValues, ref errorId, ref errorMsg, out expandParamsOnBest, out callNonVirtually);
+            var result = Adapter.FindBestMethod(
+                mi,
+                psMethodInvocationConstraints,
+                allowCastingToByRefLikeType: true,
+                argValues,
+                ref errorId,
+                ref errorMsg,
+                out expandParamsOnBest,
+                out callNonVirtually);
+
             if (callNonVirtually && methodInvocationType != MethodInvocationType.BaseCtor)
             {
                 methodInvocationType = MethodInvocationType.NonVirtual;
@@ -6834,9 +6920,17 @@ namespace System.Management.Automation.Language
                 string errorMsg = null;
                 bool expandParameters;
                 bool callNonVirtually;
-                var mi = Adapter.FindBestMethod(data.methodInformationStructures, invocationConstraints,
-                                                args.Select(arg => arg.Value == AutomationNull.Value ? null : arg.Value).ToArray(),
-                                                ref errorId, ref errorMsg, out expandParameters, out callNonVirtually);
+
+                var mi = Adapter.FindBestMethod(
+                    data.methodInformationStructures,
+                    invocationConstraints,
+                    allowCastingToByRefLikeType: true,
+                    args.Select(arg => arg.Value == AutomationNull.Value ? null : arg.Value).ToArray(),
+                    ref errorId,
+                    ref errorMsg,
+                    out expandParameters,
+                    out callNonVirtually);
+
                 if (mi != null)
                 {
                     result = (MethodInfo)mi.method;
@@ -6845,7 +6939,7 @@ namespace System.Management.Automation.Language
             return result;
         }
 
-        internal static Expression InvokeMethod(MethodBase mi, DynamicMetaObject target, DynamicMetaObject[] args, bool expandParameters, MethodInvocationType invocationInvocationType)
+        internal static Expression InvokeMethod(MethodBase mi, DynamicMetaObject target, DynamicMetaObject[] args, bool expandParameters, MethodInvocationType invocationType)
         {
             List<ParameterExpression> temps = new List<ParameterExpression>();
             List<Expression> initTemps = new List<Expression>();
@@ -6858,9 +6952,23 @@ namespace System.Management.Automation.Language
                 Type returnType = methodInfo.ReturnType;
                 if (returnType.IsByRefLike)
                 {
+                    ConstructorInfo exceptionCtorInfo;
+                    switch (invocationType)
+                    {
+                        case MethodInvocationType.Getter:
+                            exceptionCtorInfo = CachedReflectionInfo.GetValueException_ctor;
+                            break;
+                        case MethodInvocationType.Setter:
+                            exceptionCtorInfo = CachedReflectionInfo.SetValueException_ctor;
+                            break;
+                        default:
+                            exceptionCtorInfo = CachedReflectionInfo.MethodException_ctor;
+                            break;
+                    }
+
                     return Expression.Throw(
                         Expression.New(
-                            CachedReflectionInfo.MethodException_ctor,
+                            exceptionCtorInfo,
                             Expression.Constant(nameof(ExtendedTypeSystem.CannotCallMethodWithByRefLikeReturnType)),
                             Expression.Constant(null, typeof(Exception)),
                             Expression.Constant(ExtendedTypeSystem.CannotCallMethodWithByRefLikeReturnType),
@@ -6890,12 +6998,20 @@ namespace System.Management.Automation.Language
                 }
             }
 
+            // Invoking a base constructor or a base method (non-virtual call) depends reflection invocation
+            // via helper methods, and thus all arguments need to be casted to 'object'. The ByRef-like types
+            // cannot be boxed and won't work with reflection.
+            bool allowCastingToByRefLikeType =
+                invocationType != MethodInvocationType.BaseCtor && 
+                invocationType != MethodInvocationType.NonVirtual;
             var parameters = mi.GetParameters();
             var argExprs = new Expression[parameters.Length];
+
             for (int i = 0; i < parameters.Length; ++i)
             {
+                Type parameterType = parameters[i].ParameterType;
                 string paramName = parameters[i].Name;
-                if (string.IsNullOrWhiteSpace(parameters[i].Name))
+                if (string.IsNullOrWhiteSpace(paramName))
                 {
                     paramName = i.ToString(CultureInfo.InvariantCulture);
                 }
@@ -6910,17 +7026,30 @@ namespace System.Management.Automation.Language
                 if (paramArrayAttrs != null && paramArrayAttrs.Any())
                 {
                     Diagnostics.Assert(i == parameters.Length - 1, "vararg parameter is not the last");
-                    var paramElementType = parameters[i].ParameterType.GetElementType();
+                    var paramElementType = parameterType.GetElementType();
 
                     if (expandParameters)
                     {
-                        argExprs[i] = Expression.NewArrayInit(paramElementType,
-                                                              args.Skip(i).Select(
-                                                                  a => a.CastOrConvertMethodArgument(paramElementType, paramName, mi.Name, temps, initTemps)));
+                        argExprs[i] = Expression.NewArrayInit(
+                            paramElementType,
+                            args.Skip(i).Select(
+                                a => a.CastOrConvertMethodArgument(
+                                    paramElementType,
+                                    paramName,
+                                    mi.Name,
+                                    allowCastingToByRefLikeType: false,
+                                    temps,
+                                    initTemps)));
                     }
                     else
                     {
-                        var arg = args[i].CastOrConvertMethodArgument(parameters[i].ParameterType, paramName, mi.Name, temps, initTemps);
+                        var arg = args[i].CastOrConvertMethodArgument(
+                            parameterType,
+                            paramName,
+                            mi.Name,
+                            allowCastingToByRefLikeType: false,
+                            temps,
+                            initTemps);
                         argExprs[i] = arg;
                     }
                 }
@@ -6931,7 +7060,7 @@ namespace System.Management.Automation.Language
                     var argValue = parameters[i].DefaultValue;
                     if (argValue == null)
                     {
-                        argExprs[i] = Expression.Default(parameters[i].ParameterType);
+                        argExprs[i] = Expression.Default(parameterType);
                     }
                     else
                     {
@@ -6943,7 +7072,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    if (parameters[i].ParameterType.IsByRef)
+                    if (parameterType.IsByRef)
                     {
                         if (!(args[i].Value is PSReference))
                         {
@@ -6953,7 +7082,7 @@ namespace System.Management.Automation.Language
                                      new object[] { i + 1, typeof(PSReference).FullName, "[ref]" });
                         }
 
-                        var temp = Expression.Variable(parameters[i].ParameterType.GetElementType());
+                        var temp = Expression.Variable(parameterType.GetElementType());
                         temps.Add(temp);
                         var psRefValue = Expression.Property(args[i].Expression.Cast(typeof(PSReference)), CachedReflectionInfo.PSReference_Value);
                         initTemps.Add(Expression.Assign(temp, psRefValue.Convert(temp.Type)));
@@ -6962,7 +7091,14 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        argExprs[i] = args[i].CastOrConvertMethodArgument(parameters[i].ParameterType, paramName, mi.Name, temps, initTemps);
+
+                        argExprs[i] = args[i].CastOrConvertMethodArgument(
+                            parameterType,
+                            paramName,
+                            mi.Name,
+                            allowCastingToByRefLikeType,
+                            temps,
+                            initTemps);
                     }
                 }
             }
@@ -6970,9 +7106,9 @@ namespace System.Management.Automation.Language
             Expression call;
             if (constructorInfo != null)
             {
-                if (invocationInvocationType == MethodInvocationType.BaseCtor)
+                if (invocationType == MethodInvocationType.BaseCtor)
                 {
-                    var targetExpr = target.Value is PSObject
+                    var targetExpr = target.Value is PSObject 
                         ? target.Expression.Cast(constructorInfo.DeclaringType)
                         : PSGetMemberBinder.GetTargetExpr(target, constructorInfo.DeclaringType);
                     call = Expression.Call(
@@ -6988,7 +7124,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                if (invocationInvocationType == MethodInvocationType.NonVirtual && !methodInfo.IsStatic)
+                if (invocationType == MethodInvocationType.NonVirtual && !methodInfo.IsStatic)
                 {
                     call = Expression.Call(
                         methodInfo.ReturnType == typeof(void)
