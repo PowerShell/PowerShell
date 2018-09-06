@@ -161,16 +161,16 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Executes a pipeline in the console when we are running asnyc
+        /// Executes a pipeline in the console when we are running asnyc.
         /// </summary>
         /// <param name="tempPipeline">
-        /// The pipeline to execute
+        /// The pipeline to execute.
         /// </param>
         /// <param name="exceptionThrown">
-        /// any exception thrown trying to run the pipeline
+        /// Any exception thrown trying to run the pipeline.
         /// </param>
         /// <param name="options">
-        /// The options to use to execute the pipeline
+        /// The options to use to execute the pipeline.
         /// </param>
         internal void ExecuteCommandAsyncHelper(Pipeline tempPipeline, out Exception exceptionThrown, ExecutionOptions options)
         {
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell
 
                 // close the input pipeline so the command will do something
                 // if we are not reading input
-                if((options & Executor.ExecutionOptions.ReadInputObjects) == 0)
+                if ((options & Executor.ExecutionOptions.ReadInputObjects) == 0)
                 {
                     tempPipeline.Input.Close();
                 }
