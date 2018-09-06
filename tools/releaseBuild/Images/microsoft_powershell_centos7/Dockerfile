@@ -1,6 +1,6 @@
 # Docker image file that describes an Centos7 image with PowerShell installed from Microsoft YUM Repo
 
-FROM mcr.microsoft.com/powershell:centos7
+FROM mcr.microsoft.com/powershell:centos-7
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
 
 # Install dependencies and clean up

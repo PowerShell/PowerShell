@@ -1,6 +1,6 @@
 # Docker image file that describes an Ubuntu14.04 image with PowerShell installed from Microsoft APT Repo
 
-FROM mcr.microsoft.com/powershell:ubuntu14.04
+FROM mcr.microsoft.com/powershell:ubuntu-14.04
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
 
 # Install dependencies and clean up
