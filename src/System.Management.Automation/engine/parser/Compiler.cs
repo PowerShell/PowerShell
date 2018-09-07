@@ -1780,12 +1780,7 @@ namespace System.Management.Automation.Language
                 default:
                     // Here compileInterpretChoice == CompileInterpretChoice.CompileOnDemand
                     //
-                    // compilationThreshold is # of times the script must run before we decide to compile
-                    // NeverCompile sets the threshold to int.MaxValue, so theoretically we might compile
-                    // at some point, but it's very unlikely.
-                    // -1 is to use default (32).
-                    var deleg = new LightCompiler(compilationThreshold: -1).CompileTop(lambda).CreateDelegate();
-                    return (Action<FunctionContext>)deleg;
+                    return lambda.Compile(preferInterpretation: false);
             }
         }
 
