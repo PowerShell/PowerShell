@@ -28,7 +28,7 @@ It is shown as `PS C:\>` on  Windows.
 
 By default, you will get data back similar to the following:
 
-``` powershell
+```powershell
 PS /> Get-Process
 
 Handles   NPM(K)    PM(K)     WS(K)     CPU(s)     Id    ProcessName
