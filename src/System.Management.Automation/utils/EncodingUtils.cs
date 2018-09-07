@@ -103,7 +103,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Allows to complete for the possible values of the -Encoding parameter.
+    /// Provides the set of Encoding values for tab completion of an Encoding parameter.
     /// </summary>
     internal sealed class ArgumentEncodingCompletionsAttribute : ArgumentCompletionsAttribute
     {
