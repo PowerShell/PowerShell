@@ -121,6 +121,16 @@ function Get-CommitMessage
     {
         return $env:APPVEYOR_REPO_COMMIT_MESSAGE
     }
+    elseif ($env:BUILD_SOURCEVERSIONMESSAGE -match 'Merge\s*([0-9A-F]*)')
+    {
+        # We are in VSTS and have a commit ID in the Source Version Message
+        $commitId = $Matches[1]
+        return &git log --format=%B -n 1 $commitId
+    }
+    else
+    {
+        Write-Log "Unknown BUILD_SOURCEVERSIONMESSAGE format '$env:BUILD_SOURCEVERSIONMESSAGE'" -Verbose
+    }
 }
 
 # Sets a build variable
