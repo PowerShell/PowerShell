@@ -7,7 +7,10 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Returns the thread's current culture.
+    /// Returns:
+    ///     - the thread's current culture
+    ///     - culture by name
+    ///     - list of all supported cultures
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Culture", DefaultParameterSetName = DefaultParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113312")]
     [OutputType(typeof(System.Globalization.CultureInfo))]
@@ -31,7 +34,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter ListAvailable { get; set; }
 
         /// <summary>
-        /// Output the current Culture info object.
+        /// Output:
+        ///     - the thread's current culture
+        ///     - culture by name
+        ///     - list of all supported cultures
         /// </summary>
         protected override void ProcessRecord()
         {
