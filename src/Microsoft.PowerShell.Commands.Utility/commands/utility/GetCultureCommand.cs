@@ -9,10 +9,11 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Returns the thread's current culture.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Culture", DefaultParameterSetName = NameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113312")]
+    [Cmdlet(VerbsCommon.Get, "Culture", DefaultParameterSetName = DefaultParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113312")]
     [OutputType(typeof(System.Globalization.CultureInfo))]
     public sealed class GetCultureCommand : PSCmdlet
     {
+        private const string DefaultParameterSet = "Default";
         private const string NameParameterSet = "Name";
         private const string ListAvailableParameterSet = "ListAvailable";
 
@@ -36,25 +37,22 @@ namespace Microsoft.PowerShell.Commands
         {
             switch (ParameterSetName)
             {
+                case DefaultParameterSet:
+                    WriteObject(Host.CurrentCulture);
+
+                    break;
                 case NameParameterSet:
-                    if (Name == null)
+                    try
                     {
-                        WriteObject(Host.CurrentCulture);
+                        foreach (var ciName in Name)
+                        {
+                            CultureInfo ci = CultureInfo.GetCultureInfo(ciName);
+                            WriteObject(ci);
+                        }
                     }
-                    else
+                    catch (CultureNotFoundException exc)
                     {
-                        try
-                        {
-                            foreach (var ciName in Name)
-                            {
-                                CultureInfo ci = CultureInfo.GetCultureInfo(ciName);
-                                WriteObject(ci);
-                            }
-                        }
-                        catch (CultureNotFoundException exc)
-                        {
-                            WriteError(new ErrorRecord(exc, "ItemNotFoundException", ErrorCategory.ObjectNotFound, Name));
-                        }
+                        WriteError(new ErrorRecord(exc, "ItemNotFoundException", ErrorCategory.ObjectNotFound, Name));
                     }
 
                     break;
