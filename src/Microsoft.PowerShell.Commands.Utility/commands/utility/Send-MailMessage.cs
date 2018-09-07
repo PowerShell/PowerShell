@@ -47,11 +47,11 @@ namespace Microsoft.PowerShell.Commands
         public string Body { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the mail message body is in Html.
+        /// Gets or sets the value indicating whether the mail message body is in Html.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("BAH")]
-        public SwitchParameter BodyAsHtml { get; set; } = false;
+        public SwitchParameter BodyAsHtml { get; set; }
 
         /// <summary>
         /// Gets or sets the encoding used for the content of the body and also the subject.
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("DNO")]
         [ValidateNotNullOrEmpty]
-        public DeliveryNotificationOptions DeliveryNotificationOption { get; set; } = DeliveryNotificationOptions.None;
+        public DeliveryNotificationOptions DeliveryNotificationOption { get; set; }
 
         /// <summary>
         /// Gets or sets the from address for this e-mail message. The default value for
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public MailPriority Priority { get; set; } = MailPriority.Normal;
+        public MailPriority Priority { get; set; }
 
         /// <summary>
         /// Gets or sets the subject of the email message.
@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets if Secured layer is required or not.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public SwitchParameter UseSsl { get; set; } = false;
+        public SwitchParameter UseSsl { get; set; }
 
         /// <summary>
         /// Gets or sets the Port to be used on the server. <see cref="SmtpServer"/>
@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateRange(0, Int32.MaxValue)]
-        public int Port { get; set; } = 0;
+        public int Port { get; set; }
 
         #endregion
 
