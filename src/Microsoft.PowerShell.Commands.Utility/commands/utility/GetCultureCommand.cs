@@ -44,9 +44,9 @@ namespace Microsoft.PowerShell.Commands
                 case NameParameterSet:
                     try
                     {
-                        foreach (var ciName in Name)
+                        foreach (var cultureName in Name)
                         {
-                            CultureInfo ci = CultureInfo.GetCultureInfo(ciName);
+                            CultureInfo ci = CultureInfo.GetCultureInfo(cultureName);
                             WriteObject(ci);
                         }
                     }
