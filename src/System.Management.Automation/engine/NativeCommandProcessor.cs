@@ -1301,7 +1301,7 @@ namespace System.Management.Automation
 
             var pathext = Environment.GetEnvironmentVariable("PATHEXT");
             string[] extensionList;
-            if (String.IsNullOrEmpty(pathext))
+            if (string.IsNullOrEmpty(pathext))
             {
 #if UNIX
                 return false;
@@ -1316,7 +1316,7 @@ namespace System.Management.Automation
 
             foreach (string extension in extensionList)
             {
-                if (String.Equals(extension, myExtension, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(extension, myExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
