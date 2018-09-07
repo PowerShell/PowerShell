@@ -102,4 +102,23 @@ namespace System.Management.Automation
 
     }
 
+    /// <summary>
+    /// To make it easier to complete the possible values for the -Encoding parameter, we add an 
+    /// unified ArgumentCompletionsAttribute here. This also solves the problem of code duplication.
+    /// </summary>
+    internal sealed class ArgumentEncodingCompletionsAttribute : ArgumentCompletionsAttribute
+    {
+        public ArgumentEncodingCompletionsAttribute() : base(
+            EncodingConversion.Ascii,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+        )
+        {}
+    }
 }
