@@ -1295,7 +1295,7 @@ namespace System.Management.Automation
             {
                 return true;
             }
-#else
+#endif
 
             string myExtension = System.IO.Path.GetExtension(path);
 
@@ -1303,7 +1303,11 @@ namespace System.Management.Automation
             string[] extensionList;
             if (String.IsNullOrEmpty(pathext))
             {
+#if UNIX
+                return false;
+#else
                 extensionList = new string[] { ".exe", ".com", ".bat", ".cmd" };
+#endif
             }
             else
             {
@@ -1317,7 +1321,6 @@ namespace System.Management.Automation
                     return true;
                 }
             }
-#endif
 
             return false;
         }
