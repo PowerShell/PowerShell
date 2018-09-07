@@ -151,9 +151,9 @@ If you have any problems building, please consult the developer [FAQ][].
 
 ### Build status of master branches
 
-| AppVeyor (Windows)       | Travis CI (Linux / macOS) |
-|--------------------------|--------------------------|
-| [![av-image][]][av-site] | [![tv-image][]][tv-site] |
+| AppVeyor (Windows)       | Travis CI (Linux / macOS) | VSTS (Windows) | VSTS (Linux) | VSTS (macOS) |
+|--------------------------|---------------------------|----------------|--------------|--------------|
+| [![av-image][]][av-site] | [![tv-image][]][tv-site]  |[![vsts-windows-image][]][vsts-windows-site] | [![vsts-linux-image][]][vsts-linux-site]  | [![vsts-macos-image][]][vsts-macos-site] |
 
 ### Build status of nightly builds
 
@@ -167,6 +167,12 @@ If you have any problems building, please consult the developer [FAQ][].
 
 [FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md
 
+[vsts-windows-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-windows?branchName=master
+[vsts-windows-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=19?branchName=master
+[vsts-linux-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux?branchName=master
+[vsts-linux-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=17?branchName=master
+[vsts-macos-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos?branchName=master
+[vsts-macos-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=14?branchName=master
 [tv-image]: https://travis-ci.org/PowerShell/PowerShell.svg?branch=master
 [tv-site]: https://travis-ci.org/PowerShell/PowerShell/branches
 [av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true

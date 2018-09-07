@@ -223,7 +223,7 @@
       </Directory>
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)">
-          <Component Id="ApplicationProgramsMenuShortcut" Guid="{A77507A7-F970-4618-AC30-20AFE36EE2EB}">
+          <Component Id="ApplicationProgramsMenuShortcut" Guid="*">
             <Shortcut Id="PowerShell_ProgramsMenuShortcut" 
                       Name="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
                       Description="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
