@@ -157,7 +157,7 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
     It @ItArgs {
         $body = "Greetings from me again."
         $subject = "Second test message"
-        $object = [PSCustomObject]@{"To" = $address; "From" = $address; "Subject" = $subject; "Body" = $body; $SmtpServer = '127.0.0.1'}
+        $object = [PSCustomObject]@{To = $address; From = $address; Subject = $subject; Body = $body; SmtpServer = '127.0.0.1'}
         $object | Send-MailMessage
         Test-Path -Path $mailBox | Should -BeTrue
         $mail = read-mail $mailBox
