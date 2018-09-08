@@ -135,15 +135,6 @@
     <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed to enable remoting over WinRM. You can find a download link to it here: https://aka.ms/pscore6-prereq">
       <![CDATA[Installed OR UNIVERSAL_C_RUNTIME_INSTALLED]]>
     </Condition>
-    <!-- Prerequisite check for Windows Management Framework -->
-    <Property Id="PWRSHPLUGIN_VERSION" Secure="yes">
-      <DirectorySearchRef Id="System32" Parent="WindowsDirectory" Path="System32">
-        <FileSearch Id="pwrshplugin" Name="pwrshplugin.dll" MinVersion="6.3.9600.16383"/>
-      </DirectorySearchRef>
-    </Property>
-    <Condition Message="$(env.ProductName) requires the Windows Management Framework 4.0 or newer to be installed to enable remoting over WinRM. You can find download links here: https://aka.ms/pscore6-prereq">
-      <![CDATA[Installed OR PWRSHPLUGIN_VERSION ]]>
-    </Condition>
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.ProductProgFilesDir)">
         <Directory Id="INSTALLFOLDER" Name="PowerShell">
@@ -243,13 +234,28 @@
 <Fragment>
  <UI>
     <Property Id="REGISTER_MANIFEST" Value="1" />
+    <TextStyle Id="WMFWarningFont" FaceName="Tahoma" Size="8" Bold="yes" Red="255" Green="100" Blue="100" />
     <Property Id="ADD_PATH" Value="1" />
+    <Property Id="PWRSHPLUGIN_VERSION" Secure="yes">
+      <DirectorySearchRef Id="System32" Parent="WindowsDirectory" Path="System32">
+        <FileSearch Id="pwrshplugin" Name="pwrshplugin.dll" MinVersion="6.3.9600.16383"/>
+      </DirectorySearchRef>
+    </Property>
     <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
       <Control Id="AddToPathCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_PATH" CheckBoxValue="0" Text="Add $(var.ProductName) to Path Environment Variable"/>
       <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
-      <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
+      <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting" >
+        <Condition Action="disable">
+            <![CDATA[NOT PWRSHPLUGIN_VERSION]]>
+        </Condition>
+      </Control>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
+      <Control Id="WMFWarning" Type="Text" X="20" Y= "140" Width="290" Height="32" Transparent="yes" NoPrefix="yes" Text="{\WMFWarningFont}Windows Management Framework 4.0 or newer is required enable remoting over WinRM. See: https://aka.ms/pscore6-prereq">
+        <Condition Action="hide">
+            <![CDATA[PWRSHPLUGIN_VERSION]]>
+        </Condition>
+      </Control>
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
       <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
       <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
@@ -304,8 +310,7 @@
       <DialogRef Id="ResumeDlg" />
       <DialogRef Id="UserExit" />
       <DialogRef Id="ExplorerContextMenuDialog" />
-      
-      
+
       <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
       <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
 
