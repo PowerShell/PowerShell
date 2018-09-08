@@ -428,7 +428,7 @@ function Update-PsVersionInCode
 
     $metaDataPath = (Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json')
     $metaData = Get-Content -Path $metaDataPath | convertfrom-json
-    $currentTag = $metaData.ReleaseTag
+    $currentTag = $metaData.StableReleaseTag
 
     $currentVersion = $currentTag -replace '^v'
     $newVersion = $NewReleaseTag -replace '^v'
