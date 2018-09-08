@@ -7618,25 +7618,23 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The target of the reparse point</returns>
         public static IEnumerable<string> GetTarget(PSObject instance)
         {
-            FileSystemInfo fileSysInfo = instance.BaseObject as FileSystemInfo;
-
-            if (fileSysInfo != null)
+            if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
-                if (Platform.IsWindows)
+#if !UNIX
+                using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericRead))
                 {
-                    using (SafeFileHandle handle = OpenReparsePoint(fileSysInfo.FullName, FileDesiredAccess.GenericRead))
-                    {
-                        string linkTarget = InternalGetTarget(handle);
+                    string linkTarget = WinInternalGetTarget(handle);
 
-                        if (linkTarget != null)
-                            return (new string[] { linkTarget });
+                    if (linkTarget != null)
+                    {
+                        return (new string[] { linkTarget });
                     }
                 }
-
+#endif
                 return InternalGetTarget(fileSysInfo.FullName);
             }
-            else
-                return null;
+
+            return null;
         }
 
         /// <summary>
@@ -7962,18 +7960,6 @@ namespace Microsoft.PowerShell.Commands
             BY_HANDLE_FILE_INFORMATION handleInfo;
             bool succeeded = InternalSymbolicLinkLinkCodeMethods.GetFileInformationByHandle(handle, out handleInfo);
             return succeeded && (handleInfo.NumberOfLinks > 1);
-        }
-
-        private static string InternalGetTarget(SafeFileHandle handle)
-        {
-            if (Platform.IsWindows)
-            {
-                return WinInternalGetTarget(handle);
-            }
-            else
-            {
-                return Platform.NonWindowsInternalGetTarget(handle);
-            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
