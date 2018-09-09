@@ -251,7 +251,7 @@
         </Condition>
       </Control>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
-      <Control Id="WMFWarning" Type="Text" X="20" Y= "140" Width="290" Height="32" Transparent="yes" NoPrefix="yes" Text="{\WMFWarningFont}Windows Management Framework 4.0 or newer is required enable remoting over WinRM. See: https://aka.ms/pscore6-prereq">
+      <Control Id="WMFWarning" Type="Text" X="20" Y= "140" Width="290" Height="32" Transparent="yes" NoPrefix="yes" Text="{\WMFWarningFont}Windows Management Framework 4.0 or newer is required to enable remoting over WinRM. See: https://aka.ms/pscore6-prereq">
         <Condition Action="hide">
             <![CDATA[PWRSHPLUGIN_VERSION]]>
         </Condition>
