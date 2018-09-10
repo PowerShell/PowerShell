@@ -1395,6 +1395,8 @@ namespace System.Management.Automation.Internal
 
         internal static bool ShowMarkdownOutputBypass;
 
+        internal static bool ExpressionCompile;
+
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
         {

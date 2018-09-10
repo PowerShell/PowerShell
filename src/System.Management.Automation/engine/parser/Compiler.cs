@@ -1780,7 +1780,14 @@ namespace System.Management.Automation.Language
                 default:
                     // Here compileInterpretChoice == CompileInterpretChoice.CompileOnDemand
                     //
-                    return lambda.Compile(preferInterpretation: false);
+                    if (Internal.InternalTestHooks.ExpressionCompile)
+                    {
+                        return lambda.Compile(preferInterpretation: false);
+                    }
+                    else
+                    {
+                        return lambda.Compile(preferInterpretation: true);
+                    }
             }
         }
 
