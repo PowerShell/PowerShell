@@ -428,7 +428,8 @@ function Start-PSBuild {
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         # If this parameter is not provided it will get determined automatically.
-        [ValidateSet("linux-arm",
+        [ValidateSet("fxdependent",
+                     "linux-arm",
                      "linux-musl-x64",
                      "linux-x64",
                      "osx-x64",
@@ -455,7 +456,6 @@ function Start-PSBuild {
     if ("win-arm","win-arm64" -contains $Runtime -and -not $Environment.IsWindows) {
         throw "Cross compiling for win-arm or win-arm64 is only supported on Windows environment"
     }
-
     function Stop-DevPowerShell {
         Get-Process pwsh* |
             Where-Object {
@@ -536,7 +536,7 @@ Fix steps:
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
 
-    if (-not $SMAOnly) {
+    if (-not $SMAOnly -and $Options.Runtime -ne 'fxdependent') {
         # libraries should not have runtime
         $Arguments += "--runtime", $Options.Runtime
     }
@@ -572,7 +572,8 @@ Fix steps:
         Write-Log "Run dotnet $Arguments from $pwd"
         Start-NativeExecution { dotnet $Arguments }
 
-        if ($CrossGen) {
+        if ($CrossGen -and $Options.Runtime -ne 'fxdependent') {
+            ## fxdependent package cannot be CrossGen'ed
             Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
             Write-Log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
         } else {
@@ -657,10 +658,13 @@ Fix steps:
             $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
         }
 
-        Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
-            --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
-            --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
-            --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
+        # fxdependent package does not have an executable to set iconPath etc.
+        if ($Options.Runtime -ne 'fxdependent') {
+            Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
+                    --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
+                    --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
+                    --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
+        }
     }
 
     # download modules from powershell gallery.
@@ -696,7 +700,12 @@ function Restore-PSPackage
 
     if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {
 
-        $RestoreArguments = @("--runtime",$Options.Runtime,"--verbosity")
+        if($Options.Runtime -ne 'fxdependent') {
+            $RestoreArguments = @("--runtime",$Options.Runtime, "--verbosity")
+        } else {
+            $RestoreArguments = @("--verbosity")
+        }
+
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
             $RestoreArguments += "detailed"
         } else {
@@ -780,6 +789,7 @@ function New-PSOptions {
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
+                     "fxdependent",
                      "linux-arm",
                      "linux-musl-x64",
                      "linux-x64",
@@ -855,7 +865,9 @@ function New-PSOptions {
         }
     }
 
-    $Executable = if ($Environment.IsLinux -or $Environment.IsMacOS) {
+    $Executable = if ($Runtime -eq 'fxdependent') {
+        "pwsh.dll"
+    } elseif ($Environment.IsLinux -or $Environment.IsMacOS) {
         "pwsh"
     } elseif ($Environment.IsWindows) {
         "pwsh.exe"
@@ -863,7 +875,11 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
+        if ($Runtime -eq 'fxdependent') {
+            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, "publish", $Executable)
+        } else {
+            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
+        }
     }
 
     if ($SMAOnly)
