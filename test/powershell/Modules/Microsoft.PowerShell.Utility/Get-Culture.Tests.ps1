@@ -26,7 +26,6 @@ Describe "Get-Culture" -Tags "CI" {
 
         $ciArray = Get-Culture "", "ru-RU"
         $ciArray | Should -BeOfType [CultureInfo]
-        ,$ciArray | Should -BeOfType [System.Array]
         $ciArray | Should -HaveCount 2
         $ciArray[0] | Should -BeOfType [CultureInfo]
         $ciArray[0].LCID | Should -Be 127
@@ -38,7 +37,6 @@ Describe "Get-Culture" -Tags "CI" {
 
         $ciArray = "", "ru-RU" | Get-Culture
         $ciArray | Should -BeOfType [CultureInfo]
-        ,$ciArray | Should -BeOfType [System.Array]
         $ciArray | Should -HaveCount 2
         $ciArray[0] | Should -BeOfType [CultureInfo]
         $ciArray[0].LCID | Should -Be 127
@@ -49,7 +47,6 @@ Describe "Get-Culture" -Tags "CI" {
     It "Should return the culture array with '-ListAvailable' parameter" {
 
         $ciArray = Get-Culture -ListAvailable
-        ,$ciArray | Should -BeOfType [System.Array]
         $ciArray.Count | Should -BeGreaterThan 0
         $ciArray[0] | Should -BeOfType [CultureInfo]
     }
