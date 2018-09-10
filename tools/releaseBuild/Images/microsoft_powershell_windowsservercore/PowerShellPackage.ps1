@@ -32,12 +32,12 @@ param (
 )
 
 $releaseTagParam = @{}
-if($ReleaseTag)
+if ($ReleaseTag)
 {
     $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
 }
 
-if(-not $env:homedrive)
+if (-not $env:homedrive)
 {
     Write-Verbose "fixing empty home paths..." -Verbose
     $profileParts = $env:userprofile -split ':'
@@ -45,7 +45,7 @@ if(-not $env:homedrive)
     $env:homepath = $profileParts[1]
 }
 
-if(! (Test-Path $destination))
+if (! (Test-Path $destination))
 {
     Write-Verbose "Creating destination $destination" -Verbose
     $null = New-Item -Path $destination -ItemType Directory
@@ -57,7 +57,7 @@ Write-Verbose "homepath : ${env:homepath}"
 # Don't use CIM_PhysicalMemory, docker containers may cache old values
 $memoryMB = (Get-CimInstance win32_computersystem).TotalPhysicalMemory /1MB
 $requiredMemoryMB = 2048
-if($memoryMB -lt $requiredMemoryMB)
+if ($memoryMB -lt $requiredMemoryMB)
 {
     throw "Building powershell requires at least $requiredMemoryMB MiB of memory and only $memoryMB MiB is present."
 }
@@ -76,7 +76,7 @@ try{
     Write-Verbose "Bootstrapping powershell build..." -verbose
     Start-PSBootstrap -Force -Package
 
-    if($PSCmdlet.ParameterSetName -eq 'packageSigned')
+    if ($PSCmdlet.ParameterSetName -eq 'packageSigned')
     {
         Write-Verbose "Expanding signed build..." -verbose
         if($Runtime -eq 'fxdependent')
@@ -102,7 +102,7 @@ try{
         Start-PSBuild -Clean -Runtime $Runtime -Configuration Release @releaseTagParam @buildParams
     }
 
-    if($Runtime -eq 'fxdependent')
+    if ($Runtime -eq 'fxdependent')
     {
         $pspackageParams = @{'Type'='fxdependent'}
     }
@@ -111,13 +111,13 @@ try{
         $pspackageParams = @{'Type'='msi'; 'WindowsRuntime'=$Runtime}
     }
 
-    if(!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch "arm" -and $Runtime -ne 'fxdependent')
+    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch "arm" -and $Runtime -ne 'fxdependent')
     {
         Write-Verbose "Starting powershell packaging(msi)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
-    if(!$ComponentRegistration.IsPresent -and $Runtime -ne 'fxdependent')
+    if (!$ComponentRegistration.IsPresent -and $Runtime -ne 'fxdependent')
     {
         $pspackageParams['Type']='zip'
         $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
@@ -145,7 +145,8 @@ try{
             Copy-Item -Path $file -Destination "$destination\" -Force
         }
     }
-    else {
+    else
+    {
         Write-Verbose "Exporting project.assets files ..." -verbose
 
         $projectAssetsCounter = 1
@@ -168,7 +169,7 @@ try{
 finally
 {
     Write-Verbose "Beginning build clean-up..." -verbose
-    if($Wait.IsPresent)
+    if ($Wait.IsPresent)
     {
         $path = Join-Path $PSScriptRoot -ChildPath 'delete-to-continue.txt'
         $null = New-Item -Path $path -ItemType File

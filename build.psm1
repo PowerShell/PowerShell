@@ -874,10 +874,12 @@ function New-PSOptions {
     }
 
     # Build the Output path
-    if (!$Output -and $Runtime -ne 'fxdependent') {
-        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
-    } elseif($Runtime -eq 'fxdependent') {
-        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, "publish", $Executable)
+    if (!$Output) {
+        if ($Runtime -eq 'fxdependent') {
+            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, "publish", $Executable)
+        } else {
+            $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
+        }
     }
 
     if ($SMAOnly)
@@ -3081,7 +3083,7 @@ function New-PSOptionsObject
         [String]
         $Top,
 
-        ## This is non-mandatory for fxdependent package.
+        [Parameter(Mandatory)]
         [String]
         $Runtime,
 
