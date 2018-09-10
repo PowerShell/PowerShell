@@ -232,38 +232,25 @@ namespace DotNetInterop
     Context "Passing value that is implicitly/explicitly castable to ByRef-like parameter in method invocation" {
         
         BeforeAll {
-            $typeXml = @'
-<Types>
-    <Type>
-        <Name>DotNetInterop.Test2</Name>
-        <Members>
-            <CodeMethod>
-                <Name>RunTest</Name>
-                <CodeReference>
-                    <TypeName>DotNetInterop.CodeMethods</TypeName>
-                    <MethodName>RunMethod</MethodName>
-                </CodeReference>
-            </CodeMethod>
-            <CodeProperty>
-                <Name>TestName</Name>
-                <GetCodeReference>
-                    <TypeName>DotNetInterop.CodeMethods</TypeName>
-                    <MethodName>GetProperty</MethodName>
-                </GetCodeReference>
-                <SetCodeReference>
-                    <TypeName>DotNetInterop.CodeMethods</TypeName>
-                    <MethodName>SetProperty</MethodName>
-                </SetCodeReference>
-            </CodeProperty>
-        </Members>
-    </Type>
-</Types>
-'@
-            $typeXmlFile = Join-Path -Path $TestDrive -ChildPath "TestType.ps1xml"
-            Set-Content -Path $typeXmlFile -Value $typeXml -Encoding Ascii
             $ps = [powershell]::Create()
-            $ps.AddCommand("Update-TypeData").AddParameter("AppendPath", $typeXmlFile).Invoke()
+
+            # Define the CodeMethod 'RunTest'
+            $ps.AddCommand("Update-TypeData").
+                AddParameter("TypeName", "DotNetInterop.Test2").
+                AddParameter("MemberType", "CodeMethod").
+                AddParameter("MemberName", "RunTest").
+                AddParameter("Value", [DotNetInterop.CodeMethods].GetMethod('RunMethod')).Invoke()
             $ps.Commands.Clear()
+
+            # Define the CodeProperty 'TestName'
+            $ps.AddCommand("Update-TypeData").
+                AddParameter("TypeName", "DotNetInterop.Test2").
+                AddParameter("MemberType", "CodeProperty").
+                AddParameter("MemberName", "TestName").
+                AddParameter("Value", [DotNetInterop.CodeMethods].GetMethod('GetProperty')).
+                AddParameter("SecondValue", [DotNetInterop.CodeMethods].GetMethod('SetProperty')).Invoke()
+            $ps.Commands.Clear()
+
             $ps.AddScript('$test = [DotNetInterop.Test2]::new()').Invoke()
             $ps.Commands.Clear()
         }
