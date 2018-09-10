@@ -910,7 +910,15 @@ namespace System.Management.Automation
                 string systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? psHomeModulePath : hklmMachineModulePath;
 
                 currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, 0);
-                currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, -1);
+
+                int insertIndex = -1;
+#if !UNIX
+                string windowsPowerShellModulePath = GetWindowsPowerShellPSHomeModulePath();
+                // If the Windows PowerShell Module path is already present, insert the system module path
+                // ($PSHOME/Modules) before it.
+                insertIndex = PathContainsSubstring(currentProcessModulePath, windowsPowerShellModulePath);
+#endif                
+                currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
             }
 
             // if we reached this point - always add <Program Files> location to EVT.Process
@@ -918,6 +926,7 @@ namespace System.Management.Automation
 
             // index of $PSHome\Modules in currentProcessModulePath
             int indexOfPSHomeModulePath = PathContainsSubstring(currentProcessModulePath, psHomeModulePath);
+            
             // if $PSHome\Modules not found (psHomePosition == -1) - append <Program Files> location to the end;
             // if $PSHome\Modules IS found (psHomePosition >= 0) - insert <Program Files> location before $PSHome\Modules
             currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, indexOfPSHomeModulePath);
