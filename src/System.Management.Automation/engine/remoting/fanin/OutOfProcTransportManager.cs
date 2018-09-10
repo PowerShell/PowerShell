@@ -1503,20 +1503,19 @@ namespace System.Management.Automation.Remoting.Client
 
         private void CloseConnection()
         {
-            var stdInWriter = _stdInWriter;
+            var stdInWriter = Interlocked.Exchange(ref _stdInWriter, null);
             if (stdInWriter != null) { stdInWriter.Dispose(); }
 
-            var stdOutReader = _stdOutReader;
+            var stdOutReader = Interlocked.Exchange(ref _stdOutReader, null);
             if (stdOutReader != null) { stdOutReader.Dispose(); }
 
-            var stdErrReader = _stdErrReader;
+            var stdErrReader = Interlocked.Exchange(ref _stdErrReader, null);
             if (stdErrReader != null) { stdErrReader.Dispose(); }
 
             // The CloseConnection() method can be called multiple times from multiple places.
             // Set the _sshProcessId to zero here so that we go through the work of finding
             // and terminating the SSH process just once.
-            var sshProcessId = _sshProcessId;
-            _sshProcessId = 0;
+            var sshProcessId = Interlocked.Exchange(ref _sshProcessId, 0);
             if (sshProcessId != 0)
             {
                 try
