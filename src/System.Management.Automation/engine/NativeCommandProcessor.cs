@@ -1290,12 +1290,8 @@ namespace System.Management.Automation
         private bool IsExecutable(string path)
         {
 #if UNIX
-
-            if (Platform.NonWindowsIsExecutable(this.Path))
-            {
-                return true;
-            }
-#endif
+            return Platform.NonWindowsIsExecutable(this.Path);
+#else
 
             string myExtension = System.IO.Path.GetExtension(path);
 
@@ -1303,11 +1299,7 @@ namespace System.Management.Automation
             string[] extensionList;
             if (string.IsNullOrEmpty(pathext))
             {
-#if UNIX
-                return false;
-#else
                 extensionList = new string[] { ".exe", ".com", ".bat", ".cmd" };
-#endif
             }
             else
             {
@@ -1323,6 +1315,7 @@ namespace System.Management.Automation
             }
 
             return false;
+#endif
         }
 
         #region Interop for FindExecutable...
