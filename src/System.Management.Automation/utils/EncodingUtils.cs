@@ -102,4 +102,22 @@ namespace System.Management.Automation
 
     }
 
+    /// <summary>
+    /// Provides the set of Encoding values for tab completion of an Encoding parameter.
+    /// </summary>
+    internal sealed class ArgumentEncodingCompletionsAttribute : ArgumentCompletionsAttribute
+    {
+        public ArgumentEncodingCompletionsAttribute() : base(
+            EncodingConversion.Ascii,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+        )
+        {}
+    }
 }

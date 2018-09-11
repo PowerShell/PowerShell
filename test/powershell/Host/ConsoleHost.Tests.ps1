@@ -548,7 +548,7 @@ foo
             @{ value = "~\$folderName"; expectedPath = $((Get-Item ~\$folderName).FullName) }
         ) {
             param($value, $expectedPath)
-            $output = & $powershell -WorkingDirectory "$value" -Command "`$pwd.Path"
+            $output = & $powershell -NoProfile -WorkingDirectory "$value" -Command '(Get-Location).Path'
             $output | Should -BeExactly $expectedPath
         }
 
@@ -558,7 +558,7 @@ foo
             @{ parameter = '-wo' }
         ) {
             param($parameter)
-            $output = & $powershell $parameter ~ -Command "`$pwd.Path"
+            $output = & $powershell -NoProfile $parameter ~ -Command "`$pwd.Path"
             $output | Should -BeExactly $((Get-Item ~).FullName)
         }
 

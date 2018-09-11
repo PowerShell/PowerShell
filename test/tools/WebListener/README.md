@@ -1,6 +1,6 @@
 # WebListener App
 
-ASP.NET Core 2.0 app for testing HTTP and HTTPS Requests.
+ASP.NET Core app for testing HTTP and HTTPS Requests.
 
 ## Run with `dotnet`
 

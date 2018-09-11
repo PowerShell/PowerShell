@@ -59,7 +59,6 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This is only public because it implements an interface method.
         /// The class itself is internal.
-        ///
         /// We use the standard IDispose pattern.
         /// </remarks>
         public void Dispose()

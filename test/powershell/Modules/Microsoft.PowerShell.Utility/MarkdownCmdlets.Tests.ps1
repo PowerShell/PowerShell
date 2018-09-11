@@ -123,7 +123,6 @@ Describe 'ConvertFrom-Markdown tests' -Tags 'CI' {
 
     Context 'Basic tests' {
         BeforeAll {
-            $esc = [char]0x1b
             $mdFile = New-Item -Path $TestDrive/input.md -Value "Some **test string** to write in a file" -Force
             $mdLiteralPath = New-Item -Path $TestDrive/LiteralPath.md -Value "Some **test string** to write in a file" -Force
             $expectedStringFromFile = "Some $esc[1mtest string$esc[0m to write in a file`n`n"
@@ -277,6 +276,34 @@ bool function()`n{`n}
 
         It "Gets an error if input file does not exist" {
             { [System.IO.FileInfo]::new("IDoNoExist") | ConvertFrom-Markdown -ErrorAction Stop } | Should -Throw -ErrorId 'FileNotFound,Microsoft.PowerShell.Commands.ConvertFromMarkdownCommand'
+        }
+    }
+
+    Context "ConvertFrom-Markdown empty or null content tests" {
+        BeforeAll {
+            $codeBlock = @'
+```CSharp
+```
+'@
+
+            $testCases = @(
+                @{Type = "CodeBlock"; Markdown = "$codeBlock"; ExpectedOutput = ''}
+                @{Type = "Header1"; Markdown = "# "; ExpectedOutput = ''}
+                @{Type = "Header2"; Markdown = "## "; ExpectedOutput = ''}
+                @{Type = "Header3"; Markdown = "### "; ExpectedOutput = ''}
+                @{Type = "Header4"; Markdown = "#### "; ExpectedOutput = ''}
+                @{Type = "Header5"; Markdown = "##### "; ExpectedOutput = ''}
+                @{Type = "Header6"; Markdown = "###### "; ExpectedOutput = ''}
+                @{Type = "Image"; Markdown = "'![]()'"; ExpectedOutput = "'$esc[33m[Image]$esc[0m'"}
+                @{Type = "Link"; Markdown = "'[]()'"; ExpectedOutput = "'$esc[4;38;5;117m`"`"$esc[0m'"}
+            )
+        }
+
+        It "No error if thrown when empty content is provided for mardown element : <Type>" -TestCases $testCases {
+            param($Type, $Markdown, $ExpectedOutput)
+
+            $resultObj = ConvertFrom-Markdown -InputObject $Markdown -AsVT100EncodedString
+            $resultObj.VT100EncodedString.Trim() | Should -BeExactly $ExpectedOutput
         }
     }
 

@@ -1,6 +1,6 @@
 # escape=`
 #0.3.6 (no powershell 6)
-FROM microsoft/powershell:windowsservercore
+FROM mcr.microsoft.com/powershell:windowsservercore
 LABEL maintainer='PowerShell Team <powershellteam@hotmail.com>'
 LABEL description="This Dockerfile for Windows Server Core with git installed via chocolatey."
 
@@ -15,7 +15,7 @@ RUN Import-Module ./containerFiles/dockerInstall.psm1; `
 
 # Install WIX
 ADD https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311-binaries.zip /wix.zip
-COPY wix.psm1 containerFiles/wix.psm1  
+COPY wix.psm1 containerFiles/wix.psm1
 RUN Import-Module ./containerFiles/wix.psm1; `
     Install-WixZip -zipPath \wix.Zip
 

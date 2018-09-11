@@ -16,14 +16,16 @@ namespace Microsoft.PowerShell.MarkdownRender
     {
         protected override void Write(VT100Renderer renderer, LinkInline obj)
         {
+            string text = obj.FirstChild?.ToString();
+
             // Format link as image or link.
             if (obj.IsImage)
             {
-                renderer.Write(renderer.EscapeSequences.FormatImage(obj.FirstChild.ToString()));
+                renderer.Write(renderer.EscapeSequences.FormatImage(text));
             }
             else
             {
-                renderer.Write(renderer.EscapeSequences.FormatLink(obj.FirstChild.ToString(), obj.Url));
+                renderer.Write(renderer.EscapeSequences.FormatLink(text, obj.Url));
             }
         }
     }

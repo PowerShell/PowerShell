@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using Markdig;
+using Markdig.Helpers;
 using Markdig.Renderers;
 using Markdig.Syntax;
 
@@ -16,25 +17,28 @@ namespace Microsoft.PowerShell.MarkdownRender
     {
         protected override void Write(VT100Renderer renderer, FencedCodeBlock obj)
         {
-            foreach (var codeLine in obj.Lines.Lines)
+            if (obj?.Lines.Lines != null)
             {
-                if (!string.IsNullOrWhiteSpace(codeLine.ToString()))
+                foreach (StringLine codeLine in obj.Lines.Lines)
                 {
-                    // If the code block is of type YAML, then tab to right to improve readability.
-                    // This specifically helps for parameters help content.
-                    if (string.Equals(obj.Info, "yaml", StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrWhiteSpace(codeLine.ToString()))
                     {
-                        renderer.Write("\t").WriteLine(codeLine.ToString());
-                    }
-                    else
-                    {
-                        renderer.WriteLine(renderer.EscapeSequences.FormatCode(codeLine.ToString(), isInline: false));
+                        // If the code block is of type YAML, then tab to right to improve readability.
+                        // This specifically helps for parameters help content.
+                        if (string.Equals(obj.Info, "yaml", StringComparison.OrdinalIgnoreCase))
+                        {
+                            renderer.Write("\t").WriteLine(codeLine.ToString());
+                        }
+                        else
+                        {
+                            renderer.WriteLine(renderer.EscapeSequences.FormatCode(codeLine.ToString(), isInline: false));
+                        }
                     }
                 }
-            }
 
-            // Add a blank line after the code block for better readability.
-            renderer.WriteLine();
+                // Add a blank line after the code block for better readability.
+                renderer.WriteLine();
+            }
         }
     }
 }

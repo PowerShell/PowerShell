@@ -15,9 +15,9 @@ foreach($folder in $ArtifactFolder)
     # Find Symbols zip which contains compliance files
     Write-Host "ArtifactFolder: $folder"
     $filename = Join-Path -Path $folder -ChildPath 'symbols.zip'
-   
+
     $parentName = Split-Path -Path $folder -Leaf
-    
+
     # Use simplified names because some of the compliance tools didn't like the full names
     # decided not to use hashes because the names need to be consistent otherwise the tool also has issues
     # which is another problem with the full name, it includes version.
@@ -28,7 +28,10 @@ foreach($folder in $ArtifactFolder)
     elseif ($parentName -match 'x86') {
         $name = 'x86'
     }
-    else 
+    elseif ($parentName -match 'fxdependent') {
+        $name = 'fxd'
+    }
+    else
     {
         throw "$parentName could not be classified as x86 or x64"
     }

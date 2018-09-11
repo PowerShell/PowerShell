@@ -537,6 +537,7 @@ namespace System.Management.Automation
                 if (extension.Equals(ext, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
+
             return false;
         }
 
@@ -587,7 +588,9 @@ namespace System.Management.Automation
         internal static string GetPSHomeModulePath()
         {
             if (s_psHomeModulePath != null)
+            {
                 return s_psHomeModulePath;
+            }
 
             try
             {
@@ -607,7 +610,9 @@ namespace System.Management.Automation
                     Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
                 }
             }
-            catch (System.Security.SecurityException) { }
+            catch (System.Security.SecurityException)
+            {
+            }
 
             return s_psHomeModulePath;
         }
@@ -630,6 +635,7 @@ namespace System.Management.Automation
             {
                 sharedModulePath = Path.Combine(sharedModulePath, Utils.ModuleDirectory);
             }
+
             return sharedModulePath;
 #endif
         }
@@ -904,7 +910,15 @@ namespace System.Management.Automation
                 string systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? psHomeModulePath : hklmMachineModulePath;
 
                 currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, 0);
-                currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, -1);
+
+                int insertIndex = -1;
+#if !UNIX
+                string windowsPowerShellModulePath = GetWindowsPowerShellPSHomeModulePath();
+                // If the Windows PowerShell Module path is already present, insert the system module path
+                // ($PSHOME/Modules) before it.
+                insertIndex = PathContainsSubstring(currentProcessModulePath, windowsPowerShellModulePath);
+#endif                
+                currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
             }
 
             // if we reached this point - always add <Program Files> location to EVT.Process
@@ -912,6 +926,7 @@ namespace System.Management.Automation
 
             // index of $PSHome\Modules in currentProcessModulePath
             int indexOfPSHomeModulePath = PathContainsSubstring(currentProcessModulePath, psHomeModulePath);
+            
             // if $PSHome\Modules not found (psHomePosition == -1) - append <Program Files> location to the end;
             // if $PSHome\Modules IS found (psHomePosition >= 0) - insert <Program Files> location before $PSHome\Modules
             currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, indexOfPSHomeModulePath);
@@ -1112,11 +1127,15 @@ namespace System.Management.Automation
         /// <param name="cmdletPatterns">Patterns describing the cmdlets to export</param>
         /// <param name="aliasPatterns">Patterns describing the aliases to export</param>
         /// <param name="variablePatterns">Patterns describing the variables to export</param>
-        /// <param name="doNotExportCmdlets">List of Cmdlets that will not be exported,
-        ///     even if they match in cmdletPatterns.</param>
-        internal static void ExportModuleMembers(PSCmdlet cmdlet, SessionStateInternal sessionState,
-            List<WildcardPattern> functionPatterns, List<WildcardPattern> cmdletPatterns,
-            List<WildcardPattern> aliasPatterns, List<WildcardPattern> variablePatterns, List<string> doNotExportCmdlets)
+        /// <param name="doNotExportCmdlets">List of Cmdlets that will not be exported, even if they match in cmdletPatterns.</param>
+        internal static void ExportModuleMembers(
+            PSCmdlet cmdlet,
+            SessionStateInternal sessionState,
+            List<WildcardPattern> functionPatterns,
+            List<WildcardPattern> cmdletPatterns,
+            List<WildcardPattern> aliasPatterns,
+            List<WildcardPattern> variablePatterns,
+            List<string> doNotExportCmdlets)
         {
             // If this cmdlet is called, then mark that the export list should be used for exporting
             // module members...

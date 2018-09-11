@@ -14,30 +14,21 @@ phases:
 - phase: macOS_CI
 
   queue:
-    name: Hosted macOS Preview
+    name: Hosted macOS
   steps:
-  - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
+  - powershell: |
+      Get-ChildItem -Path env:
+    displayName: Capture environment
+    condition: succeededOrFailed()
+
+  - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
     displayName: Set Build Name for Non-PR
     condition: ne(variables['Build.Reason'], 'PullRequest')
-
-# Several scripts require TMPDIR to exist
-# Set it to AGENT_TEMPDIRECTORY so that we know it exists
-  - powershell: |
-      Write-Host "##vso[task.setvariable variable=TMPDIR]$env:AGENT_TEMPDIRECTORY"
-    displayName: Set TMPDIR to AGENT_TEMPDIRECTORY
-    condition: succeededOrFailed()
 
   - powershell: |
       git submodule update --init
     displayName: SubModule Init
     condition: succeededOrFailed()
-
-  - powershell: |
-      rvm install ruby-2.3.3;
-      rvm --default use 2.3.3;
-      displayName: Install Ruby
-    condition: succeededOrFailed()
-    enabled: false
 
   - powershell: |
       tools/travis.ps1 -Stage Bootstrap
@@ -66,68 +57,5 @@ phases:
         Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts]$_"
       }
     displayName: Publish Artifacts
-    condition: succeededOrFailed()
-
-  # Uploads any Test results as an artifact
-  - powershell: |
-      Get-ChildItem -Path Test*.xml, *XUnitTestResults.xml -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
-        Write-Host "##vso[artifact.upload containerfolder=testResults;artifactname=testResults]$_"
-      }
-    displayName: Publish Test Results
-    condition: succeededOrFailed()
-
-  # Publish the various Test results as Test results to VSTS
-  # Separate tasks are used because a failure will stop the task
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    displayName: Publish Test Results TestResultsSudo.xml
-    inputs:
-      testRunner: NUnit
-      testResultsFiles: '**\TestResultsSudo.xml'
-      testRunTitle: Sudo
-      mergeTestResults: true
-
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    displayName: Publish Test Results TestResultsNoSudo.xml
-    inputs:
-      testRunner: NUnit
-      testResultsFiles: '**\TestResultsNoSudo.xml'
-      testRunTitle: NoSudo
-      mergeTestResults: true
-
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    displayName: Publish Test Results TestResultsSudo.ExpTest.*.xml
-    inputs:
-      testRunner: NUnit
-      testResultsFiles: '**\TestResultsSudo.ExpTest.*.xml'
-      testRunTitle: Sudo Experimental Features
-      mergeTestResults: true
-
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    displayName: Publish Test Results TestResultsNoSudo.ExpTest.*.xml
-    inputs:
-      testRunner: NUnit
-      testResultsFiles: '**\TestResultsNoSudo.ExpTest.*.xml'
-      testRunTitle: Sudo Experimental Features
-      mergeTestResults: true
-
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    displayName: Publish Test Results ParallelXUnitTestResults.xml
-    inputs:
-      testRunner: XUnit
-      testResultsFiles: '**\ParallelXUnitTestResults.xml'
-      testRunTitle: Parallel XUnit
-      mergeTestResults: true
-
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    displayName: Publish Test Results SequentialXUnitTestResults.xml
-    inputs:
-      testRunner: XUnit
-      testResultsFiles: '**\SequentialXUnitTestResults.xml'
-      testRunTitle: Sequential XUnit
-      mergeTestResults: true
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+    continueOnError: true

@@ -3,7 +3,7 @@
 This guide supplements the [Linux instructions](./linux.md), as
 building on macOS is almost identical.
 
-.NET Core 2.0 (and by transitivity, us) only supports macOS 10.12+.
+.NET Core 2.x (and by transitivity, us) only supports macOS 10.12+.
 
 ## Environment
 
@@ -16,7 +16,7 @@ The `Start-PSBootstrap` function does the following:
 
 - Uses `brew` to install CMake, OpenSSL, and GNU WGet
 - Uninstalls any prior versions of .NET CLI
-- Downloads and installs a preview version of .NET Core SDK 2.0 to `~/.dotnet`
+- Downloads and installs .NET Core SDK to `~/.dotnet`
 
 If you want to use `dotnet` outside of `Start-PSBuild`,
 add `~/.dotnet` to your `PATH` environment variable.

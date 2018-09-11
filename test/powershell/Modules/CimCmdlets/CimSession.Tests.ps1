@@ -5,7 +5,7 @@ try {
         $PSDefaultParameterValues['it:pending'] = $true
     }
 
-    Describe "New-CimSession" -Tag @("CI") {
+    Describe "New-CimSession" -Tag @("CI","RequireAdminOnWindows") {
         BeforeAll {
             $sessions = @()
         }
@@ -16,7 +16,7 @@ try {
         }
 
         It "A cim session can be created" {
-            $sessionName = [guid]::NewGuid()
+            $sessionName = [guid]::NewGuid().Guid
             $session = New-CimSession -ComputerName . -Name $sessionName
             $sessions += $session
             $session.Name | Should -BeExactly $sessionName
@@ -24,7 +24,7 @@ try {
         }
 
         It "A Cim session can be retrieved" {
-            $sessionName = [guid]::NewGuid()
+            $sessionName = [guid]::NewGuid().Guid
             $session = New-CimSession -ComputerName . -Name $sessionName
             $sessions += $session
             (Get-CimSession -Name $sessionName).InstanceId | Should -Be $session.InstanceId
@@ -33,7 +33,7 @@ try {
         }
 
         It "A cim session can be removed" {
-            $sessionName = [guid]::NewGuid()
+            $sessionName = [guid]::NewGuid().Guid
             $session = New-CimSession -ComputerName . -Name $sessionName
             $sessions += $session
             $session.Name | Should -BeExactly $sessionName

@@ -34,7 +34,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
         # Get version from metadata and append -<previewname>
         $metaDataJsonPath = Join-Path $PSScriptRoot -ChildPath '..\metadata.json'
         $metadata = Get-content $metaDataJsonPath | ConvertFrom-Json
-        $versionPart = $metadata.NextReleaseTag
+        $versionPart = $metadata.PreviewReleaseTag
         if($versionPart -match '-.*$')
         {
             $versionPart = $versionPart -replace '-.*$'

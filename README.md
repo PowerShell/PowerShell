@@ -76,22 +76,22 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.4/powershell-6.0.4-linux-arm32.tar.gz
 [rl-snap]: https://snapcraft.io/powershell
 
-[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/PowerShell-6.1.0-preview.4-win-x64.msi
-[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/PowerShell-6.1.0-preview.4-win-x86.msi
-[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/powershell-preview_6.1.0-preview.4-1.ubuntu.18.04_amd64.deb
-[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/powershell-preview_6.1.0-preview.4-1.ubuntu.16.04_amd64.deb
-[pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/powershell-preview_6.1.0-preview.4-1.ubuntu.14.04_amd64.deb
-[pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/powershell-preview_6.1.0-preview.4-1.debian.8_amd64.deb
-[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/powershell-preview_6.1.0-preview.4-1.debian.9_amd64.deb
-[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/powershell-preview-6.1.0-preview.4-1.rhel.7.x86_64.rpm
-[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/powershell-6.1.0-preview.4-osx-x64.pkg
-[pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/PowerShell-6.1.0-preview.4-win-arm32.zip
-[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/PowerShell-6.1.0-preview.4-win-arm64.zip
-[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/PowerShell-6.1.0-preview.4-win-x86.zip
-[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/PowerShell-6.1.0-preview.4-win-x64.zip
-[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/powershell-6.1.0-preview.4-osx-x64.tar.gz
-[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/powershell-6.1.0-preview.4-linux-x64.tar.gz
-[pv-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.4/powershell-6.1.0-preview.4-linux-arm32.tar.gz
+[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/PowerShell-6.1.0-rc.1-win-x64.msi
+[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/PowerShell-6.1.0-rc.1-win-x86.msi
+[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0.rc.1-1.ubuntu.18.04_amd64.deb
+[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0.rc.1-1.ubuntu.16.04_amd64.deb
+[pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0.rc.1-1.ubuntu.14.04_amd64.deb
+[pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0.rc.1-1.debian.8_amd64.deb
+[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview_6.1.0.rc.1-1.debian.9_amd64.deb
+[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-preview-6.1.0.rc.1-1.rhel.7.x86_64.rpm
+[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-6.1.0-rc.1-osx-x64.pkg
+[pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/PowerShell-6.1.0-rc.1-win-arm32.zip
+[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/PowerShell-6.1.0-rc.1-win-arm64.zip
+[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/PowerShell-6.1.0-rc.1-win-x86.zip
+[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/PowerShell-6.1.0-rc.1-win-x64.zip
+[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-6.1.0-rc.1-osx-x64.tar.gz
+[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-6.1.0-rc.1-linux-x64.tar.gz
+[pv-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-rc.1/powershell-6.1.0-rc.1-linux-arm32.tar.gz
 [pv-snap]: https://snapcraft.io/powershell-preview
 
 [in-windows]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
@@ -151,9 +151,9 @@ If you have any problems building, please consult the developer [FAQ][].
 
 ### Build status of master branches
 
-| AppVeyor (Windows)       | Travis CI (Linux / macOS) |
-|--------------------------|--------------------------|
-| [![av-image][]][av-site] | [![tv-image][]][tv-site] |
+| AppVeyor (Windows)       | Travis CI (Linux / macOS) | VSTS (Windows) | VSTS (Linux) | VSTS (macOS) |
+|--------------------------|---------------------------|----------------|--------------|--------------|
+| [![av-image][]][av-site] | [![tv-image][]][tv-site]  |[![vsts-windows-image][]][vsts-windows-site] | [![vsts-linux-image][]][vsts-linux-site]  | [![vsts-macos-image][]][vsts-macos-site] |
 
 ### Build status of nightly builds
 
@@ -167,6 +167,12 @@ If you have any problems building, please consult the developer [FAQ][].
 
 [FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md
 
+[vsts-windows-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-windows?branchName=master
+[vsts-windows-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=19?branchName=master
+[vsts-linux-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux?branchName=master
+[vsts-linux-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=17?branchName=master
+[vsts-macos-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos?branchName=master
+[vsts-macos-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=14?branchName=master
 [tv-image]: https://travis-ci.org/PowerShell/PowerShell.svg?branch=master
 [tv-site]: https://travis-ci.org/PowerShell/PowerShell/branches
 [av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true

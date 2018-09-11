@@ -357,6 +357,11 @@ namespace System.Management.Automation
         public System.EventHandler<CommandLookupEventArgs> PostCommandLookupAction { get; set; }
 
         /// <summary>
+        /// Gets or sets the action that is invoked everytime the runspace location (cwd) is changed.
+        /// </summary>
+        public System.EventHandler<LocationChangedEventArgs> LocationChangedAction { get; set; }
+
+        /// <summary>
         /// Returns the CmdletInfo object that corresponds to the name argument
         /// </summary>
         /// <param name="commandName">The name of the cmdlet to look for</param>

@@ -132,24 +132,24 @@ $testCases = @{
         HelpFiles            = "Microsoft.PowerShell.PackageManagement.dll-help.xml"
         HelpInfoFiles        = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_HelpInfo.xml"
         CompressedFiles      = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\Modules\PackageManagement\*\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\PackageManagement\*\en-US"
+        HelpInstallationPath = "$pshome\Modules\PackageManagement\en-US"
+        HelpInstallationPathHome = "$userHelpRoot\PackageManagement\en-US"
     }
 
     "PowershellGet" = @{
         HelpFiles            = "PSGet.psm1-help.xml"
         HelpInfoFiles        = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_HelpInfo.xml"
         CompressedFiles      = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\Modules\PowershellGet\*\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\PackageManagement\*\en-US"
+        HelpInstallationPath = "$pshome\Modules\PowershellGet\en-US"
+        HelpInstallationPathHome = "$userHelpRoot\PackageManagement\en-US"
     }
 
     "PSReadline" = @{
         HelpFiles            = "Microsoft.PowerShell.PSReadLine.dll-help.xml"
         HelpInfoFiles        = "PSReadline_5714753b-2afd-4492-a5fd-01d9e2cff8b5_HelpInfo.xml"
         CompressedFiles      = "PSReadline_5714753b-2afd-4492-a5fd-01d9e2cff8b5_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\Modules\PSReadLine\2.0.0\en-US"
-        HelpInstallationPathHome = "$userHelpRoot\PSReadLine\2.0.0\en-US"
+        HelpInstallationPath = "$pshome\Modules\PSReadLine\en-US"
+        HelpInstallationPathHome = "$userHelpRoot\PSReadLine\en-US"
     }
 }
 

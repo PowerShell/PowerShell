@@ -165,7 +165,7 @@
             <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
             <Component Id="SetPath" Guid="{9dbb7763-7baf-48e7-b025-3bdedcb0632f}" KeyPath="yes">
               <Condition>ADD_PATH=1</Condition>
-              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="[$(var.ProductDirectoryName)]$(var.PwshPath)"/>
+              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="$(var.PwshPath)"/>
             </Component>
             <!-- Explorer context menu with 2 submenus to open PowerShell normally or as an Administator.
                  See https://blogs.msdn.microsoft.com/andrew_richards/2017/03/01/enhancing-the-open-command-prompt-here-shift-right-click-context-menu-experience/ for details -->
@@ -223,7 +223,7 @@
       </Directory>
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)">
-          <Component Id="ApplicationProgramsMenuShortcut" Guid="{A77507A7-F970-4618-AC30-20AFE36EE2EB}">
+          <Component Id="ApplicationProgramsMenuShortcut" Guid="*">
             <Shortcut Id="PowerShell_ProgramsMenuShortcut" 
                       Name="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
                       Description="$(var.ProductSimpleVersionWithNameAndOptionalArchitecture)" 
