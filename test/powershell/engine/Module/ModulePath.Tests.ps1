@@ -24,15 +24,8 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $expectedSystemPath = Join-Path -Path $PSHOME -ChildPath 'Modules'
 
         # Skip these tests in cases when there is no 'pwsh' executable (e.g. when framework dependent PS package is used)
-        if ( -not (Test-Path $powershell))
-        {
-            $skipNoPwsh = $true
-        }
-        else
-        {
-            $skipNoPwsh = $false
-        }
-
+        $skipNoPwsh = -not (Test-Path $powershell)
+        
         if ($IsWindows)
         {
             $expectedWindowsPowerShellPSHomePath = Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"
