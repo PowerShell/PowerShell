@@ -1,18 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Linq;
-using System.Management.Automation.Language;
-using System.Reflection;
-using System.Globalization;
-using System.Collections.Specialized;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Text;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Management.Automation.Language;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Interpreter;
+using System.Text;
+
 using Microsoft.PowerShell;
 using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 
@@ -519,7 +520,7 @@ namespace System.Management.Automation
 
         private PSMemberInfo LookupMember(string name)
         {
-            LookupMember(name, new HashSet<string>(StringComparer.OrdinalIgnoreCase), out var returnValue, out var hasCycle);
+            LookupMember(name, new HashSet<string>(StringComparer.OrdinalIgnoreCase), out PSMemberInfo returnValue, out bool hasCycle);
             if (hasCycle)
             {
                 throw new
@@ -882,7 +883,8 @@ namespace System.Management.Automation
             {
                 if (GetterCodeReference == null)
                 {
-                    throw new GetValueException("GetWithoutGetterFromCodePropertyValue",
+                    throw new GetValueException(
+                        "GetWithoutGetterFromCodePropertyValue",
                         null,
                         ExtendedTypeSystem.GetWithoutGetterException,
                         this.Name);
@@ -890,15 +892,17 @@ namespace System.Management.Automation
 
                 try
                 {
-                    return GetterCodeReference.Invoke(null, new object[] {this.instance});
+                    return GetterCodeReference.Invoke(null, new object[] { this.instance });
                 }
                 catch (TargetInvocationException ex)
                 {
                     Exception inner = ex.InnerException ?? ex;
-                    throw new GetValueInvocationException("CatchFromCodePropertyGetTI",
+                    throw new GetValueInvocationException(
+                        "CatchFromCodePropertyGetTI",
                         inner,
                         ExtendedTypeSystem.ExceptionWhenGetting,
-                        this.name, inner.Message);
+                        this.name,
+                        inner.Message);
                 }
                 catch (Exception e)
                 {
@@ -907,17 +911,20 @@ namespace System.Management.Automation
                         throw;
                     }
 
-                    throw new GetValueInvocationException("CatchFromCodePropertyGet",
+                    throw new GetValueInvocationException(
+                        "CatchFromCodePropertyGet",
                         e,
                         ExtendedTypeSystem.ExceptionWhenGetting,
-                        this.name, e.Message);
+                        this.name,
+                        e.Message);
                 }
             }
             set
             {
                 if (SetterCodeReference == null)
                 {
-                    throw new SetValueException("SetWithoutSetterFromCodeProperty",
+                    throw new SetValueException(
+                        "SetWithoutSetterFromCodeProperty",
                         null,
                         ExtendedTypeSystem.SetWithoutSetterException,
                         this.Name);
@@ -925,15 +932,17 @@ namespace System.Management.Automation
 
                 try
                 {
-                    SetterCodeReference.Invoke(null, new object[] {this.instance, value});
+                    SetterCodeReference.Invoke(null, new object[] { this.instance, value });
                 }
                 catch (TargetInvocationException ex)
                 {
                     Exception inner = ex.InnerException ?? ex;
-                    throw new SetValueInvocationException("CatchFromCodePropertySetTI",
+                    throw new SetValueInvocationException(
+                        "CatchFromCodePropertySetTI",
                         inner,
                         ExtendedTypeSystem.ExceptionWhenSetting,
-                        this.name, inner.Message);
+                        this.name,
+                        inner.Message);
                 }
                 catch (Exception e)
                 {
@@ -942,16 +951,18 @@ namespace System.Management.Automation
                         throw;
                     }
 
-                    throw new SetValueInvocationException("CatchFromCodePropertySet",
+                    throw new SetValueInvocationException(
+                        "CatchFromCodePropertySet",
                         e,
                         ExtendedTypeSystem.ExceptionWhenSetting,
-                        this.name, e.Message);
+                        this.name,
+                        e.Message);
                 }
             }
         }
 
         /// <summary>
-        /// Gets the type of the value for this member
+        /// Gets the type of the value for this member.
         /// </summary>
         /// <exception cref="GetValueException">If there is no property getter</exception>
         public override string TypeNameOfValue
@@ -960,7 +971,8 @@ namespace System.Management.Automation
             {
                 if (GetterCodeReference == null)
                 {
-                    throw new GetValueException("GetWithoutGetterFromCodePropertyTypeOfValue",
+                    throw new GetValueException(
+                        "GetWithoutGetterFromCodePropertyTypeOfValue",
                         null,
                         ExtendedTypeSystem.GetWithoutGetterException,
                         this.Name);
@@ -2233,13 +2245,13 @@ namespace System.Management.Automation
                 _codeReferenceMethodInformation = DotNetAdapter.GetMethodInformationArray(new[] {CodeReference});
             }
 
-            Adapter.GetBestMethodAndArguments(CodeReference.Name, _codeReferenceMethodInformation, newArguments, out var convertedArguments);
+            Adapter.GetBestMethodAndArguments(CodeReference.Name, _codeReferenceMethodInformation, newArguments, out object[] convertedArguments);
 
             return DotNetAdapter.AuxiliaryMethodInvoke(null, convertedArguments, _codeReferenceMethodInformation[0], newArguments);
         }
 
         /// <summary>
-        /// Gets the definition for CodeReference
+        /// Gets the definition for CodeReference.
         /// </summary>
         public override Collection<string> OverloadDefinitions => new Collection<string>
         {

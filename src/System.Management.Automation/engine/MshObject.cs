@@ -52,7 +52,7 @@ namespace System.Management.Automation
 
         internal TypeTable GetTypeTable()
         {
-            if (_typeTable != null && _typeTable.TryGetTarget(out var typeTable))
+            if (_typeTable != null && _typeTable.TryGetTarget(out TypeTable typeTable))
             {
                 return typeTable;
             }
@@ -242,14 +242,18 @@ namespace System.Management.Automation
                 returnValue.Add(new CollectionEntry<PSMemberInfo>(
                     PSObject.AdapterGetMembersDelegate<PSMemberInfo>,
                     PSObject.AdapterGetMemberDelegate<PSMemberInfo>,
-                    false, false, "adapted members"));
+                    shouldReplicateWhenReturning: false,
+                    shouldCloneWhenReturning: false,
+                    collectionNameForTracing: "adapted members"));
             }
             if ((viewType & PSMemberViewTypes.Base) == PSMemberViewTypes.Base)
             {
                 returnValue.Add(new CollectionEntry<PSMemberInfo>(
                     PSObject.DotNetGetMembersDelegate<PSMemberInfo>,
                     PSObject.DotNetGetMemberDelegate<PSMemberInfo>,
-                    false, false, "clr members"));
+                    shouldReplicateWhenReturning: false,
+                    shouldCloneWhenReturning: false,
+                    collectionNameForTracing: "clr members"));
             }
             return returnValue;
         }
@@ -261,15 +265,21 @@ namespace System.Management.Automation
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.TypeTableGetMembersDelegate<PSMethodInfo>,
                     PSObject.TypeTableGetMemberDelegate<PSMethodInfo>,
-                    true, true, "type table members"),
+                    shouldReplicateWhenReturning: true,
+                    shouldCloneWhenReturning: true,
+                    collectionNameForTracing: "type table members"),
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.AdapterGetMembersDelegate<PSMethodInfo>,
                     PSObject.AdapterGetMemberDelegate<PSMethodInfo>,
-                    false, false, "adapted members"),
+                    shouldReplicateWhenReturning: false,
+                    shouldCloneWhenReturning: false,
+                    collectionNameForTracing: "adapted members"),
                 new CollectionEntry<PSMethodInfo>(
                     PSObject.DotNetGetMembersDelegate<PSMethodInfo>,
                     PSObject.DotNetGetMemberDelegate<PSMethodInfo>,
-                    false, false, "clr members")
+                    shouldReplicateWhenReturning: false,
+                    shouldCloneWhenReturning: false,
+                    collectionNameForTracing: "clr members")
             };
             return returnValue;
         }
@@ -412,7 +422,7 @@ namespace System.Management.Automation
                 return adapter;
             }
 
-            if (s_adapterMapping.TryGetValue(objectType, out var result))
+            if (s_adapterMapping.TryGetValue(objectType, out AdapterSet result))
             {
                 return result;
             }
@@ -864,7 +874,7 @@ namespace System.Management.Automation
                 return psobj.InternalTypeNames;
             }
 
-            if (HasInstanceTypeName(obj, out var result))
+            if (HasInstanceTypeName(obj, out ConsolidatedString result))
             {
                 return result;
             }
@@ -1067,7 +1077,7 @@ namespace System.Management.Automation
             }
             if (returnValue.Length == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
             int separatorLength = separatorToUse.Length;
             returnValue.Remove(returnValue.Length - separatorLength, separatorLength);
@@ -1089,7 +1099,7 @@ namespace System.Management.Automation
             }
             if (returnValue.Length == 0)
             {
-                return String.Empty;
+                return string.Empty;
             }
             int separatorLength = separatorToUse.Length;
             returnValue.Remove(returnValue.Length - separatorLength, separatorLength);
@@ -1187,7 +1197,7 @@ namespace System.Management.Automation
             {
                 if (obj == null)
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 // Fast-track the primitive types...
@@ -1285,7 +1295,7 @@ namespace System.Management.Automation
             // A brokered ToString has precedence over any other attempts.
             // If it fails we let the exception go because the caller must be notified.
             PSMethodInfo method = null;
-            if (PSObject.HasInstanceMembers(mshObj, out var instanceMembers))
+            if (PSObject.HasInstanceMembers(mshObj, out PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers))
             {
                 method = instanceMembers["ToString"] as PSMethodInfo;
             }
@@ -1394,7 +1404,7 @@ namespace System.Management.Automation
             {
                 var result = msjObjFormattable == null ? baseObject.ToString() : msjObjFormattable.ToString(format, formatProvider);
 
-                return result ?? String.Empty;
+                return result ?? string.Empty;
             }
             catch (Exception e)
             {
@@ -1622,7 +1632,7 @@ namespace System.Management.Automation
 
         internal void AddOrSetProperty(string memberName, object value)
         {
-            if (PSGetMemberBinder.TryGetInstanceMember(this, memberName, out var memberInfo) && memberInfo is PSPropertyInfo)
+            if (PSGetMemberBinder.TryGetInstanceMember(this, memberName, out PSMemberInfo memberInfo) && memberInfo is PSPropertyInfo)
             {
                 memberInfo.Value = value;
             }
@@ -1634,7 +1644,7 @@ namespace System.Management.Automation
 
         internal void AddOrSetProperty(PSNoteProperty property)
         {
-            if (PSGetMemberBinder.TryGetInstanceMember(this, property.Name, out var memberInfo) && memberInfo is PSPropertyInfo)
+            if (PSGetMemberBinder.TryGetInstanceMember(this, property.Name, out PSMemberInfo memberInfo) && memberInfo is PSPropertyInfo)
             {
                 memberInfo.Value = property.Value;
             }
@@ -2283,7 +2293,7 @@ namespace Microsoft.PowerShell
         internal static string Type(Type type, bool dropNamespaces = false, string key = null)
         {
             if (type == null)
-                return String.Empty;
+                return string.Empty;
 
             string result;
             if (type.IsGenericType && !type.IsGenericTypeDefinition)
@@ -2351,7 +2361,7 @@ namespace Microsoft.PowerShell
                 && !dropNamespaces
                 && !type.Assembly.GetCustomAttributes(typeof(DynamicClassImplementationAssemblyAttribute)).Any())
             {
-                TypeResolver.TryResolveType(result, out var roundTripType);
+                TypeResolver.TryResolveType(result, out Type roundTripType);
                 if (roundTripType != type)
                 {
                     result = type.AssemblyQualifiedName;
@@ -2367,7 +2377,10 @@ namespace Microsoft.PowerShell
         public static string Type(PSObject instance)
         {
             if (instance == null)
-                return String.Empty;
+            {
+                return string.Empty;
+            }
+
             return Type((Type)instance.BaseObject);
         }
 
@@ -2377,9 +2390,12 @@ namespace Microsoft.PowerShell
         /// <param name="instance">instance of PSObject wrapping an XmlNode</param>
         public static string XmlNode(PSObject instance)
         {
-            XmlNode node = (XmlNode) instance?.BaseObject;
+            XmlNode node = (XmlNode)instance?.BaseObject;
             if (node == null)
-                return String.Empty;
+            {
+                return string.Empty;
+            }
+
             return node.LocalName;
         }
 
@@ -2389,19 +2405,22 @@ namespace Microsoft.PowerShell
         /// <param name="instance">instance of PSObject wrapping an XmlNodeList</param>
         public static string XmlNodeList(PSObject instance)
         {
-            XmlNodeList nodes = (XmlNodeList) instance?.BaseObject;
+            XmlNodeList nodes = (XmlNodeList)instance?.BaseObject;
             if (nodes == null)
-                return String.Empty;
+            {
+                return string.Empty;
+            }   
+
             if (nodes.Count == 1)
             {
                 if (nodes[0] == null)
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
                 return PSObject.AsPSObject(nodes[0]).ToString();
             }
 
-            return PSObject.ToStringEnumerable(null, nodes, null, null, null);
+            return PSObject.ToStringEnumerable(context: null, enumerable: nodes, separator: null, format: null, formatProvider: null);
         }
     }
 }
