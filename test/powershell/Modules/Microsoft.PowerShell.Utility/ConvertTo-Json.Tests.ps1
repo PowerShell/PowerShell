@@ -48,4 +48,20 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $output = 1 | ConvertTo-Json
         $output | Should -BeExactly '1'
     }
+
+    It "The result string should be escaped." {
+        $result1 = @'
+{
+  "abc": "'def'"
+}
+'@
+        $result2 = @'
+{
+  "abc": "\u0027def\u0027"
+}
+'@
+        @{ 'abc' = "'def'" } | ConvertTo-Json | Should -BeExactly $result1
+        @{ 'abc' = "'def'" } | ConvertTo-Json -EscapeHandling Default | Should -BeExactly $result1
+        @{ 'abc' = "'def'" } | ConvertTo-Json -EscapeHandling EscapeHtml | Should -BeExactly $result2
+    }
 }
