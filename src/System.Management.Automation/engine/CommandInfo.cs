@@ -802,7 +802,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="name">The name of the type.</param>
         /// <param name="type">The real type.</param>
-        internal PSTypeName(string name, Type type)
+        public PSTypeName(string name, Type type)
         {
             Name = name;
             _type = type;
@@ -973,7 +973,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static bool IsPSTypeName(PSMemberNameAndType member) => string.Compare("PSTypeName", member.Name, StringComparison.CurrentCultureIgnoreCase) == 0;
+        private static bool IsPSTypeName(PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.CurrentCultureIgnoreCase);
 
         private static string GetMemberTypeProjection(string typename, IList<PSMemberNameAndType> members)
         {

@@ -1211,7 +1211,7 @@ namespace System.Management.Automation
 
                 foreach (var propertyName in properties)
                 {
-                    if (string.Compare(name, propertyName, StringComparison.CurrentCultureIgnoreCase) == 0)
+                    if (name.Equals(propertyName, StringComparison.CurrentCultureIgnoreCase))
                     {
                         return true;
                     }
