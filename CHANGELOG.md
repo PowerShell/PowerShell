@@ -1,6 +1,6 @@
 # Changelog
 
-## v6.1.0 - 2018-09-11
+## v6.1.0 - 2018-09-13
 
 ### Engine Updates and Fixes
 
