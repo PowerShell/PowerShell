@@ -4,7 +4,7 @@ $Environment = Get-EnvironmentInformation
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
-$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.17.10", "ubuntu.18.04", "debian.8", "debian.9")
+$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.18.04", "debian.8", "debian.9")
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -667,8 +667,6 @@ function New-UnixPackage {
                     $DebDistro = "ubuntu.14.04"
                 } elseif ($Environment.IsUbuntu16) {
                     $DebDistro = "ubuntu.16.04"
-                } elseif ($Environment.IsUbuntu17) {
-                    $DebDistro = "ubuntu.17.10"
                 } elseif ($Environment.IsUbuntu18) {
                     $DebDistro = "ubuntu.18.04"
                 } elseif ($Environment.IsDebian8) {
