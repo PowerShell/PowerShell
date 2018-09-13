@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     {
         private const string DefaultParameterSet = "Default";
         private const string NameParameterSet = "Name";
-        private const string ListAvailableParameterSet = "ListAvailable";
+        private const string ListParameterSet = "List";
 
         /// <summary>
         /// Gets or sets culture names for which CultureInfo values are returned.
@@ -28,10 +28,19 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name { get; set; }
 
         /// <summary>
-        /// Gets or sets a switch to list all available cultures.
+        /// Gets or sets a switch to return predefined cultures.
+        /// By default we return cultures in current state (with custom changes).
+        /// With the switch on, we return predefined, original cultures.
         /// </summary>
-        [Parameter(ParameterSetName = ListAvailableParameterSet)]
-        public SwitchParameter ListAvailable { get; set; }
+        [Parameter(ParameterSetName = NameParameterSet)]
+        [ValidateNotNull]
+        public SwitchParameter Predefined { get; set; }
+
+        /// <summary>
+        /// Gets or sets a filter to list subset or all available cultures.
+        /// </summary>
+        [Parameter(ParameterSetName = ListParameterSet)]
+        public CultureTypes List { get; set; } = CultureTypes.AllCultures;
 
         /// <summary>
         /// Output:
@@ -52,7 +61,17 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (var cultureName in Name)
                         {
-                            CultureInfo ci = CultureInfo.GetCultureInfo(cultureName);
+                            CultureInfo ci;
+
+                            if (Predefined)
+                            {
+                                ci = new CultureInfo(cultureName, true);
+                            }
+                            else
+                            {
+                                ci = CultureInfo.GetCultureInfo(cultureName);
+                            }
+
                             WriteObject(ci);
                         }
                     }
@@ -62,8 +81,8 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     break;
-                case ListAvailableParameterSet:
-                    foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.AllCultures))
+                case ListParameterSet:
+                    foreach (CultureInfo ci in CultureInfo.GetCultures(List))
                     {
                         WriteObject(ci);
                     }
