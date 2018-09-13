@@ -50,18 +50,15 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     It "The result string should be escaped." {
-        $result1 = @'
-{
-  "abc": "'def'"
-}
-'@
-        $result2 = @'
-{
-  "abc": "\u0027def\u0027"
-}
-'@
-        @{ 'abc' = "'def'" } | ConvertTo-Json | Should -BeExactly $result1
-        @{ 'abc' = "'def'" } | ConvertTo-Json -EscapeHandling Default | Should -BeExactly $result1
-        @{ 'abc' = "'def'" } | ConvertTo-Json -EscapeHandling EscapeHtml | Should -BeExactly $result2
+        if ($isWindows) {
+            $newline = "`r`n"
+        } else {
+            $newline = "`n"
+        }
+        $expected1 = "{$newline  ""abc"": ""'def'""$newline}"
+        $expected2 = "{$newline  ""abc"": ""\u0027def\u0027""$newline}"
+        @{ 'abc' = "'def'" } | ConvertTo-Json | Should -BeExactly $expected1
+        @{ 'abc' = "'def'" } | ConvertTo-Json -EscapeHandling Default | Should -BeExactly $expected1
+        @{ 'abc' = "'def'" } | ConvertTo-Json -EscapeHandling EscapeHtml | Should -BeExactly $expected2
     }
 }
