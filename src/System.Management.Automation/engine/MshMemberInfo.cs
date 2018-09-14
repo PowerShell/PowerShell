@@ -377,13 +377,13 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSAliasProperty(string name, string referencedMemberName)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
 
             this.name = name;
-            if (String.IsNullOrEmpty(referencedMemberName))
+            if (string.IsNullOrEmpty(referencedMemberName))
             {
                 throw PSTraceSource.NewArgumentException("referencedMemberName");
             }
@@ -402,13 +402,13 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSAliasProperty(string name, string referencedMemberName, Type conversionType)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
 
             this.name = name;
-            if (String.IsNullOrEmpty(referencedMemberName))
+            if (string.IsNullOrEmpty(referencedMemberName))
             {
                 throw PSTraceSource.NewArgumentException("referencedMemberName");
             }
@@ -773,7 +773,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSCodeProperty(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -790,7 +790,7 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">if getterCodeReference doesn't have the right format.</exception>
         public PSCodeProperty(string name, MethodInfo getterCodeReference)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -819,7 +819,7 @@ namespace System.Management.Automation
         /// </exception>
         public PSCodeProperty(string name, MethodInfo getterCodeReference, MethodInfo setterCodeReference)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -1075,7 +1075,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSProperty(string name, Adapter adapter, object baseObject, object adapterData)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -1188,7 +1188,7 @@ namespace System.Management.Automation
                 {
                     if (serializedValue == null)
                     {
-                        return String.Empty;
+                        return string.Empty;
                     }
 
                     if (serializedValue is PSObject serializedValueAsPSObject)
@@ -1292,7 +1292,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for an empty or null name</exception>
         public PSNoteProperty(string name, object value)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -1665,7 +1665,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSScriptProperty(string name, ScriptBlock getterScript)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -1685,7 +1685,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSScriptProperty(string name, ScriptBlock getterScript, ScriptBlock setterScript)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -1722,7 +1722,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSScriptProperty(string name, string getterScript, string setterScript, PSLanguageMode? languageMode)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -2155,7 +2155,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSCodeMethod(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -2172,7 +2172,7 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">if the codeReference does not have the right format</exception>
         public PSCodeMethod(string name, MethodInfo codeReference)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -2325,7 +2325,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSScriptMethod(string name, ScriptBlock script)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -2488,7 +2488,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -2907,7 +2907,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSParameterizedProperty(string name, Adapter adapter, object baseObject, object adapterData)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -2920,7 +2920,7 @@ namespace System.Management.Automation
 
         internal PSParameterizedProperty(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -3059,7 +3059,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSMemberSet(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -3079,7 +3079,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSMemberSet(string name, IEnumerable<PSMemberInfo> members)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -3148,7 +3148,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSMemberSet(string name, PSObject mshObject)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -3430,7 +3430,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSPropertySet(string name, IEnumerable<string> referencedPropertyNames)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -3444,7 +3444,7 @@ namespace System.Management.Automation
             ReferencedPropertyNames = new Collection<string>();
             foreach (string referencedPropertyName in referencedPropertyNames)
             {
-                if (String.IsNullOrEmpty(referencedPropertyName))
+                if (string.IsNullOrEmpty(referencedPropertyName))
                 {
                     throw PSTraceSource.NewArgumentException("referencedPropertyNames");
                 }
@@ -3655,7 +3655,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("memberList");
             }
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -3788,11 +3788,11 @@ namespace System.Management.Automation
 
         internal static bool IsReservedName(string name)
         {
-            return (String.Equals(name, PSObject.BaseObjectMemberSetName, StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(name, PSObject.AdaptedMemberSetName, StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(name, PSObject.ExtendedMemberSetName, StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(name, PSObject.PSObjectMemberSetName, StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(name, PSObject.PSTypeNames, StringComparison.OrdinalIgnoreCase));
+            return (string.Equals(name, PSObject.BaseObjectMemberSetName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(name, PSObject.AdaptedMemberSetName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(name, PSObject.ExtendedMemberSetName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(name, PSObject.PSObjectMemberSetName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(name, PSObject.PSTypeNames, StringComparison.OrdinalIgnoreCase));
         }
 
         #region IEnumerable
@@ -3851,7 +3851,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
@@ -3868,7 +3868,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public ReadOnlyPSMemberInfoCollection<T> Match(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -3885,7 +3885,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4050,7 +4050,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override void Remove(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4092,7 +4092,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
@@ -4117,7 +4117,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4134,7 +4134,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4152,7 +4152,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes, MshMemberMatchOptions matchOptions)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4597,7 +4597,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override void Remove(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4639,7 +4639,7 @@ namespace System.Management.Automation
         /// </param>
         private void EnsureReservedMemberIsLoaded(string name)
         {
-            Diagnostics.Assert(!String.IsNullOrEmpty(name),
+            Diagnostics.Assert(!string.IsNullOrEmpty(name),
                 "Name cannot be null or empty");
 
             // Length >= psbase (shortest special member)
@@ -4679,7 +4679,7 @@ namespace System.Management.Automation
             {
                 using (PSObject.memberResolution.TraceScope("Lookup"))
                 {
-                    if (String.IsNullOrEmpty(name))
+                    if (string.IsNullOrEmpty(name))
                     {
                         throw PSTraceSource.NewArgumentException("name");
                     }
@@ -4837,7 +4837,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4854,7 +4854,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4874,7 +4874,7 @@ namespace System.Management.Automation
         {
             using (PSObject.memberResolution.TraceScope("Matching \"{0}\"", name))
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
