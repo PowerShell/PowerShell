@@ -64,7 +64,7 @@ Describe "Get-Culture" -Tags "CI" {
         # that .Net Core behavior depend on the underlying OS
         # and can differ on different platforms.
         # See https://github.com/dotnet/corefx/issues/6374#issuecomment-418827420
-        $exc = { Get-Culture -Name "abcdefghijkl" -ErrorAction Stop } | Should -Throw -ErrorId "ItemNotFoundException,Microsoft.PowerShell.Commands.GetCultureCommand"
+        $exc = { Get-Culture -Name "abcdefghijkl" -ErrorAction Stop } | Should -PassThru -Throw -ErrorId "ItemNotFoundException,Microsoft.PowerShell.Commands.GetCultureCommand"
         $exc.Exception | Should -BeOfType [System.Globalization.CultureNotFoundException]
     }
 }
