@@ -12,11 +12,11 @@ namespace Microsoft.PowerShell.Commands
     ///     - culture by name
     ///     - list of all supported cultures.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Culture", DefaultParameterSetName = DefaultParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113312")]
+    [Cmdlet(VerbsCommon.Get, "Culture", DefaultParameterSetName = CurrentCultureParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113312")]
     [OutputType(typeof(System.Globalization.CultureInfo))]
     public sealed class GetCultureCommand : PSCmdlet
     {
-        private const string DefaultParameterSet = "Default";
+        private const string CurrentCultureParameterSet = "CurrentCulture";
         private const string NameParameterSet = "Name";
         private const string ListParameterSet = "List";
 
@@ -28,13 +28,12 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name { get; set; }
 
         /// <summary>
-        /// Gets or sets a switch to return predefined cultures.
-        /// By default we return cultures in current state (with custom changes).
-        /// With the switch on, we return predefined, original cultures.
+        /// Gets or sets a switch to return current culture with user overrides (by default).
+        /// With the switch on, we return current culture without user overrides.
         /// </summary>
+        [Parameter(ParameterSetName = CurrentCultureParameterSet)]
         [Parameter(ParameterSetName = NameParameterSet)]
-        [ValidateNotNull]
-        public SwitchParameter Predefined { get; set; }
+        public SwitchParameter NoUserOverrides { get; set; }
 
         /// <summary>
         /// Gets or sets a filter to list subset or all available cultures.
@@ -50,9 +49,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            CultureInfo ci;
+
             switch (ParameterSetName)
             {
-                case DefaultParameterSet:
+                case CurrentCultureParameterSet:
+                    if (NoUserOverrides)
+                    {
+                        ci = CultureInfo.GetCultureInfo(Host.CurrentCulture.LCID);
+                    }
+                    else
+                    {
+                        ci = Host.CurrentCulture;
+                    }
+
                     WriteObject(Host.CurrentCulture);
 
                     break;
@@ -61,11 +71,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (var cultureName in Name)
                         {
-                            CultureInfo ci;
-
-                            if (Predefined)
+                            if (NoUserOverrides && string.Equals(cultureName, Host.CurrentCulture.Name))
                             {
-                                ci = new CultureInfo(cultureName, true);
+                                ci = new CultureInfo(cultureName, false);
                             }
                             else
                             {
@@ -82,9 +90,9 @@ namespace Microsoft.PowerShell.Commands
 
                     break;
                 case ListParameterSet:
-                    foreach (CultureInfo ci in CultureInfo.GetCultures(List))
+                    foreach (CultureInfo culture in CultureInfo.GetCultures(List))
                     {
-                        WriteObject(ci);
+                        WriteObject(culture);
                     }
 
                     break;

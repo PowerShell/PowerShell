@@ -6,18 +6,21 @@ Describe "Get-Culture" -Tags "CI" {
     It "Should return a type of CultureInfo for Get-Culture cmdlet" {
 
         Get-Culture | Should -BeOfType [CultureInfo]
-
+        Get-Culture -NoUserOverrides | Should -BeOfType [CultureInfo]
     }
 
     It "Should have $ culture variable be equivalent to (Get-Culture).Name" {
 
         (Get-Culture).Name | Should -Be $PsCulture
-
     }
 
     It "Should return the specified culture with '-Name' parameter" {
 
         $ci = Get-Culture -Name ru-RU
+        $ci | Should -BeOfType [CultureInfo]
+        $ci.Name | Should -BeExactly "ru-RU"
+
+        $ci = Get-Culture -Name ru-RU -NoUserOverrides
         $ci | Should -BeOfType [CultureInfo]
         $ci.Name | Should -BeExactly "ru-RU"
     }
@@ -44,9 +47,13 @@ Describe "Get-Culture" -Tags "CI" {
         $ciArray[1].LCID | Should -Be 1049
     }
 
-    It "Should return the culture array with '-ListAvailable' parameter" {
+    It "Should return the culture array with '-List' parameter" {
 
-        $ciArray = Get-Culture -ListAvailable
+        $ciArray = Get-Culture -List AllCultures
+        $ciArray.Count | Should -BeGreaterThan 0
+        $ciArray[0] | Should -BeOfType [CultureInfo]
+
+        $ciArray = Get-Culture -List $([System.Globalization.CultureTypes]::AllCultures+[System.Globalization.CultureTypes]::UserCustomCulture)
         $ciArray.Count | Should -BeGreaterThan 0
         $ciArray[0] | Should -BeOfType [CultureInfo]
     }
