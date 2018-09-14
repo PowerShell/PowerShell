@@ -1085,10 +1085,7 @@ namespace System.Management.Automation
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = this.Path;
 
-            // On Windows, check the extension list and see if we should try to execute this directly.
-            // Otherwise, use the platform library to check executability
-            if ((Platform.IsWindows && ValidateExtension(this.Path))
-                || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(this.Path)))
+            if (IsExecutable(this.Path))
             {
                 startInfo.UseShellExecute = false;
                 if (redirectInput)
@@ -1288,16 +1285,19 @@ namespace System.Management.Automation
             }
         }
 
-        private bool ValidateExtension(string path)
+        // On Windows, check the extension list and see if we should try to execute this directly.
+        // Otherwise, use the platform library to check executability
+        private bool IsExecutable(string path)
         {
-            // Now check the extension and see if it's one of the ones in pathext
+#if UNIX
+            return Platform.NonWindowsIsExecutable(this.Path);
+#else
+
             string myExtension = System.IO.Path.GetExtension(path);
 
-            string pathext = (string)LanguagePrimitives.ConvertTo(
-                this.Command.Context.GetVariableValue(SpecialVariables.PathExtVarPath),
-                typeof(string), CultureInfo.InvariantCulture);
+            var pathext = Environment.GetEnvironmentVariable("PATHEXT");
             string[] extensionList;
-            if (String.IsNullOrEmpty(pathext))
+            if (string.IsNullOrEmpty(pathext))
             {
                 extensionList = new string[] { ".exe", ".com", ".bat", ".cmd" };
             }
@@ -1305,14 +1305,17 @@ namespace System.Management.Automation
             {
                 extensionList = pathext.Split(Utils.Separators.Semicolon);
             }
+
             foreach (string extension in extensionList)
             {
-                if (String.Equals(extension, myExtension, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(extension, myExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
             }
+
             return false;
+#endif
         }
 
         #region Interop for FindExecutable...
