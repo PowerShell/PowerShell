@@ -2691,18 +2691,18 @@ namespace System.Management.Automation
                 return typeof(Func<PSNonBindableType>);
             }
 
-            var methodTypes = new Type[parameterInfos.Length + 1];
-            for (int i = 0; i < parameterInfos.Length; i++)
-            {
-                var parameterInfo = parameterInfos[i];
-                Type parameterType = parameterInfo.ParameterType;
-                methodTypes[i] = GetPSMethodProjectedType(parameterType, parameterInfo.IsOut);
-            }
-
-            methodTypes[parameterInfos.Length] = GetPSMethodProjectedType(methodInfo.ReturnType);
-
             try
             {
+                var methodTypes = new Type[parameterInfos.Length + 1];
+                for (int i = 0; i < parameterInfos.Length; i++)
+                {
+                    var parameterInfo = parameterInfos[i];
+                    Type parameterType = parameterInfo.ParameterType;
+                    methodTypes[i] = GetPSMethodProjectedType(parameterType, parameterInfo.IsOut);
+                }
+
+                methodTypes[parameterInfos.Length] = GetPSMethodProjectedType(methodInfo.ReturnType);
+
                 return DelegateHelpers.MakeDelegate(methodTypes);
             }
             catch (TypeLoadException)
