@@ -152,15 +152,15 @@ If you have any problems building, please consult the developer [FAQ][].
 
 ### Build status of master branches
 
-| AppVeyor (Windows)       | Travis CI (Linux / macOS) | VSTS (Windows) | VSTS (Linux) | VSTS (macOS) |
-|--------------------------|---------------------------|----------------|--------------|--------------|
-| [![av-image][]][av-site] | [![tv-image][]][tv-site]  |[![vsts-windows-image][]][vsts-windows-site] | [![vsts-linux-image][]][vsts-linux-site]  | [![vsts-macos-image][]][vsts-macos-site] |
+| AppVeyor (Windows)       | Azure (Windows)                          | Azure (Linux)                        | Azure (macOS)                        | Azure (spelling)                     |
+|:-------------------------|:-----------------------------------------|:-------------------------------------|:-------------------------------------|:-------------------------------------|
+| [![av-image][]][av-site] | [![az-windows-image][]][az-windows-site] | [![az-linux-image][]][az-linux-site] | [![az-macos-image][]][az-macos-site] | [![az-spell-image][]][az-spell-site] |
 
 ### Build status of nightly builds
 
-| AppVeyor (Windows)       | Travis CI (Linux) | Travis CI (macOS) | Code Coverage Status | Code Factor Status |
-|--------------------------|-------------------|-------------------|----------------------|--------------------|
-| [![av-nightly-image][]][av-nightly-site] | [![linux-nightly-image][]][tv-site] | [![macOS-nightly-image][]][tv-site] | [![cc-image][]][cc-site] | [![cf-image][]][cf-site] |
+| AppVeyor (Windows)                       | Azure CI (Linux)                               | Azure CI (macOS)                               | Code Coverage Status     | Code Factor Status       |
+|:-----------------------------------------|:-----------------------------------------------|:-----------------------------------------------|:-------------------------|:-------------------------|
+| [![av-nightly-image][]][av-nightly-site] | [![linux-nightly-image][]][linux-nightly-site] | [![macOS-nightly-image][]][macos-nightly-site] | [![cc-image][]][cc-site] | [![cf-image][]][cf-site] |
 
 [bd-linux]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/linux.md
 [bd-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/windows-core.md
@@ -168,18 +168,21 @@ If you have any problems building, please consult the developer [FAQ][].
 
 [FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md
 
-[vsts-windows-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-windows?branchName=master
-[vsts-windows-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=19?branchName=master
-[vsts-linux-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux?branchName=master
-[vsts-linux-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=17?branchName=master
-[vsts-macos-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos?branchName=master
-[vsts-macos-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=14?branchName=master
+[az-windows-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-windows?branchName=master
+[az-windows-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=19
+[az-linux-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux?branchName=master
+[az-linux-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=17
+[az-macos-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos?branchName=master
+[az-macos-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=14
+[az-spell-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-spelling?branchName=master
+[az-spell-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=22
 [tv-image]: https://travis-ci.org/PowerShell/PowerShell.svg?branch=master
-[tv-site]: https://travis-ci.org/PowerShell/PowerShell/branches
+[linux-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=23
+[macos-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=24
 [av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true
 [av-site]: https://ci.appveyor.com/project/PowerShell/powershell
-[linux-nightly-image]: https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.Linux.svg
-[macOS-nightly-image]: https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.OSX.svg
+[linux-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux-daily?branchName=master
+[macOS-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos-daily?branchName=master
 [av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
 [av-nightly-site]: https://ci.appveyor.com/project/PowerShell/powershell-f975h
 [cc-site]: https://codecov.io/gh/PowerShell/PowerShell
