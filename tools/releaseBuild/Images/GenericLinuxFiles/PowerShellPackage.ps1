@@ -17,7 +17,8 @@ param (
 
     [switch]$AppImage,
     [switch]$TarX64,
-    [switch]$TarArm
+    [switch]$TarArm,
+    [switch]$FxDependent
 )
 
 $releaseTagParam = @{}
@@ -33,9 +34,23 @@ try {
     Import-Module "$location/tools/packaging"
 
     Start-PSBootstrap -Package -NoSudo
-    Start-PSBuild -Configuration Release -Crossgen -PSModuleRestore @releaseTagParam
 
-    Start-PSPackage @releaseTagParam
+    $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true}
+
+    if($FxDependent.IsPresent) {
+        $buildParams.Add("Runtime", "fxdependent")
+    } else {
+        $buildParams.Add("Crossgen", $true)
+    }
+
+    Start-PSBuild @buildParams @releaseTagParam
+
+    if($FxDependent) {
+        Start-PSPackage -Type 'fxdependent' @releaseTagParam
+    } else {
+        Start-PSPackage @releaseTagParam
+    }
+
     if ($AppImage) { Start-PSPackage -Type AppImage @releaseTagParam }
     if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam }
 
@@ -52,6 +67,7 @@ finally
 }
 
 $linuxPackages = Get-ChildItem "$location/powershell*" -Include *.deb,*.rpm,*.AppImage,*.tar.gz
+
 foreach ($linuxPackage in $linuxPackages)
 {
     $filePath = $linuxPackage.FullName

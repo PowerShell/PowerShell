@@ -151,16 +151,20 @@ Additional references:
   (See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell) for more info.)
 * If your change adds a new source file, ensure the appropriate copyright and license headers is on top.
   It is standard practice to have both a copyright and license notice for each source file.
-    * For `.h`, `.cpp`, and `.cs` files use:
+    * For `.h`, `.cpp`, and `.cs` files use the copyright header with empty line after it:
 
+    ```c#
         // Copyright (c) Microsoft Corporation. All rights reserved.
         // Licensed under the MIT License.
+        <Add empty line here>
+    ```
 
-    * For `.ps1` and `.psm1` files use:
+    * For `.ps1` and `.psm1` files use the copyright header with empty line after it:
 
     ```powershell
         # Copyright (c) Microsoft Corporation. All rights reserved.
         # Licensed under the MIT License.
+        <Add empty line here>
     ```
 
 * If your change adds a new module manifest (.psd1 file), ensure that:
