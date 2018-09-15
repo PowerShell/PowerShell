@@ -1,171 +1,169 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Describe "Basic Send-MailMessage tests" -Tags CI {
-    BeforeAll {
-        function test-smtpserver
+
+function Test-SmtpServer
+{
+    try
+    {
+        $tc = New-Object -TypeName System.Net.Sockets.TcpClient -ArgumentList "localhost", 25
+        $rv = $tc.Connected
+        $tc.Close()
+        return $rv
+    }
+    catch
+    {
+        return $false
+    }
+}
+function Get-Mail
+{
+    Param(
+        [parameter(Mandatory=$true)]
+        [String]
+        $mailBox
+    )
+
+    $state = "init"
+    $mail = Get-Content $mailBox
+    $rv = @{}
+    foreach ($line in $mail)
+    {
+        switch ($state)
         {
-            $rv = $false
-
-            try
+            "init"
             {
-                $tc = New-Object -TypeName System.Net.Sockets.TcpClient -ArgumentList "localhost", 25
-                $rv = $tc.Connected
-                $tc.Close()
-            }
-            catch
-            {
-                $rv = false
-            }
-
-            return $rv
-        }
-
-        function read-mail
-        {
-            Param(
-                [parameter(Mandatory=$true)]
-                [String]
-                $mailBox
-            )
-
-            $state = "init"
-            $mail = Get-Content $mailBox
-            $rv = @{}
-            foreach ($line in $mail)
-            {
-                switch ($state)
+                if ($line.Length -gt 0)
                 {
-                    "init"
-                    {
-                        if ($line.Length -gt 0)
-                        {
-                            $state = "headers"
-                        }
-                    }
-                    "headers"
-                    {
-                        if ($line.StartsWith("From: "))
-                        {
-                            $rv.From = $line.Substring(6)
-                        }
-                        elseif ($line.StartsWith("To: "))
-                        {
-                            if ($null -eq $rv.To)
-                            {
-                                $rv.To = @()
-                            }
-
-                            $rv.To += $line.Substring(4)
-                        }
-                        elseif ($line.StartsWith("Subject: "))
-                        {
-                            $rv.Subject = $line.Substring(9);
-                        }
-                        elseif ($line.Length -eq 0)
-                        {
-                            $state = "body"
-                        }
-                    }
-                    "body"
-                    {
-                        if ($line.Length -eq 0)
-                        {
-                            $state = "done"
-                            continue
-                        }
-
-                        if ($null -eq $rv.Body)
-                        {
-                            $rv.Body = @()
-                        }
-
-                        $rv.Body += $line
-                    }
+                    $state = "headers"
                 }
             }
+            "headers"
+            {
+                if ($line.StartsWith("From: "))
+                {
+                    $rv.From = $line.Substring(6)
+                }
+                elseif ($line.StartsWith("To: "))
+                {
+                    if ($null -eq $rv.To)
+                    {
+                        $rv.To = @()
+                    }
 
-            return $rv
+                    $rv.To += $line.Substring(4)
+                }
+                elseif ($line.StartsWith("Subject: "))
+                {
+                    $rv.Subject = $line.Substring(9);
+                }
+                elseif ($line.Length -eq 0)
+                {
+                    $state = "body"
+                }
+            }
+            "body"
+            {
+                if ($line.Length -eq 0)
+                {
+                    $state = "done"
+                    continue
+                }
+
+                if ($null -eq $rv.Body)
+                {
+                    $rv.Body = @()
+                }
+
+                $rv.Body += $line
+            }
         }
+    }
 
-        $PesterArgs = @{Name = ""}
-        $alreadyHasMail = $true
+    return $rv
+}
+
+Describe "Send-MailMessage" -Tags CI {
+    BeforeAll {
+        $user = [Environment]::UserName
+        $domain = [Environment]::MachineName
+        $address = "$user@$domain"
+        $mailBox = "/var/mail/$user"
 
         if (-not $IsLinux)
         {
-            $PesterArgs["Skip"] = $true
-            $PesterArgs["Name"] += " (skipped: not Linux)"
+            $ItArgs = @{ Skip = $true }
+            $testCases = @{ Name = "(skipped: not Linux)" }
             return
         }
 
-        $domain = [Environment]::MachineName
-        if (-not (test-smtpserver))
+        if (-not (Test-SmtpServer))
         {
-            $PesterArgs["Pending"] = $true
-            $PesterArgs["Name"] += " (pending: no mail server detected)"
+            $ItArgs = @{ Pending = $true }
+            $testCases = @{ Name = "(pending: no mail server detected)" }
             return
         }
 
-        $user = [Environment]::UserName
         $inPassword = Select-String "^${user}:" /etc/passwd -ErrorAction SilentlyContinue
         if (-not $inPassword)
         {
-            $PesterArgs["Pending"] = $true
-            $PesterArgs["Name"] += " (pending: user not in /etc/passwd)"
+            $ItArgs = @{ Pending = $true }
+            $testCases = @{ Name = "(pending: user not in /etc/passwd)" }
             return
         }
 
-        $address = "$user@$domain"
-        $mailStore = "/var/mail"
-        $mailBox = Join-Path $mailStore $user
-        $mailBoxFile = Get-Item $mailBox -ErrorAction SilentlyContinue
-        if ($null -ne $mailBoxFile -and $mailBoxFile.Length -gt 2)
-        {
-            $PesterArgs["Pending"] = $true
-            $PesterArgs["Name"] += " (pending: mailbox not empty)"
-            return
-        }
-        $alreadyHasMail = $false
+        # Save content of mail box before running tests
+        $mailBoxContent = Get-Content -Path $mailBox -ErrorAction SilentlyContinue
+
+        $ItArgs = @{}
+        $testCases = @(
+            @{
+                Name = "with minimal set"
+                InputObject = @{
+                    To = $address
+                    From = $address
+                    Subject = "Subject $(Get-Date)"
+                    Body = "Body $(Get-Date)"
+                    SmtpServer = "127.0.0.1"
+                }
+            }
+        )
     }
 
-    AfterEach {
-       if (-not $alreadyHasMail)
-       {
-           Set-Content -Value "" -Path $mailBox -Force -ErrorAction SilentlyContinue
-       }
+    BeforeEach {
+        # Clear mail box before each test
+        "" | Set-Content -Path $mailBox -Force -ErrorAction SilentlyContinue
     }
 
-    $ItArgs = $PesterArgs.Clone()
-    $ItArgs['Name'] = "Can send mail message from user to self " + $ItArgs['Name']
+    AfterAll {
+        # Restore content of mail box after running tests
+        $mailBoxContent | Set-Content -Path $mailBox -Force -ErrorAction SilentlyContinue
+    }
 
-    It @ItArgs {
-        $body = "Greetings from me."
-        $subject = "Test message"
-        Send-MailMessage -To $address -From $address -Subject $subject -Body $body -SmtpServer 127.0.0.1
+    It "Can send mail message using named parameters <Name>" -TestCases $testCases @ItArgs {
+        param($InputObject)
+
+        Send-MailMessage @InputObject -ErrorAction SilentlyContinue
         Test-Path -Path $mailBox | Should -BeTrue
-        $mail = read-mail $mailBox
-        $mail.From | Should -BeExactly $address
-        $mail.To.Count | Should -BeExactly 1
-        $mail.To[0] | Should -BeExactly $address
-        $mail.Subject | Should -BeExactly $subject
-        $mail.Body.Count | Should -BeExactly 1
-        $mail.Body[0] | Should -BeExactly $body
+        $mail = Get-Mail $mailBox
+        $mail.From | Should -BeExactly $InputObject.From
+        $mail.To.Count | Should -BeExactly $InputObject.To.Count
+        $mail.To | Should -BeExactly $InputObject.To
+        $mail.Subject | Should -BeExactly  $InputObject.Subject
+        $mail.Body.Count | Should -BeExactly $InputObject.Body.Count
+        $mail.Body | Should -BeExactly  $InputObject.Body
     }
 
-    $ItArgs = $PesterArgs.Clone()
-    $ItArgs['Name'] = "Can send mail message from user to self using pipeline " + $ItArgs['Name']
+    It "Can send mail message using pipline named parameters <Name>" -TestCases $testCases @ItArgs {
+        param($InputObject)
 
-    It @ItArgs {
-        $body = "Greetings from me again."
-        $subject = "Second test message"
-        $object = [PSCustomObject]@{To = $address; From = $address; Subject = $subject; Body = $body; SmtpServer = '127.0.0.1'}
-        $object | Send-MailMessage
+        [PsCustomObject]$InputObject | Send-MailMessage -ErrorAction SilentlyContinue
         Test-Path -Path $mailBox | Should -BeTrue
-        $mail = read-mail $mailBox
-        $mail.From | Should -BeExactly $address
-        $mail.To.Count | Should -BeExactly 1
-        $mail.To[0] | Should -BeExactly $address
-        $mail.Subject | Should -BeExactly $subject
-        $mail.Body.Count | Should -BeExactly 1
-        $mail.Body[0] | Should -BeExactly $body
+        $mail = Get-Mail $mailBox
+        $mail.From | Should -BeExactly $InputObject.From
+        $mail.To.Count | Should -BeExactly $InputObject.To.Count
+        $mail.To | Should -BeExactly $InputObject.To
+        $mail.Subject | Should -BeExactly  $InputObject.Subject
+        $mail.Body.Count | Should -BeExactly $InputObject.Body.Count
+        $mail.Body | Should -BeExactly  $InputObject.Body
     }
 }
