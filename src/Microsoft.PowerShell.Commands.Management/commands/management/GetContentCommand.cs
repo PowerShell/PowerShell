@@ -115,6 +115,17 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(error);
                 return;
             }
+            
+            foreach (string currentPath in Path)
+            {
+                if ( Directory.Exists(currentPath) )
+                {
+                   string errMsg = StringUtil.Format(SessionStateStrings.GetContainerContentException, currentPath);
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "GetContainerContentException", ErrorCategory.InvalidOperation, null);
+                    WriteError(error);
+                    return;                
+                }
+            }
 
             if (TotalCount == 0)
             {

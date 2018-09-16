@@ -24,9 +24,14 @@ Describe "Get-Content" -Tags "CI" {
         Remove-Item -Path $testPath2 -Force
     }
 
-    It "Should throw an error on a directory  " {
+    It "Should throw an error on a directory" {
         { Get-Content . -ErrorAction Stop } |
-            Should -Throw -ErrorId "GetContentReaderUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetContentCommand"
+            Should -Throw -ErrorId "GetContainerContentException,Microsoft.PowerShell.Commands.GetContentCommand"
+    }
+
+    It "Should throw error on a directory with specific message" {
+        { Get-Content . -ErrorAction Stop } |
+            Should -Throw "Unable to access '.' contents as it is a container. Please use 'Get-ChildItem .' instead."
     }
 
     It "Should return an Object when listing only a single line and the correct information from a file" {

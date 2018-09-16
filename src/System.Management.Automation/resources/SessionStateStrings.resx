@@ -279,6 +279,9 @@
   <data name="GetContentWriterDynamicParametersProviderException" xml:space="preserve">
     <value>The dynamic parameters for the GetContentWriter operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
   </data>
+  <data name="GetContainerContentException" xml:space="preserve">
+    <value>Unable to access '{0}' contents as it is a container. Please use 'Get-ChildItem {0}' instead.</value>
+  </data>   
   <data name="SetContentToLastLocationWhenHistoryIsEmpty" xml:space="preserve">
     <value>There is no location history left to navigate backwards.</value>
   </data>
