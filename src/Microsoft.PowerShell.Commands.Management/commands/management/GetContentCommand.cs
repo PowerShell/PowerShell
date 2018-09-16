@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
             
             foreach (string currentPath in Path)
             {
-                if ( Directory.Exists(currentPath) )
+                if (Directory.Exists(currentPath))
                 {
                    string errMsg = StringUtil.Format(SessionStateStrings.GetContainerContentException, currentPath);
                     ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "GetContainerContentException", ErrorCategory.InvalidOperation, null);
