@@ -139,12 +139,12 @@ curl https://packages.microsoft.com/keys/microsoft.asc | $SUDO apt-key add -
 case $DISTRIB_ID in
     ubuntu)
         case $DISTRIB_RELEASE in
-            17.10|16.10|16.04|15.10|14.04)
+            18.04|16.10|16.04|15.10|14.04)
                 curl https://packages.microsoft.com/config/ubuntu/$DISTRIB_RELEASE/prod.list | $SUDO tee /etc/apt/sources.list.d/microsoft.list
             ;;
             *)
                 echo "ERROR: unsupported Ubuntu version ($DISTRIB_RELEASE)." >&2
-                echo "Supported versions: 14.04, 15.10, 16.04, 16.10, 17.10." >&2
+                echo "Supported versions: 14.04, 15.10, 16.04, 16.10, 18.04." >&2
                 exit 1
             ;;
         esac
