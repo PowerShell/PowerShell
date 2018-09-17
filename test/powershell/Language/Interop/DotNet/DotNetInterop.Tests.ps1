@@ -92,6 +92,13 @@ namespace DotNetInterop
         public MyByRefLikeType(int i) { }
         public static int Index;
     }
+
+    public class ExampleProblemClass
+    {
+        public void ProblemMethod(ref MyByRefLikeType value)
+        {
+        }
+    }
 }
 '@
         if (-not ("DotNetInterop.Test" -as [type]))
@@ -227,6 +234,11 @@ namespace DotNetInterop
 
     It "Set access of an indexer that accepts ByRef-like type value should fail gracefully" {
         { $testObj[1] = 1 } | Should -Throw -ErrorId "CannotIndexWithByRefLikeReturnType"
+    }
+
+    It "Create instance of type with method that use a ByRef-like type as a ByRef parameter" {
+        $obj = [DotNetInterop.ExampleProblemClass]::new()
+        $obj | Should -BeOfType DotNetInterop.ExampleProblemClass
     }
 
     Context "Passing value that is implicitly/explicitly castable to ByRef-like parameter in method invocation" {
