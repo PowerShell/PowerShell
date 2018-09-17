@@ -1165,6 +1165,7 @@ function Start-PSPester {
             $null = New-Item -ItemType Directory -Path $outputBufferFolder
             icacls $outputBufferFolder /grant Everyone:F
             $outputBufferFilePath = Join-Path -Path $outputBufferFolder -ChildPath ([System.IO.Path]::GetRandomFileName())
+            $null = New-Item -ItemType File -Path $outputBufferFilePath
         }
         else
         {
@@ -1366,7 +1367,7 @@ function Start-PSPester {
         $env:POWERSHELL_TELEMETRY_OPTOUT = $originalTelemetry
         if ($Unelevate)
         {
-            Remove-Item $outputBufferFilePath
+            Remove-Item $outputBufferFilePath -ErrorAction SilentlyContinue
         }
     }
 
