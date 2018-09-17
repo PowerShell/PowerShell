@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Describe 'ConvertTo-Json' -tags "CI" {
+    BeforeAll {
+        $newline = [System.Environment]::NewLine
+    }
+
     It 'Newtonsoft.Json.Linq.Jproperty should be converted to Json properly' {
         $EgJObject = New-Object -TypeName Newtonsoft.Json.Linq.JObject
         $EgJObject.Add("TestValue1", "123456")
@@ -22,7 +26,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $null = $ps.AddScript({
             $obj = [PSCustomObject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
             $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
-            1..100 | Foreach-Object { $obj } | ConvertTo-Json -Depth 10 -Verbose
+            1..100 | Foreach-Object { $obj } | ConvertTo-Json -Depth 10
             # the conversion is expected to take some time, this throw is in case it doesn't
             throw "Should not have thrown exception"
         })
@@ -49,18 +53,13 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $output | Should -BeExactly '1'
     }
 
-    It "The result string should be not escaped by default." {
-        $newline = [System.Environment]::NewLine
-        $expected1 = "{$newline  ""abc"": ""'def'""$newline}"
+    It "The result string should <Name>." -TestCases @(
+        @{name = "be not escaped by default.";                     params = @{};                              expected = "{$newline  ""abc"": ""'def'""$newline}" }
+        @{name = "be not escaped with '-EscapeHandling Default'."; params = @{EscapeHandling = 'Default'};    expected = "{$newline  ""abc"": ""'def'""$newline}" }
+        @{name = "be escaped with '-EscapeHandling EscapeHtml'.";  params = @{EscapeHandling = 'EscapeHtml'}; expected = "{$newline  ""abc"": ""\u0027def\u0027""$newline}" }
+    ) {
+        param ($name, $params ,$expected)
 
-        @{ 'abc' = "'def'" } | ConvertTo-Json | Should -BeExactly $expected1
-        @{ 'abc' = "'def'" } | ConvertTo-Json -EscapeHandling Default | Should -BeExactly $expected1
-    }
-
-    It "The result string should be escaped with '-EscapeHandling EscapeHtml'." {
-        $newline = [System.Environment]::NewLine
-        $expected2 = "{$newline  ""abc"": ""\u0027def\u0027""$newline}"
-
-        @{ 'abc' = "'def'" } | ConvertTo-Json -EscapeHandling EscapeHtml | Should -BeExactly $expected2
+        @{ 'abc' = "'def'" } | ConvertTo-Json @params | Should -BeExactly $expected
     }
 }
