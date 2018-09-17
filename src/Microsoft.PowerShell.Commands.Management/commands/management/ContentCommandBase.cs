@@ -577,6 +577,7 @@ namespace Microsoft.PowerShell.Commands
                 bool filtersHidPath = false;
 
                 ErrorRecord pathNotFoundErrorRecord = null;
+
                 // Throw error if path is a directory.
                 if (System.IO.Directory.Exists(path))
                 {
