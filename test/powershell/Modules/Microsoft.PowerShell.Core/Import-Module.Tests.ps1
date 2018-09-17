@@ -273,7 +273,7 @@ Describe "Circular nested module test" -tags "CI" {
     }
 }
 
-Describe "Import-Module -Force behaviour" {
+Describe "Import-Module -Force behaviour" -Tag "CI" {
     BeforeAll {
         $moduleContent = 'function Test-One { return 101 }'
         $newModuleContent = "function Test-One { return 93 }`nfunction Test-Two { return 14 }"
