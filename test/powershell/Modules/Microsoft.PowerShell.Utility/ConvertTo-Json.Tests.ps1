@@ -49,16 +49,18 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $output | Should -BeExactly '1'
     }
 
-    It "The result string should be escaped." {
-        if ($isWindows) {
-            $newline = "`r`n"
-        } else {
-            $newline = "`n"
-        }
+    It "The result string should be not escaped by default." {
+        $newline = [System.Environment]::NewLine
         $expected1 = "{$newline  ""abc"": ""'def'""$newline}"
-        $expected2 = "{$newline  ""abc"": ""\u0027def\u0027""$newline}"
+
         @{ 'abc' = "'def'" } | ConvertTo-Json | Should -BeExactly $expected1
         @{ 'abc' = "'def'" } | ConvertTo-Json -EscapeHandling Default | Should -BeExactly $expected1
+    }
+
+    It "The result string should be escaped with '-EscapeHandling EscapeHtml'." {
+        $newline = [System.Environment]::NewLine
+        $expected2 = "{$newline  ""abc"": ""\u0027def\u0027""$newline}"
+
         @{ 'abc' = "'def'" } | ConvertTo-Json -EscapeHandling EscapeHtml | Should -BeExactly $expected2
     }
 }
