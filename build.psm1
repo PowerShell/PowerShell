@@ -1420,6 +1420,7 @@ function script:Start-UnelevatedProcess
     }
 
     # the current consumer of this function does not depend on
+    # this function waiting on the process to complete
     if ($Script:psNonAdminCred)
     {
         Write-Log "Running with non-admin user..."
