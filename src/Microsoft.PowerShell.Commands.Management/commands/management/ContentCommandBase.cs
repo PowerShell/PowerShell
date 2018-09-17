@@ -577,6 +577,14 @@ namespace Microsoft.PowerShell.Commands
                 bool filtersHidPath = false;
 
                 ErrorRecord pathNotFoundErrorRecord = null;
+                // Throw error if path is a directory.
+                if (System.IO.Directory.Exists(path))
+                {
+                    string errMsg = StringUtil.Format(SessionStateStrings.GetContainerContentException, path);
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "GetContainerContentException", ErrorCategory.InvalidOperation, null);
+                    WriteError(error);
+                    return results;
+                }
 
                 try
                 {

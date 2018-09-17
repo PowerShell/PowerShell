@@ -60,6 +60,11 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$()" {
             { Set-Content -Path $() -Value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
         }
+
+        It "should throw 'GetContainerContentException' when -Path is a container" {
+            { Set-Content -Path . -Value "GetContainerContentException" -ErrorAction Stop } | Should -Throw -ErrorId "GetContainerContentException,Microsoft.PowerShell.Commands.SetContentCommand"
+        }
+
         It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -skip:$skipRegistry {
             { Set-Content -Path HKLM:\\software\\microsoft -Value "ShouldNotWorkBecausePathIsUnsupported" -ErrorAction Stop } | Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.SetContentCommand"
         }

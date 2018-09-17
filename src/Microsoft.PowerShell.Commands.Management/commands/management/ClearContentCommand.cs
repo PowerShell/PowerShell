@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -27,7 +29,15 @@ namespace Microsoft.PowerShell.Commands
             currentCommandContext.PassThru = false;
 
             foreach (string path in Path)
-            {
+            {                
+                if (System.IO.Directory.Exists(path))
+                {
+                    string errMsg = StringUtil.Format(SessionStateStrings.GetContainerContentException, path);
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "GetContainerContentException", ErrorCategory.InvalidOperation, null);
+                    WriteError(error);
+                    return;         
+                }                
+                
                 try
                 {
                     InvokeProvider.Content.Clear(path, currentCommandContext);

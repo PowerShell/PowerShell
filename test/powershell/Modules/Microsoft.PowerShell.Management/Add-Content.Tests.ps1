@@ -35,6 +35,10 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       { Add-Content -Path $null -Value "ShouldNotWorkBecausePathIsNull" -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddContentCommand"
     }
 
+    It "should throw 'GetContainerContentException' when -Path is a container" {
+      { Add-Content -Path . -Value "GetContainerContentException" -ErrorAction Stop } | Should -Throw -ErrorId "GetContainerContentException,Microsoft.PowerShell.Commands.AddContentCommand"
+    }
+
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 903880)]
     It "should throw `"Cannot bind argument to parameter 'Path'`" when -Path is `$()" {
       { Add-Content -Path $() -Value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddContentCommand"
