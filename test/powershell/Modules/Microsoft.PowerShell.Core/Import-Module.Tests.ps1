@@ -278,7 +278,6 @@ Describe "Import-Module -Force behaviour" {
         $moduleContent = 'function Test-One { return 101 }'
         $newModuleContent = "function Test-One { return 93 }`nfunction Test-Two { return 14 }"
         $modulePath = Join-Path $TestDrive 'ipmofTestModule.psm1'
-        # Another edit
     }
 
     AfterEach {
