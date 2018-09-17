@@ -566,11 +566,11 @@ function Get-ReleaseTag
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
         $releaseTag = $releaseTag + '.' + $env:APPVEYOR_BUILD_NUMBER
     }
-    elseif($env:BUILD_BUILID)
+    elseif($env:BUILD_BUILDID)
     {
         #In VSTS
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-        $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
+        $releaseTag = $releaseTag + '.' + $env:BUILD_BUILDID
     }
 
     return $releaseTag
