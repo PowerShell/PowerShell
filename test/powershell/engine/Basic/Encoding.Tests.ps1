@@ -78,7 +78,11 @@ Describe "File encoding tests" -Tag CI {
     Context "Parameter 'Encoding' should accept numeric and string Ids" {
         BeforeAll {
             $testValue = "ф"
-            $expectedBytes = 244,13,10 -join "-"
+            if ($IsWindows) {
+                $expectedBytes = 244,13,10 -join "-"
+            } else {
+                $expectedBytes = 244,10 -join "-"
+            }
         }
 
         It "Parameter 'Encoding' should accept '<encoding>'" -TestCases @(
