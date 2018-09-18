@@ -158,8 +158,6 @@ namespace System.Management.Automation.Language
         public virtual AstVisitAction VisitBlockStatement(BlockStatementAst blockStatementAst) { return AstVisitAction.Continue; }
         /// <summary/>
         public virtual AstVisitAction VisitNamedAttributeArgument(NamedAttributeArgumentAst namedAttributeArgumentAst) { return AstVisitAction.Continue; }
-        /// <summary/>
-        public virtual AstVisitAction VisitNamedMethodArgument(NamedMethodArgumentAst namedMethodArgumentAst) { return AstVisitAction.Continue; }
     }
 
     /// <summary>

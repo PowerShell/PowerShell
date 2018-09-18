@@ -35,8 +35,6 @@ namespace System.Management.Automation.Language
         /// <summary/>
         object VisitNamedAttributeArgument(NamedAttributeArgumentAst namedAttributeArgumentAst);
         /// <summary/>
-        object VisitNamedMethodArgument(NamedMethodArgumentAst namedMethodArgumentAst);
-        /// <summary/>
         object VisitParameter(ParameterAst parameterAst);
 
         #endregion Script Blocks
@@ -517,8 +515,6 @@ namespace System.Management.Automation.Language
         public virtual object VisitMemberExpression(MemberExpressionAst memberExpressionAst) { return null; }
         /// <summary/>
         public virtual object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { return null; }
-        /// <summary/>
-        public virtual object VisitNamedMethodArgument(NamedMethodArgumentAst namedMethodArgumentAst) { return null; }
         /// <summary/>
         public virtual object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst) { return null; }
         /// <summary/>
