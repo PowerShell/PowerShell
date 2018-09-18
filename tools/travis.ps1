@@ -50,7 +50,7 @@ function Get-ReleaseTag
     $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
 
-    $releaseTag = $metadata.NextReleaseTag
+    $releaseTag = $metadata.PreviewReleaseTag
     if($env:TRAVIS_BUILD_NUMBER)
     {
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
@@ -154,12 +154,35 @@ function Set-DailyBuildBadge
 # One of push, pull_request, api, cron.
 $isPR = $env:TRAVIS_EVENT_TYPE -eq 'pull_request'
 
+$commitMessage = [string]::Empty
+
 # For PRs, Travis-ci strips out [ and ] so read the message directly from git
-if($env:TRAVIS_EVENT_TYPE -eq 'pull_request')
+if($env:TRAVIS_EVENT_TYPE -eq 'pull_request' -or $env:BUILD_REASON)
 {
-    # If the current job is a pull request, the env variable 'TRAVIS_PULL_REQUEST_SHA' contains
-    # the commit SHA of the HEAD commit of the PR.
-    $commitMessage = git log --format=%B -n 1 $env:TRAVIS_PULL_REQUEST_SHA
+    $commitId = $null
+    if ($env:TRAVIS_EVENT_TYPE)
+    {
+        # We are in Travis-CI
+        $commitId = $env:TRAVIS_PULL_REQUEST_SHA
+
+        # If the current job is a pull request, the env variable 'TRAVIS_PULL_REQUEST_SHA' contains
+        # the commit SHA of the HEAD commit of the PR.
+        $commitMessage = git log --format=%B -n 1 $commitId
+        Write-Log -message "commitMessage: $commitMessage"
+    }
+    elseif($env:TF_BUILD)
+    {
+        if($env:BUILD_SOURCEVERSIONMESSAGE -match 'Merge\s*([0-9A-F]*)')
+        {
+            # We are in VSTS and have a commit ID in the Source Version Message
+            $commitId = $Matches[1]
+            $commitMessage = git log --format=%B -n 1 $commitId
+        }
+        else
+        {
+            Write-Log "Unknown BUILD_SOURCEVERSIONMESSAGE format '$env:BUILD_SOURCEVERSIONMESSAGE'" -Verbose
+        }
+    }
 }
 else
 {
@@ -167,17 +190,26 @@ else
 }
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
-$hasFeatureTag = $commitMessage -match '\[feature\]'
-$hasPackageTag = $commitMessage -match '\[package\]'
+# or the environment variable `FORCE_FEATURE` equals `True`
+$hasFeatureTag = $commitMessage -match '\[feature\]' -or $env:FORCE_FEATURE -eq 'True'
+
+# Run a packaging if the commit message contains `[Package]`
+# or the environment variable `FORCE_PACKAGE` equals `True`
+$hasPackageTag = $commitMessage -match '\[package\]' -or $env:FORCE_PACKAGE -eq 'True'
 $createPackages = -not $isPr -or $hasPackageTag
 $hasRunFailingTestTag = $commitMessage -match '\[includeFailingTest\]'
-$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
+$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api' -or $env:BUILD_REASON -eq 'Schedule'
 # only update the build badge for the cron job
-$cronBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron'
+$cronBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:BUILD_REASON -eq 'Schedule'
 $isFullBuild = $isDailyBuild -or $hasFeatureTag
 
 if($Stage -eq 'Bootstrap')
 {
+    if($cronBuild -and $env:TF_BUILD)
+    {
+        Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
+    }
+
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing

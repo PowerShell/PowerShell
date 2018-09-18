@@ -70,7 +70,17 @@ namespace System.Management.Automation.Language
             bool expandParamsOnBest;
             bool callNonVirtually;
             var positionalArgCount = positionalArgs.Length;
-            var bestMethod = Adapter.FindBestMethod(newConstructors, null, positionalArgs, ref errorId, ref errorMsg, out expandParamsOnBest, out callNonVirtually);
+
+            var bestMethod = Adapter.FindBestMethod(
+                newConstructors,
+                invocationConstraints: null,
+                allowCastingToByRefLikeType: false,
+                positionalArgs,
+                ref errorId,
+                ref errorMsg,
+                out expandParamsOnBest,
+                out callNonVirtually);
+
             if (bestMethod == null)
             {
                 parser.ReportError(new ParseError(attributeAst.Extent, errorId,

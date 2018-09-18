@@ -115,10 +115,10 @@ namespace System.Management.Automation
 
         internal const string EventError = "error";
         internal static readonly VariablePath EventErrorVarPath = new VariablePath("script:" + EventError);
-
+#if !UNIX
         internal const string PathExt = "env:PATHEXT";
         internal static readonly VariablePath PathExtVarPath = new VariablePath(PathExt);
-
+#endif
         internal const string PSEmailServer = "PSEmailServer";
         internal static readonly VariablePath PSEmailServerVarPath = new VariablePath(PSEmailServer);
 
