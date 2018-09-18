@@ -79,6 +79,7 @@ Describe "File encoding tests" -Tag CI {
         BeforeAll {
             $testValue = "ф"
             if ($IsWindows) {
+                # Expected bytes: 244 - 'ф', 13  - '`r', 10  - '`n'.
                 $expectedBytes = 244,13,10 -join "-"
             } else {
                 $expectedBytes = 244,10 -join "-"
