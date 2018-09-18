@@ -1427,7 +1427,7 @@ function script:Start-UnelevatedProcess
     {
         Write-Log "Running with non-admin user..."
         $psi = [System.Diagnostics.ProcessStartInfo]::new($process)
-        $psi.ArgumentList = $arguments
+        $psi.Arguments = "$arguments"
         $psi.Password = $Script:psNonAdminCred.Password
         $psi.UserName = $Script:psNonAdminCred.UserName
         # Shell execute must be false for both the password and environment
