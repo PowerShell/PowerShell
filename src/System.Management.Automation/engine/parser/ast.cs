@@ -5354,7 +5354,7 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentException">
         /// If <paramref name="pipelineElements"/> is null or is an empty collection.
         /// </exception>
-        public PipelineAst(IScriptExtent extent, IEnumerable<CommandBaseAst> pipelineElements) :this (extent, pipelineElements, background: false)
+        public PipelineAst(IScriptExtent extent, IEnumerable<CommandBaseAst> pipelineElements) :this(extent, pipelineElements, background: false)
         {
 
         }
@@ -5389,7 +5389,7 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="commandAst"/> is null.
         /// </exception>
-        public PipelineAst(IScriptExtent extent, CommandBaseAst commandAst) :this (extent, commandAst, background: false)
+        public PipelineAst(IScriptExtent extent, CommandBaseAst commandAst) :this(extent, commandAst, background: false)
         {
 
         }
