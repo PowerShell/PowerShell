@@ -1426,7 +1426,20 @@ function script:Start-UnelevatedProcess
     if ($Script:psNonAdminCred)
     {
         Write-Log "Running with non-admin user..."
-        Start-Process -FilePath $process -ArgumentList $arguments -Credential $Script:psNonAdminCred
+        $psi = [System.Diagnostics.ProcessStartInfo]::new($process)
+        $psi.ArgumentList = $arguments
+        $psi.Password = $Script:psNonAdminCred.Password
+        $psi.UserName = $Script:psNonAdminCred.UserName
+        # Shell execute must be false for both the password and environment
+        $psi.UseShellExecute = $false
+        $psi.WorkingDirectory = (Get-Location).ProviderPath
+        # Set variables we want to carry over to the new process
+        Get-ChildItem env:SYSTEM_*, env:BUILD_*, env:TF_*, env:AGENT_*, env:TMPDIR | ForEach-Object {
+            $psi.EnvironmentVariables.Add($_.Name, $_.Value)
+        }
+        [System.Diagnosis.Process]::Start($psi)
+
+        #Start-Process -FilePath $process -ArgumentList $arguments -Credential $Script:psNonAdminCred
     }
     else
     {
