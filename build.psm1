@@ -1434,7 +1434,7 @@ function script:Start-UnelevatedProcess
         $psi.UseShellExecute = $false
         $psi.WorkingDirectory = (Get-Location).ProviderPath
         # Set variables we want to carry over to the new process
-        Get-ChildItem env:SYSTEM_*, env:BUILD_*, env:TF_*, env:AGENT_*, env:TMPDIR | ForEach-Object {
+        Get-ChildItem env:SYSTEM_*, env:BUILD_*, env:TF_*, env:AGENT_* | ForEach-Object {
             $psi.EnvironmentVariables[$_.Name]=$_.Value
         }
         [System.Diagnosis.Process]::Start($psi)
