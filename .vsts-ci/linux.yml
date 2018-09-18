@@ -15,8 +15,28 @@ phases:
     name: Hosted Ubuntu 1604
   steps:
   - powershell: |
+      Get-Process
+    displayName: Capture Processes
+    condition: succeededOrFailed()
+
+  - powershell: |
       Get-ChildItem -Path env:
     displayName: Capture environment
+    condition: succeededOrFailed()
+
+  - powershell: |
+      # sometimes the file is locked and we must wait or things will fail
+      $filePath = '/var/lib/dpkg/lock'
+      $lockList = sudo lsof '/var/lib/dpkg/lock'
+      while($lockList)
+      {
+        Write-Verbose "waiting..." -verbose
+        Write-Verbose ($lockList -join "`n") -verbose
+        Start-Sleep -Second 30
+        $lockList = sudo lsof $filePath
+      }
+      exit 0
+    displayName: Wait for /var/lib/dpkg/lock
     condition: succeededOrFailed()
 
   - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
@@ -33,12 +53,6 @@ phases:
   - powershell: |
       git submodule update --init
     displayName: SubModule Init
-    condition: succeededOrFailed()
-
-  - powershell: |
-      sudo apt-get update
-      sudo apt-get install -y --no-install-recommends less
-    displayName: Install less
     condition: succeededOrFailed()
 
   - powershell: |
