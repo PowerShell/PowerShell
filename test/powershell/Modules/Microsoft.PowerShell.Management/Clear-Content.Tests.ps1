@@ -116,11 +116,6 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
         Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
     }
 
-    It "should throw `GetContainerContentException` when -Path is a container" {
-      { Clear-Content -Path . -ErrorAction Stop } |
-        Should -Throw -ErrorId "GetContainerContentException,Microsoft.PowerShell.Commands.ClearContentCommand"
-    }
-
     #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
     It "should throw 'PSNotSupportedException' when you clear-content to an unsupported provider" {
       $functionName = Get-NonExistantFunctionName
