@@ -1156,6 +1156,10 @@ function Start-PSPester {
     }
 
     $command += "Import-Module '$Pester'; "
+    if($IsWindows)
+    {
+        $command += '$env:TEMP=[System.IO.Path]::GetTempPath();'
+    }
 
     if ($Unelevate)
     {
@@ -1167,7 +1171,6 @@ function Start-PSPester {
             $outputBufferFilePath = Join-Path -Path $outputBufferFolder -ChildPath ([System.IO.Path]::GetRandomFileName())
             $null = New-Item -ItemType File -Path $outputBufferFilePath
             icacls $outputBufferFilePath /grant Everyone:F
-            icacls $env:TEMP /grant Everyone:F
         }
         else
         {
