@@ -1437,7 +1437,8 @@ function script:Start-UnelevatedProcess
         Get-ChildItem env:SYSTEM_*, env:BUILD_*, env:TF_*, env:AGENT_* | ForEach-Object {
             $psi.EnvironmentVariables[$_.Name]=$_.Value
         }
-        [System.Diagnosis.Process]::Start($psi)
+
+        [System.Diagnostics.Process]::Start($psi)
 
         #Start-Process -FilePath $process -ArgumentList $arguments -Credential $Script:psNonAdminCred
     }
