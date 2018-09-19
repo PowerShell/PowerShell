@@ -59,21 +59,23 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
         $null = $ps.AddParameter("Process", { $_; start-sleep 1 })
         $null = $ps.AddCommand("Export-CliXml")
         $null = $ps.AddParameter("Path", $testfile)
+        $null = $ps.AddParameter("Verbose")
         $null = $ps.BeginInvoke()
-        Start-Sleep 1
+        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 50
         $null = $ps.Stop()
         $ps.InvocationStateInfo.State | Should -Be "Stopped"
         $ps.Dispose()
     }
 
     It "Import-Clixml StopProcessing should succeed" {
-        1,2,3 | Export-Clixml -Path $testfile
+        1..50000 | Export-Clixml -Path $testfile
         $ps = [PowerShell]::Create()
-        $ps.AddCommand("Get-Process")
-        $ps.AddCommand("Import-CliXml")
-        $ps.AddParameter("Path", $testfile)
-        $ps.BeginInvoke()
-        $ps.Stop()
+        $null = $ps.AddCommand("Import-CliXml")
+        $null = $ps.AddParameter("Path", $testfile)
+        $null = $ps.AddParameter("Verbose")
+        $null = $ps.BeginInvoke()
+        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 20
+        $null = $ps.Stop()
         $ps.InvocationStateInfo.State | Should -Be "Stopped"
     }
 

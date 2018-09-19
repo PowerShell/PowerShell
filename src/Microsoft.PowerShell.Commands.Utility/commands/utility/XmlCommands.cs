@@ -123,6 +123,8 @@ namespace Microsoft.PowerShell.Commands
         BeginProcessing()
         {
             CreateFileStream();
+
+            WriteVerbose("Export-Clixml started");
         }
 
         /// <summary>
@@ -326,6 +328,16 @@ namespace Microsoft.PowerShell.Commands
         private ImportXmlHelper _helper;
 
         /// <summary>
+        /// BeginProcessing override.
+        /// </summary>
+        protected override
+        void
+        BeginProcessing()
+        {
+            WriteVerbose("Import-Clixml started");
+        }
+
+        /// <summary>
         /// ProcessRecord overload.
         /// </summary>
         protected override void ProcessRecord()
@@ -416,6 +428,8 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject(string.Format(CultureInfo.InvariantCulture, "<?xml version=\"1.0\" encoding=\"{0}\"?>", Encoding.UTF8.WebName));
                 WriteObject("<Objects>");
             }
+
+            WriteVerbose("ConvertTo-Xml started");
         }
 
         /// <summary>

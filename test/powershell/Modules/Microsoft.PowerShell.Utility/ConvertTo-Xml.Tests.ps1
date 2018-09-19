@@ -60,11 +60,10 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
 
     It "StopProcessing should work" {
         $ps = [PowerShell]::Create()
-        $ps.AddCommand("Get-Process")
-        $ps.AddCommand("ConvertTo-Xml")
-        $ps.AddParameter("Depth", 2)
-        $ps.BeginInvoke()
-        $ps.Stop()
+        $null = $ps.AddScript({ Get-Process | ConvertTo-Xml -Depth 2 -Verbose })
+        $null = $ps.BeginInvoke()
+        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 50
+        $null = $ps.Stop()
         $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
     }
 
