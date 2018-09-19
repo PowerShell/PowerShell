@@ -6366,7 +6366,6 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-
                 // Throw error if path is a directory.
                 if (Directory.Exists(path))
                 {
@@ -6524,7 +6523,6 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-
                 // Throw error if path is a directory.
                 if (Directory.Exists(path))
                 {
