@@ -1440,6 +1440,7 @@ function script:Start-UnelevatedProcess
 
         # Setup directories non-admin user can use
         $nonAdminRoot = New-SubFolderWithPermissions -Path $env:TEMP -ChildPath ([System.IO.Path]::GetRandomFileName())
+        $nonAdminProfile = New-SubFolderWithPermissions -Path $nonAdminRoot -ChildPath 'profile'
         $nonAdminTemp = New-SubFolderWithPermissions -Path $nonAdminRoot -ChildPath 'temp'
         $nonAdminAppData = New-SubFolderWithPermissions -Path $nonAdminRoot -ChildPath 'AppData'
         $nonAdminAppDataLocal = New-SubFolderWithPermissions -Path $nonAdminAppData -ChildPath 'Local'
@@ -1447,6 +1448,7 @@ function script:Start-UnelevatedProcess
         $psi.EnvironmentVariables['TEMP']=$nonAdminTemp
         $psi.EnvironmentVariables['LOCALAPPDATA']=$nonAdminAppDataLocal
         $psi.EnvironmentVariables['APPDATA']=$nonAdminAppDataRemote
+        $psi.EnvironmentVariables['USERPROFILE']=$nonAdminProfile
 
         [System.Diagnostics.Process]::Start($psi)
 
