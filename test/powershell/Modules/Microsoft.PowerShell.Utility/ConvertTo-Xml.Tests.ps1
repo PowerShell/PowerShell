@@ -59,22 +59,22 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
     }
 
     It "StopProcessing should work" {
-		$ps = [PowerShell]::Create()
-		$ps.AddCommand("Get-Process")
-		$ps.AddCommand("ConvertTo-Xml")
-		$ps.AddParameter("Depth", 2)
-		$ps.BeginInvoke()
-		$ps.Stop()
-		$ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
+        $ps = [PowerShell]::Create()
+        $ps.AddCommand("Get-Process")
+        $ps.AddCommand("ConvertTo-Xml")
+        $ps.AddParameter("Depth", 2)
+        $ps.BeginInvoke()
+        $ps.Stop()
+        $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
     }
 
     # these tests just cover aspects that aren't normally exercised being used as a cmdlet
-	It "Can read back switch and parameter values using api" {
+    It "Can read back switch and parameter values using api" {
         Add-Type -AssemblyName "${pshome}/Microsoft.PowerShell.Commands.Utility.dll"
 
-		$cmd = [Microsoft.PowerShell.Commands.ConvertToXmlCommand]::new()
-		$cmd.NoTypeInformation = $true
-		$cmd.NoTypeInformation | Should -BeTrue
+        $cmd = [Microsoft.PowerShell.Commands.ConvertToXmlCommand]::new()
+        $cmd.NoTypeInformation = $true
+        $cmd.NoTypeInformation | Should -BeTrue
     }
 
     It "Serialize primitive type" {
