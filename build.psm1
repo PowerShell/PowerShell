@@ -1472,7 +1472,7 @@ function New-SubFolderWithPermissions
         $Permissions = 'Everyone:F'
     )
 
-    $newFolderPath = Join-Path -Path $ParentPath -ChildPath $FolderName
+    $newFolderPath = Join-Path -Path $Path -ChildPath $ChildPath
     $null = New-Item -ItemType Directory -Path $newFolderPath
     icacls $newFolderPath /grant $Permissions
     return $newFolderPath
