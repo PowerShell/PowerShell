@@ -206,23 +206,26 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             string providerId = null;
 
-            // Replace path with last working directory when '-' was passed.
-            bool pushNextLocation = true;
-            if (originalPath.Equals("-", StringComparison.OrdinalIgnoreCase))
+            switch (originalPath)
             {
-                if (_SetLocationHistory.Count <= 0)
-                {
-                    throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
-                }
-                var previousLocation =  _SetLocationHistory.Pop();
-                path = previousLocation.Path;
-                pushNextLocation = false;
-            }
-
-            if (pushNextLocation)
-            {
-                var newPushPathInfo = GetNewPushPathInfo();
-                _SetLocationHistory.Push(newPushPathInfo);
+                case string originalPathSwitch when originalPathSwitch.Equals("-", StringComparison.OrdinalIgnoreCase):
+                    if (_setLocationHistory.UndoCount <= 0)
+                    {
+                        throw new InvalidOperationException(SessionStateStrings.LocationUndoStackIsEmpty);
+                    }
+                    path = _setLocationHistory.Undo(this.CurrentLocation).Path;
+                    break;
+                case string originalPathSwitch when originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
+                    if (_setLocationHistory.RedoCount <= 0)
+                    {
+                        throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
+                    }
+                    path = _setLocationHistory.Redo(this.CurrentLocation).Path;
+                    break;
+                default:
+                    var pushPathInfo = GetNewPushPathInfo();
+                    _setLocationHistory.Push(pushPathInfo);
+                    break;
             }
 
             PSDriveInfo previousWorkingDrive = CurrentDrive;
@@ -776,9 +779,9 @@ namespace System.Management.Automation
         #region push-Pop current working directory
 
         /// <summary>
-        /// A bounded stack for the location history of Set-Location
+        /// Location history for Set-Location that supports Undo/Redo using bounded stacks.
         /// </summary>
-        private BoundedStack<PathInfo> _SetLocationHistory;
+        private readonly HistoryStack<PathInfo> _setLocationHistory;
 
         /// <summary>
         /// A stack of the most recently pushed locations
@@ -816,13 +819,13 @@ namespace System.Management.Automation
             }
 
             // Push the directory/drive pair onto the stack
-            var newPushPathInfo = GetNewPushPathInfo();
-            locationStack.Push(newPushPathInfo);
+            var pushPathInfo = GetNewPushPathInfo();
+            locationStack.Push(pushPathInfo);
         }
 
         private PathInfo GetNewPushPathInfo()
         {
-             // Create a new instance of the directory/drive pair
+            // Create a new instance of the directory/drive pair
             ProviderInfo provider = CurrentDrive.Provider;
             string mshQualifiedPath =
                 LocationGlobber.GetMshQualifiedPath(CurrentDrive.CurrentLocation, CurrentDrive);
