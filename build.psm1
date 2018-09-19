@@ -1161,12 +1161,10 @@ function Start-PSPester {
     {
         if($Script:psNonAdminCred)
         {
-            $outputBufferFolder = Join-Path -Path $env:SystemDrive -ChildPath ([System.IO.Path]::GetRandomFileName())
-            $null = New-Item -ItemType Directory -Path $outputBufferFolder
-            icacls $outputBufferFolder /grant Everyone:F
+            $outputBufferFolder = New-SubFolderWithPermissions -Path $env:SystemDrive -ChildPath ([System.IO.Path]::GetRandomFileName())
             $outputBufferFilePath = Join-Path -Path $outputBufferFolder -ChildPath ([System.IO.Path]::GetRandomFileName())
             $null = New-Item -ItemType File -Path $outputBufferFilePath
-            icacls $outputBufferFilePath /grant Everyone:F
+            $null = icacls $outputBufferFilePath /grant Everyone:F
         }
         else
         {
@@ -1479,7 +1477,11 @@ function New-SubFolderWithPermissions
     $null = New-Item -ItemType Directory -Path $newFolderPath
 
     Write-Verbose "New-SubFolderWithPermissions - granting permssions: '$Permissions'" -Verbose
-    $null = icacls $newFolderPath /grant $Permissions
+    $acl = Get-Acl -Path $newFolderPath
+    $accessrule = New-Object System.Security.AccessControl.FileSystemAccessRule ('Everyone', 'FullControl', 'ContainerInherit, ObjectInherit', 'InheritOnly', 'Allow')
+    $acl.SetAccessRule($accessrule)
+    Set-Acl -Path $newFolderPath -AclObject $acl
+    #$null = icacls $newFolderPath /grant $Permissions
     return $newFolderPath
 }
 
