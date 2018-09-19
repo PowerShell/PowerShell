@@ -272,3 +272,43 @@ Describe "Circular nested module test" -tags "CI" {
         $m.NestedModules[0] | Should -Be $m
     }
 }
+
+Describe "Import-Module -Force behaviour" -Tag "CI" {
+    BeforeAll {
+        $moduleContent = 'function Test-One { return 101 }'
+        $newModuleContent = "function Test-One { return 93 }`nfunction Test-Two { return 14 }"
+        $modulePath = Join-Path $TestDrive 'ipmofTestModule.psm1'
+    }
+
+    AfterEach {
+        Get-Module 'ipmofTestModule' | Remove-Module
+    }
+
+    It "Loads new functions when Import-Module is called with -Force" {
+        Set-Content -Path $modulePath -Value $moduleContent
+        Import-Module $modulePath
+
+        Test-One | Should -Be 101
+        { Test-Two } | Should -Throw -ErrorId 'CommandNotFoundException'
+
+        Set-Content -Path $modulePath -Value $newModuleContent -Force
+        Import-Module -Force $modulePath
+
+        Test-One | Should -Be 93
+        Test-Two | Should -Be 14
+    }
+
+    It "Does not load new functions when Import-Module is called without -Force" {
+        Set-Content -Path $modulePath -Value $moduleContent
+        Import-Module $modulePath
+
+        Test-One | Should -Be 101
+        { Test-Two } | Should -Throw -ErrorId 'CommandNotFoundException'
+
+        Set-Content -Path $modulePath -Value $newModuleContent -Force
+        Import-Module $modulePath
+
+        Test-One | Should -Be 101
+        { Test-Two } | Should -Throw -ErrorId 'CommandNotFoundException'
+    }
+}
