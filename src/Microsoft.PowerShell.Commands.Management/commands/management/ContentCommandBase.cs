@@ -578,6 +578,15 @@ namespace Microsoft.PowerShell.Commands
 
                 ErrorRecord pathNotFoundErrorRecord = null;
 
+                // Throw error if path is a directory.
+                if (System.IO.Directory.Exists(path))
+                {
+                    string errMsg = StringUtil.Format(SessionStateStrings.GetContainerContentException, path);
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "GetContainerContentException", ErrorCategory.InvalidOperation, null);
+                    WriteError(error);
+                    return results;
+                }
+
                 try
                 {
                     // First resolve each of the paths

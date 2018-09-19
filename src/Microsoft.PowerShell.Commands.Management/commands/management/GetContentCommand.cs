@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(error);
                 return;
             }
-
+            
             if (TotalCount == 0)
             {
                 // Don't read anything
