@@ -1472,8 +1472,13 @@ function New-SubFolderWithPermissions
         $Permissions = 'Everyone:F'
     )
 
+    Write-Verbose "New-SubFolderWithPermissions - Path: '$Path', ChildPath: '$ChildPath'" -Verbose
     $newFolderPath = Join-Path -Path $Path -ChildPath $ChildPath
+
+    Write-Verbose "New-SubFolderWithPermissions - newFolderPath: '$newFolderPath'" -Verbose
     $null = New-Item -ItemType Directory -Path $newFolderPath
+
+    Write-Verbose "New-SubFolderWithPermissions - granting permssions: '$Permissions'" -Verbose
     icacls $newFolderPath /grant $Permissions
     return $newFolderPath
 }
