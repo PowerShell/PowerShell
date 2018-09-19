@@ -1428,8 +1428,10 @@ function script:Start-UnelevatedProcess
         Write-Log "Running with non-admin user..."
         $psi = [System.Diagnostics.ProcessStartInfo]::new($process)
         $psi.Arguments = "$arguments"
+        $netCred = $Script:psNonAdminCred.GetNetworkCredential()
         $psi.Password = $Script:psNonAdminCred.Password
-        $psi.UserName = $Script:psNonAdminCred.UserName
+        $psi.UserName = $netCred.UserName
+        $psi.Domain = $netCred.Domain
         # Shell execute must be false for both the password and environment
         $psi.UseShellExecute = $false
         $psi.WorkingDirectory = (Get-Location).ProviderPath
