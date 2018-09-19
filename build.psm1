@@ -1167,6 +1167,7 @@ function Start-PSPester {
             $outputBufferFilePath = Join-Path -Path $outputBufferFolder -ChildPath ([System.IO.Path]::GetRandomFileName())
             $null = New-Item -ItemType File -Path $outputBufferFilePath
             icacls $outputBufferFilePath /grant Everyone:F
+            icacls $env:TEMP /grant Everyone:F
         }
         else
         {
