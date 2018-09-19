@@ -1156,10 +1156,6 @@ function Start-PSPester {
     }
 
     $command += "Import-Module '$Pester'; "
-    if($IsWindows)
-    {
-        $command += '$env:TEMP=[System.IO.Path]::GetTempPath();'
-    }
 
     if ($Unelevate)
     {
@@ -1444,6 +1440,16 @@ function script:Start-UnelevatedProcess
             $psi.EnvironmentVariables[$_.Name]=$_.Value
         }
 
+        # Setup directories non-admin user can use
+        $nonAdminRoot = New-SubFolderWithPermissions -Path $env:TEMP -ChildPath ([System.IO.Path]::GetRandomFileName())
+        $nonAdminTemp = New-SubFolderWithPermissions -Path $nonAdminRoot -ChildPath 'temp'
+        $nonAdminAppData = New-SubFolderWithPermissions -Path $nonAdminRoot -ChildPath 'AppData'
+        $nonAdminAppDataLocal = New-SubFolderWithPermissions -Path $nonAdminAppData -ChildPath 'Local'
+        $nonAdminAppDataRemote = New-SubFolderWithPermissions -Path $nonAdminAppData -ChildPath 'Remote'
+        $psi.EnvironmentVariables['TEMP']=$nonAdminTemp
+        $psi.EnvironmentVariables['LOCALAPPDATA']=$nonAdminAppDataLocal
+        $psi.EnvironmentVariables['APPDATA']=$nonAdminAppDataRemote
+
         [System.Diagnostics.Process]::Start($psi)
 
         #Start-Process -FilePath $process -ArgumentList $arguments -Credential $Script:psNonAdminCred
@@ -1453,6 +1459,23 @@ function script:Start-UnelevatedProcess
         Write-Log "Using runas to launch unelevated..."
         runas.exe /trustlevel:0x20000 "$process $arguments"
     }
+}
+
+function New-SubFolderWithPermissions
+{
+    param(
+        [string]
+        $Path,
+        [string]
+        $ChildPath,
+        [string]
+        $Permissions = 'Everyone:F'
+    )
+
+    $newFolderPath = Join-Path -Path $ParentPath -ChildPath $FolderName
+    $null = New-Item -ItemType Directory -Path $newFolderPath
+    icacls $newFolderPath /grant $Permissions
+    return $newFolderPath
 }
 
 function Show-PSPesterError
