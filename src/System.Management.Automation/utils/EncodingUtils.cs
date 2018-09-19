@@ -91,15 +91,23 @@ namespace System.Management.Automation
     {
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
-            string encodingName = inputData as String;
-            Encoding foundEncoding;
-            if (encodingName != null && EncodingConversion.encodingMap.TryGetValue(encodingName, out foundEncoding))
+            switch (inputData)
             {
-                return foundEncoding;
+                case string stringName:
+                    if (EncodingConversion.encodingMap.TryGetValue(stringName, out Encoding foundEncoding))
+                    {
+                        return foundEncoding;
+                    }
+                    else
+                    {
+                        return System.Text.Encoding.GetEncoding(stringName);
+                    }
+                case int intName:
+                        return System.Text.Encoding.GetEncoding(intName);
             }
+
             return inputData;
         }
-
     }
 
     /// <summary>
