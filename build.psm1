@@ -1479,7 +1479,7 @@ function New-SubFolderWithPermissions
     $null = New-Item -ItemType Directory -Path $newFolderPath
 
     Write-Verbose "New-SubFolderWithPermissions - granting permssions: '$Permissions'" -Verbose
-    icacls $newFolderPath /grant $Permissions
+    $null = icacls $newFolderPath /grant $Permissions
     return $newFolderPath
 }
 
