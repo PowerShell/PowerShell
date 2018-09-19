@@ -150,12 +150,6 @@ There is also the community driven PowerShell Slack Team which you can sign up f
 
 If you have any problems building, please consult the developer [FAQ][].
 
-### Build status of master branches
-
-| AppVeyor (Windows)       | Azure (Windows)                          | Azure (Linux)                        | Azure (macOS)                        | Azure (spelling)                     |
-|:-------------------------|:-----------------------------------------|:-------------------------------------|:-------------------------------------|:-------------------------------------|
-| [![av-image][]][av-site] | [![az-windows-image][]][az-windows-site] | [![az-linux-image][]][az-linux-site] | [![az-macos-image][]][az-macos-site] | [![az-spell-image][]][az-spell-site] |
-
 ### Build status of nightly builds
 
 | AppVeyor (Windows)                       | Azure CI (Linux)                               | Azure CI (macOS)                               | Code Coverage Status     | Code Factor Status       |
