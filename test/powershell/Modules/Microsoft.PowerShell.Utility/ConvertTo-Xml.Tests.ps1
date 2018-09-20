@@ -59,19 +59,7 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
     }
 
     It "StopProcessing should work" {
-        try {
-            $ps = [PowerShell]::Create()
-            $null = $ps.AddScript({ Get-Process | ConvertTo-Xml -Depth 2 -Verbose })
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $true)
-            $null = $ps.BeginInvoke()
-            Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 50
-            $null = $ps.BeginStop($null, $null)
-            Wait-UntilTrue { $ps.InvocationStateInfo.State -eq "Stopped" } -IntervalInMilliseconds 50
-            $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
-        } finally {
-            $ps.Dispose()
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $false)
-        }
+        Test-Stopping { Get-Process | ConvertTo-Xml -Depth 2 -Verbose } -IntervalInMilliseconds 50
     }
 
     # these tests just cover aspects that aren't normally exercised being used as a cmdlet

@@ -30,6 +30,7 @@ FunctionsToExport = @(
         'Test-IsVstsLinux'
         'Test-IsVstsWindows'
         'Test-TesthookIsSet'
+        'Test-Stopping'
         'Wait-FileToBePresent'
         'Wait-UntilTrue'
     )

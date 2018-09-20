@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 function Wait-UntilTrue
 {
     [CmdletBinding()]
@@ -311,6 +312,31 @@ function Start-NativeExecution
         }
     } finally {
         $script:ErrorActionPreference = $backupEAP
+    }
+# Test if the scriptblock (cmdlet) can be stopped
+function Test-Stopping
+{
+    [CmdletBinding()]
+    param (
+        [ScriptBlock]$sb,
+        [int]$TimeoutInMilliseconds = 10000,
+        [int]$IntervalInMilliseconds = 1000
+        )
+
+    try {
+        $ps = [PowerShell]::Create()
+        $null = $ps.AddScript($sb)
+        Enable-Testhook 'ActivateSleepForStoppingTest'
+        $null = $ps.BeginInvoke()
+        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds
+        $null = $ps.BeginStop($null, $null)
+        Wait-UntilTrue { $ps.InvocationStateInfo.State -eq "Stopped" } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds
+
+        $ps.InvocationStateInfo.State | Should -Be "Stopped"
+
+    } finally {
+        $ps.Dispose()
+        Disable-Testhook 'ActivateSleepForStoppingTest'
     }
 }
 

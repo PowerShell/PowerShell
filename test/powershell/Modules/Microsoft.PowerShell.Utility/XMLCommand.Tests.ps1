@@ -53,36 +53,14 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
     }
 
     It "Export-Clixml StopProcessing should succeed" {
-        try {
-            $ps = [PowerShell]::Create()
-            $null = $ps.AddScript("1..10000 | Export-CliXml -Path $testfile -Verbose")
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $true)
-            $null = $ps.BeginInvoke()
-            Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 50
-            $null = $ps.BeginStop($null, $null)
-            Wait-UntilTrue { $ps.InvocationStateInfo.State -eq "Stopped" } -IntervalInMilliseconds 50
-            $ps.InvocationStateInfo.State | Should -Be "Stopped"
-        } finally {
-            $ps.Dispose()
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $false)
-        }
+        $sb = [scriptblock]::Create("1..10000 | Export-CliXml -Path $testfile -Verbose")
+        Test-Stopping $sb -IntervalInMilliseconds 50
     }
 
     It "Import-Clixml StopProcessing should succeed" {
-        try {
-            1..10000 | Export-Clixml -Path $testfile
-            $ps = [PowerShell]::Create()
-            $null = $ps.AddScript("Import-CliXml -Path $testfile -Verbose")
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $true)
-            $null = $ps.BeginInvoke()
-            Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 20
-            $null = $ps.BeginStop($null, $null)
-            Wait-UntilTrue { $ps.InvocationStateInfo.State -eq "Stopped" } -IntervalInMilliseconds 50
-            $ps.InvocationStateInfo.State | Should -Be "Stopped"
-        } finally {
-            $ps.Dispose()
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $false)
-        }
+        1..10000 | Export-Clixml -Path $testfile
+        $sb = [scriptblock]::Create("Import-CliXml -Path $testfile -Verbose")
+        Test-Stopping $sb -IntervalInMilliseconds 20
     }
 
     It "Export-Clixml using -Depth should work" {

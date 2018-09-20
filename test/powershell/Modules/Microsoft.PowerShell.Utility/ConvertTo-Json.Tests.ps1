@@ -22,26 +22,12 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
 	It "StopProcessing should succeed" {
-        try {
-            $ps = [PowerShell]::Create()
-            $null = $ps.AddScript({
-                $obj = [PSCustomObject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
-                $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
-                1..100 | Foreach-Object { $obj } | ConvertTo-Json -Depth 10 -Verbose
-                # the conversion is expected to take some time, this throw is in case it doesn't
-                throw "Should not have thrown exception"
-            })
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $true)
-            $null = $ps.BeginInvoke()
-            # wait for verbose message from ConvertTo-Json to ensure cmdlet is processing
-            Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 50
-            $null = $ps.BeginStop($null, $null)
-            Wait-UntilTrue { $ps.InvocationStateInfo.State -eq "Stopped" } -IntervalInMilliseconds 50
-            $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
-        } finally {
-            $ps.Dispose()
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $false)
+        $sb = {
+            $obj = [PSCustomObject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
+            $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
+            1..100 | Foreach-Object { $obj } | ConvertTo-Json -Depth 10 -Verbose
         }
+        Test-Stopping $sb -IntervalInMilliseconds 50
     }
 
     It "The result string is packed in an array symbols when AsArray parameter is used." {
