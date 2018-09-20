@@ -109,6 +109,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (InternalTestHooks.ActivateSleepForStoppingTest)
+            {
+                WriteVerbose("ConvertTo-Json started");
+                System.Threading.Thread.Sleep(50);
+            }
+
             if (InputObject != null)
             {
                 _inputObjects.Add(InputObject);

@@ -123,8 +123,6 @@ namespace Microsoft.PowerShell.Commands
         BeginProcessing()
         {
             CreateFileStream();
-
-            WriteVerbose("Export-Clixml started");
         }
 
         /// <summary>
@@ -133,6 +131,12 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
+            if (InternalTestHooks.ActivateSleepForStoppingTest)
+            {
+                WriteVerbose("Import-Clixml started");
+                System.Threading.Thread.Sleep(50);
+            }
+
             if (_serializer != null)
             {
                 _serializer.Serialize(InputObject);
@@ -328,16 +332,6 @@ namespace Microsoft.PowerShell.Commands
         private ImportXmlHelper _helper;
 
         /// <summary>
-        /// BeginProcessing override.
-        /// </summary>
-        protected override
-        void
-        BeginProcessing()
-        {
-            WriteVerbose("Import-Clixml started");
-        }
-
-        /// <summary>
         /// ProcessRecord overload.
         /// </summary>
         protected override void ProcessRecord()
@@ -346,6 +340,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string path in Path)
                 {
+                    if (InternalTestHooks.ActivateSleepForStoppingTest)
+                    {
+                        WriteVerbose("Import-Clixml started");
+                        System.Threading.Thread.Sleep(50);
+                    }
+
                     _helper = new ImportXmlHelper(path, this, _isLiteralPath);
                     _helper.Import();
                 }
@@ -428,8 +428,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject(string.Format(CultureInfo.InvariantCulture, "<?xml version=\"1.0\" encoding=\"{0}\"?>", Encoding.UTF8.WebName));
                 WriteObject("<Objects>");
             }
-
-            WriteVerbose("ConvertTo-Xml started");
         }
 
         /// <summary>
@@ -437,6 +435,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (InternalTestHooks.ActivateSleepForStoppingTest)
+            {
+                WriteVerbose("ConvertTo-Xml started");
+                System.Threading.Thread.Sleep(50);
+            }
+
             if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
             {
                 CreateMemoryStream();

@@ -53,30 +53,34 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
     }
 
     It "Export-Clixml StopProcessing should succeed" {
-        $ps = [PowerShell]::Create()
-        $null = $ps.AddScript("1..10")
-        $null = $ps.AddCommand("foreach-object")
-        $null = $ps.AddParameter("Process", { $_; start-sleep 1 })
-        $null = $ps.AddCommand("Export-CliXml")
-        $null = $ps.AddParameter("Path", $testfile)
-        $null = $ps.AddParameter("Verbose")
-        $null = $ps.BeginInvoke()
-        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 50
-        $null = $ps.Stop()
-        $ps.InvocationStateInfo.State | Should -Be "Stopped"
-        $ps.Dispose()
+        try {
+            $ps = [PowerShell]::Create()
+            $null = $ps.AddScript("1..10000 | Export-CliXml -Path $testfile -Verbose")
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $true)
+            $null = $ps.BeginInvoke()
+            Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 50
+            $null = $ps.Stop()
+            $ps.InvocationStateInfo.State | Should -Be "Stopped"
+        } finally {
+            $ps.Dispose()
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $false)
+        }
     }
 
     It "Import-Clixml StopProcessing should succeed" {
-        1..50000 | Export-Clixml -Path $testfile
-        $ps = [PowerShell]::Create()
-        $null = $ps.AddCommand("Import-CliXml")
-        $null = $ps.AddParameter("Path", $testfile)
-        $null = $ps.AddParameter("Verbose")
-        $null = $ps.BeginInvoke()
-        Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 20
-        $null = $ps.Stop()
-        $ps.InvocationStateInfo.State | Should -Be "Stopped"
+        try {
+            1..10000 | Export-Clixml -Path $testfile
+            $ps = [PowerShell]::Create()
+            $null = $ps.AddScript("Import-CliXml -Path $testfile -Verbose")
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $true)
+            $null = $ps.BeginInvoke()
+            Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 20
+            $null = $ps.Stop()
+            $ps.InvocationStateInfo.State | Should -Be "Stopped"
+        } finally {
+            $ps.Dispose()
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $false)
+        }
     }
 
     It "Export-Clixml using -Depth should work" {
