@@ -2757,13 +2757,14 @@ namespace System.Management.Automation
 
             if (type.IsByRef)
             {
-                var elementType = type.GetElementType();
+                var elementType = GetPSMethodProjectedType(type.GetElementType());
                 type = isOut ? typeof(PSOutParameter<>).MakeGenericType(elementType)
                              : typeof(PSReference<>).MakeGenericType(elementType);
             }
             else if (type.IsPointer)
             {
-                type = typeof(PSPointer<>).MakeGenericType(type.GetElementType());
+                var elementType = GetPSMethodProjectedType(type.GetElementType());
+                type = typeof(PSPointer<>).MakeGenericType(elementType);
             }
 
             return type;
