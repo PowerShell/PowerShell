@@ -59,7 +59,8 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $true)
             $null = $ps.BeginInvoke()
             Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 50
-            $null = $ps.Stop()
+            $null = $ps.BeginStop($null, $null)
+            Wait-UntilTrue { $ps.InvocationStateInfo.State -eq "Stopped" } -IntervalInMilliseconds 50
             $ps.InvocationStateInfo.State | Should -Be "Stopped"
         } finally {
             $ps.Dispose()
@@ -75,7 +76,8 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ActivateSleepForStoppingTest', $true)
             $null = $ps.BeginInvoke()
             Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 20
-            $null = $ps.Stop()
+            $null = $ps.BeginStop($null, $null)
+            Wait-UntilTrue { $ps.InvocationStateInfo.State -eq "Stopped" } -IntervalInMilliseconds 50
             $ps.InvocationStateInfo.State | Should -Be "Stopped"
         } finally {
             $ps.Dispose()

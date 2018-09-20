@@ -35,7 +35,8 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $null = $ps.BeginInvoke()
             # wait for verbose message from ConvertTo-Json to ensure cmdlet is processing
             Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -IntervalInMilliseconds 50
-            $null = $ps.Stop()
+            $null = $ps.BeginStop($null, $null)
+            Wait-UntilTrue { $ps.InvocationStateInfo.State -eq "Stopped" } -IntervalInMilliseconds 50
             $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
         } finally {
             $ps.Dispose()
