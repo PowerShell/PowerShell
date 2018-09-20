@@ -1366,6 +1366,7 @@ namespace System.Management.Automation.Internal
 {
     /// <summary>This class is used for internal test purposes.</summary>
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "Needed Internal use only")]
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed.")]
     public static class InternalTestHooks
     {
         internal static bool BypassGroupPolicyCaching;
