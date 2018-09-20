@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (InternalTestHooks.ActivateSleepForStoppingTest)
             {
-                WriteVerbose("Import-Clixml started");
+                WriteVerbose("Export-Clixml started");
                 System.Threading.Thread.Sleep(50);
             }
 

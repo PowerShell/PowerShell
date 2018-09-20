@@ -59,7 +59,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 
     It "Import-Clixml StopProcessing should succeed" {
         1..10000 | Export-Clixml -Path $testfile
-        $sb = [scriptblock]::Create("Import-CliXml -Path $testfile -Verbose")
+        $sb = [scriptblock]::Create("Import-CliXml -Path $testfile,$testfile,$testfile,$testfile,$testfile -Verbose")
         Test-Stopping $sb -IntervalInMilliseconds 20
     }
 
