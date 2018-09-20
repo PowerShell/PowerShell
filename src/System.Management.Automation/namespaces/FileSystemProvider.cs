@@ -6366,7 +6366,6 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                // Throw error if path is a directory.
                 if (Directory.Exists(path))
                 {
                     string errMsg = StringUtil.Format(SessionStateStrings.GetContainerContentException, path);
@@ -6377,7 +6376,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Users can't both read as bytes, and specify a delimiter
                 if (delimiterSpecified)
-                {                    
+                {
                     if (usingByteEncoding)
                     {
                         Exception e =
@@ -6523,10 +6522,9 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                // Throw error if path is a directory.
                 if (Directory.Exists(path))
                 {
-                    string errMsg = StringUtil.Format(SessionStateStrings.GetContainerContentException, path);
+                    string errMsg = StringUtil.Format(SessionStateStrings.WriteContainerContentException, path);
                     ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "WriteContainerContentException", ErrorCategory.InvalidOperation, null);
                     WriteError(error);
                     return stream;

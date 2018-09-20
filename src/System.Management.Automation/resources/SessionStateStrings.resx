@@ -281,7 +281,10 @@
   </data>
   <data name="GetContainerContentException" xml:space="preserve">
     <value>Unable to access '{0}' contents as it is a directory. Please use 'Get-ChildItem' instead.</value>
-  </data>  
+  </data>
+  <data name="WriteContainerContentException" xml:space="preserve">
+    <value>Unable to access '{0}' contents as it is a directory.</value>
+  </data>   
   <data name="LocationUndoStackIsEmpty" xml:space="preserve">
     <value>There is no location history left to navigate backwards.</value>
   </data>
