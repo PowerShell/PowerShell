@@ -9,7 +9,7 @@ $repoRootPathFound = $false
 Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
     BeforeAll {
         # Skip if not windows, We don't need these tests to run on linux (the tests run fine in travis-ci)
-        $skip = !$IsWindows
+        $skip = $false
         if ( !$skip )
         {
             $NpmInstalled = "not installed"
@@ -25,7 +25,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                     -NoNewWindow
                 Start-Process `
                     -FilePath "npm" `
-                    -ArgumentList @('install','-g','gulp','--silent') `
+                    -ArgumentList @('install','-g','gulp@4.0.0','--silent') `
                     -Wait `
                     -WorkingDirectory $PSScriptRoot `
                     -NoNewWindow
