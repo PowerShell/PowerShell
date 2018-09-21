@@ -187,9 +187,6 @@
       <Component Id="cmp2B60F4AC2E8D95A558C3E121A6252D37" Guid="{C361734D-C0E0-47E2-B867-82878D0F0E4C}">
         <File Id="fil8E8E3BF1C97D92DFEB4FC97D778F238F" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Runtime.CompilerServices.VisualC.dll" />
       </Component>
-      <Component Id="cmpf65fc69858294501b4f61951193b392c" Guid="{09C9310D-56AD-4F7A-90C8-DF0F7E8A7251}">
-        <File Id="filDDE80F6ACEC54B56BA33E587A072DE27" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26725.06.dll" />
-      </Component>
       <Component Id="cmp5977DC14DE00AD6E597A2FEBB8C3B58B" Guid="{8E01E3C2-0596-46D8-95DD-BCA308A88941}">
         <File Id="filEE7925E7A712381B024DAE39831F7AEB" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Threading.dll" />
       </Component>
@@ -483,9 +480,6 @@
       </Component>
       <Component Id="cmp644DFED4A59040568D091F0EA5F691E6" Guid="{C63BB7F7-682A-4EF4-AEFE-5A7BE5475AAA}">
         <File Id="fil69EA4231E04E7B76EE0676A3C7EB4F91" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Security.Cryptography.Pkcs.dll" />
-      </Component>
-      <Component Id="cmp47ff9204b9544467a6f71e951716f8a4" Guid="{8B8505AA-27B2-4244-A1C3-1E5952D64B64}">
-        <File Id="fil87A274531F374FB186928D7A3B28F54F" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26725.06.dll" />
       </Component>
       <Component Id="cmpCC989C2FC3319628C5A0897A9CDB4C7D" Guid="{2FC1414C-925B-4653-B376-0DC7114DAA4C}">
         <File Id="fil2FBB26045517B5A73BF6024C55539694" KeyPath="yes" Source="$(env.ProductSourcePath)\api-ms-win-core-processthreads-l1-1-0.dll" />
@@ -2023,6 +2017,12 @@
           <File Id="fil3779A5AC06BDD2A3AB680DBA83FEAFD1" KeyPath="yes" Source="$(env.ProductSourcePath)\zh-Hant\Microsoft.CodeAnalysis.resources.dll" />
         </Component>
       </Directory>
+      <Component Id="cmp235BDA01BE4144BE9F2BFBA3AE1A00CD" Guid="{03a98239-8d0d-4ee9-82d9-6466fc763c2e}">
+        <File Id="fil4233B53B90A84FC88FA51A8B976747FB" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26814.03.dll" />
+      </Component>
+      <Component Id="cmp5BCFD9C11FB34654B14B795494C7B51D" Guid="{0ebb07c1-0089-4639-85c2-eaed0acffdb2}">
+        <File Id="fil8EBB2AB7056C492495580A5B63F35348" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26814.03.dll" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -2089,7 +2089,6 @@
       <ComponentRef Id="cmp23FD946C6681D6747F1B638ECBE8C8BC" />
       <ComponentRef Id="cmp4B935A8190C2D7D1F0E0DB9E5AAD7F30" />
       <ComponentRef Id="cmp2B60F4AC2E8D95A558C3E121A6252D37" />
-      <ComponentRef Id="cmpf65fc69858294501b4f61951193b392c" />
       <ComponentRef Id="cmp5977DC14DE00AD6E597A2FEBB8C3B58B" />
       <ComponentRef Id="cmp689C7CE34E0246D8B56D370E898354CE" />
       <ComponentRef Id="cmp634E012FEF6122735D91DE4B1BCC1116" />
@@ -2188,7 +2187,6 @@
       <ComponentRef Id="cmpE66ABF016916C709133CA0DB9366469F" />
       <ComponentRef Id="cmpECCD26D8C540FA35F5C633B318EB742E" />
       <ComponentRef Id="cmp644DFED4A59040568D091F0EA5F691E6" />
-      <ComponentRef Id="cmp47ff9204b9544467a6f71e951716f8a4" />
       <ComponentRef Id="cmpCC989C2FC3319628C5A0897A9CDB4C7D" />
       <ComponentRef Id="cmpC9085D713FC071587C61ACFE51384BDD" />
       <ComponentRef Id="cmpB942FEF3BC11F835DF30CDDD845486AD" />
@@ -2672,6 +2670,8 @@
       <ComponentRef Id="cmpC0582B8F392548248FA3DE3080069F68" />
       <ComponentRef Id="cmp3D4940617EE5426384A6BF086E79CC63" />
       <ComponentRef Id="cmpF13D9769FBE945B09326776DC9877740" />
+      <ComponentRef Id="cmp235BDA01BE4144BE9F2BFBA3AE1A00CD" />
+      <ComponentRef Id="cmp5BCFD9C11FB34654B14B795494C7B51D" />
     </ComponentGroup>
   </Fragment>
 </Wix>
