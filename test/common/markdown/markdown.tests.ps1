@@ -9,7 +9,7 @@ $repoRootPathFound = $false
 Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
     BeforeAll {
         # Skip if not windows, We don't need these tests to run on linux (the tests run fine in travis-ci)
-        $skip = $false
+        $skip = !$IsWindows
         if ( !$skip )
         {
             $NpmInstalled = "not installed"
