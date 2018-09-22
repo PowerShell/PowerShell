@@ -95,13 +95,6 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 } -VerboseOutputOnError
 
         }
-        catch
-        {
-            Write-Warning -Message ("Unable to run gulp to test markdown files. Please " + `
-                                    "be sure that you have installed nodejs and have " + `
-                                    "run 'npm install -g gulp' in order to have this " + `
-                                    "text execute.")
-        }
         finally
         {
             Pop-Location
