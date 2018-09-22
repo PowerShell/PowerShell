@@ -23,6 +23,7 @@ FunctionsToExport = @(
         'Get-RandomFileName'
         'Send-VstsLogFile'
         'Set-TesthookResult'
+        'Start-NativeExecution'
         'Test-IsElevated'
         'Test-IsRoot'
         'Test-IsVstsLinux'
