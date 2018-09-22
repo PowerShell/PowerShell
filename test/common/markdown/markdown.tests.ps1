@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
 $moduleRootFilePath = Split-Path -Path $PSScriptRoot -Parent
 
 # Identify the repository root path of the resource module
@@ -40,6 +42,9 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 Write-Warning "Node and npm are required to run this test"
                 $skip = $true
             }
+
+            $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
+            Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
         }
     }
 
@@ -88,11 +93,13 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 './tools/*.md'
             )
             $filter = ($docsToTest -join ',')
+
+            # Gulp 4 beta is returning non-zero exit code even when there is not an error
             Start-NativeExecution {
                     &"gulp" test-mdsyntax --silent `
                         --rootpath $repoRootPath `
                         --filter $filter
-                } -VerboseOutputOnError
+                } -VerboseOutputOnError -IgnoreExitcode
 
         }
         finally
@@ -100,9 +107,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             Pop-Location
         }
 
-        $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
-
-        $mdIssuesPath | should exist
+        $mdIssuesPath | Should -Exist
 
         [string[]] $markdownErrors = Get-Content -Path $mdIssuesPath
         Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
