@@ -88,9 +88,11 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 './tools/*.md'
             )
             $filter = ($docsToTest -join ',')
-            &"gulp" test-mdsyntax --silent `
-                --rootpath $repoRootPath `
-                --filter $filter
+            Start-NativeExecution {
+                    &"gulp" test-mdsyntax --silent `
+                        --rootpath $repoRootPath `
+                        --filter $filter
+                } -VerboseOutputOnError
 
         }
         catch
@@ -105,13 +107,11 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             Pop-Location
         }
 
-        $LASTEXITCODE | Should beexactly 0
-
         $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
 
         $mdIssuesPath | should exist
 
-        [string] $markdownErrors = Get-Content -Path $mdIssuesPath
+        [string[]] $markdownErrors = Get-Content -Path $mdIssuesPath
         Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
 
         if ($markdownErrors -ne "--EMPTY--")
@@ -119,6 +119,6 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             $markdownErrors += ' (See https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md for an explanation of the error codes)'
         }
 
-        $markdownErrors | Should BeExactly "--EMPTY--"
+        $markdownErrors -join "`n" | Should -BeExactly "--EMPTY--"
     }
 }
