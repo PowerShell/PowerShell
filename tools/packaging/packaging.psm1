@@ -879,7 +879,7 @@ function New-MacOsDistributionPackage
     $resourcesDir = Join-Path -path $tempDir -childPath 'resources'
     New-Item -ItemType Directory -Path $resourcesDir -Force > $null
     #Copy background file to temp directory
-    $backgroundFile = Join-Path $PSScriptRoot "/../../assets/macDialog.png"
+    $backgroundFile = "$RepoRoot/assets/macDialog.png"
     Copy-Item -Path $backgroundFile -Destination $resourcesDir
     # Move the current package to the temp directory
     $tempPackagePath = Join-Path -path $tempDir -ChildPath $packageName
@@ -1194,7 +1194,7 @@ function New-ManGzip
     )
 
     # run ronn to convert man page to roff
-    $RonnFile = Join-Path $PSScriptRoot "/../../assets/pwsh.1.ronn"
+    $RonnFile = "$RepoRoot/assets/pwsh.1.ronn"
     if ($IsPreview.IsPresent)
     {
         $newRonnFile = $RonnFile -replace 'pwsh', 'pwsh-preview'
@@ -1521,7 +1521,7 @@ function New-UnifiedNugetPackage
     {
 
         $refBinPath = New-TempFolder
-        $SnkFilePath = Join-Path $PSScriptRoot -ChildPath '../../src/signing/visualstudiopublic.snk' -Resolve
+        $SnkFilePath = (Resolve-Path "$RepoRoot/src/signing/visualstudiopublic.snk").Path
 
         New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
         $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
