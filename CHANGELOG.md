@@ -1344,10 +1344,12 @@ For more information on this, we invite you to read [this blog post explaining P
  Even if the module isn't owned by the PowerShell Team, please tell us what works and what doesn't by leaving a comment in [issue #4062][issue-4062]! (#3981)
 - Enhance type inference in tab completion based on runtime variable values. (#2744) (Thanks to @powercode!)
  This enables tab completion in situations like:
+
  ```powershell
  $p = Get-Process
  $p | Foreach-Object Prio<tab>
  ```
+
 - Add `GitCommitId` to PowerShell Core banner.
  Now you don't have to run `$PSVersionTable` as soon as you start PowerShell to get the version! (#3916) (Thanks to @iSazonov!)
 - Fix a bug in tab completion to make `native.exe --<tab>` call into native completer. (#3633) (Thanks to @powercode!)
@@ -1530,9 +1532,9 @@ We made a number of fixes to the progress bar rendering and the `ProgressRecord`
 - Add the `-TimeOut` parameter to `Test-Connection`. (#2492)
 - Add `ShouldProcess` support to `New-FileCatalog` and `Test-FileCatalog` (fixes `-WhatIf` and `-Confirm`). (#3074) (Thanks to @iSazonov!)
 - Fix `Test-ModuleManifest` to normalize paths correctly before validating.
-  - This fixes some problems when using `Publish-Module` on non-Windows platforms. (#3097)
+    - This fixes some problems when using `Publish-Module` on non-Windows platforms. (#3097)
 - Remove the `AliasProperty "Count"` defined for `System.Array`.
-  - This removes the extraneous `Count` property on some `ConvertFrom-Json` output. (#3231) (Thanks to @PetSerAl!)
+    - This removes the extraneous `Count` property on some `ConvertFrom-Json` output. (#3231) (Thanks to @PetSerAl!)
 - Port `Import-PowerShellDatafile` from PowerShell script to C#. (#2750) (Thanks to @powercode!)
 - Add `-CustomMethod` parameter to web cmdlets to allow for non-standard method verbs. (#3142) (Thanks to @Lee303!)
 - Fix web cmdlets to include the HTTP response in the exception when the response status code is not success. (#3201)
