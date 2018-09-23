@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSetPingContinues)]
         [Parameter(ParameterSetName = ParameterSetTraceRoute)]
         [ValidateRange(0, sMaxHops)]
-        [Alias("Ttl","TimeToLive","Hops")]
+        [Alias("Ttl", "TimeToLive", "Hops")]
         public int MaxHops { get; set; } = sMaxHops;
 
         private const int sMaxHops = 128;
