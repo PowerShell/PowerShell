@@ -103,12 +103,8 @@ namespace System.Management.Automation
         /// <summary>
         /// All property member types
         /// </summary>
-<<<<<<< HEAD
         Properties = AliasProperty | CodeProperty | Property | NoteProperty | ScriptProperty | InferredProperty,
-=======
-        Properties = AliasProperty | CodeProperty | Property | NoteProperty | ScriptProperty,
 
->>>>>>> [Feature] Cleanup of MshMemberInfo.cs
         /// <summary>
         /// All method member types
         /// </summary>
