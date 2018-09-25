@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 $Environment = Get-EnvironmentInformation
+$RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
@@ -173,13 +175,13 @@ function Start-PSPackage {
 
         # Use Git tag if not given a version
         if (-not $Version) {
-            $Version = (git --git-dir="$PSScriptRoot/../../.git" describe) -Replace '^v'
+            $Version = (git --git-dir="$RepoRoot/.git" describe) -Replace '^v'
         }
 
         $Source = Split-Path -Path $Script:Options.Output -Parent
 
         # Copy the ThirdPartyNotices.txt so it's part of the package
-        Copy-Item "$PSScriptRoot/../../ThirdPartyNotices.txt" -Destination $Source -Force
+        Copy-Item "$RepoRoot/ThirdPartyNotices.txt" -Destination $Source -Force
 
         # If building a symbols package, we add a zip of the parent to publish
         if ($IncludeSymbols.IsPresent)
@@ -302,8 +304,8 @@ function Start-PSPackage {
                     ProductNameSuffix = $NameSuffix
                     ProductSourcePath = $Source
                     ProductVersion = $Version
-                    AssetsPath = "$PSScriptRoot\..\..\assets"
-                    LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf"
+                    AssetsPath = "$RepoRoot\assets"
+                    LicenseFilePath = "$RepoRoot\assets\license.rtf"
                     # Product Code needs to be unique for every PowerShell version since it is a unique identifier for the particular product release
                     ProductCode = New-Guid
                     ProductTargetArchitecture = $TargetArchitecture
@@ -877,7 +879,7 @@ function New-MacOsDistributionPackage
     $resourcesDir = Join-Path -path $tempDir -childPath 'resources'
     New-Item -ItemType Directory -Path $resourcesDir -Force > $null
     #Copy background file to temp directory
-    $backgroundFile = Join-Path $PSScriptRoot "/../../assets/macDialog.png"
+    $backgroundFile = "$RepoRoot/assets/macDialog.png"
     Copy-Item -Path $backgroundFile -Destination $resourcesDir
     # Move the current package to the temp directory
     $tempPackagePath = Join-Path -path $tempDir -ChildPath $packageName
@@ -1192,7 +1194,7 @@ function New-ManGzip
     )
 
     # run ronn to convert man page to roff
-    $RonnFile = Join-Path $PSScriptRoot "/../../assets/pwsh.1.ronn"
+    $RonnFile = "$RepoRoot/assets/pwsh.1.ronn"
     if ($IsPreview.IsPresent)
     {
         $newRonnFile = $RonnFile -replace 'pwsh', 'pwsh-preview'
@@ -1261,11 +1263,11 @@ function New-MacOSLauncher
     # Define icns file information.
     if ($IsPreview)
     {
-        $iconfile = "$PSScriptRoot/../../assets/Powershell-preview.icns"
+        $iconfile = "$RepoRoot/assets/Powershell-preview.icns"
     }
     else
     {
-        $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+        $iconfile = "$RepoRoot/assets/Powershell.icns"
     }
     $iconfilebase = (Get-Item -Path $iconfile).BaseName
 
@@ -1519,7 +1521,7 @@ function New-UnifiedNugetPackage
     {
 
         $refBinPath = New-TempFolder
-        $SnkFilePath = Join-Path $PSScriptRoot -ChildPath '../../src/signing/visualstudiopublic.snk' -Resolve
+        $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
 
         New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
         $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
@@ -1679,7 +1681,7 @@ function Get-ProjectPackageInformation
         $ProjectName
     )
 
-    $csproj = "$PSScriptRoot\..\..\src\$ProjectName\$ProjectName.csproj"
+    $csproj = "$RepoRoot\src\$ProjectName\$ProjectName.csproj"
     [xml] $csprojXml = (Get-content -Raw -Path $csproj)
 
     # get the package references
@@ -1743,7 +1745,7 @@ function New-NuSpec {
     $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion
     $nuspecObj = [xml] $nuspecTemplate
 
-    if ( ($Dependency -ne $null) -and $Dependency.Count -gt 0 ) {
+    if ( ($null -ne $Dependency) -and $Dependency.Count -gt 0 ) {
 
         foreach($dep in $Dependency) {
             # Each item is [tuple[ [tuple[string, string]], [tuple[string, string]] ]
@@ -1861,11 +1863,11 @@ function New-ReferenceAssembly
     $reader = [System.IO.File]::OpenText($smaCs)
     $writer = [System.IO.File]::CreateText($smaCsFiltered)
 
-    while(($line = $reader.ReadLine()) -ne $null)
+    while($null -ne ($line = $reader.ReadLine()))
     {
         $match = $line | Select-String -Pattern $patternsToRemove -SimpleMatch
 
-        if ($match -ne $null)
+        if ($null -ne $match)
         {
             $writer.WriteLine("//$line")
         }
@@ -1874,11 +1876,11 @@ function New-ReferenceAssembly
             $writer.WriteLine($line)
         }
     }
-    if ($reader -ne $null)
+    if ($null -ne $reader)
     {
         $reader.Close()
     }
-    if ($writer -ne $null)
+    if ($null -ne $writer)
     {
         $writer.Close()
     }
@@ -1905,7 +1907,7 @@ function New-ReferenceAssembly
 
         $refBinPath = Join-Path $smaProjectFolder 'bin/Release/netstandard2.0/System.Management.Automation.dll'
 
-        if ($refBinPath -eq $null)
+        if ($null -eq $refBinPath)
         {
             throw "Reference assembly was not built."
         }
@@ -1956,7 +1958,7 @@ function New-NugetPackage
 
     $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
 
-    if ($nuget -eq $null)
+    if ($null -eq $nuget)
     {
         throw 'nuget application is not available in PATH'
     }
@@ -1999,7 +2001,7 @@ function Publish-NugetToMyGet
 
     $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
 
-    if ($nuget -eq $null)
+    if ($null -eq $nuget)
     {
         throw 'nuget application is not available in PATH'
     }
@@ -2321,7 +2323,7 @@ function New-MSIPatch
         [Parameter(HelpMessage='Path to the patch template WXS.  Usually you do not need to specify this')]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $PatchWxsPath = "$PSScriptRoot\..\..\assets\patch-template.wxs",
+        [string] $PatchWxsPath = "$RepoRoot\assets\patch-template.wxs",
 
         [Parameter(HelpMessage='Produce a delta patch instead of a full patch.  Usually not worth it.')]
         [switch] $Delta
@@ -2361,7 +2363,7 @@ function New-MSIPatch
     Copy-Item -Path $BaselineWixPdbPath -Destination $wixBaselineOriginalPdbPath -Force
     Copy-Item -Path $PatchWixPdbPath -Destination $wixPatchOriginalPdbPath -Force
 
-    [xml] $filesAssetXml = Get-Content -Raw -Path "$PSScriptRoot\..\..\assets\files.wxs"
+    [xml] $filesAssetXml = Get-Content -Raw -Path "$RepoRoot\assets\files.wxs"
     [xml] $patchTemplateXml = Get-Content -Raw -Path $PatchWxsPath
 
     # Update the patch version
@@ -2457,22 +2459,22 @@ function New-MSIPackage
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $ProductWxsPath = "$PSScriptRoot\..\..\assets\Product.wxs",
+        [string] $ProductWxsPath = "$RepoRoot\assets\Product.wxs",
 
         # File describing the MSI file components
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$PSScriptRoot\..\..\assets\Files.wxs",
+        [string] $FilesWxsPath = "$RepoRoot\assets\Files.wxs",
 
         # Path to Assets folder containing artifacts such as icons, images
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $AssetsPath = "$PSScriptRoot\..\..\assets",
+        [string] $AssetsPath = "$RepoRoot\assets",
 
         # Path to license.rtf file - for the EULA
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf",
+        [string] $LicenseFilePath = "$RepoRoot\assets\license.rtf",
 
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
@@ -2607,7 +2609,7 @@ function Test-FileWxs
         # File describing the MSI file components from the asset folder
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$PSScriptRoot\..\..\assets\Files.wxs",
+        [string] $FilesWxsPath = "$RepoRoot\assets\Files.wxs",
 
         # File describing the MSI file components generated by heat
         [ValidateNotNullOrEmpty()]
@@ -2695,13 +2697,14 @@ function Test-FileWxs
 
     if (!$passed)
     {
-        $newXmlFileName = Join-Path -Path $env:TEMP -ChildPath ([System.io.path]::GetRandomFileName() + '.xml')
+        $newXmlFileName = Join-Path -Path $env:TEMP -ChildPath ([System.io.path]::GetRandomFileName() + '.wxs')
         $newFilesAssetXml.Save($newXmlFileName)
         $newXml = Get-Content -raw $newXmlFileName
         $newXml = $newXml -replace 'amd64', '$(var.FileArchitecture)'
         $newXml = $newXml -replace 'x86', '$(var.FileArchitecture)'
         $newXml | Out-File -FilePath $newXmlFileName -Encoding ascii
-        Write-Log -message "Update xml saved to $newXmlFileName"
+        Write-Log -message "Updated xml saved to $newXmlFileName."
+        Write-Log -message "If component files were intentionally changed, such as due to moving to a newer .NET Core runtime, update '$FilesWxsPath' with the content from '$newXmlFileName'."
         if ($env:appveyor)
         {
             try
