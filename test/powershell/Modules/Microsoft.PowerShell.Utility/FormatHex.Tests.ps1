@@ -423,9 +423,71 @@ Describe "FormatHex" -tags "CI" {
             $result.ToString() | Should -MatchExactly "00000000000000000000   61 61 61 61 61 61 61 61 61 61 61 61 61 61 61 61  aaaaaaaaaaaaaaaa$($newline)00000000000000000010   61 61 61 61 61 61 61 61 61 61 61 61 61 61        aaaaaaaaaaaaaa  "
         }
 
-        It "Validate that files do not have buffer underrun problems 'Format-Hex -path `$InputFile4'" {
+        It "Validate that files do not have buffer underrun problems 'Format-Hex -Path `$InputFile4'" {
 
-            $result = Format-Hex -path $InputFile4
+            $result = Format-Hex -Path $InputFile4
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.Count | Should -Be 3
+            $result[0].ToString() | Should -MatchExactly "00000000000000000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
+            $result[1].ToString() | Should -MatchExactly "00000000000000000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
+            $result[2].ToString() | Should -MatchExactly "00000000000000000020   65 6E 74                                         ent             "
+        }
+    }
+
+    Context "Count and Offset parameters" {
+        It "Count = length" {
+
+            $result = Format-Hex -Path $InputFile4 -Count $inputText4.Length
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.Count | Should -Be 3
+            $result[0].ToString() | Should -MatchExactly "00000000000000000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
+            $result[1].ToString() | Should -MatchExactly "00000000000000000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
+            $result[2].ToString() | Should -MatchExactly "00000000000000000020   65 6E 74                                         ent             "
+        }
+
+        It "Count = 1" {
+            $result = Format-Hex -Path $inputFile4 -Count 1
+            $result.ToString() | Should -MatchExactly    "00000000000000000000   4E                                               N               "
+        }
+
+        It "Offset = length" {
+
+            $result = Format-Hex -Path $InputFile4 -Offset $inputText4.Length
+            $result | Should -BeNullOrEmpty
+
+            $result = Format-Hex -InputObject $inputText4 -Offset $inputText4.Length
+            $result.Bytes | Should -HaveCount 0
+        }
+
+        It "Offset = 1" {
+
+            $result = Format-Hex -Path $InputFile4 -Offset 1
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.Count | Should -Be 3
+            $result[0].ToString() | Should -MatchExactly "00000000000000000001   6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65 72  ow is the winter"
+            $result[1].ToString() | Should -MatchExactly "00000000000000000011   20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74 65   of our disconte"
+            $result[2].ToString() | Should -MatchExactly "00000000000000000021   6E 74                                            nt              "
+        }
+
+        It "Count = 1 and Offset = 1" {
+            $result = Format-Hex -Path $inputFile4 -Count 1 -Offset 1
+            $result.ToString() | Should -MatchExactly    "00000000000000000001   6F                                               o               "
+        }
+
+        It "Count should be > 0" {
+            { Format-Hex -Path $inputFile4 -Count 0 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.FormatHex"
+        }
+
+        It "Offset should be >= 0" {
+            { Format-Hex -Path $inputFile4 -Offset -1 } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.FormatHex"
+        }
+
+        It "Offset = 0" {
+
+            $result = Format-Hex -Path $InputFile4 -Offset 0
 
             $result | Should -Not -BeNullOrEmpty
             $result.Count | Should -Be 3
