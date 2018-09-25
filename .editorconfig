@@ -15,13 +15,13 @@ indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
 # Code files
-[*.{cs,csx,vb,vbx}]
+[*.{cs,csx,cpp,h}]
 indent_size = 4
 insert_final_newline = true
 charset = utf-8
 
 # Xml project files
-[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
+[*.{csproj,resx,ps1xml}]
 indent_size = 2
 
 # JSON files
@@ -37,7 +37,7 @@ indent_size = 2
 indent_size = 2
 
 # Dotnet code style settings:
-[*.{cs,vb}]
+[*.{cs,cpp}]
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
 
