@@ -2797,7 +2797,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!needToAnalyzeScriptModules)
                 {
-                    // need to add nested modules to the manifestInfo when no more analysis needs to be done
+                    // Add nested modules to the manifestInfo when no more analysis needs to be done
                     PSModuleInfo fakeNestedModuleInfo = null;
                     foreach (ModuleSpecification nestedModule in nestedModules)
                     {
@@ -3442,6 +3442,7 @@ namespace Microsoft.PowerShell.Commands
                                     updated.Add(element);
                                 }
                             }
+
                             ss.Internal.ExportedVariables.Clear();
                             ss.Internal.ExportedVariables.AddRange(updated);
                         }
