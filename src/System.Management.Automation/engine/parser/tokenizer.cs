@@ -3262,7 +3262,7 @@ namespace System.Management.Automation.Language
                     if (suffix == NumberSuffixFlags.Decimal)
                     {
                         decimal d;
-                        if (Decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
+                        if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
                         {
                             result = d * multiplier;
                             return true;
@@ -3275,7 +3275,7 @@ namespace System.Management.Automation.Language
                     if (real)
                     {
                         double d;
-                        if (Double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
+                        if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
                         {
                             // TryParse incorrectly return +0 when the result should be -0, so check for that case
                             if (d == 0.0 && strNum[0] == '-')
@@ -3289,7 +3289,7 @@ namespace System.Management.Automation.Language
                                     result = d * multiplier;
                                     break;
                                 case NumberSuffixFlags.Long:
-                                    result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture) * multiplier);
+                                    result = (long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture) * multiplier;
                                     break;
                                 case NumberSuffixFlags.Short:
                                     result = (short)((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * multiplier);
@@ -3310,6 +3310,7 @@ namespace System.Management.Automation.Language
                                     {
                                         result = testresult;
                                     }
+
                                     break;
                                 default:
                                     result = null;
@@ -3330,8 +3331,10 @@ namespace System.Management.Automation.Language
                         {
                             multiplier = -multiplier;
                         }
+
                         strNum = strNum.Substring(1);
                     }
+
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
                     long longValue;
@@ -3372,6 +3375,7 @@ namespace System.Management.Automation.Language
                                     // ulong
                                     result = u;
                                 }
+
                                 return true;
                             }
 
@@ -3379,7 +3383,6 @@ namespace System.Management.Automation.Language
                     }
 
                     // From here on - the user hasn't specified the type, so we need to figure it out.
-
                     BigInteger bigValue;
                     TypeCode whichTryParseWorked;
                     int intValue;
@@ -3433,6 +3436,7 @@ namespace System.Management.Automation.Language
                     {
                         result = (double)bigValue;
                     }
+
                     return true;
                 }
                 catch (Exception)
@@ -3526,6 +3530,7 @@ namespace System.Management.Automation.Language
                     {
                         notNumber = true;
                     }
+
                     hex = true;
                 }
                 else
@@ -3549,6 +3554,7 @@ namespace System.Management.Automation.Language
                                 real = true;
                                 ScanNumberAfterDot(sb, ref signIndex, ref notNumber);
                             }
+
                             break;
                         case 'E':
                         case 'e':
