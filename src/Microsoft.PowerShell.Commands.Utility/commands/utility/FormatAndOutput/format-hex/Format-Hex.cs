@@ -55,6 +55,20 @@ namespace Microsoft.PowerShell.Commands
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
+        /// Gets and sets count of bytes to read from the input stream from.
+        /// </summary>
+        [Parameter()]
+        [ValidateRange(ValidateRangeKind.Positive)]
+        public Int64 Count { get; set; } = Int64.MaxValue;
+
+        /// <summary>
+        /// Gets and sets offset of bytes to start reading the input stream from.
+        /// </summary>
+        [Parameter()]
+        [ValidateRange(ValidateRangeKind.NonNegative)]
+        public Int64 Offset { get; set; }
+
+        /// <summary>
         /// This parameter is no-op.
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
@@ -162,37 +176,31 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path"></param>
         private void ProcessFileContent(string path)
         {
-            byte[] buffer = new byte[BUFFERSIZE];
+            Span<byte> buffer = stackalloc byte[BUFFERSIZE];
 
             try
             {
-                using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read)))
+                using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read)))
                 {
-                    UInt32 offset = 0;
+                    Int64 offset = Offset;
                     Int32 bytesRead = 0;
+                    Int64 count = 0;
 
-                    while ((bytesRead = reader.Read(buffer, 0, BUFFERSIZE)) > 0)
+                    reader.BaseStream.Position = Offset;
+
+                    while ((bytesRead = reader.Read(buffer)) > 0)
                     {
-                        if (bytesRead == BUFFERSIZE)
+                        count += bytesRead;
+                        if (count > Count)
                         {
-                            // We are reusing the same buffer so if we save the output to a variable, the variable
-                            // will just contain multiple references to the same buffer memory space (containing only the
-                            // last bytes of the file read).  Copying the buffer allows us to pass the values on without
-                            // overwriting previous values.
-                            byte[] copyOfBuffer = new byte[16];
-                            Array.Copy(buffer, 0, copyOfBuffer, 0, bytesRead);
-                            ConvertToHexidecimal(copyOfBuffer, path, offset);
+                            bytesRead -= (int)(count - Count);
+                            ConvertToHexidecimal(buffer.Slice(0, bytesRead), path, offset);
+                            break;
                         }
-                        else
-                        {
-                            // Handle the case of a partial (and probably last) buffer.  Copies the bytes read into a new,
-                            // shorter array so we do not have the extra bytes from the previous pass through at the end.
-                            byte[] remainingBytes = new byte[bytesRead];
-                            Array.Copy(buffer, 0, remainingBytes, 0, bytesRead);
-                            ConvertToHexidecimal(remainingBytes, path, offset);
-                        }
-                        // Update offset value.
-                        offset += (UInt32)bytesRead;
+
+                        ConvertToHexidecimal(buffer.Slice(0, bytesRead), path, offset);
+
+                        offset += bytesRead;
                     }
                 }
             }
@@ -299,7 +307,9 @@ namespace Microsoft.PowerShell.Commands
 
             if (inputBytes != null)
             {
-                ConvertToHexidecimal(inputBytes, null, 0);
+                int offset = Math.Min(inputBytes.Length, Offset < (long)int.MaxValue ? (int)Offset : int.MaxValue);
+                int count = Math.Min(inputBytes.Length - offset, Count < (long)int.MaxValue ? (int)Count : int.MaxValue);
+                ConvertToHexidecimal(inputBytes.AsSpan().Slice(offset, count), null, 0);
             }
         }
 
@@ -308,18 +318,15 @@ namespace Microsoft.PowerShell.Commands
         #region Output
 
         /// <summary>
-        /// Outputs the hexadecimial representaion of the of the input data.
+        /// Outputs the hexadecimial representaion of the input data.
         /// </summary>
-        /// <param name="inputBytes"></param>
-        /// <param name="path"></param>
-        /// <param name="offset"></param>
-        private void ConvertToHexidecimal(byte[] inputBytes, string path, UInt32 offset)
+        /// <param name="inputBytes">Bytes for the hexadecimial representaion.</param>
+        /// <param name="path">File path.</param>
+        /// <param name="offset">Offset in the file.</param>
+        private void ConvertToHexidecimal(Span<byte> inputBytes, string path, Int64 offset)
         {
-            if (inputBytes != null)
-            {
-                ByteCollection byteCollectionObject = new ByteCollection(offset, inputBytes, path);
-                WriteObject(byteCollectionObject);
-            }
+            ByteCollection byteCollectionObject = new ByteCollection((UInt64)offset, inputBytes.ToArray(), path);
+            WriteObject(byteCollectionObject);
         }
 
         #endregion
