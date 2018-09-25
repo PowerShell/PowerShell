@@ -111,6 +111,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (InternalTestHooks.ActivateSleepForStoppingTest)
             {
+                // We'll wait the verbose stream marker in tests and then call Stop().
+                // The cmdlet is very fast and likely to end before the test sees the marker
+                // so we have to slow down it by Sleep(50).
+                // We can not sleep for a long time because Stop() doesn't work on sleeping runspace.
                 WriteVerbose("ConvertTo-Json started");
                 System.Threading.Thread.Sleep(50);
             }
