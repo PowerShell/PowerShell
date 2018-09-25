@@ -1521,7 +1521,7 @@ function New-UnifiedNugetPackage
     {
 
         $refBinPath = New-TempFolder
-        $SnkFilePath = (Resolve-Path "$RepoRoot/src/signing/visualstudiopublic.snk").Path
+        $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
 
         New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
         $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
