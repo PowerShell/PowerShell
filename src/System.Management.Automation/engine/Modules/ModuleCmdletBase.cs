@@ -2797,6 +2797,20 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!needToAnalyzeScriptModules)
                 {
+                    // need to add nested modules to the manifestInfo when no more analysis needs to be done
+                    PSModuleInfo fakeNestedModuleInfo = null;
+                    foreach (ModuleSpecification nestedModule in nestedModules)
+                    {
+                        fakeNestedModuleInfo = new PSModuleInfo(nestedModule.Name, Context, null);
+                        if (nestedModule.Guid.HasValue)
+                        {
+                            fakeNestedModuleInfo.SetGuid(nestedModule.Guid.Value);
+                        }
+                        fakeNestedModuleInfo.SetVersion(nestedModule.RequiredVersion ?? nestedModule.Version);
+
+                        manifestInfo.AddNestedModule(fakeNestedModuleInfo);
+                    }
+
                     return manifestInfo;
                 }
             }

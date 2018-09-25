@@ -2,13 +2,17 @@
 # Licensed under the MIT License.
 Describe "Test-ModuleManifest tests" -tags "CI" {
 
+    BeforeEach {
+        $testModulePath = "testdrive:/module/test.psd1"
+        New-Item -ItemType Directory -Path testdrive:/module
+    }
+
     AfterEach {
         Remove-Item -Recurse -Force -ErrorAction SilentlyContinue testdrive:/module
     }
 
     It "module manifest containing paths with backslashes or forwardslashes are resolved correctly" {
 
-        New-Item -ItemType Directory -Path testdrive:/module
         New-Item -ItemType Directory -Path testdrive:/module/foo
         New-Item -ItemType Directory -Path testdrive:/module/bar
         New-Item -ItemType File -Path testdrive:/module/foo/bar.psm1
@@ -38,10 +42,8 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         param ($parameter, $error)
 
-        New-Item -ItemType Directory -Path testdrive:/module
         New-Item -ItemType Directory -Path testdrive:/module/foo
         New-Item -ItemType File -Path testdrive:/module/foo/bar.psm1
-        $testModulePath = "testdrive:/module/test.psd1"
 
         $args = @{$parameter = "doesnotexist.psm1"}
         New-ModuleManifest -Path $testModulePath @args
@@ -57,9 +59,6 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         param($rootModuleValue)
 
-        New-Item -ItemType Directory -Path testdrive:/module
-        $testModulePath = "testdrive:/module/test.psd1"
-
         New-Item -ItemType File -Path testdrive:/module/$rootModuleValue
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
         $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
@@ -74,9 +73,6 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         param($rootModuleValue, $error)
 
-        New-Item -ItemType Directory -Path testdrive:/module
-        $testModulePath = "testdrive:/module/test.psd1"
-
         New-Item -ItemType File -Path testdrive:/module/$rootModuleValue
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
@@ -88,9 +84,6 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
     ) {
 
         param($rootModuleValue)
-
-        New-Item -ItemType Directory -Path testdrive:/module
-        $testModulePath = "testdrive:/module/test.psd1"
 
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
         $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
@@ -104,8 +97,6 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         param($rootModuleValue, $error)
 
-        $testModulePath = "testdrive:/module/test.psd1"
-        New-Item -ItemType Directory -Path testdrive:/module
         New-Item -ItemType File -Path testdrive:/module/$rootModuleValue
 
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
@@ -118,11 +109,22 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         param($rootModuleValue, $error)
 
-        $testModulePath = "testdrive:/module/test.psd1"
-        New-Item -ItemType Directory -Path testdrive:/module
-
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+    }
+
+    It "module manifest containing nested module gets returned: <variation>" -TestCases (
+        @{variation = "no analysis as all exported with no wildcard"; exportValue = "@()"},
+        @{variation = "analysis as exported with wildcard"; exportValue = "*"}
+    ) {
+
+        param($exportValue)
+
+        New-Item -ItemType File -Path testdrive:/module/Foo.psm1
+        New-ModuleManifest -Path $testModulePath -NestedModules "Foo.psm1" -FunctionsToExport $exportValue -CmdletsToExport $exportValue -VariablesToExport $exportValue -AliasesToExport $exportValue
+        $module = Test-ModuleManifest -Path $testModulePath
+        $module.NestedModules | Should -HaveCount 1
+        $module.NestedModules.Name | Should -BeExactly "Foo"
     }
 }
 
