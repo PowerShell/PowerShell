@@ -131,10 +131,10 @@ namespace Microsoft.PowerShell.Commands
         void
         ProcessRecord()
         {
-            if (InternalTestHooks.ActivateSleepForStoppingTest)
+            if (InternalTestHooks.ActivateSleepForStoppingTest != 0)
             {
                 WriteVerbose("Export-Clixml started");
-                System.Threading.Thread.Sleep(50);
+                System.Threading.Thread.Sleep(InternalTestHooks.ActivateSleepForStoppingTest);
             }
 
             if (_serializer != null)
@@ -340,10 +340,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string path in Path)
                 {
-                    if (InternalTestHooks.ActivateSleepForStoppingTest)
+                    if (InternalTestHooks.ActivateSleepForStoppingTest != 0)
                     {
                         WriteVerbose("Import-Clixml started");
-                        System.Threading.Thread.Sleep(50);
+                        System.Threading.Thread.Sleep(InternalTestHooks.ActivateSleepForStoppingTest);
                     }
 
                     _helper = new ImportXmlHelper(path, this, _isLiteralPath);
@@ -435,10 +435,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InternalTestHooks.ActivateSleepForStoppingTest)
+            if (InternalTestHooks.ActivateSleepForStoppingTest != 0)
             {
                 WriteVerbose("ConvertTo-Xml started");
-                System.Threading.Thread.Sleep(50);
+                System.Threading.Thread.Sleep(InternalTestHooks.ActivateSleepForStoppingTest);
             }
 
             if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))

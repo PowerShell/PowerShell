@@ -1397,7 +1397,7 @@ namespace System.Management.Automation.Internal
         internal static bool ShowMarkdownOutputBypass;
 
         // Slow down a cmdlet to predictably check the cmdlet stopping (that 'PowerShell.Stop()' or 'Ctrl-C' work).
-        internal static bool ActivateSleepForStoppingTest;
+        internal static int ActivateSleepForStoppingTest;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)

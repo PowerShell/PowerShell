@@ -313,6 +313,7 @@ function Start-NativeExecution
     } finally {
         $script:ErrorActionPreference = $backupEAP
     }
+
 # Test if the scriptblock (cmdlet) can be stopped
 function Test-Stopping
 {
@@ -320,13 +321,13 @@ function Test-Stopping
     param (
         [ScriptBlock]$sb,
         [int]$TimeoutInMilliseconds = 10000,
-        [int]$IntervalInMilliseconds = 1000
+        [int]$IntervalInMilliseconds = 100
         )
 
     try {
         $ps = [PowerShell]::Create()
         $null = $ps.AddScript($sb)
-        Enable-Testhook 'ActivateSleepForStoppingTest'
+        ${Script:TesthookType}::SetTestHook('ActivateSleepForStoppingTest', 50)
         $null = $ps.BeginInvoke()
         Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds
         $null = $ps.BeginStop($null, $null)
@@ -336,7 +337,7 @@ function Test-Stopping
 
     } finally {
         $ps.Dispose()
-        Disable-Testhook 'ActivateSleepForStoppingTest'
+        ${Script:TesthookType}::SetTestHook('ActivateSleepForStoppingTest', 0)
     }
 }
 
