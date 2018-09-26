@@ -8,17 +8,15 @@ ARG TESTDOWNLOADCOMMAND="git clone --recursive https://github.com/PowerShell/Pow
 
 # Install dependencies
 RUN dnf install -y \
-        curl \
         glibc-locale-source \
         git \
         compat-openssl10 \
-        wget \
     && dnf upgrade-minimal -y --security \
     && dnf clean all
 
 # Install dotnet-runtime
 RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc
-RUN wget -q https://packages.microsoft.com/config/fedora/27/prod.repo
+ADD https://packages.microsoft.com/config/fedora/27/prod.repo .
 RUN mv prod.repo /etc/yum.repos.d/microsoft-prod.repo
 RUN dnf install -y \
         dotnet-runtime-2.1 \
@@ -31,7 +29,7 @@ ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
 # Install PowerShell package
-RUN curl -L -o $PACKAGENAME $PACKAGELOCATION/$PACKAGENAME
+ADD $PACKAGELOCATION/$PACKAGENAME .
 RUN mkdir -p /opt/microsoft/powershell
 RUN tar zxf $PACKAGENAME -C /opt/microsoft/powershell
 

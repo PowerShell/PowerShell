@@ -11,14 +11,12 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         apt-utils \
         ca-certificates \
-        curl \
         apt-transport-https \
         locales \
-        git \
-        wget
+        git
 
 # Install dotnet-runtime
-RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+ADD https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb .
 RUN dpkg -i packages-microsoft-prod.deb
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -30,7 +28,7 @@ ENV LC_ALL $LANG
 RUN locale-gen $LANG && update-locale
 
 # Install PowerShell package
-RUN curl -L -o $PACKAGENAME $PACKAGELOCATION/$PACKAGENAME
+ADD $PACKAGELOCATION/$PACKAGENAME .
 RUN mkdir -p /opt/microsoft/powershell
 RUN tar zxf $PACKAGENAME -C /opt/microsoft/powershell
 

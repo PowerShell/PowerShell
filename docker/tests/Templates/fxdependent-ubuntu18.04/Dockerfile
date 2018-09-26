@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM microsoft/dotnet:2.1-runtime-bionic
 
 ARG PACKAGENAME
 ARG PACKAGELOCATION
@@ -11,18 +11,9 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         apt-utils \
         ca-certificates \
-        curl \
         apt-transport-https \
         locales \
-        git \
-        wget
-
-# Install dotnet-runtime
-RUN wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
-RUN dpkg -i packages-microsoft-prod.deb
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        dotnet-runtime-2.1
+        git
 
 # Setup the locale
 ENV LANG en_US.UTF-8
@@ -30,7 +21,7 @@ ENV LC_ALL $LANG
 RUN locale-gen $LANG && update-locale
 
 # Install PowerShell package
-RUN curl -L -o $PACKAGENAME $PACKAGELOCATION/$PACKAGENAME
+ADD $PACKAGELOCATION/$PACKAGENAME .
 RUN mkdir -p /opt/microsoft/powershell
 RUN tar zxf $PACKAGENAME -C /opt/microsoft/powershell
 

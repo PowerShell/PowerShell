@@ -8,7 +8,6 @@ ARG TESTDOWNLOADCOMMAND="git clone --recursive https://github.com/PowerShell/Pow
 
 # Install dependencies
 RUN yum install -y \
-        curl \
         glibc-locale-source \
         git
 
@@ -23,7 +22,7 @@ ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
 # Install PowerShell package
-RUN curl -L -o $PACKAGENAME $PACKAGELOCATION/$PACKAGENAME
+ADD $PACKAGELOCATION/$PACKAGENAME .
 RUN mkdir -p /opt/microsoft/powershell
 RUN tar zxf $PACKAGENAME -C /opt/microsoft/powershell
 

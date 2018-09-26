@@ -11,7 +11,6 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         apt-utils \
         ca-certificates \
-        curl \
         apt-transport-https \
         locales \
         git \
@@ -20,11 +19,11 @@ RUN apt-get update \
 # Install dotnet-runtime
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
 RUN mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
-RUN wget -q https://packages.microsoft.com/config/debian/8/prod.list
+ADD https://packages.microsoft.com/config/debian/8/prod.list .
 RUN mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        dotnet-runtime-2.1
+        dotnet-runtime-2.1 
 
 # Setup the locale
 ENV LANG en_US.UTF-8
@@ -32,7 +31,7 @@ ENV LC_ALL $LANG
 RUN locale-gen $LANG && update-locale
 
 # Install PowerShell package
-RUN curl -L -o $PACKAGENAME $PACKAGELOCATION/$PACKAGENAME
+ADD $PACKAGELOCATION/$PACKAGENAME .
 RUN mkdir -p /opt/microsoft/powershell
 RUN tar zxf $PACKAGENAME -C /opt/microsoft/powershell
 

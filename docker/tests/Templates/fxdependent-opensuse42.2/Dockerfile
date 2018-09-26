@@ -12,16 +12,14 @@ RUN zypper --non-interactive update --skip-interactive \
         glibc-locale \
         glibc-i18ndata \
         tar \
-        curl \
         libunwind \
         libicu \
         openssl \
-        git \
-        wget
+        git
 
 # Install dotnet-runtime
 RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc
-RUN wget -q https://packages.microsoft.com/config/opensuse/42.2/prod.repo
+ADD https://packages.microsoft.com/config/opensuse/42.2/prod.repo .
 RUN mv prod.repo /etc/zypp/repos.d/microsoft-prod.repo
 RUN zypper --non-interactive update --skip-interactive \
     && zypper --non-interactive install \
@@ -33,7 +31,7 @@ ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
 # Install PowerShell package
-RUN curl -L -o $PACKAGENAME $PACKAGELOCATION/$PACKAGENAME
+ADD $PACKAGELOCATION/$PACKAGENAME .
 RUN mkdir -p /opt/microsoft/powershell
 RUN tar zxf $PACKAGENAME -C /opt/microsoft/powershell
 
