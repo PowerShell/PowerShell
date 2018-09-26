@@ -1037,7 +1037,7 @@ function Publish-PSTestTools {
     }
 
     # Get the SelfSignedCertificate module so the web listener can use it
-    Save-Module -Name SelfSignedCertificate -Path "$PSScriptRoot/test/tools/Modules/" -Repository "PSGallery"
+    Save-Module -Name SelfSignedCertificate -Path "$PSScriptRoot/test/tools/Modules/" -Repository "PSGallery" -Version '0.0.2'
 }
 
 function Get-ExperimentalFeatureTests {
