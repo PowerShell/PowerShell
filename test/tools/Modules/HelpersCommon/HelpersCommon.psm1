@@ -321,13 +321,14 @@ function Test-Stopping
     param (
         [ScriptBlock]$sb,
         [int]$TimeoutInMilliseconds = 10000,
-        [int]$IntervalInMilliseconds = 100
+        [int]$IntervalInMilliseconds = 100,
+        [int]$SlowDownCmdletInMilliseconds = 50
         )
 
     try {
         $ps = [PowerShell]::Create()
         $null = $ps.AddScript($sb)
-        ${Script:TesthookType}::SetTestHook('ActivateSleepForStoppingTest', 50)
+        ${Script:TesthookType}::SetTestHook('ActivateSleepForStoppingTest', $SlowDownCmdletInMilliseconds)
         $null = $ps.BeginInvoke()
         Wait-UntilTrue { $ps.Streams.Verbose.Count -gt 0 } -TimeoutInMilliseconds $TimeoutInMilliseconds -IntervalInMilliseconds $IntervalInMilliseconds
         $null = $ps.BeginStop($null, $null)
