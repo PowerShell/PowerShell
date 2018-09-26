@@ -80,6 +80,13 @@ Function New-ProtectedCertificate
 
     $certLocation = ".\test\tools\Modules\WebListener\ServerCert.pfx"
 
+    $password = ConvertTo-SecureString -Force -AsPlainText 'password'
+
+    New-SelfSignedCertificate `
+        -OutCertPath $certLocation `
+        -Passphrase $password `
+        -Force
+
     return $certLocation
 }
 
