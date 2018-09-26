@@ -6,6 +6,7 @@ project.lock.json
 /staging/
 /Packages/
 *.nuget.props
+/test/tools/Modules/SelfSignedCertificate/
 
 # dotnet cli install/uninstall scripts
 dotnet-install.ps1
@@ -45,6 +46,9 @@ dotnet-uninstall-debian-packages.sh
 *.pkg
 *.nupkg
 *.AppImage
+
+# Ignore certificates
+*.pfx
 
 # default location for produced nuget packages
 /nuget-artifacts

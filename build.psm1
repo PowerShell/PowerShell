@@ -1035,6 +1035,9 @@ function Publish-PSTestTools {
             Pop-Location
         }
     }
+
+    # Get the SelfSignedCertificate module so the web listener can use it
+    Save-Module -Name SelfSignedCertificate -Path "$PSScriptRoot/test/tools/Modules/" -Repository "PSGallery"
 }
 
 function Get-ExperimentalFeatureTests {
