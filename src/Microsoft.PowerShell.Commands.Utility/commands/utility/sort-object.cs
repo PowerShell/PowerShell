@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Generic;
 using System.Management.Automation;
 
@@ -16,6 +17,17 @@ namespace Microsoft.PowerShell.Commands
     public sealed class SortObjectCommand : OrderObjectBase
     {
         #region Command Line Switches
+        /// <summary>
+        /// This param specifies if a stable sort is required.
+        /// </summary>
+        /// <value></value>
+        [Parameter(ParameterSetName="Default")]
+        public SwitchParameter Stable
+        {
+            get { return _stable; }
+            set { _stable = value; }
+        }
+        private bool _stable;
         /// <summary>
         /// This param specifies if sort order is ascending.
         /// </summary>
@@ -41,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This param specifies you only want the top N items returned.
         /// </summary>
-        [Parameter(ParameterSetName = "Default")]
+        [Parameter(ParameterSetName = "Top", Mandatory = true)]
         [ValidateRange(1, int.MaxValue)]
         public int Top { get; set; } = 0;
 
@@ -116,7 +128,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Identify how many items will be in the heap and the current number of items
             int heapCount = 0;
-            int heapCapacity = Top > 0 ? Top : Bottom;
+            int heapCapacity = _stable ? Int32.MaxValue
+                                       : Top > 0 ? Top : Bottom;
 
             // Identify the comparator (the value all comparisons will be made against based on whether we're
             // doing a Top N or Bottom N sort)
@@ -239,13 +252,12 @@ namespace Microsoft.PowerShell.Commands
             // Track the number of items that will be output from the data once it is sorted
             int sortedItemCount = dataToProcess.Count;
 
-            // If -Top & -Bottom were not used, or if -Top or -Bottom would return all objects, invoke
-            // an in-place full sort
-            if ((Top == 0 && Bottom == 0) || Top >= dataToProcess.Count || Bottom >= dataToProcess.Count)
+            // If -Stable, -Top & -Bottom were not used, invoke an in-place full sort
+            if (!_stable && Top == 0 && Bottom == 0)
             {
                 sortedItemCount = FullSort(dataToProcess, comparer);
             }
-            // Otherwise, use an indexed min-/max-heap to perform an in-place sort of all objects
+            // Otherwise, use an indexed min-/max-heap to perform an in-place, stable sort of all objects
             else
             {
                 sortedItemCount = Heapify(dataToProcess, comparer);
