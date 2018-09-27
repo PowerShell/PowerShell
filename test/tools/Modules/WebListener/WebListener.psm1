@@ -58,7 +58,7 @@ function New-ClientCertificate
         Force = $true
     } + $distinguishedName
 
-    New-SelfSignedCertificate @certificateParameters
+    SelfSignedModule\New-SelfSignedCertificate @certificateParameters
 }
 
 function New-ServerCertificate
@@ -86,7 +86,7 @@ function New-ServerCertificate
         Force = $true
     } + $distinguishedName
 
-    New-SelfSignedCertificate @certificateParameters
+    SelfSignedModule\New-SelfSignedCertificate @certificateParameters
 }
 
 function Get-WebListener
