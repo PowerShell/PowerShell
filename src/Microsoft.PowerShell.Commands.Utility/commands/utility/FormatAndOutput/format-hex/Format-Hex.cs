@@ -236,80 +236,79 @@ namespace Microsoft.PowerShell.Commands
         {
             Object obj = inputObject.BaseObject;
             byte[] inputBytes = null;
-            if (obj is System.IO.FileSystemInfo)
-            {
-                string[] path = { ((FileSystemInfo)obj).FullName };
-                List<string> pathsToProcess = ResolvePaths(path, true);
-                ProcessPath(pathsToProcess);
-            }
 
-            else if (obj is string)
+            switch (obj)
             {
-                string inputString = obj.ToString();
-                inputBytes = Encoding.GetBytes(inputString);
-            }
+                case System.IO.FileSystemInfo fsi:
+                    string[] path = { fsi.FullName };
+                    List<string> pathsToProcess = ResolvePaths(path, true);
+                    ProcessPath(pathsToProcess);
+                    return;
+                case string str:
+                    inputBytes = Encoding.GetBytes(str);
+                    break;
+                case byte b:
+                    inputBytes = new byte[] { b };
+                    break;
+                case byte[] byteArray:
+                    inputBytes = byteArray;
+                    break;
+                case Int32 iInt32:
+                    inputBytes = BitConverter.GetBytes(iInt32);
+                    break;
+                case Int32[] inputInt32s:
+                    int i32 = 0;
+                    inputBytes = new byte[sizeof(Int32) * inputInt32s.Length];
+                    Span<byte> inputStreamArray32 = inputBytes;
 
-            else if (obj is byte)
-            {
-                inputBytes = new byte[] { (byte)obj };
-            }
+                    foreach (Int32 value in inputInt32s)
+                    {
+                        BitConverter.TryWriteBytes(inputStreamArray32.Slice(i32), value);
+                        i32 += sizeof(Int32);
+                    }
 
-            else if (obj is byte[])
-            {
-                inputBytes = ((byte[])obj);
-            }
+                    break;
+                case Int64 iInt64:
+                    inputBytes = BitConverter.GetBytes(iInt64);
+                    break;
+                case Int64[] inputInt64s:
+                    int i64 = 0;
+                    inputBytes = new byte[sizeof(Int64) * inputInt64s.Length];
+                    Span<byte> inputStreamArray64 = inputBytes;
 
-            else if (obj is Int32)
-            {
-                inputBytes = BitConverter.GetBytes((Int32)obj);
-            }
+                    foreach (Int64 value in inputInt64s)
+                    {
+                        BitConverter.TryWriteBytes(inputStreamArray64.Slice(i64), value);
+                        i64 += sizeof(Int64);
+                    }
 
-            else if (obj is Int32[])
-            {
-                List<byte> inputStreamArray = new List<byte>();
-                Int32[] inputInts = (Int32[])obj;
-                foreach (Int32 value in inputInts)
+                    break;
+                // If the object type is not supported, throw an error. Once Serialization is
+                // available on CoreCLR, other types will be supported.
+                default:
                 {
-                    byte[] tempBytes = BitConverter.GetBytes(value);
-                    inputStreamArray.AddRange(tempBytes);
+                    string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
+                    ErrorRecord errorRecord = new ErrorRecord(new ArgumentException(errorMessage),
+                                                                "FormatHexTypeNotSupported",
+                                                                ErrorCategory.InvalidArgument,
+                                                                obj.GetType());
+                    WriteError(errorRecord);
+                    break;
                 }
-                inputBytes = inputStreamArray.ToArray();
-            }
-
-            else if (obj is Int64)
-            {
-                inputBytes = BitConverter.GetBytes((Int64)obj);
-            }
-
-            else if (obj is Int64[])
-            {
-                List<byte> inputStreamArray = new List<byte>();
-                Int64[] inputInts = (Int64[])obj;
-                foreach (Int64 value in inputInts)
-                {
-                    byte[] tempBytes = BitConverter.GetBytes(value);
-                    inputStreamArray.AddRange(tempBytes);
-                }
-                inputBytes = inputStreamArray.ToArray();
-            }
-
-            // If the object type is not supported, throw an error. Once Serialization is
-            // available on CoreCLR, other types will be supported.
-            else
-            {
-                string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
-                ErrorRecord errorRecord = new ErrorRecord(new ArgumentException(errorMessage),
-                                                            "FormatHexTypeNotSupported",
-                                                            ErrorCategory.InvalidArgument,
-                                                            obj.GetType());
-                WriteError(errorRecord);
             }
 
             if (inputBytes != null)
             {
                 int offset = Math.Min(inputBytes.Length, Offset < (long)int.MaxValue ? (int)Offset : int.MaxValue);
                 int count = Math.Min(inputBytes.Length - offset, Count < (long)int.MaxValue ? (int)Count : int.MaxValue);
-                ConvertToHexidecimal(inputBytes.AsSpan().Slice(offset, count), null, 0);
+                if (offset != 0 || count != inputBytes.Length)
+                {
+                    ConvertToHexidecimal(inputBytes.AsSpan().Slice(offset, count), null, 0);
+                }
+                else
+                {
+                    ConvertToHexidecimal(inputBytes, null, 0);
+                }
             }
         }
 
@@ -326,6 +325,12 @@ namespace Microsoft.PowerShell.Commands
         private void ConvertToHexidecimal(Span<byte> inputBytes, string path, Int64 offset)
         {
             ByteCollection byteCollectionObject = new ByteCollection((UInt64)offset, inputBytes.ToArray(), path);
+            WriteObject(byteCollectionObject);
+        }
+
+        private void ConvertToHexidecimal(byte[] inputBytes, string path, Int64 offset)
+        {
+            ByteCollection byteCollectionObject = new ByteCollection((UInt64)offset, inputBytes, path);
             WriteObject(byteCollectionObject);
         }
 
