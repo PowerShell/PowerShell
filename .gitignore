@@ -6,7 +6,7 @@ project.lock.json
 /staging/
 /Packages/
 *.nuget.props
-/test/tools/Modules/
+/test/tools/Modules/SelfSignedCertificate/
 
 # dotnet cli install/uninstall scripts
 dotnet-install.ps1
