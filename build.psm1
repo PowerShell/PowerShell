@@ -1037,7 +1037,7 @@ function Publish-PSTestTools {
     }
 
     # Get the SelfSignedCertificate module so the web listener can use it
-    Install-Module -Name SelfSignedCertificate -Scope CurrentUser -Repository "PSGallery" -MinimumVersion '0.0.2' -Force -Confirm:$false -AllowClobber
+    Save-Module -Name SelfSignedCertificate -Path "${PSScriptRoot}/test/tools/Modules/" -Repository "PSGallery" -MinimumVersion '0.0.2' -Force -Confirm:$false
 }
 
 function Get-ExperimentalFeatureTests {
