@@ -85,14 +85,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The number of times the Ping data packets can be forwarded by routers.
         /// As gateways and routers transmit packets through a network,
-        /// they decrement the CurrentMTUSize Time-to-Live (TTL) value found in the packet header.
+        /// they decrement the Time-to-Live (TTL) value found in the packet header.
         /// The default (from Windows) is 128 hops.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPingCount)]
         [Parameter(ParameterSetName = ParameterSetPingContinues)]
         [Parameter(ParameterSetName = ParameterSetTraceRoute)]
         [ValidateRange(0, sMaxHops)]
-        [Alias("Ttl")]
+        [Alias("Ttl", "TimeToLive", "Hops")]
         public int MaxHops { get; set; } = sMaxHops;
 
         private const int sMaxHops = 128;
