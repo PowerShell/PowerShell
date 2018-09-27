@@ -3182,6 +3182,7 @@ namespace System.Management.Automation.Runspaces
         private static void GetHostComputeInteropTypes(out Type computeSystemPropertiesType, out Type hostComputeInteropType)
         {
             Assembly schemaAssembly = Assembly.Load(new AssemblyName("Microsoft.HyperV.Schema, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"));
+
             // The type name was changed in newer version of Windows so we check for new one first,
             // then fallback to previous type name to support older versions of Windows
             computeSystemPropertiesType = schemaAssembly.GetType("HCS.Compute.System.Properties");
