@@ -78,7 +78,15 @@ Function New-ProtectedCertificate
     Password: "password"
     #>
 
-    $certLocation = ".\test\tools\Modules\WebListener\ServerCert.pfx"
+    $certLocation = Join-Path ([System.IO.Path]::GetTempPath()) 'protectedCert.pfx'
+
+    $password = ConvertTo-SecureString -Force -AsPlainText 'password'
+
+    $null = New-SelfSignedCertificate `
+        -CommonName 'localhost' `
+        -OutCertPath $certLocation `
+        -Passphrase $password `
+        -Force
 
     return $certLocation
 }
