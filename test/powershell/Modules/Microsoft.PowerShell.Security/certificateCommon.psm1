@@ -84,7 +84,7 @@ Function New-ProtectedCertificate
     $rand = [Random]::new()
     $global:protectedCertPassword = ConvertTo-SecureString -Force -AsPlainText (((1..10).ForEach{ '{0:x}' -f $rand.Next(0xf) }) -join '')
 
-    $null = SelfSignedModule\New-SelfSignedCertificate `
+    $null = SelfSignedCertificate\New-SelfSignedCertificate `
         -CommonName 'localhost' `
         -OutCertPath $certLocation `
         -Passphrase $global:protectedCertPassword `
