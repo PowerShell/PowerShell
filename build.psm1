@@ -406,7 +406,7 @@ function Test-IsPreview
 }
 
 function Start-PSBuild {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName="Default")]
     param(
         # When specified this switch will stops running dev powershell
         # to help avoid compilation error, because file are in use.
@@ -417,7 +417,10 @@ function Start-PSBuild {
         [switch]$ResGen,
         [switch]$TypeGen,
         [switch]$Clean,
+        [Parameter(ParameterSetName="Legacy")]
         [switch]$PSModuleRestore,
+        [Parameter(ParameterSetName="Default")]
+        [switch]$NoPSModuleRestore,
         [switch]$CI,
 
         # this switch will re-build only System.Management.Automation.dll
@@ -447,6 +450,11 @@ function Start-PSBuild {
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag
     )
+
+    if (!$NoPSModuleRestore)
+    {
+        $PSModuleRestore = $true
+    }
 
     if ($Runtime -eq "linux-arm" -and -not $Environment.IsUbuntu) {
         throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
