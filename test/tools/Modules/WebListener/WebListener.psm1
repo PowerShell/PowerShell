@@ -52,7 +52,7 @@ function New-ClientCertificate
         StartDate = [datetime]::Now.Subtract([timespan]::FromDays(30))
         Duration = [timespan]::FromDays(365)
         Passphrase = $Passphrase
-        CertificateFormat = [System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx
+        CertificateFormat = 'Pfx'
         KeyLength = 4096
         ForCertificateAuthority = $true
         Force = $true
@@ -79,9 +79,9 @@ function New-ServerCertificate
         StartDate = [datetime]::Now.Subtract([timespan]::FromDays(30))
         Duration = [timespan]::FromDays(1000)
         Passphrase = $Passphrase
-        KeyUsage = [System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature,[System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::KeyEncipherment
+        KeyUsage = 'DigitalSignature','KeyEncipherment'
         EnhancedKeyUsage = 'ServerAuthentication','ClientAuthentication'
-        CertificateFormat = [System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx
+        CertificateFormat = 'Pfx'
         KeyLength = 2048
         Force = $true
     } + $distinguishedName
