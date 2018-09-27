@@ -4,7 +4,7 @@ A PowerShell module for managing the WebListener App.
 
 When the WebListener is started from this module,
 it will automatically generate two fresh certificates,
-`ClientCert.pfx` and `ServerCert.pfx` using the SelfSignedCertificate module.
+`ClientCert.pfx` and `ServerCert.pfx` using the `SelfSignedCertificate` module.
 
 The generated Self-Signed Certificate `ServerCert.pfx` has a randomly generated password
 and is issued for the Client and Server Authentication key usages.
