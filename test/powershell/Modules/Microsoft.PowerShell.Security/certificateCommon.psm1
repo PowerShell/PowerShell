@@ -80,12 +80,14 @@ Function New-ProtectedCertificate
 
     $certLocation = Join-Path ([System.IO.Path]::GetTempPath()) 'protectedCert.pfx'
 
-    $password = ConvertTo-SecureString -Force -AsPlainText 'password'
+    # Hackery to create a new 10 digit random hex string as a password
+    $rand = [Random]::new()
+    $global:protectedCertPassword = ConvertTo-SecureString -Force -AsPlainText (((1..10).ForEach{ '{0:x}' -f $rand.Next(0xf) }) -join '')
 
     $null = New-SelfSignedCertificate `
         -CommonName 'localhost' `
         -OutCertPath $certLocation `
-        -Passphrase $password `
+        -Passphrase $global:protectedCertPassword `
         -Force
 
     return $certLocation

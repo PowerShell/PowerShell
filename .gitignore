@@ -46,9 +46,6 @@ dotnet-uninstall-debian-packages.sh
 *.nupkg
 *.AppImage
 
-# Ignore certificates
-*.pfx
-
 # default location for produced nuget packages
 /nuget-artifacts
 
