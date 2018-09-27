@@ -71,7 +71,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameter is no-op.
         /// </summary>
-        [Parameter(ParameterSetName = "ByInputObject")]
+        [Parameter(ParameterSetName = "ByInputObject", DontShow = true)]
+        [Obsolete("Raw parameter is deprecated.", true)]
         public SwitchParameter Raw { get; set; }
 
         #endregion
