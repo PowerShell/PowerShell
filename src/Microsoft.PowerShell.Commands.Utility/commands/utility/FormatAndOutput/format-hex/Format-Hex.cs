@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
-        /// Gets and sets count of bytes to read from the input stream from.
+        /// Gets and sets count of bytes to read from the input stream.
         /// </summary>
         [Parameter()]
         [ValidateRange(ValidateRangeKind.Positive)]
