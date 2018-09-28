@@ -3261,8 +3261,7 @@ namespace System.Management.Automation.Language
                     // e.g., 0x1d == 29
                     if (suffix == NumberSuffixFlags.Decimal)
                     {
-                        decimal d;
-                        if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
+                        if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal d))
                         {
                             result = d * multiplier;
                             return true;
@@ -3274,34 +3273,33 @@ namespace System.Management.Automation.Language
 
                     if (real)
                     {
-                        double d;
-                        if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
+                        if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double doubleValue))
                         {
                             // TryParse incorrectly return +0 when the result should be -0, so check for that case
-                            if (d == 0.0 && strNum[0] == '-')
+                            if (doubleValue == 0.0 && strNum[0] == '-')
                             {
-                                d = -0.0;
+                                doubleValue = -0.0;
                             }
 
                             switch (suffix)
                             {
                                 case NumberSuffixFlags.None:
-                                    result = d * multiplier;
+                                    result = doubleValue * multiplier;
                                     break;
                                 case NumberSuffixFlags.Long:
-                                    result = (long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture) * multiplier;
+                                    result = (long)Convert.ChangeType(doubleValue, typeof(long), CultureInfo.InvariantCulture) * multiplier;
                                     break;
                                 case NumberSuffixFlags.Short:
-                                    result = (short)((short)Convert.ChangeType(d, typeof(short), CultureInfo.InvariantCulture) * multiplier);
+                                    result = (short)((short)Convert.ChangeType(doubleValue, typeof(short), CultureInfo.InvariantCulture) * multiplier);
                                     break;
                                 case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Long:
-                                    result = (ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
+                                    result = (ulong)Convert.ChangeType(doubleValue, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
                                     break;
                                 case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Short:
-                                    result = (ushort)((ushort)Convert.ChangeType(d, typeof(ushort), CultureInfo.InvariantCulture) * multiplier);
+                                    result = (ushort)((ushort)Convert.ChangeType(doubleValue, typeof(ushort), CultureInfo.InvariantCulture) * multiplier);
                                     break;
                                 case NumberSuffixFlags.Unsigned:
-                                    ulong testresult = (ulong)Convert.ChangeType(d, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
+                                    ulong testresult = (ulong)Convert.ChangeType(doubleValue, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
                                     if (testresult < uint.MaxValue)
                                     {
                                         result = (uint)testresult;
@@ -3337,15 +3335,14 @@ namespace System.Management.Automation.Language
 
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
-                    long longValue;
                     switch (suffix)
                     {
                         case NumberSuffixFlags.None:
                             break;
                         case NumberSuffixFlags.Long:
-                            if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
+                            if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out long l))
                             {
-                                result = longValue * multiplier;
+                                result = l * multiplier;
                                 return true;
                             }
 
@@ -3405,19 +3402,17 @@ namespace System.Management.Automation.Language
                     // From here on - the user hasn't specified the type, so we need to figure it out.
                     BigInteger bigValue;
                     TypeCode whichTryParseWorked;
-                    int intValue;
-                    decimal decimalValue;
-                    if (int.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out intValue))
+                    if (int.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out int intValue))
                     {
                         whichTryParseWorked = TypeCode.Int32;
                         bigValue = intValue;
                     }
-                    else if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
+                    else if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out long longValue))
                     {
                         whichTryParseWorked = TypeCode.Int64;
                         bigValue = longValue;
                     }
-                    else if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimalValue))
+                    else if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal decimalValue))
                     {
                         whichTryParseWorked = TypeCode.Decimal;
                         bigValue = (BigInteger)decimalValue;
@@ -3427,8 +3422,7 @@ namespace System.Management.Automation.Language
                         // The result must be double if we get here.
                         if (!hex)
                         {
-                            double doubleValue;
-                            if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out doubleValue))
+                            if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double doubleValue))
                             {
                                 result = doubleValue * multiplier;
                                 return true;
