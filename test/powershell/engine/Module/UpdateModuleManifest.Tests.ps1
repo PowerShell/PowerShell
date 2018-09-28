@@ -5,7 +5,7 @@ Describe "Update-ModuleManifest tests" -tags "CI" {
 
     BeforeEach {
         $testModulePath = "testdrive:/module/test.psd1"
-        New-Item -ItemType Directory -Path testdrive:/module
+        New-Item -ItemType Directory -Path testdrive:/module > $null
     }
 
     AfterEach {
@@ -18,7 +18,7 @@ Describe "Update-ModuleManifest tests" -tags "CI" {
     ) {
         param($exportValue)
 
-        New-Item -ItemType File -Path testdrive:/module/foo.psm1
+        New-Item -ItemType File -Path testdrive:/module/foo.psm1 > $null
         New-ModuleManifest -Path $testModulePath -NestedModules foo.psm1 -HelpInfoUri http://foo.com -AliasesToExport $exportValue -CmdletsToExport $exportValue -FunctionsToExport $exportValue -VariablesToExport $exportValue -DscResourcesToExport $exportValue
         $module = Test-ModuleManifest -Path $testModulePath
         $module.HelpInfoUri | Should -BeExactly "http://foo.com/"
