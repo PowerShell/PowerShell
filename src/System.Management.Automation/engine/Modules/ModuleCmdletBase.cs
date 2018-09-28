@@ -1339,7 +1339,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Helper function to generate fake PSModuleInfo objects from ModuleSpecification objects
+        /// Helper function to generate fake PSModuleInfo objects from ModuleSpecification objects.
         /// </summary>
         /// <param name="moduleSpecs">Collection of ModuleSpecification objects</param>
         /// <returns>Collection of fake PSModuleInfo objects</returns>
