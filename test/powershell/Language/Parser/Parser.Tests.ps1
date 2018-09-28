@@ -654,12 +654,21 @@ foo``u{2195}abc
                 @{ Script = "10"; ExpectedValue = "10"; ExpectedType = [int] }
                 @{ Script = "-10"; ExpectedValue = "-10"; ExpectedType = [int] }
                 @{ Script = "+10"; ExpectedValue = "10"; ExpectedType = [int] }
+                @{ Script = $([int32]::MaxValue); ExpectedValue = $([int32]::MaxValue); ExpectedType = [int] }
+                @{ Script = $([int32]::MinValue); ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
                 #<Real>
                 @{ Script = "0.0"; ExpectedValue = "0"; ExpectedType = [double] }
                 @{ Script = "6.5"; ExpectedValue = "6.5"; ExpectedType = [double] }
                 @{ Script = "-6.5"; ExpectedValue = "-6.5"; ExpectedType = [double] }
+                @{ Script = "9.12"; ExpectedValue = "9.12"; ExpectedType = [double] }
+                @{ Script = ".01"; ExpectedValue = "0.01"; ExpectedType = [double] }
+                @{ Script = $([single]::MinValue); ExpectedValue = $([float]::MinValue).ToString(); ExpectedType = [double] }
+                @{ Script = $([float]::MaxValue); ExpectedValue = $([float]::MaxValue).ToString(); ExpectedType = [double] }
                 #Exponential
                 @{ Script = "0e0"; ExpectedValue = "0"; ExpectedType = [double] }
+                @{ Script = "0e1"; ExpectedValue = "0"; ExpectedType = [double] }
+                @{ Script = "-0e2"; ExpectedValue = "0"; ExpectedType = [double] }
+                @{ Script = "3e0"; ExpectedValue = "3"; ExpectedType = [double] }
                 @{ Script = "5e-2"; ExpectedValue = "0.05"; ExpectedType = [double] }
                 @{ Script = "5e2"; ExpectedValue = "500"; ExpectedType = [double] }
                 @{ Script = "-5e-2"; ExpectedValue = "-0.05"; ExpectedType = [double] }
@@ -668,6 +677,10 @@ foo``u{2195}abc
                 @{ Script = "0x0"; ExpectedValue = "0"; ExpectedType = [int] }
                 @{ Script = "0x12"; ExpectedValue = "18"; ExpectedType = [int] }
                 @{ Script = "-0x12"; ExpectedValue = "-18"; ExpectedType = [int] }
+                @{ Script = "0x80000000"; ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
+                @{ Script = "0xFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [int] }
+                @{ Script = "0x7fffffff"; ExpectedValue = $([int32]::MaxValue); ExpectedType = [int] }
+                @{ Script = "0x100000000"; ExpectedValue = [int64]0x100000000; ExpectedType = [long] }
                 #Multipliers
                 @{ Script = "1kb"; ExpectedValue = "1024"; ExpectedType = [int] }
                 @{ Script = "1mb"; ExpectedValue = "1048576"; ExpectedType = [int] }
