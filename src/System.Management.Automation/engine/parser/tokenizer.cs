@@ -3340,6 +3340,8 @@ namespace System.Management.Automation.Language
                     long longValue;
                     switch (suffix)
                     {
+                        case NumberSuffixFlags.None:
+                            break;
                         case NumberSuffixFlags.Long:
                             if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
                             {
@@ -3358,28 +3360,46 @@ namespace System.Management.Automation.Language
 
                             result = null;
                             return false;
-                        default:
-                            if (suffix.HasFlag(NumberSuffixFlags.Unsigned) && ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
+                        case NumberSuffixFlags.Unsigned:
+                            if (ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
                             {
                                 u *= (ulong)multiplier;
-                                if (suffix.HasFlag(NumberSuffixFlags.Short) && u <= ushort.MaxValue)
-                                {
-                                    result = (ushort)u;
-                                }
-                                else if (!suffix.HasFlag(NumberSuffixFlags.Long) && u <= uint.MaxValue)
+
+                                if (u <= uint.MaxValue)
                                 {
                                     result = (uint)u;
                                 }
                                 else
                                 {
-                                    // ulong
                                     result = u;
                                 }
 
                                 return true;
                             }
 
-                            break;
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Long:
+                            if (ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong ul))
+                            {
+                                result = (ulong)(ul * (ulong)multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Short:
+                            if (ushort.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ushort us))
+                            {
+                                result = (ushort)(us * (ushort)multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        default:
+                            result = null;
+                            return false;
                     }
 
                     // From here on - the user hasn't specified the type, so we need to figure it out.
