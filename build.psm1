@@ -5,6 +5,10 @@
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
+# Path to a directory to store modules we temporarily need to test PowerShell
+$script:TestModuleDirPath = Join-Path ([System.IO.Path]::GetTempPath()) 'PwshTestModules'
+New-Item -Force -ItemType Directory -Path $script:TestModuleDirPath
+
 $dotnetCLIChannel = "release"
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
@@ -1037,7 +1041,7 @@ function Publish-PSTestTools {
     }
 
     # Get the SelfSignedCertificate module so the web listener can use it
-    Save-Module -Name SelfSignedCertificate -Path "${PSScriptRoot}/test/tools/Modules/" -Repository "PSGallery" -MinimumVersion '0.0.2' -Force -Confirm:$false
+    Save-Module -Name SelfSignedCertificate -Path $script:TestModuleDirPath -Repository "PSGallery" -MinimumVersion '0.0.2' -Force -Confirm:$false
 }
 
 function Get-ExperimentalFeatureTests {
@@ -1142,7 +1146,7 @@ function Start-PSPester {
     }
 
     # Autoload (in subprocess) temporary modules used in our tests
-    $command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$env:PSModulePath;'
+    $command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + "'$script:TestModuleDirPath$TestModulePathSeparator'" + '+$env:PSModulePath;'
 
     # Windows needs the execution policy adjusted
     if ($Environment.IsWindows) {
