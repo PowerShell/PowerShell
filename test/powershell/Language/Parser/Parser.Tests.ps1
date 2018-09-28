@@ -842,6 +842,7 @@ foo``u{2195}abc
             @{ Script = "188lu" }
             @{ Script = "500sgb" }
             @{ Script = "10000usgb" }
+            @{ Script = "10000.0usgb" }
         )
         It "<Script> should throw an error" -TestCases $testInvalidNumerals {
             param($Script)
