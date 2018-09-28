@@ -3422,9 +3422,9 @@ namespace System.Management.Automation.Language
                         // The result must be double if we get here.
                         if (!hex)
                         {
-                            if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double doubleValue))
+                            if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double dbl))
                             {
-                                result = doubleValue * multiplier;
+                                result = dbl * multiplier;
                                 return true;
                             }
                         }
