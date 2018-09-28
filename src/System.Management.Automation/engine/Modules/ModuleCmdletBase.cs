@@ -5155,21 +5155,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If the module has already been loaded, just emit it and continue...
                 Context.Modules.ModuleTable.TryGetValue(fileName, out module);
-<<<<<<< HEAD
-                // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior
-                // if (!BaseForce &&
-                //    IsModuleAlreadyLoaded(module) &&
-                //    ((manifestProcessingFlags & ManifestProcessingFlags.LoadElements) == ManifestProcessingFlags.LoadElements))
-                if (!BaseForce && module != null &&
-                    (BaseRequiredVersion == null || module.Version.Equals(BaseRequiredVersion)) &&
-                    ((BaseMinimumVersion == null && BaseMaximumVersion == null)
-                        || (BaseMaximumVersion != null && BaseMinimumVersion == null && module.Version <= BaseMaximumVersion)
-                        || (BaseMaximumVersion == null && BaseMinimumVersion != null && module.Version >= BaseMinimumVersion)
-                        || (BaseMaximumVersion != null && BaseMinimumVersion != null && module.Version >= BaseMinimumVersion && module.Version <= BaseMaximumVersion)) &&
-                    (BaseGuid == null || module.Guid.Equals(BaseGuid)) && importingModule)
-=======
                 if (!BaseForce && importingModule && IsModuleAlreadyLoaded(module))
->>>>>>> [Feature] Refactor module version comparison logic so it all goes through one method
                 {
                     moduleFileFound = true;
                     module = Context.Modules.ModuleTable[fileName];
