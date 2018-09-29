@@ -3285,12 +3285,8 @@ namespace System.Management.Automation.Language
         {
             int countDigits = 0;
             char c = PeekChar();
-            while (c.IsDecimalDigit())
+            while (c.IsDecimalDigit() || c == '_')
             {
-                countDigits += 1;
-                SkipChar();
-                sb.Append(c);
-                c = PeekChar();
                 if (c == '_')
                 {
                     SkipChar();
@@ -3302,6 +3298,11 @@ namespace System.Management.Automation.Language
                         break;
                     }
                 }
+
+                countDigits += 1;
+                SkipChar();
+                sb.Append(c);
+                c = PeekChar();
             }
 
             return countDigits;
@@ -3692,6 +3693,8 @@ namespace System.Management.Automation.Language
                                     return true;
                                 }
                             }
+
+                            break;
                     }
 
                     // Value cannot be contained in type specified by suffix, or invalid suffix flags.
