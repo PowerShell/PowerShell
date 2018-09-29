@@ -9,6 +9,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
+using System.Numerics;
 using System.Reflection;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
@@ -36,6 +37,112 @@ namespace System.Management.Automation
     /// </summary>
     internal static class Utils
     {
+        private struct PrimitiveRange
+        {
+            internal readonly BigInteger minValue;
+            internal readonly BigInteger maxValue;
+
+            internal PrimitiveRange(BigInteger min, BigInteger max)
+            {
+                this.minValue = min;
+                this.maxValue = max;
+            }
+
+            internal void Deconstruct(out BigInteger min, out BigInteger max)
+            {
+                min = this.minValue;
+                max = this.maxValue;
+            }
+        }
+
+        private static readonly Dictionary<Type, PrimitiveRange> s_typeBounds = new Dictionary<Type, PrimitiveRange>() {
+            { typeof(sbyte),   new PrimitiveRange(sbyte.MinValue,   sbyte.MaxValue)   },
+            { typeof(byte),    new PrimitiveRange(byte.MinValue,    byte.MaxValue)    },
+            { typeof(short),   new PrimitiveRange(short.MinValue,   short.MaxValue)   },
+            { typeof(ushort),  new PrimitiveRange(ushort.MinValue,  ushort.MaxValue)  },
+            { typeof(int),     new PrimitiveRange(int.MinValue,     int.MaxValue)     },
+            { typeof(uint),    new PrimitiveRange(uint.MinValue,    uint.MaxValue)    },
+            { typeof(long),    new PrimitiveRange(long.MinValue,    long.MaxValue)    },
+            { typeof(ulong),   new PrimitiveRange(ulong.MinValue,   ulong.MaxValue)   },
+            { typeof(decimal), new PrimitiveRange((BigInteger)decimal.MinValue, (BigInteger)decimal.MaxValue) },
+            { typeof(double),  new PrimitiveRange((BigInteger)double.MinValue,  (BigInteger)double.MaxValue)  },
+        };
+
+        internal static bool TryConvert<T>(double value, out T outValue) where T : struct
+        {
+            if (!s_typeBounds.ContainsKey(typeof(T)))
+            {
+                outValue = default(T);
+                return false;
+            }
+
+            (BigInteger minValue, BigInteger maxValue) = s_typeBounds[typeof(T)];
+
+            if (minValue > (BigInteger)value || (BigInteger)value > maxValue)
+            {
+                outValue = default(T);
+                return false;
+            }
+
+            outValue = LanguagePrimitives.ConvertTo<T>(Math.Round(value));
+            return true;
+        }
+
+        internal static bool TryConvert<T>(BigInteger value, out T outValue) where T : struct
+        {
+            if (!s_typeBounds.ContainsKey(typeof(T)))
+            {
+                outValue = default(T);
+                return false;
+            }
+
+            (BigInteger minValue, BigInteger maxValue) = s_typeBounds[typeof(T)];
+
+            if (minValue > value || value > maxValue)
+            {
+                outValue = default(T);
+                return false;
+            }
+
+            outValue = LanguagePrimitives.ConvertTo<T>(value);
+            return true;
+        }
+
+        internal static bool TryParseBinary(ReadOnlySpan<char> digits, bool unsigned, out BigInteger result)
+        {
+            switch (digits.Length)
+            {
+                case int n when (n <= 8):
+                    result = unsigned ? (BigInteger)Convert.ToByte(digits.ToString(), 2) : Convert.ToSByte(digits.ToString(), 2);
+                    return true;
+                case int n when (n <= 16):
+                    result = unsigned ? (BigInteger)Convert.ToUInt16(digits.ToString(), 2) : Convert.ToInt16(digits.ToString(), 2);
+                    return true;
+                case int n when (n <= 32):
+                    result = unsigned ? (BigInteger)Convert.ToUInt32(digits.ToString(), 2) : Convert.ToInt32(digits.ToString(), 2);
+                    return true;
+                case int n when (n <= 64):
+                    result = unsigned ? (BigInteger)Convert.ToUInt64(digits.ToString(), 2) : Convert.ToInt64(digits.ToString(), 2);
+                    return true;
+                default:
+                    result = ParseBigBinary(digits, unsigned);
+                    return true;
+            }
+        }
+
+        private static BigInteger ParseBigBinary(ReadOnlySpan<char> digits, bool unsigned)
+        {
+            BigInteger value = 0;
+            unsigned = unsigned || (digits[0] == '0');
+
+            for (int i = 0; i < digits.Length; i++)
+            {
+                value += (digits[i] == '1') ? BigInteger.Pow(2, digits.Length - i - 1) : 0;
+            }
+
+            return unsigned ? value : (value - BigInteger.Pow(2, digits.Length));
+        }
+
         // From System.Web.Util.HashCodeCombiner
         internal static int CombineHashCodes(int h1, int h2)
         {
