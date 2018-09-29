@@ -3516,7 +3516,7 @@ namespace System.Management.Automation.Language
                         }
 
                         // If the string isn't at a length where we expect a signing bit or it's flagged as unsigned
-                        if (strNum[0] != 0 && (suffix.HasFlag(NumberSuffixFlags.Unsigned) || (strNum.Length & 7) != 0))
+                        if (suffix.HasFlag(NumberSuffixFlags.Unsigned) || (strNum.Length & 7) != 0)
                         {
                             // Allocate new span
                             Span<char> tempSpan = new char[strNum.Length + 1];
@@ -3565,9 +3565,6 @@ namespace System.Management.Automation.Language
                                     break;
                                 case int n when (n <= 64):
                                     suffix |= NumberSuffixFlags.Long;
-                                    break;
-                                default:
-                                    suffix = NumberSuffixFlags.None;
                                     break;
                             }
                         }
@@ -3666,32 +3663,33 @@ namespace System.Management.Automation.Language
                                 result = intNoSuffix;
                                 return true;
                             }
-                            else if (Utils.TryConvert<long>(bigValue, out long longNoSuffix))
+
+                            if (Utils.TryConvert<long>(bigValue, out long longNoSuffix))
                             {
                                 result = longNoSuffix;
                                 return true;
                             }
-                            else if (Utils.TryConvert<decimal>(bigValue, out decimal decimalNoSuffix))
+
+                            if (Utils.TryConvert<decimal>(bigValue, out decimal decimalNoSuffix))
                             {
                                 result = decimalNoSuffix;
                                 return true;
                             }
-                            else
+
+                            // Result is too big for anything else; fallback to double (if decimal notation)
+                            if (format == NumberFormat.Decimal)
                             {
-                                // Result is too big for anything else; fallback to Double or BigInteger (if hex)
-                                if (format == NumberFormat.Decimal)
+                                if (Utils.TryConvert<double>(bigValue, out double doubleNoSuffix))
                                 {
-                                    if (Utils.TryConvert<double>(bigValue, out double doubleNoSuffix))
-                                    {
-                                        result = doubleNoSuffix;
-                                        return true;
-                                    }
-                                }
-                                else
-                                {
-                                    result = bigValue;
+                                    result = doubleNoSuffix;
                                     return true;
                                 }
+                            }
+                            else
+                            {
+                                // Fallback to bigint for binary / hex notations
+                                result = bigValue;
+                                return true;
                             }
 
                             break;
