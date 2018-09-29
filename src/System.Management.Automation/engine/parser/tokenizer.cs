@@ -3906,6 +3906,7 @@ namespace System.Management.Automation.Language
                                     notNumber = true;
                                     break;
                             }
+
                             break;
                         default:
                             notNumber = true;
