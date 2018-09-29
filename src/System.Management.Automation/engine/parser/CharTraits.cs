@@ -61,6 +61,9 @@ namespace System.Management.Automation.Language
 
         // The character is the first character of some operator (and hence is not part of a token that starts a number)
         ForceStartNewTokenAfterNumber = 0x0800,
+
+        // The character is a binary digit.
+        BinaryDigit = 0x1000,
     }
 
     internal static class CharExtensions
@@ -120,8 +123,8 @@ namespace System.Management.Automation.Language
 /*        - */ CharTraits.ForceStartNewTokenAfterNumber,
 /*        . */ CharTraits.ForceStartNewTokenAfterNumber,
 /*        / */ CharTraits.ForceStartNewTokenAfterNumber,
-/*        0 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst,
-/*        1 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst,
+/*        0 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst | CharTraits.BinaryDigit,
+/*        1 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst | CharTraits.BinaryDigit,
 /*        2 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst,
 /*        3 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst,
 /*        4 */ CharTraits.Digit | CharTraits.HexDigit | CharTraits.VarNameFirst,
@@ -145,7 +148,7 @@ namespace System.Management.Automation.Language
 /*        F */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.HexDigit,
 /*        G */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.MultiplierStart,
 /*        H */ CharTraits.IdentifierStart | CharTraits.VarNameFirst,
-/*        I */ CharTraits.IdentifierStart | CharTraits.VarNameFirst,
+/*        I */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.TypeSuffix,
 /*        J */ CharTraits.IdentifierStart | CharTraits.VarNameFirst,
 /*        K */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.MultiplierStart,
 /*        L */ CharTraits.IdentifierStart | CharTraits.VarNameFirst | CharTraits.TypeSuffix,
@@ -259,6 +262,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.VarNameFirst) != 0;
             }
+
             return char.IsLetterOrDigit(c);
         }
 
@@ -270,6 +274,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.IdentifierStart) != 0;
             }
+
             return char.IsLetter(c);
         }
 
@@ -281,6 +286,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & (CharTraits.IdentifierStart | CharTraits.Digit)) != 0;
             }
+
             return char.IsLetterOrDigit(c);
         }
 
@@ -291,6 +297,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.HexDigit) != 0;
             }
+
             return false;
         }
 
@@ -301,6 +308,18 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.Digit) != 0;
             }
+
+            return false;
+        }
+
+        // Return true if the character is a binary digit.
+        internal static bool IsBinaryDigit(this char c)
+        {
+            if (c < 128)
+            {
+                return (s_traits[c] & CharTraits.BinaryDigit) != 0;
+            }
+
             return false;
         }
 
@@ -311,6 +330,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.TypeSuffix) != 0;
             }
+
             return false;
         }
 
@@ -321,6 +341,7 @@ namespace System.Management.Automation.Language
             {
                 return (s_traits[c] & CharTraits.MultiplierStart) != 0;
             }
+
             return false;
         }
 
