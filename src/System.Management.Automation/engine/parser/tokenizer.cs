@@ -483,8 +483,11 @@ namespace System.Management.Automation.Language
         None = 0x0,
         Unsigned = 0x1,
         SignedByte = 0x2,
+        UnsignedByte = 0x3,
         Short = 0x4,
+        UnsignedShort = 0x5,
         Long = 0x8,
+        UnsignedLong = 0x9,
         Decimal = 0x10    }
 
     //
