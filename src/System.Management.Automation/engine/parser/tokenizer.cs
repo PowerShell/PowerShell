@@ -482,10 +482,10 @@ namespace System.Management.Automation.Language
     {
         None = 0x0,
         Unsigned = 0x1,
-        Short = 0x2,
-        Long = 0x4,
-        Decimal = 0x8
-    }
+        SignedByte = 0x2,
+        Short = 0x4,
+        Long = 0x8,
+        Decimal = 0x10    }
 
     //
     // Class used to do a partial snapshot of the state of the tokenizer.
