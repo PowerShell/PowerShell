@@ -3295,11 +3295,17 @@ namespace System.Management.Automation.Language
                                 case NumberSuffixFlags.Short:
                                     result = (short)((short)Convert.ChangeType(doubleValue, typeof(short), CultureInfo.InvariantCulture) * multiplier);
                                     break;
-                                case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Long:
+                                case NumberSuffixFlags.SignedByte:
+                                    result = (sbyte)((sbyte)Convert.ChangeType(doubleValue, typeof(sbyte), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.UnsignedLong:
                                     result = (ulong)Convert.ChangeType(doubleValue, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
                                     break;
-                                case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Short:
+                                case NumberSuffixFlags.UnsignedShort:
                                     result = (ushort)((ushort)Convert.ChangeType(doubleValue, typeof(ushort), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.UnsignedByte:
+                                    result = (byte)((byte)Convert.ChangeType(doubleValue, typeof(byte), CultureInfo.InvariantCulture) * multiplier);
                                     break;
                                 case NumberSuffixFlags.Unsigned:
                                     ulong testresult = (ulong)Convert.ChangeType(doubleValue, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
@@ -3360,6 +3366,15 @@ namespace System.Management.Automation.Language
 
                             result = null;
                             return false;
+                        case NumberSuffixFlags.SignedByte:
+                            if (sbyte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out sbyte sb))
+                            {
+                                result = (sbyte)(sb * multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
                         case NumberSuffixFlags.Unsigned:
                             if (ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
                             {
@@ -3379,7 +3394,7 @@ namespace System.Management.Automation.Language
 
                             result = null;
                             return false;
-                        case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Long:
+                        case NumberSuffixFlags.UnsignedLong:
                             if (ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong ul))
                             {
                                 result = (ulong)(ul * (ulong)multiplier);
@@ -3388,10 +3403,19 @@ namespace System.Management.Automation.Language
 
                             result = null;
                             return false;
-                        case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Short:
+                        case NumberSuffixFlags.UnsignedShort:
                             if (ushort.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ushort us))
                             {
                                 result = (ushort)(us * (ushort)multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.UnsignedByte:
+                            if (byte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out byte b))
+                            {
+                                result = (byte)(b * (byte)multiplier);
                                 return true;
                             }
 
@@ -3606,6 +3630,10 @@ namespace System.Management.Automation.Language
                     case 'D':
                         suffix |= NumberSuffixFlags.Decimal;
                         break;
+                    case 'y':
+                    case 'Y':
+                        suffix |= NumberSuffixFlags.SignedByte;
+                        break;
                     default:
                         notNumber = true;
                         break;
@@ -3627,6 +3655,10 @@ namespace System.Management.Automation.Language
                             case 's':
                             case 'S':
                                 suffix |= NumberSuffixFlags.Short;
+                                break;
+                            case 'y':
+                            case 'Y':
+                                suffix |= NumberSuffixFlags.SignedByte;
                                 break;
                             default:
                                 notNumber = true;
