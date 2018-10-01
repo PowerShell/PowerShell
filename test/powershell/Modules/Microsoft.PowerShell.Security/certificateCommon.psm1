@@ -68,6 +68,19 @@ OksttXT1kXf+aez9EzDlsgQU4ck78h0WTy01zHLwSKNWK4wFFQM=
     return $certLocation
 }
 
+Function New-CertificatePassword
+{
+    # Hackery to create a new 10 digit random hex string as a password
+    $rand = [Random]::new()
+    $script:protectedCertPassword = ConvertTo-SecureString -Force -AsPlainText (((1..10).ForEach{ '{0:x}' -f $rand.Next(0xf) }) -join '')
+    return $script:protectedCertPassword
+}
+
+Function Get-CertificatePassword
+{
+    return $script:protectedCertPassword
+}
+
 Function New-ProtectedCertificate
 {
     <#
@@ -80,14 +93,12 @@ Function New-ProtectedCertificate
 
     $certLocation = Join-Path ([System.IO.Path]::GetTempPath()) 'protectedCert.pfx'
 
-    # Hackery to create a new 10 digit random hex string as a password
-    $rand = [Random]::new()
-    $global:protectedCertPassword = ConvertTo-SecureString -Force -AsPlainText (((1..10).ForEach{ '{0:x}' -f $rand.Next(0xf) }) -join '')
+    $password = New-CertificatePassword
 
     $null = SelfSignedCertificate\New-SelfSignedCertificate `
         -CommonName 'localhost' `
         -OutCertPath $certLocation `
-        -Passphrase $global:protectedCertPassword `
+        -Passphrase $password `
         -Force
 
     return $certLocation
