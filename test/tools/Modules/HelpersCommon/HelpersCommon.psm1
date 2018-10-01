@@ -313,6 +313,7 @@ function Start-NativeExecution
     } finally {
         $script:ErrorActionPreference = $backupEAP
     }
+}
 
 # Test if the scriptblock (cmdlet) can be stopped
 function Test-Stopping
