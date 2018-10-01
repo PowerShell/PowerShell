@@ -151,6 +151,8 @@ $SUDO yum install -y \
         libcurl \
         openssl \
         libuuid.x86_64 \
+        tar \
+        gzip \
     && yum clean all
 
 ##END Check requirements and prerequisites
