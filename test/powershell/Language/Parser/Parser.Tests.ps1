@@ -729,11 +729,6 @@ foo``u{2195}abc
                 @{ Script = "0x0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
                 @{ Script = "0x41y"; ExpectedValue = "65"; ExpectedType = [sbyte] }
                 @{ Script = "-0x41y"; ExpectedValue = "-65"; ExpectedType = [sbyte] }
-                #Binary
-                @{ Script = "0b0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
-                @{ Script = "0b10y"; ExpectedValue = "2"; ExpectedType = [sbyte] }
-                @{ Script = "-0b10y"; ExpectedValue = "-2"; ExpectedType = [sbyte] }
-                @{ Script = "0b11111111y"; ExpectedValue = "-1"; ExpectedType = [sbyte] }
 
             #Short Integer notation
                 #Standard
