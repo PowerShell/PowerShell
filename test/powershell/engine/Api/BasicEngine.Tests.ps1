@@ -48,7 +48,7 @@ exit
     }
 }
 
-Describe "EndInvoke() should return a collection of results" {
+Describe "EndInvoke() should return a collection of results" -Tags "CI" {
     BeforeAll {
         $ps = [powershell]::Create()
         $ps.AddScript("'Hello'; Sleep 1; 'World'") > $null
