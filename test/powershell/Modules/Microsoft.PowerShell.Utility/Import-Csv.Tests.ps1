@@ -27,9 +27,7 @@ Describe "Import-Csv Quote Delimiter" -Tags "CI" {
         $TestImportCsvQuoteDelimiter_EmptyValue = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsvQuoteDelimiter_EmptyValue.csv
         $TestImportCsvQuoteDelimiter_QuoteWithValue = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsvQuoteDelimiter_QuoteWithValue.csv
         $TestImportCsvQuoteDelimiter_QuoteCommaDelimiter = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsvQuoteDelimiter_QuoteCommaDelimiter.csv
-    }
-	
-    
+    }   
 
     It "Should handle qoute delimiter with empty value" {
         $ExpectedHeader = "a1,H1,a3"
@@ -50,8 +48,7 @@ Describe "Import-Csv Quote Delimiter" -Tags "CI" {
         $returnObject = Import-Csv -Path $TestImportCsvQuoteDelimiter_QuoteCommaDelimiter -Delimiter ','
         $actualHeader = $returnObject[0].psobject.Properties.name -join ','
         $actualHeader | Should -Be $ExpectedHeader
-    }
-    
+    }    
 }
 
 Describe "Import-Csv File Format Tests" -Tags "CI" {
