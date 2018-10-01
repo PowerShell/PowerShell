@@ -78,6 +78,10 @@ Function New-CertificatePassword
 
 Function Get-CertificatePassword
 {
+    if ($null -eq $script:protectedCertPassword)
+    {
+        throw [System.InvalidOperationException] "`$script:protectedCertPassword is not defined. Call New-CertificatePassword first."
+    }
     return $script:protectedCertPassword
 }
 
