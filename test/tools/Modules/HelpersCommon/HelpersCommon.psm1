@@ -313,3 +313,13 @@ function Start-NativeExecution
         $script:ErrorActionPreference = $backupEAP
     }
 }
+
+# Creates a new random hex string for use with things like test certificate passwords
+function New-RandomHexString
+{
+    param([int]$Length = 10)
+
+    $random = [Random]::new()
+    return ((1..$Length).ForEach{ '{0:x}' -f $random.Next(0xf) }) -join ''
+}
+

@@ -19,15 +19,6 @@ Class WebListener
 
 [WebListener]$WebListener
 
-function New-RandomHexString
-{
-    param([int]$Length = 10)
-
-    $random = [Random]::new()
-
-    return ((1..$Length).ForEach{ '{0:x}' -f $random.Next(0xf) }) -join ''
-}
-
 function New-ClientCertificate
 {
     param([string]$CertificatePath, [string]$Password)

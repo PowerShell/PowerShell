@@ -70,9 +70,7 @@ OksttXT1kXf+aez9EzDlsgQU4ck78h0WTy01zHLwSKNWK4wFFQM=
 
 Function New-CertificatePassword
 {
-    # Hackery to create a new 10 digit random hex string as a password
-    $rand = [Random]::new()
-    $script:protectedCertPassword = ConvertTo-SecureString -Force -AsPlainText (((1..10).ForEach{ '{0:x}' -f $rand.Next(0xf) }) -join '')
+    $script:protectedCertPassword = ConvertTo-SecureString -Force -AsPlainText (New-RandomHexString)
     return $script:protectedCertPassword
 }
 
