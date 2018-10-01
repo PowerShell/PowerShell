@@ -163,11 +163,6 @@ namespace Microsoft.PowerShell
                     hostException = e;
                 }
 
-                if (args == null)
-                {
-                    args = new string[0];
-                }
-
                 s_cpp = new CommandLineParameterParser(
                     (s_theConsoleHost != null) ? s_theConsoleHost.UI : (new NullHostUserInterface()),
                     bannerText, helpText);
