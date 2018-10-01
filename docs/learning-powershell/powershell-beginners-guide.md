@@ -96,12 +96,12 @@ Alias           type -> Get-Content
 …
 ```
 
-As you can see `cls` is an alias of `Clear-Host`.
+As you can see `cls` or `clear` is an alias of `Clear-Host`.
 
 Now try it:
 ```powershell
 PS /> Get-Process
-PS /> cls
+PS /> cls or clear
 ```
 
 4. `cd -> Set-Location`: Sets the current working location to a specified location.
