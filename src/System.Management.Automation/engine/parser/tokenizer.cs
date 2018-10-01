@@ -488,7 +488,8 @@ namespace System.Management.Automation.Language
         UnsignedShort = 0x5,
         Long = 0x8,
         UnsignedLong = 0x9,
-        Decimal = 0x10    }
+        Decimal = 0x10
+    }
 
     //
     // Class used to do a partial snapshot of the state of the tokenizer.
