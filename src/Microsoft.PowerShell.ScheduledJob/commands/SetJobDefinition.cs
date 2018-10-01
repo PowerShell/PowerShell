@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 // If RunEvery parameter is specified then create a job trigger for the definition that
                 // runs the job at the requested interval.
                 bool addedTrigger = false;
-                if (MyInvocation.BoundParameters.ContainsKey("RunEvery"))
+                if (MyInvocation.BoundParameters.ContainsKey(nameof(RunEvery)))
                 {
                     AddRepetitionJobTriggerToDefinition(
                         _definition,
@@ -340,7 +340,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             UpdateJobInvocationInfo();
 
-            if (MyInvocation.BoundParameters.ContainsKey("MaxResultCount"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(MaxResultCount)))
             {
                 _definition.SetExecutionHistoryLength(MaxResultCount, false);
             }
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
 
             // RunAs32
-            if (MyInvocation.BoundParameters.ContainsKey("RunAs32"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RunAs32)))
             {
                 if (newParameters.ContainsKey(ScheduledJobInvocationInfo.RunAs32Parameter))
                 {
@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
 
             // Authentication
-            if (MyInvocation.BoundParameters.ContainsKey("Authentication"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(Authentication)))
             {
                 if (newParameters.ContainsKey(ScheduledJobInvocationInfo.AuthenticationParameter))
                 {
