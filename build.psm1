@@ -451,7 +451,7 @@ function Start-PSBuild {
         [string]$ReleaseTag
     )
 
-    if (!$NoPSModuleRestore)
+    if ($PsCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
     {
         $PSModuleRestore = $true
     }
