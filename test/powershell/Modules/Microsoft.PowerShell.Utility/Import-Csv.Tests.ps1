@@ -22,6 +22,38 @@ Describe "Import-Csv DRT Unit Tests" -Tags "CI" {
     }
 }
 
+Describe "Import-Csv Quote Delimiter" -Tags "CI" {
+    BeforeAll {
+        $TestImportCsvQuoteDelimiter_EmptyValue = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsvQuoteDelimiter_EmptyValue.csv
+        $TestImportCsvQuoteDelimiter_QuoteWithValue = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsvQuoteDelimiter_QuoteWithValue.csv
+        $TestImportCsvQuoteDelimiter_QuoteCommaDelimiter = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsvQuoteDelimiter_QuoteCommaDelimiter.csv
+    }
+	
+    
+
+    It "Should handle qoute delimiter with empty value" {
+        $ExpectedHeader = "a1,H1,a3"
+        $returnObject = Import-Csv -Path $TestImportCsvQuoteDelimiter_EmptyValue -Delimiter '"'
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -Be $ExpectedHeader
+    }
+
+    It "Should handle quote delimiter with non-empty value" {
+        $ExpectedHeader = "a1,a2,a3"
+        $returnObject = Import-Csv -Path $TestImportCsvQuoteDelimiter_QuoteWithValue -Delimiter '"'
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -Be $ExpectedHeader        
+    }
+
+    It "Should handle quoted values with non-quote delimiter" {
+        $ExpectedHeader = "a1,a2,a3"
+        $returnObject = Import-Csv -Path $TestImportCsvQuoteDelimiter_QuoteCommaDelimiter -Delimiter ','
+        $actualHeader = $returnObject[0].psobject.Properties.name -join ','
+        $actualHeader | Should -Be $ExpectedHeader
+    }
+    
+}
+
 Describe "Import-Csv File Format Tests" -Tags "CI" {
     BeforeAll {
         # The file is w/o header
