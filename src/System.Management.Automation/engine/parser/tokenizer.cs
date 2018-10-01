@@ -3368,7 +3368,8 @@ namespace System.Management.Automation.Language
                             result = null;
                             return false;
                         case NumberSuffixFlags.SignedByte:
-                            if (sbyte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out sbyte sb))
+                            // Multiplier for hex-parsed values can be negative to permit - prefix for hex values
+                            if (Math.Abs(multiplier) == 1 && sbyte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out sbyte sb))
                             {
                                 result = (sbyte)(sb * multiplier);
                                 return true;
@@ -3414,9 +3415,11 @@ namespace System.Management.Automation.Language
                             result = null;
                             return false;
                         case NumberSuffixFlags.UnsignedByte:
-                            if (byte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out byte b))
+                            // If multiplier is negative or greater than 1, we can assume it will fail since the
+                            // minimum multiplier is 1024 (already exceeds byte.MaxValue), and byte is unsigned
+                            if (multiplier == 1 && byte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out byte b))
                             {
-                                result = (byte)(b * (byte)multiplier);
+                                result = b;
                                 return true;
                             }
 
