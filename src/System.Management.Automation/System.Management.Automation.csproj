@@ -17,7 +17,7 @@
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.5.0" />
     <PackageReference Include="System.Management" Version="4.5.0" />
     <PackageReference Include="System.Security.AccessControl" Version="4.5.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.1" />
     <PackageReference Include="System.Security.Permissions" Version="4.5.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
     <!-- the following package(s) are from the powershell org -->
