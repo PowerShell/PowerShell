@@ -53,67 +53,67 @@ namespace Microsoft.PowerShell.ScheduledJob
             // Update ScheduledJobOptions object with current parameters.
             // Update switch parameters only if they were selected.
             // Also update the ScheduledJobDefinition object associated with this options object.
-            if (MyInvocation.BoundParameters.ContainsKey("StartIfOnBattery"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(StartIfOnBattery)))
             {
                 _jobOptions.StartIfOnBatteries = StartIfOnBattery;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("ContinueIfGoingOnBattery"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(ContinueIfGoingOnBattery)))
             {
                 _jobOptions.StopIfGoingOnBatteries = !ContinueIfGoingOnBattery;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("WakeToRun"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(WakeToRun)))
             {
                 _jobOptions.WakeToRun = WakeToRun;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("StartIfIdle"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(StartIfIdle)))
             {
                 _jobOptions.StartIfNotIdle = !StartIfIdle;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("StopIfGoingOffIdle"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(StopIfGoingOffIdle)))
             {
                 _jobOptions.StopIfGoingOffIdle = StopIfGoingOffIdle;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("RestartOnIdleResume"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RestartOnIdleResume)))
             {
                 _jobOptions.RestartOnIdleResume = RestartOnIdleResume;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("HideInTaskScheduler"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(HideInTaskScheduler)))
             {
                 _jobOptions.ShowInTaskScheduler = !HideInTaskScheduler;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("RunElevated"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RunElevated)))
             {
                 _jobOptions.RunElevated = RunElevated;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("RequireNetwork"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(RequireNetwork)))
             {
                 _jobOptions.RunWithoutNetwork = !RequireNetwork;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("DoNotAllowDemandStart"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(DoNotAllowDemandStart)))
             {
                 _jobOptions.DoNotAllowDemandStart = DoNotAllowDemandStart;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("IdleDuration"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(IdleDuration)))
             {
                 _jobOptions.IdleDuration = IdleDuration;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("IdleTimeout"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(IdleTimeout)))
             {
                 _jobOptions.IdleTimeout = IdleTimeout;
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("MultipleInstancePolicy"))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(MultipleInstancePolicy)))
             {
                 _jobOptions.MultipleInstancePolicy = MultipleInstancePolicy;
             }

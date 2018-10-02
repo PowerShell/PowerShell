@@ -175,13 +175,13 @@ namespace Microsoft.PowerShell.ScheduledJob
         protected override void BeginProcessing()
         {
             // Validate parameters.
-            if (MyInvocation.BoundParameters.ContainsKey("IdleTimeout") &&
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(IdleTimeout)) &&
                 _idleTimeout < TimeSpan.Zero)
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidIdleTimeout);
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("IdleDuration") &&
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(IdleDuration)) &&
                 _idleDuration < TimeSpan.Zero)
             {
                 throw new PSArgumentException(ScheduledJobErrorStrings.InvalidIdleDuration);
