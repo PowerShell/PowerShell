@@ -151,6 +151,8 @@ $SUDO yum install -y \
         libcurl \
         openssl \
         libuuid.x86_64 \
+        tar \
+        gzip \
     && yum clean all
 
 ##END Check requirements and prerequisites
@@ -168,7 +170,7 @@ if [[ "'$*'" =~ preview ]] ; then
 else
     echo "Finding the latest production release"
     release=$(curl https://api.github.com/repos/PowerShell/PowerShell/releases | grep -Po '"tag_name":(\d*?,|.*?[^\\]",)' | grep -Po '\d+.\d+.\d+[\da-z.-]*' | grep -v '[a-z]' | sort | tail -n1)
-if
+fi
 
 #DIRECT DOWNLOAD
 package=powershell-${release}-linux-x64.tar.gz
