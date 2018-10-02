@@ -32,7 +32,7 @@ $rs.Open()
 $ps = [powershell]::Create()
 $ps.RunspacePool = $rs
 $null = $ps.AddScript(1).Invoke()
-write-host should_not_hang_at_exit
+write-host should_not_stop_responding_at_exit
 exit
 '@
         $process = Start-Process pwsh -ArgumentList $command -PassThru
