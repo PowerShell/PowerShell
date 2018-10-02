@@ -194,7 +194,7 @@ To make things easy, you can just clone recursively:
 git clone --recursive https://github.com/PowerShell/PowerShell.git
 ```
 
-If you already cloned but forgot to use `--recursive`, you can update submodules manually:
+If you have already cloned but forgot to use `--recursive`, you can update submodules manually:
 
 ```sh
 git submodule update --init
