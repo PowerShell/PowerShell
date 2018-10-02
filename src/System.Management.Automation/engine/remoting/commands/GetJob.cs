@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>return the list of jobs after applying HasMoreData filter</returns>
         private List<Job> ApplyHasMoreDataFiltering(List<Job> jobList)
         {
-            bool hasMoreDataParameter = MyInvocation.BoundParameters.ContainsKey("HasMoreData");
+            bool hasMoreDataParameter = MyInvocation.BoundParameters.ContainsKey(nameof(HasMoreData));
 
             if (!hasMoreDataParameter)
             {
@@ -221,8 +221,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>returns job list including all child jobs with ChildJobState or all if IncludeChildJob is specified</returns>
         private List<Job> FindChildJobs(List<Job> jobList)
         {
-            bool childJobStateParameter = MyInvocation.BoundParameters.ContainsKey("ChildJobState");
-            bool includeChildJobParameter = MyInvocation.BoundParameters.ContainsKey("IncludeChildJob");
+            bool childJobStateParameter = MyInvocation.BoundParameters.ContainsKey(nameof(ChildJobState));
+            bool includeChildJobParameter = MyInvocation.BoundParameters.ContainsKey(nameof(IncludeChildJob));
 
             List<Job> matches = new List<Job>();
 
@@ -267,9 +267,9 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<Job> ApplyTimeFiltering(List<Job> jobList)
         {
-            bool beforeParameter = MyInvocation.BoundParameters.ContainsKey("Before");
-            bool afterParameter = MyInvocation.BoundParameters.ContainsKey("After");
-            bool newestParameter = MyInvocation.BoundParameters.ContainsKey("Newest");
+            bool beforeParameter = MyInvocation.BoundParameters.ContainsKey(nameof(Before));
+            bool afterParameter = MyInvocation.BoundParameters.ContainsKey(nameof(After));
+            bool newestParameter = MyInvocation.BoundParameters.ContainsKey(nameof(Newest));
 
             if (!beforeParameter && !afterParameter && !newestParameter)
             {

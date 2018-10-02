@@ -68,6 +68,21 @@ OksttXT1kXf+aez9EzDlsgQU4ck78h0WTy01zHLwSKNWK4wFFQM=
     return $certLocation
 }
 
+Function New-CertificatePassword
+{
+    $script:protectedCertPassword = ConvertTo-SecureString -Force -AsPlainText (New-RandomHexString)
+    return $script:protectedCertPassword
+}
+
+Function Get-CertificatePassword
+{
+    if ($null -eq $script:protectedCertPassword)
+    {
+        throw [System.InvalidOperationException] "`$script:protectedCertPassword is not defined. Call New-CertificatePassword first."
+    }
+    return $script:protectedCertPassword
+}
+
 Function New-ProtectedCertificate
 {
     <#
@@ -78,7 +93,15 @@ Function New-ProtectedCertificate
     Password: "password"
     #>
 
-    $certLocation = ".\test\tools\Modules\WebListener\ServerCert.pfx"
+    $certLocation = Join-Path ([System.IO.Path]::GetTempPath()) 'protectedCert.pfx'
+
+    $password = New-CertificatePassword
+
+    $null = SelfSignedCertificate\New-SelfSignedCertificate `
+        -CommonName 'localhost' `
+        -OutCertPath $certLocation `
+        -Passphrase $password `
+        -Force
 
     return $certLocation
 }

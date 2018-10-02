@@ -389,7 +389,7 @@ namespace Microsoft.PowerShell.Commands
                     // Enable debugging by preserving debug stop events.
                     debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
 
-                    if (this.MyInvocation.BoundParameters.ContainsKey("BreakAll"))
+                    if (this.MyInvocation.BoundParameters.ContainsKey(nameof(BreakAll)))
                     {
                         if (BreakAll)
                         {

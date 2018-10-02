@@ -25,7 +25,7 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
         }
     }
 
-    It "Run with parameter -FileVersionInfo should not hang on non Windows platform also when process' main module is null." -Skip:$IsWindows {
+    It "Run with parameter -FileVersionInfo should not stop responding on non Windows platform also when process' main module is null." -Skip:$IsWindows {
         # Main module for idle process can be null on non-Windows platforms
         { $pwshVersion = Get-Process -Id 0 -FileVersionInfo -ErrorAction Stop } | Should -Not -Throw
     }
