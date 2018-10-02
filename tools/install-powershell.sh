@@ -1,12 +1,10 @@
 #!/bin/bash
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
 
 install(){
     #Companion code for the blog https://cloudywindows.com
 
     #call this code direction from the web with:
-    #bash <(wget -qO - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) <ARGUMENTS>
+    #bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) <ARGUMENTS>
     #wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh | bash -s <ARGUMENTS>
     #bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) <ARGUMENTS>
 
@@ -130,16 +128,9 @@ install(){
         else
         #Script files are not local - pull from remote
         echo "Could not find \"appimage.sh\" next to this script..."
-        echo "Pulling and executing it from \"$gitreposcriptroot/appimage.sh\""
-        if [ -n "$(command -v curl)" ]; then
-            echo "found and using curl"
-            bash <(curl -s $gitreposcriptroot/appimage.sh) $@
-        elif [ -n "$(command -v wget)" ]; then
-            echo "found and using wget"
-            bash <(wget -qO- $gitreposcriptroot/appimage.sh) $@
-        else
-            echo "Could not find curl or wget, install one of these or manually download \"$gitreposcriptroot/appimage.sh\""
-        fi
+        echo "Pulling it from \"$gitreposcriptroot/appimage.sh\""
+        bash <(wget -qO- $gitreposcriptroot/appimage.sh) $@
+    fi
     elif [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ] || [ "$DistroBasedOn" == "amazonlinux" ]; then
         echo "Configuring PowerShell Core Enviornment for: $DistroBasedOn $DIST $REV"
         if [ -f $SCRIPTFOLDER/installpsh-$DistroBasedOn.sh ]; then
@@ -148,16 +139,13 @@ install(){
         else
         #Script files are not local - pull from remote
         echo "Could not find \"installpsh-$DistroBasedOn.sh\" next to this script..."
-        echo "Pulling and executing it from \"$gitreposcriptroot/installpsh-$DistroBasedOn.sh\""
-        if [ -n "$(command -v curl)" ]; then
-            echo "found and using curl"
+        echo "Pulling it from \"$gitreposcriptroot/installpsh-$DistroBasedOn.sh\""
+        if [ "$OS" == "osx" ]; then
             bash <(curl -s $gitreposcriptroot/installpsh-$DistroBasedOn.sh) $@
-        elif [ -n "$(command -v wget)" ]; then
-            echo "found and using wget"
-            bash <(wget -qO- $gitreposcriptroot/installpsh-$DistroBasedOn.sh) $@
         else
-            echo "Could not find curl or wget, install one of these or manually download \"$gitreposcriptroot/installpsh-$DistroBasedOn.sh\""
+            bash <(wget -qO- $gitreposcriptroot/installpsh-$DistroBasedOn.sh) $@
         fi
+    fi
     else
         echo "Sorry, your operating system is based on $DistroBasedOn and is not supported by PowerShell Core or this installer at this time."
     fi
