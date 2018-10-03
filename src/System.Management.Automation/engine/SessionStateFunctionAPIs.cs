@@ -106,6 +106,33 @@ namespace System.Management.Automation
         internal bool UseExportList { get; set; } = false;
 
         /// <summary>
+        /// Set to true when module functions are being explicitly exported using Export-ModuleMember
+        /// </summary>
+        internal bool FunctionsExported { get; set; }
+
+        /// <summary>
+        /// Set to true when any processed module functions are being explicitly exported using '*' wildcard
+        /// </summary>
+        internal bool FunctionsExportedWithWildcard
+        {
+            get { return _functionsExportedWithWildcard; }
+            set
+            {
+                Dbg.Assert((value == true), "This property should never be set/reset to false");
+                if (value == true)
+                {
+                    _functionsExportedWithWildcard = value;
+                }
+            }
+        }
+        private bool _functionsExportedWithWildcard;
+
+        /// <summary>
+        /// Set to true if module loading is performed under a manifest that explicitly exports functions (no wildcards)
+        /// </summary>
+        internal bool ManifestWithExplicitFunctionExport { get; set; }
+
+        /// <summary>
         /// Get a functions out of session state.
         /// </summary>
         /// <param name="name">

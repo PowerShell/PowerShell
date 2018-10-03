@@ -58,6 +58,20 @@ namespace System.Management.Automation
         /// <param name="path">The absolute path to the module</param>
         /// <param name="context">The execution context for this engine instance</param>
         /// <param name="sessionState">The module's sessionstate object - this may be null if the module is a dll.</param>
+        /// <param name="languageMode">Language mode for script based modules</param>
+        internal PSModuleInfo(string name, string path, ExecutionContext context, SessionState sessionState, PSLanguageMode? languageMode)
+            : this(name, path, context, sessionState)
+        {
+            LanguageMode = languageMode;
+        }
+
+        /// <summary>
+        /// This object describes a PowerShell module...
+        /// </summary>
+        /// <param name="name">The name to use for the module. If null, get it from the path name</param>
+        /// <param name="path">The absolute path to the module</param>
+        /// <param name="context">The execution context for this engine instance</param>
+        /// <param name="sessionState">The module's sessionstate object - this may be null if the module is a dll.</param>
         internal PSModuleInfo(string name, string path, ExecutionContext context, SessionState sessionState)
         {
             if (path != null)
@@ -134,6 +148,8 @@ namespace System.Management.Automation
             SessionState = new SessionState(context, true, true);
             SessionState.Internal.Module = this;
 
+            LanguageMode = scriptBlock.LanguageMode;
+
             // Now set up the module's session state to be the current session state
             SessionStateInternal oldSessionState = context.EngineSessionState;
             try
@@ -163,6 +179,20 @@ namespace System.Management.Automation
                 context.EngineSessionState = oldSessionState;
             }
         }
+
+        /// <summary>
+        /// Specifies the language mode for script based modules
+        /// </summary>
+        internal PSLanguageMode? LanguageMode
+        {
+            get;
+            set;
+        } = PSLanguageMode.FullLanguage;
+
+        /// <summary>
+        /// Set to true when script module automatically exports all functions by default
+        /// </summary>
+        internal bool ModuleAutoExportsAllFunctions { get; set; }
 
         internal bool ModuleHasPrivateMembers { get; set; }
 

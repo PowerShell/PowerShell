@@ -51,6 +51,14 @@ namespace System.Management.Automation
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                         null, "CantInvokeInNonImportedModule", ParserStrings.CantInvokeInNonImportedModule, mi.Name);
                 }
+                else if (((invocationToken == TokenKind.Ampersand) || (invocationToken == TokenKind.Dot)) && (mi.LanguageMode != context.LanguageMode))
+                {
+                    // Disallow FullLanguage "& (Get-Module MyModule) MyPrivateFn" from ConstrainedLanguage because it always
+                    // runs "internal" origin and so has access to all functions, including non-exported functions.
+                    // Otherwise we end up leaking non-exported functions that run in FullLanguage.
+                    throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null,
+                        "CantInvokeCallOperatorAcrossLanguageBoundaries", ParserStrings.CantInvokeCallOperatorAcrossLanguageBoundaries);
+                }
                 commandSessionState = mi.SessionState.Internal;
                 commandIndex += 1;
             }

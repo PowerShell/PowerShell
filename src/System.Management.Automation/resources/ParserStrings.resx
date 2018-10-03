@@ -1491,4 +1491,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="ScriptHasAdminBlockedContent" xml:space="preserve">
     <value>This script contains content that has been flagged as suspicious through a policy setting and has been blocked with error code {0}. Contact your administrator for more information.</value>
   </data>
+  <data name = "CantInvokeCallOperatorAcrossLanguageBoundaries" xml:space="preserve">
+    <value>Cannot use '&amp;' or '.' operators to invoke a module scope command across language boundaries.</value>
+  </data>
 </root>
