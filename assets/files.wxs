@@ -2017,11 +2017,11 @@
           <File Id="fil3779A5AC06BDD2A3AB680DBA83FEAFD1" KeyPath="yes" Source="$(env.ProductSourcePath)\zh-Hant\Microsoft.CodeAnalysis.resources.dll" />
         </Component>
       </Directory>
-      <Component Id="cmp235BDA01BE4144BE9F2BFBA3AE1A00CD" Guid="{03a98239-8d0d-4ee9-82d9-6466fc763c2e}">
-        <File Id="fil4233B53B90A84FC88FA51A8B976747FB" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26814.03.dll" />
+      <Component Id="cmp7641086BD8244AFAAA244FAB40CE60BC" Guid="{2dc3fc9a-086e-4bae-85a4-03322c6a682f}">
+        <File Id="fil65BC2FC2686842A4B38CCBF9F54B2DD3" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26919.02.dll" />
       </Component>
-      <Component Id="cmp5BCFD9C11FB34654B14B795494C7B51D" Guid="{0ebb07c1-0089-4639-85c2-eaed0acffdb2}">
-        <File Id="fil8EBB2AB7056C492495580A5B63F35348" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26814.03.dll" />
+      <Component Id="cmp2B1B284B631547EEB86D29E84D2E9611" Guid="{1d6e6de9-0af0-4669-9cf8-d731d43f3e8a}">
+        <File Id="fil1B414FC15B084BD9B4F5B1ACC5EC5084" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26919.02.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -2670,8 +2670,8 @@
       <ComponentRef Id="cmpC0582B8F392548248FA3DE3080069F68" />
       <ComponentRef Id="cmp3D4940617EE5426384A6BF086E79CC63" />
       <ComponentRef Id="cmpF13D9769FBE945B09326776DC9877740" />
-      <ComponentRef Id="cmp235BDA01BE4144BE9F2BFBA3AE1A00CD" />
-      <ComponentRef Id="cmp5BCFD9C11FB34654B14B795494C7B51D" />
+      <ComponentRef Id="cmp7641086BD8244AFAAA244FAB40CE60BC" />
+      <ComponentRef Id="cmp2B1B284B631547EEB86D29E84D2E9611" />
     </ComponentGroup>
   </Fragment>
 </Wix>
