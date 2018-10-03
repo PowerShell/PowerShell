@@ -53,12 +53,12 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
     }
 
     It "Export-Clixml StopProcessing should succeed" {
-        $sb = { 1..10000 | Export-CliXml -Path $testfile -Verbose }
+        $sb = { 1..20000 | Export-CliXml -Path $testfile -Verbose }
         Test-Stopping $sb -IntervalInMilliseconds 50
     }
 
     It "Import-Clixml StopProcessing should succeed" {
-        1..10000 | Export-Clixml -Path $testfile
+        1..20000 | Export-Clixml -Path $testfile
         $sb = { Import-CliXml -Path $testfile,$testfile,$testfile,$testfile,$testfile -Verbose }
         Test-Stopping $sb -IntervalInMilliseconds 20
     }
