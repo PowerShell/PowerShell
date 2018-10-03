@@ -45,7 +45,7 @@ Describe 'Common Tests - Package Reference' -Tag 'CI' {
     }
 
     # This test should be enabled when we are developing
-    It "<CsProj> reference to <PackageName> <CsProjVersion> should not need to be updated by a new version" -TestCases $testCases {
+    It "<CsProj> reference to <PackageName> <CsProjVersion> should not need to be updated by a new version" -TestCases $testCases -Pending {
         param(
             [string]
             $CsProj,
