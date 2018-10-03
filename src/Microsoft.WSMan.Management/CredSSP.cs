@@ -402,14 +402,6 @@ namespace Microsoft.WSMan.Management
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
     public class EnableWSManCredSSPCommand : WSManCredSSPCommandBase, IDisposable/*, IDynamicParameters*/
     {
-        #region Private Data
-
-        //private const string DelegateComputerParam = "DelegateComputer";
-        //private String[] delegatecomputer;
-        //private RuntimeDefinedParameterDictionary dynamicParameters = new RuntimeDefinedParameterDictionary();
-
-        #endregion
-
         /// <summary>
         /// delegate parameter
         /// </summary>
@@ -494,42 +486,6 @@ namespace Microsoft.WSMan.Management
             }
         }//End BeginProcessing()
 
-        /*
-        /// <summary>
-        /// This method returns DynamicParameters used for Enable-WSManCredSSP cmdlet. Enable-WSManCredSSP
-        /// supports -DelegateComputer parameter when -Role is client.
-        /// </summary>
-        /// <returns>
-        /// An object representing the dynamic parameters for the cmdlet or null if there
-        /// are none.
-        /// </returns>
-        object IDynamicParameters.GetDynamicParameters()
-        {
-            // return null if the role is not client.
-            if (!Role.Equals(ClientRole, StringComparison.OrdinalIgnoreCase))
-            {
-                return dynamicParameters;
-            }
-
-            // Construct attributes for the DelegateComputer parameter
-            Collection<Attribute> delegateComputerAttributeCollection = new Collection<Attribute>();
-            ParameterAttribute paramAttribute = new ParameterAttribute();
-            paramAttribute.Mandatory = true;
-            paramAttribute.Position = 1;
-            ValidateNotNullOrEmptyAttribute notNullAttribute = new ValidateNotNullOrEmptyAttribute();
-            delegateComputerAttributeCollection.Add(paramAttribute);
-            delegateComputerAttributeCollection.Add(notNullAttribute);
-
-            // Construct the parameter and return.
-            RuntimeDefinedParameter delegateComputer = new RuntimeDefinedParameter(
-                DelegateComputerParam,
-                typeof(string[]),
-                delegateComputerAttributeCollection);
-            dynamicParameters.Add(DelegateComputerParam, delegateComputer);
-
-            return dynamicParameters;
-
-        } // GetDynamicParameters*/
 
         #endregion
 
@@ -565,9 +521,6 @@ namespace Microsoft.WSMan.Management
                     WriteError(er);
                     return;
                 }
-                // Extract delegateComputer information from dynamic parameters collection
-                //RuntimeDefinedParameter delegateComputerParameter = dynamicParameters[DelegateComputerParam];
-                //delegatecomputer = (string[])delegateComputerParameter.Value;
 
                 string newxmlcontent = @"<cfg:Auth xmlns:cfg=""http://schemas.microsoft.com/wbem/wsman/1/config/client/auth""><cfg:CredSSP>true</cfg:CredSSP></cfg:Auth>";
                 try
@@ -776,7 +729,6 @@ namespace Microsoft.WSMan.Management
         void
         Dispose()
         {
-            //CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
@@ -985,7 +937,6 @@ namespace Microsoft.WSMan.Management
         void
         Dispose()
         {
-            //CleanUp();
             GC.SuppressFinalize(this);
         }
         /// <summary>
