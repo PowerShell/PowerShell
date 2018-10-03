@@ -201,9 +201,19 @@ namespace System.Management.Automation
 
             // Call the AMSI API to determine if the script block has malicious content
             var scriptExtent = scriptBlockAst.Extent;
-            if (AmsiUtils.ScanContent(scriptExtent.Text, scriptExtent.File) == AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
+            var amsiResult = AmsiUtils.ScanContent(scriptExtent.Text, scriptExtent.File);
+
+            if (amsiResult == AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
             {
                 var parseError = new ParseError(scriptExtent, "ScriptContainedMaliciousContent", ParserStrings.ScriptContainedMaliciousContent);
+                throw new ParseException(new[] { parseError });
+            }
+            else if ((amsiResult >= AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_BEGIN) &&
+                     (amsiResult <= AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_END))
+            {
+                // Certain policies set by an administrator blocked this content on this machine
+                var parseError = new ParseError(scriptExtent, "ScriptHasAdminBlockedContent",
+                    StringUtil.Format(ParserStrings.ScriptHasAdminBlockedContent, amsiResult));
                 throw new ParseException(new[] { parseError });
             }
 
