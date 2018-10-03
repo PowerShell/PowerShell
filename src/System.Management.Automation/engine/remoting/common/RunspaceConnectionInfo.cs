@@ -3189,10 +3189,18 @@ namespace System.Management.Automation.Runspaces
             if (computeSystemPropertiesType == null)
             {
                 computeSystemPropertiesType = schemaAssembly.GetType("Microsoft.HyperV.Schema.Compute.System.Properties");
+                if (computeSystemPropertiesType == null)
+                {
+                    throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotGetHostInteropTypes));
+                }
             }
 
             Assembly hostComputeInteropAssembly = Assembly.Load(new AssemblyName("Microsoft.HostCompute.Interop, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"));
             hostComputeInteropType = hostComputeInteropAssembly.GetType("Microsoft.HostCompute.Interop.HostComputeInterop");
+            if (hostComputeInteropType == null)
+            {
+                throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotGetHostInteropTypes));
+            }
         }
 
         /// <summary>
@@ -3367,6 +3375,11 @@ namespace System.Management.Automation.Runspaces
                     else
                     {
                         var propertyInfo = computeSystemPropertiesType.GetProperty("RuntimeId");
+                        if (propertyInfo == null)
+                        {
+                            throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotGetHostInteropTypes));
+                        }
+
                         RuntimeId = (Guid)propertyInfo.GetValue(computeSystemPropertiesHandle);
                     }
 
