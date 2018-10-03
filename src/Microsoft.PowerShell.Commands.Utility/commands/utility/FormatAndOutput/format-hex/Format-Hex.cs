@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath { get; set; }
 
         /// <summary>
-        /// Ojbect to process.
+        /// Object to process.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ByInputObject", ValueFromPipeline = true)]
         public PSObject InputObject { get; set; }
