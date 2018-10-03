@@ -23,19 +23,29 @@ Describe "Import-Csv DRT Unit Tests" -Tags "CI" {
 }
 
 Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
-    BeforeAll {
-        $TestImportCsvQuoteDelimiter_EmptyValue = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsvQuoteDelimiter_EmptyValue.csv
-        $TestImportCsvQuoteDelimiter_QuoteWithValue = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsvQuoteDelimiter_QuoteWithValue.csv
-        $TestImportCsvQuoteDelimiter_QuoteCommaDelimiter = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsvQuoteDelimiter_QuoteCommaDelimiter.csv
-    }   
+$empyValueCsv = @'
+a1""a3
+v1"v2"v3
+'@
+
+$withValueCsv = @'
+a1"a2"a3
+v1"v2"v3
+'@
+
+$quotedCharacterCsv = @'
+a1,a2,a3
+v1,"v2",v3
+'@
 
     It "Should handle <name>" -TestCases @(
-		@{ name = "quote with empty value"; expectedHeader = "a1,H1,a3"; file = $TestImportCsvQuoteDelimiter_EmptyValue; delimiter = '"' }
-		@{ name = "quote with value"; expectedHeader = "a1,a2,a3"; file = $TestImportCsvQuoteDelimiter_QuoteWithValue; delimiter = '"' }
-		@{ name = "value enclosed in quote"; expectedHeader = "a1,a2,a3"; file = $TestImportCsvQuoteDelimiter_QuoteCommaDelimiter; delimiter = ',' }
+		@{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
+		@{ name = "quote with value"        ; expectedHeader = "a1,a2,a3"; file = "WithValue.csv"       ; content = $withValueCsv       ; delimiter = '"' }
+		@{ name = "value enclosed in quote" ; expectedHeader = "a1,a2,a3"; file = "QuotedCharacter.csv" ; content = $quotedCharacterCsv ; delimiter = ',' }
 		){
-		param($expectedHeader, $file, $delimiter)
-		$returnObject = Import-Csv -Path $file -Delimiter $delimiter
+		param($expectedHeader, $file, $content, $delimiter)
+        Set-Content testdrive:/$file -Value $content
+		$returnObject = Import-Csv -Path testdrive:/$file -Delimiter $delimiter
         $actualHeader = $returnObject[0].psobject.Properties.name -join ','
         $actualHeader | Should -Be $expectedHeader
     }
