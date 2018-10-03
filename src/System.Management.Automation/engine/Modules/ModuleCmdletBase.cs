@@ -5379,6 +5379,15 @@ namespace Microsoft.PowerShell.Commands
             }
             PSModuleInfo module = null;
 
+            // Block ps1 files from being imported in constrained language.
+            if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage && ext.Equals(StringLiterals.PowerShellScriptFileExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                InvalidOperationException invalidOp = new InvalidOperationException(Modules.ImportPSFileNotAllowedInConstrainedLanguage);
+                ErrorRecord er = new ErrorRecord(invalidOp, "Modules_ImportPSFileNotAllowedInConstrainedLanguage",
+                                                 ErrorCategory.PermissionDenied, null);
+                ThrowTerminatingError(er);
+            }
+
             // If MinimumVersion/RequiredVersion/MaximumVersion has been specified, then only try to process manifest modules...
             if (BaseMinimumVersion != null || BaseMaximumVersion != null || BaseRequiredVersion != null || BaseGuid != null)
             {

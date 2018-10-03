@@ -618,4 +618,7 @@
   <data name="SkipEditionCheckNotSupportedWithoutListAvailable" xml:space="preserve">
     <value>The -SkipEditionCheck switch parameter cannot be used without the -ListAvailable switch parameter.</value>
   </data>
+  <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>Importing *.ps1 files as modules is not allowed in ConstrainedLanguage mode.</value>
+  </data>
 </root>
