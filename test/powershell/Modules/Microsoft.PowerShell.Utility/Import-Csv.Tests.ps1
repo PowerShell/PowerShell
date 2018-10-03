@@ -23,20 +23,23 @@ Describe "Import-Csv DRT Unit Tests" -Tags "CI" {
 }
 
 Describe "Import-Csv Double Quote Delimiter" -Tags "CI" {
-$empyValueCsv = @'
-a1""a3
-v1"v2"v3
+    BeforeAll {
+        $empyValueCsv = @'
+        a1""a3
+        v1"v2"v3
 '@
 
-$withValueCsv = @'
-a1"a2"a3
-v1"v2"v3
+        $withValueCsv = @'
+        a1"a2"a3
+        v1"v2"v3
 '@
 
-$quotedCharacterCsv = @'
-a1,a2,a3
-v1,"v2",v3
+        $quotedCharacterCsv = @'
+        a1,a2,a3
+        v1,"v2",v3
 '@
+    }
+
 
     It "Should handle <name>" -TestCases @(
 		@{ name = "quote with empty value"  ; expectedHeader = "a1,H1,a3"; file = "EmptyValue.csv"      ; content = $empyValueCsv       ; delimiter = '"' }
