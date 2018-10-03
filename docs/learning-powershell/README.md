@@ -106,7 +106,7 @@ Recommended Training and Reading
 ----
 - Microsoft Virtual Academy: [Getting Started with PowerShell][getstarted-with-powershell]
 - [Why Learn PowerShell][why-learn-powershell] by Ed Wilson
-- PowerShell Web Docs: [Basic cookbooks][basic-cookbooks]
+- PowerShell Web Docs: [Basic cookbooks][https://docs.microsoft.com/en-us/powershell/scripting/getting-started/fundamental/sample-scripts-for-administration?view=powershell-6]
 - [PowerShell eBook][ebook-from-powershell.com] from PowerShell.com
 - [PowerShell-related Videos][channel9-learn-powershell] on Channel 9
 - [Learn PowerShell Video Library][powershell.com-learn-powershell] from PowerShell.com
