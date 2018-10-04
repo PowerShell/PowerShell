@@ -68,80 +68,117 @@ namespace System.Management.Automation
             { typeof(double),  new PrimitiveRange((BigInteger)double.MinValue,  (BigInteger)double.MaxValue)  },
         };
 
-        internal static bool TryConvert<T>(double value, out T outValue) where T : struct
+        internal static bool IsWithinTypeBounds(Type destinationType, double value)
         {
-            if (!s_typeBounds.ContainsKey(typeof(T)))
+            if (!s_typeBounds.ContainsKey(destinationType))
             {
-                outValue = default(T);
                 return false;
             }
 
-            (BigInteger minValue, BigInteger maxValue) = s_typeBounds[typeof(T)];
-
-            if (minValue > (BigInteger)value || (BigInteger)value > maxValue)
+            (BigInteger minValue, BigInteger maxValue) = s_typeBounds[destinationType];
+            if (minValue > (BigInteger)Math.Round(value) || (BigInteger)Math.Round(value) > maxValue)
             {
-                outValue = default(T);
                 return false;
             }
 
-            outValue = LanguagePrimitives.ConvertTo<T>(Math.Round(value));
             return true;
         }
 
-        internal static bool TryConvert<T>(BigInteger value, out T outValue) where T : struct
+        internal static bool IsWithinTypeBounds(Type destinationType, BigInteger value)
         {
-            if (!s_typeBounds.ContainsKey(typeof(T)))
+            if (!s_typeBounds.ContainsKey(destinationType))
             {
-                outValue = default(T);
                 return false;
             }
 
-            (BigInteger minValue, BigInteger maxValue) = s_typeBounds[typeof(T)];
-
+            (BigInteger minValue, BigInteger maxValue) = s_typeBounds[destinationType];
             if (minValue > value || value > maxValue)
             {
-                outValue = default(T);
                 return false;
             }
 
-            outValue = LanguagePrimitives.ConvertTo<T>(value);
             return true;
         }
 
-        internal static bool TryParseBinary(ReadOnlySpan<char> digits, bool unsigned, out BigInteger result)
+        /// <summary>
+        /// Parses a given string or ReadOnlySpan&lt;char&gt; to calculate its value as a binary number.
+        /// Assumes input has already been sanitized and only contains zeroes (0) or ones (1).
+        /// </summary>
+        /// <param name="digits">Span or string of binary digits. Assumes all digits are either 1 or 0.</param>
+        /// <param name="unsigned">
+        /// Whether to treat the number as unsigned. When false, respects established conventions
+        /// with sign bits for certain input string lengths.
+        /// </param>
+        /// <returns>Returns the value of the binary string as a BigInteger.</returns>
+        internal static BigInteger ParseBinary(ReadOnlySpan<char> digits, bool unsigned)
         {
-            var digitString = new string(digits);
             switch (digits.Length)
             {
-                case int n when (n <= 8):
-                    result = unsigned ? (BigInteger)Convert.ToByte(digitString, 2) : Convert.ToSByte(digitString, 2);
-                    return true;
-                case int n when (n <= 16):
-                    result = unsigned ? (BigInteger)Convert.ToUInt16(digitString, 2) : Convert.ToInt16(digitString, 2);
-                    return true;
-                case int n when (n <= 32):
-                    result = unsigned ? (BigInteger)Convert.ToUInt32(digitString, 2) : Convert.ToInt32(digitString, 2);
-                    return true;
-                case int n when (n <= 64):
-                    result = unsigned ? (BigInteger)Convert.ToUInt64(digitString, 2) : Convert.ToInt64(digitString, 2);
-                    return true;
+                // Only accept sign bits at these lengths:
+                case 8: // byte
+                case 16: // short
+                case 32: // int
+                case 64: // long
+                case 96: // decimal
+                case int n when (n >= 128): // BigInteger
+                    break;
                 default:
-                    result = ParseBigBinary(digits, unsigned);
-                    return true;
+                    // If we do not flag these as unsigned, bigint assumes a sign bit for any (8 * n) string length
+                    unsigned = true;
+                    break;
             }
-        }
 
-        private static BigInteger ParseBigBinary(ReadOnlySpan<char> digits, bool unsigned)
-        {
-            BigInteger value = 0;
-            unsigned = unsigned || (digits[0] == '0');
+            unsigned = unsigned || digits[0] == '0';
 
-            for (int i = 0; i < digits.Length; i++)
+            // Calculate number of 8-bit bytes needed to hold the input,
+            // rounded up to next whole number.
+            int outputByteWalker = (digits.Length + 7) / 8;
+
+            // Output array sized to fit, use helper as array-indexer, too.
+            byte[] outputBytes = new byte[outputByteWalker--];
+
+            // We need to be prepared for any partial leading bytes,
+            // (e.g., 010|00000011|00000100|00000101) or for lengths < 8
+            // (less than one byte) e.g., 010.
+            // Walk right to left, stepping one whole byte at a time (if there are any whole bytes).
+            int blockWalker;
+            for (blockWalker = digits.Length - 1; blockWalker >= 7; blockWalker -= 8)
             {
-                value += (digits[i] == '1') ? BigInteger.Pow(2, digits.Length - i - 1) : 0;
+                // Use bit shifts and binary-or to sum the values in each byte
+                outputBytes[outputByteWalker--] = (byte)(
+                    (
+                        // These calculations will actually create values higher than a single byte,
+                        // but the higher bits are quietly stripped out when cast to byte.
+                        // '1' == 49 (00110001); '0' == 48 (00110000); we can safely bitshift the
+                        // whole thing and then simply discard the unneeded higher bits with the cast.
+                        (digits[blockWalker - 7] << 7) |
+                        (digits[blockWalker - 6] << 6) |
+                        (digits[blockWalker - 5] << 5) |
+                        (digits[blockWalker - 4] << 4)
+                    ) |
+                    // The low bits are added in separately to allow us to strip the higher 'noise' bits
+                    // before we sum the values using binary-or.
+                    (
+                      ( (digits[blockWalker - 3] << 3) |
+                        (digits[blockWalker - 2] << 2) |
+                        (digits[blockWalker - 1] << 1) |
+                         digits[blockWalker]            ) & 0b1111
+                    )
+                );
             }
 
-            return unsigned ? value : (value - BigInteger.Pow(2, digits.Length));
+            // now they're done, blockWalker is at the partial byte start, or at 0
+            if (blockWalker > 0)
+            {
+                int currentByteValue = 0;
+                for (int i = 0; i <= blockWalker; i++)
+                {
+                    currentByteValue = (currentByteValue << 1) | (digits[i] - '0');
+                }
+                outputBytes[outputByteWalker] = (byte)currentByteValue;
+            }
+
+            return new BigInteger(outputBytes, isUnsigned: unsigned, isBigEndian: true);
         }
 
         // From System.Web.Util.HashCodeCombiner

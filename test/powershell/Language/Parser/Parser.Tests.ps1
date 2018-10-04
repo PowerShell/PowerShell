@@ -689,7 +689,7 @@ foo``u{2195}abc
                 @{ Script = "0xFF_FF_FF_FF"; ExpectedValue = "-1"; ExpectedType = [int] }
                 @{ Script = "0xFFFFFFFFFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [long] }
                 @{ Script = "0xFFFFFFFFFFFFFFFFFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [decimal] }
-                @{ Script = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [BigInt] }
+                @{ Script = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [BigInt] }
                 #Binary
                 @{ Script = "0b0"; ExpectedValue = "0"; ExpectedType = [int] }
                 @{ Script = "0b10"; ExpectedValue = "2"; ExpectedType = [int] }
@@ -858,10 +858,10 @@ foo``u{2195}abc
                 @{ Script = "0x0u"; ExpectedValue = "0"; ExpectedType = [uint] }
                 @{ Script = "0x41u"; ExpectedValue = "65"; ExpectedType = [uint] }
                 #Binary
-                @{ Script = "0b0u"; ExpectedValue = "0"; ExpectedType = [byte] }
-                @{ Script = "0b10u"; ExpectedValue = "2"; ExpectedType = [byte] }
-                @{ Script = "0b11111111u"; ExpectedValue = "255"; ExpectedType = [byte] }
-                @{ Script = "0b1111111111111111u"; ExpectedValue = "65535"; ExpectedType = [ushort] }
+                @{ Script = "0b0u"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "0b10u"; ExpectedValue = "2"; ExpectedType = [uint] }
+                @{ Script = "0b11111111u"; ExpectedValue = "255"; ExpectedType = [uint] }
+                @{ Script = "0b1111111111111111u"; ExpectedValue = "65535"; ExpectedType = [uint] }
                 @{ Script = "0b11111111111111111111111111111111u"; ExpectedValue = "4294967295"; ExpectedType = [uint] }
                 @{ Script = "0b1111111111111111111111111111111111111111111111111111111111111111u"; ExpectedValue = "18446744073709551615"; ExpectedType = [ulong] }
                 #Multipliers
@@ -875,26 +875,20 @@ foo``u{2195}abc
                 #Standard
                 @{ Script = "0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
                 @{ Script = "10uy"; ExpectedValue = "10"; ExpectedType = [byte] }
-                @{ Script = "-10uy"; ExpectedValue = "-10"; ExpectedType = [byte] }
                 @{ Script = "+10uy"; ExpectedValue = "10"; ExpectedType = [byte] }
                 #Conversion from <Real>
                 @{ Script = "0.0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
                 @{ Script = "3.72uy"; ExpectedValue = "4"; ExpectedType = [byte] }
-                @{ Script = "-3.72uy"; ExpectedValue = "-4"; ExpectedType = [byte] }
                 #Exponential
                 @{ Script = "0e0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
                 @{ Script = "3e0uy"; ExpectedValue = "3"; ExpectedType = [byte] }
-                @{ Script = "-3e0uy"; ExpectedValue = "-3"; ExpectedType = [byte] }
                 @{ Script = "3e1uy"; ExpectedValue = "30"; ExpectedType = [byte] }
-                @{ Script = "-3e1uy"; ExpectedValue = "-30"; ExpectedType = [byte] }
                 #Hexadecimal
                 @{ Script = "0x0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
                 @{ Script = "0x41uy"; ExpectedValue = "65"; ExpectedType = [byte] }
-                @{ Script = "-0x41uy"; ExpectedValue = "-65"; ExpectedType = [byte] }
                 #Binary
                 @{ Script = "0b0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
                 @{ Script = "0b10uy"; ExpectedValue = "2"; ExpectedType = [byte] }
-                @{ Script = "-0b10uy"; ExpectedValue = "-2"; ExpectedType = [byte] }
                 @{ Script = "0b11111111uy"; ExpectedValue = "255"; ExpectedType = [byte] }
 
             #Unsigned-Short Integer Notation
@@ -915,7 +909,6 @@ foo``u{2195}abc
                 #Binary
                 @{ Script = "0b0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
                 @{ Script = "0b10us"; ExpectedValue = "2"; ExpectedType = [ushort] }
-                @{ Script = "-0b10us"; ExpectedValue = "-2"; ExpectedType = [ushort] }
                 @{ Script = "0b11111111us"; ExpectedValue = "255"; ExpectedType = [ushort] }
                 #Multipliers
                 @{ Script = "1uskb"; ExpectedValue = "1024"; ExpectedType = [ushort] }
@@ -937,7 +930,6 @@ foo``u{2195}abc
                 #Binary
                 @{ Script = "0b0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
                 @{ Script = "0b10ul"; ExpectedValue = "2"; ExpectedType = [ulong] }
-                @{ Script = "-0b10ul"; ExpectedValue = "-2"; ExpectedType = [ulong] }
                 @{ Script = "0b11111111ul"; ExpectedValue = "255"; ExpectedType = [ulong] }
                 #Multipliers
                 @{ Script = "1ulkb"; ExpectedValue = "1024"; ExpectedType = [ulong] }
