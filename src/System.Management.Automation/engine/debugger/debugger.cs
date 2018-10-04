@@ -1754,8 +1754,7 @@ namespace System.Management.Automation
                 System.Management.Automation.Security.SystemEnforcementMode.Enforce)
             {
                 // If there is a system lockdown in place, enforce it
-                originalLanguageMode = _context.LanguageMode;
-                _context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                originalLanguageMode = Utils.EnforceSystemLockDownLanguageMode(this._context);
             }
 
             RunspaceAvailability previousAvailability = _context.CurrentRunspace.RunspaceAvailability;

@@ -27,7 +27,7 @@ namespace System.Management.Automation
             FunctionInfo fn = this.SetFunction(entry.Name, sb, null, entry.Options, false, CommandOrigin.Internal, this.ExecutionContext, entry.HelpFile, true);
             fn.Visibility = entry.Visibility;
             fn.Module = entry.Module;
-            fn.ScriptBlock.LanguageMode = PSLanguageMode.FullLanguage;
+            fn.ScriptBlock.LanguageMode = entry.ScriptBlock.LanguageMode ?? PSLanguageMode.FullLanguage;
         }
 
         /// <summary>

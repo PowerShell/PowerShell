@@ -18,6 +18,149 @@ try
     $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:Skip"] = !$IsWindows
 
+    Describe "Help built-in function should not expose nested module private functions when run on locked down systems" -Tags 'Feature','RequireAdminOnWindows' {
+
+        BeforeAll {
+
+            $restorePSModulePath = $env:PSModulePath
+            $env:PSModulePath += ";$TestDrive"
+
+            $trustedModuleName1 = "TrustedModule$(Get-Random -Max 999)_System32"
+            $trustedModulePath1 = Join-Path $TestDrive $trustedModuleName1
+            mkdir $trustedModulePath1
+            $trustedModuleFilePath1 = Join-Path $trustedModulePath1 ($trustedModuleName1 + ".psm1")
+            $trustedModuleManifestPath1 = Join-Path $trustedModulePath1 ($trustedModuleName1 + ".psd1")
+
+            $trustedModuleName2 = "TrustedModule$(Get-Random -Max 999)_System32"
+            $trustedModulePath2 = Join-Path $TestDrive $trustedModuleName2
+            mkdir $trustedModulePath2
+            $trustedModuleFilePath2 = Join-Path $trustedModulePath2 ($trustedModuleName2 + ".psm1")
+
+            $trustedModuleScript1 = @'
+            function PublicFn1
+            {
+                NestedFn1
+                PrivateFn1
+            }
+            function PrivateFn1
+            {
+                "PrivateFn1"
+            }
+'@
+            $trustedModuleScript1 | Out-File -FilePath $trustedModuleFilePath1
+            '@{{ FunctionsToExport = "PublicFn1"; ModuleVersion = "1.0"; RootModule = "{0}"; NestedModules = "{1}" }}' -f @($trustedModuleFilePath1,$trustedModuleName2) | Out-File -FilePath $trustedModuleManifestPath1
+
+            $trustedModuleScript2 = @'
+            function NestedFn1
+            {
+                "NestedFn1"
+                "Language mode is $($ExecutionContext.SessionState.LanguageMode)"
+            }
+'@
+            $trustedModuleScript2 | Out-File -FilePath $trustedModuleFilePath2
+        }
+
+        AfterAll {
+
+            $env:PSModulePath = $restorePSModulePath
+            if ($trustedModuleName1 -ne $null) { Remove-Module -Name $trustedModuleName1 -Force -ErrorAction Ignore }
+            if ($trustedModuleName2 -ne $null) { Remove-Module -Name $trustedModuleName2 -Force -ErrorAction Ignore }
+        }
+
+        It "Verifies that private functions in trusted nested modules are not globally accessible after running the help function" {
+
+            $isCommandAccessible = "False"
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                $command = @"
+                Import-Module -Name $trustedModuleName1 -Force -ErrorAction Stop;
+"@
+                $command += @'
+                $null = help NestedFn1 2>$null;
+                $result = Get-Command NestedFn1 2>$null; 
+                return ($result -ne $null)
+'@
+                $isCommandAccessible = powershell.exe -noprofile -nologo -c $command
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            # Verify that nested function NestedFn1 was not accessible
+            $isCommandAccessible | Should -BeExactly "False"
+        }
+    }
+
+    Describe "NoLanguage runspace pool session should remain in NoLanguage mode when created on a system-locked down machine" -Tags 'Feature','RequireAdminOnWindows' {
+
+        BeforeAll {
+
+            $configFileName = "RestrictedSessionConfig.pssc"
+            $configFilePath = Join-Path $TestDrive $configFileName
+            '@{ SchemaVersion = "2.0.0.0"; SessionType = "RestrictedRemoteServer"}' > $configFilePath
+
+            $scriptModuleName = "ImportTrustedModuleForTest_System32"
+            $moduleFilePath = Join-Path $TestDrive ($scriptModuleName + ".psm1")
+            $template = @'
+            function TestRestrictedSession
+            {{
+                $iss = [initialsessionstate]::CreateFromSessionConfigurationFile("{0}")
+                $rsp = [runspacefactory]::CreateRunspacePool($iss)
+                $rsp.Open()
+                $ps = [powershell]::Create()
+                $ps.RunspacePool = $rsp
+                $null = $ps.AddScript("Hello")
+
+                try
+                {{
+                    $ps.Invoke()
+                }}
+                finally
+                {{
+                    $ps.Dispose()
+                    $rsp.Dispose()
+                }}
+            }}
+
+            Export-ModuleMember -Function TestRestrictedSession
+'@
+            $template -f $configFilePath > $moduleFilePath
+        }
+
+        It "Verifies that a NoLanguage runspace pool throws the expected 'script not allowed' error" {
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+
+                $mod = Import-Module -Name $moduleFilePath -Force -PassThru
+
+                # Running module function TestRestrictedSession should throw a 'script not allowed' error 
+                # because it runs in a 'no language' session.
+                try
+                {
+                    & "$scriptModuleName\TestRestrictedSession"
+                    throw "No Exception!"
+                }
+                catch
+                {
+                    $expectedError = $_
+                }
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+            }
+
+            $expectedError.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "ScriptsNotAllowed"
+        }
+    }
+
     Describe "Built-ins work within constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         BeforeAll {
