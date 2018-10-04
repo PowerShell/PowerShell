@@ -75,6 +75,39 @@ function New-RemoteRunspace
     return $remoteRunspace
 }
 
+function New-RemoteRunspacePool
+{
+    param (
+        [int] $MinRunspace = 1,
+
+        [int] $MaxRunspace = 6,
+
+        [string] $ConfigurationName
+    )
+
+    $wsmanConnection = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
+
+    if ($ConfigurationName -ne $null)
+    {
+        $wsmanConnection.ShellUri = "http://schemas.microsoft.com/powershell/$ConfigurationName"
+    }
+
+    if ($Script:AppVeyorRemoteCred)
+    {
+        Write-Verbose "Using Global AppVeyor Credential" -Verbose
+        $wsmanConnection.Credential = $Script:AppVeyorRemoteCred
+    }
+    else
+    {
+        Write-Verbose "Using Implicit Credential" -Verbose
+    }
+
+    [System.Management.Automation.Runspaces.RunspacePool] $remoteRunspacePool = [runspacefactory]::CreateRunspacePool($MinRunspace, $MaxRunspace, $wsmanConnection)
+    $remoteRunspacePool.Open()
+    
+    return $remoteRunspacePool
+}
+
 function CreateParameters
 {
     param (

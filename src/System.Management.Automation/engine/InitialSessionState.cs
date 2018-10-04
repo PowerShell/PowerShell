@@ -2374,7 +2374,8 @@ namespace System.Management.Automation.Runspaces
             // If a user has any module with the same name as that of the core module( or nested module inside the core module)
             // in his module path, then that will get loaded instead of the actual nested module (from the GAC - in our case)
             // Hence, searching only from the system module path while loading the core modules
-            ProcessImportModule(initializedRunspace, CoreModulesToImport, ModuleIntrinsics.GetPSHomeModulePath(), publicCommands);
+            var unresolvedCmdsToExpose = new HashSet<string>(this.UnresolvedCommandsToExpose, StringComparer.OrdinalIgnoreCase);
+            ProcessImportModule(initializedRunspace, CoreModulesToImport, ModuleIntrinsics.GetPSHomeModulePath(), publicCommands, unresolvedCmdsToExpose);
 
             // Win8:328748 - functions defined in global scope end up in a module
             // Since we import the core modules, EngineSessionState's module is set to the last imported module. So, if a function is defined in global scope, it ends up in that module.
@@ -2384,7 +2385,7 @@ namespace System.Management.Automation.Runspaces
             // Set the SessionStateDrive here since we have all the provider information at this point
             SetSessionStateDrive(initializedRunspace.ExecutionContext, true);
 
-            Exception moduleImportException = ProcessImportModule(initializedRunspace, ModuleSpecificationsToImport, string.Empty, publicCommands);
+            Exception moduleImportException = ProcessImportModule(initializedRunspace, ModuleSpecificationsToImport, string.Empty, publicCommands, unresolvedCmdsToExpose);
             if (moduleImportException != null)
             {
                 runspaceInitTracer.WriteLine(
@@ -2394,10 +2395,10 @@ namespace System.Management.Automation.Runspaces
 
             // If we still have unresolved commands after importing specified modules, then try finding associated module for
             // each unresolved command and import that module.
-            string[] foundModuleList = GetModulesForUnResolvedCommands(UnresolvedCommandsToExpose, initializedRunspace.ExecutionContext);
+            string[] foundModuleList = GetModulesForUnResolvedCommands(unresolvedCmdsToExpose, initializedRunspace.ExecutionContext);
             if (foundModuleList.Length > 0)
             {
-                ProcessImportModule(initializedRunspace, foundModuleList, string.Empty, publicCommands);
+                ProcessImportModule(initializedRunspace, foundModuleList, string.Empty, publicCommands, unresolvedCmdsToExpose);
             }
 
             ProcessDynamicVariables(initializedRunspace);
@@ -2807,7 +2808,12 @@ namespace System.Management.Automation.Runspaces
             return null;
         }
 
-        private RunspaceOpenModuleLoadException ProcessImportModule(Runspace initializedRunspace, IEnumerable moduleList, string path, HashSet<CommandInfo> publicCommands)
+        private RunspaceOpenModuleLoadException ProcessImportModule(
+            Runspace initializedRunspace,
+            IEnumerable moduleList,
+            string path,
+            HashSet<CommandInfo> publicCommands,
+            HashSet<string> unresolvedCmdsToExpose)
         {
             RunspaceOpenModuleLoadException exceptionToReturn = null;
 
@@ -2877,7 +2883,7 @@ namespace System.Management.Automation.Runspaces
             if (exceptionToReturn == null)
             {
                 // Now go through the list of commands not yet resolved to ensure they are public if requested
-                foreach (string unresolvedCommand in UnresolvedCommandsToExpose.ToArray<string>())
+                foreach (string unresolvedCommand in unresolvedCmdsToExpose.ToArray<string>())
                 {
                     string moduleName;
                     string commandToMakeVisible = Utils.ParseCommandName(unresolvedCommand, out moduleName);
@@ -2910,7 +2916,7 @@ namespace System.Management.Automation.Runspaces
 
                     if (found && !WildcardPattern.ContainsWildcardCharacters(commandToMakeVisible))
                     {
-                        UnresolvedCommandsToExpose.Remove(unresolvedCommand);
+                        unresolvedCmdsToExpose.Remove(unresolvedCommand);
                     }
                 }
             }
