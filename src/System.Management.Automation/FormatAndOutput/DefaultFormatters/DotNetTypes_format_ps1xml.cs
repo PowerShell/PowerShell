@@ -70,6 +70,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Diagnostics_Process_IncludeUserName());
 
             yield return new ExtendedTypeDefinition(
+                "System.Diagnostics.Process#IncludeCommandLine",
+                ViewsOf_System_Diagnostics_Process_IncludeCommandLine());
+
+            yield return new ExtendedTypeDefinition(
                 "System.DirectoryServices.DirectoryEntry",
                 ViewsOf_System_DirectoryServices_DirectoryEntry());
 
@@ -642,6 +646,25 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("Id")
                         .AddPropertyColumn("UserName")
                         .AddPropertyColumn("ProcessName")
+                    .EndRowDefinition()
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Diagnostics_Process_IncludeCommandLine()
+        {
+            yield return new FormatViewDefinition("ProcessWithUserName",
+                TableControl.Create()
+                    .AddHeader(Alignment.Right, label: "WS(M)", width: 10)
+                    .AddHeader(Alignment.Right, label: "CPU(s)", width: 8)
+                    .AddHeader(Alignment.Right, width: 7)
+                    .AddHeader(width: 30)
+                    .AddHeader()
+                    .StartRowDefinition()
+                        .AddScriptBlockColumn("\"{0:N2}\" -f [float]($_.WS / 1MB)")
+                        .AddScriptBlockColumn("\"{0:N2}\" -f [float]($_.CPU)")
+                        .AddPropertyColumn("Id")
+                        .AddPropertyColumn("ProcessName")
+                        .AddPropertyColumn("CommandLine")
                     .EndRowDefinition()
                 .EndTable());
         }
