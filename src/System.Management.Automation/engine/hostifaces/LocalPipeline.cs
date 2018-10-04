@@ -420,13 +420,6 @@ namespace System.Management.Automation.Runspaces
                             finally
                             {
                                 this.LocalRunspace.ExecutionContext.EngineHostInterface.SetShouldExit(exitCode);
-
-                                // close the remote runspaces available
-                                /*foreach (RemoteRunspaceInfo remoteRunspaceInfo in
-                                    this.LocalRunspace.RunspaceRepository.Runspaces)
-                                {
-                                    remoteRunspaceInfo.RemoteRunspace.CloseAsync();
-                                }*/
                             }
                         }
                     }

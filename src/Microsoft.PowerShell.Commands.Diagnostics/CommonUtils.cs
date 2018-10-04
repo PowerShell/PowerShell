@@ -129,7 +129,6 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
                 if (nChars == 0)
                 {
                     formatError = (uint)Marshal.GetLastWin32Error();
-                    //Console.WriteLine("Win32FormatMessage", String.Format(null, "Error formatting message: {0}", formatError));
                 }
                 else
                 {
