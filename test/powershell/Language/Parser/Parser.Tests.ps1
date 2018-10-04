@@ -691,12 +691,12 @@ foo``u{2195}abc
                 @{ Script = "0xFFFFFFFFFFFFFFFFFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [decimal] }
                 @{ Script = "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [BigInt] }
                 #Binary
-                @{ Script = "0b0"; ExpectedValue = "0"; ExpectedType = [sbyte] }
-                @{ Script = "0b10"; ExpectedValue = "2"; ExpectedType = [sbyte] }
-                @{ Script = "-0b10"; ExpectedValue = "-2"; ExpectedType = [sbyte] }
-                @{ Script = "0b11111111"; ExpectedValue = "-1"; ExpectedType = [sbyte] }
-                @{ Script = "0b1111_1111"; ExpectedValue = "-1"; ExpectedType = [sbyte] }
-                @{ Script = "0b1111111111111111"; ExpectedValue = "-1"; ExpectedType = [short] }
+                @{ Script = "0b0"; ExpectedValue = "0"; ExpectedType = [int] }
+                @{ Script = "0b10"; ExpectedValue = "2"; ExpectedType = [int] }
+                @{ Script = "-0b10"; ExpectedValue = "-2"; ExpectedType = [int] }
+                @{ Script = "0b11111111"; ExpectedValue = "-1"; ExpectedType = [int] }
+                @{ Script = "0b1111_1111"; ExpectedValue = "-1"; ExpectedType = [int] }
+                @{ Script = "0b1111111111111111"; ExpectedValue = "-1"; ExpectedType = [int] }
                 @{ Script = "0b11111111111111111111111111111111"; ExpectedValue = "-1"; ExpectedType = [int] }
                 @{ Script = "0b1111111111111111111111111111111111111111111111111111111111111111"; ExpectedValue = "-1"; ExpectedType = [long] }
                 #Multipliers
