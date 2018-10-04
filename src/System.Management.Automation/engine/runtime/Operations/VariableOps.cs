@@ -97,6 +97,13 @@ namespace System.Management.Automation
                 var.Value = value;
             }
 
+            if (executionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            {
+                // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in
+                // a module scope, if it's necessary.
+                ExecutionContext.MarkObjectAsUntrustedForVariableAssignment(var, scope, sessionState);
+            }
+
             return value;
         }
 

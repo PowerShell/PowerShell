@@ -499,7 +499,7 @@ namespace System.Management.Automation
                     attribute as ArgumentTransformationAttribute;
                 if (transformationAttribute != null)
                 {
-                    result = transformationAttribute.Transform(engine, result);
+                    result = transformationAttribute.TransformInternal(engine, result);
                 }
             }
             return result;

@@ -941,6 +941,16 @@ namespace Microsoft.PowerShell.Commands
                                 if (varValue != AutomationNull.Value)
                                 {
                                     matchingVariable.Value = varValue;
+
+                                    if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                                    {
+                                        // In 'ConstrainedLanguage' we want to monitor untrusted values assigned to 'Global:' variables
+                                        // and 'Script:' variables, because they may be set from 'ConstrainedLanguage' environment and
+                                        // referenced within trusted script block, and thus result in security issues.
+                                        // Here we are setting the value of an existing variable and don't know what scope this variable
+                                        // is from, so we mark the value as untrusted, regardless of the scope.
+                                        ExecutionContext.MarkObjectAsUntrusted(matchingVariable.Value);
+                                    }
                                 }
 
                                 if (Description != null)

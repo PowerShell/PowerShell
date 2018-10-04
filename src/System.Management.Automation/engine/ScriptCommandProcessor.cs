@@ -476,7 +476,26 @@ namespace System.Management.Automation
                         Context.LanguageMode = newLanguageMode.Value;
                     }
 
-                    EnterScope();
+                    bool? oldLangModeTransitionStatus = null;
+                    try
+                    {
+                        // If it's from ConstrainedLanguage to FullLanguage, indicate the transition before parameter binding takes place.
+                        if (oldLanguageMode == PSLanguageMode.ConstrainedLanguage && newLanguageMode == PSLanguageMode.FullLanguage)
+                        {
+                            oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
+                            Context.LanguageModeTransitionInParameterBinding = true;
+                        }
+
+                        EnterScope();
+                    }
+                    finally
+                    {
+                        if (oldLangModeTransitionStatus.HasValue)
+                        {
+                            // Revert the transition state to old value after doing the parameter binding
+                            Context.LanguageModeTransitionInParameterBinding = oldLangModeTransitionStatus.Value;
+                        }
+                    }
 
                     if (commandRuntime.ErrorMergeTo == MshCommandRuntime.MergeDataStream.Output)
                     {
