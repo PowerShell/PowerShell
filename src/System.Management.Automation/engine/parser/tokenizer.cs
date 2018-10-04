@@ -3764,7 +3764,8 @@ namespace System.Management.Automation.Language
             else
             {
                 c = PeekChar();
-                if (firstChar == '0' && (c == 'x' || c == 'X' || c == 'b' || c == 'B'))
+                bool isHexOrBinary = firstChar == '0' && (c == 'x' || c == 'X' || c == 'b' || c == 'B');
+                if (isHexOrBinary)
                 {
                     SkipChar();
                     switch (c)
