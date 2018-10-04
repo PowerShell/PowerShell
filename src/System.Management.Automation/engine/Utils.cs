@@ -110,19 +110,20 @@ namespace System.Management.Automation
 
         internal static bool TryParseBinary(ReadOnlySpan<char> digits, bool unsigned, out BigInteger result)
         {
+            var digitString = new string(digits);
             switch (digits.Length)
             {
                 case int n when (n <= 8):
-                    result = unsigned ? (BigInteger)Convert.ToByte(digits.ToString(), 2) : Convert.ToSByte(digits.ToString(), 2);
+                    result = unsigned ? (BigInteger)Convert.ToByte(digitString, 2) : Convert.ToSByte(digitString, 2);
                     return true;
                 case int n when (n <= 16):
-                    result = unsigned ? (BigInteger)Convert.ToUInt16(digits.ToString(), 2) : Convert.ToInt16(digits.ToString(), 2);
+                    result = unsigned ? (BigInteger)Convert.ToUInt16(digitString, 2) : Convert.ToInt16(digitString, 2);
                     return true;
                 case int n when (n <= 32):
-                    result = unsigned ? (BigInteger)Convert.ToUInt32(digits.ToString(), 2) : Convert.ToInt32(digits.ToString(), 2);
+                    result = unsigned ? (BigInteger)Convert.ToUInt32(digitString, 2) : Convert.ToInt32(digitString, 2);
                     return true;
                 case int n when (n <= 64):
-                    result = unsigned ? (BigInteger)Convert.ToUInt64(digits.ToString(), 2) : Convert.ToInt64(digits.ToString(), 2);
+                    result = unsigned ? (BigInteger)Convert.ToUInt64(digitString, 2) : Convert.ToInt64(digitString, 2);
                     return true;
                 default:
                     result = ParseBigBinary(digits, unsigned);

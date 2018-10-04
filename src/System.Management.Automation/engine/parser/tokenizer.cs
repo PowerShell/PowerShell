@@ -3502,17 +3502,10 @@ namespace System.Management.Automation.Language
                             strNum = strNum.Slice(1);
                         }
 
-                        // If we have a hex literal denoting int64 or decimal, treat it as such
-                        if (suffix == NumberSuffixFlags.None || suffix == NumberSuffixFlags.Unsigned)
+                        // If we have a hex literal denoting (u)int64, treat it as such
+                        if (strNum.Length == 16 && (suffix == NumberSuffixFlags.None || suffix == NumberSuffixFlags.Unsigned))
                         {
-                            if (strNum.Length == 16)
-                            {
-                                suffix |= NumberSuffixFlags.Long;
-                            }
-                            else if (strNum.Length == 24)
-                            {
-                                suffix |= NumberSuffixFlags.Decimal;
-                            }
+                            suffix |= NumberSuffixFlags.Long;
                         }
 
                         // If the string isn't at a length where we expect a signing bit or it's flagged as unsigned
@@ -3551,22 +3544,10 @@ namespace System.Management.Automation.Language
                             return false;
                         }
 
-                        if (suffix == NumberSuffixFlags.None || suffix == NumberSuffixFlags.Unsigned)
+                        // If we have a binary literal denoting (u)int64, treat it as such
+                        if (strNum.Length == 64 && (suffix == NumberSuffixFlags.None || suffix == NumberSuffixFlags.Unsigned))
                         {
-                            switch (strNum.Length)
-                            {
-                                case int n when (n <= 8):
-                                    suffix |= NumberSuffixFlags.SignedByte;
-                                    break;
-                                case int n when (n <= 16):
-                                    suffix |= NumberSuffixFlags.Short;
-                                    break;
-                                case int n when (n <= 32):
-                                    break;
-                                case int n when (n <= 64):
-                                    suffix |= NumberSuffixFlags.Long;
-                                    break;
-                            }
+                            suffix |= NumberSuffixFlags.Long;
                         }
                     }
                     else
