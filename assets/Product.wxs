@@ -202,11 +202,11 @@
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)"/>
               </RegistryKey>
               <!-- Sub menus to open PowerShell at the current location either as a normal shell or as Administrator -->
-              <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\open">
+              <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\openpwsh">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextSubMenuDialogText)"/>
                 <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]$(env.IconPath)"/>
               </RegistryKey>
-              <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\open\command">
+              <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\openpwsh\command">
                 <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe -NoExit -WorkingDirectory &quot;%V&quot; "/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\runas">
