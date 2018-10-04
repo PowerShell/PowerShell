@@ -27,9 +27,7 @@ namespace Microsoft.PowerShell.Commands
         private const string ParameterSetPingCount = "PingCount";
         private const string ParameterSetPingContinues = "PingContinues";
         private const string ParameterSetTraceRoute = "TraceRoute";
-        //private const string ParameterSetPathPing = "PathPing";
         private const string ParameterSetConnectionByTCPPort = "ConnectionByTCPPort";
-        //private const string ParameterSetDetectionOfBlackHole = "DetectionOfBlackHole";
         private const string ParameterSetDetectionOfMTUSize = "DetectionOfMTUSize";
 
         #region Parameters
