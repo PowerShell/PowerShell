@@ -10,6 +10,13 @@ You won't be a PowerShell guru at the end of reading this material but you will 
 
 If you have 30 minutes now, let’s try it.
 
+Advantages of Using PowerShell
+====
+
+* Easier to manage and develop Microsoft new products. All of the server products are managed by PowerShell.
+* A lot faster compared to GUI. Command line require less memory compared to GUI which can increase the speed.
+* Microsoft really pushing PowerShell as the future shell used by the professionals.
+* Beside Windows, PowerShell also compatible with Linux OS.
 
 Installing PowerShell
 ----
