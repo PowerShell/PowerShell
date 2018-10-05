@@ -5,7 +5,7 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
         (Get-Process -Id $pid -IncludeUserName).UserName | Should -Match $env:USERNAME
     }
 
-    It "Should support -IncludeCommandLine" -Pending ($IsMacOs) {
+    It "Should support -IncludeCommandLine" -Pending:($IsMacOs) {
         (Get-Process -Id $pid -IncludeCommandLine).CommandLine | Should -Match "pwsh"
     }
 
