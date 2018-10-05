@@ -396,14 +396,19 @@ Describe "Format-Custom with expression based EntrySelectedBy in a CustomControl
         $null = $ps.AddScript($script).AddCommand('Out-String')
         $ps.Streams.Error.Clear()
         $expectedOutput = @'
+
+
 Entry selected by property
 
 Name
 ----
 testing
+
+
+
 '@ -replace '\r?\n', [Environment]::NewLine
 
-        $ps.Invoke()[0].Trim() | Should -BeExactly $expectedOutput
+        $ps.Invoke() | Should -BeExactly $expectedOutput
         $ps.Streams.Error | Should -BeNullOrEmpty
     }
 
@@ -419,14 +424,19 @@ testing
         $null = $ps.AddScript($script).AddCommand('Out-String')
         $ps.Streams.Error.Clear()
         $expectedOutput = @'
+
+
 Entry selected by ScriptBlock
 
 Name
 ----
 SelectScriptBlock
+
+
+
 '@ -replace '\r?\n', [Environment]::NewLine
 
-        $ps.Invoke()[0].Trim() | Should -BeExactly $expectedOutput
+        $ps.Invoke() | Should -BeExactly $expectedOutput
         $ps.Streams.Error | Should -BeNullOrEmpty
     }
 }
