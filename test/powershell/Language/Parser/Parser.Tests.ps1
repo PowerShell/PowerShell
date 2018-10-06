@@ -648,43 +648,205 @@ foo``u{2195}abc
 
 	Context "Numerical Notations Tests (starting at line 2374 to line 2452)" {
         $testData = @(
-			#Test various numbers using the standard notation.
-            @{ Script = "0"; Expected = "0" }
-			@{ Script = "-2"; Expected = "-2" }
-			@{ Script = "2"; Expected = "2" }
-			@{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue) }
-			@{ Script = $([int32]::MinValue); Expected = $([int32]::MinValue) }
-			#Tests for hexadecimal notation.
-			@{ Script = "0x0"; Expected = "0" }
-			@{ Script = "0xF"; Expected = "15" }
-			@{ Script = "0x80000000"; Expected = $([int32]::MinValue) }
-			@{ Script = "0xFFFFFFFF"; Expected = "-1" }
-			@{ Script = "0x7fffffff"; Expected = $([int32]::MaxValue) }
-			@{ Script = "0x100000000"; Expected = [int64]0x100000000 }
-			#Tests for exponential notation.
-			@{ Script = "0e0"; Expected = "0" }
-			@{ Script = "0e1"; Expected = "0" }
-			@{ Script = "1e2"; Expected = "100" }
-			@{ Script = $([int32]::MaxValue); Expected = $([int32]::MaxValue) }
-			@{ Script = "0e2"; Expected = "0" }
-			@{ Script = "-2e2"; Expected = "-200" }
-			@{ Script = "-0e2"; Expected = "0" }
-			@{ Script = "3e0"; Expected = "3" }
-			#Tests for floating point notation.
-			@{ Script = ".01"; Expected = "0.01" }
-			@{ Script = "0.0"; Expected = "0" }
-			@{ Script = "-0.1"; Expected = "-0.1" }
-			@{ Script = "9.12"; Expected = "9.12" }
-			@{ Script = $([single]::MinValue); Expected = $([float]::MinValue).ToString() }
-			@{ Script = $([float]::MaxValue); Expected = $([float]::MaxValue).ToString() }
-			#Tests for the K suffix for numbers.
-			@{ Script = "0kb"; Expected = "0" }
-			@{ Script = "1kb"; Expected = "1024" }
-			@{ Script = "-2KB"; Expected = "-2048" }
+            #Standard numeric notation
+                #Standard
+                @{ Script = "0"; ExpectedValue = "0"; ExpectedType = [int] }
+                @{ Script = "10"; ExpectedValue = "10"; ExpectedType = [int] }
+                @{ Script = "-10"; ExpectedValue = "-10"; ExpectedType = [int] }
+                @{ Script = "+10"; ExpectedValue = "10"; ExpectedType = [int] }
+                @{ Script = $([int32]::MaxValue); ExpectedValue = $([int32]::MaxValue); ExpectedType = [int] }
+                @{ Script = $([int32]::MinValue); ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
+                #<Real>
+                @{ Script = "0.0"; ExpectedValue = "0"; ExpectedType = [double] }
+                @{ Script = "6.5"; ExpectedValue = "6.5"; ExpectedType = [double] }
+                @{ Script = "-6.5"; ExpectedValue = "-6.5"; ExpectedType = [double] }
+                @{ Script = "9.12"; ExpectedValue = "9.12"; ExpectedType = [double] }
+                @{ Script = ".01"; ExpectedValue = "0.01"; ExpectedType = [double] }
+                @{ Script = $([single]::MinValue); ExpectedValue = $([float]::MinValue).ToString(); ExpectedType = [double] }
+                @{ Script = $([float]::MaxValue); ExpectedValue = $([float]::MaxValue).ToString(); ExpectedType = [double] }
+                #Exponential
+                @{ Script = "0e0"; ExpectedValue = "0"; ExpectedType = [double] }
+                @{ Script = "0e1"; ExpectedValue = "0"; ExpectedType = [double] }
+                @{ Script = "-0e2"; ExpectedValue = "0"; ExpectedType = [double] }
+                @{ Script = "3e0"; ExpectedValue = "3"; ExpectedType = [double] }
+                @{ Script = "5e-2"; ExpectedValue = "0.05"; ExpectedType = [double] }
+                @{ Script = "5e2"; ExpectedValue = "500"; ExpectedType = [double] }
+                @{ Script = "-5e-2"; ExpectedValue = "-0.05"; ExpectedType = [double] }
+                @{ Script = "-5e2"; ExpectedValue = "-500"; ExpectedType = [double] }
+                #Hexadecimal
+                @{ Script = "0x0"; ExpectedValue = "0"; ExpectedType = [int] }
+                @{ Script = "0x12"; ExpectedValue = "18"; ExpectedType = [int] }
+                @{ Script = "-0x12"; ExpectedValue = "-18"; ExpectedType = [int] }
+                @{ Script = "0x80000000"; ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
+                @{ Script = "0xFFFFFFFF"; ExpectedValue = "-1"; ExpectedType = [int] }
+                @{ Script = "0x7fffffff"; ExpectedValue = $([int32]::MaxValue); ExpectedType = [int] }
+                @{ Script = "0x100000000"; ExpectedValue = [int64]0x100000000; ExpectedType = [long] }
+                #Multipliers
+                @{ Script = "1kb"; ExpectedValue = "1024"; ExpectedType = [int] }
+                @{ Script = "1mb"; ExpectedValue = "1048576"; ExpectedType = [int] }
+                @{ Script = "1gb"; ExpectedValue = "1073741824"; ExpectedType = [int] }
+                @{ Script = "1tb"; ExpectedValue = "1099511627776"; ExpectedType = [long] }
+                @{ Script = "1pb"; ExpectedValue = "1125899906842624"; ExpectedType = [long] }
+
+            #Decimal notation
+                #Integer
+                @{ Script = "0d"; ExpectedValue = "0"; ExpectedType = [decimal] }
+                @{ Script = "100d"; ExpectedValue = "100"; ExpectedType = [decimal] }
+                @{ Script = "-100d"; ExpectedValue = "-100"; ExpectedType = [decimal] }
+                @{ Script = "+100d"; ExpectedValue = "100"; ExpectedType = [decimal] }
+                #<Real>
+                @{ Script = "0.0d"; ExpectedValue = "0.0"; ExpectedType = [decimal] }
+                @{ Script = "1.5d"; ExpectedValue = "1.5"; ExpectedType = [decimal] }
+                @{ Script = "-1.5d"; ExpectedValue = "-1.5"; ExpectedType = [decimal] }
+                #Exponential
+                @{ Script = "0e0d"; ExpectedValue = "0"; ExpectedType = [decimal] }
+                @{ Script = "15e3d"; ExpectedValue = "15000"; ExpectedType = [decimal] }
+                @{ Script = "-15e3d"; ExpectedValue = "-15000"; ExpectedType = [decimal] }
+                #Multipliers
+                @{ Script = "1dkb"; ExpectedValue = "1024"; ExpectedType = [decimal] }
+                @{ Script = "1dmb"; ExpectedValue = "1048576"; ExpectedType = [decimal] }
+                @{ Script = "1dgb"; ExpectedValue = "1073741824"; ExpectedType = [decimal] }
+                @{ Script = "1dtb"; ExpectedValue = "1099511627776"; ExpectedType = [decimal] }
+                @{ Script = "1dpb"; ExpectedValue = "1125899906842624"; ExpectedType = [decimal] }
+
+            #Short Integer notation
+                #Standard
+                @{ Script = "0s"; ExpectedValue = "0"; ExpectedType = [short] }
+                @{ Script = "10s"; ExpectedValue = "10"; ExpectedType = [short] }
+                @{ Script = "-10s"; ExpectedValue = "-10"; ExpectedType = [short] }
+                @{ Script = "+10s"; ExpectedValue = "10"; ExpectedType = [short] }
+                #Conversion from <Real>
+                @{ Script = "0.0s"; ExpectedValue = "0"; ExpectedType = [short] }
+                @{ Script = "3.72s"; ExpectedValue = "4"; ExpectedType = [short] }
+                @{ Script = "-3.72s"; ExpectedValue = "-4"; ExpectedType = [short] }
+                #Exponential
+                @{ Script = "0e0s"; ExpectedValue = "0"; ExpectedType = [short] }
+                @{ Script = "3e0s"; ExpectedValue = "3"; ExpectedType = [short] }
+                @{ Script = "-3e0s"; ExpectedValue = "-3"; ExpectedType = [short] }
+                @{ Script = "3e2s"; ExpectedValue = "300"; ExpectedType = [short] }
+                @{ Script = "-3e2s"; ExpectedValue = "-300"; ExpectedType = [short] }
+                #Hexadecimal
+                @{ Script = "0x0s"; ExpectedValue = "0"; ExpectedType = [short] }
+                @{ Script = "0x41s"; ExpectedValue = "65"; ExpectedType = [short] }
+                @{ Script = "-0x41s"; ExpectedValue = "-65"; ExpectedType = [short] }
+                #Multipliers
+                @{ Script = "1skb"; ExpectedValue = "1024"; ExpectedType = [short] }
+
+            #Long Integer notation
+                #Standard
+                @{ Script = "0l"; ExpectedValue = "0"; ExpectedType = [long] }
+                @{ Script = "10l"; ExpectedValue = "10"; ExpectedType = [long] }
+                @{ Script = "-10l"; ExpectedValue = "-10"; ExpectedType = [long] }
+                @{ Script = "+10l"; ExpectedValue = "10"; ExpectedType = [long] }
+                #Conversion from <Real>
+                @{ Script = "0.0l"; ExpectedValue = "0"; ExpectedType = [long] }
+                @{ Script = "2.5l"; ExpectedValue = "2"; ExpectedType = [long] }
+                @{ Script = "-2.5l"; ExpectedValue = "-2"; ExpectedType = [long] }
+                #Exponential
+                @{ Script = "0e0l"; ExpectedValue = "0"; ExpectedType = [long] }
+                @{ Script = "3e2l"; ExpectedValue = "300"; ExpectedType = [long] }
+                @{ Script = "-3e2l"; ExpectedValue = "-300"; ExpectedType = [long] }
+                #Hexadecimal
+                @{ Script = "0x0l"; ExpectedValue = "0"; ExpectedType = [long] }
+                @{ Script = "0x41l"; ExpectedValue = "65"; ExpectedType = [long] }
+                @{ Script = "-0x41l"; ExpectedValue = "-65"; ExpectedType = [long] }
+                #Multipliers
+                @{ Script = "1lkb"; ExpectedValue = "1024"; ExpectedType = [long] }
+                @{ Script = "1lmb"; ExpectedValue = "1048576"; ExpectedType = [long] }
+                @{ Script = "1lgb"; ExpectedValue = "1073741824"; ExpectedType = [long] }
+                @{ Script = "1ltb"; ExpectedValue = "1099511627776"; ExpectedType = [long] }
+                @{ Script = "1lpb"; ExpectedValue = "1125899906842624"; ExpectedType = [long] }
+
+            #Unsigned Integer notation
+                #Standard
+                @{ Script = "0u"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "10u"; ExpectedValue = "10"; ExpectedType = [uint] }
+                @{ Script = "+10u"; ExpectedValue = "10"; ExpectedType = [uint] }
+                #Conversion from <Real>
+                @{ Script = "0.0u"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "2.5u"; ExpectedValue = "2"; ExpectedType = [uint] }
+                #Exponential
+                @{ Script = "0e0u"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "3e2u"; ExpectedValue = "300"; ExpectedType = [uint] }
+                #Hexadecimal
+                @{ Script = "0x0u"; ExpectedValue = "0"; ExpectedType = [uint] }
+                @{ Script = "0x41u"; ExpectedValue = "65"; ExpectedType = [uint] }
+                #Multipliers
+                @{ Script = "1ukb"; ExpectedValue = "1024"; ExpectedType = [uint] }
+                @{ Script = "1umb"; ExpectedValue = "1048576"; ExpectedType = [uint] }
+                @{ Script = "1ugb"; ExpectedValue = "1073741824"; ExpectedType = [uint] }
+                @{ Script = "1utb"; ExpectedValue = "1099511627776"; ExpectedType = [ulong] }
+                @{ Script = "1upb"; ExpectedValue = "1125899906842624"; ExpectedType = [ulong] }
+
+            #Unsigned-Short Integer Notation
+                #Standard
+                @{ Script = "0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
+                @{ Script = "10us"; ExpectedValue = "10"; ExpectedType = [ushort] }
+                @{ Script = "+10us"; ExpectedValue = "10"; ExpectedType = [ushort] }
+                #Conversion from <Real>
+                @{ Script = "0.0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
+                @{ Script = "3.72us"; ExpectedValue = "4"; ExpectedType = [ushort] }
+                #Exponential
+                @{ Script = "0e0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
+                @{ Script = "3e0us"; ExpectedValue = "3"; ExpectedType = [ushort] }
+                @{ Script = "3e2us"; ExpectedValue = "300"; ExpectedType = [ushort] }
+                #Hexadecimal
+                @{ Script = "0x0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
+                @{ Script = "0x41us"; ExpectedValue = "65"; ExpectedType = [ushort] }
+                #Multipliers
+                @{ Script = "1uskb"; ExpectedValue = "1024"; ExpectedType = [ushort] }
+
+            #Unsigned-Long Integer Notation
+                #Standard
+                @{ Script = "0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
+                @{ Script = "10ul"; ExpectedValue = "10"; ExpectedType = [ulong] }
+                @{ Script = "+10ul"; ExpectedValue = "10"; ExpectedType = [ulong] }
+                #Conversion from <Real>
+                @{ Script = "0.0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
+                @{ Script = "2.5ul"; ExpectedValue = "2"; ExpectedType = [ulong] }
+                #Exponential
+                @{ Script = "0e0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
+                @{ Script = "3e2ul"; ExpectedValue = "300"; ExpectedType = [ulong] }
+                #Hexadecimal
+                @{ Script = "0x0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
+                @{ Script = "0x41ul"; ExpectedValue = "65"; ExpectedType = [ulong] }
+                #Multipliers
+                @{ Script = "1ulkb"; ExpectedValue = "1024"; ExpectedType = [ulong] }
+                @{ Script = "1ulmb"; ExpectedValue = "1048576"; ExpectedType = [ulong] }
+                @{ Script = "1ulgb"; ExpectedValue = "1073741824"; ExpectedType = [ulong] }
+                @{ Script = "1ultb"; ExpectedValue = "1099511627776"; ExpectedType = [ulong] }
+                @{ Script = "1ulpb"; ExpectedValue = "1125899906842624"; ExpectedType = [ulong] }
         )
-        It "<Script> should return <Expected>" -TestCases $testData {
-            param ( $Script, $Expected )
-            ExecuteCommand $Script | Should -Be $Expected
+
+        It "<Script> should return <ExpectedValue>, with type <ExpectedType>" -TestCases $testData {
+            param ( $Script, $ExpectedValue, $ExpectedType )
+            ExecuteCommand $Script | Should -Be $ExpectedValue
+            ExecuteCommand $Script | Should -BeOfType $ExpectedType
+        }
+
+        $testInvalidNumerals = @(
+            @{ Script = "16p" }
+            @{ Script = "80x" }
+            @{ Script = "20ux" }
+            @{ Script = "18uu" }
+            @{ Script = "21ss" }
+            @{ Script = "100ll" }
+            @{ Script = "150su" }
+            @{ Script = "160ud" }
+            @{ Script = "160ld" }
+            @{ Script = "160sd" }
+            @{ Script = "160dd" }
+            @{ Script = "10ds" }
+            @{ Script = "10ud" }
+            @{ Script = "16sl" }
+            @{ Script = "188lu" }
+            @{ Script = "500sgb" }
+            @{ Script = "10000usgb" }
+            @{ Script = "10000.0usgb" }
+        )
+        It "<Script> should throw an error" -TestCases $testInvalidNumerals {
+            param($Script)
+             {[ScriptBlock]::Create($Script).Invoke()} | Should -Throw
         }
     }
 

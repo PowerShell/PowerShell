@@ -66,7 +66,6 @@ namespace System.Management.Automation.PerformanceData
     /// derived non-abstract type.
     /// The created instance is then passed to PSPerfCounterMgr's AddCounterSetInstance()
     /// method.
-    ///
     /// </summary>
     public abstract class CounterSetRegistrarBase
     {

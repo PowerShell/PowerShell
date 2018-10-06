@@ -19,8 +19,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class HistoryInfo
     {
-        #region constuctor
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -34,11 +32,11 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Assert(cmdline != null, "caller should validate the parameter");
             _pipelineId = pipelineId;
-            _cmdline = cmdline;
-            _status = status;
-            _startTime = startTime;
-            _endTime = endTime;
-            _cleared = false;
+            CommandLine = cmdline;
+            ExecutionStatus = status;
+            StartExecutionTime = startTime;
+            EndExecutionTime = endTime;
+            Cleared = false;
         }
 
         /// <summary>
@@ -47,77 +45,49 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="history"></param>
         private HistoryInfo(HistoryInfo history)
         {
-            _id = history._id;
+            Id = history.Id;
             _pipelineId = history._pipelineId;
-            _cmdline = history._cmdline;
-            _status = history._status;
-            _startTime = history._startTime;
-            _endTime = history._endTime;
-            _cleared = history._cleared;
+            CommandLine = history.CommandLine;
+            ExecutionStatus = history.ExecutionStatus;
+            StartExecutionTime = history.StartExecutionTime;
+            EndExecutionTime = history.EndExecutionTime;
+            Cleared = history.Cleared;
         }
 
-        #endregion constructor
-
-        #region public
         /// <summary>
         /// Id of this history entry.
         /// </summary>
         /// <value></value>
-        public long Id
-        {
-            get
-            {
-                return _id;
-            }
-        }
+        public long Id { get; private set; }
 
         /// <summary>
         /// CommandLine string
         /// </summary>
         /// <value></value>
-        public string CommandLine
-        {
-            get
-            {
-                return _cmdline;
-            }
-        }
+        public string CommandLine { get; private set; }
 
         /// <summary>
         /// Execution status of associated pipeline
         /// </summary>
         /// <value></value>
-        public PipelineState ExecutionStatus
-        {
-            get
-            {
-                return _status;
-            }
-        }
+        public PipelineState ExecutionStatus { get; private set; }
 
         /// <summary>
         /// Start time of execution of associated pipeline
         /// </summary>
         /// <value></value>
-        public DateTime StartExecutionTime
-        {
-            get
-            {
-                return _startTime;
-            }
-        }
+        public DateTime StartExecutionTime { get; }
 
         /// <summary>
         /// End time of execution of associated pipeline
         /// </summary>
         /// <value></value>
-        public DateTime EndExecutionTime
-        {
-            get
-            {
-                return _endTime;
-            }
-        }
+        public DateTime EndExecutionTime { get; private set; }
+
+        /// <summary>
+        /// The time it took to execute the associeated pipeline
+        /// </summary>
+        public TimeSpan Duration => EndExecutionTime - StartExecutionTime;
 
         /// <summary>
         /// Override for ToString() method
@@ -125,115 +95,51 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         public override string ToString()
         {
-            if (string.IsNullOrEmpty(_cmdline))
+            if (string.IsNullOrEmpty(CommandLine))
             {
                 return base.ToString();
             }
             else
             {
-                return _cmdline;
+                return CommandLine;
             }
         }
-
-        #endregion public
-
-        #region internal
 
         /// <summary>
         /// Cleared status of an entry
         /// </summary>
 
-        internal bool Cleared
-        {
-            get
-            {
-                return _cleared;
-            }
-            set
-            {
-                _cleared = value;
-            }
-        }
+        internal bool Cleared { get; set; } = false;
 
         /// <summary>
         /// Sets Id
         /// </summary>
         /// <param name="id"></param>
-        internal void SetId(long id)
-        {
-            _id = id;
-        }
+        internal void SetId(long id) => Id = id;
 
         /// <summary>
         /// Set status
         /// </summary>
         /// <param name="status"></param>
-        internal void SetStatus(PipelineState status)
-        {
-            _status = status;
-        }
+        internal void SetStatus(PipelineState status) => ExecutionStatus = status;
 
         /// <summary>
         /// Set endtime
         /// </summary>
         /// <param name="endTime"></param>
-        internal void SetEndTime(DateTime endTime)
-        {
-            _endTime = endTime;
-        }
+        internal void SetEndTime(DateTime endTime) => EndExecutionTime = endTime;
 
         /// <summary>
         /// Sets command
         /// </summary>
         /// <param name="command"></param>
-        internal void SetCommand(string command)
-        {
-            _cmdline = command;
-        }
-
-        #endregion internal
-
-        #region private
+        internal void SetCommand(string command) => CommandLine = command;
 
         /// <summary>
         /// Id of the pipeline corresponding to this history entry
         /// </summary>
         private long _pipelineId;
 
-        /// <summary>
-        /// Id of the history entry
-        /// </summary>
-        private long _id;
-
-        /// <summary>
-        /// CommandLine string
-        /// </summary>
-        private string _cmdline;
-
-        /// <summary>
-        /// ExecutionStatus of execution
-        /// </summary>
-        private PipelineState _status;
-
-        /// <summary>
-        /// Start time of execution
-        /// </summary>
-        private DateTime _startTime;
-
-        ///
-        ///End time of execution
-        ///
-        private DateTime _endTime;
-
-        /// <summary>
-        /// Flag indicating an entry is present/cleared
-        /// </summary>
-
-        private bool _cleared = false;
-
-        #endregion private
-
-        #region ICloneable Members
 
         /// <summary>
         /// Returns a clone of this object
@@ -243,8 +149,6 @@ namespace Microsoft.PowerShell.Commands
         {
             return new HistoryInfo(this);
         }
-
-        #endregion
     }
 
     /// <summary>

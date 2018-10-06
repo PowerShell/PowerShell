@@ -680,7 +680,6 @@ namespace System.Management.Automation.Language
     #region Script Blocks
 
     /// <summary>
-    ///
     /// </summary>
     public class ScriptRequirements
     {
@@ -5670,9 +5669,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// <para>Returns the name of the command invoked by this ast.</para>
-        ///
         /// <para>This command name may not be known statically, in which case null is returned.</para>
-        ///
         /// <para>
         /// For example, if the command name is in a variable: <example>&amp; $foo</example>, then the parser cannot know which command is executed.
         /// Similarly, if the command is being invoked in a module: <example>&amp; (gmo SomeModule) Bar</example>, then the parser does not know the
@@ -6419,7 +6416,6 @@ namespace System.Management.Automation.Language
         #region static fields/methods
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="stmt"></param>
         /// <param name="resourceModulePairsToImport">Item1 - ResourceName, Item2 - ModuleName, Item3 - ModuleVersion</param>

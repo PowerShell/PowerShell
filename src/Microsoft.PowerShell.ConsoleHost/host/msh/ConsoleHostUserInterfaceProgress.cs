@@ -12,10 +12,8 @@ namespace Microsoft.PowerShell
     class ConsoleHostUserInterface : System.Management.Automation.Host.PSHostUserInterface
     {
         /// <summary>
-        ///
         /// Called at the end of a prompt loop to take down any progress display that might have appeared and purge any
         /// outstanding progress activity state.
-        ///
         /// </summary>
 
         internal
@@ -52,10 +50,8 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// Invoked by ConsoleHostUserInterface.WriteProgress to update the set of outstanding activities for which
         /// ProgressRecords have been received.
-        ///
         /// </summary>
 
         private
@@ -101,9 +97,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// TimerCallback for '_progPaneUpdateTimer' to update 'progPaneUpdateFlag'
-        ///
         /// </summary>
 
         private

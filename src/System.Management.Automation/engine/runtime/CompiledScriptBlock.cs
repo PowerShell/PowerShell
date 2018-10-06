@@ -159,9 +159,10 @@ namespace System.Management.Automation
 
         private void ReallyCompile(bool optimize)
         {
+#if LEGACYTELEMETRY
             var sw = new Stopwatch();
             sw.Start();
-
+#endif
             if (!IsProductCode && SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File))
             {
                 this.IsProductCode = true;
@@ -387,7 +388,9 @@ namespace System.Management.Automation
         public override string ToString()
         {
             if (_scriptText != null)
+            {
                 return _scriptText;
+            }
 
             var sbAst = _ast as ScriptBlockAst;
             if (sbAst != null)

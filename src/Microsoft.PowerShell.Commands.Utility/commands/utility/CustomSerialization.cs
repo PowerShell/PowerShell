@@ -941,11 +941,9 @@ namespace System.Management.Automation
         /// Gets the string from PSObject using the information from
         /// types.ps1xml. This string is used for serializing the PSObject.
         /// </summary>
-        ///
         /// <param name="source">
         /// PSObject to be converted to string.
         /// </param>
-        ///
         /// <returns>
         /// string value to use for serializing this PSObject.
         /// </returns>

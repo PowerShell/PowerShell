@@ -140,7 +140,7 @@ Additional references:
   and is recommended by the Git SCM developers.
   It is also used in the [Git commit messages](#common-engineering-practices).
 * If the change is related to a specific resource, please prefix the description with the resource name:
-  * Instead of "New parameter 'ConnectionCredential' in New-SqlConnection",
+    * Instead of "New parameter 'ConnectionCredential' in New-SqlConnection",
   write "New-SqlConnection: add parameter 'ConnectionCredential'".
 * If your change warrants an update to user-facing documentation,
   a Maintainer will add the `Documentation Needed` label to your PR and add an issue to the [PowerShell-Docs repository][PowerShell-Docs],
@@ -151,15 +151,21 @@ Additional references:
   (See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell) for more info.)
 * If your change adds a new source file, ensure the appropriate copyright and license headers is on top.
   It is standard practice to have both a copyright and license notice for each source file.
-  * For `.h`, `.cpp`, and `.cs` files use:
+    * For `.h`, `.cpp`, and `.cs` files use the copyright header with empty line after it:
 
+    ```c#
         // Copyright (c) Microsoft Corporation. All rights reserved.
         // Licensed under the MIT License.
+        <Add empty line here>
+    ```
 
-  * For `.ps1` and `.psm1` files use:
+    * For `.ps1` and `.psm1` files use the copyright header with empty line after it:
 
+    ```powershell
         # Copyright (c) Microsoft Corporation. All rights reserved.
         # Licensed under the MIT License.
+        <Add empty line here>
+    ```
 
 * If your change adds a new module manifest (.psd1 file), ensure that:
 
@@ -186,6 +192,18 @@ Additional references:
 * Our CI contains automated spellchecking. If there is any false-positive,
   [run the spellchecker command line tool in interactive mode](#spellchecking-documentation)
   to add words to the `.spelling` file.
+* Our packaging test may not pass and ask you to update `files.wxs` file if you add/remove/update nuget package references or add/remove assert files.
+
+  You could update the file manually in accordance with messages in the test log file. Or you can use automatically generated file. To get the file you should build the msi package locally:
+
+  ```powershell
+  Import-Module .\build.psm1
+  Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win7-x64 -Configuration Release -ReleaseTag <release tag>
+  Import-Module .\tools\packaging
+  Start-PSPackage -Type msi -ReleaseTag <release tag> -WindowsRuntime 'win7-x64' -SkipReleaseChecks
+  ```
+
+  Last command will report where new file is located.
 
 #### Pull Request - Workflow
 

@@ -77,7 +77,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructs a RestartComputerTimeoutException
         /// </summary>
-        ///
         /// <param name="message">
         /// The message used in the exception.
         /// </param>
@@ -86,11 +85,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructs a RestartComputerTimeoutException
         /// </summary>
-        ///
         /// <param name="message">
         /// The message used in the exception.
         /// </param>
-        ///
         /// <param name="innerException">
         /// An exception that led to this exception.
         /// </param>
@@ -100,11 +97,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Serialization constructor for class RestartComputerTimeoutException
         /// </summary>
-        ///
         /// <param name="info">
         /// serialization information
         /// </param>
-        ///
         /// <param name="context">
         /// streaming context
         /// </param>
@@ -123,11 +118,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Serializes the RestartComputerTimeoutException.
         /// </summary>
-        ///
         /// <param name="info">
         /// serialization information
         /// </param>
-        ///
         /// <param name="context">
         /// streaming context
         /// </param>
@@ -1826,7 +1819,6 @@ $result
 
         /// <summary>
         /// Gets the Scope
-        ///
         /// </summary>
         /// <param name="computer"></param>
         /// <param name="namespaceParameter"></param>

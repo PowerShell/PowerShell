@@ -391,6 +391,8 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo PSCreateInstanceBinder_IsTargetTypeNonPublic =
             typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeNonPublic), staticFlags);
+        internal static readonly MethodInfo PSCreateInstanceBinder_IsTargetTypeByRefLike =
+            typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeByRefLike), staticFlags);
         internal static readonly MethodInfo PSCreateInstanceBinder_GetTargetTypeName =
             typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.GetTargetTypeName), staticFlags);
 
@@ -596,7 +598,7 @@ namespace System.Management.Automation.Language
                 return Expression.Convert(expr, type);
             }
 
-            if (type.ContainsGenericParameters)
+            if (type.ContainsGenericParameters || type.IsByRefLike)
             {
                 return Expression.Call(
                     CachedReflectionInfo.LanguagePrimitives_ThrowInvalidCastException,
@@ -1096,8 +1098,13 @@ namespace System.Management.Automation.Language
             var positionalArgCount = ast.PositionalArguments.Count;
             if (positionalArgCount > 0)
             {
-                throw InterpreterError.NewInterpreterException(null, typeof(MethodException), ast.Extent,
-                    "MethodCountCouldNotFindBest", ExtendedTypeSystem.MethodArgumentCountException, ".ctor",
+                throw InterpreterError.NewInterpreterException(
+                    null,
+                    typeof(MethodException),
+                    ast.Extent,
+                    "MethodCountCouldNotFindBest",
+                    ExtendedTypeSystem.MethodArgumentCountException,
+                    ".ctor",
                     positionalArgCount);
             }
         }
@@ -1108,8 +1115,13 @@ namespace System.Management.Automation.Language
             {
                 var namedArg = ast.NamedArguments[0];
                 var argumentName = namedArg.ArgumentName;
-                throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                    "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                throw InterpreterError.NewInterpreterException(
+                    namedArg,
+                    typeof(RuntimeException),
+                    namedArg.Extent,
+                    "PropertyNotFoundForType",
+                    ParserStrings.PropertyNotFoundForType,
+                    argumentName,
                     typeof(CmdletBindingAttribute));
             }
         }
@@ -1168,8 +1180,13 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                        "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                    throw InterpreterError.NewInterpreterException(
+                        namedArg,
+                        typeof(RuntimeException),
+                        namedArg.Extent,
+                        "PropertyNotFoundForType",
+                        ParserStrings.PropertyNotFoundForType,
+                        argumentName,
                         typeof(CmdletBindingAttribute));
                 }
             }
@@ -1255,8 +1272,13 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                        "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                    throw InterpreterError.NewInterpreterException(
+                        namedArg,
+                        typeof(RuntimeException),
+                        namedArg.Extent,
+                        "PropertyNotFoundForType",
+                        ParserStrings.PropertyNotFoundForType,
+                        argumentName,
                         typeof(CmdletBindingAttribute));
                 }
             }
@@ -1322,8 +1344,13 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
-                        "PropertyNotFoundForType", ParserStrings.PropertyNotFoundForType, argumentName,
+                    throw InterpreterError.NewInterpreterException(
+                        namedArg,
+                        typeof(RuntimeException),
+                        namedArg.Extent,
+                        "PropertyNotFoundForType",
+                        ParserStrings.PropertyNotFoundForType,
+                        argumentName,
                         typeof(CmdletBindingAttribute));
                 }
             }
@@ -5479,6 +5506,22 @@ namespace System.Management.Automation.Language
                             var propertyInfo = memberInfo[0] as PropertyInfo;
                             if (propertyInfo != null)
                             {
+                                if (propertyInfo.PropertyType.IsByRefLike)
+                                {
+                                    // ByRef-like types are not boxable and should be used only on stack.
+                                    return Expression.Throw(
+                                        Expression.New(
+                                            CachedReflectionInfo.GetValueException_ctor,
+                                            Expression.Constant(nameof(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField)),
+                                            Expression.Constant(null, typeof(Exception)),
+                                            Expression.Constant(ExtendedTypeSystem.CannotAccessByRefLikePropertyOrField),
+                                            Expression.NewArrayInit(
+                                                typeof(object),
+                                                Expression.Constant(propertyInfo.Name),
+                                                Expression.Constant(propertyInfo.PropertyType, typeof(Type)))),
+                                        typeof(object));
+                                }
+
                                 if (propertyInfo.CanRead)
                                 {
                                     return Expression.Property(null, propertyInfo);
@@ -5487,6 +5530,8 @@ namespace System.Management.Automation.Language
                             }
                             else
                             {
+                                // Field cannot be of a ByRef-like type unless it's an instance member of a ref struct.
+                                // So we don't need to check 'IsByRefLike' for static field access.
                                 return Expression.Field(null, (FieldInfo)memberInfo[0]);
                             }
                         }

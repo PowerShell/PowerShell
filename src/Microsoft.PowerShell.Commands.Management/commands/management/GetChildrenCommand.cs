@@ -11,10 +11,8 @@ namespace Microsoft.PowerShell.Commands
     /// The get-childitem command class.
     /// This command lists the contents of a container
     /// </summary>
-    ///
     /// <remarks>
     /// </remarks>
-    ///
     [Cmdlet(VerbsCommon.Get, "ChildItem", DefaultParameterSetName = "Items", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113308")]
     public class GetChildItemCommand : CoreCommandBase
     {
@@ -158,7 +156,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the force property
         /// </summary>
-        ///
         /// <remarks>
         /// Gives the provider guidance on how vigorous it should be about performing
         /// the operation. If true, the provider should do everything possible to perform
@@ -168,7 +165,6 @@ namespace Microsoft.PowerShell.Commands
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
         /// </remarks>
-        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -203,16 +199,13 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             object result = null;

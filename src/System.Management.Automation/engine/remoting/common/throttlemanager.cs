@@ -190,7 +190,6 @@ namespace System.Management.Automation.Remoting
     ///
     /// The queue used is a generic queue of type IThrottleOperations, as it will offer better
     /// performance
-    ///
     /// </summary>
     /// <remarks>Throttle limit is currently set to 50. This value may be modified later based
     /// on a figure that we may arrive at out of experience.</remarks>

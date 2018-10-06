@@ -39,7 +39,6 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Get PSSessions from container. Optionally filter on state, session instanceid or session name.
     ///     get-psession -ContainerId containerId -InstanceId instanceId
-    ///
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSSession", DefaultParameterSetName = PSRunspaceCmdlet.NameParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135219", RemotingCapability = RemotingCapability.OwnedByCommand)]

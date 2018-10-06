@@ -17,11 +17,9 @@ using System.Threading.Tasks;
 namespace System.Management.Automation.Host
 {
     /// <summary>
-    ///
     /// Defines the properties and facilities providing by an hosting application deriving from
     /// <see cref="System.Management.Automation.Host.PSHost"/> that offers dialog-oriented and
     /// line-oriented interactive features.
-    ///
     /// </summary>
     /// <seealso cref="System.Management.Automation.Host.PSHost"/>
     /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface"/>

@@ -1060,7 +1060,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="source"></param>
         /// <param name="streamName"></param>
@@ -2176,11 +2175,9 @@ namespace System.Management.Automation
         /// This string is used for serializing the PSObject at depth 0
         /// or when pso.SerializationMethod == SerializationMethod.String.
         /// </summary>
-        ///
         /// <param name="source">
         /// PSObject to be converted to string
         /// </param>
-        ///
         /// <returns>
         /// string value to use for serializing this PSObject.
         /// </returns>
@@ -2958,7 +2955,6 @@ namespace System.Management.Automation
         private readonly ReferenceIdHandlerForDeserializer<ConsolidatedString> _typeRefIdHandler;
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="context"></param>
@@ -5391,11 +5387,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the "ToString" from PSObject.
         /// </summary>
-        ///
         /// <param name="source">
         /// PSObject to be converted to string
         /// </param>
-        ///
         /// <returns>
         /// "ToString" value
         /// </returns>

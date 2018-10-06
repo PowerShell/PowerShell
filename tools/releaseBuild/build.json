@@ -200,6 +200,43 @@
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
         "ArtifactsExpected": 1
+    },
+    {
+        "Name": "win-fxdependent-symbols",
+        "RepoDestinationPath": "C:\\PowerShell",
+        "BuildCommand": "C:\\PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime fxdependent -ReleaseTag _ReleaseTag_ -Symbols",
+        "BuildDockerOptions": [
+            "-m",
+            "3968m"
+        ],
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "AdditionalContextFiles" :[
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
+        ],
+        "DockerImageName": "ps-winsrvcore",
+        "BinaryBucket": "results",
+        "ArtifactsExpected": 1,
+        "VariableForExtractedBinariesPath": "Symbols_fxdependent"
+    },
+    {
+        "Name": "win-fxdependent-package",
+        "RepoDestinationPath": "C:\\PowerShell",
+        "BuildCommand": "C:\\PowerShellPackage.ps1 -BuildZip _RepoDestinationPath_\\_BuildPackageName_ -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime fxdependent -ReleaseTag _ReleaseTag_",
+        "BuildDockerOptions": [
+            "-m",
+            "3968m"
+        ],
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "AdditionalContextFiles" :[
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
+        ],
+        "DockerImageName": "ps-winsrvcore",
+        "BinaryBucket": "signed",
+        "ArtifactsExpected": 1
     }
   ],
   "Linux": [
@@ -255,6 +292,15 @@
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/microsoft_powershell_alpine3/build-and-run-pwsh.sh"],
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_alpine3/Dockerfile",
         "DockerImageName": "ps-alpine-3",
+        "BinaryBucket": "release"
+    },
+    {
+        "Name": "fxdependent",
+        "RepoDestinationPath": "/PowerShell",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -FxDependent",
+        "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
+        "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_centos7/Dockerfile",
+        "DockerImageName": "ps-centos-7",
         "BinaryBucket": "release"
     }
   ]

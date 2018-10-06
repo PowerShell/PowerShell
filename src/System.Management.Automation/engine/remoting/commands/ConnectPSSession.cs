@@ -42,7 +42,6 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Connect all disconnected PS sessions on a remote computer
     /// > Connect-PSSession serverName
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Connect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ConnectPSSessionCommand.NameParameterSet,

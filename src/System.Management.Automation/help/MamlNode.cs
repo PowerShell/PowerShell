@@ -11,7 +11,6 @@ using System.Text;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// MamlNode is an xml node in MAML schema. Maml schema includes formatting oriented tags like para, list
     /// etc, which needs to be taken care of during display. As a result, xml node in Maml schema can't be
     /// converted into PSObject directly with XmlNodeAdapter.
@@ -45,7 +44,6 @@ namespace System.Management.Automation
     ///                 </definition>
     ///             </definitionListItem>
     ///         </definitionList>
-    ///
     /// After processing, content of these three tags will be converted into textItem and its derivations,
     ///     1. para => paraTextItem
     ///         <textItem class="paraTextItem">
@@ -66,7 +64,6 @@ namespace System.Management.Automation
     ///             <definition>definition text here</definition>
     ///         </definitionListItem>
     /// </summary>
-    ///
     internal class MamlNode
     {
         /// <summary>
@@ -180,7 +177,6 @@ namespace System.Management.Automation
         ///                 </definitionListItem>
         ///             </definitionList>
         ///         </description>
-        ///
         ///         In this case, an PSObject based on an PSObject array will be created. The inside PSObject array
         ///         will contain following items
         ///             . a MamlParaTextItem based on "para 1"
@@ -191,7 +187,6 @@ namespace System.Management.Automation
         ///
         ///         The outside PSObject will have a property
         ///             attribute => "value"
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -298,7 +293,6 @@ namespace System.Management.Automation
         /// We are making each property value is an array (PSObject[]) to start with.
         /// At the end, SimplifyProperties will be called to reduce PSObject[] containing
         /// only one element to PSObject itself.
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -364,7 +358,6 @@ namespace System.Management.Automation
         /// an node with maml formatting node inside is treated. The side effect of this
         /// is that the properties for outside mshObject will be lost. An example of this
         /// is that,
-        ///
         /// <command>
         ///     <description attrib1="value1">
         ///         <para></para>
@@ -372,7 +365,6 @@ namespace System.Management.Automation
         ///         <definitionList></definitionList>
         ///     </description>
         /// </command>
-        ///
         /// After the processing, PSObject corresponding to command will have an property
         /// with name "description" and a value of an PSObject array created based on
         /// maml formatting node inside "description" node. The attribute of description node
@@ -589,7 +581,6 @@ namespace System.Management.Automation
         ///            </definitionListItem>
         ///        </definitionList>
         ///    </description>
-        ///
         ///    In this case, an PSObject based on an PSObject array will be created. The inside PSObject array
         ///    will contain following items
         ///        . a MamlParaTextItem based on "para 1"
@@ -749,7 +740,6 @@ namespace System.Management.Automation
         ///    </para>
         ///    In this case, an PSObject of type "MamlParaTextItem" will be created with following property
         ///        a. text="para text"
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <param name="newLine"></param>
@@ -806,13 +796,11 @@ namespace System.Management.Automation
         ///            </para>
         ///        </listItem>
         ///    </list>
-        ///
         /// In this case, an array of PSObject, each of type "MamlOrderedListText" will be created with following
         /// two properties,
         ///        a. tag=" 1. " or " 2. "
         ///        b. text="text for list item 1" or "text for list item 2"
         /// In the case of unordered list, similar PSObject will created with type to be "MamlUnorderedListText" and tag="*"
-        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -1093,14 +1081,12 @@ namespace System.Management.Automation
         /// is to remove that fixed amount from the text.
         ///
         /// For example, in xml,
-        ///
         /// <preformatted>
         ///     void function()
         ///     {
         ///         // call some other function here;
         ///     }
         /// </preformatted>
-        ///
         /// we can find that the preformatted text are indented unanimously
         /// by 4 spaces because of its position in xml.
         ///

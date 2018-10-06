@@ -1,0 +1,86 @@
+name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  # Avoid expensive initialization of dotnet cli, see: http://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+
+resources:
+- repo: self
+  clean: true
+phases:
+- phase: Linux_CI
+
+  queue:
+    name: Hosted Ubuntu 1604
+  steps:
+  - powershell: |
+      Get-Process
+    displayName: Capture Processes
+    condition: succeededOrFailed()
+
+  - powershell: |
+      Get-ChildItem -Path env:
+    displayName: Capture environment
+    condition: succeededOrFailed()
+
+  - powershell: |
+      # sometimes the file is locked and we must wait or things will fail
+      $filePath = '/var/lib/dpkg/lock'
+      $lockList = sudo lsof '/var/lib/dpkg/lock'
+      while($lockList)
+      {
+        Write-Verbose "waiting..." -verbose
+        Write-Verbose ($lockList -join "`n") -verbose
+        Start-Sleep -Second 30
+        $lockList = sudo lsof $filePath
+      }
+      exit 0
+    displayName: Wait for /var/lib/dpkg/lock
+    condition: succeededOrFailed()
+
+  - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
+    displayName: Set Build Name for Non-PR
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+
+# Several scripts require TMPDIR to exist
+# Set it to AGENT_TEMPDIRECTORY so that we know it exists
+  - powershell: |
+      Write-Host "##vso[task.setvariable variable=TEMP]$env:AGENT_TEMPDIRECTORY"
+    displayName: Set TEMP to AGENT_TEMPDIRECTORY
+    condition: succeededOrFailed()
+
+  - powershell: |
+      git submodule update --init
+    displayName: SubModule Init
+    condition: succeededOrFailed()
+
+  - powershell: |
+      tools/travis.ps1 -Stage Bootstrap
+    displayName: Bootstrap
+    condition: succeeded()
+
+  - powershell: |
+      $ErrorActionPreference = 'continue'
+      tools/travis.ps1
+    displayName: Build and test
+    condition: succeeded()
+
+  - powershell: |
+      tools/travis.ps1 -Stage Failure
+    displayName: After Failure
+    condition: failed()
+
+  - powershell: |
+      tools/travis.ps1 -Stage Success
+    displayName: After Success
+    condition: succeeded()
+
+  # Uploads any packages as an artifact
+  - powershell: |
+      Get-ChildItem -Path *.rpm, *.deb, *.tar.gz -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
+        Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts]$_"
+      }
+    displayName: Publish Artifacts
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+    continueOnError: true

@@ -55,7 +55,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="baseObject"></param>
         /// <returns></returns>
@@ -96,7 +95,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="baseObject"></param>
         /// <param name="propertyName"></param>
@@ -154,7 +152,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -180,7 +177,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -243,7 +239,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="baseObject"></param>
         /// <returns></returns>
@@ -296,7 +291,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -311,7 +305,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <returns></returns>
@@ -340,7 +333,6 @@ namespace Microsoft.PowerShell.Cim
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="adaptedProperty"></param>
         /// <param name="value"></param>

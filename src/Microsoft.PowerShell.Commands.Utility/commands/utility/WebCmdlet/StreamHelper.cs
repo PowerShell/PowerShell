@@ -30,7 +30,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region Constructors
         /// <summary>
-        ///
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="initialCapacity"></param>
@@ -44,7 +43,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
-        ///
         /// </summary>
         public override bool CanRead
         {
@@ -55,7 +53,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         public override bool CanSeek
         {
@@ -66,7 +63,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         public override bool CanTimeout
         {
@@ -77,7 +73,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         public override bool CanWrite
         {
@@ -88,7 +83,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         public override long Length
         {
@@ -100,7 +94,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="bufferSize"></param>
@@ -113,7 +106,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -126,7 +118,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -140,7 +131,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         public override int ReadByte()
@@ -150,7 +140,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="value"></param>
         public override void SetLength(long value)
@@ -160,7 +149,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         public override byte[] ToArray()
@@ -170,7 +158,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -182,7 +169,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -196,7 +182,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="value"></param>
         public override void WriteByte(byte value)
@@ -206,7 +191,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="stream"></param>
         public override void WriteTo(Stream stream)
@@ -216,7 +200,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -224,7 +207,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         private void Initialize()
         {

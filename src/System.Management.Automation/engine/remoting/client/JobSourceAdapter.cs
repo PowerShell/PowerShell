@@ -138,7 +138,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -148,7 +147,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -302,7 +300,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="definition"></param>
         /// <param name="parameters"></param>
@@ -313,7 +310,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="definition"></param>
         /// <param name="parameters"></param>
@@ -328,7 +324,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -338,7 +333,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>

@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
 $moduleRootFilePath = Split-Path -Path $PSScriptRoot -Parent
 
 # Identify the repository root path of the resource module
@@ -25,7 +27,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                     -NoNewWindow
                 Start-Process `
                     -FilePath "npm" `
-                    -ArgumentList @('install','-g','gulp','--silent') `
+                    -ArgumentList @('install','-g','gulp@4.0.0','--silent') `
                     -Wait `
                     -WorkingDirectory $PSScriptRoot `
                     -NoNewWindow
@@ -40,6 +42,9 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 Write-Warning "Node and npm are required to run this test"
                 $skip = $true
             }
+
+            $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
+            Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
         }
     }
 
@@ -88,30 +93,23 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 './tools/*.md'
             )
             $filter = ($docsToTest -join ',')
-            &"gulp" test-mdsyntax --silent `
-                --rootpath $repoRootPath `
-                --filter $filter
 
-        }
-        catch
-        {
-            Write-Warning -Message ("Unable to run gulp to test markdown files. Please " + `
-                                    "be sure that you have installed nodejs and have " + `
-                                    "run 'npm install -g gulp' in order to have this " + `
-                                    "text execute.")
+            # Gulp 4 beta is returning non-zero exit code even when there is not an error
+            Start-NativeExecution {
+                    &"gulp" test-mdsyntax --silent `
+                        --rootpath $repoRootPath `
+                        --filter $filter
+                } -VerboseOutputOnError -IgnoreExitcode
+
         }
         finally
         {
             Pop-Location
         }
 
-        $LASTEXITCODE | Should beexactly 0
+        $mdIssuesPath | Should -Exist
 
-        $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
-
-        $mdIssuesPath | should exist
-
-        [string] $markdownErrors = Get-Content -Path $mdIssuesPath
+        [string[]] $markdownErrors = Get-Content -Path $mdIssuesPath
         Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
 
         if ($markdownErrors -ne "--EMPTY--")
@@ -119,6 +117,6 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             $markdownErrors += ' (See https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md for an explanation of the error codes)'
         }
 
-        $markdownErrors | Should BeExactly "--EMPTY--"
+        $markdownErrors -join "`n" | Should -BeExactly "--EMPTY--"
     }
 }

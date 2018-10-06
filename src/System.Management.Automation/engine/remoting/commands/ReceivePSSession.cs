@@ -60,7 +60,6 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Receive a running command from a computer.
     /// > $job = Receive-PSSession -ComputerName ServerOne -Name SessionName -OutTarget Job
-    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Receive, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ReceivePSSessionCommand.SessionParameterSet,

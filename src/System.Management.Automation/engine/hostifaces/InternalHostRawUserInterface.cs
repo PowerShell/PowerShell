@@ -36,9 +36,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -72,9 +70,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -109,9 +105,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -146,9 +140,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -183,9 +175,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -220,9 +210,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -257,9 +245,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -294,9 +280,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -322,9 +306,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -350,9 +332,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <param name="options">
         /// </param>
@@ -391,9 +371,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
@@ -413,9 +391,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
@@ -441,9 +417,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <value></value>
         /// <exception cref="HostException">
@@ -478,9 +452,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <param name="origin"></param>
         /// <param name="contents"></param>
@@ -501,9 +473,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <param name="r">
         /// </param>
@@ -529,9 +499,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <param name="r"></param>
         /// <returns></returns>
@@ -553,9 +521,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// See base class
-        ///
         /// </summary>
         /// <param name="source">
         /// </param>
@@ -589,7 +555,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
@@ -607,7 +572,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="str"></param>
         /// <param name="offset"></param>
@@ -629,7 +593,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="character"></param>
         /// <returns></returns>

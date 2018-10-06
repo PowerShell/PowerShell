@@ -50,7 +50,6 @@ namespace Microsoft.PowerShell.Commands
     /// This assumes that a shell by the name E12 exists on the remote server
     /// $rs = New-PSSession -computername s1 -port 8061 -ShellName E12
     /// </summary>
-    ///
     [Cmdlet(VerbsCommon.New, "PSSession", DefaultParameterSetName = "ComputerName",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135237", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
@@ -64,7 +63,6 @@ namespace Microsoft.PowerShell.Commands
         ///      (a) Computer name
         ///      (b) IPv4 address : 132.3.4.5
         ///      (c) IPv6 address: 3ffe:8311:ffff:f70f:0:5efe:172.30.162.18
-        ///
         /// </summary>
         [Parameter(Position = 0,
                    ValueFromPipeline = true,
@@ -1355,7 +1353,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// There are two problems that need to be handled.
         /// 1) We need to make sure that the ThrottleManager StartComplete and StopComplete
-        ///    operation events are called or the ThrottleManager will never end (hang).
+        ///    operation events are called or the ThrottleManager will never end (will stop reponding).
         /// 2) The HandleRunspaceStateChanged event handler remains in the Runspace
         ///    StateChanged event call chain until this object is disposed.  We have to
         ///    disallow the HandleRunspaceStateChanged event from running and throwing

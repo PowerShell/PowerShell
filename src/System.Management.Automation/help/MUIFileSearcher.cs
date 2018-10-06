@@ -335,7 +335,6 @@ namespace System.Management.Automation
         ///
         /// The file name to search is the filename part of path parameter. (Normally path
         /// parameter should contain only the filename part).
-        ///
         /// </summary>
         /// <param name="file">This is the path to the file. If it has a path, we need to search under that path first</param>
         /// <param name="searchPaths">Additional search paths</param>

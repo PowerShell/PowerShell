@@ -208,7 +208,7 @@ Describe "Get-Date -UFormat tests" -Tags "CI" {
             @{ date = $date1; format = "%D"; result = "04/05/30" }  # date; same as %m/%d/%y
             @{ date = $date1; format = "%e"; result = " 5" }        # day of month, space padded; same as %_d
             @{ date = $date2; format = "%e"; result = "15" }
-            #@{ date = $date1; format = "%F"; result = "" }
+            @{ date = $date1; format = "%F"; result = "2030-04-05" }# Equivalent to %Y-%m-%d (the ISO 8601 date format).
             #@{ date = $date1; format = "%g"; result = "" }         # last two digits of year of ISO week number (see %G)
                                                                     # TODO: need review. Broken C# implementation.
                                                                     #

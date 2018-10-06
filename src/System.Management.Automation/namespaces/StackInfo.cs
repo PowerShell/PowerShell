@@ -13,23 +13,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for the PathInfoStack class.
         /// </summary>
-        ///
         /// <param name="stackName">
         /// The name of the stack.
         /// </param>
-        ///
         /// <param name="locationStack">
         /// A stack object containing PathInfo objects
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="locationStack"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="stackName"/> is null or empty.
         /// </exception>
-        ///
         internal PathInfoStack(string stackName, Stack<PathInfo> locationStack) : base()
         {
             if (locationStack == null)

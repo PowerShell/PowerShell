@@ -124,6 +124,14 @@ Function Set-BuildVariable
     {
         Set-AppveyorBuildVariable @PSBoundParameters
     }
+    elseif($env:TF_BUILD)
+    {
+        #In VSTS
+        Write-Host "##vso[task.setvariable variable=$Name;]$Value"
+        # The variable will not show up until the next task.
+        # Setting in the current session for the same behavior as AppVeyor
+        Set-Item env:/$name -Value $Value
+    }
     else
     {
         Set-Item env:/$name -Value $Value
@@ -221,7 +229,7 @@ function Invoke-AppVeyorInstall
         Update-AppveyorBuild -message $buildName
     }
 
-    if ($env:APPVEYOR)
+    if ($env:APPVEYOR -or $env:TF_BUILD)
     {
         #
         # Generate new credential for appveyor (only) remoting tests.
@@ -339,26 +347,67 @@ function Invoke-AppVeyorTest
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
     # To work-around it, we exlude all categories, but 'CI' from the list
-    $ExcludeTag = @('Slow', 'Feature', 'Scenario')
     if (Test-DailyBuild) {
         $ExcludeTag = @()
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
     else {
+        $ExcludeTag = @('Slow', 'Feature', 'Scenario')
         Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
     }
 
+    # Get the experimental feature names and the tests associated with them
+    $ExperimentalFeatureTests = Get-ExperimentalFeatureTests
+
     if ($Purpose -eq 'UnelevatedPesterTests') {
-        Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
+        $arguments = @{
+            Bindir = $env:CoreOutput
+            OutputFile = $testResultsNonAdminFile
+            Unelevate = $true
+            Terse = $true
+            Tag = @()
+            ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
+        }
+        Start-PSPester @arguments -Title 'Pester Unelevated'
         Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
-
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
+
+        # Run tests with specified experimental features enabled
+        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
+            $featureName = $entry.Key
+            $testFiles = $entry.Value
+
+            $expFeatureTestResultFile = "$pwd\TestsResultsNonAdmin.$featureName.xml"
+            $arguments['OutputFile'] = $expFeatureTestResultFile
+            $arguments['ExperimentalFeatureName'] = $featureName
+            if ($testFiles.Count -eq 0) {
+                # If an empty array is specified for the feature name, we run all tests with the feature enabled.
+                # This allows us to prevent regressions to a critical engine experimental feature.
+                $arguments.Remove('Path')
+            } else {
+                # If a non-empty string or array is specified for the feature name, we only run those test files.
+                $arguments['Path'] = $testFiles
+            }
+            Start-PSPester @arguments -Title "Pester Experimental Unelevated - $featureName"
+
+            Write-Host -ForegroundColor Green "Upload CoreCLR Non-Admin test results for experimental feature '$featureName'"
+            Update-AppVeyorTestResults -resultsFile $expFeatureTestResultFile
+            # Fail the build, if tests failed
+            Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
+        }
     }
 
     if ($Purpose -eq 'ElevatedPesterTests_xUnit_Packaging') {
-        Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
+        $arguments = @{
+            Terse = $true
+            Bindir = $env:CoreOutput
+            OutputFile = $testResultsAdminFile
+            Tag = @('RequireAdminOnWindows')
+            ExcludeTag = $ExcludeTag
+        }
+        Start-PSPester @arguments -Title 'Pester Elevated'
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
@@ -374,6 +423,30 @@ function Invoke-AppVeyorTest
             $ParallelXUnitTestResultsFile
         ) | ForEach-Object {
             Test-XUnitTestResults -TestResultsFile $_
+        }
+
+        # Run tests with specified experimental features enabled
+        foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
+            $featureName = $entry.Key
+            $testFiles = $entry.Value
+
+            $expFeatureTestResultFile = "$pwd\TestsResultsAdmin.$featureName.xml"
+            $arguments['OutputFile'] = $expFeatureTestResultFile
+            $arguments['ExperimentalFeatureName'] = $featureName
+            if ($testFiles.Count -eq 0) {
+                # If an empty array is specified for the feature name, we run all tests with the feature enabled.
+                # This allows us to prevent regressions to a critical engine experimental feature.
+                $arguments.Remove('Path')
+            } else {
+                # If a non-empty string or array is specified for the feature name, we only run those test files.
+                $arguments['Path'] = $testFiles
+            }
+            Start-PSPester @arguments -Title "Pester Experimental Elevated - $featureName"
+
+            Write-Host -ForegroundColor Green "Upload CoreCLR Admin test results for experimental feature '$featureName'"
+            Update-AppVeyorTestResults -resultsFile $expFeatureTestResultFile
+            # Fail the build, if tests failed
+            Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
         }
     }
 
@@ -428,7 +501,7 @@ function Get-ReleaseTag
     $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
 
-    $releaseTag = $metadata.NextReleaseTag
+    $releaseTag = $metadata.PreviewReleaseTag
     if($env:APPVEYOR_BUILD_NUMBER)
     {
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
@@ -529,6 +602,10 @@ function Invoke-AppveyorFinish
                 {
                     Push-AppveyorArtifact $_
                 }
+                elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
+                    # In VSTS
+                    Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts;]$_"
+                }
             }
             else
             {
@@ -549,6 +626,7 @@ function Invoke-AppveyorFinish
     }
     catch {
         Write-Host -Foreground Red $_
+        Write-Host -Foreground Red $_.ScriptStackTrace
         throw $_
     }
 }

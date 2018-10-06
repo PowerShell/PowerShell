@@ -18,7 +18,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The WMI Object to use
         /// </summary>
-        ///
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "object")]
         public ManagementObject InputObject
         {

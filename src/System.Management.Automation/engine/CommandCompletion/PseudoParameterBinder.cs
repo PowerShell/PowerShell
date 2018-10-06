@@ -251,7 +251,6 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Runs the PowerShell parameter binding algorithm against a CommandAst,
     /// returning information about which parameters were bound.
-    ///
     /// </summary>
     public static class StaticParameterBinder
     {
@@ -695,12 +694,10 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         public Dictionary<string, ParameterBindingResult> BoundParameters { get; }
 
         /// <summary>
-        ///
         /// </summary>
         public Dictionary<string, StaticBindingError> BindingExceptions { get; }
     }
@@ -722,12 +719,10 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         public ParameterMetadata Parameter { get; internal set; }
 
         /// <summary>
-        ///
         /// </summary>
         public Object ConstantValue
         {
@@ -743,7 +738,6 @@ namespace System.Management.Automation.Language
         private object _constantValue;
 
         /// <summary>
-        ///
         /// </summary>
         public CommandElementAst Value
         {
@@ -1380,7 +1374,6 @@ namespace System.Management.Automation.Language
         /// specified. We always eat the error (such as parameter without value) and continue
         /// to do the binding.
         /// </summary>
-        ///
         /// <param name="paramAstAtCursor">
         /// For parameter completion, if the cursor is pointing at a CommandParameterAst, we
         /// should not try exact matching for that CommandParameterAst. This is to handle the

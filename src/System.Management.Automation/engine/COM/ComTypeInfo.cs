@@ -217,7 +217,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeinfo"></param>
         /// <param name="index"></param>
@@ -233,7 +232,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="typeinfo"></param>
         /// <returns></returns>

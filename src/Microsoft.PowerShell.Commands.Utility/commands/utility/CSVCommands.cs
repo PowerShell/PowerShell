@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyIncludeTypeInformationAndNoTypeInformation", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
             }
-            if (this.MyInvocation.BoundParameters.ContainsKey("IncludeTypeInformation"))
+            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)))
             {
                 NoTypeInformation = !IncludeTypeInformation;
             }
@@ -207,17 +207,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter()]
         [ArgumentToEncodingTransformationAttribute()]
-        [ArgumentCompletions(
-            EncodingConversion.Ascii,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.OEM,
-            EncodingConversion.Unicode,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf8Bom,
-            EncodingConversion.Utf8NoBom,
-            EncodingConversion.Utf32
-            )]
+        [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
@@ -591,17 +581,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter()]
         [ArgumentToEncodingTransformationAttribute()]
-        [ArgumentCompletions(
-            EncodingConversion.Ascii,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.OEM,
-            EncodingConversion.Unicode,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf8Bom,
-            EncodingConversion.Utf8NoBom,
-            EncodingConversion.Utf32
-            )]
+        [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
@@ -615,7 +595,6 @@ namespace Microsoft.PowerShell.Commands
         #region Override Methods
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -688,7 +667,6 @@ namespace Microsoft.PowerShell.Commands
         private IList<string> _propertyNames;
 
         /// <summary>
-        ///
         /// </summary>
         private ExportCsvHelper _helper;
 
@@ -738,7 +716,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region CSV conversion
         /// <summary>
-        ///
         /// </summary>
         /// <param name="line"></param>
         public override void
@@ -866,19 +843,16 @@ namespace Microsoft.PowerShell.Commands
     #region ExportHelperConversion
 
     /// <summary>
-    ///
     /// </summary>
     internal class ExportCsvHelper : IDisposable
     {
         /// <summary>
-        ///
         /// </summary>
         private PSCmdlet _cmdlet;
 
         private char _delimiter;
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="delimiter"></param>
@@ -953,7 +927,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="mshObject"></param>
         /// <param name="propertyNames"></param>
@@ -1156,6 +1129,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private readonly StreamReader _sr;
 
+        // Initial sizes of the value list and the line stringbuilder.
+        // Set to reasonable initial sizes. They may grow beyond these,
+        // but this will prevent a few reallocations.
+        private const int ValueCountGuestimate = 16;
+        private const int LineLengthGuestimate = 256;
+
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
         {
             if (cmdlet == null)
@@ -1242,9 +1221,11 @@ namespace Microsoft.PowerShell.Commands
                 TypeName = ReadTypeInformation();
             }
 
+            var values = new List<string>(ValueCountGuestimate);
+            var builder = new StringBuilder(LineLengthGuestimate);
             while ((Header == null) && (!this.EOF))
             {
-                Collection<string> values = ParseNextRecord();
+                ParseNextRecord(values, builder);
 
                 // Trim all trailing blankspaces and delimiters ( single/multiple ).
                 // If there is only one element in the row and if its a blankspace we dont trim it.
@@ -1285,9 +1266,12 @@ namespace Microsoft.PowerShell.Commands
         {
             _alreadyWarnedUnspecifiedName = alreadyWriteOutWarning;
             ReadHeader();
+            var prevalidated = false;
+            var values = new List<string>(ValueCountGuestimate);
+            var builder = new StringBuilder(LineLengthGuestimate);
             while (true)
             {
-                Collection<string> values = ParseNextRecord();
+                ParseNextRecord(values, builder);
                 if (values.Count == 0)
                     break;
 
@@ -1297,7 +1281,8 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                PSObject result = BuildMshobject(TypeName, Header, values, _delimiter);
+                PSObject result = BuildMshobject(TypeName, Header, values, _delimiter, prevalidated);
+                prevalidated = true;
                 _cmdlet.WriteObject(result);
             }
             alreadyWriteOutWarning = _alreadyWarnedUnspecifiedName;
@@ -1372,13 +1357,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// Parsed collection of strings.
         /// </returns>
-        private Collection<string>
-        ParseNextRecord()
+        private void
+        ParseNextRecord(List<string> result, StringBuilder current)
         {
-            // Collection of strings to return
-            Collection<string> result = new Collection<string>();
+            result.Clear();
             // current string
-            StringBuilder current = new StringBuilder();
+            current.Clear();
 
             bool seenBeginQuote = false;
             // int i = 0;
@@ -1526,8 +1510,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 result.Add(current.ToString());
             }
-
-            return result;
         }
 
         // If we detect a newline we return it as a string "\r", "\n" or "\r\n"
@@ -1618,19 +1600,22 @@ namespace Microsoft.PowerShell.Commands
 
         private
         PSObject
-        BuildMshobject(string type, IList<string> names, Collection<string> values, char delimiter)
+        BuildMshobject(string type, IList<string> names, List<string> values, char delimiter, bool preValidated = false)
         {
             //string[] namesarray = null;
-            PSObject result = new PSObject();
+            PSObject result = new PSObject(names.Count);
             char delimiterlocal = delimiter;
             int unspecifiedNameIndex = 1;
             for (int i = 0; i <= names.Count - 1; i++)
             {
                 string name = names[i];
                 string value = null;
-                ////if name is null and delimiter is '"', continue
+                ////if name is null and delimiter is '"', use a default property name 'UnspecifiedName'
                 if (name.Length == 0 && delimiterlocal == '"')
-                    continue;
+                {
+                    name = UnspecifiedName + unspecifiedNameIndex;
+                    unspecifiedNameIndex++;
+                }
                 ////if name is null and delimiter is not '"', use a default property name 'UnspecifiedName'
                 if (string.IsNullOrEmpty(name))
                 {
@@ -1642,7 +1627,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = values[i];
                 }
-                result.Properties.Add(new PSNoteProperty(name, value));
+
+                result.Properties.Add(new PSNoteProperty(name, value), preValidated);
             }
 
             if (!_alreadyWarnedUnspecifiedName && unspecifiedNameIndex != 1)
@@ -1651,7 +1637,7 @@ namespace Microsoft.PowerShell.Commands
                 _alreadyWarnedUnspecifiedName = true;
             }
 
-            if (type != null && type.Length > 0)
+            if (!string.IsNullOrEmpty(type))
             {
                 result.TypeNames.Clear();
                 result.TypeNames.Add(type);

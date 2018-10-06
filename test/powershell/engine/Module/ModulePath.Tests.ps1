@@ -23,6 +23,9 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         }
         $expectedSystemPath = Join-Path -Path $PSHOME -ChildPath 'Modules'
 
+        # Skip these tests in cases when there is no 'pwsh' executable (e.g. when framework dependent PS package is used)
+        $skipNoPwsh = -not (Test-Path $powershell)
+        
         if ($IsWindows)
         {
             $expectedWindowsPowerShellPSHomePath = Join-Path $env:windir "System32" "WindowsPowerShell" "v1.0" "Modules"
@@ -46,7 +49,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $env:PSModulePath = $originalModulePath
     }
 
-    It "validate sxs module path" {
+    It "validate sxs module path" -Skip:$skipNoPwsh {
 
         $env:PSModulePath = ""
         $defaultModulePath = & $powershell -nopro -c '$env:PSModulePath'
@@ -71,7 +74,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         }
     }
 
-    It "ignore pshome module path derived from a different powershell core instance" -Skip:(!$IsCoreCLR) {
+    It "ignore pshome module path derived from a different powershell core instance" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
 
         ## Create 'powershell' and 'pwsh.deps.json' in the fake PSHome folder,
         ## so that the module path calculation logic would believe it's real.
@@ -110,7 +113,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         }
     }
 
-    It "keep non-pshome module path derived from powershell core instance parent" -Skip:(!$IsCoreCLR) {
+    It "keep non-pshome module path derived from powershell core instance parent" -Skip:(!$IsCoreCLR -or $skipNoPwsh) {
 
         ## non-pshome module path derived from another powershell core instance should be preserved
         $customeModules = Join-Path -Path $TestDrive -ChildPath 'CustomModules'
@@ -130,4 +133,33 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $paths -contains $customeModules | Should -BeTrue
     }
 
+    It 'Ensures $PSHOME\Modules is inserted correctly when launched from a different version of PowerShell' -Skip:(!($IsCoreCLR -and $IsWindows) -or $skipNoPwsh) {
+        # When launched from a different version of PowerShell, PSModulePath contains the other version's PSHOME\Modules path
+        # and the Windows PowerShell modoule path. THe other version's module path should be removed and this version's
+        # PSHOME\Modules path should be inserted before Windows PowerShell module path.
+        $winpwshModulePath = [System.IO.Path]::Combine([System.Environment]::SystemDirectory, "WindowsPowerShell", "v1.0", "Modules");
+        $pwshModulePath = Join-Path -Path $PSHOME -ChildPath 'Modules'
+
+        # create a fake 'other version' $PSHOME and $PSHOME\Modules
+        $fakeHome = Join-Path -Path $TestDrive -ChildPath 'fakepwsh'
+        $fakeModulePath = Join-Path -Path $fakeHome -ChildPath 'Modules'
+
+        $null = New-Item -Path $fakeHome -ItemType Directory
+        $null = New-Item -Path $fakeModulePath -ItemType Directory
+
+        # powershell looks for these to files to determine the directory is a pwsh directory.
+        Set-Content -Path "$fakeHome\pwsh.exe" -Value "fake pwsh.exe"
+        Set-Content -Path "$fakeHome\pwsh.deps.json" -Value 'fake pwsh.deps.json'
+
+        # replace the actual pwsh module path with the fake one.
+        $fakeModulePath = $env:PSModulePath.Replace($pwshModulePath, $fakeModulePath, [StringComparison]::OrdinalIgnoreCase)
+
+        $newModulePath = & $powershell -nopro -c '$env:PSModulePath'
+        $pwshIndex = $newModulePath.IndexOf($pwshModulePath, [StringComparison]::OrdinalIgnoreCase)
+        $wpshIndex = $newModulePath.IndexOf($winpwshModulePath, [StringComparison]::OrdinalIgnoreCase)
+        # ensure both module paths exist and the pwsh module path occurs before the Windows PowerShell module path
+        $pwshIndex | Should -Not -Be -1
+        $wpshIndex | Should -Not -Be -1
+        $pwshIndex | Should -BeLessThan $wpshIndex
+    }
 }

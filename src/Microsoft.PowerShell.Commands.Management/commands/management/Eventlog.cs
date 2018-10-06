@@ -1141,7 +1141,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The following is the definition of the input parameter "LogName".
         /// Specifies the name of the log
-        ///
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0)]

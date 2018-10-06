@@ -701,6 +701,8 @@ namespace Microsoft.PowerShell.Commands
 
         private string ResolveAssemblyName(string assembly, bool isForReferenceAssembly)
         {
+            ErrorRecord errorRecord;
+
             // if it's a path, resolve it
             if (assembly.Contains(PathType.DirectorySeparatorChar) || assembly.Contains(PathType.AltDirectorySeparatorChar))
             {
@@ -711,7 +713,22 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     var paths = SessionState.Path.GetResolvedPSPathFromPSPath(assembly);
-                    return paths[0].Path;
+                    if (paths.Count > 0)
+                    {
+                        return paths[0].Path;
+                    }
+                    else
+                    {
+                        errorRecord = new ErrorRecord(
+                            new Exception(
+                                string.Format(ParserStrings.ErrorLoadingAssembly, assembly)),
+                            "ErrorLoadingAssembly",
+                            ErrorCategory.InvalidOperation,
+                            assembly);
+
+                        ThrowTerminatingError(errorRecord);
+                        return null;
+                    }
                 }
             }
 
@@ -757,15 +774,20 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Look up the assembly in the current folder
-            string currentFolderPath = SessionState.Path.GetResolvedPSPathFromPSPath(refAssemblyDll)[0].Path;
-            if (File.Exists(currentFolderPath))
+            var resolvedPaths = SessionState.Path.GetResolvedPSPathFromPSPath(refAssemblyDll);
+
+            if (resolvedPaths.Count > 0)
             {
-                return currentFolderPath;
+                string currentFolderPath = resolvedPaths[0].Path;
+                if (File.Exists(currentFolderPath))
+                {
+                    return currentFolderPath;
+                }
             }
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            errorRecord = new ErrorRecord(
                 new Exception(
-                    String.Format(ParserStrings.ErrorLoadingAssembly, assembly)),
+                    string.Format(ParserStrings.ErrorLoadingAssembly, assembly)),
                 "ErrorLoadingAssembly",
                 ErrorCategory.InvalidOperation,
                 assembly);
@@ -925,6 +947,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
+                parseOptions = CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Latest);
                 compilationOptions = GetDefaultCompilationOptions();
             }
 
@@ -942,7 +965,7 @@ namespace Microsoft.PowerShell.Commands
                 case FromLiteralPathParameterSetName:
                     foreach (string filePath in _paths)
                     {
-                        using (var sourceFile = new FileStream(filePath, FileMode.Open))
+                        using (var sourceFile = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
                             sourceText = SourceText.From(sourceFile);
                             syntaxTrees.Add(ParseSourceText(sourceText, parseOptions, path: filePath));

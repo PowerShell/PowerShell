@@ -77,7 +77,6 @@ namespace System.Management.Automation
         ///
         /// If provider is set and helpCategory is 'Command', this will add provider specific help
         /// to provider.
-        ///
         /// </summary>
         /// <value></value>
         internal string Provider { get; set; }
@@ -121,7 +120,6 @@ namespace System.Management.Automation
         /// 4. If command help is requested, search for alias also.
         /// 5. If help category is none, set it to be all.
         /// 6. Don't do default help.
-        ///
         /// </summary>
         internal void Validate()
         {

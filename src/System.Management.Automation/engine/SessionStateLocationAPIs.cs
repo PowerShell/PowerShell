@@ -24,11 +24,9 @@ namespace System.Management.Automation
         /// you want to change the current working directory use the SetLocation
         /// method.
         /// </summary>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If a location has not been set yet.
         /// </exception>
-        ///
         internal PathInfo CurrentLocation
         {
             get
@@ -56,29 +54,23 @@ namespace System.Management.Automation
         /// Gets the namespace specific path of the current working directory
         /// for the specified namespace.
         /// </summary>
-        ///
         /// <param name="namespaceID">
         /// An identifier that uniquely identifies the namespace to get the
         /// current working directory for.
         /// </param>
-        ///
         /// <returns>
         /// The namespace specific path of the current working directory for
         /// the specified namespace.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="namespaceID"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="namespacesID"/> refers to a provider that does not exist.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If a current drive cannot be found for the provider <paramref name="namespaceID"/>
         /// </exception>
-        ///
         internal PathInfo GetNamespaceCurrentLocation(string namespaceID)
         {
             if (namespaceID == null)
@@ -139,38 +131,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Changes the current working directory to the path specified
         /// </summary>
-        ///
         /// <param name="path">
         /// The path of the new current working directory
         /// </param>
-        ///
         /// <returns>
         /// The PathInfo object representing the path of the location
         /// that was set.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="path"/> does not exist, is not a container, or
         /// resolved to multiple containers.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="path"/> refers to a provider that does not exist.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If <paramref name="path"/> refers to a drive that does not exist.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with <paramref name="path"/> threw an
         /// exception.
         /// </exception>
-        ///
         internal PathInfo SetLocation(string path)
         {
             return SetLocation(path, null);
@@ -179,46 +163,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Changes the current working directory to the path specified
         /// </summary>
-        ///
         /// <param name="path">
         /// The path of the new current working directory
         /// </param>
-        ///
         /// <param name="context">
         /// The context the provider uses when performing the operation.
         /// </param>
-        ///
         /// <returns>
         /// The PathInfo object representing the path of the location
         /// that was set.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="path"/> does not exist, is not a container, or
         /// resolved to multiple containers.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="path"/> refers to a provider that does not exist.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If <paramref name="path"/> refers to a drive that does not exist.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with <paramref name="path"/> threw an
         /// exception.
         /// </exception>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If the <paramref name="path"/> could not be resolved.
         /// </exception>
-        ///
         internal PathInfo SetLocation(string path, CmdletProviderContext context)
         {
             if (path == null)
@@ -226,28 +200,32 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
+            PathInfo current = CurrentLocation;
             string originalPath = path;
             string driveName = null;
             ProviderInfo provider = null;
             string providerId = null;
 
-            // Replace path with last working directory when '-' was passed.
-            bool pushNextLocation = true;
-            if (originalPath.Equals("-", StringComparison.OrdinalIgnoreCase))
+            switch (originalPath)
             {
-                if (_SetLocationHistory.Count <= 0)
-                {
-                    throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
-                }
-                var previousLocation =  _SetLocationHistory.Pop();
-                path = previousLocation.Path;
-                pushNextLocation = false;
-            }
-
-            if (pushNextLocation)
-            {
-                var newPushPathInfo = GetNewPushPathInfo();
-                _SetLocationHistory.Push(newPushPathInfo);
+                case string originalPathSwitch when originalPathSwitch.Equals("-", StringComparison.OrdinalIgnoreCase):
+                    if (_setLocationHistory.UndoCount <= 0)
+                    {
+                        throw new InvalidOperationException(SessionStateStrings.LocationUndoStackIsEmpty);
+                    }
+                    path = _setLocationHistory.Undo(this.CurrentLocation).Path;
+                    break;
+                case string originalPathSwitch when originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
+                    if (_setLocationHistory.RedoCount <= 0)
+                    {
+                        throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
+                    }
+                    path = _setLocationHistory.Redo(this.CurrentLocation).Path;
+                    break;
+                default:
+                    var pushPathInfo = GetNewPushPathInfo();
+                    _setLocationHistory.Push(pushPathInfo);
+                    break;
             }
 
             PSDriveInfo previousWorkingDrive = CurrentDrive;
@@ -579,6 +557,15 @@ namespace System.Management.Automation
             // Set the $PWD variable to the new location
 
             this.SetVariable(SpecialVariables.PWDVarPath, this.CurrentLocation, false, true, CommandOrigin.Internal);
+
+            // If an action has been defined for location changes, invoke it now.
+            if (PublicSessionState.InvokeCommand.LocationChangedAction != null)
+            {
+                var eventArgs = new LocationChangedEventArgs(PublicSessionState, current, CurrentLocation);
+                PublicSessionState.InvokeCommand.LocationChangedAction.Invoke(ExecutionContext.CurrentRunspace, eventArgs);
+                s_tracer.WriteLine("Invoked LocationChangedAction");
+            }
+
             return this.CurrentLocation;
         } // SetLocation
 
@@ -586,53 +573,42 @@ namespace System.Management.Automation
         /// Determines if the specified path is the current working directory
         /// or a parent of the current working directory.
         /// </summary>
-        ///
         /// <param name="path">
         /// A monad namespace absolute or relative path.
         /// </param>
-        ///
         /// <param name="context">
         /// The context the provider uses when performing the operation.
         /// </param>
-        ///
         /// <returns>
         /// true, if the path is the current working directory or a parent of the current
         /// working directory. false, otherwise.
         /// </returns>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        ///
         /// <exception cref="InvalidOperationException">
         /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="providerId"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        ///
         internal bool IsCurrentLocationOrAncestor(string path, CmdletProviderContext context)
         {
             bool result = false;
@@ -803,9 +779,9 @@ namespace System.Management.Automation
         #region push-Pop current working directory
 
         /// <summary>
-        /// A bounded stack for the location history of Set-Location
+        /// Location history for Set-Location that supports Undo/Redo using bounded stacks.
         /// </summary>
-        private BoundedStack<PathInfo> _SetLocationHistory;
+        private readonly HistoryStack<PathInfo> _setLocationHistory;
 
         /// <summary>
         /// A stack of the most recently pushed locations
@@ -822,12 +798,10 @@ namespace System.Management.Automation
         /// Pushes the current location onto the working
         /// location stack so that it can be retrieved later.
         /// </summary>
-        ///
         /// <param name="stackName">
         /// The ID of the stack to push the location on. If
         /// it is null or empty the default stack is used.
         /// </param>
-        ///
         internal void PushCurrentLocation(string stackName)
         {
             if (String.IsNullOrEmpty(stackName))
@@ -845,13 +819,13 @@ namespace System.Management.Automation
             }
 
             // Push the directory/drive pair onto the stack
-            var newPushPathInfo = GetNewPushPathInfo();
-            locationStack.Push(newPushPathInfo);
+            var pushPathInfo = GetNewPushPathInfo();
+            locationStack.Push(pushPathInfo);
         }
 
         private PathInfo GetNewPushPathInfo()
         {
-             // Create a new instance of the directory/drive pair
+            // Create a new instance of the directory/drive pair
             ProviderInfo provider = CurrentDrive.Provider;
             string mshQualifiedPath =
                 LocationGlobber.GetMshQualifiedPath(CurrentDrive.CurrentLocation, CurrentDrive);
@@ -876,17 +850,14 @@ namespace System.Management.Automation
         /// entry on the working directory stack and removes that entry
         /// from the stack.
         /// </summary>
-        ///
         /// <param name="stackName">
         /// The ID of the stack to pop the location from. If it is null or
         /// empty the default stack is used.
         /// </param>
-        ///
         /// <returns>
         /// A PathInfo object representing the location that was popped
         /// from the location stack and set as the new location.
         /// </returns>
-        ///
         /// <exception cref="ArgumentException">
         /// If the path on the stack does not exist, is not a container, or
         /// resolved to multiple containers.
@@ -896,20 +867,16 @@ namespace System.Management.Automation
         /// or
         /// A stack was not found with the specified name.
         /// </exception>
-        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the path on the stack refers to a provider that does not exist.
         /// </exception>
-        ///
         /// <exception cref="DriveNotFoundException">
         /// If the path on the stack refers to a drive that does not exist.
         /// </exception>
-        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with the path on the stack threw an
         /// exception.
         /// </exception>
-        ///
         internal PathInfo PopLocation(string stackName)
         {
             if (String.IsNullOrEmpty(stackName))
@@ -998,22 +965,18 @@ namespace System.Management.Automation
         /// Gets the monad namespace paths for all the directories that are
         /// pushed on the working directory stack.
         /// </summary>
-        ///
         /// <param name="stackName">
         /// The stack of the ID of the location stack to retrieve. If it is
         /// null or empty the default stack is used.
         /// </param>
-        ///
         /// <returns>
         /// The PathInfoStack representing the location stack for the specified
         /// stack ID.
         /// </returns>
-        ///
         /// <exception cref="ArgumentException">
         /// If no location stack <paramref name="stackName"/> exists except if
         /// the default stack is requested.
         /// </exception>
-        ///
         internal PathInfoStack LocationStack(string stackName)
         {
             if (String.IsNullOrEmpty(stackName))
@@ -1049,20 +1012,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the default stack ID to the specified stack ID
         /// </summary>
-        ///
         /// <param name="stackName">
         /// The stack ID to be used as the default.
         /// </param>
-        ///
         /// <returns>
         /// The PathInfoStack for the new default stack or null if the
         /// stack does not exist yet.
         /// </returns>
-        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="stackName"/> does not exist as a location stack.
         /// </exception>
-        ///
         internal PathInfoStack SetDefaultLocationStack(string stackName)
         {
             if (String.IsNullOrEmpty(stackName))
@@ -1100,5 +1059,47 @@ namespace System.Management.Automation
 
         #endregion push-Pop current working directory
     }           // SessionStateInternal class
+
+    /// <summary>
+    /// Event argument for the LocationChangedAction containing
+    /// information about the old location we were in and the new
+    /// location we changed to.
+    /// </summary>
+    public class LocationChangedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the LocationChangedEventArgs class.
+        /// </summary>
+        /// <param name="sessionState">
+        /// The public session state instance associated with this runspace.
+        /// </param>
+        /// <param name="oldPath">
+        /// The path we changed locations from.
+        /// </param>
+        /// <param name="newPath">
+        /// The path we change locations to.
+        /// </param>
+        internal LocationChangedEventArgs(SessionState sessionState, PathInfo oldPath, PathInfo newPath)
+        {
+            SessionState = sessionState;
+            OldPath = oldPath;
+            NewPath = newPath;
+        }
+
+        /// <summary>
+        /// Gets the path we changed location from.
+        /// </summary>
+        public PathInfo OldPath { get; internal set; }
+
+        /// <summary>
+        /// Gets the path we changed location to.
+        /// </summary>
+        public PathInfo NewPath { get; internal set; }
+
+        /// <summary>
+        /// Gets the session state instance for the current runspace.
+        /// </summary>
+        public SessionState SessionState { get; internal set; }
+    }
 }
 
