@@ -94,10 +94,10 @@ cd ../powershell-unix
 dotnet publish --configuration Release --runtime linux-musl-x64 $dotnetArguments
 
 # add libpsl-native to build
-mv libpsl-native.so bin/Release/netcoreapp2.2/linux-musl-x64/publish
+mv libpsl-native.so bin/Release/netcoreapp2.1/linux-musl-x64/publish
 
 # tar build for output
-cd bin/Release/netcoreapp2.2/linux-musl-x64/publish
+cd bin/Release/netcoreapp2.1/linux-musl-x64/publish
 
 tar -czvf $tarName .
 
