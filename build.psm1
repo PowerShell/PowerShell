@@ -9,7 +9,7 @@ $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $script:TestModuleDirPath = Join-Path ([System.IO.Path]::GetTempPath()) 'PwshTestModules'
 $null = New-Item -Force -ItemType Directory -Path $script:TestModuleDirPath
 
-$dotnetCLIChannel = "release"
+$dotnetCLIChannel = 'preview' # TODO: Change this to 'release' once .Net Core 2.2 goes RTM
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
@@ -380,7 +380,7 @@ Fix steps:
         Pop-Location
     }
 
-    # publish netcoreapp2.1 reference assemblies
+    # publish netcoreapp2.2 reference assemblies
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
         $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
@@ -580,7 +580,7 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp2.1")]
+        [ValidateSet("netcoreapp2.2")]
         [string]$Framework,
 
         # These are duplicated from Start-PSBuild
@@ -633,7 +633,7 @@ function New-PSOptions {
     Write-Verbose "Top project directory is $Top"
 
     if (-not $Framework) {
-        $Framework = "netcoreapp2.1"
+        $Framework = "netcoreapp2.2"
         Write-Verbose "Using framework '$Framework'"
     }
 
