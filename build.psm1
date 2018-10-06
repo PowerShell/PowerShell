@@ -1172,7 +1172,7 @@ function Publish-TestResults
         [string]
         $Path,
 
-        [ValidateSet('NUnit','XUnit')]
+        [ValidateSet('NUnit','VsTest')]
         [string]
         $Type='NUnit'
     )
@@ -1412,7 +1412,7 @@ function Start-PSxUnit {
         $sequentialResultDirectory = Join-Path $pwd $SequentialTestResultsFolder
         dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Sequential --logger:trx -p:ParallelizeTestCollections=false --results-directory $sequentialResultDirectory
         $sequentialTestResultsFile = Get-ChildItem $sequentialResultDirectory
-        Publish-TestResults -Path $sequentialTestResultsFile.FullName -Type 'NUnit' -Title 'Xunit Sequential'
+        Publish-TestResults -Path $sequentialTestResultsFile.FullName -Type 'VsTest' -Title 'Xunit Sequential'
 
         $extraParams = @()
 
@@ -1433,7 +1433,7 @@ function Start-PSxUnit {
         $parallelResultDirectory = Join-Path $pwd $ParallelTestResultsFolder
         dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Parallel --logger:trx --no-build --results-directory $parallelResultDirectory
         $parallelTestResultsFile = Get-ChildItem $parallelResultDirectory
-        Publish-TestResults -Path $parallelTestResultsFile.FullName -Type 'NUnit' -Title 'Xunit Parallel'
+        Publish-TestResults -Path $parallelTestResultsFile.FullName -Type 'VsTest' -Title 'Xunit Parallel'
     }
     finally {
         Pop-Location
