@@ -1357,8 +1357,8 @@ function Test-PSPesterResults
 
 function Start-PSxUnit {
     [CmdletBinding()]param(
-        [string] $SequentialTestResultsFile = "SequentialXUnitResults.xml",
-        [string] $ParallelTestResultsFile = "ParallelXUnitResults.xml"
+        [string] $SequentialTestResultsFolder = "SequentialXUnitResults",
+        [string] $ParallelTestResultsFolder = "ParallelXUnitResults"
     )
 
     # Add .NET CLI tools to PATH
@@ -1367,13 +1367,6 @@ function Start-PSxUnit {
     $Content = Split-Path -Parent (Get-PSOutput)
     if (-not (Test-Path $Content)) {
         throw "PowerShell must be built before running tests!"
-    }
-
-    if (Test-Path $SequentialTestResultsFile) {
-        Remove-Item $SequentialTestResultsFile -Force -ErrorAction SilentlyContinue
-    }
-    if (Test-Path $ParallelTestResultsFile) {
-        Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
     }
 
     try {
@@ -1412,10 +1405,14 @@ function Start-PSxUnit {
             }
         }
 
+        if (Test-Path (Join-Path $pwd $SequentialTestResultsFolder)) {
+            Remove-Item $SequentialTestResultsFolder -Force -Recurse -ErrorAction SilentlyContinue
+        }
         # Run sequential tests first, and then run the tests that can execute in parallel
-        dotnet xunit -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
-
-        Publish-TestResults -Path $SequentialTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+        $sequentialResultDirectory = Join-Path $pwd $SequentialTestResultsFolder
+        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Sequential --logger:trx -p:ParallelizeTestCollections=false --results-directory $sequentialResultDirectory
+        $sequentialTestResultsFile = Get-ChildItem $sequentialResultDirectory
+        Publish-TestResults -Path $sequentialTestResultsFile.FullName -Type 'NUnit' -Title 'Xunit Sequential'
 
         $extraParams = @()
 
@@ -1430,8 +1427,13 @@ function Start-PSxUnit {
             )
         }
 
-        dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild @extraParams
-        Publish-TestResults -Path $ParallelTestResultsFile -Type 'XUnit' -Title 'Xunit Parallel'
+        if (Test-Path (Join-Path $pwd $ParallelTestResultsFolder)) {
+            Remove-Item $ParallelTestResultsFolder -Force -Recurse -ErrorAction SilentlyContinue
+        }
+        $parallelResultDirectory = Join-Path $pwd $ParallelTestResultsFolder
+        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Parallel --logger:trx --no-build --results-directory $parallelResultDirectory
+        $parallelTestResultsFile = Get-ChildItem $parallelResultDirectory
+        Publish-TestResults -Path $parallelTestResultsFile.FullName -Type 'NUnit' -Title 'Xunit Parallel'
     }
     finally {
         Pop-Location
