@@ -333,7 +333,7 @@ elseif($Stage -eq 'Build')
         $SequentialXUnitTestResultsFolder = "$pwd/SequentialXUnitTestResults"
         $ParallelXUnitTestResultsFolder = "$pwd/ParallelXUnitTestResults"
 
-        Start-PSxUnit -SequentialTestResultsFolder $SequentialXUnitTestResultsFolder -ParallelTestResultsFile $ParallelXUnitTestResultsFolder
+        Start-PSxUnit -SequentialTestResultsFolder $SequentialXUnitTestResultsFolder -ParallelTestResultsFolder $ParallelXUnitTestResultsFolder
         # If there are failures, Test-XUnitTestResults throws
         $SequentialXUnitTestResultsFolder, $ParallelXUnitTestResultsFolder | ForEach-Object { Test-XUnitTestResults -TestResultsFolder $_ }
     }

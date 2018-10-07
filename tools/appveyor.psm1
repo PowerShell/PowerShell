@@ -411,7 +411,7 @@ function Invoke-AppVeyorTest
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
-        Start-PSxUnit -SequentialTestResultsFolder $SequentialXUnitTestResultsFolder -ParallelTestResultsFile $ParallelXUnitTestResultsFolder
+        Start-PSxUnit -SequentialTestResultsFolder $SequentialXUnitTestResultsFolder -ParallelTestResultsFolder $ParallelXUnitTestResultsFolder
         Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
         Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFolder
         Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFolder
