@@ -1172,7 +1172,7 @@ function Publish-TestResults
         [string]
         $Path,
 
-        [ValidateSet('NUnit','VsTest')]
+        [ValidateSet('NUnit','XUnit')]
         [string]
         $Type='NUnit'
     )
@@ -1357,8 +1357,8 @@ function Test-PSPesterResults
 
 function Start-PSxUnit {
     [CmdletBinding()]param(
-        [string] $SequentialTestResultsFolder = "SequentialXUnitResults",
-        [string] $ParallelTestResultsFolder = "ParallelXUnitResults"
+        [string] $SequentialTestResultsFile = "SequentialXUnitResults.xml",
+        [string] $ParallelTestResultsFile = "ParallelXUnitResults.xml"
     )
 
     # Add .NET CLI tools to PATH
@@ -1405,14 +1405,12 @@ function Start-PSxUnit {
             }
         }
 
-        if (Test-Path (Join-Path $pwd $SequentialTestResultsFolder)) {
-            Remove-Item $SequentialTestResultsFolder -Force -Recurse -ErrorAction SilentlyContinue
-        }
         # Run sequential tests first, and then run the tests that can execute in parallel
-        $sequentialResultDirectory = Join-Path $pwd $SequentialTestResultsFolder
-        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Sequential --logger:trx -p:ParallelizeTestCollections=false --results-directory $sequentialResultDirectory
-        $sequentialTestResultsFile = Get-ChildItem $sequentialResultDirectory
-        Publish-TestResults -Path $sequentialTestResultsFile.FullName -Type 'VsTest' -Title 'Xunit Sequential'
+        if (Test-Path $SequentialTestResultsFile) {
+            Remove-Item $SequentialTestResultsFile -Force -ErrorAction SilentlyContinue
+        }
+        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Sequential -p:ParallelizeTestCollections=false --test-adapter-path:. "--logger:xunit;LogFilePath=$SequentialTestResultsFile"
+        Publish-TestResults -Path $sequentialTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
 
         $extraParams = @()
 
@@ -1427,13 +1425,11 @@ function Start-PSxUnit {
             )
         }
 
-        if (Test-Path (Join-Path $pwd $ParallelTestResultsFolder)) {
-            Remove-Item $ParallelTestResultsFolder -Force -Recurse -ErrorAction SilentlyContinue
+        if (Test-Path $ParallelTestResultsFile) {
+            Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
         }
-        $parallelResultDirectory = Join-Path $pwd $ParallelTestResultsFolder
-        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Parallel --logger:trx --no-build --results-directory $parallelResultDirectory
-        $parallelTestResultsFile = Get-ChildItem $parallelResultDirectory
-        Publish-TestResults -Path $parallelTestResultsFile.FullName -Type 'VsTest' -Title 'Xunit Parallel'
+        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Parallel --no-build  --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
+        Publish-TestResults -Path $parallelTestResultsFile -Type 'XUnit' -Title 'Xunit Parallel'
     }
     finally {
         Pop-Location
