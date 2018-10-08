@@ -2415,7 +2415,12 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool WinCreateSymbolicLink(string path, string strTargetPath, bool isDirectory)
         {
-            int created = NativeMethods.CreateSymbolicLink(path, strTargetPath, (isDirectory ? 1 : 0));
+            // Allow creation of symbolic links when the process is not elevated.
+            // Developer Mode on Windows 10 (build >= 14972) must first be enabled.
+            const int SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE = 2;
+            int created = NativeMethods.CreateSymbolicLink(path,
+                                                           strTargetPath,
+                                                           SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE | (isDirectory ? 1 : 0));
             bool success = (created == 1) ? true : false;
             return success;
         }
