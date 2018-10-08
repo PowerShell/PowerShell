@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Globalization;
 #if !UNIX
 using System.Management;
 #endif
@@ -734,13 +735,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 int pid;
                 string cmdLine;
+                var procDirectoryInfo = new DirectoryInfo("/proc/");
 
-                foreach (var pidDir in Directory.EnumerateDirectories("/proc/"))
+                foreach (var pidDir in procDirectoryInfo.EnumerateDirectories())
                 {
                     // We need only numeric directories which correspond to the process PID.
-                    if (int.TryParse(pidDir, out pid))
+
+                    if (int.TryParse(pidDir.Name, out pid))
                     {
-                        cmdLine = System.IO.File.ReadAllText($"/proc/{pidDir}/cmdline");
+                        cmdLine = System.IO.File.ReadAllText(String.Format(CultureInfo.InvariantCulture, "/proc/{0}/cmdline", pidDir.Name));
                         dict.TryAdd(pid, cmdLine);
                     }
                 }
