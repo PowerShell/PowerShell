@@ -134,13 +134,13 @@ We have a Gitter Room which you can join below.
 
 [![Join the chat at https://gitter.im/PowerShell/PowerShell](https://badges.gitter.im/PowerShell/PowerShell.svg)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-There is also the community driven PowerShell Slack Team which you can sign up for at [Slack Sign up].
+There is also the community driven PowerShell Slack Team which you can sign up for at [Slack].
 
-[Slack Sign up]: http://slack.poshcode.org
+[Slack]: http://slack.poshcode.org
 
 ## Add-ons and libraries
 
-[Awesome PowerShell](https://github.com/janikvonrotz/awesome-powershell) is a great curated list of add-ons and resources.
+[Awesome PowerShell](https://github.com/janikvonrotz/awesome-powershell) has a great curated list of add-ons and resources.
 
 ## Building the Repository
 
@@ -194,7 +194,7 @@ To make things easy, you can just clone recursively:
 git clone --recursive https://github.com/PowerShell/PowerShell.git
 ```
 
-If you already cloned but forgot to use `--recursive`, you can update submodules manually:
+If you have already cloned but forgot to use `--recursive`, you can update submodules manually:
 
 ```sh
 git submodule update --init
