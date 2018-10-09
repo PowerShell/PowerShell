@@ -731,9 +731,11 @@ namespace Microsoft.PowerShell.Commands
         {
             var dict = new Dictionary<int, string>(512);
 #if UNIX
+            int pid;
+
             if (!Platform.IsMacOS)
             {
-                int pid;
+                // Linux
                 string cmdLine;
                 var procDirectoryInfo = new DirectoryInfo("/proc/");
 
@@ -750,7 +752,45 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                // Still not implemented for MacOs.
+                // MacOs
+                using (Process ps = new Process())
+                {
+                    ps.StartInfo.FileName = "ps";
+                    ps.StartInfo.Arguments = "-A -o pid=,command=";
+                    ps.StartInfo.UseShellExecute = false;
+                    ps.StartInfo.RedirectStandardOutput = true;
+                    ps.Start();
+                    ps.WaitForExit(200);
+
+                    // Output example:
+                    // '    1 /init\n    3 /init\n    4 -bash\n'
+                    const int PID_FIELD_LENGTH = 5;
+                    const int SEP_LENGTH = 1;
+                    const char EOL = '\n';
+                    const int EOL_LENGTH = 1;
+
+                    var output = ps.StandardOutput.ReadToEnd().AsSpan();
+                    var start = 0;
+                    var end = output.IndexOf(EOL);
+                    ReadOnlySpan<char> cmdLine;
+
+                    while (PID_FIELD_LENGTH + SEP_LENGTH < end)
+                    {
+                        int.TryParse(output.Slice(start, PID_FIELD_LENGTH), out pid);
+                        cmdLine = output.Slice(start + PID_FIELD_LENGTH + SEP_LENGTH, end - PID_FIELD_LENGTH - SEP_LENGTH);
+
+                        dict.TryAdd(pid, cmdLine.ToString());
+
+                        // Go to next line.
+                        start += end + EOL_LENGTH;
+                        if (start >= output.Length)
+                        {
+                            break;
+                        }
+
+                        end = output.Slice(start).IndexOf('\n');
+                    }
+                }
             }
 
 #else
