@@ -423,7 +423,7 @@ Fix steps:
         ## need RCEdit to modify the binaries embedded resources
         $rcedit = "~/.rcedit/rcedit-x64.exe"
         if (-not (Test-Path -Type Leaf $rcedit)) {
-            $rcedit = Get-Command "rcedit-x64.exe" -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1 | % Name
+            $rcedit = Get-Command "rcedit-x64.exe" -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1 | ForEach-Object Name
         }
         if (-not $rcedit) {
             throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
@@ -2609,10 +2609,10 @@ assembly
                 $asm."config-file" = $configfile
                 $asm.time = $suite.time
                 $asm.total = $suite.SelectNodes(".//test-case").Count
-                $asm.Passed = $tGroup|? {$_.Name -eq "Success"} | % {$_.Count}
-                $asm.Failed = $tGroup|? {$_.Name -eq "Failure"} | % {$_.Count}
-                $asm.Skipped = $tGroup|? { $_.Name -eq "Ignored" } | % {$_.Count}
-                $asm.Skipped += $tGroup|? { $_.Name -eq "Inconclusive" } | % {$_.Count}
+                $asm.Passed = $tGroup| Where-Object -FilterScript {$_.Name -eq "Success"} | ForEach-Object -Process {$_.Count}
+                $asm.Failed = $tGroup| Where-Object -FilterScript {$_.Name -eq "Failure"} | ForEach-Object -Process {$_.Count}
+                $asm.Skipped = $tGroup| Where-Object -FilterScript { $_.Name -eq "Ignored" } | ForEach-Object -Process {$_.Count}
+                $asm.Skipped += $tGroup| Where-Object -FilterScript { $_.Name -eq "Inconclusive" } | ForEach-Object -Process {$_.Count}
                 $c = [collection]::new()
                 $c.passed = $asm.Passed
                 $c.failed = $asm.failed
