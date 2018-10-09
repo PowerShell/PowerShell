@@ -3122,7 +3122,7 @@ namespace System.Management.Automation.Runspaces
                                                                             ContainerId));
 
                 case ContainersFeatureNotEnabled:
-                    throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.ContainersFeatureNotEnabled));
+                    throw new PSInvalidOperationException(RemotingErrorIdStrings.ContainersFeatureNotEnabled);
 
                 // other errors caught with exception
                 case OtherError:
@@ -3163,7 +3163,7 @@ namespace System.Management.Automation.Runspaces
                     break;
 
                 case ContainersFeatureNotEnabled:
-                    throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.ContainersFeatureNotEnabled));
+                    throw new PSInvalidOperationException(RemotingErrorIdStrings.ContainersFeatureNotEnabled);
 
                 case OtherError:
                     throw new PSInvalidOperationException(ErrorMessage);
@@ -3191,7 +3191,7 @@ namespace System.Management.Automation.Runspaces
                 computeSystemPropertiesType = schemaAssembly.GetType("Microsoft.HyperV.Schema.Compute.System.Properties");
                 if (computeSystemPropertiesType == null)
                 {
-                    throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotGetHostInteropTypes));
+                    throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
                 }
             }
 
@@ -3199,7 +3199,7 @@ namespace System.Management.Automation.Runspaces
             hostComputeInteropType = hostComputeInteropAssembly.GetType("Microsoft.HostCompute.Interop.HostComputeInterop");
             if (hostComputeInteropType == null)
             {
-                throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotGetHostInteropTypes));
+                throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
             }
         }
 
@@ -3377,7 +3377,7 @@ namespace System.Management.Automation.Runspaces
                         var propertyInfo = computeSystemPropertiesType.GetProperty("RuntimeId");
                         if (propertyInfo == null)
                         {
-                            throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.CannotGetHostInteropTypes));
+                            throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
                         }
 
                         RuntimeId = (Guid)propertyInfo.GetValue(computeSystemPropertiesHandle);
