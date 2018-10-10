@@ -1410,6 +1410,8 @@ function Start-PSxUnit {
             Remove-Item $SequentialTestResultsFile -Force -ErrorAction SilentlyContinue
         }
         dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Sequential -p:ParallelizeTestCollections=false --test-adapter-path:. "--logger:xunit;LogFilePath=$SequentialTestResultsFile"
+        Publish-TestResults -Path $SequentialTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
+
         $extraParams = @()
 
         # we are having intermittent issues on macOS with these tests failing.
