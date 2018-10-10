@@ -3,10 +3,12 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Management.Automation.Language;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -320,10 +322,312 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
 
+            // TODO: Experimental
+            // Check for implicit remoting commands that can be batched, and execute as batched if able.
+            var addOutputter = ((options & ExecutionOptions.AddOutputter) > 0);
+            exceptionThrown = null;
+            if (addOutputter && TryRunAsImplicitBatch(command, out exceptionThrown))
+            {
+                return null;
+            }
+
             Pipeline tempPipeline = CreatePipeline(command, (options & ExecutionOptions.AddToHistory) > 0);
 
             return ExecuteCommandHelper(tempPipeline, out exceptionThrown, options);
         }
+
+        #region ImplicitRemotingBatching
+
+        // A visitor to walk an AST and validate that it is a candidate for implicit remoting batching.
+        internal class PipelineForBatchingChecker : AstVisitor
+        {
+            internal readonly HashSet<string> ValidVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            internal readonly HashSet<string> Commands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            internal ScriptBlockAst ScriptBeingConverted { get; set; }
+
+            public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
+            {
+                if (!variableExpressionAst.VariablePath.IsAnyLocal())
+                {
+                    ThrowError(
+                            new ImplicitRemotingBatchingNotSupportedException(
+                                "Variable type not supported"),
+                            variableExpressionAst);
+                }
+
+                if (variableExpressionAst.VariablePath.UnqualifiedPath != "_")
+                {
+                    ValidVariables.Add(variableExpressionAst.VariablePath.UnqualifiedPath);
+                }
+
+                return AstVisitAction.Continue;
+            }
+
+            public override AstVisitAction VisitPipeline(PipelineAst pipelineAst)
+            {
+                if (pipelineAst.PipelineElements[0] is CommandExpressionAst)
+                {
+                    // If the first element is a CommandExpression, this pipeline should be the value
+                    // of a parameter. We want to avoid a scriptblock that contains only a pure expression.
+                    // The check "pipelineAst.Parent.Parent == ScriptBeingConverted" guarantees we throw
+                    // error on that kind of scriptblock.
+
+                    // Disallow pure expressions at the "top" level, but allow them otherwise.
+                    // We want to catch:
+                    //     1 | echo
+                    // But we don't want to error out on:
+                    //     echo $(1)
+                    // See the comment in VisitCommand on why it's safe to check Parent.Parent, we
+                    // know that we have at least:
+                    //     * a NamedBlockAst (the end block)
+                    //     * a ScriptBlockAst (the ast we're comparing to)
+                    if (pipelineAst.GetPureExpression() == null || pipelineAst.Parent.Parent == ScriptBeingConverted)
+                    {
+                        ThrowError(
+                            new ImplicitRemotingBatchingNotSupportedException(
+                                "Pipeline Starting With Expression not supported"),
+                            pipelineAst);
+                    }
+                }
+
+                return AstVisitAction.Continue;
+            }
+
+            public override AstVisitAction VisitCommand(CommandAst commandAst)
+            {
+                if (commandAst.InvocationOperator == TokenKind.Dot)
+                {
+                    ThrowError(
+                        new ImplicitRemotingBatchingNotSupportedException(
+                            "Dot Sourcing not supported"),
+                        commandAst);
+                }
+
+                /*
+                // Up front checking ensures that we have a simple script block,
+                // so we can safely assume that the parents are:
+                //     * a PipelineAst
+                //     * a NamedBlockAst (the end block)
+                //     * a ScriptBlockAst (the ast we're comparing to)
+                // If that isn't the case, the conversion isn't allowed.  It
+                // is also safe to assume that we have at least 3 parents, a script block can't be simpler.
+                if (commandAst.Parent.Parent.Parent != ScriptBeingConverted)
+                {
+                    ThrowError(
+                        new ImplicitRemotingBatchingNotSupportedException(
+                            "CantConvertWithCommandInvocations not supported"),
+                        commandAst);
+                }
+                */
+
+                if (commandAst.CommandElements[0] is ScriptBlockExpressionAst)
+                {
+                    ThrowError(
+                        new ImplicitRemotingBatchingNotSupportedException(
+                            "ScriptBlock Invocation not supported"),
+                        commandAst);
+                }
+
+                var commandName = commandAst.GetCommandName();
+                if (commandName != null)
+                {
+                    Commands.Add(commandName);
+                }
+
+                return AstVisitAction.Continue;
+            }
+
+            public override AstVisitAction VisitMergingRedirection(MergingRedirectionAst redirectionAst)
+            {
+                if (redirectionAst.ToStream != RedirectionStream.Output)
+                {
+                    ThrowError(
+                        new ImplicitRemotingBatchingNotSupportedException(
+                            "Output Error Redirect not supported"),
+                        redirectionAst);
+                }
+
+                return AstVisitAction.Continue;
+            }
+
+            public override AstVisitAction VisitFileRedirection(FileRedirectionAst redirectionAst)
+            {
+                ThrowError(
+                    new ImplicitRemotingBatchingNotSupportedException(
+                        "Output Error Redirect not supported"),
+                    redirectionAst);
+
+                return AstVisitAction.Continue;
+            }
+
+            /*
+            public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
+            {
+                ThrowError(new ImplicitRemotingBatchingNotSupportedException(
+                               "ScriptBlocks not supported"),
+                           scriptBlockExpressionAst);
+
+                return AstVisitAction.SkipChildren;
+            }
+            */
+
+            public override AstVisitAction VisitUsingExpression(UsingExpressionAst usingExpressionAst)
+            {
+                // Using expressions are not expected in Implicit remoting commands.
+                ThrowError(new ImplicitRemotingBatchingNotSupportedException(
+                    "Using expressions not supported"), 
+                    usingExpressionAst);
+
+                return AstVisitAction.SkipChildren;
+            }
+
+            internal static void ThrowError(ImplicitRemotingBatchingNotSupportedException ex, Ast ast)
+            {
+                InterpreterError.UpdateExceptionErrorRecordPosition(ex, ast.Extent);
+                throw ex;
+            }
+        }
+
+        internal class ImplicitRemotingBatchingNotSupportedException : RuntimeException
+        {
+            internal ImplicitRemotingBatchingNotSupportedException(string message) : base(message)
+            { }
+        }
+
+        private static readonly HashSet<string> AllowedCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "ForEach-Object",
+            "Measure-Command",
+            "Measure-Object",
+            "Sort-Object",
+            "Where-Object"
+        };
+
+        private bool TryRunAsImplicitBatch(string command, out Exception exceptionThrown)
+        {
+            exceptionThrown = null;
+            if (_parent.RunspaceRef.IsRunspaceOverridden ||
+                !_parent.RunspaceRef.Runspace.ExecutionContext.Modules.IsImplicitRemotingModuleLoaded)
+            {
+                return false;
+            }
+
+            try
+            {
+                var scriptBlock = ScriptBlock.Create(command);
+                var scriptBlockAst = scriptBlock.Ast as ScriptBlockAst;
+                if (scriptBlockAst == null)
+                {
+                    throw new ImplicitRemotingBatchingNotSupportedException("Invalid Scriptblock");
+                }
+
+                // Make sure that this is a simple pipeline
+                string errorId;
+                string errorMsg;
+                scriptBlockAst.GetSimplePipeline(true, out errorId, out errorMsg);
+                if (errorId != null)
+                {
+                    throw new ImplicitRemotingBatchingNotSupportedException("Script not a simple pipeline");
+                }
+
+                // Run checker
+                var checker = new PipelineForBatchingChecker { ScriptBeingConverted = scriptBlockAst };
+                scriptBlockAst.InternalVisit(checker);
+
+                // Have valid batching candidate
+                using (var ps = System.Management.Automation.PowerShell.Create())
+                {
+                    ps.Runspace = _parent.RunspaceRef.Runspace;
+
+                    // Check commands
+                    ps.Commands.AddCommand("Get-Command").AddParameter("Name", checker.Commands.ToArray());
+                    var cmdInfoList = ps.Invoke<CommandInfo>();
+                    if (ps.Streams.Error.Count > 0)
+                    {
+                        // Cannot continue
+                        throw new PSInvalidOperationException();
+                    }
+                    // All command modules must be implicit remoting modules from the same PSSession
+                    var success = true;
+                    var psSessionId = Guid.Empty;
+                    foreach (var cmdInfo in cmdInfoList)
+                    {
+                        // Check for allowed command
+                        var aliasInfo = cmdInfo as AliasInfo;
+                        string cmdName = (aliasInfo != null) ? aliasInfo.ReferencedCommand.Name : cmdInfo.Name;
+                        if (AllowedCommands.Contains(cmdName))
+                        {
+                            continue;
+                        }
+
+                        if (cmdInfo.Module == null || string.IsNullOrEmpty(cmdInfo.ModuleName))
+                        {
+                            success = false;
+                            break;
+                        }
+
+                        var privateData = cmdInfo.Module.PrivateData as System.Collections.Hashtable;
+                        if (privateData == null)
+                        {
+                            success = false;
+                            break;
+                        }
+                        if (!privateData.ContainsKey("ImplicitSessionId"))
+                        {
+                            success = false;
+                            break;
+                        }
+                        if (psSessionId == Guid.Empty)
+                        {
+                            psSessionId = new Guid(privateData["ImplicitSessionId"] as string);
+                        }
+                        else if (!psSessionId.ToString().Equals(privateData["ImplicitSessionId"] as string, StringComparison.OrdinalIgnoreCase))
+                        {
+                            success = false;
+                            break;
+                        }
+                    }
+
+                    if (success)
+                    {
+                        // Update script to declare variables via Using keyword
+                        if (checker.ValidVariables.Count > 0)
+                        {
+                            foreach (var variableName in checker.ValidVariables)
+                            {
+                                command = command.Replace(variableName, ("using:" + variableName), StringComparison.Ordinal);
+                            }
+
+                            scriptBlock = ScriptBlock.Create(command);
+                        }
+
+                        // Retrieve the PSSession runspace to run the batch script on
+                        ps.Commands.Clear();
+                        ps.Commands.AddCommand("Get-PSSession").AddParameter("InstanceId", psSessionId);
+                        var psSession = ps.Invoke<System.Management.Automation.Runspaces.PSSession>().FirstOrDefault();
+                        if (psSession == null || ps.Streams.Error.Count > 0)
+                        {
+                            // Cannot continue
+                            throw new PSInvalidOperationException();
+                        }
+
+                        // Create and invoke implicit remoting script remotely.
+                        ps.Commands.Clear();
+                        ps.AddCommand("Invoke-Command").AddParameter("Session", psSession).AddParameter("ScriptBlock", scriptBlock).AddParameter("HideComputerName", true)
+                            .AddCommand("Out-Default");
+                        ps.Invoke();
+
+                        return true;
+                    }
+                }
+            }
+            catch (Exception)
+            { }
+
+            return false;
+        }
+
+        #endregion
 
         private Command GetOutDefaultCommand(bool endOfStatement)
         {
