@@ -719,11 +719,6 @@ namespace Microsoft.PowerShell.Commands
         private const string TypeNameForProcessWithUserName = "System.Diagnostics.Process#IncludeUserName";
 
         /// <summary>
-        /// New PSTypeName added to the process object if IncludeCommandline switch present.
-        /// </summary>
-        private const string TypeNameForProcessWithCommandLine = "System.Diagnostics.Process#IncludeCommandline";
-
-        /// <summary>
         /// Get and cache command lines for all processes.
         /// </summary>
         /// <returns></returns>
