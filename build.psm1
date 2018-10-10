@@ -1369,13 +1369,6 @@ function Start-PSxUnit {
         throw "PowerShell must be built before running tests!"
     }
 
-    if (Test-Path $SequentialTestResultsFile) {
-        Remove-Item $SequentialTestResultsFile -Force -ErrorAction SilentlyContinue
-    }
-    if (Test-Path $ParallelTestResultsFile) {
-        Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
-    }
-
     try {
         Push-Location $PSScriptRoot/test/csharp
 
@@ -1413,8 +1406,10 @@ function Start-PSxUnit {
         }
 
         # Run sequential tests first, and then run the tests that can execute in parallel
-        dotnet xunit -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
-
+        if (Test-Path $SequentialTestResultsFile) {
+            Remove-Item $SequentialTestResultsFile -Force -ErrorAction SilentlyContinue
+        }
+        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Sequential -p:ParallelizeTestCollections=false --test-adapter-path:. "--logger:xunit;LogFilePath=$SequentialTestResultsFile"
         Publish-TestResults -Path $SequentialTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
 
         $extraParams = @()
@@ -1430,7 +1425,10 @@ function Start-PSxUnit {
             )
         }
 
-        dotnet xunit -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild @extraParams
+        if (Test-Path $ParallelTestResultsFile) {
+            Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
+        }
+        dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Parallel --no-build  --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
         Publish-TestResults -Path $ParallelTestResultsFile -Type 'XUnit' -Title 'Xunit Parallel'
     }
     finally {
