@@ -2,27 +2,32 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics; // Process class
-using System.ComponentModel; // Win32Exception
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.Serialization;
-using System.Threading;
-using System.Management.Automation;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
 using System.IO;
+using System.Globalization;
+#if !UNIX
+using System.Management;
+#endif
+using System.Management.Automation;
+using System.Management.Automation.Internal;
+using System.Net;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Principal;
-using Microsoft.Win32.SafeHandles;
-using System.Management.Automation.Internal;
-using Microsoft.PowerShell.Commands.Internal;
+using System.Text;
+using System.Threading;
+
 using Microsoft.Management.Infrastructure;
+using Microsoft.PowerShell.Commands.Internal;
+using Microsoft.Win32.SafeHandles;
 
 using FileNakedHandle = System.IntPtr;
 using DWORD = System.UInt32;
@@ -42,15 +47,15 @@ namespace Microsoft.PowerShell.Commands
         internal enum MatchMode
         {
             /// <summary>
-            /// Select all processes
+            /// Select all processes.
             /// </summary>
             All,
             /// <summary>
-            /// Select processes matching the supplied names
+            /// Select processes matching the supplied names.
             /// </summary>
             ByName,
             /// <summary>
-            /// Select the processes matching the id
+            /// Select the processes matching the id.
             /// </summary>
             ById,
             /// <summary>
@@ -471,7 +476,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets/sets an array of process IDs.
+        /// Gets or sets an array of process IDs.
         /// </summary>
         [Parameter(ParameterSetName = IdParameterSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(ParameterSetName = IdWithUserNameParameterSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
@@ -507,22 +512,24 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Include the UserName.
+        /// Gets or sets the switch to include the UserName.
         /// </summary>
         [Parameter(ParameterSetName = NameWithUserNameParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = IdWithUserNameParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = InputObjectWithUserNameParameterSet, Mandatory = true)]
-        public SwitchParameter IncludeUserName
-        {
-            get { return _includeUserName; }
-            set { _includeUserName = value; }
-        }
-        private bool _includeUserName = false;
+        public SwitchParameter IncludeUserName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the switch to include the command line of a process.
+        /// </summary>
+        [Parameter(ParameterSetName = NameParameterSet)]
+        [Parameter(ParameterSetName = IdParameterSet)]
+        [Parameter(ParameterSetName = InputObjectParameterSet)]
+        public SwitchParameter IncludeCommandLine { get; set; }
 
         ///<summary>
-        /// To display the modules of a process.
+        /// Gets or sets the switch to include the modules of a process.
         ///</summary>
-
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
         [Parameter(ParameterSetName = InputObjectParameterSet)]
@@ -530,7 +537,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Module { get; set; }
 
         ///<summary>
-        /// To display the fileversioninfo of the main module of a process.
+        /// Gets or sets the switch to include the fileversioninfo of the main module of a process.
         ///</summary>
         [Parameter(ParameterSetName = NameParameterSet)]
         [Parameter(ParameterSetName = IdParameterSet)]
@@ -554,6 +561,11 @@ namespace Microsoft.PowerShell.Commands
                 var ex = new InvalidOperationException(ProcessResources.IncludeUserNameRequiresElevation);
                 var er = new ErrorRecord(ex, "IncludeUserNameRequiresElevation", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
+            }
+
+            if (IncludeCommandLine.IsPresent)
+            {
+                _processCommandLineCache = InitProcessCommandLineCache();
             }
         }
 
@@ -680,7 +692,14 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    WriteObject(IncludeUserName.IsPresent ? AddUserNameToProcess(process) : (object)process);
+                    if (IncludeUserName.IsPresent || IncludeCommandLine.IsPresent)
+                    {
+                        WriteObject(AddNotePropertiesToProcess(process));
+                    }
+                    else
+                    {
+                        WriteObject(process);
+                    }
                 }
             }
         }
@@ -690,25 +709,136 @@ namespace Microsoft.PowerShell.Commands
         #region Privates
 
         /// <summary>
-        /// New PSTypeName added to the process object.
+        /// Cache of command lines for all processes.
+        /// </summary>
+        private Dictionary<int, string> _processCommandLineCache;
+
+        /// <summary>
+        /// New PSTypeName added to the process object if IncludeUserName switch present.
         /// </summary>
         private const string TypeNameForProcessWithUserName = "System.Diagnostics.Process#IncludeUserName";
 
         /// <summary>
-        /// Add the 'UserName' NoteProperty to the Process object.
+        /// Get and cache command lines for all processes.
+        /// </summary>
+        /// <returns></returns>
+        private static Dictionary<int, string> InitProcessCommandLineCache()
+        {
+            var dict = new Dictionary<int, string>(512);
+#if UNIX
+            int pid;
+
+            if (!Platform.IsMacOS)
+            {
+                // Linux
+                string cmdLine;
+                var procDirectoryInfo = new DirectoryInfo("/proc/");
+
+                foreach (var pidDir in procDirectoryInfo.EnumerateDirectories())
+                {
+                    // We need only numeric directories which correspond to the process PID.
+
+                    if (int.TryParse(pidDir.Name, out pid))
+                    {
+                        cmdLine = System.IO.File.ReadAllText(String.Format(CultureInfo.InvariantCulture, "/proc/{0}/cmdline", pidDir.Name));
+                        dict.TryAdd(pid, cmdLine);
+                    }
+                }
+            }
+            else
+            {
+                // MacOs
+                using (Process ps = new Process())
+                {
+                    ps.StartInfo.FileName = "ps";
+                    ps.StartInfo.Arguments = "-A -o pid=,command=";
+                    ps.StartInfo.UseShellExecute = false;
+                    ps.StartInfo.RedirectStandardOutput = true;
+                    ps.Start();
+                    ps.WaitForExit(200);
+
+                    // Output example:
+                    // '    1 /init\n    3 /init\n    4 -bash\n'
+                    const int PID_FIELD_LENGTH = 5;
+                    const int SEP_LENGTH = 1;
+                    const char EOL = '\n';
+                    const int EOL_LENGTH = 1;
+
+                    var output = ps.StandardOutput.ReadToEnd().AsSpan();
+                    var start = 0;
+                    var end = output.IndexOf(EOL);
+                    ReadOnlySpan<char> cmdLine;
+
+                    while (PID_FIELD_LENGTH + SEP_LENGTH < end)
+                    {
+                        if (int.TryParse(output.Slice(start, PID_FIELD_LENGTH), out pid))
+                        {
+                            cmdLine = output.Slice(start + PID_FIELD_LENGTH + SEP_LENGTH, end - PID_FIELD_LENGTH - SEP_LENGTH);
+
+                            dict.TryAdd(pid, cmdLine.ToString());
+                        }
+
+                        // Go to next line.
+                        start += end + EOL_LENGTH;
+                        if (start >= output.Length)
+                        {
+                            break;
+                        }
+
+                        end = output.Slice(start).IndexOf('\n');
+                    }
+                }
+            }
+
+#else
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT ProcessId, CommandLine FROM Win32_Process"))
+            {
+                using (ManagementObjectCollection objects = searcher.Get())
+                {
+                    foreach (ManagementObject obj in objects)
+                    {
+                        // (int)(uint) - unbox 'object' then unchecked convert.
+                        dict.Add((int)(uint)obj["ProcessId"], (string)obj["CommandLine"]);
+                    }
+                }
+            }
+
+#endif
+            return dict;
+        }
+
+        /// <summary>
+        /// Add the note properties to the Process object.
         /// </summary>
         /// <param name="process"></param>
         /// <returns></returns>
-        private static PSObject AddUserNameToProcess(Process process)
+        private PSObject AddNotePropertiesToProcess(Process process)
         {
-            // Return null if we failed to get the owner information
-            string userName = RetrieveProcessUserName(process);
+            Diagnostics.Assert(_processCommandLineCache != null, "_processCommandLineCache should be initialized.");
 
             PSObject processAsPsobj = PSObject.AsPSObject(process);
-            PSNoteProperty noteProperty = new PSNoteProperty("UserName", userName);
 
-            processAsPsobj.Properties.Add(noteProperty, true);
-            processAsPsobj.TypeNames.Insert(0, TypeNameForProcessWithUserName);
+            if (IncludeUserName.IsPresent)
+            {
+                // Return null if we cannot get the owner information.
+                string userName = RetrieveProcessUserName(process);
+
+                PSNoteProperty noteProperty = new PSNoteProperty("UserName", userName);
+
+                processAsPsobj.Properties.Add(noteProperty, true);
+                processAsPsobj.TypeNames.Insert(0, TypeNameForProcessWithUserName);
+            }
+
+            if (IncludeCommandLine.IsPresent)
+            {
+                // Return null if we cannot get the command line information.
+                string commandLine = RetrieveProcessCommandLine(process);
+
+                PSNoteProperty noteProperty = new PSNoteProperty("CommandLine", commandLine);
+
+                processAsPsobj.Properties.Add(noteProperty, true);
+                processAsPsobj.TypeNames.Insert(0, TypeNameForProcessWithUserName);
+            }
 
             return processAsPsobj;
         }
@@ -813,6 +943,21 @@ namespace Microsoft.PowerShell.Commands
 
 #endif
             return userName;
+        }
+
+        /// <summary>
+        /// Retrieve the command line for the process.
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        private string RetrieveProcessCommandLine(Process process)
+        {
+            if (_processCommandLineCache.TryGetValue(process.Id, out string cmdLine))
+            {
+                return cmdLine;
+            }
+
+            return null;
         }
 
         #endregion Privates

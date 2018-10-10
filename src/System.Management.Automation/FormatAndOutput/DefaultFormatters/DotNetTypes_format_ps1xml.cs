@@ -635,13 +635,15 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Right, label: "CPU(s)", width: 8)
                     .AddHeader(Alignment.Right, width: 7)
                     .AddHeader(width: 30)
+                    .AddHeader(width: 20)
                     .AddHeader()
                     .StartRowDefinition()
                         .AddScriptBlockColumn("\"{0:N2}\" -f [float]($_.WS / 1MB)")
                         .AddScriptBlockColumn("\"{0:N2}\" -f [float]($_.CPU)")
                         .AddPropertyColumn("Id")
-                        .AddPropertyColumn("UserName")
                         .AddPropertyColumn("ProcessName")
+                        .AddPropertyColumn("UserName")
+                        .AddPropertyColumn("CommandLine")
                     .EndRowDefinition()
                 .EndTable());
         }

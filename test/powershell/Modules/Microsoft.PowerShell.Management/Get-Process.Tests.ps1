@@ -5,6 +5,10 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
         (Get-Process -Id $pid -IncludeUserName).UserName | Should -Match $env:USERNAME
     }
 
+    It "Should support -IncludeCommandLine" {
+        (Get-Process -Id $pid -IncludeCommandLine).CommandLine | Should -Match "pwsh"
+    }
+
     It "Should support -Module" -Pending:$IsMacOS {
         $modules = Get-Process -Id $pid -Module
         $modules.GetType() | Should -BeExactly "System.Object[]"
