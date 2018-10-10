@@ -51,7 +51,7 @@ exit
 Describe "EndInvoke() should return a collection of results" -Tags "CI" {
     BeforeAll {
         $ps = [powershell]::Create()
-        $ps.AddScript("'Hello'; Sleep 1; 'World'") > $null
+        $ps.AddScript("'Hello'; 'World'") > $null
     }
 
     It "BeginInvoke() and then EndInvoke() should return a collection of results" {
@@ -65,7 +65,6 @@ Describe "EndInvoke() should return a collection of results" -Tags "CI" {
 
     It "BeginInvoke() and then EndInvoke() should return a collection of results after a previous Stop() call" {
         $async = $ps.BeginInvoke()
-        Start-Sleep -Milliseconds 300
         $ps.Stop()
 
         $async = $ps.BeginInvoke()
@@ -78,7 +77,6 @@ Describe "EndInvoke() should return a collection of results" -Tags "CI" {
 
     It "BeginInvoke() and then EndInvoke() should return a collection of results after a previous BeginStop()/EndStop() call" {
         $asyncInvoke = $ps.BeginInvoke()
-        Start-Sleep -Milliseconds 300
         $asyncStop = $ps.BeginStop($null, $null)
         $ps.EndStop($asyncStop)
 
