@@ -842,7 +842,7 @@ namespace Microsoft.PowerShell.Commands
                 PSNoteProperty noteProperty = new PSNoteProperty("CommandLine", commandLine);
 
                 processAsPsobj.Properties.Add(noteProperty, true);
-                processAsPsobj.TypeNames.Insert(0, TypeNameForProcessWithCommandLine);
+                processAsPsobj.TypeNames.Insert(0, TypeNameForProcessWithUserName);
             }
 
             return processAsPsobj;
