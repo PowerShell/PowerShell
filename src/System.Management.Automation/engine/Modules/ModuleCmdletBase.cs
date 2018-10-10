@@ -1338,6 +1338,25 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
+        /// <summary>
+        /// Helper function to generate fake PSModuleInfo objects from ModuleSpecification objects.
+        /// </summary>
+        /// <param name="moduleSpecs">Collection of ModuleSpecification objects</param>
+        /// <returns>Collection of fake PSModuleInfo objects</returns>
+        private IEnumerable<PSModuleInfo> CreateFakeModuleObject(IEnumerable<ModuleSpecification> moduleSpecs)
+        {
+            foreach (ModuleSpecification moduleSpec in moduleSpecs)
+            {
+                var fakeModuleInfo = new PSModuleInfo(moduleSpec.Name, Context, null);
+                if (moduleSpec.Guid.HasValue)
+                {
+                    fakeModuleInfo.SetGuid(moduleSpec.Guid.Value);
+                }
+                fakeModuleInfo.SetVersion(moduleSpec.RequiredVersion ?? moduleSpec.Version);
+                yield return fakeModuleInfo;
+            }
+        }
+
         private ErrorRecord GetErrorRecordIfUnsupportedRootCdxmlAndNestedModuleScenario(
             Hashtable data,
             string moduleManifestPath,
@@ -1977,16 +1996,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    PSModuleInfo fakeRequiredModuleInfo = null;
-                    foreach (ModuleSpecification requiredModule in requiredModules)
+                    foreach (PSModuleInfo fakeRequiredModuleInfo in CreateFakeModuleObject(requiredModules))
                     {
-                        fakeRequiredModuleInfo = new PSModuleInfo(requiredModule.Name, Context, null);
-                        if (requiredModule.Guid.HasValue)
-                        {
-                            fakeRequiredModuleInfo.SetGuid(requiredModule.Guid.Value);
-                        }
-                        fakeRequiredModuleInfo.SetVersion(requiredModule.RequiredVersion ?? requiredModule.Version);
-
                         requiredModulesSpecifiedInModuleManifest.Add(fakeRequiredModuleInfo);
                     }
                 }
@@ -2797,6 +2808,12 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!needToAnalyzeScriptModules)
                 {
+                    // Add nested modules to the manifestInfo when no more analysis needs to be done
+                    foreach (PSModuleInfo fakeNestedModuleInfo in CreateFakeModuleObject(nestedModules))
+                    {
+                        manifestInfo.AddNestedModule(fakeNestedModuleInfo);
+                    }
+
                     return manifestInfo;
                 }
             }
@@ -3428,6 +3445,7 @@ namespace Microsoft.PowerShell.Commands
                                     updated.Add(element);
                                 }
                             }
+
                             ss.Internal.ExportedVariables.Clear();
                             ss.Internal.ExportedVariables.AddRange(updated);
                         }

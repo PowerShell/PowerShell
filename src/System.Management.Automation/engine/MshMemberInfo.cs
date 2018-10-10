@@ -1,18 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Linq;
-using System.Management.Automation.Language;
-using System.Reflection;
-using System.Globalization;
-using System.Collections.Specialized;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Text;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Management.Automation.Language;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Interpreter;
+using System.Text;
+
 using Microsoft.PowerShell;
 using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 
@@ -34,62 +35,81 @@ namespace System.Management.Automation
         /// An alias to another member
         /// </summary>
         AliasProperty = 1,
+
         /// <summary>
         /// A property defined as a reference to a method
         /// </summary>
         CodeProperty = 2,
+
         /// <summary>
         /// A property from the BaseObject
         /// </summary>
         Property = 4,
+
         /// <summary>
         /// A property defined by a Name-Value pair
         /// </summary>
         NoteProperty = 8,
+
         /// <summary>
         /// A property defined by script language
         /// </summary>
         ScriptProperty = 16,
+
         /// <summary>
         /// A set of properties
         /// </summary>
         PropertySet = 32,
+
         /// <summary>
         /// A method from the BaseObject
         /// </summary>
         Method = 64,
+
         /// <summary>
         /// A method defined as a reference to another method
         /// </summary>
         CodeMethod = 128,
+
         /// <summary>
         /// A method defined as a script
         /// </summary>
         ScriptMethod = 256,
+
         /// <summary>
         /// A member that acts like a Property that takes parameters. This is not consider to be a property or a method.
         /// </summary>
         ParameterizedProperty = 512,
+
         /// <summary>
         /// A set of members
         /// </summary>
         MemberSet = 1024,
+
         /// <summary>
         /// All events
         /// </summary>
         Event = 2048,
+
         /// <summary>
         /// All dynamic members (where PowerShell cannot know the type of the member)
         /// </summary>
         Dynamic = 4096,
+
+        /// <summary>
+        /// Members that are inferred by type inference for PSObject and hashtable.
+        /// </summary>
+        InferredProperty = 8192,
         /// <summary>
         /// All property member types
         /// </summary>
-        Properties = AliasProperty | CodeProperty | Property | NoteProperty | ScriptProperty,
+        Properties = AliasProperty | CodeProperty | Property | NoteProperty | ScriptProperty | InferredProperty,
+
         /// <summary>
         /// All method member types
         /// </summary>
         Methods = CodeMethod | Method | ScriptMethod,
+
         /// <summary>
         /// All member types
         /// </summary>
@@ -107,14 +127,17 @@ namespace System.Management.Automation
         /// Extended methods / properties
         /// </summary>
         Extended = 1,
+
         /// <summary>
         /// Adapted methods / properties
         /// </summary>
         Adapted = 2,
+
         /// <summary>
         /// Base methods / properties
         /// </summary>
         Base = 4,
+
         /// <summary>
         /// All methods / properties
         /// </summary>
@@ -131,10 +154,12 @@ namespace System.Management.Automation
         /// No options
         /// </summary>
         None = 0,
+
         /// <summary>
         /// Hidden members should be displayed
         /// </summary>
         IncludeHidden = 1,
+
         /// <summary>
         /// Only include members with <see cref="PSMemberInfo.ShouldSerialize"/> property set to <c>true</c>
         /// </summary>
@@ -157,12 +182,12 @@ namespace System.Management.Automation
 
         internal void SetValueNoConversion(object setValue)
         {
-            PSProperty thisAsProperty = this as PSProperty;
-            if (thisAsProperty == null)
+            if (!(this is PSProperty thisAsProperty))
             {
                 this.Value = setValue;
                 return;
             }
+
             thisAsProperty.SetAdaptedValue(setValue, false);
         }
 
@@ -193,13 +218,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member name
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-        }
+        public string Name => this.name;
 
         /// <summary>
         /// Allows a derived class to set the member name...
@@ -211,6 +230,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
         }
 
@@ -284,7 +304,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of an PSPropertyInfo derived class
         /// </summary>
-        protected PSPropertyInfo() { }
+        protected PSPropertyInfo()
+        {
+        }
+
         /// <summary>
         /// Gets true if this property can be set
         /// </summary>
@@ -336,6 +359,7 @@ namespace System.Management.Automation
                 returnValue.Append(ConversionType);
                 returnValue.Append(")");
             }
+
             returnValue.Append(ReferencedMemberName);
             return returnValue.ToString();
         }
@@ -349,15 +373,17 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSAliasProperty(string name, string referencedMemberName)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
-            if (String.IsNullOrEmpty(referencedMemberName))
+            if (string.IsNullOrEmpty(referencedMemberName))
             {
                 throw PSTraceSource.NewArgumentException("referencedMemberName");
             }
+
             ReferencedMemberName = referencedMemberName;
         }
 
@@ -372,15 +398,17 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSAliasProperty(string name, string referencedMemberName, Type conversionType)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
-            if (String.IsNullOrEmpty(referencedMemberName))
+            if (string.IsNullOrEmpty(referencedMemberName))
             {
                 throw PSTraceSource.NewArgumentException("referencedMemberName");
             }
+
             ReferencedMemberName = referencedMemberName;
             // conversionType is optional and can be null
             ConversionType = conversionType;
@@ -394,13 +422,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member this alias refers to
         /// </summary>
-        internal PSMemberInfo ReferencedMember
-        {
-            get
-            {
-                return this.LookupMember(ReferencedMemberName);
-            }
-        }
+        internal PSMemberInfo ReferencedMember => this.LookupMember(ReferencedMemberName);
 
         /// <summary>
         /// Gets the the type to convert the referenced member's value. It might be
@@ -416,8 +438,7 @@ namespace System.Management.Automation
         /// <returns>a new PSMemberInfo that is a copy of this PSMemberInfo</returns>
         public override PSMemberInfo Copy()
         {
-            PSAliasProperty alias = new PSAliasProperty(name, ReferencedMemberName);
-            alias.ConversionType = ConversionType;
+            PSAliasProperty alias = new PSAliasProperty(name, ReferencedMemberName) {ConversionType = ConversionType};
             CloneBaseProperties(alias);
             return alias;
         }
@@ -425,13 +446,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member type
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.AliasProperty;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.AliasProperty;
 
         /// <summary>
         /// Gets the type of the value for this member
@@ -450,6 +465,7 @@ namespace System.Management.Automation
                 {
                     return ConversionType.FullName;
                 }
+
                 return this.ReferencedMember.TypeNameOfValue;
             }
         }
@@ -467,11 +483,11 @@ namespace System.Management.Automation
         {
             get
             {
-                PSPropertyInfo memberProperty = this.ReferencedMember as PSPropertyInfo;
-                if (memberProperty != null)
+                if (this.ReferencedMember is PSPropertyInfo memberProperty)
                 {
                     return memberProperty.IsSettable;
                 }
+
                 return false;
             }
         }
@@ -489,29 +505,28 @@ namespace System.Management.Automation
         {
             get
             {
-                PSPropertyInfo memberProperty = this.ReferencedMember as PSPropertyInfo;
-                if (memberProperty != null)
+                if (this.ReferencedMember is PSPropertyInfo memberProperty)
                 {
                     return memberProperty.IsGettable;
                 }
+
                 return false;
             }
         }
 
         private PSMemberInfo LookupMember(string name)
         {
-            bool hasCycle;
-            PSMemberInfo returnValue;
-            LookupMember(name, new HashSet<string>(StringComparer.OrdinalIgnoreCase), out returnValue, out hasCycle);
+            LookupMember(name, new HashSet<string>(StringComparer.OrdinalIgnoreCase), out PSMemberInfo returnValue, out bool hasCycle);
             if (hasCycle)
             {
                 throw new
                     ExtendedTypeSystemException(
-                    "CycleInAliasLookup",
-                    null,
-                    ExtendedTypeSystem.CycleInAlias,
-                    this.Name);
+                        "CycleInAliasLookup",
+                        null,
+                        ExtendedTypeSystem.CycleInAlias,
+                        this.Name);
             }
+
             return returnValue;
         }
 
@@ -536,18 +551,19 @@ namespace System.Management.Automation
                     name);
             }
 
-            PSAliasProperty aliasMember = member as PSAliasProperty;
-            if (aliasMember == null)
+            if (!(member is PSAliasProperty aliasMember))
             {
                 hasCycle = false;
                 returnedMember = member;
                 return;
             }
+
             if (visitedAliases.Contains(name))
             {
                 hasCycle = true;
                 return;
             }
+
             visitedAliases.Add(name);
             LookupMember(aliasMember.ReferencedMemberName, visitedAliases, out returnedMember, out hasCycle);
         }
@@ -572,13 +588,12 @@ namespace System.Management.Automation
                 {
                     returnValue = LanguagePrimitives.ConvertTo(returnValue, ConversionType, CultureInfo.InvariantCulture);
                 }
+
                 return returnValue;
             }
-            set
-            {
-                this.ReferencedMember.Value = value;
-            }
+            set => this.ReferencedMember.Value = value;
         }
+
         #endregion virtual implementation
     }
 
@@ -608,12 +623,14 @@ namespace System.Management.Automation
                 returnValue.Append(GetterCodeReference.Name);
                 returnValue.Append(";");
             }
+
             if (this.IsSettable)
             {
                 returnValue.Append("set=");
                 returnValue.Append(SetterCodeReference.Name);
                 returnValue.Append(";");
             }
+
             returnValue.Append("}");
             return returnValue.ToString();
         }
@@ -642,6 +659,7 @@ namespace System.Management.Automation
                     null,
                     ExtendedTypeSystem.CodePropertyGetterFormat);
             }
+
             SetGetter(methodAsMember);
         }
 
@@ -669,6 +687,7 @@ namespace System.Management.Automation
                     null,
                     ExtendedTypeSystem.CodePropertySetterFormat);
             }
+
             SetSetter(methodAsMember, GetterCodeReference);
         }
 
@@ -690,6 +709,7 @@ namespace System.Management.Automation
                     null,
                     ExtendedTypeSystem.CodePropertyGetterFormat);
             }
+
             GetterCodeReference = methodForGet;
         }
 
@@ -697,10 +717,10 @@ namespace System.Management.Automation
         {
             ParameterInfo[] parameters = methodForGet.GetParameters();
             return methodForGet.IsPublic
-                && methodForGet.IsStatic
-                && methodForGet.ReturnType != typeof(void)
-                && parameters.Length == 1
-                && parameters[0].ParameterType == typeof(PSObject);
+                   && methodForGet.IsStatic
+                   && methodForGet.ReturnType != typeof(void)
+                   && parameters.Length == 1
+                   && parameters[0].ParameterType == typeof(PSObject);
         }
 
         /// <summary>
@@ -717,6 +737,7 @@ namespace System.Management.Automation
                         null,
                         ExtendedTypeSystem.CodePropertyGetterAndSetterNull);
                 }
+
                 SetterCodeReference = null;
                 return;
             }
@@ -728,6 +749,7 @@ namespace System.Management.Automation
                     null,
                     ExtendedTypeSystem.CodePropertySetterFormat);
             }
+
             SetterCodeReference = methodForSet;
         }
 
@@ -735,11 +757,11 @@ namespace System.Management.Automation
         {
             ParameterInfo[] parameters = methodForSet.GetParameters();
             return methodForSet.IsPublic
-                && methodForSet.IsStatic
-                && methodForSet.ReturnType == typeof(void)
-                && parameters.Length == 2
-                && parameters[0].ParameterType == typeof(PSObject)
-                && (methodForGet == null || methodForGet.ReturnType == parameters[1].ParameterType);
+                   && methodForSet.IsStatic
+                   && methodForSet.ReturnType == typeof(void)
+                   && parameters.Length == 2
+                   && parameters[0].ParameterType == typeof(PSObject)
+                   && (methodForGet == null || methodForGet.ReturnType == parameters[1].ParameterType);
         }
 
         /// <summary>
@@ -747,10 +769,11 @@ namespace System.Management.Automation
         /// </summary>
         internal PSCodeProperty(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
         }
 
@@ -763,15 +786,17 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">if getterCodeReference doesn't have the right format.</exception>
         public PSCodeProperty(string name, MethodInfo getterCodeReference)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             if (getterCodeReference == null)
             {
                 throw PSTraceSource.NewArgumentNullException("getterCodeReference");
             }
+
             SetGetter(getterCodeReference);
         }
 
@@ -790,15 +815,17 @@ namespace System.Management.Automation
         /// </exception>
         public PSCodeProperty(string name, MethodInfo getterCodeReference, MethodInfo setterCodeReference)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             if (getterCodeReference == null && setterCodeReference == null)
             {
                 throw PSTraceSource.NewArgumentNullException("getterCodeReference setterCodeReference");
             }
+
             SetGetter(getterCodeReference);
             SetSetter(setterCodeReference, getterCodeReference);
         }
@@ -814,6 +841,7 @@ namespace System.Management.Automation
         public MethodInfo SetterCodeReference { get; private set; }
 
         #region virtual implementation
+
         /// <summary>
         /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
         /// </summary>
@@ -828,35 +856,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member type
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.CodeProperty;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.CodeProperty;
 
         /// <summary>
         /// Gets true if this property can be set
         /// </summary>
-        public override bool IsSettable
-        {
-            get
-            {
-                return this.SetterCodeReference != null;
-            }
-        }
+        public override bool IsSettable => this.SetterCodeReference != null;
 
         /// <summary>
         /// Gets true if this property can be read
         /// </summary>
-        public override bool IsGettable
-        {
-            get
-            {
-                return GetterCodeReference != null;
-            }
-        }
+        public override bool IsGettable => GetterCodeReference != null;
 
         /// <summary>
         /// Gets and Sets the value of this member
@@ -869,22 +879,26 @@ namespace System.Management.Automation
             {
                 if (GetterCodeReference == null)
                 {
-                    throw new GetValueException("GetWithoutGetterFromCodePropertyValue",
+                    throw new GetValueException(
+                        "GetWithoutGetterFromCodePropertyValue",
                         null,
                         ExtendedTypeSystem.GetWithoutGetterException,
                         this.Name);
                 }
+
                 try
                 {
-                    return GetterCodeReference.Invoke(null, new object[1] { this.instance });
+                    return GetterCodeReference.Invoke(null, new object[] { this.instance });
                 }
                 catch (TargetInvocationException ex)
                 {
                     Exception inner = ex.InnerException ?? ex;
-                    throw new GetValueInvocationException("CatchFromCodePropertyGetTI",
+                    throw new GetValueInvocationException(
+                        "CatchFromCodePropertyGetTI",
                         inner,
                         ExtendedTypeSystem.ExceptionWhenGetting,
-                        this.name, inner.Message);
+                        this.name,
+                        inner.Message);
                 }
                 catch (Exception e)
                 {
@@ -892,32 +906,39 @@ namespace System.Management.Automation
                     {
                         throw;
                     }
-                    throw new GetValueInvocationException("CatchFromCodePropertyGet",
+
+                    throw new GetValueInvocationException(
+                        "CatchFromCodePropertyGet",
                         e,
                         ExtendedTypeSystem.ExceptionWhenGetting,
-                        this.name, e.Message);
+                        this.name,
+                        e.Message);
                 }
             }
             set
             {
                 if (SetterCodeReference == null)
                 {
-                    throw new SetValueException("SetWithoutSetterFromCodeProperty",
+                    throw new SetValueException(
+                        "SetWithoutSetterFromCodeProperty",
                         null,
                         ExtendedTypeSystem.SetWithoutSetterException,
                         this.Name);
                 }
+
                 try
                 {
-                    SetterCodeReference.Invoke(null, new object[2] { this.instance, value });
+                    SetterCodeReference.Invoke(null, new object[] { this.instance, value });
                 }
                 catch (TargetInvocationException ex)
                 {
                     Exception inner = ex.InnerException ?? ex;
-                    throw new SetValueInvocationException("CatchFromCodePropertySetTI",
+                    throw new SetValueInvocationException(
+                        "CatchFromCodePropertySetTI",
                         inner,
                         ExtendedTypeSystem.ExceptionWhenSetting,
-                        this.name, inner.Message);
+                        this.name,
+                        inner.Message);
                 }
                 catch (Exception e)
                 {
@@ -925,15 +946,19 @@ namespace System.Management.Automation
                     {
                         throw;
                     }
-                    throw new SetValueInvocationException("CatchFromCodePropertySet",
+
+                    throw new SetValueInvocationException(
+                        "CatchFromCodePropertySet",
                         e,
                         ExtendedTypeSystem.ExceptionWhenSetting,
-                        this.name, e.Message);
+                        this.name,
+                        e.Message);
                 }
             }
         }
+
         /// <summary>
-        /// Gets the type of the value for this member
+        /// Gets the type of the value for this member.
         /// </summary>
         /// <exception cref="GetValueException">If there is no property getter</exception>
         public override string TypeNameOfValue
@@ -942,16 +967,46 @@ namespace System.Management.Automation
             {
                 if (GetterCodeReference == null)
                 {
-                    throw new GetValueException("GetWithoutGetterFromCodePropertyTypeOfValue",
+                    throw new GetValueException(
+                        "GetWithoutGetterFromCodePropertyTypeOfValue",
                         null,
                         ExtendedTypeSystem.GetWithoutGetterException,
                         this.Name);
                 }
+
                 return GetterCodeReference.ReturnType.FullName;
             }
         }
-        #endregion virtual implementation
 
+        #endregion virtual implementation
+    }
+
+    /// <summary>
+    /// Type used to capture the properties inferred from Hashtable and PSObject.
+    /// </summary>
+    internal class PSInferredProperty : PSPropertyInfo
+    {
+        public PSInferredProperty(string name, PSTypeName typeName)
+        {
+            this.name = name;
+            TypeName = typeName;
+        }
+
+        internal PSTypeName TypeName { get; }
+
+        public override PSMemberTypes MemberType => PSMemberTypes.InferredProperty;
+
+        public override object Value { get; set; }
+
+        public override string TypeNameOfValue => TypeName.Name;
+
+        public override PSMemberInfo Copy() => new PSInferredProperty(Name, TypeName);
+
+        public override bool IsSettable => false;
+
+        public override bool IsGettable => false;
+
+        public override string ToString() => $"{ToStringCodeMethods.Type(TypeName.Type)} {Name}";
     }
 
     /// <summary>
@@ -972,6 +1027,7 @@ namespace System.Management.Automation
                 returnValue.Append(" {get;set;}");
                 return returnValue.ToString();
             }
+
             Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
             return adapter.BasePropertyToString(this);
         }
@@ -980,8 +1036,8 @@ namespace System.Management.Automation
         /// used by the adapters to keep intermediate data used between DoGetProperty and
         /// DoGetValue or DoSetValue
         /// </summary>
-
         internal string typeOfValue;
+
         internal object serializedValue;
         internal bool isDeserialized;
 
@@ -989,6 +1045,7 @@ namespace System.Management.Automation
         /// This will be either instance.adapter or instance.clrAdapter
         /// </summary>
         internal Adapter adapter;
+
         internal object adapterData;
         internal object baseObject;
 
@@ -1014,10 +1071,11 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSProperty(string name, Adapter adapter, object baseObject, object adapterData)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             this.adapter = adapter;
             this.adapterData = adapterData;
@@ -1025,6 +1083,7 @@ namespace System.Management.Automation
         }
 
         #region virtual implementation
+
         /// <summary>
         /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
         /// </summary>
@@ -1042,13 +1101,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member type
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.Property;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.Property;
 
         private object GetAdaptedValue()
         {
@@ -1056,6 +1109,7 @@ namespace System.Management.Automation
             {
                 return serializedValue;
             }
+
             Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
 
             object o = adapter.BasePropertyGet(this);
@@ -1069,6 +1123,7 @@ namespace System.Management.Automation
                 serializedValue = setValue;
                 return;
             }
+
             Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
             adapter.BasePropertySet(this, setValue, shouldConvert);
         }
@@ -1080,14 +1135,8 @@ namespace System.Management.Automation
         /// <exception cref="SetValueException">When setting the value of a property throws an exception</exception>
         public override object Value
         {
-            get
-            {
-                return GetAdaptedValue();
-            }
-            set
-            {
-                SetAdaptedValue(value, true);
-            }
+            get => GetAdaptedValue();
+            set => SetAdaptedValue(value, true);
         }
 
         /// <summary>
@@ -1101,6 +1150,7 @@ namespace System.Management.Automation
                 {
                     return true;
                 }
+
                 Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
                 return adapter.BasePropertyIsSettable(this);
             }
@@ -1117,10 +1167,12 @@ namespace System.Management.Automation
                 {
                     return true;
                 }
+
                 Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
                 return adapter.BasePropertyIsGettable(this);
             }
         }
+
         /// <summary>
         /// Gets the type of the value for this member
         /// </summary>
@@ -1132,11 +1184,10 @@ namespace System.Management.Automation
                 {
                     if (serializedValue == null)
                     {
-                        return String.Empty;
+                        return string.Empty;
                     }
 
-                    PSObject serializedValueAsPSObject = serializedValue as PSObject;
-                    if (serializedValueAsPSObject != null)
+                    if (serializedValue is PSObject serializedValueAsPSObject)
                     {
                         var typeNames = serializedValueAsPSObject.InternalTypeNames;
                         if ((typeNames != null) && (typeNames.Count >= 1))
@@ -1149,10 +1200,12 @@ namespace System.Management.Automation
 
                     return serializedValue.GetType().FullName;
                 }
+
                 Diagnostics.Assert((this.baseObject != null) && (this.adapter != null), "if it is deserialized, it should have all these properties set");
                 return adapter.BasePropertyType(this);
             }
         }
+
         #endregion virtual implementation
     }
 
@@ -1196,24 +1249,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the object the property belongs to
         /// </summary>
-        public object BaseObject
-        {
-            get
-            {
-                return this.baseObject;
-            }
-        }
+        public object BaseObject => this.baseObject;
 
         /// <summary>
         /// Gets the data attached to this property
         /// </summary>
-        public object Tag
-        {
-            get
-            {
-                return this.adapterData;
-            }
-        }
+        public object Tag => this.adapterData;
     }
 
     /// <summary>
@@ -1247,16 +1288,18 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for an empty or null name</exception>
         public PSNoteProperty(string name, object value)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             // value can be null
             this.noteValue = value;
         }
 
         #region virtual implementation
+
         /// <summary>
         /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
         /// </summary>
@@ -1271,45 +1314,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets PSMemberTypes.NoteProperty
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.NoteProperty;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.NoteProperty;
 
         /// <summary>
         /// Gets true since the value of an PSNoteProperty can always be set
         /// </summary>
-        public override bool IsSettable
-        {
-            get
-            {
-                return this.IsInstance;
-            }
-        }
+        public override bool IsSettable => this.IsInstance;
 
         /// <summary>
         /// Gets true since the value of an PSNoteProperty can always be obtained
         /// </summary>
-        public override bool IsGettable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsGettable => true;
 
         /// <summary>
         /// Gets or sets the value of this property
         /// </summary>
         public override object Value
         {
-            get
-            {
-                return this.noteValue;
-            }
+            get => this.noteValue;
             set
             {
                 if (!this.IsInstance)
@@ -1319,6 +1341,7 @@ namespace System.Management.Automation
                         ExtendedTypeSystem.ChangeStaticMember,
                         this.Name);
                 }
+
                 this.noteValue = value;
             }
         }
@@ -1337,8 +1360,7 @@ namespace System.Management.Automation
                     return typeof(object).FullName;
                 }
 
-                PSObject valAsPSObject = val as PSObject;
-                if (valAsPSObject != null)
+                if (val is PSObject valAsPSObject)
                 {
                     var typeNames = valAsPSObject.InternalTypeNames;
                     if ((typeNames != null) && (typeNames.Count >= 1))
@@ -1359,8 +1381,7 @@ namespace System.Management.Automation
         {
             string displayTypeName = null;
 
-            PSObject valAsPSObject = val as PSObject;
-            if (valAsPSObject != null)
+            if (val is PSObject valAsPSObject)
             {
                 var typeNames = valAsPSObject.InternalTypeNames;
                 if ((typeNames != null) && (typeNames.Count >= 1))
@@ -1368,6 +1389,7 @@ namespace System.Management.Automation
                     displayTypeName = typeNames[0];
                 }
             }
+
             if (string.IsNullOrEmpty(displayTypeName))
             {
                 displayTypeName = val == null
@@ -1412,16 +1434,13 @@ namespace System.Management.Automation
         /// <param name="variable">The variable to wrap</param>
         /// <exception cref="ArgumentException">for an empty or null name</exception>
         public PSVariableProperty(PSVariable variable)
-            : base(variable != null ? variable.Name : null, null)
+            : base(variable?.Name, null)
         {
-            if (variable == null)
-            {
-                throw PSTraceSource.NewArgumentException("variable");
-            }
-            _variable = variable;
+            _variable = variable ?? throw PSTraceSource.NewArgumentException("variable");
         }
 
         #region virtual implementation
+
         /// <summary>
         /// returns a new PSMemberInfo that is a copy of this PSMemberInfo,
         /// Note that it returns another reference to the variable, not a reference
@@ -1438,45 +1457,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets PSMemberTypes.NoteProperty
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.NoteProperty;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.NoteProperty;
 
         /// <summary>
         /// True if the underlying variable is settable...
         /// </summary>
-        public override bool IsSettable
-        {
-            get
-            {
-                return (_variable.Options & (ScopedItemOptions.Constant | ScopedItemOptions.ReadOnly)) == ScopedItemOptions.None;
-            }
-        }
+        public override bool IsSettable => (_variable.Options & (ScopedItemOptions.Constant | ScopedItemOptions.ReadOnly)) == ScopedItemOptions.None;
 
         /// <summary>
         /// Gets true since the value of an PSNoteProperty can always be obtained
         /// </summary>
-        public override bool IsGettable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsGettable => true;
 
         /// <summary>
         /// Gets or sets the value of this property
         /// </summary>
         public override object Value
         {
-            get
-            {
-                return _variable.Value;
-            }
+            get => _variable.Value;
             set
             {
                 if (!this.IsInstance)
@@ -1486,6 +1484,7 @@ namespace System.Management.Automation
                         ExtendedTypeSystem.ChangeStaticMember,
                         this.Name);
                 }
+
                 _variable.Value = value;
             }
         }
@@ -1504,8 +1503,7 @@ namespace System.Management.Automation
                     return typeof(object).FullName;
                 }
 
-                PSObject valAsPSObject = val as PSObject;
-                if (valAsPSObject != null)
+                if (val is PSObject valAsPSObject)
                 {
                     var typeNames = valAsPSObject.InternalTypeNames;
                     if ((typeNames != null) && (typeNames.Count >= 1))
@@ -1549,21 +1547,23 @@ namespace System.Management.Automation
                 returnValue.Append(this.GetterScript.ToString());
                 returnValue.Append(";");
             }
+
             if (this.IsSettable)
             {
                 returnValue.Append("set=");
                 returnValue.Append(this.SetterScript.ToString());
                 returnValue.Append(";");
             }
+
             returnValue.Append("}");
             return returnValue.ToString();
         }
 
-        private Nullable<PSLanguageMode> _languageMode;
-        private string _getterScriptText;
+        private readonly PSLanguageMode? _languageMode;
+        private readonly string _getterScriptText;
         private ScriptBlock _getterScript;
 
-        private string _setterScriptText;
+        private readonly string _setterScriptText;
         private ScriptBlock _setterScript;
         private bool _shouldCloneOnAccess;
 
@@ -1661,16 +1661,14 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSScriptProperty(string name, ScriptBlock getterScript)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
-            if (getterScript == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("getterScript");
-            }
-            _getterScript = getterScript;
+
+            _getterScript = getterScript ?? throw PSTraceSource.NewArgumentNullException("getterScript");
         }
 
         /// <summary>
@@ -1683,10 +1681,11 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSScriptProperty(string name, ScriptBlock getterScript, ScriptBlock setterScript)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             if (getterScript == null && setterScript == null)
             {
@@ -1698,6 +1697,7 @@ namespace System.Management.Automation
             {
                 getterScript.DebuggerStepThrough = true;
             }
+
             if (setterScript != null)
             {
                 setterScript.DebuggerStepThrough = true;
@@ -1716,12 +1716,13 @@ namespace System.Management.Automation
         /// <param name="setterScript">script to be used for the property setter. $this will be this PSObject and $args(1) will be the value to set.</param>
         /// <param name="languageMode">Language mode to be used during script block evaluation.</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
-        internal PSScriptProperty(string name, string getterScript, string setterScript, Nullable<PSLanguageMode> languageMode)
+        internal PSScriptProperty(string name, string getterScript, string setterScript, PSLanguageMode? languageMode)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             if (getterScript == null && setterScript == null)
             {
@@ -1740,57 +1741,39 @@ namespace System.Management.Automation
             _shouldCloneOnAccess = shouldCloneOnAccess;
         }
 
-        internal PSScriptProperty(string name, string getterScript, string setterScript, Nullable<PSLanguageMode> languageMode, bool shouldCloneOnAccess)
+        internal PSScriptProperty(string name, string getterScript, string setterScript, PSLanguageMode? languageMode, bool shouldCloneOnAccess)
             : this(name, getterScript, setterScript, languageMode)
         {
             _shouldCloneOnAccess = shouldCloneOnAccess;
         }
 
         #region virtual implementation
+
         /// <summary>
         /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
         /// </summary>
         /// <returns>a new PSMemberInfo that is a copy of this PSMemberInfo</returns>
         public override PSMemberInfo Copy()
         {
-            PSScriptProperty property;
-            property = new PSScriptProperty(name, this.GetterScript, this.SetterScript);
-            property._shouldCloneOnAccess = _shouldCloneOnAccess;
+            var property = new PSScriptProperty(name, this.GetterScript, this.SetterScript) {_shouldCloneOnAccess = _shouldCloneOnAccess};
             CloneBaseProperties(property);
             return property;
         }
+
         /// <summary>
         /// Gets the member type
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.ScriptProperty;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.ScriptProperty;
 
         /// <summary>
         /// Gets true if this property can be set
         /// </summary>
-        public override bool IsSettable
-        {
-            get
-            {
-                return this._setterScript != null || this._setterScriptText != null;
-            }
-        }
+        public override bool IsSettable => this._setterScript != null || this._setterScriptText != null;
 
         /// <summary>
         /// Gets true if this property can be read
         /// </summary>
-        public override bool IsGettable
-        {
-            get
-            {
-                return this._getterScript != null || this._getterScriptText != null;
-            }
-        }
+        public override bool IsGettable => this._getterScript != null || this._getterScriptText != null;
 
         /// <summary>
         /// Gets and Sets the value of this property
@@ -1811,6 +1794,7 @@ namespace System.Management.Automation
                         ExtendedTypeSystem.GetWithoutGetterException,
                         this.Name);
                 }
+
                 return InvokeGetter(this.instance);
             }
             set
@@ -1822,6 +1806,7 @@ namespace System.Management.Automation
                         ExtendedTypeSystem.SetWithoutSetterException,
                         this.Name);
                 }
+
                 InvokeSetter(this.instance, value);
             }
         }
@@ -1836,7 +1821,7 @@ namespace System.Management.Automation
                     dollarUnder: AutomationNull.Value,
                     input: AutomationNull.Value,
                     scriptThis: scriptThis,
-                    args: new object[] { value });
+                    args: new[] {value});
                 return value;
             }
             catch (RuntimeException e)
@@ -1924,18 +1909,12 @@ namespace System.Management.Automation
         /// <remarks>
         /// If <c>null</c> then there are no constraints
         /// </remarks>
-        public Type MethodTargetType { get; private set; }
+        public Type MethodTargetType { get; }
 
         /// <remarks>
         /// If <c>null</c> then there are no constraints
         /// </remarks>
-        public IEnumerable<Type> ParameterTypes
-        {
-            get
-            {
-                return _parameterTypes;
-            }
-        }
+        public IEnumerable<Type> ParameterTypes => _parameterTypes;
 
         private readonly Type[] _parameterTypes;
 
@@ -1945,14 +1924,17 @@ namespace System.Management.Automation
             {
                 return ys == null;
             }
+
             if (ys == null)
             {
                 return false;
             }
+
             if (xs.Count != ys.Count)
             {
                 return false;
             }
+
             return xs.SequenceEqual(ys);
         }
 
@@ -1964,18 +1946,22 @@ namespace System.Management.Automation
             {
                 return false;
             }
+
             if (ReferenceEquals(this, other))
             {
                 return true;
             }
+
             if (other.MethodTargetType != this.MethodTargetType)
             {
                 return false;
             }
+
             if (!EqualsForCollection(_parameterTypes, other._parameterTypes))
             {
                 return false;
             }
+
             return true;
         }
 
@@ -1985,15 +1971,18 @@ namespace System.Management.Automation
             {
                 return false;
             }
+
             if (ReferenceEquals(this, obj))
             {
                 return true;
             }
+
             if (obj.GetType() != typeof(PSMethodInvocationConstraints))
             {
                 return false;
             }
-            return Equals((PSMethodInvocationConstraints)obj);
+
+            return Equals((PSMethodInvocationConstraints) obj);
         }
 
         public override int GetHashCode()
@@ -2038,6 +2027,7 @@ namespace System.Management.Automation
             {
                 sb.Append("<empty>");
             }
+
             return sb.ToString();
         }
     }
@@ -2050,7 +2040,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of a class derived from PSMethodInfo.
         /// </summary>
-        protected PSMethodInfo() { }
+        protected PSMethodInfo()
+        {
+        }
 
         /// <summary>
         /// Invokes the appropriate method overload for the given arguments and returns its result.
@@ -2080,17 +2072,11 @@ namespace System.Management.Automation
         /// </remarks>
         public sealed override object Value
         {
-            get
-            {
-                return this;
-            }
-            set
-            {
-                throw new ExtendedTypeSystemException("CannotChangePSMethodInfoValue",
-                    null,
-                    ExtendedTypeSystem.CannotSetValueForMemberType,
-                    this.GetType().FullName);
-            }
+            get => this;
+            set => throw new ExtendedTypeSystemException("CannotChangePSMethodInfoValue",
+                null,
+                ExtendedTypeSystem.CannotSetValueForMemberType,
+                this.GetType().FullName);
         }
 
         #endregion virtual implementation
@@ -2117,6 +2103,7 @@ namespace System.Management.Automation
                 returnValue.Append(overload);
                 returnValue.Append(", ");
             }
+
             returnValue.Remove(returnValue.Length - 2, 2);
             return returnValue.ToString();
         }
@@ -2127,9 +2114,9 @@ namespace System.Management.Automation
         {
             ParameterInfo[] parameters = method.GetParameters();
             return method.IsStatic
-                && method.IsPublic
-                && parameters.Length != 0
-                && parameters[0].ParameterType == typeof(PSObject);
+                   && method.IsPublic
+                   && parameters.Length != 0
+                   && parameters[0].ParameterType == typeof(PSObject);
         }
 
         internal void SetCodeReference(Type type, string methodName)
@@ -2149,8 +2136,9 @@ namespace System.Management.Automation
             if (methodAsMember == null)
             {
                 throw new ExtendedTypeSystemException("WrongMethodFormatFromTypeTable", null,
-                        ExtendedTypeSystem.CodeMethodMethodFormat);
+                    ExtendedTypeSystem.CodeMethodMethodFormat);
             }
+
             CodeReference = methodAsMember;
             if (!CheckMethodInfo(CodeReference))
             {
@@ -2163,10 +2151,11 @@ namespace System.Management.Automation
         /// </summary>
         internal PSCodeMethod(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
         }
 
@@ -2179,14 +2168,16 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">if the codeReference does not have the right format</exception>
         public PSCodeMethod(string name, MethodInfo codeReference)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             if (codeReference == null)
             {
                 throw PSTraceSource.NewArgumentNullException("codeReference");
             }
+
             if (!CheckMethodInfo(codeReference))
             {
                 throw new ExtendedTypeSystemException("WrongMethodFormat", null, ExtendedTypeSystem.CodeMethodMethodFormat);
@@ -2202,6 +2193,7 @@ namespace System.Management.Automation
         public MethodInfo CodeReference { get; private set; }
 
         #region virtual implementation
+
         /// <summary>
         /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
         /// </summary>
@@ -2216,13 +2208,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member type
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.CodeMethod;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.CodeMethod;
 
         /// <summary>
         /// Invokes CodeReference method and returns its results.
@@ -2242,6 +2228,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("arguments");
             }
+
             object[] newArguments = new object[arguments.Length + 1];
             newArguments[0] = this.instance;
             for (int i = 0; i < arguments.Length; i++)
@@ -2251,38 +2238,26 @@ namespace System.Management.Automation
 
             if (_codeReferenceMethodInformation == null)
             {
-                _codeReferenceMethodInformation = DotNetAdapter.GetMethodInformationArray(new[] { CodeReference });
+                _codeReferenceMethodInformation = DotNetAdapter.GetMethodInformationArray(new[] {CodeReference});
             }
-            object[] convertedArguments;
-            Adapter.GetBestMethodAndArguments(CodeReference.Name, _codeReferenceMethodInformation, newArguments, out convertedArguments);
+
+            Adapter.GetBestMethodAndArguments(CodeReference.Name, _codeReferenceMethodInformation, newArguments, out object[] convertedArguments);
 
             return DotNetAdapter.AuxiliaryMethodInvoke(null, convertedArguments, _codeReferenceMethodInformation[0], newArguments);
         }
 
         /// <summary>
-        /// Gets the definition for CodeReference
+        /// Gets the definition for CodeReference.
         /// </summary>
-        public override Collection<string> OverloadDefinitions
+        public override Collection<string> OverloadDefinitions => new Collection<string>
         {
-            get
-            {
-                return new Collection<string>
-                {
-                    DotNetAdapter.GetMethodInfoOverloadDefinition(null, CodeReference, 0)
-                };
-            }
-        }
+            DotNetAdapter.GetMethodInfoOverloadDefinition(null, CodeReference, 0)
+        };
 
         /// <summary>
         /// Gets the type of the value for this member. Currently this always returns typeof(PSCodeMethod).FullName.
         /// </summary>
-        public override string TypeNameOfValue
-        {
-            get
-            {
-                return typeof(PSCodeMethod).FullName;
-            }
-        }
+        public override string TypeNameOfValue => typeof(PSCodeMethod).FullName;
 
         #endregion virtual implementation
     }
@@ -2310,7 +2285,7 @@ namespace System.Management.Automation
             return returnValue.ToString();
         }
 
-        private ScriptBlock _script;
+        private readonly ScriptBlock _script;
         private bool _shouldCloneOnAccess;
 
         /// <summary>
@@ -2346,16 +2321,14 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSScriptMethod(string name, ScriptBlock script)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
-            if (script == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("script");
-            }
-            _script = script;
+
+            _script = script ?? throw PSTraceSource.NewArgumentNullException("script");
         }
 
         /// <summary>
@@ -2390,6 +2363,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("arguments");
             }
+
             return InvokeScript(Name, _script, this.instance, arguments);
         }
 
@@ -2443,8 +2417,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Collection<string> retValue = new Collection<string>();
-                retValue.Add(this.ToString());
+                Collection<string> retValue = new Collection<string> {this.ToString()};
                 return retValue;
             }
         }
@@ -2455,33 +2428,20 @@ namespace System.Management.Automation
         /// <returns>a new PSMemberInfo that is a copy of this PSMemberInfo</returns>
         public override PSMemberInfo Copy()
         {
-            PSScriptMethod method;
-            method = new PSScriptMethod(this.name, _script);
-            method._shouldCloneOnAccess = _shouldCloneOnAccess;
+            var method = new PSScriptMethod(this.name, _script) {_shouldCloneOnAccess = _shouldCloneOnAccess};
             CloneBaseProperties(method);
             return method;
         }
+
         /// <summary>
         /// Gets the member type
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.ScriptMethod;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.ScriptMethod;
 
         /// <summary>
         /// Gets the type of the value for this member. Currently this always returns typeof(object).FullName.
         /// </summary>
-        public override string TypeNameOfValue
-        {
-            get
-            {
-                return typeof(object).FullName;
-            }
-        }
+        public override string TypeNameOfValue => typeof(object).FullName;
 
         #endregion virtual implementation
     }
@@ -2524,13 +2484,14 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             this.adapterData = adapterData;
-            _adapter = adapter;
+            this._adapter = adapter;
             this.baseObject = baseObject;
         }
 
@@ -2552,6 +2513,7 @@ namespace System.Management.Automation
         }
 
         #region virtual implementation
+
         /// <summary>
         /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
         /// </summary>
@@ -2566,13 +2528,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member type
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.Method;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.Method;
 
         /// <summary>
         /// Invokes the appropriate method overload for the given arguments and returns its result.
@@ -2602,37 +2558,26 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("arguments");
             }
+
             return _adapter.BaseMethodInvoke(this, invocationConstraints, arguments);
         }
 
         /// <summary>
         /// Gets a list of all the overloads for this method
         /// </summary>
-        public override Collection<string> OverloadDefinitions
-        {
-            get
-            {
-                return _adapter.BaseMethodDefinitions(this);
-            }
-        }
+        public override Collection<string> OverloadDefinitions => _adapter.BaseMethodDefinitions(this);
 
         /// <summary>
         /// Gets the type of the value for this member. This always returns typeof(PSMethod).FullName.
         /// </summary>
-        public override string TypeNameOfValue
-        {
-            get
-            {
-                return typeof(PSMethod).FullName;
-            }
-        }
+        public override string TypeNameOfValue => typeof(PSMethod).FullName;
 
         #endregion virtual implementation
 
         /// <summary>
         /// True if the method is a special method like GET/SET property accessor methods.
         /// </summary>
-        internal bool IsSpecial { get; private set; }
+        internal bool IsSpecial { get; }
 
         internal static PSMethod Create(string name, DotNetAdapter dotNetInstanceAdapter, object baseObject, DotNetAdapter.MethodCacheEntry method)
         {
@@ -2651,6 +2596,7 @@ namespace System.Management.Automation
             {
                 method.PSMethodCtor = CreatePSMethodConstructor(method.methodInformationStructures);
             }
+
             return method.PSMethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
         }
 
@@ -2691,18 +2637,18 @@ namespace System.Management.Automation
                 return typeof(Func<PSNonBindableType>);
             }
 
-            var methodTypes = new Type[parameterInfos.Length + 1];
-            for (int i = 0; i < parameterInfos.Length; i++)
-            {
-                var parameterInfo = parameterInfos[i];
-                Type parameterType = parameterInfo.ParameterType;
-                methodTypes[i] = GetPSMethodProjectedType(parameterType, parameterInfo.IsOut);
-            }
-
-            methodTypes[parameterInfos.Length] = GetPSMethodProjectedType(methodInfo.ReturnType);
-
             try
             {
+                var methodTypes = new Type[parameterInfos.Length + 1];
+                for (int i = 0; i < parameterInfos.Length; i++)
+                {
+                    var parameterInfo = parameterInfos[i];
+                    Type parameterType = parameterInfo.ParameterType;
+                    methodTypes[i] = GetPSMethodProjectedType(parameterType, parameterInfo.IsOut);
+                }
+
+                methodTypes[parameterInfos.Length] = GetPSMethodProjectedType(methodInfo.ReturnType);
+
                 return DelegateHelpers.MakeDelegate(methodTypes);
             }
             catch (TypeLoadException)
@@ -2725,13 +2671,14 @@ namespace System.Management.Automation
 
             if (type.IsByRef)
             {
-                var elementType = type.GetElementType();
+                var elementType = GetPSMethodProjectedType(type.GetElementType());
                 type = isOut ? typeof(PSOutParameter<>).MakeGenericType(elementType)
                              : typeof(PSReference<>).MakeGenericType(elementType);
             }
             else if (type.IsPointer)
             {
-                type = typeof(PSPointer<>).MakeGenericType(type.GetElementType());
+                var elementType = GetPSMethodProjectedType(type.GetElementType());
+                type = typeof(PSPointer<>).MakeGenericType(elementType);
             }
 
             return type;
@@ -2743,13 +2690,14 @@ namespace System.Management.Automation
             var types = new Type[methods.Length];
             for (int i = 0; i < methods.Length; i++)
             {
-                types[i] = GetMethodGroupType((MethodInfo)methods[i].method);
+                types[i] = GetMethodGroupType((MethodInfo) methods[i].method);
             }
 
             var methodGroupType = CreateMethodGroup(types, 0, types.Length);
             Type psMethodType = typeof(PSMethod<>).MakeGenericType(methodGroupType);
             var delegateType = typeof(Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>);
-            return (Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>)Delegate.CreateDelegate(delegateType, psMethodType.GetMethod("Create", BindingFlags.NonPublic|BindingFlags.Static));
+            return (Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>) Delegate.CreateDelegate(delegateType,
+                psMethodType.GetMethod("Create", BindingFlags.NonPublic | BindingFlags.Static));
         }
 
         private static Type CreateMethodGroup(Type[] sourceTypes, int start, int count)
@@ -2769,29 +2717,69 @@ namespace System.Management.Automation
                 case 4: return typeof(MethodGroup<,,,>).MakeGenericType(types);
                 case int i when i < 8: return typeof(MethodGroup<,,,>).MakeGenericType(types[0], types[1], types[2], CreateMethodGroup(types, 3, i - 3));
                 case 8: return typeof(MethodGroup<,,,,,,,>).MakeGenericType(types);
-                case int i when i < 16: return typeof(MethodGroup<,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], CreateMethodGroup(types, 7, i - 7));
+                case int i when i < 16:
+                    return typeof(MethodGroup<,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], CreateMethodGroup(types, 7, i - 7));
                 case 16: return typeof(MethodGroup<,,,,,,,,,,,,,,,>).MakeGenericType(types);
-                case int i when i < 32: return typeof(MethodGroup<,,,,,,,,,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], types[7], types[8], types[9], types[10], types[11], types[12], types[13], types[14], CreateMethodGroup(types, 15, i - 15));
+                case int i when i < 32:
+                    return typeof(MethodGroup<,,,,,,,,,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], types[7], types[8], types[9], types[10],
+                        types[11], types[12], types[13], types[14], CreateMethodGroup(types, 15, i - 15));
                 case 32: return typeof(MethodGroup<,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,>).MakeGenericType(types);
                 default:
-                    return typeof(MethodGroup<,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], types[7], types[8], types[9], types[10], types[11], types[12], types[13], types[14], types[15], types[16], types[17], types[18], types[19], types[20], types[21], types[22], types[23], types[24], types[25], types[26], types[27], types[28], types[29], types[30], CreateMethodGroup(sourceTypes, start + 31, count - 31));
+                    return typeof(MethodGroup<,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], types[7], types[8],
+                        types[9], types[10], types[11], types[12], types[13], types[14], types[15], types[16], types[17], types[18], types[19], types[20], types[21], types[22], types[23],
+                        types[24], types[25], types[26], types[27], types[28], types[29], types[30], CreateMethodGroup(sourceTypes, start + 31, count - 31));
             }
         }
     }
 
-    internal abstract class PSNonBindableType { }
-    internal class VOID { }
-    internal class PSOutParameter<T> { }
-    internal struct PSPointer<T> { }
-    internal struct PSTypedReference { }
+    internal abstract class PSNonBindableType
+    {
+    }
 
-    internal abstract class MethodGroup { }
-    internal class MethodGroup<T1> : MethodGroup { }
-    internal class MethodGroup<T1, T2> : MethodGroup { }
-    internal class MethodGroup<T1, T2, T3, T4> : MethodGroup { }
-    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8> : MethodGroup { }
-    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> : MethodGroup { }
-    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32> : MethodGroup { }
+    internal class VOID
+    {
+    }
+
+    internal class PSOutParameter<T>
+    {
+    }
+
+    internal struct PSPointer<T>
+    {
+    }
+
+    internal struct PSTypedReference
+    {
+    }
+
+    internal abstract class MethodGroup
+    {
+    }
+
+    internal class MethodGroup<T1> : MethodGroup
+    {
+    }
+
+    internal class MethodGroup<T1, T2> : MethodGroup
+    {
+    }
+
+    internal class MethodGroup<T1, T2, T3, T4> : MethodGroup
+    {
+    }
+
+    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8> : MethodGroup
+    {
+    }
+
+    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> : MethodGroup
+    {
+    }
+
+    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31,
+        T32> : MethodGroup
+    {
+    }
 
     internal struct PSMethodSignatureEnumerator : IEnumerator<Type>
     {
@@ -2828,11 +2816,13 @@ namespace System.Management.Automation
                 var remaining = index - (length - 1);
                 return MoveNext(t, remaining);
             }
+
             if (index >= length)
             {
                 Current = null;
                 return false;
             }
+
             Current = t;
             return true;
         }
@@ -2862,9 +2852,14 @@ namespace System.Management.Automation
         }
 
         internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData)
-            : base(name, adapter, baseObject, adapterData) { }
+            : base(name, adapter, baseObject, adapterData)
+        {
+        }
+
         internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData, bool isSpecial, bool isHidden)
-            : base(name, adapter, baseObject, adapterData, isSpecial, isHidden) { }
+            : base(name, adapter, baseObject, adapterData, isSpecial, isHidden)
+        {
+        }
 
         /// <summary>
         /// Helper factory function since we cannot bind a delegate to a ConstructorInfo.
@@ -2908,47 +2903,39 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSParameterizedProperty(string name, Adapter adapter, object baseObject, object adapterData)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             this.adapter = adapter;
             this.adapterData = adapterData;
             this.baseObject = baseObject;
         }
+
         internal PSParameterizedProperty(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
         }
 
         /// <summary>
         /// Gets true if this property can be set
         /// </summary>
-        public bool IsSettable
-        {
-            get
-            {
-                return adapter.BaseParameterizedPropertyIsSettable(this);
-            }
-        }
+        public bool IsSettable => adapter.BaseParameterizedPropertyIsSettable(this);
 
         /// <summary>
         /// Gets true if this property can be read
         /// </summary>
-        public bool IsGettable
-        {
-            get
-            {
-                return adapter.BaseParameterizedPropertyIsGettable(this);
-            }
-        }
+        public bool IsGettable => adapter.BaseParameterizedPropertyIsGettable(this);
 
         #region virtual implementation
+
         /// <summary>
         /// Invokes the getter method and returns its result
         /// </summary>
@@ -2962,6 +2949,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("arguments");
             }
+
             return this.adapter.BaseParameterizedPropertyGet(this, arguments);
         }
 
@@ -2978,30 +2966,19 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("arguments");
             }
+
             this.adapter.BaseParameterizedPropertySet(this, valueToSet, arguments);
         }
 
         /// <summary>
         /// Returns a collection of the definitions for this property
         /// </summary>
-        public override Collection<string> OverloadDefinitions
-        {
-            get
-            {
-                return adapter.BaseParameterizedPropertyDefinitions(this);
-            }
-        }
+        public override Collection<string> OverloadDefinitions => adapter.BaseParameterizedPropertyDefinitions(this);
 
         /// <summary>
         /// Gets the type of the value for this member.
         /// </summary>
-        public override string TypeNameOfValue
-        {
-            get
-            {
-                return adapter.BaseParameterizedPropertyType(this);
-            }
-        }
+        public override string TypeNameOfValue => adapter.BaseParameterizedPropertyType(this);
 
         /// <summary>
         /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
@@ -3017,15 +2994,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member type
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.ParameterizedProperty;
-            }
-        }
-        #endregion virtual implementation
+        public override PSMemberTypes MemberType => PSMemberTypes.ParameterizedProperty;
 
+        #endregion virtual implementation
     }
 
     /// <summary>
@@ -3056,24 +3027,26 @@ namespace System.Management.Automation
                 returnValue.Append(member.Name);
                 returnValue.Append(", ");
             }
+
             if (returnValue.Length > 2)
             {
                 returnValue.Remove(returnValue.Length - 2, 2);
             }
+
             returnValue.Insert(0, this.Name);
             returnValue.Append("}");
             return returnValue.ToString();
         }
 
-        private PSMemberInfoIntegratingCollection<PSMemberInfo> _members;
-        private PSMemberInfoIntegratingCollection<PSPropertyInfo> _properties;
-        private PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
+        private readonly PSMemberInfoIntegratingCollection<PSMemberInfo> _members;
+        private readonly PSMemberInfoIntegratingCollection<PSPropertyInfo> _properties;
+        private readonly PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
         internal PSMemberInfoInternalCollection<PSMemberInfo> internalMembers;
-        private PSObject _constructorPSObject;
+        private readonly PSObject _constructorPSObject;
 
-        private static Collection<CollectionEntry<PSMemberInfo>> s_emptyMemberCollection = new Collection<CollectionEntry<PSMemberInfo>>();
-        private static Collection<CollectionEntry<PSMethodInfo>> s_emptyMethodCollection = new Collection<CollectionEntry<PSMethodInfo>>();
-        private static Collection<CollectionEntry<PSPropertyInfo>> s_emptyPropertyCollection = new Collection<CollectionEntry<PSPropertyInfo>>();
+        private static readonly Collection<CollectionEntry<PSMemberInfo>> s_emptyMemberCollection = new Collection<CollectionEntry<PSMemberInfo>>();
+        private static readonly Collection<CollectionEntry<PSMethodInfo>> s_emptyMethodCollection = new Collection<CollectionEntry<PSMethodInfo>>();
+        private static readonly Collection<CollectionEntry<PSPropertyInfo>> s_emptyPropertyCollection = new Collection<CollectionEntry<PSPropertyInfo>>();
 
         /// <summary>
         /// Initializes a new instance of PSMemberSet with no initial members
@@ -3082,10 +3055,11 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSMemberSet(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             this.internalMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
             _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_emptyMemberCollection);
@@ -3101,15 +3075,17 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSMemberSet(string name, IEnumerable<PSMemberInfo> members)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             if (members == null)
             {
                 throw PSTraceSource.NewArgumentNullException("members");
             }
+
             this.internalMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
             foreach (PSMemberInfo member in members)
             {
@@ -3117,16 +3093,18 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("members");
                 }
+
                 this.internalMembers.Add(member.Copy());
             }
+
             _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_emptyMemberCollection);
             _properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this, s_emptyPropertyCollection);
             _methods = new PSMemberInfoIntegratingCollection<PSMethodInfo>(this, s_emptyMethodCollection);
         }
 
-        private static Collection<CollectionEntry<PSMemberInfo>> s_typeMemberCollection = GetTypeMemberCollection();
-        private static Collection<CollectionEntry<PSMethodInfo>> s_typeMethodCollection = GetTypeMethodCollection();
-        private static Collection<CollectionEntry<PSPropertyInfo>> s_typePropertyCollection = GetTypePropertyCollection();
+        private static readonly Collection<CollectionEntry<PSMemberInfo>> s_typeMemberCollection = GetTypeMemberCollection();
+        private static readonly Collection<CollectionEntry<PSMethodInfo>> s_typeMethodCollection = GetTypeMethodCollection();
+        private static readonly Collection<CollectionEntry<PSPropertyInfo>> s_typePropertyCollection = GetTypePropertyCollection();
 
         private static Collection<CollectionEntry<PSMemberInfo>> GetTypeMemberCollection()
         {
@@ -3166,15 +3144,17 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal PSMemberSet(string name, PSObject mshObject)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             if (mshObject == null)
             {
                 throw PSTraceSource.NewArgumentNullException("mshObject");
             }
+
             _constructorPSObject = mshObject;
             this.internalMembers = mshObject.InstanceMembers;
             _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_typeMemberCollection);
@@ -3188,56 +3168,30 @@ namespace System.Management.Automation
         /// Gets a flag indicating whether the memberset will inherit members of the memberset
         /// of the same name in the "parent" class.
         /// </summary>
-        public bool InheritMembers
-        {
-            get
-            {
-                return this.inheritMembers;
-            }
-        }
+        public bool InheritMembers => this.inheritMembers;
 
         /// <summary>
         /// Gets the internal member collection
         /// </summary>
-        internal virtual PSMemberInfoInternalCollection<PSMemberInfo> InternalMembers
-        {
-            get { return this.internalMembers; }
-        }
+        internal virtual PSMemberInfoInternalCollection<PSMemberInfo> InternalMembers => this.internalMembers;
 
         /// <summary>
         /// Gets the member collection
         /// </summary>
-        public PSMemberInfoCollection<PSMemberInfo> Members
-        {
-            get
-            {
-                return _members;
-            }
-        }
+        public PSMemberInfoCollection<PSMemberInfo> Members => _members;
 
         /// <summary>
         /// Gets the Property collection, or the members that are actually properties.
         /// </summary>
-        public PSMemberInfoCollection<PSPropertyInfo> Properties
-        {
-            get
-            {
-                return _properties;
-            }
-        }
+        public PSMemberInfoCollection<PSPropertyInfo> Properties => _properties;
 
         /// <summary>
         /// Gets the Method collection, or the members that are actually methods.
         /// </summary>
-        public PSMemberInfoCollection<PSMethodInfo> Methods
-        {
-            get
-            {
-                return _methods;
-            }
-        }
+        public PSMemberInfoCollection<PSMethodInfo> Methods => _methods;
 
         #region virtual implementation
+
         /// <summary>
         /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
         /// </summary>
@@ -3251,6 +3205,7 @@ namespace System.Management.Automation
                 {
                     memberSet.Members.Add(member);
                 }
+
                 CloneBaseProperties(memberSet);
                 return memberSet;
             }
@@ -3263,13 +3218,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member type. For PSMemberSet the member type is PSMemberTypes.MemberSet.
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.MemberSet;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.MemberSet;
 
         /// <summary>
         /// Gets the value of this member. The getter returns the PSMemberSet itself.
@@ -3277,29 +3226,17 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">When trying to set the property</exception>
         public override object Value
         {
-            get
-            {
-                return this;
-            }
-            set
-            {
-                throw new ExtendedTypeSystemException("CannotChangePSMemberSetValue", null,
-                    ExtendedTypeSystem.CannotSetValueForMemberType, this.GetType().FullName);
-            }
+            get => this;
+            set => throw new ExtendedTypeSystemException("CannotChangePSMemberSetValue", null,
+                ExtendedTypeSystem.CannotSetValueForMemberType, this.GetType().FullName);
         }
 
         /// <summary>
         /// Gets the type of the value for this member. This returns typeof(PSMemberSet).FullName.
         /// </summary>
-        public override string TypeNameOfValue
-        {
-            get
-            {
-                return typeof(PSMemberSet).FullName;
-            }
-        }
-        #endregion virtual implementation
+        public override string TypeNameOfValue => typeof(PSMemberSet).FullName;
 
+        #endregion virtual implementation
     }
 
     /// <summary>
@@ -3314,8 +3251,8 @@ namespace System.Management.Automation
     /// </remarks>
     internal class PSInternalMemberSet : PSMemberSet
     {
-        private object _syncObject = new Object();
-        private PSObject _psObject;
+        private readonly object _syncObject = new Object();
+        private readonly PSObject _psObject;
 
         #region Constructor
 
@@ -3372,7 +3309,7 @@ namespace System.Management.Automation
                                 default:
                                     Diagnostics.Assert(false,
                                         string.Format(CultureInfo.InvariantCulture,
-                                        "PSInternalMemberSet cannot process {0}", name));
+                                            "PSInternalMemberSet cannot process {0}", name));
                                     break;
                             }
                         }
@@ -3438,7 +3375,7 @@ namespace System.Management.Automation
         private void GenerateInternalMembersFromPSObject()
         {
             PSMemberInfoCollection<PSMemberInfo> members = PSObject.dotNetInstanceAdapter.BaseGetMembers<PSMemberInfo>(
-               _psObject);
+                _psObject);
             foreach (PSMemberInfo member in members)
             {
                 internalMembers.Add(member.Copy());
@@ -3473,8 +3410,10 @@ namespace System.Management.Automation
                     returnValue.Append(property);
                     returnValue.Append(", ");
                 }
+
                 returnValue.Remove(returnValue.Length - 2, 2);
             }
+
             returnValue.Append("}");
             return returnValue.ToString();
         }
@@ -3487,22 +3426,25 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public PSPropertySet(string name, IEnumerable<string> referencedPropertyNames)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             this.name = name;
             if (referencedPropertyNames == null)
             {
                 throw PSTraceSource.NewArgumentNullException("referencedPropertyNames");
             }
+
             ReferencedPropertyNames = new Collection<string>();
             foreach (string referencedPropertyName in referencedPropertyNames)
             {
-                if (String.IsNullOrEmpty(referencedPropertyName))
+                if (string.IsNullOrEmpty(referencedPropertyName))
                 {
                     throw PSTraceSource.NewArgumentException("referencedPropertyNames");
                 }
+
                 ReferencedPropertyNames.Add(referencedPropertyName);
             }
         }
@@ -3513,6 +3455,7 @@ namespace System.Management.Automation
         public Collection<string> ReferencedPropertyNames { get; }
 
         #region virtual implementation
+
         /// <summary>
         /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
         /// </summary>
@@ -3523,16 +3466,11 @@ namespace System.Management.Automation
             CloneBaseProperties(member);
             return member;
         }
+
         /// <summary>
         /// Gets the member type
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.PropertySet;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.PropertySet;
 
         /// <summary>
         /// Gets the PSPropertySet itself.
@@ -3540,27 +3478,16 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">When setting the member</exception>
         public override object Value
         {
-            get
-            {
-                return this;
-            }
-            set
-            {
-                throw new ExtendedTypeSystemException("CannotChangePSPropertySetValue", null,
-                    ExtendedTypeSystem.CannotSetValueForMemberType, this.GetType().FullName);
-            }
+            get => this;
+            set => throw new ExtendedTypeSystemException("CannotChangePSPropertySetValue", null,
+                ExtendedTypeSystem.CannotSetValueForMemberType, this.GetType().FullName);
         }
 
         /// <summary>
         /// Gets the type of the value for this member. This returns typeof(PSPropertySet).FullName.
         /// </summary>
-        public override string TypeNameOfValue
-        {
-            get
-            {
-                return typeof(PSPropertySet).FullName;
-            }
-        }
+        public override string TypeNameOfValue => typeof(PSPropertySet).FullName;
+
         #endregion virtual implementation
     }
 
@@ -3599,6 +3526,7 @@ namespace System.Management.Automation
 
             return eventDefinition.ToString();
         }
+
         internal EventInfo baseEvent;
 
         /// <summary>
@@ -3613,6 +3541,7 @@ namespace System.Management.Automation
         }
 
         #region virtual implementation
+
         /// <summary>
         /// returns a new PSMemberInfo that is a copy of this PSMemberInfo
         /// </summary>
@@ -3627,13 +3556,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the member type
         /// </summary>
-        public override PSMemberTypes MemberType
-        {
-            get
-            {
-                return PSMemberTypes.Event;
-            }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.Event;
 
         /// <summary>
         /// Gets the value of this member. The getter returns the
@@ -3642,27 +3565,15 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">When setting the member</exception>
         public sealed override object Value
         {
-            get
-            {
-                return baseEvent;
-            }
-            set
-            {
-                throw new ExtendedTypeSystemException("CannotChangePSEventInfoValue", null,
-                    ExtendedTypeSystem.CannotSetValueForMemberType, this.GetType().FullName);
-            }
+            get => baseEvent;
+            set => throw new ExtendedTypeSystemException("CannotChangePSEventInfoValue", null,
+                ExtendedTypeSystem.CannotSetValueForMemberType, this.GetType().FullName);
         }
 
         /// <summary>
         /// Gets the type of the value for this member. This always returns typeof(PSMethod).FullName.
         /// </summary>
-        public override string TypeNameOfValue
-        {
-            get
-            {
-                return typeof(PSEvent).FullName;
-            }
-        }
+        public override string TypeNameOfValue => typeof(PSEvent).FullName;
 
         #endregion virtual implementation
     }
@@ -3684,23 +3595,17 @@ namespace System.Management.Automation
         }
 
         /// <summary/>
-        public override PSMemberTypes MemberType
-        {
-            get { return PSMemberTypes.Dynamic; }
-        }
+        public override PSMemberTypes MemberType => PSMemberTypes.Dynamic;
 
         /// <summary/>
         public override object Value
         {
-            get { throw PSTraceSource.NewInvalidOperationException(); }
-            set { throw PSTraceSource.NewInvalidOperationException(); }
+            get => throw PSTraceSource.NewInvalidOperationException();
+            set => throw PSTraceSource.NewInvalidOperationException();
         }
 
         /// <summary/>
-        public override string TypeNameOfValue
-        {
-            get { return "dynamic"; }
-        }
+        public override string TypeNameOfValue => "dynamic";
 
         /// <summary/>
         public override PSMemberInfo Copy()
@@ -3724,6 +3629,7 @@ namespace System.Management.Automation
             {
                 return WildcardPattern.Get(name, WildcardOptions.IgnoreCase);
             }
+
             return null;
         }
 
@@ -3736,7 +3642,8 @@ namespace System.Management.Automation
         /// <param name="memberTypes">type of members we want to retrieve</param>
         /// <returns>A collection of members of the right types and name extracted from memberList.</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
-        internal static PSMemberInfoInternalCollection<T> Match<T>(PSMemberInfoInternalCollection<T> memberList, string name, WildcardPattern nameMatch, PSMemberTypes memberTypes) where T : PSMemberInfo
+        internal static PSMemberInfoInternalCollection<T> Match<T>(PSMemberInfoInternalCollection<T> memberList, string name, WildcardPattern nameMatch, PSMemberTypes memberTypes)
+            where T : PSMemberInfo
         {
             PSMemberInfoInternalCollection<T> returnValue = new PSMemberInfoInternalCollection<T>();
             if (memberList == null)
@@ -3744,10 +3651,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("memberList");
             }
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             if (nameMatch == null)
             {
                 T member = memberList[name];
@@ -3755,6 +3663,7 @@ namespace System.Management.Automation
                 {
                     returnValue.Add(member);
                 }
+
                 return returnValue;
             }
 
@@ -3765,6 +3674,7 @@ namespace System.Management.Automation
                     returnValue.Add(member);
                 }
             }
+
             return returnValue;
         }
     }
@@ -3775,15 +3685,18 @@ namespace System.Management.Automation
     public abstract class PSMemberInfoCollection<T> : IEnumerable<T> where T : PSMemberInfo
     {
         #region ctor
+
         /// <summary>
         /// Initializes a new instance of an PSMemberInfoCollection derived class
         /// </summary>
         protected PSMemberInfoCollection()
         {
         }
+
         #endregion ctor
 
         #region abstract
+
         /// <summary>
         /// Adds a member to this collection
         /// </summary>
@@ -3834,13 +3747,12 @@ namespace System.Management.Automation
         /// <param name="name">name of the member to look for</param>
         /// <returns>the member matching name</returns>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
-        public abstract T this[string name]
-        {
-            get;
-        }
+        public abstract T this[string name] { get; }
+
         #endregion abstract
 
         #region Match
+
         /// <summary>
         /// Returns all members in the collection matching name
         /// </summary>
@@ -3872,11 +3784,11 @@ namespace System.Management.Automation
 
         internal static bool IsReservedName(string name)
         {
-            return (String.Equals(name, PSObject.BaseObjectMemberSetName, StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(name, PSObject.AdaptedMemberSetName, StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(name, PSObject.ExtendedMemberSetName, StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(name, PSObject.PSObjectMemberSetName, StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(name, PSObject.PSTypeNames, StringComparison.OrdinalIgnoreCase));
+            return (string.Equals(name, PSObject.BaseObjectMemberSetName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(name, PSObject.AdaptedMemberSetName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(name, PSObject.ExtendedMemberSetName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(name, PSObject.PSObjectMemberSetName, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(name, PSObject.PSTypeNames, StringComparison.OrdinalIgnoreCase));
         }
 
         #region IEnumerable
@@ -3895,6 +3807,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>the enumerator for this collection</returns>
         public abstract IEnumerator<T> GetEnumerator();
+
         #endregion IEnumerable
     }
 
@@ -3907,7 +3820,7 @@ namespace System.Management.Automation
     /// </remarks>
     public class ReadOnlyPSMemberInfoCollection<T> : IEnumerable<T> where T : PSMemberInfo
     {
-        private PSMemberInfoInternalCollection<T> _members;
+        private readonly PSMemberInfoInternalCollection<T> _members;
 
         /// <summary>
         /// Initializes a new instance of ReadOnlyPSMemberInfoCollection with the given members
@@ -3920,6 +3833,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("members");
             }
+
             _members = members;
         }
 
@@ -3933,10 +3847,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
+
                 return _members[name];
             }
         }
@@ -3949,10 +3864,11 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public ReadOnlyPSMemberInfoCollection<T> Match(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             return _members.Match(name);
         }
 
@@ -3965,10 +3881,11 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             return _members.Match(name, memberTypes);
         }
 
@@ -3993,14 +3910,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the number of elements in this collection
         /// </summary>
-        public int Count { get { return _members.Count; } }
+        public int Count => _members.Count;
 
         /// <summary>
         /// Returns the 0 based member identified by index
         /// </summary>
         /// <param name="index">index of the member to retrieve</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
-        public T this[int index] { get { return _members[index]; } }
+        public T this[int index] => _members[index];
     }
 
     /// <summary>
@@ -4050,6 +3967,7 @@ namespace System.Management.Automation
             {
                 _countHidden--;
             }
+
             if (newMember.IsHidden)
             {
                 _countHidden++;
@@ -4128,7 +4046,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override void Remove(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4154,6 +4072,7 @@ namespace System.Management.Automation
                     {
                         _countHidden--;
                     }
+
                     _members.Remove(name);
                 }
             }
@@ -4169,7 +4088,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
@@ -4194,10 +4113,11 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             return Match(name, PSMemberTypes.All, MshMemberMatchOptions.None);
         }
 
@@ -4210,10 +4130,11 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             return Match(name, memberTypes, MshMemberMatchOptions.None);
         }
 
@@ -4227,7 +4148,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes, MshMemberMatchOptions matchOptions)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4344,10 +4265,11 @@ namespace System.Management.Automation
     internal class CollectionEntry<T> where T : PSMemberInfo
     {
         internal delegate PSMemberInfoInternalCollection<T> GetMembersDelegate(PSObject obj);
+
         internal delegate T GetMemberDelegate(PSObject obj, string name);
 
         internal CollectionEntry(GetMembersDelegate getMembers, GetMemberDelegate getMember,
-                                    bool shouldReplicateWhenReturning, bool shouldCloneWhenReturning, string collectionNameForTracing)
+            bool shouldReplicateWhenReturning, bool shouldCloneWhenReturning, string collectionNameForTracing)
         {
             GetMembers = getMembers;
             GetMember = getMember;
@@ -4366,6 +4288,7 @@ namespace System.Management.Automation
 
         internal string CollectionNameForTracing { get; }
     }
+
     #endregion CollectionEntry
 
     internal static class ReservedNameMembers
@@ -4385,6 +4308,7 @@ namespace System.Management.Automation
                 mshOwner.InstanceMembers.Add(memberSet);
                 memberSet.instance = mshOwner;
             }
+
             return memberSet;
         }
 
@@ -4472,8 +4396,8 @@ namespace System.Management.Automation
 
         internal Collection<CollectionEntry<T>> Collections { get; }
 
-        private PSObject _mshOwner;
-        private PSMemberSet _memberSetOwner;
+        private readonly PSObject _mshOwner;
+        private readonly PSMemberSet _memberSetOwner;
 
         internal PSMemberInfoIntegratingCollection(object owner, Collection<CollectionEntry<T>> collections)
         {
@@ -4641,6 +4565,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 memberToBeAdded.ReplicateInstance(_mshOwner);
                 _mshOwner.InstanceMembers.Add(memberToBeAdded, preValidated);
 
@@ -4668,7 +4593,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override void Remove(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4710,7 +4635,7 @@ namespace System.Management.Automation
         /// </param>
         private void EnsureReservedMemberIsLoaded(string name)
         {
-            Diagnostics.Assert(!String.IsNullOrEmpty(name),
+            Diagnostics.Assert(!string.IsNullOrEmpty(name),
                 "Name cannot be null or empty");
 
             // Length >= psbase (shortest special member)
@@ -4750,7 +4675,7 @@ namespace System.Management.Automation
             {
                 using (PSObject.memberResolution.TraceScope("Lookup"))
                 {
-                    if (String.IsNullOrEmpty(name))
+                    if (string.IsNullOrEmpty(name))
                     {
                         throw PSTraceSource.NewArgumentException("name");
                     }
@@ -4767,8 +4692,7 @@ namespace System.Management.Automation
                         if (PSObject.HasInstanceMembers(_mshOwner, out instanceMembers))
                         {
                             member = instanceMembers[name];
-                            T memberAsT = member as T;
-                            if (memberAsT != null)
+                            if (member is T memberAsT)
                             {
                                 PSObject.memberResolution.WriteLine("Found PSObject instance member: {0}.", name);
                                 return memberAsT;
@@ -4779,8 +4703,7 @@ namespace System.Management.Automation
                     {
                         member = _memberSetOwner.InternalMembers[name];
                         delegateOwner = _memberSetOwner.instance;
-                        T memberAsT = member as T;
-                        if (memberAsT != null)
+                        if (member is T memberAsT)
                         {
                             // In membersets we cannot replicate the instance when adding
                             // since the memberset might not yet have an associated PSObject.
@@ -4798,17 +4721,19 @@ namespace System.Management.Automation
                     foreach (CollectionEntry<T> collection in Collections)
                     {
                         Diagnostics.Assert(delegateOwner != null, "all integrating collections with non empty collections have an associated PSObject");
-                        T memberAsT = collection.GetMember((PSObject)delegateOwner, name);
+                        T memberAsT = collection.GetMember((PSObject) delegateOwner, name);
                         if (memberAsT != null)
                         {
                             if (collection.ShouldCloneWhenReturning)
                             {
-                                memberAsT = (T)memberAsT.Copy();
+                                memberAsT = (T) memberAsT.Copy();
                             }
+
                             if (collection.ShouldReplicateWhenReturning)
                             {
                                 memberAsT.ReplicateInstance(delegateOwner);
                             }
+
                             return memberAsT;
                         }
                     }
@@ -4831,8 +4756,7 @@ namespace System.Management.Automation
                     {
                         if (member.MatchesOptions(matchOptions))
                         {
-                            T memberAsT = member as T;
-                            if (memberAsT != null)
+                            if (member is T memberAsT)
                             {
                                 returnValue.Add(memberAsT);
                             }
@@ -4846,8 +4770,7 @@ namespace System.Management.Automation
                     {
                         if (member.MatchesOptions(matchOptions))
                         {
-                            T memberAsT = member as T;
-                            if (memberAsT != null)
+                            if (member is T memberAsT)
                             {
                                 member.ReplicateInstance(delegateOwner);
                                 returnValue.Add(memberAsT);
@@ -4862,7 +4785,7 @@ namespace System.Management.Automation
                 delegateOwner = PSObject.AsPSObject(delegateOwner);
                 foreach (CollectionEntry<T> collection in Collections)
                 {
-                    PSMemberInfoInternalCollection<T> members = collection.GetMembers((PSObject)delegateOwner);
+                    PSMemberInfoInternalCollection<T> members = collection.GetMembers((PSObject) delegateOwner);
                     foreach (T member in members)
                     {
                         PSMemberInfo previousMember = returnValue[member.Name];
@@ -4872,27 +4795,32 @@ namespace System.Management.Automation
                                 member.Name, member.MemberType, previousMember.MemberType);
                             continue;
                         }
+
                         if (!member.MatchesOptions(matchOptions))
                         {
                             PSObject.memberResolution.WriteLine("Skipping hidden member \"{0}\".", member.Name);
                             continue;
                         }
+
                         T memberToAdd;
                         if (collection.ShouldCloneWhenReturning)
                         {
-                            memberToAdd = (T)member.Copy();
+                            memberToAdd = (T) member.Copy();
                         }
                         else
                         {
                             memberToAdd = member;
                         }
+
                         if (collection.ShouldReplicateWhenReturning)
                         {
                             memberToAdd.ReplicateInstance(delegateOwner);
                         }
+
                         returnValue.Add(memberToAdd);
                     }
                 }
+
                 return returnValue;
             }
         }
@@ -4905,10 +4833,11 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             return Match(name, PSMemberTypes.All, MshMemberMatchOptions.None);
         }
 
@@ -4921,10 +4850,11 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
+
             return Match(name, memberTypes, MshMemberMatchOptions.None);
         }
 
@@ -4940,7 +4870,7 @@ namespace System.Management.Automation
         {
             using (PSObject.memberResolution.TraceScope("Matching \"{0}\"", name))
             {
-                if (String.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
@@ -4978,7 +4908,7 @@ namespace System.Management.Automation
         {
             private S _current;
             private int _currentIndex;
-            private PSMemberInfoInternalCollection<S> _allMembers;
+            private readonly PSMemberInfoInternalCollection<S> _allMembers;
 
             /// <summary>
             /// Constructs this instance to enumerate over members
@@ -5024,6 +4954,7 @@ namespace System.Management.Automation
                     {
                         break;
                     }
+
                     _currentIndex++;
                 }
 
@@ -5049,17 +4980,12 @@ namespace System.Management.Automation
                     {
                         throw PSTraceSource.NewInvalidOperationException();
                     }
+
                     return _current;
                 }
             }
 
-            object IEnumerator.Current
-            {
-                get
-                {
-                    return ((IEnumerator<S>)this).Current;
-                }
-            }
+            object IEnumerator.Current => ((IEnumerator<S>) this).Current;
 
             void IEnumerator.Reset()
             {
@@ -5070,7 +4996,9 @@ namespace System.Management.Automation
             /// <summary>
             /// Not supported
             /// </summary>
-            public void Dispose() { }
+            public void Dispose()
+            {
+            }
         }
     }
 
@@ -5078,4 +5006,3 @@ namespace System.Management.Automation
 }
 
 #pragma warning restore 56503
-

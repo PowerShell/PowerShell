@@ -91,15 +91,41 @@ namespace System.Management.Automation
     {
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
-            string encodingName = inputData as String;
-            Encoding foundEncoding;
-            if (encodingName != null && EncodingConversion.encodingMap.TryGetValue(encodingName, out foundEncoding))
+            switch (inputData)
             {
-                return foundEncoding;
+                case string stringName:
+                    if (EncodingConversion.encodingMap.TryGetValue(stringName, out Encoding foundEncoding))
+                    {
+                        return foundEncoding;
+                    }
+                    else
+                    {
+                        return System.Text.Encoding.GetEncoding(stringName);
+                    }
+                case int intName:
+                        return System.Text.Encoding.GetEncoding(intName);
             }
+
             return inputData;
         }
-
     }
 
+    /// <summary>
+    /// Provides the set of Encoding values for tab completion of an Encoding parameter.
+    /// </summary>
+    internal sealed class ArgumentEncodingCompletionsAttribute : ArgumentCompletionsAttribute
+    {
+        public ArgumentEncodingCompletionsAttribute() : base(
+            EncodingConversion.Ascii,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+        )
+        {}
+    }
 }

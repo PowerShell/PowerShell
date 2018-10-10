@@ -40,6 +40,13 @@ Describe "Get-Member" -Tags "CI" {
 
 	Get-Member -InputObject $o | Should -Not -BeNullOrEmpty
     }
+
+    It "Should be able to be called on IntPtr" {
+        $results = [System.IntPtr] | Get-Member -Type Property -Static | Sort-Object -Property Name
+        $results.Count | Should -BeExactly 2
+        $results[0].Name | Should -BeExactly 'Size'
+        $results[1].Name | Should -BeExactly 'Zero'
+    }
 }
 
 Describe "Get-Member DRT Unit Tests" -Tags "CI" {

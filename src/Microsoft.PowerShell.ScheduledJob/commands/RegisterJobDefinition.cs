@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             if (definition != null)
             {
                 // Set the MaxCount value if available.
-                if (MyInvocation.BoundParameters.ContainsKey("MaxResultCount"))
+                if (MyInvocation.BoundParameters.ContainsKey(nameof(MaxResultCount)))
                 {
                     if (MaxResultCount < 1)
                     {
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 {
                     // If RunEvery parameter is specified then create a job trigger for the definition that
                     // runs the job at the requested interval.
-                    if (MyInvocation.BoundParameters.ContainsKey("RunEvery"))
+                    if (MyInvocation.BoundParameters.ContainsKey(nameof(RunEvery)))
                     {
                         AddRepetitionJobTriggerToDefinition(
                             definition,

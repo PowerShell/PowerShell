@@ -17,13 +17,13 @@
 
 - Use `Squash and merge` by default to keep clean commit history in Master branch.
 
-  ![](./Images/squash-merge.png)&nbsp;&nbsp;&nbsp;&nbsp;![](./Images/squash-confirm.png)
+  ![Squash Merge Example](./Images/squash-merge.png)&nbsp;&nbsp;&nbsp;&nbsp;![Squash Confirm Example](./Images/squash-confirm.png)
 
 - Use `Create a merge commit` for feature-work PRs **only if** the commit history of the PR is reasonably clean.
   After using this option, GitHub will make it your default option for merging a PR.
   Do remember to change the default back to `Squash and merge`.
 
-  ![](./Images/merge-commit.png)&nbsp;&nbsp;&nbsp;&nbsp;![](./Images/merge-commit-confirm.png)
+  ![Merge Commit Example](./Images/merge-commit.png)&nbsp;&nbsp;&nbsp;&nbsp;![Merge Confirm Example](./Images/merge-commit-confirm.png)
 
 - Avoid `Rebase and merge` unless you have a strong argument for using it.
 

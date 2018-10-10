@@ -40,6 +40,10 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       { Add-Content -Path $() -Value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddContentCommand"
     }
 
+    It "Should throw an error on a directory" { 
+      { Add-Content -Path . -Value "WriteContainerContentException" -ErrorAction Stop } | Should -Throw -ErrorId "WriteContainerContentException,Microsoft.PowerShell.Commands.AddContentCommand"
+    }
+
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
     It "should throw 'NotSupportedException' when you add-content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS) {
       { Add-Content -Path HKLM:\\software\\microsoft -Value "ShouldNotWorkBecausePathIsUnsupported" -ErrorAction Stop } | Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.AddContentCommand"

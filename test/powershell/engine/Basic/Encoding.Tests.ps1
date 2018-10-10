@@ -8,11 +8,13 @@ Describe "File encoding tests" -Tag CI {
                 Where-Object { $_.Parameters -and $_.Parameters['Encoding'] } |
                 ForEach-Object { @{ Command = $_ } }
         }
+
         It "Encoding parameter of command '<Command>' is type 'Encoding'" -Testcase $testCases {
             param ( $command )
             $command.Parameters['Encoding'].ParameterType.FullName | Should -BeExactly "System.Text.Encoding"
         }
     }
+
     Context "File contents are UTF8 without BOM" {
         BeforeAll {
             $testStr = "t" + ([char]233) + "st"
@@ -70,6 +72,31 @@ Describe "File encoding tests" -Tag CI {
             $bytes = Get-FileBytes $outputFile
             $Expected = $( $ExpectedWithNewline; $ExpectedWithNewline )
             $bytes -join "-" | should -Be ($Expected -join "-")
+        }
+    }
+
+    Context "Parameter 'Encoding' should accept numeric and string Ids" {
+        BeforeAll {
+            $testValue = "ф"
+            if ($IsWindows) {
+                # Expected bytes: 244 - 'ф', 13  - '`r', 10  - '`n'.
+                $expectedBytes = 244,13,10 -join "-"
+            } else {
+                $expectedBytes = 244,10 -join "-"
+            }
+        }
+
+        It "Parameter 'Encoding' should accept '<encoding>'" -TestCases @(
+            @{ encoding = 1251 }
+            @{ encoding = "windows-1251" }
+        ) {
+            param ( $encoding )
+            $testFile = "${TESTDRIVE}/fileEncoding-$($encoding).txt"
+
+            Set-Content $testFile -Encoding $encoding -Value $testValue
+
+            Get-Content $testFile -Encoding $encoding | Should -BeExactly $testValue
+            (Get-Content $testFile -AsByteStream) -join "-" | Should -BeExactly $expectedBytes
         }
     }
 }

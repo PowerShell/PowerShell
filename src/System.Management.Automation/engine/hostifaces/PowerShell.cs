@@ -559,7 +559,7 @@ namespace System.Management.Automation
     ///
     /// Provides a simple interface to execute a powershell command:
     /// <code>
-    ///    Powershell.Create("get-process").Invoke();
+    ///    Powershell.Create().AddScript("get-process").Invoke();
     /// </code>
     /// The above statement creates a local runspace using default
     /// configuration, executes the command and then closes the runspace.

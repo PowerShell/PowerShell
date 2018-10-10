@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] LiteralPath { get; set; }
 
         /// <summary>
-        /// Ojbect to process.
+        /// Object to process.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ByInputObject", ValueFromPipeline = true)]
         public PSObject InputObject { get; set; }
@@ -50,17 +50,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
         [ArgumentToEncodingTransformationAttribute()]
-        [ArgumentCompletions(
-            EncodingConversion.Ascii,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.OEM,
-            EncodingConversion.Unicode,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf8Bom,
-            EncodingConversion.Utf8NoBom,
-            EncodingConversion.Utf32
-            )]
+        [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
