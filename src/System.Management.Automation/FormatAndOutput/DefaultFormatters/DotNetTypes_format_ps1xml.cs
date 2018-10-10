@@ -652,7 +652,7 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Diagnostics_Process_IncludeCommandLine()
         {
-            yield return new FormatViewDefinition("ProcessWithUserName",
+            yield return new FormatViewDefinition("ProcessWithCommandLine",
                 TableControl.Create()
                     .AddHeader(Alignment.Right, label: "WS(M)", width: 10)
                     .AddHeader(Alignment.Right, label: "CPU(s)", width: 8)

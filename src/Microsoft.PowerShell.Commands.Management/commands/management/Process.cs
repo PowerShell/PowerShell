@@ -776,10 +776,12 @@ namespace Microsoft.PowerShell.Commands
 
                     while (PID_FIELD_LENGTH + SEP_LENGTH < end)
                     {
-                        int.TryParse(output.Slice(start, PID_FIELD_LENGTH), out pid);
-                        cmdLine = output.Slice(start + PID_FIELD_LENGTH + SEP_LENGTH, end - PID_FIELD_LENGTH - SEP_LENGTH);
+                        if (int.TryParse(output.Slice(start, PID_FIELD_LENGTH), out pid))
+                        {
+                            cmdLine = output.Slice(start + PID_FIELD_LENGTH + SEP_LENGTH, end - PID_FIELD_LENGTH - SEP_LENGTH);
 
-                        dict.TryAdd(pid, cmdLine.ToString());
+                            dict.TryAdd(pid, cmdLine.ToString());
+                        }
 
                         // Go to next line.
                         start += end + EOL_LENGTH;
