@@ -1410,8 +1410,6 @@ function Start-PSxUnit {
             Remove-Item $SequentialTestResultsFile -Force -ErrorAction SilentlyContinue
         }
         dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Sequential -p:ParallelizeTestCollections=false --test-adapter-path:. "--logger:xunit;LogFilePath=$SequentialTestResultsFile"
-        Publish-TestResults -Path $sequentialTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
-
         $extraParams = @()
 
         # we are having intermittent issues on macOS with these tests failing.
@@ -1429,7 +1427,7 @@ function Start-PSxUnit {
             Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
         }
         dotnet test --configuration $Options.configuration --filter FullyQualifiedName~PSTests.Parallel --no-build  --test-adapter-path:. "--logger:xunit;LogFilePath=$ParallelTestResultsFile"
-        Publish-TestResults -Path $parallelTestResultsFile -Type 'XUnit' -Title 'Xunit Parallel'
+        Publish-TestResults -Path $ParallelTestResultsFile -Type 'XUnit' -Title 'Xunit Parallel'
     }
     finally {
         Pop-Location
