@@ -370,57 +370,31 @@ namespace System.Management.Automation
             _listEntry = listEntry;
         }
 
-        private ListEntryBuilder AddItem(string value, string label, DisplayEntryValueType kind, string format, DisplayEntry itemSelectionCondition)
+        private ListEntryBuilder AddItem(string value, string label, DisplayEntryValueType kind, string format)
         {
             if (string.IsNullOrEmpty(value))
-            {
                 throw PSTraceSource.NewArgumentNullException("property");
-            }
 
             _listEntry.Items.Add(new ListControlEntryItem
             {
                 DisplayEntry = new DisplayEntry(value, kind),
                 Label = label,
-                FormatString = format,
-                ItemSelectionCondition = itemSelectionCondition,
+                FormatString = format
             });
 
             return this;
         }
 
-        /// <summary>Adds a scriptblock list entry.</summary>
-        /// <param name="scriptBlock">The content of the scriptblock to add.</param>
-        /// <param name="label">A label for the entry.</param>
-        /// <param name="format">A format string for the scriptblock result.</param>
-        /// <param name="itemSelectionCondition">A condition that has to be met for the entry to be displayed.</param>
-        /// <returns>A reference to this instance after the append operation has completed.</returns>
-        public ListEntryBuilder AddItemScriptBlock(string scriptBlock, string label = null, string format = null, DisplayEntry itemSelectionCondition = null)
+        /// <summary></summary>
+        public ListEntryBuilder AddItemScriptBlock(string scriptBlock, string label = null, string format = null)
         {
-            return AddItem(scriptBlock, label, DisplayEntryValueType.ScriptBlock, format, itemSelectionCondition);
+            return AddItem(scriptBlock, label, DisplayEntryValueType.ScriptBlock, format);
         }
 
-        /// <summary>Adds a property list entry.</summary>
-        /// <param name="property">The property to add.</param>
-        /// <param name="label">A label for the entry.</param>
-        /// <param name="format">A format string for the property value.</param>
-        /// <param name="itemSelectionCondition">A condition that has to be met for the entry to be displayed.</param>
-        /// <returns>A reference to this instance after the append operation has completed.</returns>
-        public ListEntryBuilder AddItemProperty(string property, string label = null, string format = null, DisplayEntry itemSelectionCondition = null)
+        /// <summary></summary>
+        public ListEntryBuilder AddItemProperty(string property, string label = null, string format = null)
         {
-            return AddItem(property, label, DisplayEntryValueType.Property, format, itemSelectionCondition);
-        }
-
-        /// <summary>
-        /// Adds a property that is displayed if it the property has a value.
-        /// </summary>
-        /// <param name="property">The property to add.</param>
-        /// <param name="label">A label for the entry.</param>
-        /// <param name="format">A format string for the property value.</param>
-        /// <returns>A reference to this instance after the append operation has completed.</returns>
-        public ListEntryBuilder AddItemPropertyIfSet(string property, string label = null, string format = null)
-        {
-            var itemSelectionCondition = DisplayEntry.CreatePropertyEntry(property);
-            return AddItem(property, label, DisplayEntryValueType.Property, format, itemSelectionCondition);
+            return AddItem(property, label, DisplayEntryValueType.Property, format);
         }
 
         /// <summary></summary>

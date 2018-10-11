@@ -709,6 +709,27 @@ foo``u{2195}abc
                 @{ Script = "1dtb"; ExpectedValue = "1099511627776"; ExpectedType = [decimal] }
                 @{ Script = "1dpb"; ExpectedValue = "1125899906842624"; ExpectedType = [decimal] }
 
+            #SByte Integer notation
+                #Standard
+                @{ Script = "0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
+                @{ Script = "10y"; ExpectedValue = "10"; ExpectedType = [sbyte] }
+                @{ Script = "-10y"; ExpectedValue = "-10"; ExpectedType = [sbyte] }
+                @{ Script = "+10y"; ExpectedValue = "10"; ExpectedType = [sbyte] }
+                #Conversion from <Real>
+                @{ Script = "0.0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
+                @{ Script = "3.72y"; ExpectedValue = "4"; ExpectedType = [sbyte] }
+                @{ Script = "-3.72y"; ExpectedValue = "-4"; ExpectedType = [sbyte] }
+                #Exponential
+                @{ Script = "0e0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
+                @{ Script = "3e0y"; ExpectedValue = "3"; ExpectedType = [sbyte] }
+                @{ Script = "-3e0y"; ExpectedValue = "-3"; ExpectedType = [sbyte] }
+                @{ Script = "3e1y"; ExpectedValue = "30"; ExpectedType = [sbyte] }
+                @{ Script = "-3e1y"; ExpectedValue = "-30"; ExpectedType = [sbyte] }
+                #Hexadecimal
+                @{ Script = "0x0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
+                @{ Script = "0x41y"; ExpectedValue = "65"; ExpectedType = [sbyte] }
+                @{ Script = "-0x41y"; ExpectedValue = "-65"; ExpectedType = [sbyte] }
+
             #Short Integer notation
                 #Standard
                 @{ Script = "0s"; ExpectedValue = "0"; ExpectedType = [short] }
@@ -777,6 +798,22 @@ foo``u{2195}abc
                 @{ Script = "1ugb"; ExpectedValue = "1073741824"; ExpectedType = [uint] }
                 @{ Script = "1utb"; ExpectedValue = "1099511627776"; ExpectedType = [ulong] }
                 @{ Script = "1upb"; ExpectedValue = "1125899906842624"; ExpectedType = [ulong] }
+
+            #Byte Integer notation
+                #Standard
+                @{ Script = "0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
+                @{ Script = "10uy"; ExpectedValue = "10"; ExpectedType = [byte] }
+                @{ Script = "+10uy"; ExpectedValue = "10"; ExpectedType = [byte] }
+                #Conversion from <Real>
+                @{ Script = "0.0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
+                @{ Script = "3.72uy"; ExpectedValue = "4"; ExpectedType = [byte] }
+                #Exponential
+                @{ Script = "0e0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
+                @{ Script = "3e0uy"; ExpectedValue = "3"; ExpectedType = [byte] }
+                @{ Script = "3e1uy"; ExpectedValue = "30"; ExpectedType = [byte] }
+                #Hexadecimal
+                @{ Script = "0x0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
+                @{ Script = "0x41uy"; ExpectedValue = "65"; ExpectedType = [byte] }
 
             #Unsigned-Short Integer Notation
                 #Standard
