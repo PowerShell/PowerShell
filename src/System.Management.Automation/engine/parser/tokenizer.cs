@@ -477,14 +477,59 @@ namespace System.Management.Automation.Language
         Signature, // i.e. class or method declaration
     }
 
+    /// <summary>
+    /// Indicates which suffix character(s) are present in the numeric literal being parsed by TryGetNumberValue.
+    /// </summary>
     [Flags]
     internal enum NumberSuffixFlags
     {
+        /// <summary>
+        /// Indicates no suffix, a raw numeric literal. May be parsed as Int32, Int64, or Double.
+        /// </summary>
         None = 0x0,
+
+        /// <summary>
+        /// Indicates 'u' suffix for unsigned integers. May be parsed as UInt32 or UInt64, depending on the value.
+        /// </summary>
         Unsigned = 0x1,
-        Short = 0x2,
-        Long = 0x4,
-        Decimal = 0x8
+
+        /// <summary>
+        /// Indicates 'y' suffix for signed byte (sbyte) values.
+        /// </summary>
+        SignedByte = 0x2,
+
+        /// <summary>
+        /// Indicates 'uy' suffix for unsigned byte values.
+        /// This is a compound value, representing both SignedByte and Unsigned flags being set.
+        /// </summary>
+        UnsignedByte = 0x3,
+
+        /// <summary>
+        /// Indicates 's' suffix for short (Int16) integers.
+        /// </summary>
+        Short = 0x4,
+
+        /// <summary>
+        /// Indicates 'us' suffix for ushort (UInt16) integers.
+        /// This is a compound flag value, representing both Unsigned and Short flags being set.
+        /// </summary>
+        UnsignedShort = 0x5,
+
+        /// <summary>
+        /// Indicates 'l' suffix for long (Int64) integers.
+        /// </summary>
+        Long = 0x8,
+
+        /// <summary>
+        /// Indicates 'ul' suffix for ulong (UInt64) integers.
+        /// This is a compound flag value, representing both Unsigned and Long flags being set.
+        /// </summary>
+        UnsignedLong = 0x9,
+
+        /// <summary>
+        /// Indicates 'd' suffix for decimal (128-bit) real numbers.
+        /// </summary>
+        Decimal = 0x10
     }
 
     //
@@ -3292,11 +3337,17 @@ namespace System.Management.Automation.Language
                                 case NumberSuffixFlags.Short:
                                     result = (short)((short)Convert.ChangeType(doubleValue, typeof(short), CultureInfo.InvariantCulture) * multiplier);
                                     break;
-                                case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Long:
+                                case NumberSuffixFlags.SignedByte:
+                                    result = (sbyte)((sbyte)Convert.ChangeType(doubleValue, typeof(sbyte), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.UnsignedLong:
                                     result = (ulong)Convert.ChangeType(doubleValue, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
                                     break;
-                                case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Short:
+                                case NumberSuffixFlags.UnsignedShort:
                                     result = (ushort)((ushort)Convert.ChangeType(doubleValue, typeof(ushort), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.UnsignedByte:
+                                    result = (byte)((byte)Convert.ChangeType(doubleValue, typeof(byte), CultureInfo.InvariantCulture) * multiplier);
                                     break;
                                 case NumberSuffixFlags.Unsigned:
                                     ulong testresult = (ulong)Convert.ChangeType(doubleValue, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
@@ -3357,6 +3408,16 @@ namespace System.Management.Automation.Language
 
                             result = null;
                             return false;
+                        case NumberSuffixFlags.SignedByte:
+                            // Multiplier for hex-parsed values can be negative to permit - prefix for hex values
+                            if (Math.Abs(multiplier) == 1 && sbyte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out sbyte sb))
+                            {
+                                result = (sbyte)(sb * multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
                         case NumberSuffixFlags.Unsigned:
                             if (ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
                             {
@@ -3376,7 +3437,7 @@ namespace System.Management.Automation.Language
 
                             result = null;
                             return false;
-                        case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Long:
+                        case NumberSuffixFlags.UnsignedLong:
                             if (ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong ul))
                             {
                                 result = (ulong)(ul * (ulong)multiplier);
@@ -3385,10 +3446,21 @@ namespace System.Management.Automation.Language
 
                             result = null;
                             return false;
-                        case NumberSuffixFlags.Unsigned | NumberSuffixFlags.Short:
+                        case NumberSuffixFlags.UnsignedShort:
                             if (ushort.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ushort us))
                             {
                                 result = (ushort)(us * (ushort)multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.UnsignedByte:
+                            // If multiplier is negative or greater than 1, we can assume it will fail since the
+                            // minimum multiplier is 1024 (already exceeds byte.MaxValue), and byte is unsigned
+                            if (multiplier == 1 && byte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out byte b))
+                            {
+                                result = b;
                                 return true;
                             }
 
@@ -3603,6 +3675,10 @@ namespace System.Management.Automation.Language
                     case 'D':
                         suffix |= NumberSuffixFlags.Decimal;
                         break;
+                    case 'y':
+                    case 'Y':
+                        suffix |= NumberSuffixFlags.SignedByte;
+                        break;
                     default:
                         notNumber = true;
                         break;
@@ -3624,6 +3700,10 @@ namespace System.Management.Automation.Language
                             case 's':
                             case 'S':
                                 suffix |= NumberSuffixFlags.Short;
+                                break;
+                            case 'y':
+                            case 'Y':
+                                suffix |= NumberSuffixFlags.SignedByte;
                                 break;
                             default:
                                 notNumber = true;
