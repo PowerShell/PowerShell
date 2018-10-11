@@ -3370,8 +3370,7 @@ namespace System.Management.Automation.Language
             NumberSuffixFlags suffix,
             bool real,
             long multiplier,
-            out object result
-        )
+            out object result)
         {
             checked
             {
@@ -3450,9 +3449,6 @@ namespace System.Management.Automation.Language
                                         return true;
                                     }
 
-                                    break;
-                                case NumberSuffixFlags.UnsignedByte:
-                                    result = (byte)((byte)Convert.ChangeType(doubleValue, typeof(byte), CultureInfo.InvariantCulture) * multiplier);
                                     break;
                                 case NumberSuffixFlags.Unsigned:
                                     if (Utils.IsWithinTypeBounds(typeof(uint), doubleValue))
@@ -3562,7 +3558,7 @@ namespace System.Management.Automation.Language
                                 case 96:
                                     suffix |= NumberSuffixFlags.Decimal;
                                     break;
-                                case int n when (n > 96):
+                                case int n when n > 96:
                                     suffix |= NumberSuffixFlags.BigInteger;
                                     break;
                             }
@@ -3745,15 +3741,15 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Scans a numeric string to determine its characteristics.
         /// </summary>
-        /// <param name="firstChar">the first character.T</param>
+        /// <param name="firstChar">The first character.</param>
         /// <param name="format">Indicate if it's a hex, binary, or decimal number.</param>
         /// <param name="suffix">Indicate the format suffix.</param>
         /// <param name="real">Indicate if the number is real (non-integer).</param>
-        /// <param name="multiplier">indicate the specified multiplier</param>
+        /// <param name="multiplier">Indicate the specified multiplier.</param>
         /// <returns>
-        /// return null if the token is not a number
+        /// Return null if the token is not a number
         /// OR
-        /// return the string format of the number
+        /// Return the string format of the number.
         /// </returns>
         private ReadOnlySpan<char> ScanNumberHelper(char firstChar, out NumberFormat format, out NumberSuffixFlags suffix, out bool real, out long multiplier)
         {

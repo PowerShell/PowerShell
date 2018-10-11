@@ -162,7 +162,4 @@ Describe "Get-Random" -Tags "CI" {
 	$secondRandomNumber = Get-Random 34359738367 -SetSeed 20
 	$firstRandomNumber | Should -Be @secondRandomNumber
     }
-    It "Should throw an error because the hexadecimal number is to large " {
-	{ Get-Random 0x07FFFFFFFFFFFFFFFF } | Should -Throw "Value was either too large or too small for a UInt32"
-    }
 }

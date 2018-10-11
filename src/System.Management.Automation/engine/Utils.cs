@@ -39,23 +39,24 @@ namespace System.Management.Automation
     {
         private struct PrimitiveRange
         {
-            internal readonly BigInteger minValue;
-            internal readonly BigInteger maxValue;
+            internal readonly BigInteger MinValue;
+            internal readonly BigInteger MaxValue;
 
             internal PrimitiveRange(BigInteger min, BigInteger max)
             {
-                this.minValue = min;
-                this.maxValue = max;
+                this.MinValue = min;
+                this.MaxValue = max;
             }
 
             internal void Deconstruct(out BigInteger min, out BigInteger max)
             {
-                min = this.minValue;
-                max = this.maxValue;
+                min = this.MinValue;
+                max = this.MaxValue;
             }
         }
 
-        private static readonly Dictionary<Type, PrimitiveRange> s_typeBounds = new Dictionary<Type, PrimitiveRange>() {
+        private static readonly Dictionary<Type, PrimitiveRange> s_typeBounds = new Dictionary<Type, PrimitiveRange>()
+        {
             { typeof(sbyte),   new PrimitiveRange(sbyte.MinValue,  sbyte.MaxValue)  },
             { typeof(byte),    new PrimitiveRange(byte.MinValue,   byte.MaxValue)   },
             { typeof(short),   new PrimitiveRange(short.MinValue,  short.MaxValue)  },
@@ -120,7 +121,7 @@ namespace System.Management.Automation
                 case 32: // int
                 case 64: // long
                 case 96: // decimal
-                case int n when (n >= 128): // BigInteger
+                case int n when n >= 128: // BigInteger
                     break;
                 default:
                     // If we do not flag these as unsigned, bigint assumes a sign bit for any (8 * n) string length
@@ -145,7 +146,8 @@ namespace System.Management.Automation
             for (blockWalker = digits.Length - 1; blockWalker >= 7; blockWalker -= 8)
             {
                 // Use bit shifts and binary-or to sum the values in each byte
-                outputBytes[outputByteWalker--] = (byte)(
+                outputBytes[outputByteWalker--] = (byte)
+                (
                     (
                         // These calculations will actually create values higher than a single byte,
                         // but the higher bits are quietly stripped out when cast to byte.
@@ -159,10 +161,10 @@ namespace System.Management.Automation
                     // The low bits are added in separately to allow us to strip the higher 'noise' bits
                     // before we sum the values using binary-or.
                     (
-                      ( (digits[blockWalker - 3] << 3) |
+                       ((digits[blockWalker - 3] << 3) |
                         (digits[blockWalker - 2] << 2) |
                         (digits[blockWalker - 1] << 1) |
-                         digits[blockWalker]            ) & 0b1111
+                         digits[blockWalker]) & 0b1111
                     )
                 );
             }
