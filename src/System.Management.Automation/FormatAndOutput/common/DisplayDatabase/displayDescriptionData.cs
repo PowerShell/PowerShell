@@ -788,27 +788,7 @@ namespace System.Management.Automation
             ValueType = type;
         }
 
-        /// <summary>
-        /// Creates a DisplayEntry for the given scriptblock.
-        /// </summary>
-        /// <param name="scriptblock">The content of the scriptblock.</param>
-        /// <returns>A <see cref="DisplayEntry"/> for the <paramref name="scriptblock"/>.</returns>
-        public static DisplayEntry CreateScriptBlockEntry(string scriptblock)
-        {
-            return new DisplayEntry(scriptblock, DisplayEntryValueType.ScriptBlock);
-        }
-
-        /// <summary>
-        /// Creates a DisplayEntry for the given property name.
-        /// </summary>
-        /// <param name="property">The name of the property.</param>
-        /// <returns>A <see cref="DisplayEntry"/> for the <paramref name="property"/>.</returns>
-        public static DisplayEntry CreatePropertyEntry(string property)
-        {
-            return new DisplayEntry(property, DisplayEntryValueType.Property);
-        }
-
-        /// <inheritdoc />
+        /// <summary/>
         public override string ToString()
         {
             return (ValueType == DisplayEntryValueType.Property ? "property: " : "script: ") + Value;
