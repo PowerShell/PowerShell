@@ -342,6 +342,7 @@ namespace Microsoft.PowerShell
         #region ImplicitRemotingBatching
 
         // A visitor to walk an AST and validate that it is a candidate for implicit remoting batching.
+        // Based on ScriptBlockToPowerShellChecker.
         internal class PipelineForBatchingChecker : AstVisitor
         {
             internal readonly HashSet<string> ValidVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -497,6 +498,7 @@ namespace Microsoft.PowerShell
             { }
         }
 
+        // Commands allowed to run on target remote session along with implicit remote commands
         private static readonly HashSet<string> AllowedCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "ForEach-Object",
@@ -506,6 +508,12 @@ namespace Microsoft.PowerShell
             "Where-Object"
         };
 
+        // Determines if the typed command invokes implicit remoting module proxy functions in such
+        // a way as to allow simple batching, to reduce round trips between client and server sessions.
+        // Requirements:
+        //  a. All commands must be implicit remoting module proxy commands targeted to the same remote session
+        //  b. Except for *allowed* commands that can be safely run on remote session rather than client session
+        //  c. Commands must be in a simple pipeline
         private bool TryRunAsImplicitBatch(string command, out Exception exceptionThrown)
         {
             exceptionThrown = null;
@@ -538,6 +546,12 @@ namespace Microsoft.PowerShell
                 // Run checker
                 var checker = new PipelineForBatchingChecker { ScriptBeingConverted = scriptBlockAst };
                 scriptBlockAst.InternalVisit(checker);
+
+                // If this is just a single command, there is no point in batching it
+                if (checker.Commands.Count < 2)
+                {
+                    throw new ImplicitRemotingBatchingNotSupportedException("No need to batch a single command.");
+                }
 
                 // We have a valid batching candidate
                 using (var ps = System.Management.Automation.PowerShell.Create())
@@ -595,6 +609,10 @@ namespace Microsoft.PowerShell
 
                     if (success)
                     {
+                        //
+                        // Invoke command pipeline as entire pipeline on remote session
+                        //
+
                         // Update script to declare variables via Using keyword
                         if (checker.ValidVariables.Count > 0)
                         {
@@ -616,11 +634,22 @@ namespace Microsoft.PowerShell
                             throw new PSInvalidOperationException();
                         }
 
-                        // Create and invoke implicit remoting script remotely.
+                        // Create and invoke implicit remoting command pipeline
                         ps.Commands.Clear();
                         ps.AddCommand("Invoke-Command").AddParameter("Session", psSession).AddParameter("ScriptBlock", scriptBlock).AddParameter("HideComputerName", true)
                             .AddCommand("Out-Default");
-                        ps.Invoke();
+
+                        try
+                        {
+                            ps.Invoke();
+                        }
+                        catch (Exception ex)
+                        {
+                            var errorRecord = new ErrorRecord(ex, "ImplicitRemotingBatchExecutionTerminatingError", ErrorCategory.InvalidOperation, null);
+
+                            ps.Commands.Clear();
+                            ps.AddCommand("Write-Error").AddParameter("InputObject", errorRecord).Invoke();
+                        }
 
                         return true;
                     }
