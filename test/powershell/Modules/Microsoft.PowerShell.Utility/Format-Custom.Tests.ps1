@@ -298,3 +298,145 @@ class MyLeaf2
 		$result | Should -Be $expectedResult
 	}
 }
+
+Describe "Format-Custom with expression based EntrySelectedBy in a CustomControl" -Tags "CI" {
+    BeforeAll {
+        $formatFilePath = Join-Path $TestDrive 'UpdateFormatDataTests.format.ps1xml'
+        $xmlContent = @'
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration>
+    <Controls>
+        <Control>
+            <Name>MyTestControl</Name>
+            <CustomControl>
+                <CustomEntries>
+                    <CustomEntry>
+                        <EntrySelectedBy>
+                            <SelectionCondition>
+                                <TypeName>MyTestObject</TypeName>
+                                <ScriptBlock>$_.Name -eq 'SelectScriptBlock'</ScriptBlock>
+                            </SelectionCondition>
+                        </EntrySelectedBy>
+                        <CustomItem>
+                            <Text>Entry selected by ScriptBlock</Text>
+                        </CustomItem>
+                    </CustomEntry>
+                    <CustomEntry>
+                        <EntrySelectedBy>
+                            <SelectionCondition>
+                                <TypeName>MyTestObject</TypeName>
+                                <PropertyName>SelectProperty</PropertyName>
+                            </SelectionCondition>
+                        </EntrySelectedBy>
+                        <CustomItem>
+                            <Text>Entry selected by property</Text>
+                        </CustomItem>
+                    </CustomEntry>
+                    <CustomEntry>
+                        <CustomItem>
+                            <Text>Default was picked</Text>
+                        </CustomItem>
+                    </CustomEntry>
+                </CustomEntries>
+            </CustomControl>
+        </Control>
+    </Controls>
+    <ViewDefinitions>
+        <View>
+            <Name>DefaultView</Name>
+            <ViewSelectedBy>
+                <TypeName>MyTestObject</TypeName>
+            </ViewSelectedBy>
+            <GroupBy>
+                <PropertyName>Name</PropertyName>
+                <CustomControlName>MyTestControl</CustomControlName>
+            </GroupBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader />
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+    </ViewDefinitions>
+</Configuration>
+'@
+
+        Set-Content -Path $formatFilePath -Value $xmlContent
+        $ps = [powershell]::Create()
+        $iss = [initialsessionstate]::CreateDefault2()
+        $iss.Formats.Add($formatFilePath)
+        $rs = [runspacefactory]::CreateRunspace($iss)
+        $rs.Open()
+        $ps.Runspace = $rs
+    }
+
+    AfterAll {
+        $rs.Close()
+        $ps.Dispose()
+    }
+
+    It 'Property expression binding should be able to access the current object' {
+        $script = {
+            [PSCustomObject]@{
+                PSTypeName = 'MyTestObject'
+                SelectProperty = $true
+                Name = 'testing'
+            }
+        }
+
+        $null = $ps.AddScript($script).AddCommand('Out-String')
+        $ps.Streams.Error.Clear()
+        $expectedOutput = @'
+
+
+Entry selected by property
+
+Name
+----
+testing
+
+
+
+'@ -replace '\r?\n', [Environment]::NewLine
+
+        $ps.Invoke() | Should -BeExactly $expectedOutput
+        $ps.Streams.Error | Should -BeNullOrEmpty
+    }
+
+    It 'ScriptBlock expression binding should be able to access the current object' {
+        $script = {
+            [PSCustomObject]@{
+                PSTypeName = 'MyTestObject'
+                SelectProperty = $false
+                Name = 'SelectScriptBlock'
+            }
+        }
+
+        $null = $ps.AddScript($script).AddCommand('Out-String')
+        $ps.Streams.Error.Clear()
+        $expectedOutput = @'
+
+
+Entry selected by ScriptBlock
+
+Name
+----
+SelectScriptBlock
+
+
+
+'@ -replace '\r?\n', [Environment]::NewLine
+
+        $ps.Invoke() | Should -BeExactly $expectedOutput
+        $ps.Streams.Error | Should -BeNullOrEmpty
+    }
+}
