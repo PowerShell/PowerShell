@@ -987,11 +987,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // revert Formats if there is a failure
                     Context.InitialSessionState.Formats.Clear();
-                    foreach (var format in originalFormats)
-                    {
-                        Context.InitialSessionState.Formats.Add(format);
-                    }
-
+                    Context.InitialSessionState.Formats.Add(originalFormats);
                     this.WriteError(new ErrorRecord(e, "FormatXmlUpdateException", ErrorCategory.InvalidOperation, null));
                 }
             }
