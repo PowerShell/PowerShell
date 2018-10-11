@@ -322,13 +322,16 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
 
-            // TODO: Experimental
+            // Experimental:
             // Check for implicit remoting commands that can be batched, and execute as batched if able.
-            var addOutputter = ((options & ExecutionOptions.AddOutputter) > 0);
-            exceptionThrown = null;
-            if (addOutputter && TryRunAsImplicitBatch(command, out exceptionThrown))
+            if (ExperimentalFeature.EnabledExperimentalFeatureNames.TryGetValue("PSImplicitRemotingBatching", out string actualValue))
             {
-                return null;
+                var addOutputter = ((options & ExecutionOptions.AddOutputter) > 0);
+                exceptionThrown = null;
+                if (addOutputter && TryRunAsImplicitBatch(command, out exceptionThrown))
+                {
+                    return null;
+                }
             }
 
             Pipeline tempPipeline = CreatePipeline(command, (options & ExecutionOptions.AddToHistory) > 0);
@@ -506,8 +509,10 @@ namespace Microsoft.PowerShell
         private bool TryRunAsImplicitBatch(string command, out Exception exceptionThrown)
         {
             exceptionThrown = null;
+
+            // Early out
             if (_parent.RunspaceRef.IsRunspaceOverridden ||
-                !_parent.RunspaceRef.Runspace.ExecutionContext.Modules.IsImplicitRemotingModuleLoaded)
+                (_parent.RunspaceRef.Runspace.ExecutionContext.Modules != null && !_parent.RunspaceRef.Runspace.ExecutionContext.Modules.IsImplicitRemotingModuleLoaded))
             {
                 return false;
             }
@@ -534,7 +539,7 @@ namespace Microsoft.PowerShell
                 var checker = new PipelineForBatchingChecker { ScriptBeingConverted = scriptBlockAst };
                 scriptBlockAst.InternalVisit(checker);
 
-                // Have valid batching candidate
+                // We have a valid batching candidate
                 using (var ps = System.Management.Automation.PowerShell.Create())
                 {
                     ps.Runspace = _parent.RunspaceRef.Runspace;
@@ -595,13 +600,13 @@ namespace Microsoft.PowerShell
                         {
                             foreach (var variableName in checker.ValidVariables)
                             {
-                                command = command.Replace(variableName, ("using:" + variableName), StringComparison.Ordinal);
+                                command = command.Replace(variableName, ("Using:" + variableName), StringComparison.OrdinalIgnoreCase);
                             }
 
                             scriptBlock = ScriptBlock.Create(command);
                         }
 
-                        // Retrieve the PSSession runspace to run the batch script on
+                        // Retrieve the PSSession runspace in which to run the batch script on
                         ps.Commands.Clear();
                         ps.Commands.AddCommand("Get-PSSession").AddParameter("InstanceId", psSessionId);
                         var psSession = ps.Invoke<System.Management.Automation.Runspaces.PSSession>().FirstOrDefault();
@@ -621,8 +626,7 @@ namespace Microsoft.PowerShell
                     }
                 }
             }
-            catch (Exception)
-            { }
+            catch (Exception) { }
 
             return false;
         }
