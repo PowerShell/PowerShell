@@ -5,11 +5,14 @@ Describe "Get-Culture" -Tags "CI" {
 
     It "Should return a type of CultureInfo for Get-Culture cmdlet" {
 
-        Get-Culture | Should -BeOfType [CultureInfo]
+        $culture = Get-Culture
+        $culture | Should -BeOfType [CultureInfo]
+        ($culture).LCID | Should -Be $host.CurrentCulture.LCID
+
         Get-Culture -NoUserOverrides | Should -BeOfType [CultureInfo]
     }
 
-    It "Should have $ culture variable be equivalent to (Get-Culture).Name" {
+    It "Should have `$PSCulture variable be equivalent to (Get-Culture).Name" {
 
         (Get-Culture).Name | Should -Be $PsCulture
     }
@@ -47,24 +50,15 @@ Describe "Get-Culture" -Tags "CI" {
         $ciArray[1].LCID | Should -Be 1049
     }
 
-    It "Should return the culture array with '-List' parameter" {
+    It "Should return the culture array with '-ListAvailable' parameter" {
 
-        $ciArray = Get-Culture -List AllCultures
-        $ciArray.Count | Should -BeGreaterThan 0
-        $ciArray[0] | Should -BeOfType [CultureInfo]
-
-        $ciArray = Get-Culture -List $([System.Globalization.CultureTypes]::AllCultures+[System.Globalization.CultureTypes]::UserCustomCulture)
+        $ciArray = Get-Culture -ListAvailable
         $ciArray.Count | Should -BeGreaterThan 0
         $ciArray[0] | Should -BeOfType [CultureInfo]
     }
 
     It "Should write an error on unsupported culture name" {
 
-        # The strange culture name come from the fact
-        # that .Net Core behavior depend on the underlying OS
-        # and can differ on different platforms.
-        # See https://github.com/dotnet/corefx/issues/6374#issuecomment-418827420
-        $exc = { Get-Culture -Name "abcdefghijkl" -ErrorAction Stop } | Should -PassThru -Throw -ErrorId "ItemNotFoundException,Microsoft.PowerShell.Commands.GetCultureCommand"
-        $exc.Exception | Should -BeOfType [System.Globalization.CultureNotFoundException]
+        { Get-Culture -Name "abcdefghijkl" -ErrorAction Stop } | Should -PassThru -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCultureCommand"
     }
 }

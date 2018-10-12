@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation;
 
@@ -18,12 +20,13 @@ namespace Microsoft.PowerShell.Commands
     {
         private const string CurrentCultureParameterSet = "CurrentCulture";
         private const string NameParameterSet = "Name";
-        private const string ListParameterSet = "List";
+        private const string ListAvailableParameterSet = "ListAvailable";
 
         /// <summary>
         /// Gets or sets culture names for which CultureInfo values are returned.
         /// </summary>
         [Parameter(ParameterSetName = NameParameterSet, Position = 0, ValueFromPipeline = true)]
+        [ValidateSet(typeof(ValidateCultureNamesGenerator))]
         [ValidateNotNull]
         public string[] Name { get; set; }
 
@@ -36,10 +39,10 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoUserOverrides { get; set; }
 
         /// <summary>
-        /// Gets or sets a filter to list subset or all available cultures.
+        /// Gets or sets a switch to list all available cultures.
         /// </summary>
-        [Parameter(ParameterSetName = ListParameterSet)]
-        public CultureTypes List { get; set; } = CultureTypes.AllCultures;
+        [Parameter(ParameterSetName = ListAvailableParameterSet)]
+        public SwitchParameter ListAvailable { get; set; }
 
         /// <summary>
         /// Output:
@@ -63,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
                         ci = Host.CurrentCulture;
                     }
 
-                    WriteObject(Host.CurrentCulture);
+                    WriteObject(ci);
 
                     break;
                 case NameParameterSet:
@@ -71,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (var cultureName in Name)
                         {
-                            if (NoUserOverrides && string.Equals(cultureName, Host.CurrentCulture.Name))
+                            if (NoUserOverrides && string.Equals(cultureName, Host.CurrentCulture.Name, StringComparison.CurrentCultureIgnoreCase))
                             {
                                 ci = new CultureInfo(cultureName, false);
                             }
@@ -89,14 +92,32 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     break;
-                case ListParameterSet:
-                    foreach (CultureInfo culture in CultureInfo.GetCultures(List))
+                case ListAvailableParameterSet:
+                    foreach (var cultureInfo in CultureInfo.GetCultures(CultureTypes.AllCultures))
                     {
-                        WriteObject(culture);
+                        WriteObject(cultureInfo);
                     }
 
                     break;
             }
+        }
+    }
+
+    /// <summary>
+    /// Get list of valid culture names for ValidateSet attribute.
+    /// </summary>
+    public class ValidateCultureNamesGenerator : IValidateSetValuesGenerator
+    {
+        string[] IValidateSetValuesGenerator.GetValidValues()
+        {
+            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+            var result = new List<string>(cultures.Length);
+            foreach (var cultureInfo in cultures)
+            {
+                result.Add(cultureInfo.Name);
+            }
+
+            return result.ToArray();
         }
     }
 }
