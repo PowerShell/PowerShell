@@ -42,7 +42,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="d">The value to convert.</param>
         /// <returns>Returns a BigInteger value equivalent to the input value rounded to nearest integer.</returns>
-        internal static BigInteger AsBigInt(this double d) => (BigInteger)Math.Round(d);
+        internal static BigInteger AsBigInt(this double d) => new BigInteger(Math.Round(d));
 
         internal static bool TryCast(BigInteger value, out byte b)
         {
