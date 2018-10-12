@@ -131,45 +131,36 @@ namespace System.Management.Automation
 
             unsigned = unsigned || digits[0] == '0';
 
-            // Calculate number of 8-bit bytes needed to hold the input,
-            // rounded up to next whole number.
+            // Calculate number of 8-bit bytes needed to hold the input,  rounded up to next whole number.
+            // This value will also be used as the indexer for our array.
             int outputByteWalker = (digits.Length + 7) / 8;
-
-            // Output array sized to fit, use helper as array-indexer, too.
             byte[] outputBytes = new byte[outputByteWalker--];
 
-            // We need to be prepared for any partial leading bytes,
-            // (e.g., 010|00000011|00000100|00000101) or for lengths < 8
-            // (less than one byte) e.g., 010.
+            // We need to be prepared for any partial leading bytes, (e.g., 010|00000011|00000100|00000101)
+            // or for lengths < 8 (less than one byte) e.g., 010.
             // Walk right to left, stepping one whole byte at a time (if there are any whole bytes).
             int blockWalker;
             for (blockWalker = digits.Length - 1; blockWalker >= 7; blockWalker -= 8)
             {
-                // Use bit shifts and binary-or to sum the values in each byte
-                outputBytes[outputByteWalker--] = (byte)
-                (
-                    (
-                        // These calculations will actually create values higher than a single byte,
-                        // but the higher bits are quietly stripped out when cast to byte.
-                        // '1' == 49 (00110001); '0' == 48 (00110000); we can safely bitshift the
-                        // whole thing and then simply discard the unneeded higher bits with the cast.
-                        (digits[blockWalker - 7] << 7) |
-                        (digits[blockWalker - 6] << 6) |
-                        (digits[blockWalker - 5] << 5) |
-                        (digits[blockWalker - 4] << 4)
-                    ) |
-                    // The low bits are added in separately to allow us to strip the higher 'noise' bits
-                    // before we sum the values using binary-or.
-                    (
-                       ((digits[blockWalker - 3] << 3) |
-                        (digits[blockWalker - 2] << 2) |
-                        (digits[blockWalker - 1] << 1) |
-                         digits[blockWalker]) & 0b1111
-                    )
-                );
+                // We use bit shifts and binary-or to sum the values in each byte.  These calculations will actually
+                // create values higher than a single byte, but the higher bits are quietly stripped out when cast
+                // to byte.
+                // '1' == 49 (00110001); '0' == 48 (00110000); we can safely bitshift the whole thing and then
+                // simply discard the unneeded higher bits with the cast. The low bits are added in separately to
+                // allow us to strip the higher 'noise' bits before we sum the values using binary-or.
+                outputBytes[outputByteWalker--] =
+                    (byte)(((digits[blockWalker - 7] << 7)
+                        | (digits[blockWalker - 6] << 6)
+                        | (digits[blockWalker - 5] << 5)
+                        | (digits[blockWalker - 4] << 4))
+                        | (((digits[blockWalker - 3] << 3)
+                        | (digits[blockWalker - 2] << 2)
+                        | (digits[blockWalker - 1] << 1)
+                        | digits[blockWalker])
+                        & 0b1111));
             }
 
-            // now they're done, blockWalker is at the partial byte start, or at 0
+            // With all full bytes parsed, blockWalker is either at the partial byte start, or at 0
             if (blockWalker > 0)
             {
                 int currentByteValue = 0;
@@ -177,6 +168,7 @@ namespace System.Management.Automation
                 {
                     currentByteValue = (currentByteValue << 1) | (digits[i] - '0');
                 }
+
                 outputBytes[outputByteWalker] = (byte)currentByteValue;
             }
 
