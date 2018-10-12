@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             bool viewDefinitionsFound = false;
             bool controlDefinitionsFound = false;
 
-            if (MatchNodeName(documentElement, XmlTags.ConfigurationNode))
+            if (MatchNodeNameWithAttributes(documentElement, XmlTags.ConfigurationNode))
             {
                 // load the various sections
                 using (this.StackFrame(documentElement))
