@@ -220,9 +220,10 @@ function Start-PSBuild {
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
         # If this parameter is not provided it will get determined automatically.
-        [ValidateSet("fxdependent",
+        [ValidateSet("alpine-x64",
+                     "fxdependent",
                      "linux-arm",
-                     "alpine-x64",
+                     "linux-arm64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
@@ -590,9 +591,10 @@ function New-PSOptions {
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
+                     "alpine-x64",
                      "fxdependent",
                      "linux-arm",
-                     "alpine-x64",
+                     "linux-arm64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
@@ -2057,8 +2059,9 @@ function Start-CrossGen {
         $PublishPath,
 
         [Parameter(Mandatory=$true)]
-        [ValidateSet("linux-arm",
-                     "alpine-x64",
+        [ValidateSet("alpine-x64",
+                     "linux-arm",
+                     "linux-arm64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
