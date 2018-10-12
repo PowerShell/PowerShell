@@ -175,7 +175,7 @@
     <value>PowerShell Credential Request: {0}</value>
   </data>
   <data name="RemoteHostPromptForCredentialModifiedMessage" xml:space="preserve">
-    <value>Warning: A script or application on the remote computer {0} is requesting your credentials. Enter your credentials only if you trust the remote computer and the application or script that is requesting them.
+    <value>Warning: OH DAMN I CNA"T FIND THE RIGHT ERROR MESSAGE A script or application on the remote computer {0} is requesting your credentials. Enter your credentials only if you trust the remote computer and the application or script that is requesting them.
 
 {1}</value>
   </data>
