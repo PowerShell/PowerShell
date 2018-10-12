@@ -94,7 +94,12 @@ try{
     {
         Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -verbose
         $buildParams = @{'CrossGen'= $Runtime -notmatch "arm" -and $Runtime -ne "fxdependent"}
-        if(!$Symbols.IsPresent)
+
+        if($Symbols.IsPresent)
+        {
+            $buildParams['NoPSModuleRestore'] = $true
+        }
+        else
         {
             $buildParams['PSModuleRestore'] = $true
         }
