@@ -3548,7 +3548,7 @@ namespace System.Management.Automation.Language
 
                         bigValue = Utils.ParseBinary(strNum, suffix.HasFlag(NumberSuffixFlags.Unsigned));
 
-                        // If we have a binary literal denoting (u)int64, treat it as such
+                        // If we have a binary literal denoting (u)int64/decimal/BigInteger, treat it as such
                         if (suffix == NumberSuffixFlags.None || suffix == NumberSuffixFlags.Unsigned)
                         {
                             switch (strNum.Length)
