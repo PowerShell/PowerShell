@@ -37,15 +37,33 @@ namespace System.Management.Automation
     /// </summary>
     internal static class Utils
     {
-        private struct PrimitiveRange
+        private readonly struct PrimitiveRange
         {
             internal readonly BigInteger MinValue;
             internal readonly BigInteger MaxValue;
 
-            internal PrimitiveRange(BigInteger min, BigInteger max)
+            internal PrimitiveRange(long min, long max)
             {
                 this.MinValue = min;
                 this.MaxValue = max;
+            }
+
+            internal PrimitiveRange(ulong min, ulong max)
+            {
+                this.MinValue = min;
+                this.MaxValue = max;
+            }
+
+            internal PrimitiveRange(decimal min, decimal max)
+            {
+                this.MinValue = (BigInteger)min;
+                this.MaxValue = (BigInteger)max;
+            }
+
+            internal PrimitiveRange(double min, double max)
+            {
+                this.MinValue = (BigInteger)min;
+                this.MaxValue = (BigInteger)max;
             }
 
             internal void Deconstruct(out BigInteger min, out BigInteger max)
@@ -57,16 +75,16 @@ namespace System.Management.Automation
 
         private static readonly Dictionary<Type, PrimitiveRange> s_typeBounds = new Dictionary<Type, PrimitiveRange>()
         {
-            { typeof(sbyte),   new PrimitiveRange(sbyte.MinValue,  sbyte.MaxValue)  },
-            { typeof(byte),    new PrimitiveRange(byte.MinValue,   byte.MaxValue)   },
-            { typeof(short),   new PrimitiveRange(short.MinValue,  short.MaxValue)  },
-            { typeof(ushort),  new PrimitiveRange(ushort.MinValue, ushort.MaxValue) },
-            { typeof(int),     new PrimitiveRange(int.MinValue,    int.MaxValue)    },
-            { typeof(uint),    new PrimitiveRange(uint.MinValue,   uint.MaxValue)   },
-            { typeof(long),    new PrimitiveRange(long.MinValue,   long.MaxValue)   },
-            { typeof(ulong),   new PrimitiveRange(ulong.MinValue,  ulong.MaxValue)  },
-            { typeof(decimal), new PrimitiveRange((BigInteger)decimal.MinValue, (BigInteger)decimal.MaxValue) },
-            { typeof(double),  new PrimitiveRange((BigInteger)double.MinValue,  (BigInteger)double.MaxValue)  },
+            { typeof(sbyte),   new PrimitiveRange(sbyte.MinValue,   sbyte.MaxValue)   },
+            { typeof(byte),    new PrimitiveRange(byte.MinValue,    byte.MaxValue)    },
+            { typeof(short),   new PrimitiveRange(short.MinValue,   short.MaxValue)   },
+            { typeof(ushort),  new PrimitiveRange(ushort.MinValue,  ushort.MaxValue)  },
+            { typeof(int),     new PrimitiveRange(int.MinValue,     int.MaxValue)     },
+            { typeof(uint),    new PrimitiveRange(uint.MinValue,    uint.MaxValue)    },
+            { typeof(long),    new PrimitiveRange(long.MinValue,    long.MaxValue)    },
+            { typeof(ulong),   new PrimitiveRange(ulong.MinValue,   ulong.MaxValue)   },
+            { typeof(decimal), new PrimitiveRange(decimal.MinValue, decimal.MaxValue) },
+            { typeof(double),  new PrimitiveRange(double.MinValue,  double.MaxValue)  },
         };
 
         internal static bool IsWithinTypeBounds(Type destinationType, double value)
