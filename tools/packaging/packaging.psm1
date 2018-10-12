@@ -283,7 +283,7 @@ function Start-PSPackage {
             "fxdependent" {
                 ## Remove PDBs from package to reduce size.
                 if(-not $IncludeSymbols.IsPresent) {
-                    Get-ChildItem $Source -Filter *.pdb | Remove-Item -Force
+                    Get-ChildItem -Recurse $Source -Filter *.pdb | Remove-Item -Force
                 }
 
                 if ($Environment.IsWindows) {
