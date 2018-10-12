@@ -15,6 +15,7 @@ function Test-SmtpServer
         return $false
     }
 }
+
 function Get-Mail
 {
     Param(
