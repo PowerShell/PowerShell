@@ -500,6 +500,9 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static byte[] Unprotect(byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope)
         {
+#if UNIX
+            throw new PlatformNotSupportedException(Serialization.DeserializeSecureStringNotSupported);
+#else
             if (encryptedData == null)
                 throw new ArgumentNullException("encryptedData");
 
@@ -556,6 +559,7 @@ namespace Microsoft.PowerShell
                     CAPI.LocalFree(userData.pbData);
                 }
             }
+#endif
         }
     }
 
