@@ -482,11 +482,11 @@ namespace System.Management.Automation
         internal static bool IsModuleMatchingConstraints(
             out ModuleMatchFailure matchFailureReason,
             PSModuleInfo moduleInfo,
-            string name = null,
-            Guid? guid = null,
-            Version requiredVersion = null,
-            Version minimumVersion = null,
-            Version maximumVersion = null)
+            string name,
+            Guid? guid,
+            Version requiredVersion,
+            Version minimumVersion,
+            Version maximumVersion)
         {
             // Define that a null module does not meet any constraints
             if (moduleInfo == null)
@@ -557,14 +557,14 @@ namespace System.Management.Automation
         /// <returns>True if the module parameters match all given constraints, false otherwise.</returns>
         internal static bool AreModuleFieldsMatchingConstraints(
             out ModuleMatchFailure matchFailureReason,
-            string moduleName = null,
-            Guid? moduleGuid = null,
-            Version moduleVersion = null,
-            string requiredName = null,
-            Guid? requiredGuid = null,
-            Version requiredVersion = null,
-            Version minimumRequiredVersion = null,
-            Version maximumRequiredVersion = null)
+            string moduleName,
+            Guid? moduleGuid,
+            Version moduleVersion,
+            string requiredName,
+            Guid? requiredGuid,
+            Version requiredVersion,
+            Version minimumRequiredVersion,
+            Version maximumRequiredVersion)
         {
             // If a name is required, check it matches
             if (requiredName != null && !requiredName.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
