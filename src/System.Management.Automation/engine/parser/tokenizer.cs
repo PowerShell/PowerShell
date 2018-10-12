@@ -3379,23 +3379,23 @@ namespace System.Management.Automation.Language
                     NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
                                          NumberStyles.AllowExponent;
 
-                    // Decimal parser does not accept hex literals, and 'd' is a valid hex character, so will
-                    // never be read as Decimal literal
-                    // e.g., 0x1d == 29
-                    if (suffix == NumberSuffixFlags.Decimal)
-                    {
-                        if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal d))
-                        {
-                            result = d * multiplier;
-                            return true;
-                        }
-
-                        result = null;
-                        return false;
-                    }
-
                     if (real)
                     {
+                        // Decimal parser does not accept hex literals, and 'd' is a valid hex character, so will
+                        // never be read as Decimal literal
+                        // e.g., 0x1d == 29
+                        if (suffix == NumberSuffixFlags.Decimal)
+                        {
+                            if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal d))
+                            {
+                                result = d * multiplier;
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        }
+
                         if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double doubleValue))
                         {
                             // TryParse incorrectly return +0 when the result should be -0, so check for that case
@@ -3411,68 +3411,69 @@ namespace System.Management.Automation.Language
                                     result = doubleValue;
                                     return true;
                                 case NumberSuffixFlags.SignedByte:
-                                    if (Utils.IsWithinTypeBounds(typeof(sbyte), doubleValue))
+                                    if (Utils.TryCast(doubleValue.AsBigInt(), out sbyte sb))
                                     {
-                                        result = (sbyte)Math.Round(doubleValue);
+                                        result = sb;
                                         return true;
                                     }
 
                                     break;
                                 case NumberSuffixFlags.UnsignedByte:
-                                    if (Utils.IsWithinTypeBounds(typeof(byte), doubleValue))
+                                    if (Utils.TryCast(doubleValue.AsBigInt(), out byte b))
                                     {
-                                        result = (byte)Math.Round(doubleValue);
+                                        result = b;
                                         return true;
                                     }
 
                                     break;
                                 case NumberSuffixFlags.Short:
-                                    if (Utils.IsWithinTypeBounds(typeof(short), doubleValue))
+                                    if (Utils.TryCast(doubleValue.AsBigInt(), out short s))
                                     {
-                                        result = (short)Math.Round(doubleValue);
+                                        result = s;
                                         return true;
                                     }
 
                                     break;
                                 case NumberSuffixFlags.Long:
-                                    if (Utils.IsWithinTypeBounds(typeof(long), doubleValue))
+                                    if (Utils.TryCast(doubleValue.AsBigInt(), out long l))
                                     {
-                                        result = (long)Math.Round(doubleValue);
+                                        result = l;
                                         return true;
                                     }
 
                                     break;
                                 case NumberSuffixFlags.UnsignedShort:
-                                    if (Utils.IsWithinTypeBounds(typeof(ushort), doubleValue))
+                                    if (Utils.TryCast(doubleValue.AsBigInt(), out ushort us))
                                     {
-                                        result = (ushort)Math.Round(doubleValue);
+                                        result = us;
                                         return true;
                                     }
 
                                     break;
                                 case NumberSuffixFlags.Unsigned:
-                                    if (Utils.IsWithinTypeBounds(typeof(uint), doubleValue))
+                                    BigInteger testValue = doubleValue.AsBigInt();
+                                    if (Utils.TryCast(testValue, out uint u))
                                     {
-                                        result = (uint)Math.Round(doubleValue);
+                                        result = u;
                                         return true;
                                     }
-                                    else if (Utils.IsWithinTypeBounds(typeof(ulong), doubleValue))
+                                    else if (Utils.TryCast(testValue, out ulong ul))
                                     {
-                                        result = (ulong)Math.Round(doubleValue);
+                                        result = ul;
                                         return true;
                                     }
 
                                     break;
                                 case NumberSuffixFlags.UnsignedLong:
-                                    if (Utils.IsWithinTypeBounds(typeof(ulong), doubleValue))
+                                    if (Utils.TryCast(doubleValue.AsBigInt(), out ulong ul_))
                                     {
-                                        result = (ulong)Math.Round(doubleValue);
+                                        result = ul_;
                                         return true;
                                     }
 
                                     break;
                                 case NumberSuffixFlags.BigInteger:
-                                    result = (BigInteger)Math.Round(doubleValue);
+                                    result = doubleValue.AsBigInt();
                                     return true;
                             }
 
@@ -3580,70 +3581,70 @@ namespace System.Management.Automation.Language
                     switch (suffix)
                     {
                         case NumberSuffixFlags.SignedByte:
-                            if (Utils.IsWithinTypeBounds(typeof(sbyte), bigValue))
+                            if (Utils.TryCast(bigValue, out sbyte sb))
                             {
-                                result = (sbyte)bigValue;
+                                result = sb;
                                 return true;
                             }
 
                             break;
                         case NumberSuffixFlags.UnsignedByte:
-                            if (Utils.IsWithinTypeBounds(typeof(byte), bigValue))
+                            if (Utils.TryCast(bigValue, out byte b))
                             {
-                                result = (byte)bigValue;
+                                result = b;
                                 return true;
                             }
 
                             break;
                         case NumberSuffixFlags.Short:
-                            if (Utils.IsWithinTypeBounds(typeof(short), bigValue))
+                            if (Utils.TryCast(bigValue, out short s))
                             {
-                                result = (short)bigValue;
+                                result = s;
                                 return true;
                             }
 
                             break;
                         case NumberSuffixFlags.Long:
-                            if (Utils.IsWithinTypeBounds(typeof(long), bigValue))
+                            if (Utils.TryCast(bigValue, out long l))
                             {
-                                result = (long)bigValue;
+                                result = l;
                                 return true;
                             }
 
                             break;
                         case NumberSuffixFlags.UnsignedShort:
-                            if (Utils.IsWithinTypeBounds(typeof(ushort), bigValue))
+                            if (Utils.TryCast(bigValue, out ushort us))
                             {
-                                result = (ushort)bigValue;
+                                result = us;
                                 return true;
                             }
 
                             break;
                         case NumberSuffixFlags.Unsigned:
-                            if (Utils.IsWithinTypeBounds(typeof(uint), bigValue))
+                            if (Utils.TryCast(bigValue, out uint u))
                             {
-                                result = (uint)bigValue;
+                                result = u;
                                 return true;
                             }
-                            else if (Utils.IsWithinTypeBounds(typeof(ulong), bigValue))
+                            else if (Utils.TryCast(bigValue, out ulong ul))
                             {
-                                result = (ulong)bigValue;
+                                result = ul;
                                 return true;
                             }
 
                             break;
                         case NumberSuffixFlags.UnsignedLong:
-                            if (Utils.IsWithinTypeBounds(typeof(ulong), bigValue))
+                            if (Utils.TryCast(bigValue, out ulong ul_))
                             {
-                                result = (ulong)bigValue;
+                                result = ul_;
                                 return true;
                             }
 
                             break;
                         case NumberSuffixFlags.Decimal:
-                            if (Utils.IsWithinTypeBounds(typeof(decimal), bigValue))
+                            if (Utils.TryCast(bigValue, out decimal dm))
                             {
-                                result = (decimal)bigValue;
+                                result = dm;
                                 return true;
                             }
 
@@ -3653,30 +3654,30 @@ namespace System.Management.Automation.Language
                             return true;
                         case NumberSuffixFlags.None:
                             // Type not specified; fit value into narrowest signed type available, int32 minimum
-                            if (Utils.IsWithinTypeBounds(typeof(int), bigValue))
+                            if (Utils.TryCast(bigValue, out int i))
                             {
-                                result = (int)bigValue;
+                                result = i;
                                 return true;
                             }
 
-                            if (Utils.IsWithinTypeBounds(typeof(long), bigValue))
+                            if (Utils.TryCast(bigValue, out long l_))
                             {
-                                result = (long)bigValue;
+                                result = l_;
                                 return true;
                             }
 
-                            if (Utils.IsWithinTypeBounds(typeof(decimal), bigValue))
+                            if (Utils.TryCast(bigValue, out decimal dm_))
                             {
-                                result = (decimal)bigValue;
+                                result = dm_;
                                 return true;
                             }
 
                             // Result is too big for anything else; fallback to double (if decimal notation)
                             if (format == NumberFormat.Decimal)
                             {
-                                if (Utils.IsWithinTypeBounds(typeof(double), bigValue))
+                                if (Utils.TryCast(bigValue, out double d))
                                 {
-                                    result = (double)bigValue;
+                                    result = d;
                                     return true;
                                 }
                             }

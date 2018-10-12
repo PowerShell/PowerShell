@@ -37,85 +37,130 @@ namespace System.Management.Automation
     /// </summary>
     internal static class Utils
     {
-        private readonly struct PrimitiveRange
+        /// <summary>
+        /// Converts a given double value to BigInteger via Math.Round().
+        /// </summary>
+        /// <param name="d">The value to convert.</param>
+        /// <returns>Returns a BigInteger value equivalent to the input value rounded to nearest integer.</returns>
+        internal static BigInteger AsBigInt(this double d) => (BigInteger)Math.Round(d);
+
+        internal static bool TryCast(BigInteger value, out byte b)
         {
-            internal readonly BigInteger MinValue;
-            internal readonly BigInteger MaxValue;
-
-            internal PrimitiveRange(long min, long max)
+            if (value < byte.MinValue || byte.MaxValue < value)
             {
-                this.MinValue = min;
-                this.MaxValue = max;
-            }
-
-            internal PrimitiveRange(ulong min, ulong max)
-            {
-                this.MinValue = min;
-                this.MaxValue = max;
-            }
-
-            internal PrimitiveRange(decimal min, decimal max)
-            {
-                this.MinValue = (BigInteger)min;
-                this.MaxValue = (BigInteger)max;
-            }
-
-            internal PrimitiveRange(double min, double max)
-            {
-                this.MinValue = (BigInteger)min;
-                this.MaxValue = (BigInteger)max;
-            }
-
-            internal void Deconstruct(out BigInteger min, out BigInteger max)
-            {
-                min = this.MinValue;
-                max = this.MaxValue;
-            }
-        }
-
-        private static readonly Dictionary<Type, PrimitiveRange> s_typeBounds = new Dictionary<Type, PrimitiveRange>()
-        {
-            { typeof(sbyte),   new PrimitiveRange(sbyte.MinValue,   sbyte.MaxValue)   },
-            { typeof(byte),    new PrimitiveRange(byte.MinValue,    byte.MaxValue)    },
-            { typeof(short),   new PrimitiveRange(short.MinValue,   short.MaxValue)   },
-            { typeof(ushort),  new PrimitiveRange(ushort.MinValue,  ushort.MaxValue)  },
-            { typeof(int),     new PrimitiveRange(int.MinValue,     int.MaxValue)     },
-            { typeof(uint),    new PrimitiveRange(uint.MinValue,    uint.MaxValue)    },
-            { typeof(long),    new PrimitiveRange(long.MinValue,    long.MaxValue)    },
-            { typeof(ulong),   new PrimitiveRange(ulong.MinValue,   ulong.MaxValue)   },
-            { typeof(decimal), new PrimitiveRange(decimal.MinValue, decimal.MaxValue) },
-            { typeof(double),  new PrimitiveRange(double.MinValue,  double.MaxValue)  },
-        };
-
-        internal static bool IsWithinTypeBounds(Type destinationType, double value)
-        {
-            if (!s_typeBounds.ContainsKey(destinationType))
-            {
+                b = 0;
                 return false;
             }
 
-            (BigInteger minValue, BigInteger maxValue) = s_typeBounds[destinationType];
-            if (minValue > (BigInteger)Math.Round(value) || (BigInteger)Math.Round(value) > maxValue)
-            {
-                return false;
-            }
-
+            b = (byte)value;
             return true;
         }
 
-        internal static bool IsWithinTypeBounds(Type destinationType, BigInteger value)
+        internal static bool TryCast(BigInteger value, out sbyte sb)
         {
-            if (!s_typeBounds.ContainsKey(destinationType))
+            if (value < sbyte.MinValue || sbyte.MaxValue < value)
             {
+                sb = 0;
                 return false;
             }
 
-            (BigInteger minValue, BigInteger maxValue) = s_typeBounds[destinationType];
-            if (minValue > value || value > maxValue)
+            sb = (sbyte)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out short s)
+        {
+            if (value < short.MinValue || short.MaxValue < value)
             {
+                s = 0;
                 return false;
             }
 
+            s = (short)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out ushort us)
+        {
+            if (value < ushort.MinValue || ushort.MaxValue < value)
+            {
+                us = 0;
+                return false;
+            }
+
+            us = (ushort)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out int i)
+        {
+            if (value < int.MinValue || int.MaxValue < value)
+            {
+                i = 0;
+                return false;
+            }
+
+            i = (int)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out uint u)
+        {
+            if (value < uint.MinValue || uint.MaxValue < value)
+            {
+                u = 0;
+                return false;
+            }
+
+            u = (uint)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out long l)
+        {
+            if (value < long.MinValue || long.MaxValue < value)
+            {
+                l = 0;
+                return false;
+            }
+
+            l = (long)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out ulong ul)
+        {
+            if (value < ulong.MinValue || ulong.MaxValue < value)
+            {
+                ul = 0;
+                return false;
+            }
+
+            ul = (ulong)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out decimal dm)
+        {
+            if (value < (BigInteger)decimal.MinValue || (BigInteger)decimal.MaxValue < value)
+            {
+                dm = 0;
+                return false;
+            }
+
+            dm = (decimal)value;
+            return true;
+        }
+
+        internal static bool TryCast(BigInteger value, out double db)
+        {
+            if (value < (BigInteger)decimal.MinValue || (BigInteger)decimal.MaxValue < value)
+            {
+                db = 0;
+                return false;
+            }
+
+            db = (double)value;
             return true;
         }
 
@@ -131,23 +176,31 @@ namespace System.Management.Automation
         /// <returns>Returns the value of the binary string as a BigInteger.</returns>
         internal static BigInteger ParseBinary(ReadOnlySpan<char> digits, bool unsigned)
         {
-            switch (digits.Length)
+            if (!unsigned)
             {
-                // Only accept sign bits at these lengths:
-                case 8: // byte
-                case 16: // short
-                case 32: // int
-                case 64: // long
-                case 96: // decimal
-                case int n when n >= 128: // BigInteger
-                    break;
-                default:
-                    // If we do not flag these as unsigned, bigint assumes a sign bit for any (8 * n) string length
+                if (digits[0] == '0')
+                {
                     unsigned = true;
-                    break;
+                }
+                else
+                {
+                    switch (digits.Length)
+                    {
+                        // Only accept sign bits at these lengths:
+                        case 8: // byte
+                        case 16: // short
+                        case 32: // int
+                        case 64: // long
+                        case 96: // decimal
+                        case int n when n >= 128: // BigInteger
+                            break;
+                        default:
+                            // If we do not flag these as unsigned, bigint assumes a sign bit for any (8 * n) string length
+                            unsigned = true;
+                            break;
+                    }
+                }
             }
-
-            unsigned = unsigned || digits[0] == '0';
 
             // Calculate number of 8-bit bytes needed to hold the input,  rounded up to next whole number.
             // This value will also be used as the indexer for our array.
