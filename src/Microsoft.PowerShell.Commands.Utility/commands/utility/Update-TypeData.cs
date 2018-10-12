@@ -939,6 +939,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
+                var originalFormats = Context.InitialSessionState.Formats;
                 try
                 {
                     // Always rebuild the format information
@@ -984,6 +985,9 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (RuntimeException e)
                 {
+                    // revert Formats if there is a failure
+                    Context.InitialSessionState.Formats.Clear();
+                    Context.InitialSessionState.Formats.Add(originalFormats);
                     this.WriteError(new ErrorRecord(e, "FormatXmlUpdateException", ErrorCategory.InvalidOperation, null));
                 }
             }

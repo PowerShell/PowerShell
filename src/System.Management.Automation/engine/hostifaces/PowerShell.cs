@@ -3405,13 +3405,8 @@ namespace System.Management.Automation
                 psAsyncResult.EndInvoke();
                 EndInvokeAsyncResult = null;
 
-                if (OutputBufferOwner)
-                {
-                    // PowerShell no longer owns the output buffer when it is passed back to the caller.
-                    OutputBufferOwner = false;
-                    OutputBuffer = null;
-                }
-
+                // PowerShell no longer owns the output buffer when it is passed back to the caller.
+                ResetOutputBufferAsNeeded();
                 return psAsyncResult.Output;
             }
             catch (InvalidRunspacePoolStateException exception)
@@ -3442,6 +3437,9 @@ namespace System.Management.Automation
                 IAsyncResult asyncResult = CoreStop(true, null, null);
                 // This is a sync call..Wait for the stop operation to complete.
                 asyncResult.AsyncWaitHandle.WaitOne();
+
+                // PowerShell no longer owns the output buffer when the pipeline is stopped by caller.
+                ResetOutputBufferAsNeeded();
             }
             catch (ObjectDisposedException)
             {
@@ -3503,6 +3501,9 @@ namespace System.Management.Automation
             }
 
             psAsyncResult.EndInvoke();
+
+            // PowerShell no longer owns the output buffer when the pipeline is stopped by caller.
+            ResetOutputBufferAsNeeded();
         }
 
         #endregion
@@ -3559,6 +3560,18 @@ namespace System.Management.Automation
         /// OutputBuffer
         /// </summary>
         internal PSDataCollection<PSObject> OutputBuffer { get; private set; }
+
+        /// <summary>
+        /// Reset the output buffer to null if it's owned by the current powershell instance.
+        /// </summary>
+        private void ResetOutputBufferAsNeeded()
+        {
+            if (OutputBufferOwner)
+            {
+                OutputBufferOwner = false;
+                OutputBuffer = null;
+            }
+        }
 
         /// <summary>
         /// This has been added as a work around for Windows8 bug 803461.
