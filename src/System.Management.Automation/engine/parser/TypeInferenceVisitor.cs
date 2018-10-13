@@ -1603,6 +1603,7 @@ namespace System.Management.Automation
                     if (psMethod.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase) &&
                         psMethod.adapterData is DotNetAdapter.MethodCacheEntry methodCacheEntry)
                     {
+                        maybeWantDefaultCtor = false;
                         AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
                         return true;
                     }
@@ -1613,6 +1614,7 @@ namespace System.Management.Automation
                 {
                     if (methodCacheEntry[0].method.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
                     {
+                        maybeWantDefaultCtor = false;
                         AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
                         return true;
                     }
