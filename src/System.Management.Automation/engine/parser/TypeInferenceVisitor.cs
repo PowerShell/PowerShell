@@ -1598,18 +1598,6 @@ namespace System.Management.Automation
 
                     return false;
                 }
-                case PSMethod psMethod: // static .net method
-                {
-                    if (psMethod.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase) &&
-                        psMethod.adapterData is DotNetAdapter.MethodCacheEntry methodCacheEntry)
-                    {
-                        maybeWantDefaultCtor = false;
-                        AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
-                        return true;
-                    }
-
-                    return false;
-                }
                 case DotNetAdapter.MethodCacheEntry methodCacheEntry: // .net method
                 {
                     if (methodCacheEntry[0].method.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
@@ -1665,6 +1653,17 @@ namespace System.Management.Automation
                     ScriptBlock scriptBlock = null;
                     switch (memberInfo)
                     {
+                        case PSMethod m:
+                        {
+                            if (m.adapterData is DotNetAdapter.MethodCacheEntry methodCacheEntry)
+                            {
+                                maybeWantDefaultCtor = false;
+                                AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
+                                return true;
+                            }
+
+                            return false;
+                        }
                         case PSProperty p:
                         {
                             result.Add(new PSTypeName(p.Value.GetType()));
