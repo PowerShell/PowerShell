@@ -3496,8 +3496,13 @@ namespace System.Management.Automation.Language
                                 multiplier = -multiplier;
                             }
 
+                            // Remove leading char (expected: - or +)
                             strNum = strNum.Slice(1);
                         }
+
+                        // If we're expecting a sign bit, remove the leading 0 added in ScanNumberHelper
+                        if (!suffix.HasFlag(NumberSuffixFlags.Unsigned) && ((strNum.Length - 1) & 7) == 0)
+                            strNum = strNum.Slice(1);
 
                         // If we have a hex literal denoting (u)int64, treat it as such
                         if (suffix == NumberSuffixFlags.None || suffix == NumberSuffixFlags.Unsigned)
@@ -3514,21 +3519,6 @@ namespace System.Management.Automation.Language
                                     suffix |= NumberSuffixFlags.BigInteger;
                                     break;
                             }
-                        }
-
-                        // If the string isn't at a length where we expect a signing bit or it's flagged as unsigned
-                        if (suffix.HasFlag(NumberSuffixFlags.Unsigned) || (strNum.Length & 7) != 0)
-                        {
-                            // Allocate new span
-                            Span<char> tempSpan = new char[strNum.Length + 1];
-
-                            // Insert 0 prefix so BigInt doesn't use the high bit as a sign bit
-                            tempSpan[0] = '0';
-
-                            // Copy original digits into the new span after the 0
-                            strNum.CopyTo(tempSpan.Slice(1));
-
-                            strNum = tempSpan;
                         }
                     }
 
@@ -3787,6 +3777,7 @@ namespace System.Management.Automation.Language
                     {
                         case 'x':
                         case 'X':
+                            sb.Append('0'); // Prepend a 0 to the number before any numeric digits are added
                             ScanHexDigits(sb);
                             if (sb.Length == 0)
                             {
