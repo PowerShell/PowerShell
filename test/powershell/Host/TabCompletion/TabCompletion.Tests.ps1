@@ -355,7 +355,7 @@ Describe "TabCompletion" -Tags CI {
             $testCases = @(
                 @{ inputStr = '[powershell]::Create().'; expected = 'Commands' }
                 @{ inputStr = '$ExecutionContext.GetType().'; expected = 'Assembly' }
-                @{ inputStr = '[runspace]::DefaultRunspace'; expected = 'ConnectionInfo' }
+                @{ inputStr = '[runspace]::DefaultRunspace.'; expected = 'ConnectionInfo' }
                 @{ inputStr = '$ExecutionContext.SessionState.'; expected = 'Applications' }
                 @{ inputStr = '[psmoduleinfo]::new().'; expected = 'AccessMode' }
             )
