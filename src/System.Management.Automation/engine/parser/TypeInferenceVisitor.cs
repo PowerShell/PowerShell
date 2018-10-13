@@ -1751,7 +1751,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                return ;
+                return;
             }
 
             // Accessing a method as a property, we'd return a wrapper over the method.
