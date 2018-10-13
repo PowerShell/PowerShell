@@ -350,6 +350,25 @@ Describe "TabCompletion" -Tags CI {
         }
     }
 
+    Context "Member completion tests" {
+        BeforeAll {
+            $testCases = @(
+                @{ inputStr = '[powershell]::Create().'; expected = 'Commands' }
+                @{ inputStr = '$ExecutionContext.GetType().'; expected = 'Assembly' }
+                @{ inputStr = '[runspace]::DefaultRunspace'; expected = 'ConnectionInfo' }
+                @{ inputStr = '$ExecutionContext.SessionState.'; expected = 'Applications' }
+                @{ inputStr = '[psmoduleinfo]::new().'; expected = 'AccessMode' }
+            )
+        }
+
+        It "Input '<inputStr>' should successfully complete members" -TestCases $testCases {
+            param($inputStr, $expected)
+
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
+        }
+    }
+
     Context "Miscellaneous completion tests" {
         BeforeAll {
             $testCases = @(
