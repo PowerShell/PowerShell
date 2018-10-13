@@ -926,6 +926,14 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be System.Int32
     }
 
+    It 'Infers type of variable $_ in catch block' {
+        $variableAst = { try {} catch { $_ } }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
+        $res = [AstTypeInference]::InferTypeOf($variableAst)
+
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be System.Management.Automation.ErrorRecord
+    }
+
     It 'Infers type of function member' {
         $res = [AstTypeInference]::InferTypeOf( {
                 class X {
