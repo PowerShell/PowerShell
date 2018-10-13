@@ -242,6 +242,12 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Type'
     }
 
+    It "Infers type from static member method" {
+        $res = [AstTypeInference]::InferTypeOf( { [powershell]::Create() }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Management.Automation.PowerShell'
+    }
+
     It "Infers type from integer * stringliteral" {
         $res = [AstTypeInference]::InferTypeOf( {  5 * "5" }.Ast)
         $res.Count | Should -Be 1

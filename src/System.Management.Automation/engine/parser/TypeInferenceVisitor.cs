@@ -1657,7 +1657,6 @@ namespace System.Management.Automation
                         {
                             if (m.adapterData is DotNetAdapter.MethodCacheEntry methodCacheEntry)
                             {
-                                maybeWantDefaultCtor = false;
                                 AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
                                 return true;
                             }
