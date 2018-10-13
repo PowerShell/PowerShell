@@ -1803,7 +1803,7 @@ namespace System.Management.Automation
                 // $_ is special, see if we're used in a script block in some pipeline.
                 while (parent != null)
                 {
-                    if (parent is ScriptBlockExpressionAst)
+                    if (parent is ScriptBlockExpressionAst || parent is CatchClauseAst)
                     {
                         break;
                     }
@@ -1830,6 +1830,12 @@ namespace System.Management.Automation
                     if (parent.Parent is CommandParameterAst)
                     {
                         parent = parent.Parent;
+                    }
+
+                    if (parent is CatchClauseAst)
+                    {
+                        inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
+                        return;
                     }
 
                     if (parent.Parent is CommandAst commandAst)
