@@ -205,7 +205,7 @@ namespace System.Management.Automation
             // Calculate number of 8-bit bytes needed to hold the input,  rounded up to next whole number.
             // This value will also be used as the indexer for our array.
             int outputByteWalker = (digits.Length + 7) / 8;
-            byte[] outputBytes = new byte[outputByteWalker--];
+            Span<byte> outputBytes = new byte[outputByteWalker--];
 
             // We need to be prepared for any partial leading bytes, (e.g., 010|00000011|00000100|00000101)
             // or for lengths < 8 (less than one byte) e.g., 010.
