@@ -8263,6 +8263,41 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
+        /// Tries to create a file stream on a file.
+        /// </summary>
+        /// <param name="path">The fully-qualified path to the file.</param>
+        /// <param name="streamName">The name of the alternate data stream to open.</param>
+        /// <param name="mode">The FileMode of the file.</param>
+        /// <param name="access">The FileAccess of the file.</param>
+        /// <param name="share">The FileShare of the file.</param>
+        /// <param name="stream">A FileStream that can be used to interact with the file.</param>
+        /// <returns>true if the stream was successfully created, otherwise false.</returns>
+        internal static bool TryCreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share, out FileStream stream)
+        {
+            if (path == null)
+                throw new ArgumentNullException("path");
+            if (streamName == null)
+                throw new ArgumentNullException("streamName");
+
+            string adjustedStreamName = streamName.Trim();
+            adjustedStreamName = ":" + adjustedStreamName;
+            string resultPath = path + adjustedStreamName;
+
+            if (mode == FileMode.Append)
+                mode = FileMode.OpenOrCreate;
+            SafeFileHandle handle = NativeMethods.CreateFile(resultPath, access, share, IntPtr.Zero, mode, 0, IntPtr.Zero);
+
+            if (handle.IsInvalid)
+            {
+                stream = null;
+                return false;
+            }
+
+            stream = new FileStream(handle, access);
+            return true;
+        }
+
+        /// <summary>
         /// Removes an alternate data stream.
         /// </summary>
         /// <param name="path">The path to the file.</param>
