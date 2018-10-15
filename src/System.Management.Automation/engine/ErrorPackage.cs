@@ -1673,12 +1673,14 @@ namespace System.Management.Automation
     /// <summary>
     /// Dummy generic class for type inference purposes on typed catch blocks.
     /// </summary>
-    /// <typeparam name="E">Anything that inherits Exception.</typeparam>
-    internal class ErrorRecord<E> : ErrorRecord where E : Exception
+    /// <typeparam name="TException">Anything that inherits Exception.</typeparam>
+    internal class ErrorRecord<TException> : ErrorRecord where TException : Exception
     {
-        public new E Exception { get; }
+        public new TException Exception { get; }
 
-        public ErrorRecord(Exception exception, string errorId, ErrorCategory errorCategory, object targetObject) : base(exception, errorId, errorCategory, targetObject) { }
+        public ErrorRecord(Exception exception, string errorId, ErrorCategory errorCategory, object targetObject) : base(exception, errorId, errorCategory, targetObject)
+        {
+        }
     }
 
     /// <summary>

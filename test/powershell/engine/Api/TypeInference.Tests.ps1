@@ -935,7 +935,7 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It 'Infers type of $_.Expression in catch block' {
-        $memberAst = { try {} catch { $_.Expression } }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] }, $true)
+        $memberAst = { try {} catch { $_.Exception } }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] }, $true)
         $res = [AstTypeInference]::InferTypeOf($memberAst)
 
         $res.Count | Should -Be 1
@@ -943,14 +943,14 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It 'Infers type of $_.Expression in typed catch block' {
-        $memberAst = { try {} catch [System.IO.FileNotFoundException] { $_.Expression } }.Ast.Find(
+        $memberAst = { try {} catch [System.IO.FileNotFoundException] { $_.Exception } }.Ast.Find(
             { param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] },
             $true
         )
         $res = [AstTypeInference]::InferTypeOf($memberAst)
 
         $res.Count | Should -Be 1
-        $res.Name | Should -Be System.Exception
+        $res.Name | Should -Be System.IO.FileNotFoundException
     }
 
     It 'Infers type of function member' {
