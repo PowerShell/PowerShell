@@ -7,7 +7,7 @@ Describe "Get-Culture" -Tags "CI" {
 
         $culture = Get-Culture
         $culture | Should -BeOfType [CultureInfo]
-        ($culture).LCID | Should -Be $host.CurrentCulture.LCID
+        ($culture).EnglishName | Should -BeExactly $host.CurrentCulture.EnglishName
 
         Get-Culture -NoUserOverrides | Should -BeOfType [CultureInfo]
     }
@@ -33,14 +33,11 @@ Describe "Get-Culture" -Tags "CI" {
         $ciArray = Get-Culture "", "ru-RU"
         $ciArray | Should -HaveCount 2
         $ciArray[0] | Should -BeOfType [CultureInfo]
-        $ciArray[0].LCID | Should -Be 127
-        if ($isWindows) {
-            # Check that for empty name the cmdlet returns an invariant culture on Windows.
-            $ciArray[0].DisplayName | Should -BeExactly "Invariant Language (Invariant Country)"
-        }
+        $ciArray[0].EnglishName | Should -BeExactly "Invariant Language (Invariant Country)"
 
         $ciArray[1] | Should -BeOfType [CultureInfo]
-        $ciArray[1].LCID | Should -Be 1049
+        $ciArray[1].Name | Should -BeExactly "ru-RU"
+        $ciArray[1].EnglishName | Should -BeExactly "Russian (Russia)"
     }
 
     It "Should accept values from a pipeline for '-Name' parameter" {
@@ -48,9 +45,10 @@ Describe "Get-Culture" -Tags "CI" {
         $ciArray = "", "ru-RU" | Get-Culture
         $ciArray | Should -HaveCount 2
         $ciArray[0] | Should -BeOfType [CultureInfo]
-        $ciArray[0].LCID | Should -Be 127
+        $ciArray[0].EnglishName | Should -BeExactly "Invariant Language (Invariant Country)"
         $ciArray[1] | Should -BeOfType [CultureInfo]
-        $ciArray[1].LCID | Should -Be 1049
+        $ciArray[1].Name | Should -BeExactly "ru-RU"
+        $ciArray[1].EnglishName | Should -BeExactly "Russian (Russia)"
     }
 
     It "Should return the culture array with '-ListAvailable' parameter" {

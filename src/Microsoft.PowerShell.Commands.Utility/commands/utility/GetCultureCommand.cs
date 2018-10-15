@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
                 case CurrentCultureParameterSet:
                     if (NoUserOverrides)
                     {
-                        ci = CultureInfo.GetCultureInfo(Host.CurrentCulture.LCID);
+                        ci = CultureInfo.GetCultureInfo(Host.CurrentCulture.Name);
                     }
                     else
                     {
