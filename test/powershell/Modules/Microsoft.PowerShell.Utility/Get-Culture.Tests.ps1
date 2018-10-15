@@ -31,10 +31,11 @@ Describe "Get-Culture" -Tags "CI" {
     It "Should return specified cultures with '-Name' parameter" {
 
         $ciArray = Get-Culture "", "ru-RU"
-        $ciArray | Should -BeOfType [CultureInfo]
         $ciArray | Should -HaveCount 2
         $ciArray[0] | Should -BeOfType [CultureInfo]
         $ciArray[0].LCID | Should -Be 127
+        # Check that for empty name the cmdlet returns an invariant culture.
+        $ciArray[0].DisplayName | Should -BeExactly "Invariant Language (Invariant Country)"
         $ciArray[1] | Should -BeOfType [CultureInfo]
         $ciArray[1].LCID | Should -Be 1049
     }
@@ -42,7 +43,6 @@ Describe "Get-Culture" -Tags "CI" {
     It "Should accept values from a pipeline for '-Name' parameter" {
 
         $ciArray = "", "ru-RU" | Get-Culture
-        $ciArray | Should -BeOfType [CultureInfo]
         $ciArray | Should -HaveCount 2
         $ciArray[0] | Should -BeOfType [CultureInfo]
         $ciArray[0].LCID | Should -Be 127

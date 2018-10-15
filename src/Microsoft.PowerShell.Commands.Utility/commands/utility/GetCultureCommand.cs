@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets culture names for which CultureInfo values are returned.
+        /// Empty string matches Invariant culture.
         /// </summary>
         [Parameter(ParameterSetName = NameParameterSet, Position = 0, ValueFromPipeline = true)]
         [ValidateSet(typeof(ValidateCultureNamesGenerator))]
@@ -74,9 +75,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (var cultureName in Name)
                         {
-                            if (NoUserOverrides && string.Equals(cultureName, Host.CurrentCulture.Name, StringComparison.CurrentCultureIgnoreCase))
+                            if (!NoUserOverrides && string.Equals(cultureName, Host.CurrentCulture.Name, StringComparison.CurrentCultureIgnoreCase))
                             {
-                                ci = new CultureInfo(cultureName, false);
+                                ci = Host.CurrentCulture;
                             }
                             else
                             {
