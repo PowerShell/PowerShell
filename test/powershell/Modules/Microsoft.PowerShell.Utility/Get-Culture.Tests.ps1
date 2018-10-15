@@ -34,8 +34,11 @@ Describe "Get-Culture" -Tags "CI" {
         $ciArray | Should -HaveCount 2
         $ciArray[0] | Should -BeOfType [CultureInfo]
         $ciArray[0].LCID | Should -Be 127
-        # Check that for empty name the cmdlet returns an invariant culture.
-        $ciArray[0].DisplayName | Should -BeExactly "Invariant Language (Invariant Country)"
+        if ($isWindows) {
+            # Check that for empty name the cmdlet returns an invariant culture on Windows.
+            $ciArray[0].DisplayName | Should -BeExactly "Invariant Language (Invariant Country)"
+        }
+
         $ciArray[1] | Should -BeOfType [CultureInfo]
         $ciArray[1].LCID | Should -Be 1049
     }
