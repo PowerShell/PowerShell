@@ -204,8 +204,10 @@ namespace System.Management.Automation
 
             // Calculate number of 8-bit bytes needed to hold the input,  rounded up to next whole number.
             // This value will also be used as the indexer for our array.
-            int outputByteWalker = (digits.Length + 7) / 8;
-            Span<byte> outputBytes = outputByteWalker <= 512 ? stackalloc byte[outputByteWalker--] : new byte[outputByteWalker--];
+            int outputByteCount = (digits.Length + 7) / 8;
+            int outputByteIndex = outputByteCount - 1;
+
+            Span<byte> outputBytes = outputByteIndex <= 512 ? stackalloc byte[outputByteCount] : new byte[outputByteCount];
 
             // We need to be prepared for any partial leading bytes, (e.g., 010|00000011|00000100|00000101)
             // or for lengths < 8 (less than one byte) e.g., 010.
@@ -222,7 +224,7 @@ namespace System.Management.Automation
                 //
                 // N.B.: This code has been tested against a straight for loop iterating through the byte, and in no
                 // circumstance was it faster or more effective than this unrolled version.
-                outputBytes[outputByteWalker--] =
+                outputBytes[outputByteIndex--] =
                     (byte)(((digits[blockWalker - 7] << 7)
                         | (digits[blockWalker - 6] << 6)
                         | (digits[blockWalker - 5] << 5)
@@ -234,8 +236,8 @@ namespace System.Management.Automation
                         & 0b1111));
             }
 
-            // With all full bytes parsed, blockWalker is either at the partial byte start, or at 0
-            if (blockWalker > 0)
+            // With all full bytes parsed, blockWalker is either at the partial byte start, or at -1
+            if (blockWalker >= 0)
             {
                 int currentByteValue = 0;
                 for (int i = 0; i <= blockWalker; i++)
@@ -243,7 +245,7 @@ namespace System.Management.Automation
                     currentByteValue = (currentByteValue << 1) | (digits[i] - '0');
                 }
 
-                outputBytes[outputByteWalker] = (byte)currentByteValue;
+                outputBytes[outputByteIndex] = (byte)currentByteValue;
             }
 
             return new BigInteger(outputBytes, isUnsigned: unsigned, isBigEndian: true);
