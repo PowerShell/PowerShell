@@ -18,9 +18,9 @@ Here's the simplest of tests
 
 ```powershell
 Describe "A variable can be assigned and retrieved" {
-    It "Create a variable and make sure its value is correct" {
+    It "Creates a variable and makes sure its value is correct" {
        $a = 1
-       $a | Should Be 1
+       $a | Should -Be 1
    }
 }
 ```
@@ -31,11 +31,11 @@ If you need to do type checking, that can be done as well
 Describe "One is really one" {
     It "Compare 1 to 1" {
        $a = 1
-       $a | Should Be 1
+       $a | Should -Be 1
     }
     It "1 is really an int" {
        $i = 1
-       $i.GetType() | Should Be "int"
+       $i.GetType() | Should -Be "int"
     }
 }
 ```
@@ -46,11 +46,11 @@ alternatively, you could do the following:
 Describe "One is really one" {
     It "Compare 1 to 1" {
        $a = 1
-       $a | Should Be 1
+       $a | Should -Be 1
     }
     It "1 is really an int" {
        $i = 1
-       $i.GetType() | Should Be ([System.Int32])
+       $i | Should -BeOfType System.Int32
     }
 }
 ```
@@ -65,7 +65,7 @@ It "Get-Item on a nonexisting file should have error PathNotFound" {
 }
 ```
 
-Note that if Get-Item were to succeed, the test will fail.
+Note that if `Get-Item` were to succeed, the test will fail.
 
 However, if you need to check the `InnerException` or other members of the ErrorRecord, you should use `-PassThru` parameter:
 
@@ -73,7 +73,7 @@ However, if you need to check the `InnerException` or other members of the Error
 	It "InnerException sample" {
 
 	$e = { Invoke-WebRequest https://expired.badssl.com/ } | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand" -PassThru
-	$e.Exception.InnerException.NativeErrorCode | Should Be 12175
+	$e.Exception.InnerException.NativeErrorCode | Should -Be 12175
     ...
 	}
 ```
@@ -82,7 +82,7 @@ However, if you need to check the `InnerException` or other members of the Error
 For creation of PowerShell tests, the Describe block is the level of granularity suggested and one of three tags should be used: "CI", "Feature", or "Scenario". If the tag is not provided, tests in that describe block will be run any time tests are executed.
 
 #### Describe
-Creates a logical group of tests. All Mocks and TestDrive contents defined within a Describe block are scoped to that Describe; they will no longer be present when the Describe block exits. A `Describe block may contain any number of Context and It blocks.
+Creates a logical group of tests. All Mocks and TestDrive contents defined within a Describe block are scoped to that Describe; they will no longer be present when the Describe block exits. A Describe block may contain any number of Context and It blocks.
 
 #### Context
 Provides logical grouping of It blocks within a single Describe block. Any Mocks defined inside a Context are removed at the end of the Context scope, as are any files or folders added to the TestDrive during the Context block's execution. Any BeforeEach or AfterEach blocks defined inside a Context also only apply to tests within that Context .
@@ -145,7 +145,7 @@ $testCases = @(
 Describe "A test" {
     It "<a> -xor <b> should be <expectedresult>" -testcase $testcases {
         param ($a, $b, $ExpectedResult)
-        $a -xor $b | Should Be $ExpectedResult
+        $a -xor $b | Should -Be $ExpectedResult
     }
 }
 ```
@@ -160,7 +160,7 @@ The following example illustrates simple use:
 Context "Get-Random is not random" {
         Mock Get-Random { return 3 }
         It "Get-Random returns 3" {
-            Get-Random | Should Be 3
+            Get-Random | Should -Be 3
         }
     }
 ```
@@ -186,7 +186,7 @@ Describe it {
 
         Write-Host -for DarkRed "Before It"
         It "should not be a surprise" {
-            1 | should be 1
+            1 | should -Be 1
         }
         Write-Host -for DarkRed "After It"
     }
@@ -223,8 +223,8 @@ Tests completed in 79ms
 Passed: 1 Failed: 0 Skipped: 0 Pending: 0
 ```
 
-The DESCRIBE BeforeAll block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe BLOCK, that state will not be visible (as the code will not yet been run). Notice, too, that the BEFOREALL block in Context is executed before any other code in that block.
-Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those block rely on state set by free code elsewhere in the block.
+The Describe BeforeAll block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe BLOCK, that state will not be visible (as the code will not yet been run). Notice, too, that the BeforeAll block in Context is executed before any other code in that block.
+Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those blocks rely on state set by free code elsewhere in the block.
 
 #### Skipping tests in bulk
 Sometimes it is beneficial to skip all the tests in a particular `Describe` block. For example, tests which are not applicable to a platform could be skipped, and they would be reported as skipped. The following is an example of how this may be done:
@@ -241,18 +241,18 @@ Describe "Should not run these tests on non-Windows platforms" {
     }
     Context "Block 1" {
         It "This block 1 test 1" {
-            1 | should be 1
+            1 | should -Be 1
         }
         It "This is block 1 test 2" {
-            1 | should be 1
+            1 | should -Be 1
         }
     }
     Context "Block 2" {
         It "This block 2 test 1" {
-            2 | should be 1
+            2 | should -Be 1
         }
         It "This is block 2 test 2" {
-            2 | should be 1
+            2 | should -Be 1
         }
     }
 }
@@ -277,12 +277,12 @@ Describing Should not run these tests on non-Windows platforms
     [-] This block 2 test 1 52ms
       Expected: {1}
       But was:  {2}
-      22:             2 | should be 1
+      22:             2 | should -Be 1
       at <ScriptBlock>, <No file>: line 22
     [-] This is block 2 test 2 77ms
       Expected: {1}
       But was:  {2}
-      25:             2 | should be 1
+      25:             2 | should -Be 1
       at <ScriptBlock>, <No file>: line 25
 ```
 
@@ -295,7 +295,7 @@ You may want to have a test like
 
 ```powershell
 It 'tests multi-line string' {
-    Get-MultiLineString | Should Be @'
+    Get-MultiLineString | Should -Be @'
 first line
 second line
 '@
@@ -322,7 +322,7 @@ function normalizeEnds([string]$text)
 }
 
 It 'tests multi-line string' {
-    normalizeEnds (Get-MultiLineString) | Should Be (normalizeEnds @'
+    normalizeEnds (Get-MultiLineString) | Should -Be (normalizeEnds @'
 first line
 second line
 '@)
