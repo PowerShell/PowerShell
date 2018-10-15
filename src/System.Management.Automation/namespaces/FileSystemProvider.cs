@@ -8242,24 +8242,14 @@ namespace System.Management.Automation.Internal
         /// <returns>A FileStream that can be used to interact with the file.</returns>
         internal static FileStream CreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share)
         {
-            if (path == null) throw new ArgumentNullException("path");
-            if (streamName == null) throw new ArgumentNullException("streamName");
-
-            string adjustedStreamName = streamName.Trim();
-            adjustedStreamName = ":" + adjustedStreamName;
-            string resultPath = path + adjustedStreamName;
-
-            if (mode == FileMode.Append) mode = FileMode.OpenOrCreate;
-            SafeFileHandle handle = NativeMethods.CreateFile(resultPath, access, share, IntPtr.Zero, mode, 0, IntPtr.Zero);
-
-            if (handle.IsInvalid)
+            if (!TryCreateFileStream(path, streamName, mode, access, share, out var stream))
             {
                 string errorMessage = StringUtil.Format(
                     FileSystemProviderStrings.AlternateDataStreamNotFound, streamName, path);
-                throw new FileNotFoundException(errorMessage, resultPath);
+                throw new FileNotFoundException(errorMessage, $"{path}:{streamName.Trim()}");
             }
 
-            return new FileStream(handle, access);
+            return stream;
         }
 
         /// <summary>
@@ -8275,16 +8265,21 @@ namespace System.Management.Automation.Internal
         internal static bool TryCreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share, out FileStream stream)
         {
             if (path == null)
+            {
                 throw new ArgumentNullException("path");
-            if (streamName == null)
-                throw new ArgumentNullException("streamName");
+            }
 
-            string adjustedStreamName = streamName.Trim();
-            adjustedStreamName = ":" + adjustedStreamName;
-            string resultPath = path + adjustedStreamName;
+            if (streamName == null)
+            {
+                throw new ArgumentNullException("streamName");
+            }
 
             if (mode == FileMode.Append)
+            {
                 mode = FileMode.OpenOrCreate;
+            }
+
+            var resultPath = $"{path}:{streamName.Trim()}";
             SafeFileHandle handle = NativeMethods.CreateFile(resultPath, access, share, IntPtr.Zero, mode, 0, IntPtr.Zero);
 
             if (handle.IsInvalid)
