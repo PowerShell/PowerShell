@@ -1832,9 +1832,24 @@ namespace System.Management.Automation
                         parent = parent.Parent;
                     }
 
-                    if (parent is CatchClauseAst)
+                    if (parent is CatchClauseAst catchBlock)
                     {
-                        inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
+                        if (catchBlock.CatchTypes.Count > 0)
+                        {
+                            foreach (TypeConstraintAst catchType in catchBlock.CatchTypes)
+                            {
+                                Type exceptionType = catchType.TypeName.GetReflectionType();
+                                if (exceptionType != null && typeof(Exception).IsAssignableFrom(exceptionType))
+                                {
+                                    inferredTypes.Add(new PSTypeName(typeof(ErrorRecord<>).MakeGenericType(exceptionType)));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
+                        }
+
                         return;
                     }
 

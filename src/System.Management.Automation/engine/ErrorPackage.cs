@@ -1671,6 +1671,17 @@ namespace System.Management.Automation
     } // class ErrorRecord
 
     /// <summary>
+    /// Dummy generic class for type inference purposes on typed catch blocks.
+    /// </summary>
+    /// <typeparam name="E">Anything that inherits Exception.</typeparam>
+    internal class ErrorRecord<E> : ErrorRecord where E : Exception
+    {
+        public new E Exception { get; }
+
+        public ErrorRecord(Exception exception, string errorId, ErrorCategory errorCategory, object targetObject) : base(exception, errorId, errorCategory, targetObject) { }
+    }
+
+    /// <summary>
     /// Implemented by exception classes which contain additional
     /// <see cref="System.Management.Automation.ErrorRecord"/>
     /// information.
