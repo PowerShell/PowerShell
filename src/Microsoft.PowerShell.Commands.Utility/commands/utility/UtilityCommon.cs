@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder asciiEnd = new StringBuilder(BytesPerLine);
 
             // '+1' comes from 'result.Append(nextLine.ToString() + " " + asciiEnd.ToString());' below.
-            StringBuilder result = new StringBuilder(nextLine.Capacity+asciiEnd.Capacity+1);
+            StringBuilder result = new StringBuilder(nextLine.Capacity+asciiEnd.Capacity + 1);
 
             if (Bytes.Length > 0)
             {

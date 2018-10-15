@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Creates a binary reader that reads the file content into a buffer (byte[]) 16 bytes at a time, and
-        /// passes a copy of that array on to the ConvertToHexidecimal method to output.
+        /// passes a copy of that array on to the WriteHexidecimal method to output.
         /// </summary>
         /// <param name="path"></param>
         private void ProcessFileContent(string path)
@@ -195,11 +195,11 @@ namespace Microsoft.PowerShell.Commands
                         if (count > Count)
                         {
                             bytesRead -= (int)(count - Count);
-                            ConvertToHexidecimal(buffer.Slice(0, bytesRead), path, offset);
+                            WriteHexidecimal(buffer.Slice(0, bytesRead), path, offset);
                             break;
                         }
 
-                        ConvertToHexidecimal(buffer.Slice(0, bytesRead), path, offset);
+                        WriteHexidecimal(buffer.Slice(0, bytesRead), path, offset);
 
                         offset += bytesRead;
                     }
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Creates a byte array from the object passed to the cmdlet (based on type) and passes
-        /// that array on to the ConvertToHexidecimal method to output.
+        /// that array on to the WriteHexidecimal method to output.
         /// </summary>
         /// <param name="inputObject"></param>
         private void ProcessObjectContent(PSObject inputObject)
@@ -257,12 +257,12 @@ namespace Microsoft.PowerShell.Commands
                 case Int32 iInt32:
                     inputBytes = BitConverter.GetBytes(iInt32);
                     break;
-                case Int32[] inputInt32s:
+                case Int32[] i32s:
                     int i32 = 0;
-                    inputBytes = new byte[sizeof(Int32) * inputInt32s.Length];
+                    inputBytes = new byte[sizeof(Int32) * i32s.Length];
                     Span<byte> inputStreamArray32 = inputBytes;
 
-                    foreach (Int32 value in inputInt32s)
+                    foreach (Int32 value in i32s)
                     {
                         BitConverter.TryWriteBytes(inputStreamArray32.Slice(i32), value);
                         i32 += sizeof(Int32);
@@ -304,11 +304,11 @@ namespace Microsoft.PowerShell.Commands
                 int count = Math.Min(inputBytes.Length - offset, Count < (long)int.MaxValue ? (int)Count : int.MaxValue);
                 if (offset != 0 || count != inputBytes.Length)
                 {
-                    ConvertToHexidecimal(inputBytes.AsSpan().Slice(offset, count), null, 0);
+                    WriteHexidecimal(inputBytes.AsSpan().Slice(offset, count), null, 0);
                 }
                 else
                 {
-                    ConvertToHexidecimal(inputBytes, null, 0);
+                    WriteHexidecimal(inputBytes, null, 0);
                 }
             }
         }
@@ -323,13 +323,13 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="inputBytes">Bytes for the hexadecimial representaion.</param>
         /// <param name="path">File path.</param>
         /// <param name="offset">Offset in the file.</param>
-        private void ConvertToHexidecimal(Span<byte> inputBytes, string path, Int64 offset)
+        private void WriteHexidecimal(Span<byte> inputBytes, string path, Int64 offset)
         {
             ByteCollection byteCollectionObject = new ByteCollection((UInt64)offset, inputBytes.ToArray(), path);
             WriteObject(byteCollectionObject);
         }
 
-        private void ConvertToHexidecimal(byte[] inputBytes, string path, Int64 offset)
+        private void WriteHexidecimal(byte[] inputBytes, string path, Int64 offset)
         {
             ByteCollection byteCollectionObject = new ByteCollection((UInt64)offset, inputBytes, path);
             WriteObject(byteCollectionObject);
