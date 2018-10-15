@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value>The path name.</value>
         public string Path
         {
-            get => !_pathSet ? s_inputStream : _path;
+            get => _pathSet ? _path : s_inputStream;
             set
             {
                 _path = value;
@@ -1062,7 +1062,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // null check is not needed (because of ValidateNotNullOrEmpty),
                 // but we have to include it to silence OACR
-                _includeStrings = value ?? throw PSTraceSource.NewArgumentNullException("value");
+                _includeStrings = value ?? throw PSTraceSource.NewArgumentNullException(nameof(value));
 
                 this._include = new WildcardPattern[_includeStrings.Length];
                 for (int i = 0; i < _includeStrings.Length; i++)
