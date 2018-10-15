@@ -355,7 +355,7 @@ namespace Microsoft.PowerShell
                 {
                     ThrowError(
                             new ImplicitRemotingBatchingNotSupportedException(
-                                "Variable type not supported"),
+                                ConsoleHostStrings.ImplicitBatchVariableTypeNotSupported),
                             variableExpressionAst);
                 }
 
@@ -389,7 +389,7 @@ namespace Microsoft.PowerShell
                     {
                         ThrowError(
                             new ImplicitRemotingBatchingNotSupportedException(
-                                "Pipeline Starting With Expression not supported"),
+                                ConsoleHostStrings.ImplicitBatchStartExpressionNotSupported),
                             pipelineAst);
                     }
                 }
@@ -403,7 +403,7 @@ namespace Microsoft.PowerShell
                 {
                     ThrowError(
                         new ImplicitRemotingBatchingNotSupportedException(
-                            "Dot Sourcing not supported"),
+                            ConsoleHostStrings.ImplicitBatchDotSourcingNotSupported),
                         commandAst);
                 }
 
@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell
                 {
                     ThrowError(
                         new ImplicitRemotingBatchingNotSupportedException(
-                            "ScriptBlock Invocation not supported"),
+                            ConsoleHostStrings.ImplicitBatchScriptBlockNotSupported),
                         commandAst);
                 }
 
@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell
                 {
                     ThrowError(
                         new ImplicitRemotingBatchingNotSupportedException(
-                            "Output Error Redirect not supported"),
+                            ConsoleHostStrings.ImplicitBatchMergeRedirectNotSupported),
                         redirectionAst);
                 }
 
@@ -458,7 +458,7 @@ namespace Microsoft.PowerShell
             {
                 ThrowError(
                     new ImplicitRemotingBatchingNotSupportedException(
-                        "Output Error Redirect not supported"),
+                        ConsoleHostStrings.ImplicitBatchFileRedirectNotSupported),
                     redirectionAst);
 
                 return AstVisitAction.Continue;
@@ -479,7 +479,7 @@ namespace Microsoft.PowerShell
             {
                 // Using expressions are not expected in Implicit remoting commands.
                 ThrowError(new ImplicitRemotingBatchingNotSupportedException(
-                    "Using expressions not supported"), 
+                    ConsoleHostStrings.ImplicitBatchUsingNotSupported), 
                     usingExpressionAst);
 
                 return AstVisitAction.SkipChildren;
@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell
                 var scriptBlockAst = scriptBlock.Ast as ScriptBlockAst;
                 if (scriptBlockAst == null)
                 {
-                    throw new ImplicitRemotingBatchingNotSupportedException("Invalid Scriptblock");
+                    throw new ImplicitRemotingBatchingNotSupportedException(ConsoleHostStrings.ImplicitBatchInvalidScriptBlock);
                 }
 
                 // Make sure that this is a simple pipeline
@@ -540,7 +540,7 @@ namespace Microsoft.PowerShell
                 scriptBlockAst.GetSimplePipeline(true, out errorId, out errorMsg);
                 if (errorId != null)
                 {
-                    throw new ImplicitRemotingBatchingNotSupportedException("Script not a simple pipeline");
+                    throw new ImplicitRemotingBatchingNotSupportedException(ConsoleHostStrings.ImplicitBatchScriptNotSimplePipeline);
                 }
 
                 // Run checker
@@ -550,7 +550,7 @@ namespace Microsoft.PowerShell
                 // If this is just a single command, there is no point in batching it
                 if (checker.Commands.Count < 2)
                 {
-                    throw new ImplicitRemotingBatchingNotSupportedException("No need to batch a single command.");
+                    throw new ImplicitRemotingBatchingNotSupportedException(ConsoleHostStrings.ImplicitBatchSingleCommand);
                 }
 
                 // We have a valid batching candidate
