@@ -219,6 +219,9 @@ namespace System.Management.Automation
                 // '1' == 49 (00110001); '0' == 48 (00110000); we can safely bitshift the whole thing and then
                 // simply discard the unneeded higher bits with the cast. The low bits are added in separately to
                 // allow us to strip the higher 'noise' bits before we sum the values using binary-or.
+                //
+                // N.B.: This code has been tested against a straight for loop iterating through the byte, and in no
+                // circumstance was it faster or more effective than this unrolled version.
                 outputBytes[outputByteWalker--] =
                     (byte)(((digits[blockWalker - 7] << 7)
                         | (digits[blockWalker - 6] << 6)
