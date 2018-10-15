@@ -7,10 +7,6 @@ Describe "Join-String" -Tags "CI" {
         $testObject = Get-ChildItem
     }
 
-    It "Should be called using an object as piped without error with no switches" {
-        {$testObject | Join-String } | Should -Not -Throw
-    }
-
     It "Should be called using the InputObject without error with no other switches" {
         { Join-String -InputObject $testObject } | Should -Not -Throw
     }
@@ -52,7 +48,7 @@ Describe "Join-String" -Tags "CI" {
         $actual | Should -BeExactly $expected
     }
 
-	It "Should join property values Formatted" {
+    It "Should join property values Formatted" {
         $expected = ($testObject.Name).Foreach{"[$_]"} -join "; "
         $actual = $testObject | Join-String -Property Name -Separator "; " -Format "[{0}]"
         $actual | Should -BeExactly $expected
@@ -85,7 +81,7 @@ Describe "Join-String" -Tags "CI" {
         $actual | Should -BeExactly $expected
     }
 
-	It "Should join script block results with Format and separator" {
+    It "Should join script block results with Format and separator" {
         $sb = {$_.Name + $_.Length}
         $expected = ($testObject | ForEach-Object $sb).Foreach{"[{0}]" -f $_} -join "; "
         $actual = $testObject | Join-String -Property $sb -Separator "; " -Format "[{0}]"
@@ -99,20 +95,20 @@ Describe "Join-String" -Tags "CI" {
         $actual | Should -BeExactly $expected
     }
 
-	It "Should handle null separator" {
-		$expected = -join 'hello'.tochararray()
+    It "Should handle null separator" {
+        $expected = -join 'hello'.tochararray()
         $actual = "hello" | Join-String -separator $null
         $actual | Should -BeExactly $expected
-	}
+    }
 
-	It "Should tabcomplete InputObject properties" {
-		$cmd = '[io.fileinfo]::new("c:\temp") | Join-String -Property '
-		$res = tabexpansion2 $cmd $cmd.length
-		$completionTexts = $res.CompletionMatches.CompletionText
-		$Propertys = [io.fileinfo]::new($PSScriptRoot).psobject.properties.Name
-		foreach($n in $Propertys) {
-			$n -in $completionTexts | Should -BeTrue
-		}
-	}
+    It "Should tabcomplete InputObject properties" {
+        $cmd = '[io.fileinfo]::new("c:\temp") | Join-String -Property '
+        $res = tabexpansion2 $cmd $cmd.length
+        $completionTexts = $res.CompletionMatches.CompletionText
+        $Propertys = [io.fileinfo]::new($PSScriptRoot).psobject.properties.Name
+        foreach ($n in $Propertys) {
+            $n -in $completionTexts | Should -BeTrue
+        }
+    }
 
 }

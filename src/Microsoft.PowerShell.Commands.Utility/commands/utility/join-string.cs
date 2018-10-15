@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             get
             {
 #if UNIX
-                return Platform.IsMacOS ? "`r" : "`n";
+                return "`n";
 #else
                 return "`r`n";
 #endif
