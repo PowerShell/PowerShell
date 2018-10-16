@@ -206,24 +206,24 @@ namespace System.Management.Automation
             const int MaxStackAllocation = 512;
 
             // Calculate number of 8-bit bytes needed to hold the input,  rounded up to next whole number.
-            // This value will also be used as the indexer for our array.
             int outputByteCount = (digits.Length + 7) / 8;
             int outputByteIndex = outputByteCount - 1;
 
             Span<byte> outputBytes = outputByteCount <= MaxStackAllocation ? stackalloc byte[outputByteCount] : new byte[outputByteCount];
 
-            // We need to be prepared for any partial leading bytes, (e.g., 010|00000011|00000100|00000101)
-            // or for lengths < 8 (less than one byte) e.g., 010.
-            // Walk right to left, stepping one whole byte at a time (if there are any whole bytes).
+            // We need to be prepared for any partial leading bytes, (e.g., 010|00000011|00101100), or cases
+            // where we only have less than 8 bits to work with from the beginning.
+            //
+            // Walk bytes right to left, stepping one whole byte at a time (if there are any whole bytes).
             int byteWalker;
             for (byteWalker = digits.Length - 1; byteWalker >= 7; byteWalker -= 8)
             {
-                // We use bit shifts and binary-or to sum the values in each byte.  These calculations will actually
-                // create values higher than a single byte, but the higher bits are quietly stripped out when cast
+                // Use bit shifts and binary-or to sum the values in each byte.  These calculations will
+                // create values higher than a single byte, but the higher bits will be stripped out when cast
                 // to byte.
-                // '1' == 49 (00110001); '0' == 48 (00110000); we can safely bitshift the whole thing and then
-                // simply discard the unneeded higher bits with the cast. The low bits are added in separately to
-                // allow us to strip the higher 'noise' bits before we sum the values using binary-or.
+                //
+                // The low bits are added in separately to allow us to strip the higher 'noise' bits before we
+                // sum the values using binary-or.
                 //
                 // N.B.: This code has been tested against a straight for loop iterating through the byte, and in no
                 // circumstance was it faster or more effective than this unrolled version.
@@ -239,7 +239,7 @@ namespace System.Management.Automation
                         & 0b1111));
             }
 
-            // With all full bytes parsed, byteWalker is either at the partial byte start, or at -1
+            // With complete bytes parsed, byteWalker is either at the partial byte start index, or at -1
             if (byteWalker >= 0)
             {
                 int currentByteValue = 0;
