@@ -113,7 +113,6 @@ Recommended Training and Reading
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
 - [PowerShell Documentation](https://docs.microsoft.com/powershell)
-- [Learn Windows PowerShell in a Month of Lunches][month-of-lunches]
 
 
 Commercial Resources
@@ -121,6 +120,7 @@ Commercial Resources
 - [Windows PowerShell in Action][in-action] by Bruce Payette
 - [Introduction to PowerShell][powershell-intro] from Pluralsight
 - [PowerShell Training and Tutorials][lynda-training] from Lynda.com
+- [Learn Windows PowerShell in a Month of Lunches][month-of-lunches]
 
 
 [in-action]: https://www.amazon.com/Windows-PowerShell-Action-Second-Payette/dp/1935182137
