@@ -943,30 +943,30 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     $catchClauseTypes = @(
-        @{ Type = [System.ArgumentException] }
-        @{ Type = [System.ArgumentNullException] }
-        @{ Type = [System.ArgumentOutOfRangeException] }
-        @{ Type = [System.Collections.Generic.KeyNotFoundException] }
-        @{ Type = [System.DivideByZeroException] }
-        @{ Type = [System.FormatException] }
-        @{ Type = [System.IndexOutOfRangeException] }
-        @{ Type = [System.InvalidOperationException] }
-        @{ Type = [System.IO.DirectoryNotFoundException] }
-        @{ Type = [System.IO.DriveNotFoundException] }
-        @{ Type = [System.IO.FileNotFoundException] }
-        @{ Type = [System.IO.PathTooLongException] }
-        @{ Type = [System.Management.Automation.CommandNotFoundException] }
-        @{ Type = [System.Management.Automation.JobFailedException] }
-        @{ Type = [System.Management.Automation.RuntimeException] }
-        @{ Type = [System.Management.Automation.ValidationMetadataException] }
-        @{ Type = [System.NotImplementedException] }
-        @{ Type = [System.NotSupportedException] }
-        @{ Type = [System.ObjectDisposedException] }
-        @{ Type = [System.OverflowException] }
-        @{ Type = [System.PlatformNotSupportedException] }
-        @{ Type = [System.RankException] }
-        @{ Type = [System.TimeoutException] }
-        @{ Type = [System.UriFormatException] }
+        @{ Type = 'System.ArgumentException' }
+        @{ Type = 'System.ArgumentNullException' }
+        @{ Type = 'System.ArgumentOutOfRangeException' }
+        @{ Type = 'System.Collections.Generic.KeyNotFoundException' }
+        @{ Type = 'System.DivideByZeroException' }
+        @{ Type = 'System.FormatException' }
+        @{ Type = 'System.IndexOutOfRangeException' }
+        @{ Type = 'System.InvalidOperationException' }
+        @{ Type = 'System.IO.DirectoryNotFoundException' }
+        @{ Type = 'System.IO.DriveNotFoundException' }
+        @{ Type = 'System.IO.FileNotFoundException' }
+        @{ Type = 'System.IO.PathTooLongException' }
+        @{ Type = 'System.Management.Automation.CommandNotFoundException' }
+        @{ Type = 'System.Management.Automation.JobFailedException' }
+        @{ Type = 'System.Management.Automation.RuntimeException' }
+        @{ Type = 'System.Management.Automation.ValidationMetadataException' }
+        @{ Type = 'System.NotImplementedException' }
+        @{ Type = 'System.NotSupportedException' }
+        @{ Type = 'System.ObjectDisposedException' }
+        @{ Type = 'System.OverflowException' }
+        @{ Type = 'System.PlatformNotSupportedException' }
+        @{ Type = 'System.RankException' }
+        @{ Type = 'System.TimeoutException' }
+        @{ Type = 'System.UriFormatException' }
     )
 
     It 'Infers type of $_.Expression in [<Type>] typed catch block' -TestCases $catchClauseTypes {
