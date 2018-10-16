@@ -12,9 +12,9 @@ Describe "Get-Culture" -Tags "CI" {
         Get-Culture -NoUserOverrides | Should -BeOfType [CultureInfo]
     }
 
-    It "Should have `$PSCulture variable be equivalent to (Get-Culture).Name" {
+    It "Should have (Get-Culture).Name variable be equivalent to `$PSCulture" {
 
-        (Get-Culture).Name | Should -Be $PsCulture
+        (Get-Culture).Name | Should -BeExactly $PsCulture
     }
 
     It "Should return the specified culture with '-Name' parameter" {
@@ -61,5 +61,12 @@ Describe "Get-Culture" -Tags "CI" {
     It "Should write an error on unsupported culture name" {
 
         { Get-Culture -Name "abcdefghijkl" -ErrorAction Stop } | Should -PassThru -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCultureCommand"
+    }
+}
+
+Describe "`$PSCulture" -Tags "CI" {
+
+    It "Check `$PSCulture value" {
+        $PSCulture | Should -BeExactly [System.Globalization.CultureInfo]::CurrentCulture.Name
     }
 }
