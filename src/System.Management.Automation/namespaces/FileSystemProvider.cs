@@ -8246,7 +8246,7 @@ namespace System.Management.Automation.Internal
             {
                 string errorMessage = StringUtil.Format(
                     FileSystemProviderStrings.AlternateDataStreamNotFound, streamName, path);
-                throw new FileNotFoundException(errorMessage, $"{path}:{streamName.Trim()}");
+                throw new FileNotFoundException(errorMessage, $"{path}:{streamName}");
             }
 
             return stream;
