@@ -82,7 +82,7 @@ However, if you need to check the `InnerException` or other members of the Error
 For creation of PowerShell tests, the Describe block is the level of granularity suggested and one of three tags should be used: "CI", "Feature", or "Scenario". If the tag is not provided, tests in that describe block will be run any time tests are executed.
 
 #### Describe
-Creates a logical group of tests. All Mocks and TestDrive contents defined within a Describe block are scoped to that Describe; they will no longer be present when the Describe block exits. A Describe block may contain any number of Context and It blocks.
+Creates a logical group of tests. All Mocks and TestDrive contents defined within a Describe block are scoped to that Describe; they will no longer be present when the Describe block exits. A `Describe` block may contain any number of Context and It blocks.
 
 #### Context
 Provides logical grouping of It blocks within a single Describe block. Any Mocks defined inside a Context are removed at the end of the Context scope, as are any files or folders added to the TestDrive during the Context block's execution. Any BeforeEach or AfterEach blocks defined inside a Context also only apply to tests within that Context .
@@ -223,7 +223,7 @@ Tests completed in 79ms
 Passed: 1 Failed: 0 Skipped: 0 Pending: 0
 ```
 
-The Describe BeforeAll block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe BLOCK, that state will not be visible (as the code will not yet been run). Notice, too, that the BeforeAll block in Context is executed before any other code in that block.
+The `Describe` `BeforeAll` block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe block, that state will not be visible (as the code will not yet been run). Notice, too, that the BeforeAll block in Context is executed before any other code in that block.
 Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those blocks rely on state set by free code elsewhere in the block.
 
 #### Skipping tests in bulk
