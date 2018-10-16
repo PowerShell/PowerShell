@@ -21,7 +21,7 @@ Describe "Test-Connection" -tags "CI" {
         $UnreachableAddress = "10.11.12.13"
         # this resolves to an actual IP rather than 127.0.0.1
         # this can also include both IPv4 and IPv6, so select InterNetwork rather than InterNetworkV6
-        $realAddress = [System.Net.Dns]::GetHostEntry($hostName).AddressList | 
+        $realAddress = [System.Net.Dns]::GetHostEntry($hostName).AddressList |
             Where-Object {$_.AddressFamily -eq "InterNetwork"} |
             Select-Object -First 1 |
             Foreach-Object {$_.IPAddressToString}
@@ -166,7 +166,7 @@ Describe "Test-Connection" -tags "CI" {
 
         It "ResolveDestination for address" {
             $result = Test-Connection $targetAddress -ResolveDestination -Count 1
-            $resolvedName = [System.Net.DNS]::GetHostByName($targetName).HostName
+            $resolvedName = [System.Net.DNS]::GetHostEntry($targetAddress).HostName
 
             $result.Destination | Should -BeExactly $resolvedName
             $result.Replies[0].Address     | Should -BeExactly $targetAddress

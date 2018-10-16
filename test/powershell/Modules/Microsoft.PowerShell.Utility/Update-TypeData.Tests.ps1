@@ -48,7 +48,33 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.Dispose()
     }
 
-  It "Update-TypeData with Invalid TypesXml should throw Exception" {
+    It "Update-TypeData with attributes on root node should succeed"   {
+        $xmlContent = @"
+        <Types xmlns:foo="bar">
+            <Type>
+                <Name>Test</Name>
+                    <Members>
+                        <AliasProperty>
+                            <Name>Yada</Name>
+                            <ReferencedMemberName>Length</ReferencedMemberName>
+                        </AliasProperty>
+                    </Members>
+            </Type>
+        </Types>
+"@
+        $path = "$testdrive\test.types.ps1xml"
+        Set-Content -Value $xmlContent -Path $path
+        $null = $ps.AddScript("Update-TypeData -AppendPath $path")
+        $ps.Invoke()
+        $ps.HadErrors | Should -BeFalse
+        $ps.Commands.Clear()
+        $null = $ps.AddScript("Get-TypeData test")
+        $typeData = $ps.Invoke()
+        $typeData | Should -HaveCount 1
+        $typeData.TypeName | Should -BeExactly "Test"
+    }
+
+    It "Update-TypeData with Invalid TypesXml should throw Exception" {
         $null = $ps.AddScript("Update-TypeData -PrependPath $testfile")
         $ps.Invoke()
         $ps.HadErrors | Should -BeTrue

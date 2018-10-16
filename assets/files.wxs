@@ -1814,14 +1814,14 @@
           <Component Id="cmpE9DB812405C44652B6BEF707AFDC345E" Guid="{3aca5828-2ad6-44c5-ab8f-0c0cddbd065c}">
             <File Id="filCB8CBEA7AF6C424587BA5E2C759CE938" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.format.ps1xml" />
           </Component>
-          <Component Id="cmp6486055134C64750ADECE5C833507E08" Guid="{612d3bf9-acce-4579-b563-656cc89fe59e}">
-            <File Id="fil4017C27D1D4C4166A71958CAFBD7E4D4" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.cat" />
-          </Component>
           <Component Id="cmp988678E2987C440F828A11DC2BDC7BFB" Guid="{655a2c52-80a0-419a-975d-5995657dcc80}">
             <File Id="filF99521F7316946708234601020C64E48" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageProviderFunctions.psm1" />
           </Component>
           <Component Id="cmpE48B7EDF48A04D1C82A32EDBCD2E8E07" Guid="{637acb8e-5ed5-4b03-8442-9f9ec0c83106}">
             <File Id="filD267FC3422004444A1D7A446CC13ABAE" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.psd1" />
+          </Component>
+          <Component Id="cmpD495CAB0DC4146199E0475F16EFCBE66" Guid="{1f3d41d9-ec3e-4480-93a0-5eead90681fc}">
+            <File Id="fil79DFD803DEF74E17BAF56B187959025D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.cat" />
           </Component>
         </Directory>
         <Directory Name="Microsoft.PowerShell.Archive" Id="dirD041DEE4F67848958E0D4AF104E4088C">
@@ -2657,7 +2657,6 @@
       <ComponentRef Id="cmpE29B1178E25C47DC988CC57B6DDA3B15" />
       <ComponentRef Id="cmpA83063651AF54638A78187CA67953118" />
       <ComponentRef Id="cmp2B41C7F93EAA4322B3FAED6F2BE95724" />
-      <ComponentRef Id="cmp6486055134C64750ADECE5C833507E08" />
       <ComponentRef Id="cmp6DDBFA3A9FED42B3AFDCDD4BE0416533" />
       <ComponentRef Id="cmp988678E2987C440F828A11DC2BDC7BFB" />
       <ComponentRef Id="cmpE48B7EDF48A04D1C82A32EDBCD2E8E07" />
@@ -2672,6 +2671,7 @@
       <ComponentRef Id="cmpF13D9769FBE945B09326776DC9877740" />
       <ComponentRef Id="cmp42388D37FC414982A91ED7273B600826" />
       <ComponentRef Id="cmpB73D31515A5C4A11AFD5E4131784B3BB" />
+      <ComponentRef Id="cmpD495CAB0DC4146199E0475F16EFCBE66" />
     </ComponentGroup>
   </Fragment>
 </Wix>

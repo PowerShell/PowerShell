@@ -4241,7 +4241,7 @@ param(
         } elseif ($IsWindows) {
             $help | more.com
         } else {
-            $help | less
+            $help | less -Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""
         }
     }
 ";
