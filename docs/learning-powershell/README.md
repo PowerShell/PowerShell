@@ -113,6 +113,7 @@ Recommended Training and Reading
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
 - [PowerShell Documentation](https://docs.microsoft.com/powershell)
+- [Learn Windows PowerShell in a Month of Lunches][month-of-lunches]
 
 
 Commercial Resources
@@ -135,3 +136,4 @@ Commercial Resources
 [quick-reference]: http://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
 [script-guy-how-to]:https://blogs.technet.microsoft.com/tommypatterson/2015/09/04/ed-wilsons-powershell5-videos-now-on-channel9-2/
 [basic-cookbooks]:https://docs.microsoft.com/en-us/powershell/scripting/getting-started/fundamental/sample-scripts-for-administration?view=powershell-6
+[month-of-lunches]:https://www.amazon.com/Learn-Windows-PowerShell-Month-Lunches/dp/1617291080
