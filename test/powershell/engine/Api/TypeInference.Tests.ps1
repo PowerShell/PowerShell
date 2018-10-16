@@ -970,9 +970,9 @@ Describe "Type inference Tests" -tags "CI" {
     )
 
     It 'Infers type of $_.Exception in [<Type>] typed catch block' -TestCases $catchClauseTypes {
-        param([Type] $Type)
+        param($Type)
 
-        $memberAst = [scriptblock]::Create("try {} catch [$Type] { $_.Exception }").Ast.Find(
+        $memberAst = [scriptblock]::Create("try {} catch [$Type] { `$_.Exception }").Ast.Find(
             { param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] },
             $true
         )
