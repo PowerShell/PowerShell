@@ -88,6 +88,7 @@ function CreateParameters
 
     return $parameters
 }
+
 function New-RemoteSession
 {
     param (
