@@ -930,7 +930,7 @@ Describe "Type inference Tests" -tags "CI" {
         $variableAst = { try {} catch { $_ } }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
         $res = [AstTypeInference]::InferTypeOf($variableAst)
 
-        $res.Count | Should -Be 1
+        $res | Should -HaveCount 1
         $res.Name | Should -Be System.Management.Automation.ErrorRecord
     }
 
@@ -938,7 +938,7 @@ Describe "Type inference Tests" -tags "CI" {
         $memberAst = { try {} catch { $_.Exception } }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] }, $true)
         $res = [AstTypeInference]::InferTypeOf($memberAst)
 
-        $res.Count | Should -Be 1
+        $res | Should -HaveCount 1
         $res.Name | Should -Be System.Exception
     }
 
