@@ -191,34 +191,4 @@ The current session does not support debugging; execution will continue.
   <data name="RunAsAdministrator" xml:space="preserve">
     <value>Run as Administrator</value>
   </data>
-  <data name="ImplicitBatchVariableTypeNotSupported" xml:space="preserve">
-    <value>Variable type not supported.</value>
-  </data>
-  <data name="ImplicitBatchStartExpressionNotSupported" xml:space="preserve">
-    <value>Pipeline starting with an expression is not supported.</value>
-  </data>
-  <data name="ImplicitBatchDotSourcingNotSupported" xml:space="preserve">
-    <value>Dot sourcing is not supported.</value>
-  </data>
-  <data name="ImplicitBatchScriptBlockNotSupported" xml:space="preserve">
-    <value>ScriptBlock invocation is not supported.</value>
-  </data>
-  <data name="ImplicitBatchMergeRedirectNotSupported" xml:space="preserve">
-    <value>Merge redirection to something other than Output stream is not supported.</value>
-  </data>
-  <data name="ImplicitBatchFileRedirectNotSupported" xml:space="preserve">
-    <value>File redirect is not supported.</value>
-  </data>
-  <data name="ImplicitBatchUsingNotSupported" xml:space="preserve">
-    <value>Using expression is not supported.</value>
-  </data>
-  <data name="ImplicitBatchInvalidScriptBlock" xml:space="preserve">
-    <value>Invalid ScriptBlock.</value>
-  </data>
-  <data name="ImplicitBatchScriptNotSimplePipeline" xml:space="preserve">
-    <value>Script is not a simple pipeline.</value>
-  </data>
-  <data name="ImplicitBatchSingleCommand" xml:space="preserve">
-    <value>Script contains a single command, batching not needed.</value>
-  </data>
 </root>
