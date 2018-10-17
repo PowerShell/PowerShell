@@ -8279,7 +8279,7 @@ namespace System.Management.Automation.Internal
                 mode = FileMode.OpenOrCreate;
             }
 
-            var resultPath = $"{path}:{streamName.Trim()}";
+            var resultPath = $"{path}:{streamName}";
             SafeFileHandle handle = NativeMethods.CreateFile(resultPath, access, share, IntPtr.Zero, mode, 0, IntPtr.Zero);
 
             if (handle.IsInvalid)
