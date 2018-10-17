@@ -225,18 +225,25 @@ namespace System.Management.Automation
                 // The low bits are added in separately to allow us to strip the higher 'noise' bits before we
                 // sum the values using binary-or.
                 //
+                // Simplified representation of logic:     (byte)( (7)|(6)|(5)|(4) ) | ( ( (3)|(2)|(1)|(0) ) & 0b1111 )
+                //
                 // N.B.: This code has been tested against a straight for loop iterating through the byte, and in no
                 // circumstance was it faster or more effective than this unrolled version.
                 outputBytes[outputByteIndex--] =
-                    (byte)(((digits[byteWalker - 7] << 7)
+                    (byte)(
+                        ( (digits[byteWalker - 7] << 7)
                         | (digits[byteWalker - 6] << 6)
                         | (digits[byteWalker - 5] << 5)
-                        | (digits[byteWalker - 4] << 4))
-                        | (((digits[byteWalker - 3] << 3)
+                        | (digits[byteWalker - 4] << 4)
+                        )
+                    | (
+                        ( (digits[byteWalker - 3] << 3)
                         | (digits[byteWalker - 2] << 2)
                         | (digits[byteWalker - 1] << 1)
-                        | digits[byteWalker])
-                        & 0b1111));
+                        | (digits[byteWalker])
+                        ) & 0b1111
+                      )
+                    );
             }
 
             // With complete bytes parsed, byteWalker is either at the partial byte start index, or at -1

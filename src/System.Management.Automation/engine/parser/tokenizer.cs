@@ -3502,7 +3502,9 @@ namespace System.Management.Automation.Language
 
                         // If we're expecting a sign bit, remove the leading 0 added in ScanNumberHelper
                         if (!suffix.HasFlag(NumberSuffixFlags.Unsigned) && ((strNum.Length - 1) & 7) == 0)
+                        {
                             strNum = strNum.Slice(1);
+                        }
 
                         // If we have a hex literal denoting (u)int64, treat it as such
                         if (suffix == NumberSuffixFlags.None || suffix == NumberSuffixFlags.Unsigned)
