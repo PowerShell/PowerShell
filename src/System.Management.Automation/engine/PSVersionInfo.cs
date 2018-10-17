@@ -13,8 +13,9 @@ using Microsoft.Win32;
 namespace System.Management.Automation
 {
     /// <summary>
+    /// <para>
     /// Encapsulates $PSVersionTable.
-    ///
+    /// </para><para>
     /// Provides a simple interface to retrieve details from the PowerShell version table:
     /// <code>
     ///    PSVersionInfo.PSVersion;
@@ -24,6 +25,7 @@ namespace System.Management.Automation
     ///    PSVersionInfo.PSEdition;
     /// </code>
     /// The above statement retrieves the PowerShell edition.
+    /// </para>
     /// </summary>
     public class PSVersionInfo
     {
@@ -162,7 +164,7 @@ namespace System.Management.Automation
         #region Programmer APIs
 
         /// <summary>
-        /// Gets the version of PowerShell
+        /// Gets the version of PowerShell.
         /// </summary>
         public static Version PSVersion
         {
@@ -189,7 +191,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the edition of PowerShell
+        /// Gets the edition of PowerShell.
         /// </summary>
         public static string PSEdition
         {
