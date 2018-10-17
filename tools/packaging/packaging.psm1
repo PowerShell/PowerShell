@@ -269,6 +269,11 @@ function Start-PSPackage {
                 }
             }
             "fxdependent" {
+                ## Remove PDBs from package to reduce size.
+                if(-not $IncludeSymbols.IsPresent) {
+                    Get-ChildItem -Recurse $Source -Filter *.pdb | Remove-Item -Force
+                }
+
                 if ($IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
@@ -1110,6 +1115,11 @@ function Get-PackageDependencies
         } elseif ($Environment.IsRedHatFamily) {
             $Dependencies = @(
                 "openssl-libs",
+                "libicu"
+            )
+        } elseif ($Environment.IsSUSEFamily) {
+            $Dependencies = @(
+                "libopenssl1_0_0",
                 "libicu"
             )
         }

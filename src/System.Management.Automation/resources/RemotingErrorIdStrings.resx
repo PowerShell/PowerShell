@@ -1667,4 +1667,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="ProcessInfoNotRecoverable" xml:space="preserve">
     <value>Information about the process could not be read: '{0}'.</value>
   </data>
+  <data name="CannotGetHostInteropTypes" xml:space="preserve">
+    <value>Host system does not have the correct version of Hyper-V schema.</value>
+  </data>
 </root>

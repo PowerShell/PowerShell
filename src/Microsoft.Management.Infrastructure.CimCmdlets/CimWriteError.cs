@@ -183,8 +183,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 originInfo);
 
             DebugHelper.WriteLogEx("Created RemotingErrorRecord.", 0);
-            // errorRecord.SetInvocationInfo(jobContext.CmdletInvocationInfo);
-            // errorRecord.PreserveInvocationInfoOnce = true;
             return errorRecord;
         }
 
