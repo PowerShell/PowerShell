@@ -51,7 +51,7 @@ namespace System.Management.Automation
         private const int MaxModuleNestingDepth = 10;
 
         /// <summary>
-        /// True when an implicit remoting module is loaded
+        /// Gets and sets boolean that indicates when an implicit remoting module is loaded.
         /// </summary>
         internal bool IsImplicitRemotingModuleLoaded
         {

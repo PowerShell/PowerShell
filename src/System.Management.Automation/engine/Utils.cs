@@ -1739,10 +1739,12 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// TestImplicitRemotingBatching
+        /// Test hook used to test implicit remoting batching.  A local runspace must be provided that has imported a 
+        /// remote session, i.e., has run the Import-PSSession cmdlet.  This hook will return true if the provided commandPipeline
+        /// is successfully batched and run in the remote session, and false if it is rejected for batching.
         /// </summary>
         /// <param name="commandPipeline">Command pipeline to test</param>
-        /// <param name="runspace">Runspace to test on</param>
+        /// <param name="runspace">Runspace with imported remote session</param>
         /// <returns>True if commandPipeline is batched successfully</returns>
         public static bool TestImplicitRemotingBatching(string commandPipeline, System.Management.Automation.Runspaces.Runspace runspace)
         {
