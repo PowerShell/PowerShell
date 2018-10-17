@@ -861,7 +861,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance
+        /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance.
         /// </summary>
         /// <param name="runspace">Runspace in which to invoke commands.</param>
         /// <returns>An instance of PowerShell.</returns>
