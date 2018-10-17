@@ -3601,7 +3601,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>A steppable pipeline object</returns>
         /// <exception cref="InvalidOperationException">An attempt was made to use the scriptblock outside of the engine.</exception>
-        internal SteppablePipeline GetSteppablePipeline()
+        public SteppablePipeline GetSteppablePipeline()
         {
             ExecutionContext context = GetContextFromTLS();
             SteppablePipeline spl = GetSteppablePipeline(context, CommandOrigin.Internal);
