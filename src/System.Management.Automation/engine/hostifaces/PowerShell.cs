@@ -13,8 +13,8 @@ using System.Management.Automation.Runspaces.Internal;
 using System.Diagnostics.CodeAnalysis; // for fxcop.
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Diagnostics;
-using Microsoft.Management.Infrastructure;
 using System.Threading.Tasks;
+using Microsoft.Management.Infrastructure;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -3015,6 +3015,9 @@ namespace System.Management.Automation
         /// Invoke the <see cref="Command"/> asynchronously.
         /// Use await to wait for the command to complete and obtain the output of the command.
         /// </summary>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke.
+        /// </returns>
         /// <exception cref="InvalidOperationException">
         /// Cannot perform the operation because the command is already started.
         /// Stop the command and try the operation again.
@@ -3032,25 +3035,30 @@ namespace System.Management.Automation
         /// Use await to wait for the command to complete and obtain the output of the command.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// When invoked using InvokeAsync, invocation doesn't
         /// finish until Input is closed. Caller of InvokeAsync must
         /// close the input buffer after all input has been written to
         /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        ///
+        /// </para><para>
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
         /// be sure to call Close() before calling InvokeAsync().  Otherwise,
         /// the command will be executed as though it had external input.
         /// If you observe that the command isn't doing anything,
         /// this may be the reason.
+        /// </para>
         /// </remarks>
         /// <typeparam name="T">
-        /// Type of the input buffer
+        /// Type of the input buffer.
         /// </typeparam>
         /// <param name="input">
         /// Input to the command. See remarks for more details.
         /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke.
+        /// </returns>
         /// <exception cref="InvalidOperationException">
         /// Cannot perform the operation because the command is already started.
         /// Stop the command and try the operation again.
@@ -3068,21 +3076,23 @@ namespace System.Management.Automation
         /// Use await to wait for the command to complete and obtain the output of the command.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// When invoked using InvokeAsync, invocation doesn't
         /// finish until Input is closed. Caller of InvokeAsync must
         /// close the input buffer after all input has been written to
         /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        ///
+        /// </para><para>
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
         /// be sure to call Close() before calling InvokeAsync().  Otherwise,
         /// the command will be executed as though it had external input.
         /// If you observe that the command isn't doing anything,
         /// this may be the reason.
+        /// </para>
         /// </remarks>
         /// <typeparam name="T">
-        /// Type of the input buffer
+        /// Type of the input buffer.
         /// </typeparam>
         /// <param name="input">
         /// Input to the command. See remarks for more details.
@@ -3097,6 +3107,9 @@ namespace System.Management.Automation
         /// A user supplied state to call the <paramref name="callback"/>
         /// with.
         /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke.
+        /// </returns>
         /// <exception cref="InvalidOperationException">
         /// Cannot perform the operation because the command is already started.
         /// Stop the command and try the operation again.
@@ -3114,18 +3127,20 @@ namespace System.Management.Automation
         /// Use await to wait for the command to complete and obtain the output of the command.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// When invoked using InvokeAsync, invocation doesn't
         /// finish until Input is closed. Caller of InvokeAsync must
         /// close the input buffer after all input has been written to
         /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        ///
+        /// </para><para>
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
         /// be sure to call Close() before calling InvokeAsync().  Otherwise,
         /// the command will be executed as though it had external input.
         /// If you observe that the command isn't doing anything,
         /// this may be the reason.
+        /// </para>
         /// </remarks>
         /// <typeparam name="TInput">
         /// Type of input object(s) for the command invocation.
@@ -3139,6 +3154,9 @@ namespace System.Management.Automation
         /// <param name="output">
         /// A buffer supplied by the user where output is collected.
         /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke, or null if the caller provided their own buffer.
+        /// </returns>
         /// <exception cref="InvalidOperationException">
         /// Cannot perform the operation because the command is already started.
         /// Stop the command and try the operation again.
@@ -3157,18 +3175,20 @@ namespace System.Management.Automation
         /// Use await to wait for the command to complete and obtain the output of the command.
         /// </summary>
         /// <remarks>
+        /// <para>
         /// When invoked using InvokeAsync, invocation doesn't
         /// finish until Input is closed. Caller of InvokeAsync must
         /// close the input buffer after all input has been written to
         /// input buffer. Input buffer is closed by calling
         /// Close() method.
-        ///
+        /// </para><para>
         /// If you want this command to execute as a standalone cmdlet
         /// (that is, using command-line parameters only),
         /// be sure to call Close() before calling InvokeAsync().  Otherwise,
         /// the command will be executed as though it had external input.
         /// If you observe that the command isn't doing anything,
         /// this may be the reason.
+        /// </para>
         /// </remarks>
         /// <typeparam name="TInput">
         /// Type of input object(s) for the command invocation.
@@ -3192,6 +3212,9 @@ namespace System.Management.Automation
         /// A user supplied state to call the <paramref name="callback"/>
         /// with.
         /// </param>
+        /// <returns>
+        /// The output buffer created to hold the results of the asynchronous invoke, or null if the caller provided their own buffer.
+        /// </returns>
         /// <exception cref="InvalidOperationException">
         /// Cannot perform the operation because the command is already started.
         /// Stop the command and try the operation again.
