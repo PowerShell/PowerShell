@@ -861,6 +861,20 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Constructs an empty PowerShell instance; a script or command must be added before invoking this instance
+        /// </summary>
+        /// <param name="runspace">Runspace in which to invoke commands.</param>
+        /// <returns>An instance of PowerShell.</returns>
+        public static PowerShell Create(Runspace runspace)
+        {
+            PowerShell result = Create();
+
+            result.Runspace = runspace;
+
+            return result;
+        }
+
+        /// <summary>
         /// Creates a nested powershell within the current instance.
         /// Nested PowerShell is used to do simple operations like checking state
         /// of a variable while another command is using the runspace.
