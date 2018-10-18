@@ -701,6 +701,19 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// Gets the engine intrinsics.
+        /// </summary>
+        /// <exception cref="InvalidRunspaceStateException">Runspace is not opened.
+        /// </exception>
+        public System.Management.Automation.EngineIntrinsics EngineIntrinsics
+        {
+            get
+            {
+                return ExecutionContext?.EngineIntrinsics;
+            }
+        }
+
+        /// <summary>
         /// Skip user profile on engine initialization
         /// </summary>
         internal bool SkipUserProfile { get; set; } = false;
