@@ -27,7 +27,6 @@
 - Allow root node of `format.ps1xml` to have attributes that are ignored (#7987)
 - Use non-virtual call to invoke 'family or assembly' methods on base class from PowerShell class (#7622) (#7624) (Thanks @yurko7!)
 - Enable indexing operations on `System.Tuple` and `System.ValueTuple` (#7633) (Thanks @SeeminglyScience!)
-- Enable indexing operations on objects that implement `ITuple` (#7633) (Thanks @SeeminglyScience!)
 - Make the parameter to `ImportPSModule` use `params` so that it is easier to call (#7933) (Thanks @iSazonov!)
 
 ### General Cmdlet Updates and Fixes
