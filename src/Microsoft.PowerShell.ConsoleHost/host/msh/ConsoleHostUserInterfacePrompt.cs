@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell
                     break;
                 }
                 else
-                if (rawInputString.StartsWith(PromptCommandPrefix, StringComparison.CurrentCulture))
+                if (rawInputString.StartsWith(PromptCommandPrefix, StringComparison.Ordinal))
                 {
                     processedInputString = PromptCommandMode(rawInputString, desc, out inputDone);
                 }
