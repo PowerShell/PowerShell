@@ -67,6 +67,6 @@ Describe "Get-Culture" -Tags "CI" {
 Describe "`$PSCulture" -Tags "CI" {
 
     It "Check `$PSCulture value" {
-        $PSCulture | Should -BeExactly [System.Globalization.CultureInfo]::CurrentCulture.Name
+        $PSCulture | Should -BeExactly $([System.Globalization.CultureInfo]::CurrentCulture.Name)
     }
 }
