@@ -23,8 +23,8 @@ namespace System.Management.Automation.Runspaces
                     .StartEntry()
                         .StartFrame()
                             .AddScriptBlockExpressionBinding(@"
-                      $header = ""           00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F""
-                      if($_.Path) { $header = ""           "" + [Microsoft.PowerShell.Commands.UtilityResources]::FormatHexPathPrefix + $_.Path + ""`r`n`r`n"" + $header }
+                      $header = ""                       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F""
+                      if($_.Path) { $header = ""                       "" + [Microsoft.PowerShell.Commands.UtilityResources]::FormatHexPathPrefix + $_.Path + ""`r`n`r`n"" + $header }
                       $header
                     ")
                         .EndFrame()
