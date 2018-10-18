@@ -8266,12 +8266,12 @@ namespace System.Management.Automation.Internal
         {
             if (path == null)
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
 
             if (streamName == null)
             {
-                throw new ArgumentNullException("streamName");
+                throw new ArgumentNullException(nameof(streamName));
             }
 
             if (mode == FileMode.Append)
