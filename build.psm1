@@ -2981,9 +2981,9 @@ function New-TestPackage
         [string] $Destination
     )
 
-    if ((Test-Path $Destination) -and -not (Test-Path $Destination -PathType Container))
+    if (Test-Path $Destination -PathType Leaf)
     {
-        throw "Destination: '$Destination' is not a directory."
+        throw "Destination: '$Destination' is not a directory or does not exist."
     }
     else
     {
@@ -2991,7 +2991,7 @@ function New-TestPackage
         Write-Verbose -Message "Creating destination folder: $Destination"
     }
 
-    $packageRoot = Join-Path $env:TEMP 'TestPackage'
+    $packageRoot = Join-Path $env:TEMP ('TestPackage-' + (new-guid))
     $null = New-Item -ItemType Directory -Path $packageRoot -Force
     $packagePath = Join-Path $Destination "TestPackage.zip"
 
