@@ -223,7 +223,9 @@ Tests completed in 79ms
 Passed: 1 Failed: 0 Skipped: 0 Pending: 0
 ```
 
-The `Describe` `BeforeAll` block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe block, that state will not be visible (as the code will not yet been run). Notice, too, that the BeforeAll block in Context is executed before any other code in that block.
+The `Describe` `BeforeAll` block is executed before any other code even though it was at the bottom of the Describe block,
+so if state is set elsewhere in the describe block, that state will not be visible (as the code will not yet been run). Notice, too,
+that the `BeforeAll` block in Context is executed before any other code in that block.
 Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those blocks rely on state set by free code elsewhere in the block.
 
 #### Skipping tests in bulk
