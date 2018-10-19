@@ -41,6 +41,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                     Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [AllowNull]
+        [AllowEmptyCollection]
+        [AllowEmptyString]
         public string[] Path
         {
             get { return _paths; }
@@ -53,6 +56,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "LiteralPath",
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
+        [AllowNull]
+        [AllowEmptyCollection]
+        [AllowEmptyString]
         public string[] LiteralPath
         {
             get { return _paths; }
@@ -156,49 +162,60 @@ namespace Microsoft.PowerShell.Commands
         {
             CmdletProviderContext currentContext = CmdletProviderContext;
 
-            foreach (string path in _paths)
+            if (_paths != null && _paths.Length != 0)
             {
-                bool result = false;
+                foreach (string path in _paths)
+                {
+                    bool result = false;
 
-                try
-                {
-                    if (IsValid)
+                    if (!string.IsNullOrWhiteSpace(path))
                     {
-                        result = SessionState.Path.IsValid(path, currentContext);
-                    }
-                    else
-                    {
-                        if (this.PathType == TestPathType.Container)
+                        try
                         {
-                            result = InvokeProvider.Item.IsContainer(path, currentContext);
+                            if (IsValid)
+                            {
+                                result = SessionState.Path.IsValid(path, currentContext);
+                            }
+                            else
+                            {
+                                if (this.PathType == TestPathType.Container)
+                                {
+                                    result = InvokeProvider.Item.IsContainer(path, currentContext);
+                                }
+                                else if (this.PathType == TestPathType.Leaf)
+                                {
+                                    result =
+                                        InvokeProvider.Item.Exists(path, currentContext) &&
+                                        !InvokeProvider.Item.IsContainer(path, currentContext);
+                                }
+                                else
+                                {
+                                    result = InvokeProvider.Item.Exists(path, currentContext);
+                                }
+                            }
                         }
-                        else if (this.PathType == TestPathType.Leaf)
-                        {
-                            result =
-                                InvokeProvider.Item.Exists(path, currentContext) &&
-                                !InvokeProvider.Item.IsContainer(path, currentContext);
-                        }
-                        else
-                        {
-                            result = InvokeProvider.Item.Exists(path, currentContext);
-                        }
-                    }
-                }
-                // Any of the known exceptions means the path does not exist.
-                catch (PSNotSupportedException)
-                {
-                }
-                catch (DriveNotFoundException)
-                {
-                }
-                catch (ProviderNotFoundException)
-                {
-                }
-                catch (ItemNotFoundException)
-                {
-                }
 
-                WriteObject(result);
+                        // Any of the known exceptions means the path does not exist.
+                        catch (PSNotSupportedException)
+                        {
+                        }
+                        catch (DriveNotFoundException)
+                        {
+                        }
+                        catch (ProviderNotFoundException)
+                        {
+                        }
+                        catch (ItemNotFoundException)
+                        {
+                        }
+                    }
+
+                    WriteObject(result);
+                }
+            }
+            else
+            {
+                WriteObject(false);
             }
         } // ProcessRecord
         #endregion Command code
