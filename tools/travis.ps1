@@ -370,6 +370,11 @@ elseif($Stage -eq 'Build')
             Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
             Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
         }
+
+        if ($isDailyBuild)
+        {
+            New-TestPackage -Destination $pwd
+        }
     }
 
     # if the tests did not pass, throw the reason why
