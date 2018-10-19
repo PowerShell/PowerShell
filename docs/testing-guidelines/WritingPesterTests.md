@@ -82,7 +82,10 @@ However, if you need to check the `InnerException` or other members of the Error
 For creation of PowerShell tests, the Describe block is the level of granularity suggested and one of three tags should be used: "CI", "Feature", or "Scenario". If the tag is not provided, tests in that describe block will be run any time tests are executed.
 
 #### Describe
-Creates a logical group of tests. All Mocks and TestDrive contents defined within a Describe block are scoped to that Describe; they will no longer be present when the Describe block exits. A `Describe` block may contain any number of Context and It blocks.
+Creates a logical group of tests.
+All `Mocks` and `TestDrive` contents defined within a `Describe` block are scoped to that `Describe`;
+they will no longer be present when the `Describe` block exits.
+A `Describe` block may contain any number of Context and `It` blocks.
 
 #### Context
 Provides logical grouping of It blocks within a single Describe block. Any Mocks defined inside a Context are removed at the end of the Context scope, as are any files or folders added to the TestDrive during the Context block's execution. Any BeforeEach or AfterEach blocks defined inside a Context also only apply to tests within that Context .
