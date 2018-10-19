@@ -35,7 +35,7 @@ Describe "One is really one" {
     }
     It "1 is really an int" {
        $i = 1
-       $i.GetType() | Should -Be "int"
+       $i.GetType() | Should -BeExactly "int"
     }
 }
 ```
