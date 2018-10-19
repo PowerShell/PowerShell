@@ -38,7 +38,7 @@ $ErrorActionPreference = "Stop"
 
 $IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
 $IsMacOSEnv = (Get-Variable -Name "IsMacOS" -ErrorAction Ignore) -and $IsMacOS
-$IsWinEnv   = !$IsLinuxEnv -and !$IsMacOSEnv
+$IsWinEnv = !$IsLinuxEnv -and !$IsMacOSEnv
 
 if (-not $Destination) {
     $Destination = if ($IsWinEnv) {
@@ -75,6 +75,68 @@ Function Remove-Destination([string] $Destination) {
         } else {
             # Unix systems don't keep open file handles so you can just move files/folders even if in use
             Move-Item "$Destination" "$Destination.old"
+        }
+    }
+}
+
+Function IsPathInRegistryPath([string] $Path) {
+    #Remove ending DirectorySeparatorChar for comparison purposes
+    $Path = [System.Environment]::ExpandEnvironmentVariables([regex]::Replace($Path, '\\;$|\\$', ''));
+    $InstalledPaths = @()
+    #Possible gotcha: don't use Get-ItemPropertyValue (see https://github.com/PowerShell/PowerShell/issues/5906)
+    #Possible gotcha: coerce the (possibly null) property to string before calling ExpandEnvironmentVariables
+    [string] $HKCURegKeyPath = Get-ItemProperty -Path 'HKCU:\Environment' -Name 'PATH' -ErrorAction SilentlyContinue
+    $InstalledPaths += @([System.Environment]::ExpandEnvironmentVariables(($HKCURegKeyPath)).Split(';'))
+    [string] $HKLMRegKeyPath = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -Name 'PATH' -ErrorAction SilentlyContinue
+    $InstalledPaths += @([System.Environment]::ExpandEnvironmentVariables(($HKLMRegKeyPath)).Split(';'))
+    #Remove ending DirectorySeparatorChar in all items of array for comparison purposes
+    $InstalledPaths = $InstalledPaths.ForEach( { $_.Replace('\\$', '') })
+    if ($InstalledPaths -icontains $Path) {
+        return $True
+    }
+    return $False
+}
+
+Function SavePathInRegistryKey([Microsoft.Win32.RegistryKey] $Key, [string] $Path) {
+    [string] $CurrentUnexpandedValue = $Key.GetValue('PATH', '', [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+    #Keep current PathValueKind if possible/appropriate
+    try {
+        [Microsoft.Win32.RegistryValueKind]$PathValueKind = $Key.GetValueKind('PATH')
+    } catch {
+        [Microsoft.Win32.RegistryValueKind]$PathValueKind = [Microsoft.Win32.RegistryValueKind]::ExpandString
+    }
+    #Evaluate new path
+    $NewPathValue = [string]::Concat(
+        [regex]::Replace($CurrentUnexpandedValue, ([System.IO.Path]::DirectorySeparatorChar + '$')),
+        [System.IO.Path]::DirectorySeparatorChar, $Path)
+    #Upgrade PathValueKind to [Microsoft.Win32.RegistryValueKind]::ExpandString if appropriate
+    if ($NewPathValue.Contains('%')) { $PathValueKind = [Microsoft.Win32.RegistryValueKind]::ExpandString }
+    $Key.SetValue("PATH", $NewPathValue, $PathValueKind)
+}
+
+Function AddPathToPathWinEnv([string]$Path) {
+    if (-not (IsPathInRegistryPath($Path))) {
+        #Do not save user paths in machine wide registry path
+        #USERPROFILE is not a subpath of APPDATA or LOCALAPPDATA for roaming profiles
+        #APPDATA and LOCALAPPDATA are relocatable ==> test all 3
+        if ((-not ($Path.StartsWith($ENV:USERPROFILE))) -and
+            (-not ($Path.StartsWith($ENV:APPDATA))) -and
+            (-not ($Path.StartsWith($env:LOCALAPPDATA)))) {
+            try {
+                [string]$KeyName = 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment\'
+                SavePathInRegistryKey([Microsoft.Win32.Registry]::LocalMachine.OpenSubKey($KeyName), $Path)
+            } catch {
+                Write-Verbose -Message "Unable to save the new path in the machine wide registry."
+            }
+        }
+    }
+    #If failed to install to machine wide path or path was not appropriate for machine wide path
+    if (-not (IsPathInRegistryPath($Path))) {
+        try {
+            [string]$KeyName = 'Environment'
+            SavePathInRegistryKey([Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($KeyName), $Path)
+        } catch {
+            Write-Verbose -Message "Unable to save the new path in the registry for the current user"
         }
     }
 }
@@ -181,15 +243,9 @@ try {
     if (-not $IsWinEnv) { chmod 755 $Destination/pwsh }
 
     if ($AddToPath) {
-        if ($IsWinEnv -and (-not [System.Environment]::GetEnvironmentVariable("Path", "Machine").Contains($Destination))) {
-            ## Add to the Machine scope 'Path' environment variable
-            $machinePath = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
-            $machinePath = $Destination + [System.IO.Path]::PathSeparator + $machinePath
-            [System.Environment]::SetEnvironmentVariable("Path", $machinePath, "Machine")
-            Write-Verbose "'$Destination' is added to the Path" -Verbose
-        }
-
-        if (-not $IsWinEnv) {
+        if ($IsWinEnv) {
+            AddPathToPathWinEnv($Destination)
+        } else {
             $targetPath = Join-Path -Path $Destination -ChildPath "pwsh"
             $symlink = if ($IsLinuxEnv) { "/usr/bin/pwsh" } elseif ($IsMacOSEnv) { "/usr/local/bin/pwsh" }
             $needNewSymlink = $true
