@@ -160,63 +160,66 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            CmdletProviderContext currentContext = CmdletProviderContext;
-
-            if (_paths != null && _paths.Length != 0)
-            {
-                foreach (string path in _paths)
-                {
-                    bool result = false;
-
-                    if (!string.IsNullOrWhiteSpace(path))
-                    {
-                        try
-                        {
-                            if (IsValid)
-                            {
-                                result = SessionState.Path.IsValid(path, currentContext);
-                            }
-                            else
-                            {
-                                if (this.PathType == TestPathType.Container)
-                                {
-                                    result = InvokeProvider.Item.IsContainer(path, currentContext);
-                                }
-                                else if (this.PathType == TestPathType.Leaf)
-                                {
-                                    result =
-                                        InvokeProvider.Item.Exists(path, currentContext) &&
-                                        !InvokeProvider.Item.IsContainer(path, currentContext);
-                                }
-                                else
-                                {
-                                    result = InvokeProvider.Item.Exists(path, currentContext);
-                                }
-                            }
-                        }
-
-                        // Any of the known exceptions means the path does not exist.
-                        catch (PSNotSupportedException)
-                        {
-                        }
-                        catch (DriveNotFoundException)
-                        {
-                        }
-                        catch (ProviderNotFoundException)
-                        {
-                        }
-                        catch (ItemNotFoundException)
-                        {
-                        }
-                    }
-
-                    WriteObject(result);
-                }
-            }
-            else
+            if (_paths == null || _paths.Length == 0)
             {
                 WriteObject(false);
+                return;
             }
+
+            CmdletProviderContext currentContext = CmdletProviderContext;
+
+            foreach (string path in _paths)
+            {
+                bool result = false;
+
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    WriteObject(result);
+                    continue;
+                }
+
+                try
+                {
+                    if (IsValid)
+                    {
+                        result = SessionState.Path.IsValid(path, currentContext);
+                    }
+                    else
+                    {
+                        if (this.PathType == TestPathType.Container)
+                        {
+                            result = InvokeProvider.Item.IsContainer(path, currentContext);
+                        }
+                        else if (this.PathType == TestPathType.Leaf)
+                        {
+                            result =
+                                InvokeProvider.Item.Exists(path, currentContext) &&
+                                !InvokeProvider.Item.IsContainer(path, currentContext);
+                        }
+                        else
+                        {
+                            result = InvokeProvider.Item.Exists(path, currentContext);
+                        }
+                    }
+                }
+
+                // Any of the known exceptions means the path does not exist.
+                catch (PSNotSupportedException)
+                {
+                }
+                catch (DriveNotFoundException)
+                {
+                }
+                catch (ProviderNotFoundException)
+                {
+                }
+                catch (ItemNotFoundException)
+                {
+                }
+
+                WriteObject(result);
+            }
+
         } // ProcessRecord
         #endregion Command code
 
