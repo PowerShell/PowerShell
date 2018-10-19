@@ -55,16 +55,16 @@ namespace Microsoft.PowerShell.Commands
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
-        /// Gets and sets count of bytes to read from the input stream.
+        /// Gets or sets count of bytes to read from the input stream.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateRange(ValidateRangeKind.Positive)]
         public Int64 Count { get; set; } = Int64.MaxValue;
 
         /// <summary>
-        /// Gets and sets offset of bytes to start reading the input stream from.
+        /// Gets or sets offset of bytes to start reading the input stream from.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateRange(ValidateRangeKind.NonNegative)]
         public Int64 Offset { get; set; }
 
@@ -284,6 +284,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     break;
+
                 // If the object type is not supported, throw an error. Once Serialization is
                 // available on CoreCLR, other types will be supported.
                 default:
