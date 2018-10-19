@@ -4,6 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Threading;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Collections.Generic;
@@ -705,12 +706,9 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <exception cref="InvalidRunspaceStateException">Runspace is not opened.
         /// </exception>
-        public System.Management.Automation.EngineIntrinsics EngineIntrinsics
+        public EngineIntrinsics EngineIntrinsics
         {
-            get
-            {
-                return ExecutionContext?.EngineIntrinsics;
-            }
+            get => ExecutionContext?.EngineIntrinsics;
         }
 
         /// <summary>
