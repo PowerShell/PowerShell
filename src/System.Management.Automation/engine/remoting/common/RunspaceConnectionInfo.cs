@@ -3122,7 +3122,7 @@ namespace System.Management.Automation.Runspaces
                                                                             ContainerId));
 
                 case ContainersFeatureNotEnabled:
-                    throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.ContainersFeatureNotEnabled));
+                    throw new PSInvalidOperationException(RemotingErrorIdStrings.ContainersFeatureNotEnabled);
 
                 // other errors caught with exception
                 case OtherError:
@@ -3163,7 +3163,7 @@ namespace System.Management.Automation.Runspaces
                     break;
 
                 case ContainersFeatureNotEnabled:
-                    throw new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.ContainersFeatureNotEnabled));
+                    throw new PSInvalidOperationException(RemotingErrorIdStrings.ContainersFeatureNotEnabled);
 
                 case OtherError:
                     throw new PSInvalidOperationException(ErrorMessage);
@@ -3177,15 +3177,30 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Dynamically load the Host Compute interop assemblies and return useful types.
         /// </summary>
-        /// <param name="computeSystemPropertiesType">The Microsoft.HyperV.Schema.Compute.System.Properties type.</param>
+        /// <param name="computeSystemPropertiesType">The HCS.Compute.System.Properties type.</param>
         /// <param name="hostComputeInteropType">The Microsoft.HostCompute.Interop.HostComputeInterop type.</param>
         private static void GetHostComputeInteropTypes(out Type computeSystemPropertiesType, out Type hostComputeInteropType)
         {
             Assembly schemaAssembly = Assembly.Load(new AssemblyName("Microsoft.HyperV.Schema, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"));
-            computeSystemPropertiesType = schemaAssembly.GetType("Microsoft.HyperV.Schema.Compute.System.Properties");
+
+            // The type name was changed in newer version of Windows so we check for new one first,
+            // then fallback to previous type name to support older versions of Windows
+            computeSystemPropertiesType = schemaAssembly.GetType("HCS.Compute.System.Properties");
+            if (computeSystemPropertiesType == null)
+            {
+                computeSystemPropertiesType = schemaAssembly.GetType("Microsoft.HyperV.Schema.Compute.System.Properties");
+                if (computeSystemPropertiesType == null)
+                {
+                    throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
+                }
+            }
 
             Assembly hostComputeInteropAssembly = Assembly.Load(new AssemblyName("Microsoft.HostCompute.Interop, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"));
             hostComputeInteropType = hostComputeInteropAssembly.GetType("Microsoft.HostCompute.Interop.HostComputeInterop");
+            if (hostComputeInteropType == null)
+            {
+                throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
+            }
         }
 
         /// <summary>
@@ -3350,7 +3365,23 @@ namespace System.Management.Automation.Runspaces
 
                     var computeSystemPropertiesHandle = getComputeSystemPropertiesInfo.Invoke(null, new object[] { ComputeSystem });
 
-                    RuntimeId = (Guid)computeSystemPropertiesType.GetProperty("RuntimeId").GetValue(computeSystemPropertiesHandle);
+                    // Since Hyper-V changed this from a property to a field, we can optimize for newest Windows to see if it's a field,
+                    // otherwise we fall back to old code to be compatible with older versions of Windows
+                    var fieldInfo = computeSystemPropertiesType.GetField("RuntimeId");
+                    if (fieldInfo != null)
+                    {
+                        RuntimeId = (Guid)fieldInfo.GetValue(computeSystemPropertiesHandle);
+                    }
+                    else
+                    {
+                        var propertyInfo = computeSystemPropertiesType.GetProperty("RuntimeId");
+                        if (propertyInfo == null)
+                        {
+                            throw new PSInvalidOperationException(RemotingErrorIdStrings.CannotGetHostInteropTypes);
+                        }
+
+                        RuntimeId = (Guid)propertyInfo.GetValue(computeSystemPropertiesHandle);
+                    }
 
                     //
                     // Get container object root for Windows Server container.

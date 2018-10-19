@@ -29,7 +29,7 @@
 src/Microsoft.PowerShell.Commands.Management/      @daxian-dbw @adityapatwardhan
 
 # Area: CmdLets Utility
-src/Microsoft.PowerShell.Commands.Utility/         @JamesWTruher @dantraMSFT @PaulHigin
+src/Microsoft.PowerShell.Commands.Utility/         @JamesWTruher @PaulHigin
 
 # Area: Console
 src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @anmenaga
@@ -38,14 +38,14 @@ src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @anmenaga
 demos/                                             @joeyaiello @SteveL-MSFT @HemantMahawar
 
 # Area: DSC
-src/System.Management.Automation/DscSupport        @TravisEz13 @dantraMSFT
+src/System.Management.Automation/DscSupport        @TravisEz13 @SteveL-MSFT
 
 # Area: engine
 src/System.Management.Automation/engine            @daxian-dbw @BrucePay
 
 # Area: Debugging
 # Must be below engine to override
-src/System.Management.Automation/engine/debugger/  @BrucePay @dantraMSFT @PaulHigin
+src/System.Management.Automation/engine/debugger/  @BrucePay @PaulHigin
 
 # Area: help
 src/System.Management.Automation/help              @Francisco-Gamino @adityapatwardhan
@@ -60,23 +60,20 @@ src/System.Management.Automation/engine/parser     @daxian-dbw @BrucePay
 src/System.Management.Automation/namespaces        @BrucePay @anmenaga
 
 # Area: Remoting
-src/System.Management.Automation/engine/remoting   @dantraMSFT @mirichmo @PaulHigin
+src/System.Management.Automation/engine/remoting    @mirichmo @PaulHigin
 
 # Area: Side-By-Side
 # @mirichmo @charub
 
-# Area: Libpsl-native
-src/libpsl-native                                  @dantraMSFT
-
 # Areas: Build
 # Must be last
-*.config   @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @dantraMSFT
-*.props    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @dantraMSFT
-*.yml      @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @dantraMSFT
-*.csproj   @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @dantraMSFT
-build.*    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @dantraMSFT
-tools/     @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @dantraMSFT
-docker/    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @dantraMSFT
+*.config   @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+*.props    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+*.yml      @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+*.csproj   @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+build.*    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+tools/     @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
+docker/    @daxian-dbw @TravisEz13 @adityapatwardhan @anmenaga @PaulHigin
 
 # Area: Compliance
 tools/terms    @TravisEz13

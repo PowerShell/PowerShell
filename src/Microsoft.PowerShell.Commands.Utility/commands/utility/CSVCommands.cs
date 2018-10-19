@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyIncludeTypeInformationAndNoTypeInformation", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
             }
-            if (this.MyInvocation.BoundParameters.ContainsKey("IncludeTypeInformation"))
+            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)))
             {
                 NoTypeInformation = !IncludeTypeInformation;
             }
@@ -1610,9 +1610,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 string name = names[i];
                 string value = null;
-                ////if name is null and delimiter is '"', continue
+                ////if name is null and delimiter is '"', use a default property name 'UnspecifiedName'
                 if (name.Length == 0 && delimiterlocal == '"')
-                    continue;
+                {
+                    name = UnspecifiedName + unspecifiedNameIndex;
+                    unspecifiedNameIndex++;
+                }
                 ////if name is null and delimiter is not '"', use a default property name 'UnspecifiedName'
                 if (string.IsNullOrEmpty(name))
                 {

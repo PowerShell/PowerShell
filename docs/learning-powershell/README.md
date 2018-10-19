@@ -100,7 +100,7 @@ Note that all bash commands should continue working on PowerShell session.
 | rm -r &lt;folderName>           |Remove-Item &lt;folderName> -Recurse   |Delete a folder
 | find -name build*               |Get-ChildItem build* -Recurse          |Find a file or folder starting with 'build'
 | grep -Rin "sometext" --include="*.cs" |Get-ChildItem -Recurse -Filter *.cs <br> \| Select-String -Pattern "sometext" | Recursively case-insensitive search for text in files
-
+| curl https://github.com | Invoke-RestMethod https://github.com | Transfer data to or from the web
 
 Recommended Training and Reading
 ----
@@ -134,3 +134,4 @@ Commercial Resources
 [powershell.com-learn-powershell]: http://powershell.com/cs/media/14/default.aspx
 [quick-reference]: http://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
 [script-guy-how-to]:https://blogs.technet.microsoft.com/tommypatterson/2015/09/04/ed-wilsons-powershell5-videos-now-on-channel9-2/
+[basic-cookbooks]:https://docs.microsoft.com/en-us/powershell/scripting/getting-started/fundamental/sample-scripts-for-administration?view=powershell-6

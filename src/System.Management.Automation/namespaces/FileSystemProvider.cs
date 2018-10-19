@@ -6366,6 +6366,14 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
+                if (Directory.Exists(path))
+                {
+                    string errMsg = StringUtil.Format(SessionStateStrings.GetContainerContentException, path);
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "GetContainerContentException", ErrorCategory.InvalidOperation, null);
+                    WriteError(error);
+                    return stream;
+                }
+
                 // Users can't both read as bytes, and specify a delimiter
                 if (delimiterSpecified)
                 {
@@ -6514,6 +6522,14 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
+                if (Directory.Exists(path))
+                {
+                    string errMsg = StringUtil.Format(SessionStateStrings.WriteContainerContentException, path);
+                    ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "WriteContainerContentException", ErrorCategory.InvalidOperation, null);
+                    WriteError(error);
+                    return stream;
+                }
+
                 stream = new FileSystemContentReaderWriter(path, streamName, filemode, FileAccess.Write, FileShare.Write, encoding, usingByteEncoding, false, this, false, suppressNewline);
             }
             catch (PathTooLongException pathTooLong)

@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
             // Throw out terminating error if this is the case.
             if (IsModuleSpecified && IsFullyQualifiedModuleSpecified)
             {
-                string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
+                string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, nameof(Module), nameof(FullyQualifiedModule));
                 ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
             // Throw out terminating error if this is the case.
             if (IsModuleSpecified && IsFullyQualifiedModuleSpecified)
             {
-                string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
+                string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, nameof(Module), nameof(FullyQualifiedModule));
                 ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
@@ -1643,10 +1643,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 powerShell.AddParameter("Name", this.CommandName);
             }
-            powerShell.AddParameter("Module", this.Module);
+            powerShell.AddParameter(nameof(Module), this.Module);
             if (IsFullyQualifiedModuleSpecified)
             {
-                powerShell.AddParameter("FullyQualifiedModule", this.FullyQualifiedModule);
+                powerShell.AddParameter(nameof(FullyQualifiedModule), this.FullyQualifiedModule);
             }
             powerShell.AddParameter("ArgumentList", this.ArgumentList);
 
@@ -2405,9 +2405,9 @@ function Get-PSImplicitRemotingSession
         {
             StringBuilder result = new StringBuilder();
 
-            if (_invocationInfo.BoundParameters.ContainsKey("Module"))
+            if (_invocationInfo.BoundParameters.ContainsKey(nameof(Module)))
             {
-                string[] moduleNames = (string[])_invocationInfo.BoundParameters["Module"];
+                string[] moduleNames = (string[])_invocationInfo.BoundParameters[nameof(Module)];
                 foreach (string moduleName in moduleNames)
                 {
                     result.AppendFormat(

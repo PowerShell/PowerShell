@@ -73,31 +73,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private String resultClassName;
 
         /// <summary>
-        /// The following is the definition of the input parameter "AssociatorRole".
-        /// Specifies the name of the association role of the instances to be retrieved.
-        /// </summary>
-        //[Parameter(ValueFromPipelineByPropertyName = true)]
-        //public String AssociatorRole
-        //{
-        //    get { return associatorRole; }
-        //    set { associatorRole = value; }
-        //}
-        //private String associatorRole;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "SourceRole".
-        /// Specifies the name of the association role of the source instance where the
-        /// association traversal should begin.
-        /// </summary>
-        //[Parameter(ValueFromPipelineByPropertyName = true)]
-        //public String SourceRole
-        //{
-        //    get { return sourcerole; }
-        //    set { sourcerole = value; }
-        //}
-        //private String sourcerole;
-
-        /// <summary>
         /// <para>
         /// The following is the definition of the input parameter "InputObject".
         /// Provides the instance from which the association traversal is to begin.
@@ -315,14 +290,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         #region const string of parameter names
-        // internal const string nameAssociation = "Association";
         internal const string nameCimInstance = "InputObject";
-        // internal const string nameNamespace = "Namespace";
-        // internal const string nameOperationTimeoutSec = "OperationTimeoutSec";
         internal const string nameComputerName = "ComputerName";
         internal const string nameCimSession = "CimSession";
         internal const string nameResourceUri = "ResourceUri";
-        // internal const string nameKeyOnly = "KeyOnly";
         #endregion
 
         /// <summary>

@@ -1407,17 +1407,65 @@ namespace System.Management.Automation.Internal
     }
 
     /// <summary>
-    /// An bounded stack based on a linked list.
+    /// Provides undo/redo functionality by using 2 instances of <seealso cref="BoundedStack{T}"/>.
+    /// </summary>
+    internal class HistoryStack<T>
+    {
+        private readonly BoundedStack<T> _boundedUndoStack;
+        private readonly BoundedStack<T> _boundedRedoStack;
+
+        internal HistoryStack(uint capacity)
+        {
+            _boundedUndoStack = new BoundedStack<T>(capacity);
+            _boundedRedoStack = new BoundedStack<T>(capacity);
+        }
+
+        internal void Push(T item)
+        {
+            _boundedUndoStack.Push(item);
+            if (RedoCount >= 0)
+            {
+                _boundedRedoStack.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Handles bounded history stacks by pushing the current item to the redoStack and returning the item from the popped undoStack.
+        /// </summary>
+        internal T Undo(T currentItem)
+        {
+            T previousItem = _boundedUndoStack.Pop();
+            _boundedRedoStack.Push(currentItem);
+            return previousItem;
+        }
+
+        /// <summary>
+        /// Handles bounded history stacks by pushing the current item to the undoStack and returning the item from the popped redoStack.
+        /// </summary>
+        internal T Redo(T currentItem)
+        {
+            var nextItem = _boundedRedoStack.Pop();
+            _boundedUndoStack.Push(currentItem);
+            return nextItem;
+        }
+
+        internal int UndoCount => _boundedUndoStack.Count;
+
+        internal int RedoCount => _boundedRedoStack.Count;
+    }
+
+    /// <summary>
+    /// A bounded stack based on a linked list.
     /// </summary>
     internal class BoundedStack<T> : LinkedList<T>
     {
-        private readonly int _capacity;
+        private readonly uint _capacity;
 
         /// <summary>
         /// Lazy initialisation, i.e. it sets only its limit but does not allocate the memory for the given capacity.
         /// </summary>
         /// <param name="capacity"></param>
-        internal BoundedStack(int capacity)
+        internal BoundedStack(uint capacity)
         {
             _capacity = capacity;
         }
@@ -1430,7 +1478,7 @@ namespace System.Management.Automation.Internal
         {
             this.AddFirst(item);
 
-            if(this.Count > _capacity)
+            if (this.Count > _capacity)
             {
                 this.RemoveLast();
             }
@@ -1442,6 +1490,11 @@ namespace System.Management.Automation.Internal
         /// <returns></returns>
         internal T Pop()
         {
+            if (this.First == null)
+            {
+                throw new InvalidOperationException(SessionStateStrings.BoundedStackIsEmpty);
+            }
+
             var item = this.First.Value;
             try
             {

@@ -279,8 +279,17 @@
   <data name="GetContentWriterDynamicParametersProviderException" xml:space="preserve">
     <value>The dynamic parameters for the GetContentWriter operation cannot be retrieved for the '{0}' provider for path '{1}'. {2}</value>
   </data>
-  <data name="SetContentToLastLocationWhenHistoryIsEmpty" xml:space="preserve">
+  <data name="GetContainerContentException" xml:space="preserve">
+    <value>Unable to get content because it is a directory: '{0}'. Please use 'Get-ChildItem' instead.</value>
+  </data>
+  <data name="WriteContainerContentException" xml:space="preserve">
+    <value>Unable to write content because it is a directory: '{0}'.</value>
+  </data>   
+  <data name="LocationUndoStackIsEmpty" xml:space="preserve">
     <value>There is no location history left to navigate backwards.</value>
+  </data>
+  <data name="LocationRedoStackIsEmpty" xml:space="preserve">
+    <value>There is no location history left to navigate forwards.</value>
   </data>
   <data name="BoundedStackIsEmpty" xml:space="preserve">
     <value>The BoundedStack is empty.</value>

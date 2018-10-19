@@ -11,6 +11,10 @@ cd bin
 dotnet WebListener.dll ServerCert.pfx password 8083 8084 8085 8086
 ```
 
+**NOTE**: `ServerCert.pfx` is no longer a static asset
+and you will need to create your own certificate for this purpose.
+The `SelfSignedCertificate` module in the PowerShell Gallery provides this functionality.
+
 The test site can then be accessed via `http://localhost:8083/`, `https://localhost:8084/`, `https://localhost:8085/`, or `https://localhost:8086/`.
 
 The `WebListener.dll` takes 6 arguments:

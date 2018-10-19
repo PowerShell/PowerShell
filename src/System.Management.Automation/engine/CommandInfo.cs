@@ -3,11 +3,15 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Text;
+
 using Microsoft.PowerShell.Commands;
 
 namespace System.Management.Automation
@@ -770,6 +774,17 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// This constructor is used when the creating a PSObject with a custom typename.
+        /// </summary>
+        /// <param name="name">The name of the type.</param>
+        /// <param name="type">The real type.</param>
+        public PSTypeName(string name, Type type)
+        {
+            Name = name;
+            _type = type;
+        }
+
+        /// <summary>
         /// This constructor is used when the type is defined in PowerShell.
         /// </summary>
         /// <param name="typeDefinitionAst">The type definition from the ast.</param>
@@ -875,6 +890,95 @@ namespace System.Management.Automation
         {
             return Name ?? string.Empty;
         }
+    }
+
+    [DebuggerDisplay("{PSTypeName} {Name}")]
+    internal struct PSMemberNameAndType
+    {
+        public readonly string Name;
+
+        public readonly PSTypeName PSTypeName;
+
+        public readonly object Value;
+
+        public PSMemberNameAndType(string name, PSTypeName typeName, object value = null)
+        {
+            Name = name;
+            PSTypeName = typeName;
+            Value = value;
+        }
+    }
+
+    /// <summary>
+    /// Represents dynamic types such as <see cref="System.Management.Automation.PSObject"/>,
+    /// but can be used where a real type might not be available, in which case the name of the type can be used.
+    /// The type encodes the members of dynamic objects in the type name.
+    /// </summary>
+    internal class PSSyntheticTypeName : PSTypeName
+    {
+        internal static PSSyntheticTypeName Create(string typename, IList<PSMemberNameAndType> membersTypes) => Create(new PSTypeName(typename), membersTypes);
+
+        internal static PSSyntheticTypeName Create(Type type, IList<PSMemberNameAndType> membersTypes) => Create(new PSTypeName(type), membersTypes);
+
+        internal static PSSyntheticTypeName Create(PSTypeName typename, IList<PSMemberNameAndType> membersTypes)
+        {
+            var typeName = GetMemberTypeProjection(typename.Name, membersTypes);
+            var members = new List<PSMemberNameAndType>();
+            members.AddRange(membersTypes);
+            members.Sort((c1,c2) =>string.Compare(c1.Name, c2.Name, StringComparison.CurrentCultureIgnoreCase));
+            return new PSSyntheticTypeName(typeName, typename.Type, members);
+        }
+
+        private PSSyntheticTypeName(string typeName, Type type, IList<PSMemberNameAndType> membersTypes)
+        : base(typeName, type)
+        {
+            Members = membersTypes;
+            if (type != typeof(PSObject))
+            {
+                return;
+            }
+
+            for (int i = 0; i < Members.Count; i++)
+            {
+                var psMemberNameAndType = Members[i];
+                if (IsPSTypeName(psMemberNameAndType))
+                {
+                    Members.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        private static bool IsPSTypeName(PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.CurrentCultureIgnoreCase);
+
+        private static string GetMemberTypeProjection(string typename, IList<PSMemberNameAndType> members)
+        {
+            if (typename == typeof(PSObject).FullName)
+            {
+                foreach (var mem in members)
+                {
+                    if (IsPSTypeName(mem))
+                    {
+                        typename = mem.Value.ToString();
+                    }
+                }
+            }
+
+            var builder = new StringBuilder(typename, members.Count * 7);
+            builder.Append('#');
+            foreach (var m in members.OrderBy(m => m.Name))
+            {
+                if (!IsPSTypeName(m))
+                {
+                    builder.Append(m.Name).Append(":");
+                }
+            }
+
+            builder.Length--;
+            return builder.ToString();
+        }
+
+        public IList<PSMemberNameAndType> Members { get; }
     }
 
     internal interface IScriptCommandInfo

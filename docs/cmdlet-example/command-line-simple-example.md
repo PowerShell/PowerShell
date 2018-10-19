@@ -186,16 +186,19 @@ If you copy `netstandard.dll` from this directory to the directory containing
    get it to reload `MyModule.dll`.
 
 1. Copy the `netstandard.dll` implementation assembly for .NET 4.6.1 to the module's directory.
+
    ```powershell
    cd 'path-to-where-you-copied-module.dll'
    Copy-Item 'C:\Program Files\dotnet\sdk\<version-number>\Microsoft\Microsoft.NET.Build.Extensions\net461\lib\netstandard.dll' .
    ```
 
 1. Import the module and execute the command:
+
    ```powershell
    Import-Module .\MyModule.dll
    Write-TimestampedMessage "Test message."
    ```
+
    Now the command should succeed.
 
    Note: If it fails, restart Windows PowerShell to make sure

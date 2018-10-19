@@ -60,7 +60,7 @@ return $_.Length";
                     .StartRowDefinition(wrap: true)
                         .AddPropertyColumn("Mode")
                         .AddScriptBlockColumn(@"
-                                    [String]::Format(""{0,10}  {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
+                                    [String]::Format(""{0,10} {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
                                 ")
                         .AddScriptBlockColumn(LengthScriptBlock)
                         .AddPropertyColumn("Name")
