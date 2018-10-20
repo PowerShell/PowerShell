@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool writeOldWay = PowerShellVersion == null ||
                                PowerShellVersion.Major < 5 ||
-                               PowerShellVersion.Build < 11086;
+                               (PowerShellVersion.Major == 5 && PowerShellVersion.Minor < 1);
 
             TypeInfoDataBase db = this.Context.FormatDBManager.Database;
 

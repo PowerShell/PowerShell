@@ -99,12 +99,30 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
         /// <param name="path">Indicates the path of the file whose contents are wrapped in the ByteCollection.</param>
-        public ByteCollection(UInt32 offset, Byte[] value, string path)
+        [Obsolete("The constructor is deprecated.", true)]
+        public ByteCollection(UInt32 offset, byte[] value, string path)
         {
-            this.Offset = offset;
-            _initialOffSet = offset;
-            this.Bytes = value;
-            this.Path = path;
+            Offset64 = offset;
+            Bytes = value;
+            Path = path;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of ByteCollection.
+        /// </summary>
+        /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
+        /// <param name="value">Underlying bytes stored in the collection.</param>
+        /// <param name="path">Indicates the path of the file whose contents are wrapped in the ByteCollection.</param>
+        public ByteCollection(UInt64 offset, byte[] value, string path)
+        {
+            if (value == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("value");
+            }
+
+            Offset64 = offset;
+            Bytes = value;
+            Path = path;
         }
 
         /// <summary>
@@ -112,36 +130,78 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
         /// <param name="value">Underlying bytes stored in the collection.</param>
-        public ByteCollection(UInt32 offset, Byte[] value)
+        [Obsolete("The constructor is deprecated.", true)]
+        public ByteCollection(UInt32 offset, byte[] value)
         {
-            this.Offset = offset;
-            _initialOffSet = offset;
-            this.Bytes = value;
+            if (value == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("value");
+            }
+
+            Offset64 = offset;
+            Bytes = value;
+        }
+
+        /// <summary>
+        /// ByteCollection constructor.
+        /// </summary>
+        /// <param name="offset">The Offset address to be used while displaying the bytes in the collection.</param>
+        /// <param name="value">Underlying bytes stored in the collection.</param>
+        public ByteCollection(UInt64 offset, byte[] value)
+        {
+            if (value == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("value");
+            }
+
+            Offset64 = offset;
+            Bytes = value;
         }
 
         /// <summary>
         /// ByteCollection constructor.
         /// </summary>
         /// <param name="value">Underlying bytes stored in the collection.</param>
-        public ByteCollection(Byte[] value)
+        public ByteCollection(byte[] value)
         {
-            this.Bytes = value;
+            if (value == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("value");
+            }
+
+            Bytes = value;
         }
 
         /// <summary>
-        /// The Offset address to be used while displaying the bytes in the collection.
+        /// Gets the Offset address to be used while displaying the bytes in the collection.
         /// </summary>
-        public UInt32 Offset { get; private set; }
-        private UInt32 _initialOffSet = 0;
+        [Obsolete("The property is deprecated, please use Offset64 instead.", true)]
+        public UInt32 Offset
+        {
+             get
+             {
+                return (UInt32)Offset64;
+             }
+
+             private set
+             {
+                 Offset64 = value;
+             }
+        }
 
         /// <summary>
-        /// Underlying bytes stored in the collection.
+        /// Gets the Offset address to be used while displaying the bytes in the collection.
+        /// </summary>
+        public UInt64 Offset64 { get; private set; }
+
+        /// <summary>
+        /// Gets underlying bytes stored in the collection.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Byte[] Bytes { get; private set; }
+        public byte[] Bytes { get; private set; }
 
         /// <summary>
-        /// Indicates the path of the file whose contents are wrapped in the ByteCollection.
+        /// Gets the path of the file whose contents are wrapped in the ByteCollection.
         /// </summary>
         public string Path { get; private set; }
 
@@ -151,20 +211,28 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         public override string ToString()
         {
-            StringBuilder result = new StringBuilder();
-            StringBuilder nextLine = new StringBuilder();
-            StringBuilder asciiEnd = new StringBuilder();
+            const int BytesPerLine = 16;
+            const string LineFormat = "{0:X20}   ";
+
+            // '20 + 3' comes from format "{0:X20}   ".
+            // '20' comes from '[Uint64]::MaxValue.ToString().Length'.
+            StringBuilder nextLine = new StringBuilder(20 + 3 + (BytesPerLine * 3));
+            StringBuilder asciiEnd = new StringBuilder(BytesPerLine);
+
+            // '+1' comes from 'result.Append(nextLine.ToString() + " " + asciiEnd.ToString());' below.
+            StringBuilder result = new StringBuilder(nextLine.Capacity + asciiEnd.Capacity + 1);
 
             if (Bytes.Length > 0)
             {
-                UInt32 charCounter = 0;
+                Int64 charCounter = 0;
 
                 // ToString() in invoked thrice by the F&O for the same content.
                 // Hence making sure that Offset is not getting incremented thrice for the same bytes being displayed.
-                Offset = _initialOffSet;
+                var currentOffset = Offset64;
 
-                nextLine.AppendFormat("{0:X2}   ", CultureInfo.InvariantCulture.TextInfo.ToUpper(Convert.ToString(Offset, 16)).PadLeft(8, '0'));
-                foreach (Byte currentByte in Bytes)
+                nextLine.AppendFormat(CultureInfo.InvariantCulture, LineFormat, currentOffset);
+
+                foreach (byte currentByte in Bytes)
                 {
                     // Display each byte, in 2-digit hexadecimal, and add that to the left-hand side.
                     nextLine.AppendFormat("{0:X2} ", currentByte);
@@ -179,38 +247,40 @@ namespace Microsoft.PowerShell.Commands
                     {
                         asciiEnd.Append('.');
                     }
+
                     charCounter++;
 
                     // If we've hit the end of a line, combine the right half with the
                     // left half, and start a new line.
-                    if ((charCounter % 16) == 0)
+                    if ((charCounter % BytesPerLine) == 0)
                     {
-                        result.Append(nextLine.ToString() + " " + asciiEnd.ToString());
+                        result.Append(nextLine).Append(' ').Append(asciiEnd);
                         nextLine.Clear();
                         asciiEnd.Clear();
-                        Offset += 0x10;
-                        nextLine.AppendFormat("{0:X2}   ", CultureInfo.InvariantCulture.TextInfo.ToUpper(Convert.ToString(Offset, 16)).PadLeft(8, '0'));
+                        currentOffset += BytesPerLine;
+                        nextLine.AppendFormat(CultureInfo.InvariantCulture, LineFormat, currentOffset);
 
                         // Adding a newline to support long inputs strings flowing through InputObject parameterset.
                         if ((charCounter <= Bytes.Length) && string.IsNullOrEmpty(this.Path))
                         {
-                            result.Append("\r\n");
+                            result.AppendLine();
                         }
                     }
                 }
 
                 // At the end of the file, we might not have had the chance to output
-                // the end of the line yet.  Only do this if we didn't exit on the 16-byte
+                // the end of the line yet. Only do this if we didn't exit on the 16-byte
                 // boundary, though.
                 if ((charCounter % 16) != 0)
                 {
                     while ((charCounter % 16) != 0)
                     {
-                        nextLine.Append("   ");
+                        nextLine.Append(' ', 3);
                         asciiEnd.Append(' ');
                         charCounter++;
                     }
-                    result.Append(nextLine.ToString() + " " + asciiEnd.ToString());
+
+                    result.Append(nextLine).Append(' ').Append(asciiEnd);
                 }
             }
 
