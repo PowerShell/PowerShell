@@ -294,8 +294,6 @@ namespace Microsoft.PowerShell.Commands
 
             WriteConsoleTraceRouteHeader(resolvedTargetName, targetAddress.ToString());
 
-            TraceRouteResult traceRouteResult = new TraceRouteResult(Source, targetAddress, resolvedTargetName);
-
             Int32 currentHop = 1;
             Ping sender = new Ping();
             PingOptions pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
@@ -350,8 +348,10 @@ namespace Microsoft.PowerShell.Commands
                 traceRouteReply.ReplyRouterAddress = reply.Address;
 
                 WriteTraceRouteProgress(traceRouteReply);
-
-                traceRouteResult.Replies.Add(traceRouteReply);
+                if (!Quiet.IsPresent)
+                {
+                    WriteObject(new TraceRouteResult(Source, targetAddress, resolvedTargetName, traceRouteReply));
+                }
             } while (reply != null && currentHop <= sMaxHops && (reply.Status == IPStatus.TtlExpired || reply.Status == IPStatus.TimedOut));
 
             WriteTraceRouteFooter();
@@ -359,10 +359,6 @@ namespace Microsoft.PowerShell.Commands
             if (Quiet.IsPresent)
             {
                 WriteObject(currentHop <= sMaxHops);
-            }
-            else
-            {
-                WriteObject(traceRouteResult);
             }
         }
 
@@ -374,7 +370,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _testConnectionProgressBarActivity;
-        private static string[] s_PSHostTag = new string[] { "PSHOST" };
 
         private void WriteTraceRouteProgress(TraceRouteReply traceRouteReply)
         {
@@ -395,12 +390,12 @@ namespace Microsoft.PowerShell.Commands
                 msg = StringUtil.Format(TestConnectionResources.TraceRouteTimeOut, traceRouteReply.Hop);
             }
 
-            WriteInformation(msg, s_PSHostTag);
+            WriteVerbose(msg);
         }
 
         private void WriteTraceRouteFooter()
         {
-            WriteInformation(TestConnectionResources.TraceRouteComplete, s_PSHostTag);
+            WriteVerbose(TestConnectionResources.TraceRouteComplete);
         }
 
         /// <summary>
@@ -439,13 +434,65 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public class TraceRouteResult
         {
-            internal TraceRouteResult(string source, IPAddress destinationAddress, string destinationHost)
+            internal TraceRouteResult(string source, IPAddress destinationAddress, string destinationHost, TraceRouteReply reply)
             {
                 Source = source;
                 DestinationAddress = destinationAddress;
                 DestinationHost = destinationHost;
-                Replies = new List<TraceRouteReply>();
+                Reply = reply;
+
+                PingAttempts = Reply.PingReplies.Count;
+                Address = Reply.ReplyRouterAddress;
+                Hostname = Reply.ReplyRouterName;
+                Status = IPStatus.Unknown;
+
+                long totalTime = 0;
+                foreach (PingReply pingReply in Reply.PingReplies)
+                {
+                    TotalBytes += pingReply.Buffer.Length;
+                    totalTime += pingReply.RoundtripTime;
+
+                    MaxRoundtrip = pingReply.RoundtripTime > MaxRoundtrip ? pingReply.RoundtripTime : MaxRoundtrip;
+
+                    // PingReply objects do not report correct status or roundtrip times on a traceroute
+                    // and will return TtlExpired on a successful ping with roundtrip time of 0 ms
+                    if (Status == IPStatus.Success || pingReply.Status == IPStatus.TtlExpired)
+                    {
+                        Status = IPStatus.Success;
+                    }
+                    else
+                    {
+                        Status = pingReply.Status;
+                    }
+
+                }
+
+                if (Status == IPStatus.Unknown)
+                {
+                    Status = Reply.PingReplies[0].Status;
+                }
             }
+
+            /// <summary>
+            /// The index number of the this hop in the overall traceroute.
+            /// </summary>
+            public int Hop { get => Reply.Hop; }
+
+            /// <summary>
+            /// The overall status of the traceroute hop. If any successes are recorded, it is considered successful.
+            /// Otherwise, the first reply status is
+            /// </summary>
+            public IPStatus Status;
+
+            /// <summary>
+            /// The IPAddress of the hop point.
+            /// </summary>
+            public IPAddress Address { get; }
+
+            /// <summary>
+            /// The hostname of the hop point.
+            /// </summary>
+            public string Hostname { get; }
 
             /// <summary>
             /// Source from which to trace route.
@@ -463,8 +510,24 @@ namespace Microsoft.PowerShell.Commands
             public string DestinationHost { get; }
 
             /// <summary>
+            /// The average roundtrip time in ms to the hop point.
             /// </summary>
-            public List<TraceRouteReply> Replies { get; }
+            public long MaxRoundtrip { get; } = 0;
+
+            /// <summary>
+            /// The total number of bytes sent to the hop point.
+            /// </summary>
+            public int TotalBytes { get; } = 0;
+
+            /// <summary>
+            /// The number of pings that succeeded to the hop point.
+            /// </summary>
+            public int PingAttempts { get; } = 0;
+
+            /// <summary>
+            /// The reply summary object from the Traceroute hop point.
+            /// </summary>
+            public TraceRouteReply Reply { get; }
         }
 
         #endregion TracerouteTest
