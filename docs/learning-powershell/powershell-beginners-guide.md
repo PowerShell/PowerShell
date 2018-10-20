@@ -41,7 +41,7 @@ Handles   NPM(K)    PM(K)     WS(K)     CPU(s)     Id    ProcessName
 …
 ```
 
-Only interested in the instance of firefox process that are running on your computer?
+Only interested in the instance of Firefox process that is running on your computer?
 
 Try this:
 
