@@ -191,6 +191,50 @@ namespace System.Management.Automation
         } // SetLocation
 
         /// <summary>
+        /// Changes the current location to the specified path.
+        /// </summary>
+        /// <param name="path">
+        /// The path to change the location to. This can be either a drive-relative or provider-relative
+        /// path. It cannot be a provider-internal path.
+        /// </param>
+        /// <param name="context">
+        /// The context under which the command is running.
+        /// </param>
+        /// <param name="literalPath">
+        /// Indicates if the path is a literal path.
+        /// </param>
+        /// <returns>
+        /// The path of the new current location.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="path"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="path"/> does not exist, is not a container, or
+        /// resolved to multiple containers.
+        /// </exception>
+        /// <exception cref="ProviderNotFoundException">
+        /// If <paramref name="path"/> refers to a provider that does not exist.
+        /// </exception>
+        /// <exception cref="DriveNotFoundException">
+        /// If <paramref name="path"/> refers to a drive that does not exist.
+        /// </exception>
+        /// <exception cref="ProviderInvocationException">
+        /// If the provider associated with <paramref name="path"/> threw an
+        /// exception.
+        /// </exception>
+        internal PathInfo SetLocation(string path, CmdletProviderContext context, bool literalPath)
+        {
+            Dbg.Diagnostics.Assert(
+                _sessionState != null,
+                "The only constructor for this class should always set the sessionState field");
+
+            // Parameter validation is done in the session state object
+
+            return _sessionState.SetLocation(path, context, literalPath);
+        } // SetLocation
+
+        /// <summary>
         /// Determines if the specified path is the current location or a parent of the current location.
         /// </summary>
         /// <param name="path">

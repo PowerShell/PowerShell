@@ -195,6 +195,47 @@ namespace System.Management.Automation
         /// </exception>
         internal PathInfo SetLocation(string path, CmdletProviderContext context)
         {
+            return SetLocation(path, context, literalPath: false);
+        }
+
+        /// <summary>
+        /// Changes the current working directory to the path specified
+        /// </summary>
+        /// <param name="path">
+        /// The path of the new current working directory
+        /// </param>
+        /// <param name="context">
+        /// The context the provider uses when performing the operation.
+        /// </param>
+        /// <param name="literalPath">
+        /// Indicate if the path is a literal path.
+        /// </param>
+        /// <returns>
+        /// The PathInfo object representing the path of the location
+        /// that was set.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="path"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="path"/> does not exist, is not a container, or
+        /// resolved to multiple containers.
+        /// </exception>
+        /// <exception cref="ProviderNotFoundException">
+        /// If <paramref name="path"/> refers to a provider that does not exist.
+        /// </exception>
+        /// <exception cref="DriveNotFoundException">
+        /// If <paramref name="path"/> refers to a drive that does not exist.
+        /// </exception>
+        /// <exception cref="ProviderInvocationException">
+        /// If the provider associated with <paramref name="path"/> threw an
+        /// exception.
+        /// </exception>
+        /// <exception cref="ItemNotFoundException">
+        /// If the <paramref name="path"/> could not be resolved.
+        /// </exception>
+        internal PathInfo SetLocation(string path, CmdletProviderContext context, bool literalPath)
+        {
             if (path == null)
             {
                 throw PSTraceSource.NewArgumentNullException("path");
@@ -208,14 +249,14 @@ namespace System.Management.Automation
 
             switch (originalPath)
             {
-                case string originalPathSwitch when originalPathSwitch.Equals("-", StringComparison.OrdinalIgnoreCase):
+                case string originalPathSwitch when !literalPath && originalPathSwitch.Equals("-", StringComparison.OrdinalIgnoreCase):
                     if (_setLocationHistory.UndoCount <= 0)
                     {
                         throw new InvalidOperationException(SessionStateStrings.LocationUndoStackIsEmpty);
                     }
                     path = _setLocationHistory.Undo(this.CurrentLocation).Path;
                     break;
-                case string originalPathSwitch when originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
+                case string originalPathSwitch when !literalPath && originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
                     if (_setLocationHistory.RedoCount <= 0)
                     {
                         throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
