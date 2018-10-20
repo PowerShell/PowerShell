@@ -40,7 +40,7 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       { Add-Content -Path $() -Value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddContentCommand"
     }
 
-    It "Should throw an error on a directory" { 
+    It "Should throw an error on a directory" {
       { Add-Content -Path . -Value "WriteContainerContentException" -ErrorAction Stop } | Should -Throw -ErrorId "WriteContainerContentException,Microsoft.PowerShell.Commands.AddContentCommand"
     }
 
@@ -57,5 +57,39 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       $result[0]     | Should -BeExactly "hello"
       $result[1]     | Should -BeExactly "world"
     }
+  }
+}
+
+Describe "Add-Content feature tests" -Tag Feature {
+  It "Should not block reads while writing" {
+    $logpath = Join-Path $testdrive "test.log"
+
+    $writer = Start-Job -ScriptBlock {
+      param($logpath)
+
+      1..10 | % {
+        $_ | Add-Content $logpath
+        Start-Sleep -ms 100
+      }
+    } -ArgumentList $logpath
+
+    $reader = Start-Job -ScriptBlock {
+      param($logpath)
+
+      while (!(Test-Path $logpath)) {
+        Start-Sleep -ms 10
+      }
+
+      Get-Content $logpath -Wait
+    } -ArgumentList $logpath
+
+    $null = $writer | Wait-Job
+    $writer.ChildJobs[0].Error[0] | Should -BeNullOrEmpty
+    $contents = Receive-Job $reader
+    $contents.Count | Should -Be 10
+    $reader.ChildJobs[0].Error[0] | Should -BeNullOrEmpty
+
+    Remove-Job $writer -Force
+    Remove-Job $reader -Force
   }
 }
