@@ -370,7 +370,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _testConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.TraceRouteStart, resolvedTargetName, targetAddress, MaxHops);
 
-            WriteInformation(_testConnectionProgressBarActivity, s_PSHostTag);
+            WriteVerbose(_testConnectionProgressBarActivity);
         }
 
         private string _testConnectionProgressBarActivity;
@@ -600,7 +600,7 @@ namespace Microsoft.PowerShell.Commands
             Ping sender = new Ping();
             PingOptions pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
             PingReply reply = null;
-            PingReport pingReport = new PingReport(Source, resolvedTargetName);
+            //PingReport pingReport = new PingReport(Source, resolvedTargetName);
             Int32 timeout = TimeoutSeconds * 1000;
             Int32 delay = Delay * 1000;
 
@@ -637,7 +637,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        pingReport.Replies.Add(reply);
+                        WriteObject(new PingReport(Source, resolvedTargetName, reply));
                     }
 
                     WritePingProgress(reply);
@@ -659,10 +659,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject(quietResult);
             }
-            else
-            {
-                WriteObject(pingReport);
-            }
         }
 
         private void WritePingHeader(string resolvedTargetName, string targetAddress)
@@ -672,7 +668,7 @@ namespace Microsoft.PowerShell.Commands
                                                                   targetAddress,
                                                                   BufferSize);
 
-            WriteInformation(_testConnectionProgressBarActivity, null);
+            WriteVerbose(_testConnectionProgressBarActivity);
         }
 
         private void WritePingProgress(PingReply reply)
@@ -691,12 +687,12 @@ namespace Microsoft.PowerShell.Commands
                                         reply.Options?.Ttl);
             }
 
-            WriteInformation(msg, null);
+            WriteVerbose(msg);
         }
 
         private void WritePingFooter()
         {
-            WriteInformation(TestConnectionResources.PingComplete, null);
+            WriteVerbose(TestConnectionResources.PingComplete);
         }
 
         /// <summary>
@@ -704,11 +700,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public class PingReport
         {
-            internal PingReport(string source, string destination)
+            internal PingReport(string source, string destination, PingReply reply)
             {
                 Source = source;
                 Destination = destination;
-                Replies = new List<PingReply>();
+                Reply = reply;
             }
 
             /// <summary>
@@ -722,62 +718,24 @@ namespace Microsoft.PowerShell.Commands
             public string Destination { get; }
 
             /// <summary>
-            /// Number of successful ping attempts.
+            /// Number of bytes sent.
             /// </summary>
-            public int Successes
-            {
-                get
-                {
-                    int count = 0;
-                    foreach (PingReply reply in Replies)
-                    {
-                        if (reply.Status == IPStatus.Success)
-                            count++;
-                    }
-
-                    return count;
-                }
-            }
+            public int Bytes { get => Reply.Buffer.Length; }
 
             /// <summary>
-            /// Number of failed ping attempts.
+            /// Roundtrip time in ms.
             /// </summary>
-            public int Failures
-            {
-                get
-                {
-                    int count = 0;
-                    foreach (PingReply reply in Replies)
-                    {
-                        if (reply.Status != IPStatus.Success)
-                            count++;
-                    }
-
-                    return count;
-                }
-            }
+            public long RoundtripTime { get => Reply.RoundtripTime; }
 
             /// <summary>
-            /// The average roundtrip time of all replies.
+            /// Status of response, success or reason for failure.
             /// </summary>
-            public double AverageRoundtrip
-            {
-                get
-                {
-                    double total = 0;
-                    foreach (PingReply reply in Replies)
-                    {
-                        total += reply.RoundtripTime;
-                    }
-
-                    return total / Replies.Count;
-                }
-            }
+            public IPStatus Status { get => Reply.Status; }
 
             /// <summary>
             /// Ping results for every ping attempt.
             /// </summary>
-            public List<PingReply> Replies { get; }
+            public PingReply Reply { get; }
         }
 
         #endregion PingTest
