@@ -362,7 +362,13 @@ Fix steps:
     }
 
     # Get the folder path where pwsh.exe is located.
-    $publishPath = Split-Path $Options.Output -Parent
+    if ((Split-Path $Options.Output -Leaf) -like "pwsh*") {
+        $publishPath = Split-Path $Options.Output -Parent
+    }
+    else {
+        $publishPath = $Options.Output
+    }
+
     try {
         # Relative paths do not work well if cwd is not changed to project
         Push-Location $Options.Top
