@@ -892,7 +892,7 @@ namespace Microsoft.PowerShell.Commands
         private static byte[] s_DefaultSendBuffer = null;
 
         // Random value for WriteProgress Activity Id.
-        private static readonly int s_ProgressId = 174593053;
+        //private static readonly int s_ProgressId = 174593053;
 
         // Empty message string for Progress Bar.
         private const string ProgressRecordSpace = " ";
