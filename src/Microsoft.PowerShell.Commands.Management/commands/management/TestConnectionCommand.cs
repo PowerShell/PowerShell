@@ -240,8 +240,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteConnectionTestHeader(resolvedTargetName, targetAddress.ToString());
-
             TcpClient client = new TcpClient();
 
             try
@@ -251,8 +249,6 @@ namespace Microsoft.PowerShell.Commands
 
                 for (var i = 1; i <= TimeoutSeconds; i++)
                 {
-                    WriteConnectionTestProgress(targetNameOrAddress, targetString, i);
-
                     Task timeoutTask = Task.Delay(millisecondsDelay: 1000);
                     Task.WhenAny(connectionTask, timeoutTask).Result.Wait();
 
@@ -277,34 +273,9 @@ namespace Microsoft.PowerShell.Commands
             finally
             {
                 client.Close();
-                WriteConnectionTestFooter();
             }
 
             WriteObject(false);
-        }
-
-        private void WriteConnectionTestHeader(string resolvedTargetName, string targetAddress)
-        {
-            _testConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.ConnectionTestStart, resolvedTargetName, targetAddress);
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            WriteProgress(record);
-        }
-
-        private void WriteConnectionTestProgress(string targetNameOrAddress, string targetAddress, int timeout)
-        {
-            var msg = StringUtil.Format(TestConnectionResources.ConnectionTestDescription,
-                                        targetNameOrAddress,
-                                        targetAddress,
-                                        timeout);
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
-            WriteProgress(record);
-        }
-
-        private void WriteConnectionTestFooter()
-        {
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            record.RecordType = ProgressRecordType.Completed;
-            WriteProgress(record);
         }
 
         #endregion ConnectionTest
@@ -400,9 +371,6 @@ namespace Microsoft.PowerShell.Commands
             _testConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.TraceRouteStart, resolvedTargetName, targetAddress, MaxHops);
 
             WriteInformation(_testConnectionProgressBarActivity, s_PSHostTag);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            WriteProgress(record);
         }
 
         private string _testConnectionProgressBarActivity;
@@ -428,18 +396,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             WriteInformation(msg, s_PSHostTag);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
-            WriteProgress(record);
         }
 
         private void WriteTraceRouteFooter()
         {
             WriteInformation(TestConnectionResources.TraceRouteComplete, s_PSHostTag);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            record.RecordType = ProgressRecordType.Completed;
-            WriteProgress(record);
         }
 
         /// <summary>
@@ -521,8 +482,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteMTUSizeHeader(resolvedTargetName, targetAddress.ToString());
-
             // Cautious! Algorithm is sensitive to changing boundary values.
             int HighMTUSize = 10000;
             int CurrentMTUSize = 1473;
@@ -538,8 +497,6 @@ namespace Microsoft.PowerShell.Commands
                 while (LowMTUSize < (HighMTUSize - 1))
                 {
                     byte[] buffer = GetSendBuffer(CurrentMTUSize);
-
-                    WriteMTUSizeProgress(CurrentMTUSize, retry);
 
                     WriteDebug(StringUtil.Format("LowMTUSize: {0}, CurrentMTUSize: {1}, HighMTUSize: {2}", LowMTUSize, CurrentMTUSize, HighMTUSize));
 
@@ -598,8 +555,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            WriteMTUSizeFooter();
-
             if (Quiet.IsPresent)
             {
                 WriteObject(CurrentMTUSize);
@@ -618,32 +573,6 @@ namespace Microsoft.PowerShell.Commands
 
                 WriteObject(res);
             }
-        }
-
-        private void WriteMTUSizeHeader(string resolvedTargetName, string targetAddress)
-        {
-            _testConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.MTUSizeDetectStart,
-                                                                  resolvedTargetName,
-                                                                  targetAddress,
-                                                                  BufferSize);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            WriteProgress(record);
-        }
-
-        private void WriteMTUSizeProgress(int currentMTUSize, int retry)
-        {
-            var msg = StringUtil.Format(TestConnectionResources.MTUSizeDetectDescription, currentMTUSize, retry);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
-            WriteProgress(record);
-        }
-
-        private void WriteMTUSizeFooter()
-        {
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            record.RecordType = ProgressRecordType.Completed;
-            WriteProgress(record);
         }
 
         #endregion MTUSizeTest
@@ -743,12 +672,7 @@ namespace Microsoft.PowerShell.Commands
                                                                   targetAddress,
                                                                   BufferSize);
 
-            WriteInformation(_testConnectionProgressBarActivity, s_PSHostTag);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId,
-                                                       _testConnectionProgressBarActivity,
-                                                       ProgressRecordSpace);
-            WriteProgress(record);
+            WriteInformation(_testConnectionProgressBarActivity, null);
         }
 
         private void WritePingProgress(PingReply reply)
@@ -767,19 +691,12 @@ namespace Microsoft.PowerShell.Commands
                                         reply.Options?.Ttl);
             }
 
-            WriteInformation(msg, s_PSHostTag);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
-            WriteProgress(record);
+            WriteInformation(msg, null);
         }
 
         private void WritePingFooter()
         {
-            WriteInformation(TestConnectionResources.PingComplete, s_PSHostTag);
-
-            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
-            record.RecordType = ProgressRecordType.Completed;
-            WriteProgress(record);
+            WriteInformation(TestConnectionResources.PingComplete, null);
         }
 
         /// <summary>
@@ -803,6 +720,59 @@ namespace Microsoft.PowerShell.Commands
             /// Destination to which to ping.
             /// </summary>
             public string Destination { get; }
+
+            /// <summary>
+            /// Number of successful ping attempts.
+            /// </summary>
+            public int Successes
+            {
+                get
+                {
+                    int count = 0;
+                    foreach (PingReply reply in Replies)
+                    {
+                        if (reply.Status == IPStatus.Success)
+                            count++;
+                    }
+
+                    return count;
+                }
+            }
+
+            /// <summary>
+            /// Number of failed ping attempts.
+            /// </summary>
+            public int Failures
+            {
+                get
+                {
+                    int count = 0;
+                    foreach (PingReply reply in Replies)
+                    {
+                        if (reply.Status != IPStatus.Success)
+                            count++;
+                    }
+
+                    return count;
+                }
+            }
+
+            /// <summary>
+            /// The average roundtrip time of all replies.
+            /// </summary>
+            public double AverageRoundtrip
+            {
+                get
+                {
+                    double total = 0;
+                    foreach (PingReply reply in Replies)
+                    {
+                        total += reply.RoundtripTime;
+                    }
+
+                    return total / Replies.Count;
+                }
+            }
 
             /// <summary>
             /// Ping results for every ping attempt.
