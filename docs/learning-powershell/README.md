@@ -123,7 +123,6 @@ Commercial Resources
 - [Learn Windows PowerShell in a Month of Lunches][learn-powershell] by Don Jones and Jeffrey Hicks
 
 
-
 [in-action]: https://www.amazon.com/Windows-PowerShell-Action-Second-Payette/dp/1935182137
 [powershell-intro]: https://www.pluralsight.com/courses/powershell-intro
 [lynda-training]: https://www.lynda.com/PowerShell-training-tutorials/5779-0.html
