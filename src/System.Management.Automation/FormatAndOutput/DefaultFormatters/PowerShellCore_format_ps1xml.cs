@@ -61,6 +61,14 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_Microsoft_PowerShell_Commands_MatchInfo());
 
             yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceRouteResult",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnection_TraceRouteResult());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+PingReport",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnection_PingReport());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.PSVariable",
                 ViewsOf_System_Management_Automation_PSVariable());
 
@@ -362,6 +370,48 @@ namespace System.Management.Automation.Runspaces
                         .AddScriptBlockExpressionBinding(@"$_.ToString(((get-location).path))")
                     .EndEntry()
                 .EndControl());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnection_TraceRouteResult()
+        {
+            yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.TestConnection+TraceRouteResult",
+                TableControl.Create()
+                    .AddHeader()
+                    .AddHeader()
+                    .AddHeader(width: 24)
+                    .AddHeader()
+                    .AddHeader()
+                    .AddHeader(width: 24)
+                    .AddHeader()
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("Hop", Alignment.Right, format: "{0:D2}")
+                        .AddPropertyColumn("Address")
+                        .AddPropertyColumn("Hostname")
+                        .AddPropertyColumn("MaxRoundtrip", Alignment.Right, format: "{0} ms")
+                        .AddPropertyColumn("DestinationAddress")
+                        .AddPropertyColumn("DestinationHost")
+                    .EndRowDefinition()
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnection_PingReport()
+        {
+            yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.TestConnection+PingReport",
+                TableControl.Create()
+                    .AddHeader()
+                    .AddHeader()
+                    .AddHeader()
+                    .AddHeader()
+                    .AddHeader()
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("Destination")
+                        .AddPropertyColumn("Bytes", Alignment.Right)
+                        .AddPropertyColumn("RoundtripTime", Alignment.Right, "{0} ms")
+                        .AddPropertyColumn("Status")
+                    .EndRowDefinition()
+                .EndTable());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSVariable()
