@@ -516,8 +516,8 @@ namespace System.Management.Automation
         {
             if (arrayExpressionAst.SubExpression.Statements.Count == 0)
             {
-            return new[] { new PSTypeName(typeof(object[])) };
-        }
+                return new[] { new PSTypeName(typeof(object[])) };
+            }
 
             return new[] { GetArrayType(InferTypes(arrayExpressionAst.SubExpression)) };
         }
@@ -1989,7 +1989,8 @@ namespace System.Management.Automation
             var foreachAst = targetAsts.OfType<ForEachStatementAst>().FirstOrDefault();
             if (foreachAst != null)
             {
-                inferredTypes.AddRange(InferTypes(foreachAst.Condition));
+                inferredTypes.AddRange(
+                    GetInferredEnumeratedTypes(InferTypes(foreachAst.Condition)));
                 return;
             }
 
@@ -2209,6 +2210,24 @@ namespace System.Management.Automation
                     // is the inferred type.
                     yield return psType;
                 }
+            }
+        }
+
+        private IEnumerable<PSTypeName> GetInferredEnumeratedTypes(IEnumerable<PSTypeName> enumerableTypes)
+        {
+            foreach (PSTypeName maybeEnumerableType in enumerableTypes)
+            {
+                Type type = maybeEnumerableType.Type;
+                if (type == null)
+                {
+                    yield return maybeEnumerableType;
+                    continue;
+                }
+
+                Type enumeratedItemType = GetMostSpecificEnumeratedItemType(type);
+                yield return enumeratedItemType == null
+                    ? maybeEnumerableType
+                    : new PSTypeName(enumeratedItemType);
             }
         }
 
