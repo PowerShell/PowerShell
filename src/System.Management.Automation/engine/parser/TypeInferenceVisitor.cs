@@ -514,12 +514,23 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitArrayExpression(ArrayExpressionAst arrayExpressionAst)
         {
+            if (arrayExpressionAst.SubExpression.Statements.Count == 0)
+            {
             return new[] { new PSTypeName(typeof(object[])) };
+        }
+
+            return new[] { GetArrayType(InferTypes(arrayExpressionAst.SubExpression)) };
         }
 
         object ICustomAstVisitor.VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst)
         {
-            return new[] { new PSTypeName(typeof(object[])) };
+            var inferredElementTypes = new List<PSTypeName>();
+            foreach (ExpressionAst expression in arrayLiteralAst.Elements)
+            {
+                inferredElementTypes.AddRange(InferTypes(expression));
+            }
+
+            return new[] { GetArrayType(inferredElementTypes) };
         }
 
         object ICustomAstVisitor.VisitHashtable(HashtableAst hashtableAst)
@@ -2010,6 +2021,133 @@ namespace System.Management.Automation
             {
                 inferredTypes.Add(evalTypeName);
             }
+        }
+
+        private PSTypeName GetArrayType(IEnumerable<PSTypeName> inferredTypes)
+        {
+            PSTypeName foundType = null;
+            foreach (PSTypeName inferredType in inferredTypes)
+            {
+                if (inferredType.Type == null)
+                {
+                    return new PSTypeName(typeof(object[]));
+                }
+
+                // IEnumerable<>.GetEnumerator and IDictionary.GetEnumerator will always be
+                // inferred as multiple types due to explicit implementations, so if we find
+                // one then assume the rest are also enumerators.
+                if (typeof(IEnumerator).IsAssignableFrom(inferredType.Type))
+                {
+                    foundType = inferredType;
+                    break;
+                }
+
+                if (foundType == null)
+                {
+                    foundType = inferredType;
+                    continue;
+                }
+
+                // If there are mixed types then fall back to object[].
+                if (foundType.Type != inferredType.Type)
+                {
+                    return new PSTypeName(typeof(object[]));
+                }
+            }
+
+            if (foundType == null)
+            {
+                return new PSTypeName(typeof(object[]));
+            }
+
+            if (foundType.Type.IsArray)
+            {
+                return foundType;
+            }
+
+            Type enumeratedItemType = GetMostSpecificEnumeratedItemType(foundType.Type);
+            if (enumeratedItemType != null)
+            {
+                return new PSTypeName(enumeratedItemType.MakeArrayType());
+            }
+
+            return new PSTypeName(foundType.Type.MakeArrayType());
+        }
+
+        private Type GetMostSpecificEnumeratedItemType(Type enumerableType)
+        {
+            if (enumerableType.IsArray)
+            {
+                return enumerableType.GetElementType();
+            }
+
+            bool hasSeenNonGeneric = false;
+            bool hasSeenDictionaryEnumerator = false;
+            Type collectionInterface = GetGenericCollectionLikeInterface(
+                enumerableType,
+                ref hasSeenNonGeneric,
+                ref hasSeenDictionaryEnumerator);
+
+            if (collectionInterface != null)
+            {
+                return collectionInterface;
+            }
+
+            foreach (Type interfaceType in enumerableType.GetInterfaces())
+            {
+                collectionInterface = GetGenericCollectionLikeInterface(
+                    enumerableType,
+                    ref hasSeenNonGeneric,
+                    ref hasSeenDictionaryEnumerator);
+
+                if (collectionInterface != null)
+                {
+                    return collectionInterface;
+                }
+            }
+
+            if (hasSeenDictionaryEnumerator)
+            {
+                return typeof(DictionaryEntry);
+            }
+
+            if (hasSeenNonGeneric)
+            {
+                return typeof(object);
+            }
+
+            return null;
+        }
+
+        private Type GetGenericCollectionLikeInterface(
+            Type interfaceType,
+            ref bool hasSeenNonGeneric,
+            ref bool hasSeenDictionaryEnumerator)
+        {
+            if (interfaceType.IsConstructedGenericType)
+            {
+                Type openGeneric = interfaceType.GetGenericTypeDefinition();
+                if (openGeneric == typeof(IList<>) ||
+                    openGeneric == typeof(ICollection<>) ||
+                    openGeneric == typeof(IEnumerator<>))
+                {
+                    return interfaceType;
+                }
+            }
+
+            if (interfaceType == typeof(IDictionaryEnumerator))
+            {
+                hasSeenDictionaryEnumerator = true;
+            }
+
+            if (interfaceType == typeof(IList) ||
+                interfaceType == typeof(ICollection) ||
+                interfaceType == typeof(IEnumerator))
+            {
+                hasSeenNonGeneric = true;
+            }
+
+            return null;
         }
 
         private IEnumerable<PSTypeName> InferTypeFrom(IndexExpressionAst indexExpressionAst)
