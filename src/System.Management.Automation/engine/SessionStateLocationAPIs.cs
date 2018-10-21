@@ -13,7 +13,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session
+    /// Holds the state of a Monad Shell session.
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -79,7 +79,6 @@ namespace System.Management.Automation
             }
 
             // If namespace ID is empty, we will use the current working drive
-
             PSDriveInfo drive = null;
 
             if (namespaceID.Length == 0)
@@ -89,7 +88,6 @@ namespace System.Management.Automation
             else
             {
                 // First check to see if the provider exists
-
                 ProvidersCurrentWorkingDrive.TryGetValue(GetSingleProvider(namespaceID), out drive);
             }
 
@@ -107,7 +105,6 @@ namespace System.Management.Automation
             context.Drive = drive;
 
             // Now make the namespace specific path
-
             string path = null;
 
             if (drive.Hidden)
@@ -129,10 +126,10 @@ namespace System.Management.Automation
         } // GetNamespaceCurrentLocation
 
         /// <summary>
-        /// Changes the current working directory to the path specified
+        /// Changes the current working directory to the path specified.
         /// </summary>
         /// <param name="path">
-        /// The path of the new current working directory
+        /// The path of the new current working directory.
         /// </param>
         /// <returns>
         /// The PathInfo object representing the path of the location
@@ -199,10 +196,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Changes the current working directory to the path specified
+        /// Changes the current working directory to the path specified.
         /// </summary>
         /// <param name="path">
-        /// The path of the new current working directory
+        /// The path of the new current working directory.
         /// </param>
         /// <param name="context">
         /// The context the provider uses when performing the operation.
@@ -254,6 +251,7 @@ namespace System.Management.Automation
                     {
                         throw new InvalidOperationException(SessionStateStrings.LocationUndoStackIsEmpty);
                     }
+
                     path = _setLocationHistory.Undo(this.CurrentLocation).Path;
                     break;
                 case string originalPathSwitch when !literalPath && originalPathSwitch.Equals("+", StringComparison.Ordinal):
@@ -261,6 +259,7 @@ namespace System.Management.Automation
                     {
                         throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
                     }
+
                     path = _setLocationHistory.Redo(this.CurrentLocation).Path;
                     break;
                 default:
@@ -282,7 +281,6 @@ namespace System.Management.Automation
                 // The path is a provider-direct path so use the current
                 // provider and its hidden drive but don't modify the path
                 // at all.
-
                 provider = CurrentLocation.Provider;
                 CurrentDrive = provider.HiddenDrive;
             }
@@ -295,7 +293,6 @@ namespace System.Management.Automation
             {
                 // See if the path is a relative or absolute
                 // path.
-
                 if (Globber.IsAbsolutePath(path, out driveName))
                 {
                     // Since the path is an absolute path
@@ -310,7 +307,7 @@ namespace System.Management.Automation
                     string colonTerminatedVolume = CurrentDrive.Name + ':';
                     if (CurrentDrive.VolumeSeparatedByColon && (path.Length == colonTerminatedVolume.Length))
                     {
-                        path = Path.Combine((colonTerminatedVolume + Path.DirectorySeparatorChar), CurrentDrive.CurrentLocation);
+                        path = Path.Combine(colonTerminatedVolume + Path.DirectorySeparatorChar, CurrentDrive.CurrentLocation);
                     }
 
                     // Now that the current working drive is set,
@@ -353,11 +350,10 @@ namespace System.Management.Automation
             {
                 throw;
             }
-            catch (Exception) // Catch-all OK, 3rd party callout
+            catch (Exception)
             {
                 // Reset the drive to the previous drive and
                 // then rethrow the error
-
                 CurrentDrive = previousWorkingDrive;
                 throw;
             }
@@ -366,7 +362,6 @@ namespace System.Management.Automation
             {
                 // Set the current working drive back to the previous
                 // one in case it was changed.
-
                 CurrentDrive = previousWorkingDrive;
 
                 throw
@@ -377,7 +372,6 @@ namespace System.Management.Automation
             }
 
             // We allow globbing the location as long as it only resolves a single container.
-
             bool foundContainer = false;
             bool pathIsContainer = false;
             bool pathIsProviderQualifiedPath = false;
@@ -398,12 +392,11 @@ namespace System.Management.Automation
                     {
                         // The path should be the provider-qualified path without the provider ID
                         // or ::
-
                         string providerInternalPath = LocationGlobber.RemoveProviderQualifier(resolvedPath.Path);
 
                         try
                         {
-                            currentPath = NormalizeRelativePath(GetSingleProvider(providerName), providerInternalPath, String.Empty, normalizePathContext);
+                            currentPath = NormalizeRelativePath(GetSingleProvider(providerName), providerInternalPath, string.Empty, normalizePathContext);
                         }
                         catch (NotSupportedException)
                         {
@@ -422,11 +415,10 @@ namespace System.Management.Automation
                         {
                             throw;
                         }
-                        catch (Exception) // Catch-all OK, 3rd party callout
+                        catch (Exception)
                         {
                             // Reset the drive to the previous drive and
                             // then rethrow the error
-
                             CurrentDrive = previousWorkingDrive;
                             throw;
                         }
@@ -454,23 +446,20 @@ namespace System.Management.Automation
                         {
                             throw;
                         }
-                        catch (Exception) // Catch-all OK, 3rd party callout
+                        catch (Exception)
                         {
                             // Reset the drive to the previous drive and
                             // then rethrow the error
-
                             CurrentDrive = previousWorkingDrive;
                             throw;
                         }
                     }
 
                     // Now see if there was errors while normalizing the path
-
                     if (normalizePathContext.HasErrors())
                     {
                         // Set the current working drive back to the previous
                         // one in case it was changed.
-
                         CurrentDrive = previousWorkingDrive;
 
                         normalizePathContext.ThrowFirstErrorOrDoNothing();
@@ -480,8 +469,6 @@ namespace System.Management.Automation
                 {
                     normalizePathContext.RemoveStopReferral();
                 }
-
-                // Check to see if the path is a container
 
                 bool isContainer = false;
 
@@ -500,7 +487,6 @@ namespace System.Management.Automation
                     {
                         // Set the current working drive back to the previous
                         // one in case it was changed.
-
                         CurrentDrive = previousWorkingDrive;
 
                         itemContainerContext.ThrowFirstErrorOrDoNothing();
@@ -513,7 +499,6 @@ namespace System.Management.Automation
                         // Treat this as a container because providers that only
                         // support the ContainerCmdletProvider interface are really
                         // containers at their root.
-
                         isContainer = true;
                     }
                 }
@@ -527,10 +512,8 @@ namespace System.Management.Automation
                     if (foundContainer)
                     {
                         // The path resolved to more than one container
-
                         // Set the current working drive back to the previous
                         // one in case it was changed.
-
                         CurrentDrive = previousWorkingDrive;
 
                         throw
@@ -561,7 +544,6 @@ namespace System.Management.Automation
             {
                 // Remove the root slash since it is implied that the
                 // current working directory is relative to the root.
-
                 if (!LocationGlobber.IsProviderDirectPath(path) &&
                     path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.CurrentCulture) &&
                     !pathIsProviderQualifiedPath)
@@ -579,7 +561,6 @@ namespace System.Management.Automation
             {
                 // Set the current working drive back to the previous
                 // one in case it was changed.
-
                 CurrentDrive = previousWorkingDrive;
 
                 throw
@@ -591,12 +572,10 @@ namespace System.Management.Automation
 
             // Now make sure the current drive is set in the provider's
             // current working drive hashtable
-
             ProvidersCurrentWorkingDrive[CurrentDrive.Provider] =
                 CurrentDrive;
 
             // Set the $PWD variable to the new location
-
             this.SetVariable(SpecialVariables.PWDVarPath, this.CurrentLocation, false, true, CommandOrigin.Internal);
 
             // If an action has been defined for location changes, invoke it now.
@@ -687,12 +666,10 @@ namespace System.Management.Automation
 
             // Check to see if the path that was specified is within the current
             // working drive
-
             if (drive == CurrentDrive)
             {
                 // The path needs to be normalized to get rid of relative path tokens
                 // so they don't interfere with our path comparisons below
-
                 CmdletProviderContext normalizePathContext
                     = new CmdletProviderContext(context);
 
@@ -730,7 +707,6 @@ namespace System.Management.Automation
                 s_tracer.WriteLine("Provider path = {0}", providerSpecificPath);
 
                 // Get the current working directory provider specific path
-
                 PSDriveInfo currentWorkingDrive = null;
                 ProviderInfo currentDriveProvider = null;
 
@@ -751,7 +727,6 @@ namespace System.Management.Automation
 
                 // See if the path is the current working directory or a parent
                 // of the current working directory
-
                 s_tracer.WriteLine(
                     "Comparing {0} to {1}",
                     providerSpecificPath,
@@ -761,7 +736,6 @@ namespace System.Management.Automation
                 {
                     // The path is the current working directory so
                     // return true
-
                     s_tracer.WriteLine("The path is the current working directory");
 
                     result = true;
@@ -770,7 +744,6 @@ namespace System.Management.Automation
                 {
                     // Check to see if the specified path is a parent
                     // of the current working directory
-
                     string lockedDirectory = currentWorkingPath;
 
                     while (lockedDirectory.Length > 0)
@@ -779,7 +752,6 @@ namespace System.Management.Automation
                         // as it can even if that means it has to traverse higher
                         // than the mount point for this drive. That is
                         // why we are passing the empty string as the root here.
-
                         lockedDirectory =
                             GetParentPath(
                                 drive.Provider,
@@ -796,7 +768,6 @@ namespace System.Management.Automation
                         {
                             // The path is a parent of the current working
                             // directory
-
                             s_tracer.WriteLine(
                                 "The path is a parent of the current working directory: {0}",
                                 lockedDirectory);
@@ -825,13 +796,13 @@ namespace System.Management.Automation
         private readonly HistoryStack<PathInfo> _setLocationHistory;
 
         /// <summary>
-        /// A stack of the most recently pushed locations
+        /// A stack of the most recently pushed locations.
         /// </summary>
         private Dictionary<String, Stack<PathInfo>> _workingLocationStack;
 
         private const string startingDefaultStackName = "default";
         /// <summary>
-        /// The name of the default location stack
+        /// The name of the default location stack.
         /// </summary>
         private string _defaultStackName = startingDefaultStackName;
 
@@ -928,7 +899,6 @@ namespace System.Management.Automation
             if (WildcardPattern.ContainsWildcardCharacters(stackName))
             {
                 // Need to glob the stack name, but it can only glob to a single.
-
                 bool haveMatch = false;
 
                 WildcardPattern stackNamePattern =
@@ -989,7 +959,6 @@ namespace System.Management.Automation
                 {
                     // Remove the stack from the stack list if it
                     // no longer contains any paths.
-
                     _workingLocationStack.Remove(stackName);
                 }
             }
@@ -1031,7 +1000,6 @@ namespace System.Management.Automation
             {
                 // If the request was for the default stack, but it doesn't
                 // yet exist, create a dummy stack and return it.
-
                 if (String.Equals(
                         stackName,
                         startingDefaultStackName,
