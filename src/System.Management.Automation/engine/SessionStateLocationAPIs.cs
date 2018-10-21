@@ -256,7 +256,7 @@ namespace System.Management.Automation
                     }
                     path = _setLocationHistory.Undo(this.CurrentLocation).Path;
                     break;
-                case string originalPathSwitch when !literalPath && originalPathSwitch.Equals("+", StringComparison.OrdinalIgnoreCase):
+                case string originalPathSwitch when !literalPath && originalPathSwitch.Equals("+", StringComparison.Ordinal):
                     if (_setLocationHistory.RedoCount <= 0)
                     {
                         throw new InvalidOperationException(SessionStateStrings.LocationRedoStackIsEmpty);
