@@ -1592,7 +1592,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                int index = path.IndexOf(":", StringComparison.CurrentCulture);
+                int index = path.IndexOf(":", StringComparison.Ordinal);
 
                 if (index == -1)
                 {
@@ -1854,7 +1854,7 @@ namespace System.Management.Automation
                     string normalizedRoot = _sessionState.Drive.Current.Root.Replace(
                         StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
-                    if (normalizedRoot.IndexOf(":", StringComparison.CurrentCulture) >= 0)
+                    if (normalizedRoot.IndexOf(":", StringComparison.Ordinal) >= 0)
                     {
                         string normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
                         if (normalizedPath.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase))
@@ -2225,8 +2225,8 @@ namespace System.Management.Automation
                         // the loop.
                         break;
                     }
-                } // while
-            } // if (path.StartsWith(@"\", StringComparison.CurrentCulture))
+                }
+            }
 
             // If more relative path remains add that to
             // the known absolute path

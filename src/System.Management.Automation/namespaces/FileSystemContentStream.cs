@@ -586,7 +586,7 @@ namespace Microsoft.PowerShell.Commands
             // The solution is a modified Boyer-Moore string search algorithm.
             // This version retains the sub-linear search performance (via the
             // lookup tables,) but offloads much of the dirty work to the
-            // very efficient BCL String.IndexOf(, StringComparison.CurrentCulture) method.
+            // very efficient BCL String.IndexOf(, StringComparison.Ordinal) method.
             int numRead = 0;
             int currentOffset = actualDelimiter.Length;
             StringBuilder content = new StringBuilder();

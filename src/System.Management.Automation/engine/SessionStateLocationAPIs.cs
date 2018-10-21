@@ -522,7 +522,7 @@ namespace System.Management.Automation
                 // current working directory is relative to the root.
 
                 if (!LocationGlobber.IsProviderDirectPath(path) &&
-                    path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.CurrentCulture) &&
+                    path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) &&
                     !pathIsProviderQualifiedPath)
                 {
                     path = path.Substring(1);
