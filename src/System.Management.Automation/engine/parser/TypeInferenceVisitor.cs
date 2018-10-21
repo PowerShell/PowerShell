@@ -2091,19 +2091,19 @@ namespace System.Management.Automation
 
             if (collectionInterface != null)
             {
-                return collectionInterface;
+                return collectionInterface.GetGenericArguments()[0];
             }
 
             foreach (Type interfaceType in enumerableType.GetInterfaces())
             {
                 collectionInterface = GetGenericCollectionLikeInterface(
-                    enumerableType,
+                    interfaceType,
                     ref hasSeenNonGeneric,
                     ref hasSeenDictionaryEnumerator);
 
                 if (collectionInterface != null)
                 {
-                    return collectionInterface;
+                    return collectionInterface.GetGenericArguments()[0];
                 }
             }
 
@@ -2125,6 +2125,11 @@ namespace System.Management.Automation
             ref bool hasSeenNonGeneric,
             ref bool hasSeenDictionaryEnumerator)
         {
+            if (!interfaceType.IsInterface)
+            {
+                return null;
+            }
+
             if (interfaceType.IsConstructedGenericType)
             {
                 Type openGeneric = interfaceType.GetGenericTypeDefinition();
