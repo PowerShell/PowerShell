@@ -1930,9 +1930,22 @@ namespace System.Management.Automation
             int startOffset = variableExpressionAst.Extent.StartOffset;
             var targetAsts = (List<Ast>)AstSearcher.FindAll(
                 parent,
-                ast => (ast is ParameterAst || ast is AssignmentStatementAst || ast is ForEachStatementAst || ast is CommandAst)
-                       && variableExpressionAst.AstAssignsToSameVariable(ast)
-                       && ast.Extent.EndOffset < startOffset,
+                ast =>
+                {
+                    if (ast is ParameterAst || ast is AssignmentStatementAst || ast is CommandAst)
+                    {
+                        return variableExpressionAst.AstAssignsToSameVariable(ast)
+                            && ast.Extent.EndOffset < startOffset;
+                    }
+
+                    if (ast is ForEachStatementAst)
+                    {
+                        return variableExpressionAst.AstAssignsToSameVariable(ast)
+                            && ast.Extent.StartOffset < startOffset;
+                    }
+
+                    return false;
+                },
                 searchNestedScriptBlocks: true);
 
             foreach (var ast in targetAsts)
