@@ -578,6 +578,19 @@ namespace Microsoft.PowerShell.Commands
 
         private bool ReadDelimited(bool waitChanges, ArrayList blocks, bool readBackward, string actualDelimiter)
         {
+            if (_isRawStream)
+            {
+                // when -Raw is used we want to anyway read the whole thing
+                // so avoiding the while loop by reading the entire content.
+                string contentRead = _reader.ReadToEnd();
+                if (contentRead.Length > 0)
+                {
+                    blocks.Add(contentRead);
+                }
+
+                return _reader.Peek() != -1;
+            }
+
             // Since the delimiter is a string, we're essentially
             // dealing with a "find the substring" algorithm, but with
             // the additional restriction that we cannot read past the
@@ -602,65 +615,51 @@ namespace Microsoft.PowerShell.Commands
 
             do
             {
-                if (_isRawStream)
-                {
-                    // when -Raw is used we want to anyway read the whole thing
-                    // so avoiding the while loop by reading the entire content.
-                    string contentRead = _reader.ReadToEnd();
-                    numRead = contentRead.Length;
-                    content.Append(contentRead);
-                }
-                else
-                {
-                    // Read in the required batch of characters
-                    var readBuffer = new char[currentOffset];
-                    numRead = readBackward
-                                  ? _backReader.Read(readBuffer, 0, currentOffset)
-                                  : _reader.Read(readBuffer, 0, currentOffset);
+                // Read in the required batch of characters
+                var readBuffer = new char[currentOffset];
+                numRead = readBackward
+                                ? _backReader.Read(readBuffer, 0, currentOffset)
+                                : _reader.Read(readBuffer, 0, currentOffset);
 
-                    // If we want to wait for changes, then we'll keep on attempting to read
-                    // until we fill the buffer.
-                    if (numRead == 0)
+                // If we want to wait for changes, then we'll keep on attempting to read
+                // until we fill the buffer.
+                if (numRead == 0)
+                {
+                    if (waitChanges)
                     {
-                        if (waitChanges)
+                        // But stop reading if the provider is stopping
+                        while ((numRead < currentOffset) && (!_provider.Stopping))
                         {
-                            // But stop reading if the provider is stopping
-                            while ((numRead < currentOffset) && (!_provider.Stopping))
-                            {
-                                // Get the change, and try to read more characters
-                                // We only wait for changes when read forwards, so here we don't need to check if 'readBackward' is
-                                // true or false, we only use 'reader'. The member 'reader' will be updated by WaitForChanges.
-                                WaitForChanges(_path, _mode, _access, _share, _reader.CurrentEncoding);
-                                numRead += _reader.Read(readBuffer, 0, (currentOffset - numRead));
-                            }
+                            // Get the change, and try to read more characters
+                            // We only wait for changes when read forwards, so here we don't need to check if 'readBackward' is
+                            // true or false, we only use 'reader'. The member 'reader' will be updated by WaitForChanges.
+                            WaitForChanges(_path, _mode, _access, _share, _reader.CurrentEncoding);
+                            numRead += _reader.Read(readBuffer, 0, (currentOffset - numRead));
                         }
                     }
-
-                    if (numRead > 0)
-                    {
-                        content.Append(readBuffer, 0, numRead);
-
-                        // Look up the final character in our offset table.
-                        // If the character doesn't exist in the lookup table, then it's not in
-                        // our search key.  That means the match must happen strictly /after/ the
-                        // current position.  Because of that, we can feel confident reading in the
-                        // number of characters in the search key, without the risk of reading too many.
-                        if (!offsetDictionary.TryGetValue(content[content.Length - 1], out currentOffset))
-                            currentOffset = actualDelimiter.Length;
-
-                        // If the final letters matched, then we will get an offset of "0".
-                        // In that case, we'll either have a match (and break from the while loop,)
-                        // or we need to move the scan forward one position.
-                        if (currentOffset == 0)
-                            currentOffset = 1;
-                    }
                 }
 
-                // Two cases where we want to keep reading:
-                // 1. Raw stream and we haven't hit the end of file
-                // 2. Delimiter not found and we haven't hit the end of file
-            } while ((_isRawStream && (numRead != 0)) ||
-                ((content.ToString().IndexOf(actualDelimiter, StringComparison.Ordinal) < 0) && (numRead != 0)));
+                if (numRead > 0)
+                {
+                    content.Append(readBuffer, 0, numRead);
+
+                    // Look up the final character in our offset table.
+                    // If the character doesn't exist in the lookup table, then it's not in
+                    // our search key.  That means the match must happen strictly /after/ the
+                    // current position.  Because of that, we can feel confident reading in the
+                    // number of characters in the search key, without the risk of reading too many.
+                    if (!offsetDictionary.TryGetValue(content[content.Length - 1], out currentOffset))
+                        currentOffset = actualDelimiter.Length;
+
+                    // If the final letters matched, then we will get an offset of "0".
+                    // In that case, we'll either have a match (and break from the while loop,)
+                    // or we need to move the scan forward one position.
+                    if (currentOffset == 0)
+                        currentOffset = 1;
+                }
+
+                // We want to keep reading if delimiter not found and we haven't hit the end of file
+            } while ((content.ToString().IndexOf(actualDelimiter, StringComparison.Ordinal) < 0) && (numRead != 0));
 
             // We've reached the end of file or end of line.
             if (content.Length > 0)
@@ -672,7 +671,7 @@ namespace Microsoft.PowerShell.Commands
                 //    (Trimming it during backward reading would not only be unnecessary, but could interfere with determining the correct start position.)
                 string contentString = content.ToString();
                 blocks.Add(
-                    !readBackward && contentString.EndsWith(actualDelimiter, StringComparison.Ordinal) && !_isRawStream
+                    !readBackward && contentString.EndsWith(actualDelimiter, StringComparison.Ordinal)
                         ? contentString.Substring(0, content.Length - actualDelimiter.Length)
                         : contentString
                 );
