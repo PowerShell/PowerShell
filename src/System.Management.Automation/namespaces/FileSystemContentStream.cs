@@ -575,12 +575,11 @@ namespace Microsoft.PowerShell.Commands
             // Since the delimiter is a string, we're essentially
             // dealing with a "find the substring" algorithm, but with
             // the additional restriction that we cannot read past the
-            // end of the delimiter.  If we read past the end of the delimiter,
+            // end of the delimiter. If we read past the end of the delimiter,
             // then we'll eat up bytes that we need from the filestream.
             // The solution is a modified Boyer-Moore string search algorithm.
             // This version retains the sub-linear search performance (via the
-            // lookup tables,) but offloads much of the dirty work to the
-            // very efficient BCL String.IndexOf(, StringComparison.Ordinal) method.
+            // lookup tables).
             int numRead = 0;
             int currentOffset = actualDelimiter.Length;
             Span<char> readBuffer = stackalloc char[currentOffset];
