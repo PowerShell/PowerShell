@@ -228,50 +228,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">
         /// The path to the file to get the content from.
         /// </param>
-        /// <param name="mode">
-        /// The file mode to open the file with.
-        /// </param>
-        /// <param name="access">
-        /// The file access requested in the file.
-        /// </param>
-        ///  <param name="share">
-        ///    The file share to open the file with
-        ///  </param>
-        /// <param name="delimiter">
-        /// The delimiter to use when reading strings. Each time read is called, all contents up to an including
-        /// the delimiter is read.
-        /// </param>
-        /// <param name="encoding">
-        /// The encoding of the file to be read or written.
-        /// </param>
-        /// <param name="waitForChanges">
-        /// If true, we will perform blocking reads on the file, waiting for new content to be appended
-        /// </param>
-        /// <param name="provider">
-        /// The CmdletProvider invoking this stream
-        /// </param>
-        /// <param name="isRawStream">
-        /// Indicates raw stream.
-        /// </param>
-        public FileSystemContentReaderWriter(
-            string path,
-            FileMode mode,
-            FileAccess access,
-            FileShare share,
-            string delimiter,
-            Encoding encoding,
-            bool waitForChanges,
-            CmdletProvider provider,
-            bool isRawStream) : this(path, null, mode, access, share, encoding, false, waitForChanges, provider, isRawStream)
-        {
-        }
-
-        /// <summary>
-        /// Constructor for the content stream
-        /// </summary>
-        /// <param name="path">
-        /// The path to the file to get the content from.
-        /// </param>
         /// <param name="streamName">
         /// The name of the Alternate Data Stream to get the content from. If null or empty, returns
         /// the file's primary content.
