@@ -58,6 +58,7 @@ namespace Microsoft.PowerShell.Commands
         private string _delimiter = $"{DefaultDelimiter}";
         Dictionary<char, int> _offsetDictionary;
         private bool _usingDelimiter;
+        StringBuilder _currentLineContent;
         private bool _waitForChanges;
         private bool _isRawStream;
         private long _fileOffset;
@@ -278,6 +279,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 _delimiter = delimiter;
                 _usingDelimiter = true;
+
+                // We expect that we are parsing files where line lengths can be relatively long.
+                const int DefaultLineLength = 256;
+                _currentLineContent = new StringBuilder(DefaultLineLength);
 
                 // For Boyer-Moore string search algorithm.
                 // Populate the offset lookups.
@@ -578,7 +583,7 @@ namespace Microsoft.PowerShell.Commands
             // very efficient BCL String.IndexOf(, StringComparison.Ordinal) method.
             int numRead = 0;
             int currentOffset = actualDelimiter.Length;
-            StringBuilder content = new StringBuilder();
+            _currentLineContent.Clear();
 
             do
             {
@@ -608,14 +613,14 @@ namespace Microsoft.PowerShell.Commands
 
                 if (numRead > 0)
                 {
-                    content.Append(readBuffer, 0, numRead);
+                    _currentLineContent.Append(readBuffer, 0, numRead);
 
                     // Look up the final character in our offset table.
                     // If the character doesn't exist in the lookup table, then it's not in
                     // our search key.  That means the match must happen strictly /after/ the
                     // current position.  Because of that, we can feel confident reading in the
                     // number of characters in the search key, without the risk of reading too many.
-                    if (!_offsetDictionary.TryGetValue(content[content.Length - 1], out currentOffset))
+                    if (!_offsetDictionary.TryGetValue(_currentLineContent[_currentLineContent.Length - 1], out currentOffset))
                         currentOffset = actualDelimiter.Length;
 
                     // If the final letters matched, then we will get an offset of "0".
@@ -626,20 +631,20 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // We want to keep reading if delimiter not found and we haven't hit the end of file
-            } while ((content.ToString().IndexOf(actualDelimiter, StringComparison.Ordinal) < 0) && (numRead != 0));
+            } while ((_currentLineContent.ToString().IndexOf(actualDelimiter, StringComparison.Ordinal) < 0) && (numRead != 0));
 
             // We've reached the end of file or end of line.
-            if (content.Length > 0)
+            if (_currentLineContent.Length > 0)
             {
                 // Add the block read to the ouptut array list, trimming a trailing delimiter, if present.
                 // Note: If -Tail was specified, we get here in the course of 2 distinct passes:
                 //  - Once while reading backward simply to determine the appropriate *start position* for later forward reading, ignoring the content of the blocks read (in reverse).
                 //  - Then again during forward reading, for regular output processing; it is only then that trimming the delimiter is necessary.
                 //    (Trimming it during backward reading would not only be unnecessary, but could interfere with determining the correct start position.)
-                string contentString = content.ToString();
+                string contentString = _currentLineContent.ToString();
                 blocks.Add(
                     !readBackward && contentString.EndsWith(actualDelimiter, StringComparison.Ordinal)
-                        ? contentString.Substring(0, content.Length - actualDelimiter.Length)
+                        ? contentString.Substring(0, _currentLineContent.Length - actualDelimiter.Length)
                         : contentString
                 );
             }
@@ -649,7 +654,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             else
             {
-                if (readBackward && content.Length > 0)
+                if (readBackward && _currentLineContent.Length > 0)
                 {
                     return true;
                 }
