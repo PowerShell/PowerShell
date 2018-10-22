@@ -2082,6 +2082,19 @@ namespace System.Management.Automation
                 return enumerableType.GetElementType();
             }
 
+            // These types implement IEnumerable, but we intentionally do not enumerate them.
+            if (enumerableType == typeof(string) ||
+                typeof(IDictionary).IsAssignableFrom(enumerableType) ||
+                typeof(Xml.XmlNode).IsAssignableFrom(enumerableType))
+            {
+                return enumerableType;
+            }
+
+            if (enumerableType == typeof(Data.DataTable))
+            {
+                return typeof(Data.DataRow);
+            }
+
             bool hasSeenNonGeneric = false;
             bool hasSeenDictionaryEnumerator = false;
             Type collectionInterface = GetGenericCollectionLikeInterface(
@@ -2133,9 +2146,8 @@ namespace System.Management.Automation
             if (interfaceType.IsConstructedGenericType)
             {
                 Type openGeneric = interfaceType.GetGenericTypeDefinition();
-                if (openGeneric == typeof(IList<>) ||
-                    openGeneric == typeof(ICollection<>) ||
-                    openGeneric == typeof(IEnumerator<>))
+                if (openGeneric == typeof(IEnumerator<>) ||
+                    openGeneric == typeof(IEnumerable<>))
                 {
                     return interfaceType;
                 }
@@ -2146,9 +2158,8 @@ namespace System.Management.Automation
                 hasSeenDictionaryEnumerator = true;
             }
 
-            if (interfaceType == typeof(IList) ||
-                interfaceType == typeof(ICollection) ||
-                interfaceType == typeof(IEnumerator))
+            if (interfaceType == typeof(IEnumerator) ||
+                interfaceType == typeof(IEnumerable))
             {
                 hasSeenNonGeneric = true;
             }

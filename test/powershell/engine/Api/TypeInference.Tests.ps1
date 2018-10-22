@@ -679,6 +679,18 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be ([KeyValuePair[int, string]].FullName), 'System.Object', 'System.Collections.DictionaryEntry'
     }
 
+    It 'Infers type of a Foreach statement current value variable with generic IEnumerable' {
+        $res = [AstTypeInference]::InferTypeOf( {
+            $debugger = [Debugger]$Host.Runspace.Debugger
+            foreach ($subscriber in $debugger.GetCallStack()) {
+                $subscriber
+            }
+        }.Ast.EndBlock.Statements[1].Body.Statements[0].PipelineElements[0].Expression)
+
+        $res.Count | Should -Be 1
+        $res.Name | Should -BeExactly 'System.Management.Automation.CallStackFrame'
+    }
+
     It 'Infers type from While statement' {
         $res = [AstTypeInference]::InferTypeOf( {
                 while ($true) {
