@@ -154,7 +154,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out double db)
         {
-            if (value < (BigInteger)decimal.MinValue || (BigInteger)decimal.MaxValue < value)
+            if (value < (BigInteger)double.MinValue || (BigInteger)double.MaxValue < value)
             {
                 db = 0;
                 return false;
