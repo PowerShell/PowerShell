@@ -54,7 +54,9 @@ namespace Microsoft.PowerShell.Commands
         private StreamReader _reader;
         private StreamWriter _writer;
         private bool _usingByteEncoding;
-        private string _delimiter = "\n";
+        private const char DefaultDelimiter = '\n';
+        private string _delimiter = $"{DefaultDelimiter}";
+        Dictionary<char, int> _offsetDictionary;
         private bool _usingDelimiter;
         private bool _waitForChanges;
         private bool _isRawStream;
@@ -270,8 +272,26 @@ namespace Microsoft.PowerShell.Commands
             bool isRawStream)
             : this(path, streamName, mode, access, share, encoding, false, waitForChanges, provider, isRawStream)
         {
-            _delimiter = delimiter;
-            _usingDelimiter = true;
+            // If the delimiter is default ('\n') we'll use ReadLine() method.
+            // Otherwise allocate temporary structures for ReadDelimited() method.
+            if ( !(delimiter.Length == 1 && delimiter[0] == DefaultDelimiter) )
+            {
+                _delimiter = delimiter;
+                _usingDelimiter = true;
+
+                // For Boyer-Moore string search algorithm.
+                // Populate the offset lookups.
+                // These will tell us the maximum number of characters
+                // we can read to generate another possible match.
+                // If we read more characters than this, we risk consuming
+                // more of the stream than we need.
+                _offsetDictionary = new Dictionary<char, int>(_delimiter.Length);
+                foreach (char currentChar in _delimiter)
+                {
+                    _offsetDictionary[currentChar] = _delimiter.Length - _delimiter.LastIndexOf(currentChar) - 1;
+                }
+
+            }
         }
 
         /// <summary>
@@ -560,15 +580,6 @@ namespace Microsoft.PowerShell.Commands
             int currentOffset = actualDelimiter.Length;
             StringBuilder content = new StringBuilder();
 
-            // Populate the offset lookups
-            // These will tell us the maximum number of characters
-            // we can read to generate another possible match.
-            // If we read more characters than this, we risk consuming
-            // more of the stream than we need.
-            Dictionary<char, int> offsetDictionary = new Dictionary<char, int>();
-            foreach (char currentChar in actualDelimiter)
-                offsetDictionary[currentChar] = actualDelimiter.Length - actualDelimiter.LastIndexOf(currentChar) - 1;
-
             do
             {
                 // Read in the required batch of characters
@@ -604,7 +615,7 @@ namespace Microsoft.PowerShell.Commands
                     // our search key.  That means the match must happen strictly /after/ the
                     // current position.  Because of that, we can feel confident reading in the
                     // number of characters in the search key, without the risk of reading too many.
-                    if (!offsetDictionary.TryGetValue(content[content.Length - 1], out currentOffset))
+                    if (!_offsetDictionary.TryGetValue(content[content.Length - 1], out currentOffset))
                         currentOffset = actualDelimiter.Length;
 
                     // If the final letters matched, then we will get an offset of "0".
