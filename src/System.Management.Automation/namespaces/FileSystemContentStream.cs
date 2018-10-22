@@ -583,15 +583,16 @@ namespace Microsoft.PowerShell.Commands
             // very efficient BCL String.IndexOf(, StringComparison.Ordinal) method.
             int numRead = 0;
             int currentOffset = actualDelimiter.Length;
+            Span<char> readBuffer = stackalloc char[currentOffset];
+            bool delimiterNotFound = true;
             _currentLineContent.Clear();
 
             do
             {
                 // Read in the required batch of characters
-                var readBuffer = new char[currentOffset];
                 numRead = readBackward
-                                ? _backReader.Read(readBuffer, 0, currentOffset)
-                                : _reader.Read(readBuffer, 0, currentOffset);
+                                ? _backReader.Read(readBuffer.Slice(0, currentOffset))
+                                : _reader.Read(readBuffer.Slice(0, currentOffset));
 
                 // If we want to wait for changes, then we'll keep on attempting to read
                 // until we fill the buffer.
@@ -606,14 +607,14 @@ namespace Microsoft.PowerShell.Commands
                             // We only wait for changes when read forwards, so here we don't need to check if 'readBackward' is
                             // true or false, we only use 'reader'. The member 'reader' will be updated by WaitForChanges.
                             WaitForChanges(_path, _mode, _access, _share, _reader.CurrentEncoding);
-                            numRead += _reader.Read(readBuffer, 0, (currentOffset - numRead));
+                            numRead += _reader.Read(readBuffer.Slice(0, (currentOffset - numRead)));
                         }
                     }
                 }
 
                 if (numRead > 0)
                 {
-                    _currentLineContent.Append(readBuffer, 0, numRead);
+                    _currentLineContent.Append(readBuffer.Slice(0, numRead));
 
                     // Look up the final character in our offset table.
                     // If the character doesn't exist in the lookup table, then it's not in
@@ -621,17 +622,37 @@ namespace Microsoft.PowerShell.Commands
                     // current position.  Because of that, we can feel confident reading in the
                     // number of characters in the search key, without the risk of reading too many.
                     if (!_offsetDictionary.TryGetValue(_currentLineContent[_currentLineContent.Length - 1], out currentOffset))
+                    {
                         currentOffset = actualDelimiter.Length;
+                    }
+
+                    // We want to keep reading if delimiter not found and we haven't hit the end of file
+                    delimiterNotFound = true;
 
                     // If the final letters matched, then we will get an offset of "0".
                     // In that case, we'll either have a match (and break from the while loop,)
                     // or we need to move the scan forward one position.
                     if (currentOffset == 0)
+                    {
                         currentOffset = 1;
-                }
 
-                // We want to keep reading if delimiter not found and we haven't hit the end of file
-            } while ((_currentLineContent.ToString().IndexOf(actualDelimiter, StringComparison.Ordinal) < 0) && (numRead != 0));
+                        if (actualDelimiter.Length <= _currentLineContent.Length)
+                        {
+                            delimiterNotFound = false;
+                            int i = 0;
+                            int j = _currentLineContent.Length - actualDelimiter.Length;
+                            for ( ; i < actualDelimiter.Length; i++, j++)
+                            {
+                                if (actualDelimiter[i] != _currentLineContent[j])
+                                {
+                                    delimiterNotFound = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            } while (delimiterNotFound && (numRead != 0));
 
             // We've reached the end of file or end of line.
             if (_currentLineContent.Length > 0)
@@ -641,11 +662,10 @@ namespace Microsoft.PowerShell.Commands
                 //  - Once while reading backward simply to determine the appropriate *start position* for later forward reading, ignoring the content of the blocks read (in reverse).
                 //  - Then again during forward reading, for regular output processing; it is only then that trimming the delimiter is necessary.
                 //    (Trimming it during backward reading would not only be unnecessary, but could interfere with determining the correct start position.)
-                string contentString = _currentLineContent.ToString();
                 blocks.Add(
-                    !readBackward && contentString.EndsWith(actualDelimiter, StringComparison.Ordinal)
-                        ? contentString.Substring(0, _currentLineContent.Length - actualDelimiter.Length)
-                        : contentString
+                    !readBackward && !delimiterNotFound
+                        ? _currentLineContent.ToString(0, _currentLineContent.Length - actualDelimiter.Length)
+                        : _currentLineContent.ToString()
                 );
             }
 
@@ -1230,14 +1250,32 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Read a specific maximum of characters from the current stream into a buffer
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="index"></param>
-        /// <param name="count"></param>
+        /// <param name="buffer">Output buffer.</param>
+        /// <param name="index">Start position to write with.</param>
+        /// <param name="count">Number of bytes to read.</param>
+        /// <returns>Return the number of characters read, or -1 if we reach the head of the file</returns>
         /// <returns>Return the number of characters read, or -1 if we reach the head of the file</returns>
         public override int Read(char[] buffer, int index, int count)
         {
+            return ReadSpan(new Span<char>(buffer, index, count));
+        }
+
+        /// <summary>
+        /// Read characters from the current stream into a Span buffer.
+        /// </summary>
+        /// <param name="buffer">Output buffer.</param>
+        /// <returns>Return the number of characters read, or -1 if we reach the head of the file</returns>
+        public override int Read(Span<char> buffer)
+        {
+            return ReadSpan(buffer);
+        }
+
+        private int ReadSpan(Span<char> buffer)
+        {
             // deal with the argument validation
             int charRead = 0;
+            int index = 0;
+            int count = buffer.Length;
 
             do
             {
