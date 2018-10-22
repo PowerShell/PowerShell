@@ -2018,10 +2018,10 @@
         </Component>
       </Directory>
       <Component Id="cmp42388D37FC414982A91ED7273B600826" Guid="{52945485-ba0e-4b5a-bca7-43e679a7ead0}">
-        <File Id="filE46B309FAD834FD1844C9120E1799706" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26905.03.dll" />
+        <File Id="filE46B309FAD834FD1844C9120E1799706" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27014.03.dll" />
       </Component>
       <Component Id="cmpB73D31515A5C4A11AFD5E4131784B3BB" Guid="{fc542315-f042-4557-85b4-378a6adce57a}">
-        <File Id="fil0A6BFAD40A5E44D4A662691C96CBDE60" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26905.03.dll" />
+        <File Id="fil0A6BFAD40A5E44D4A662691C96CBDE60" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.27014.03.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
