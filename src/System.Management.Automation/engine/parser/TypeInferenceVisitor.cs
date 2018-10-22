@@ -1211,7 +1211,7 @@ namespace System.Management.Automation
 
                 foreach (var propertyName in properties)
                 {
-                    if (name.Equals(propertyName, StringComparison.CurrentCultureIgnoreCase))
+                    if (name.Equals(propertyName, StringComparison.OrdinalIgnoreCase))
                     {
                         return true;
                     }
@@ -1336,7 +1336,7 @@ namespace System.Management.Automation
                             {
                                 case string propertyName:
                                 {
-                                    if (string.Compare(name, propertyName, StringComparison.CurrentCultureIgnoreCase) == 0)
+                                    if (string.Compare(name, propertyName, StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         return includeMatchedProperties;
                                     }
@@ -1803,7 +1803,7 @@ namespace System.Management.Automation
                 // $_ is special, see if we're used in a script block in some pipeline.
                 while (parent != null)
                 {
-                    if (parent is ScriptBlockExpressionAst)
+                    if (parent is ScriptBlockExpressionAst || parent is CatchClauseAst)
                     {
                         break;
                     }
@@ -1830,6 +1830,27 @@ namespace System.Management.Automation
                     if (parent.Parent is CommandParameterAst)
                     {
                         parent = parent.Parent;
+                    }
+
+                    if (parent is CatchClauseAst catchBlock)
+                    {
+                        if (catchBlock.CatchTypes.Count > 0)
+                        {
+                            foreach (TypeConstraintAst catchType in catchBlock.CatchTypes)
+                            {
+                                Type exceptionType = catchType.TypeName.GetReflectionType();
+                                if (exceptionType != null && typeof(Exception).IsAssignableFrom(exceptionType))
+                                {
+                                    inferredTypes.Add(new PSTypeName(typeof(ErrorRecord<>).MakeGenericType(exceptionType)));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
+                        }
+
+                        return;
                     }
 
                     if (parent.Parent is CommandAst commandAst)

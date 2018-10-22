@@ -967,7 +967,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static bool IsMamlHelp(string helpFile, XmlNode helpItemsNode)
         {
-            if (helpFile.EndsWith(".maml", StringComparison.CurrentCultureIgnoreCase))
+            if (helpFile.EndsWith(".maml", StringComparison.OrdinalIgnoreCase))
                 return true;
 
             if (helpItemsNode.Attributes == null)
