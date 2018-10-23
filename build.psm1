@@ -3003,7 +3003,7 @@ function New-TestPackage
         $rootFolder = $env:AGENT_WORKFOLDER
     }
 
-    $packageRoot = Join-Path $env:TEMP ('TestPackage-' + (new-guid))
+    $packageRoot = Join-Path $rootFolder ('TestPackage-' + (new-guid))
     $null = New-Item -ItemType Directory -Path $packageRoot -Force
     $packagePath = Join-Path $Destination "TestPackage.zip"
 
