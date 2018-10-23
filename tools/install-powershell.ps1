@@ -38,7 +38,7 @@ $ErrorActionPreference = "Stop"
 
 $IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
 $IsMacOSEnv = (Get-Variable -Name "IsMacOS" -ErrorAction Ignore) -and $IsMacOS
-$IsWinEnv = !$IsLinuxEnv -and !$IsMacOSEnv
+$IsWinEnv   = !$IsLinuxEnv -and !$IsMacOSEnv
 
 if (-not $Destination) {
     $Destination = if ($IsWinEnv) {
