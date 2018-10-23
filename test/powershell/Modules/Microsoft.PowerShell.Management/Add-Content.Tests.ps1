@@ -1,8 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Describe "Add-Content cmdlet tests" -Tags "CI" {
-  $file1 = "file1.txt"
-  Setup -File "$file1"
+
+  BeforeAll {
+    $file1 = "file1.txt"
+    Setup -File "$file1"
+  }
 
   Context "Add-Content should actually add content" {
     It "should Add-Content to TestDrive:\$file1" {
@@ -57,39 +60,22 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       $result[0]     | Should -BeExactly "hello"
       $result[1]     | Should -BeExactly "world"
     }
-  }
-}
 
-Describe "Add-Content feature tests" -Tag Feature {
-  It "Should not block reads while writing" {
-    $logpath = Join-Path $testdrive "test.log"
+    It "Should not block reads while writing" {
+      $logpath = Join-Path $testdrive "test.log"
 
-    $writer = Start-Job -ScriptBlock {
-      param($logpath)
+      Set-Content $logpath -Value "hello"
 
-      1..10 | % {
-        $_ | Add-Content $logpath
-        Start-Sleep -ms 100
-      }
-    } -ArgumentList $logpath
+      $f = [System.IO.FileStream]::new($logpath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
 
-    $reader = Start-Job -ScriptBlock {
-      param($logpath)
+      Add-Content $logpath -Value "world"
 
-      while (!(Test-Path $logpath)) {
-        Start-Sleep -ms 10
-      }
+      $f.Close()
 
-      Get-Content $logpath -Wait
-    } -ArgumentList $logpath
-
-    $null = $writer | Wait-Job
-    $writer.ChildJobs[0].Error[0] | Should -BeNullOrEmpty
-    $contents = Receive-Job $reader
-    $contents.Count | Should -Be 10
-    $reader.ChildJobs[0].Error[0] | Should -BeNullOrEmpty
-
-    Remove-Job $writer -Force
-    Remove-Job $reader -Force
+      $content = Get-Content $logpath
+      $content | Should -HaveCount 2
+      $content[0] | Should -BeExactly "hello"
+      $content[1] | Should -BeExactly "world"
+    }
   }
 }
