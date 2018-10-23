@@ -6530,7 +6530,7 @@ namespace Microsoft.PowerShell.Commands
                     return stream;
                 }
 
-                stream = new FileSystemContentReaderWriter(path, streamName, filemode, FileAccess.Write, FileShare.Write, encoding, usingByteEncoding, false, this, false, suppressNewline);
+                stream = new FileSystemContentReaderWriter(path, streamName, filemode, FileAccess.Write, FileShare.ReadWrite, encoding, usingByteEncoding, false, this, false, suppressNewline);
             }
             catch (PathTooLongException pathTooLong)
             {
