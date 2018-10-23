@@ -56,9 +56,9 @@ namespace Microsoft.PowerShell.Commands
         private bool _usingByteEncoding;
         private const char DefaultDelimiter = '\n';
         private string _delimiter = $"{DefaultDelimiter}";
-        Dictionary<char, int> _offsetDictionary;
+        private Dictionary<char, int> _offsetDictionary;
         private bool _usingDelimiter;
-        StringBuilder _currentLineContent;
+        private StringBuilder _currentLineContent;
         private bool _waitForChanges;
         private bool _isRawStream;
         private long _fileOffset;
@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // If the delimiter is default ('\n') we'll use ReadLine() method.
             // Otherwise allocate temporary structures for ReadDelimited() method.
-            if ( !(delimiter.Length == 1 && delimiter[0] == DefaultDelimiter) )
+            if (!(delimiter.Length == 1 && delimiter[0] == DefaultDelimiter))
             {
                 _delimiter = delimiter;
                 _usingDelimiter = true;
@@ -295,7 +295,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _offsetDictionary[currentChar] = _delimiter.Length - _delimiter.LastIndexOf(currentChar) - 1;
                 }
-
             }
         }
 
@@ -640,7 +639,7 @@ namespace Microsoft.PowerShell.Commands
                             delimiterNotFound = false;
                             int i = 0;
                             int j = _currentLineContent.Length - actualDelimiter.Length;
-                            for ( ; i < actualDelimiter.Length; i++, j++)
+                            for (; i < actualDelimiter.Length; i++, j++)
                             {
                                 if (actualDelimiter[i] != _currentLineContent[j])
                                 {
@@ -1292,7 +1291,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     buffer[index++] = _charBuff[--_charCount];
                 }
-            } while (count > 0);
+            }
+            while (count > 0);
 
             return charRead;
         }
