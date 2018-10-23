@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -725,7 +726,8 @@ namespace System.Management.Automation
         {
             CommandInfo result = null;
 
-            if ((_commandResolutionOptions & SearchResolutionOptions.ResolveFunctionPatterns) != 0)
+            if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.ResolveFunctionPatterns) ||
+                _commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
             {
                 if (_matchingFunctionEnumerator == null)
                 {
@@ -745,13 +747,21 @@ namespace System.Management.Automation
                         {
                             matchingFunction.Add((CommandInfo)functionEntry.Value);
                         }
+                        else if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
+                        {
+                            string abbreviatedFunction = new String(((string)functionEntry.Key).Where(c => Char.IsUpper(c) || c == '-').ToArray());
+                            if (_commandName.Equals(abbreviatedFunction, StringComparison.OrdinalIgnoreCase))
+                            {
+                                matchingFunction.Add((CommandInfo)functionEntry.Value);
+                            }
+                        }
                     }
 
                     // Process functions from modules
-                    CommandInfo c = GetFunctionFromModules(_commandName);
-                    if (c != null)
+                    CommandInfo cmdInfo = GetFunctionFromModules(_commandName);
+                    if (cmdInfo != null)
                     {
-                        matchingFunction.Add(c);
+                        matchingFunction.Add(cmdInfo);
                     }
 
                     _matchingFunctionEnumerator = matchingFunction.GetEnumerator();
@@ -949,14 +959,14 @@ namespace System.Management.Automation
 
             if (_matchingCmdlet == null)
             {
-                if ((_commandResolutionOptions & SearchResolutionOptions.CommandNameIsPattern) != 0)
+                if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.CommandNameIsPattern) || _commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
                 {
                     Collection<CmdletInfo> matchingCmdletInfo = new Collection<CmdletInfo>();
 
                     PSSnapinQualifiedName PSSnapinQualifiedCommandName =
                         PSSnapinQualifiedName.GetInstance(_commandName);
 
-                    if (PSSnapinQualifiedCommandName == null)
+                    if (!_commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion) && PSSnapinQualifiedCommandName == null)
                     {
                         return null;
                     }
@@ -984,6 +994,14 @@ namespace System.Management.Automation
                                     matchingCmdletInfo.Add(cmdlet);
                                 }
                             }
+                            else if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
+                            {
+                                string abbreviatedCmdlet = new String(cmdlet.Name.Where(c => Char.IsUpper(c) || c == '-').ToArray());
+                                if (_commandName.Equals(abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    matchingCmdletInfo.Add(cmdlet);
+                                }
+                            }
                         }
                     }
 
@@ -992,7 +1010,8 @@ namespace System.Management.Automation
                 else
                 {
                     _matchingCmdlet = _context.CommandDiscovery.GetCmdletInfo(_commandName,
-                        (_commandResolutionOptions & SearchResolutionOptions.SearchAllScopes) != 0);
+                        _commandResolutionOptions.HasFlag(SearchResolutionOptions.SearchAllScopes),
+                        _commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion));
                 }
             }
 
@@ -1588,5 +1607,10 @@ namespace System.Management.Automation
 
         /// <summary>Use fuzzy matching.</summary>
         FuzzyMatch = 0x10,
+
+        /// <summary>
+        /// Enable searching for cmdlets/functions by abbreviation expansion.
+        /// </summary>
+        UseAbbreviationExpansion = 0x20,
     }
 }

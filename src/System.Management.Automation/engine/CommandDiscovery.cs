@@ -1131,11 +1131,27 @@ namespace System.Management.Automation
                                 }
 
                                 result = LookupCommandInfo(commandName, commandTypes, searchResolutionOptions, commandOrigin, context);
+
+                                if (result != null)
+                                {
+                                    break;
+                                }
                             }
 
-                            if (result != null)
+                            if (result == null && searchResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
                             {
-                                break;
+                                foreach (var cmdlet in exportedCommands)
+                                {
+                                    string abbreviatedCmdlet = new String(cmdlet.Key.Where(c => Char.IsUpper(c) || c == '-').ToArray());
+                                    if (commandName.Equals(abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        result = LookupCommandInfo(cmdlet.Key, commandOrigin, context);
+                                        if (result != null)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                         }
 
@@ -1474,13 +1490,16 @@ namespace System.Management.Automation
         /// <param name="searchAllScopes">
         /// True if we should search all scopes, false if we should stop after finding the first.
         /// </param>
+        /// <param name="useAbbreviationExpansion">
+        /// True if we should try using abbreviation expansion search.
+        /// </param>
         /// <returns>
         /// The CmdletInfo for the cmdlet for all the cmdlets with the specified name.
         /// </returns>
         /// <exception cref="ArgumentException">
         /// If <paramref name="cmdletName"/> is null or empty.
         /// </exception>
-        internal IEnumerator<CmdletInfo> GetCmdletInfo(string cmdletName, bool searchAllScopes)
+        internal IEnumerator<CmdletInfo> GetCmdletInfo(string cmdletName, bool searchAllScopes, bool useAbbreviationExpansion = false)
         {
             Dbg.Assert(!string.IsNullOrEmpty(cmdletName), "Caller should verify the cmdletName");
 
@@ -1502,7 +1521,24 @@ namespace System.Management.Automation
                 List<CmdletInfo> cmdlets;
                 if (!scope.CmdletTable.TryGetValue(commandName.ShortName, out cmdlets))
                 {
-                    continue;
+                    if (useAbbreviationExpansion)
+                    {
+                        foreach (List<CmdletInfo> cmdletList in scope.CmdletTable.Values)
+                        {
+                            foreach (CmdletInfo cmdletInfo in cmdletList)
+                            {
+                                string abbreviatedCmdlet = new String(cmdletInfo.Name.Where(c => Char.IsUpper(c)).ToArray());
+                                if (cmdletName.Equals(abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    yield return cmdletInfo;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
 
                 foreach (var cmdletInfo in cmdlets)

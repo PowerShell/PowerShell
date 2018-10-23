@@ -10,6 +10,35 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Get-Command'
     }
 
+    Context "ExperimentalFeatures" {
+
+        BeforeAll {
+            $configFilePath = Join-Path $testdrive "useabbreviationexpansion.json"
+
+            @"
+            {
+                "ExperimentalFeatures": [
+                  "PSUseAbbreviationExpansion"
+                ]
+            }
+"@ > $configFilePath
+
+        }
+
+        It 'Should complete abbreviated cmdlet' {
+            $res = pwsh -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'i-psdf' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
+            $res | Should -HaveCount 1
+            $res | Should -BeExactly 'Import-PowerShellDataFile'
+        }
+
+        It 'Should complete abbreviated function' {
+            $res = pwsh -settingsfile $configFilePath -c "(TabExpansion2 -inputScript 'pschrl' -cursorColumn 'pschr'.Length).CompletionMatches.CompletionText"
+            $res | Should -HaveCount 1
+            $res | Should -BeExactly 'PSConsoleHostReadLine'
+        }
+
+    }
+
     It 'Should complete native exe' -Skip:(!$IsWindows) {
         $res = TabExpansion2 -inputScript 'notep' -cursorColumn 'notep'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'notepad.exe'

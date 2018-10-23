@@ -358,6 +358,14 @@ namespace Microsoft.PowerShell.Commands
 
         private List<CommandScore> _commandScores = new List<CommandScore>();
 
+        /// The parameter that determines if return cmdlets based on abbreviation expansion.
+        /// This means it matches cmdlets where the uppercase characters for the noun match
+        /// the given characters.  i.e., Get-sgc would match Get-SomeGreatCmdlet
+        /// </summary>
+        [Experimental("PSUseAbbreviationExpansion", ExperimentAction.Show)]
+        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "AllCommandSet")]
+        public SwitchParameter UseAbbreviationExpansion { get; set; }
+
         #endregion Definitions of cmdlet parameters
 
         #region Overrides
@@ -701,6 +709,11 @@ namespace Microsoft.PowerShell.Commands
                 options = SearchResolutionOptions.SearchAllScopes;
             }
 
+            if (UseAbbreviationExpansion)
+            {
+                options |= SearchResolutionOptions.UseAbbreviationExpansion;
+            }
+
             if ((this.CommandType & CommandTypes.Alias) != 0)
             {
                 options |= SearchResolutionOptions.ResolveAliasPatterns;
@@ -762,7 +775,7 @@ namespace Microsoft.PowerShell.Commands
 
                             try
                             {
-                                CommandDiscovery.LookupCommandInfo(tempCommandName, this.MyInvocation.CommandOrigin, this.Context);
+                                CommandDiscovery.LookupCommandInfo(tempCommandName, CommandTypes.All, options, this.MyInvocation.CommandOrigin, this.Context);
                             }
                             catch (CommandNotFoundException)
                             {
@@ -964,7 +977,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Only for this case, the loop should exit
                     // Get-Command Foo
-                    if (isPattern || All || TotalCount != -1 || _isCommandTypeSpecified || _isModuleSpecified || _isFullyQualifiedModuleSpecified)
+                    if (UseAbbreviationExpansion || isPattern || All || TotalCount != -1 || _isCommandTypeSpecified || _isModuleSpecified || _isFullyQualifiedModuleSpecified)
                     {
                         continue;
                     }
