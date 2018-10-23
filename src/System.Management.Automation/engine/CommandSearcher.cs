@@ -749,7 +749,7 @@ namespace System.Management.Automation
                         }
                         else if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
                         {
-                            string abbreviatedFunction = new String(((string)functionEntry.Key).Where(c => Char.IsUpper(c) || c == '-').ToArray());
+                            string abbreviatedFunction = new string(((string)functionEntry.Key).Where(c => char.IsUpper(c) || c == '-').ToArray());
                             if (_commandName.Equals(abbreviatedFunction, StringComparison.OrdinalIgnoreCase))
                             {
                                 matchingFunction.Add((CommandInfo)functionEntry.Value);
@@ -996,7 +996,7 @@ namespace System.Management.Automation
                             }
                             else if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
                             {
-                                string abbreviatedCmdlet = new String(cmdlet.Name.Where(c => Char.IsUpper(c) || c == '-').ToArray());
+                                string abbreviatedCmdlet = new string(cmdlet.Name.Where(c => char.IsUpper(c) || c == '-').ToArray());
                                 if (_commandName.Equals(abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase))
                                 {
                                     matchingCmdletInfo.Add(cmdlet);

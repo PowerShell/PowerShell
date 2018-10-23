@@ -1142,7 +1142,7 @@ namespace System.Management.Automation
                             {
                                 foreach (var cmdlet in exportedCommands)
                                 {
-                                    string abbreviatedCmdlet = new String(cmdlet.Key.Where(c => Char.IsUpper(c) || c == '-').ToArray());
+                                    string abbreviatedCmdlet = new string(cmdlet.Key.Where(c => char.IsUpper(c) || c == '-').ToArray());
                                     if (commandName.Equals(abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase))
                                     {
                                         result = LookupCommandInfo(cmdlet.Key, commandOrigin, context);
@@ -1512,7 +1512,6 @@ namespace System.Management.Automation
 
             // Check the current cmdlet cache then check the top level
             // if we aren't already at the top level.
-
             SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(Context.EngineSessionState.CurrentScope);
 
@@ -1527,7 +1526,7 @@ namespace System.Management.Automation
                         {
                             foreach (CmdletInfo cmdletInfo in cmdletList)
                             {
-                                string abbreviatedCmdlet = new String(cmdletInfo.Name.Where(c => Char.IsUpper(c)).ToArray());
+                                string abbreviatedCmdlet = new string(cmdletInfo.Name.Where(c => char.IsUpper(c)).ToArray());
                                 if (cmdletName.Equals(abbreviatedCmdlet, StringComparison.OrdinalIgnoreCase))
                                 {
                                     yield return cmdletInfo;

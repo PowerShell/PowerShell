@@ -358,9 +358,10 @@ namespace Microsoft.PowerShell.Commands
 
         private List<CommandScore> _commandScores = new List<CommandScore>();
 
-        /// The parameter that determines if return cmdlets based on abbreviation expansion.
+        /// <summary>
+        /// Gets or sets the parameter that determines if return cmdlets based on abbreviation expansion.
         /// This means it matches cmdlets where the uppercase characters for the noun match
-        /// the given characters.  i.e., Get-sgc would match Get-SomeGreatCmdlet
+        /// the given characters.  i.e., g-sgc would match Get-SomeGreatCmdlet.
         /// </summary>
         [Experimental("PSUseAbbreviationExpansion", ExperimentAction.Show)]
         [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = "AllCommandSet")]
