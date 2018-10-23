@@ -5,8 +5,6 @@ The Pester community is vibrant and active, if you have questions about Pester o
 As of January 2018, PowerShell Core is using Pester version 4 which has some changes from earlier versions.
 See [Migrating from Pester 3 to Pester 4](https://github.com/pester/Pester/wiki/Migrating-from-Pester-3-to-Pester-4) for more information.
 
-
-
 When creating tests, keep the following in mind:
 * Tests should not be overly complicated and test too many things
     * boil down your tests to their essence, test only what you need
@@ -14,7 +12,8 @@ When creating tests, keep the following in mind:
 * Tests should generally not rely on any other test
 
 Examples:
-Here's the simplest of tests
+
+Here's the simplest of tests:
 
 ```powershell
 Describe "A variable can be assigned and retrieved" {
@@ -25,7 +24,7 @@ Describe "A variable can be assigned and retrieved" {
 }
 ```
 
-If you need to do type checking, that can be done as well
+If you need to do type checking, that can be done as well:
 
 ```powershell
 Describe "One is really one" {
@@ -79,7 +78,7 @@ However, if you need to check the `InnerException` or other members of the Error
 ```
 
 ### Describe/Context/It
-For creation of PowerShell tests, the Describe block is the level of granularity suggested and one of three tags should be used: "CI", "Feature", or "Scenario". If the tag is not provided, tests in that describe block will be run any time tests are executed.
+For creation of PowerShell tests, the `Describe` block is the level of granularity suggested and one of three tags should be used: "CI", "Feature", or "Scenario". If the tag is not provided, tests in that describe block will be run any time tests are executed.
 
 #### Describe
 Creates a logical group of tests.
@@ -88,31 +87,31 @@ they will no longer be present when the `Describe` block exits.
 A `Describe` block may contain any number of Context and `It` blocks.
 
 #### Context
-Provides logical grouping of It blocks within a single Describe block. Any Mocks defined inside a Context are removed at the end of the Context scope, as are any files or folders added to the TestDrive during the Context block's execution. Any BeforeEach or AfterEach blocks defined inside a Context also only apply to tests within that Context .
+Provides logical grouping of `It` blocks within a single `Describe` block. Any Mocks defined inside a `Context` are removed at the end of the `Context` scope, as are any files or folders added to the `TestDrive:` during the Context block's execution. Any `BeforeEach` or `AfterEach` blocks defined inside a `Context` also only apply to tests within that `Context`.
 
 #### It
-The  It  block is intended to be used inside of a  Describe  or  Context  Block. If you are familiar with the AAA pattern (Arrange-Act-Assert), the body of the  It  block is the appropriate location for an assert. The convention is to assert a single expectation for each  It  block. The code inside of the  It  block should throw a terminating error if the expectation of the test is not met and thus cause the test to fail. The name of the  It  block should expressively state the expectation of the test.
+The  `It` block is intended to be used inside of a `Describe` or `Context` block. If you are familiar with the AAA pattern (Arrange-Act-Assert), the body of the  `It`  block is the appropriate location for an assert. The convention is to assert a single expectation for each `It` block. The code inside of the `It` block should throw a terminating error if the expectation of the test is not met and thus cause the test to fail. The name of the `It` block should expressively state the expectation of the test.
 
 ### Admin privileges in tests
-Tests that require admin privileges **on windows** should be additionally marked with 'RequireAdminOnWindows' Pester tag.
+Tests that require admin privileges **on Windows** should be additionally marked with `RequireAdminOnWindows` Pester tag.
 In the AppVeyor CI, we run two different passes:
 
-- The pass with exclusion of tests with 'RequireAdminOnWindows' tag
-- The pass where we run only 'RequireAdminOnWindows' tests
+- The pass with exclusion of tests with `RequireAdminOnWindows` tag
+- The pass where we run only `RequireAdminOnWindows` tests
 
 In each case, tests are executed with appropriate privileges.
 
-Tests that need to be run with sudo **on Unix systems** should be additionally marked with 'RequireSudoOnUnix' Pester tag.
-'RequireSudoOnUnix' tag is mutually exclusive to all other tags like 'CI', 'Feature' etc. (which are now ignored when 'RequireSudoOnUnix' is present) and is treated as 'CI'.
+Tests that need to be run with sudo **on Unix systems** should be additionally marked with `RequireSudoOnUnix` Pester tag.
+`RequireSudoOnUnix` tag is mutually exclusive to all other tags like `CI`, `Feature` etc. (which are now ignored when `RequireSudoOnUnix` is present) and is treated as `CI`.
 Similarly as above, we run the tests in Travis CI in two passes:
-- With sudo only tests with 'RequireSudoOnUnix' tag
-- Without sudo all tests excluding those with 'RequireSudoOnUnix' tag.
+- With sudo only tests with `RequireSudoOnUnix` tag
+- Without sudo all tests excluding those with `RequireSudoOnUnix` tag.
 
 ### Selected Features
 
 #### Test Drive
-A PSDrive is available for file activity during a tests and this drive is limited to the scope of a single Describe block. The contents of the drive are cleared when a context block is exited.
-A test may need to work with file operations and validate certain types of file activities. It is usually desirable not to perform file activity tests that will produce side effects outside of an individual test. Pester creates a PSDrive inside the user's temporary drive that is accessible via a names PSDrive TestDrive:. Pester will remove this drive after the test completes. You may use this drive to isolate the file operations of your test to a temporary store.
+A `PSDrive` is available for file activity during a tests and this drive is limited to the scope of a single `Describe` block. The contents of the drive are cleared when a `Context` block is exited.
+A test may need to work with file operations and validate certain types of file activities. It is usually desirable not to perform file activity tests that will produce side effects outside of an individual test. Pester creates a `PSDrive` inside the user's temporary drive that is accessible via `TestDrive:` or `$TestDrive`. Pester will remove this drive after the test completes. You may use this drive to isolate the file operations of your test to a temporary store.
 
 The following example illustrates the feature:
 
@@ -133,7 +132,7 @@ Describe "Add-Footer" {
 }
 ```
 
-When this test completes, the contents of the TestDrive PSDrive will be removed.
+When this test completes, the contents of the `TestDrive:` `PSDrive` will be removed.
 
 #### Parameter Generation
 
@@ -156,7 +155,7 @@ Describe "A test" {
 You can also construct loops and pass values as parameters, including the expected value, but Pester does this for you.
 
 #### Mocking
-Mocks the behavior of an existing command with an alternate implementation. This creates new behavior for any existing command within the scope of a Describe or Context block. The function allows you to specify a script block that will become the command's new behavior.
+Mocks the behavior of an existing command with an alternate implementation. This creates new behavior for any existing command within the scope of a `Describe` or `Context` block. The function allows you to specify a script block that will become the command's new behavior.
 The following example illustrates simple use:
 
 ```powershell
@@ -200,7 +199,7 @@ Describe it {
 }
 ```
 
-Now, when run, you can see the execution schedule
+Now, when run, you can see the execution schedule:
 
 ```
 PS# invoke-pester c:\temp\pester.demo.tests.ps1
@@ -226,9 +225,9 @@ Tests completed in 79ms
 Passed: 1 Failed: 0 Skipped: 0 Pending: 0
 ```
 
-The `Describe` `BeforeAll` block is executed before any other code even though it was at the bottom of the Describe block,
-so if state is set elsewhere in the describe block, that state will not be visible (as the code will not yet been run). Notice, too,
-that the `BeforeAll` block in Context is executed before any other code in that block.
+The `Describe` `BeforeAll` block is executed before any other code even though it was at the bottom of the `Describe` block,
+so if state is set elsewhere in the `Describe` block, that state will not be visible (as the code will not yet been run). Notice, too,
+that the `BeforeAll` block in `Context` is executed before any other code in that block.
 Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those blocks rely on state set by free code elsewhere in the block.
 
 #### Skipping tests in bulk
@@ -363,8 +362,8 @@ Pester Do and Don't
 10. Use `Mock` functionality when you don't have your entire environment
 11. Avoid free code in a `Describe` block
     1. Use `[Before|After][Each|All]` see [Free Code in a Describe block](WritingPesterTests.md#free-code-in-a-describe-block)
-12. Avoid creating or using test files outside of TESTDRIVE:
-    1. TESTDRIVE: has automatic clean-up
+12. Avoid creating or using test files outside of `TESTDRIVE:`
+    1. `TESTDRIVE:` has automatic clean-up
 13. Keep in mind that we are creating cross platform tests
     1. Avoid using the registry
     2. Avoid using COM
@@ -372,8 +371,8 @@ Pester Do and Don't
     1. ex: checking for the count of loaded format files, check rather for format data for a specific type
 
 ## Don't
-1. Don't have too many evaluations in a single It block
+1. Don't have too many evaluations in a single `It` block
     1. The first `Should` failure will stop that block
 2. Don't use `Should` outside of an `It` Block
 3. Don't use the word "Error" or "Fail" to test a positive case
-    1. ex: "Get-ChildItem TESTDRIVE: shouldn't fail", rather "Get-ChildItem should be able to retrieve file listing from TESTDRIVE"
+    1. ex: `"Get-ChildItem TESTDRIVE: shouldn't fail"`, rather than `"Get-ChildItem should be able to retrieve file listing from TESTDRIVE"`.
