@@ -2997,6 +2997,12 @@ function New-TestPackage
         Write-Verbose -Message "Creating destination folder: $Destination"
     }
 
+    $rootFolder = $env:TEMP
+
+    if (-not $rootFolder -and $env:TF_BUILD) {
+        $rootFolder = $env:AGENT_WORKFOLDER
+    }
+
     $packageRoot = Join-Path $env:TEMP ('TestPackage-' + (new-guid))
     $null = New-Item -ItemType Directory -Path $packageRoot -Force
     $packagePath = Join-Path $Destination "TestPackage.zip"
