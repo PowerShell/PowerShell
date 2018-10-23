@@ -644,6 +644,13 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "-LiteralPath"
         }
+
+        It "Test member completion of a static method invocation" {
+            $inputStr = '[powershell]::Create().'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 31
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "Commands"
+        }
     }
 
     Context "Module completion for 'using module'" {
