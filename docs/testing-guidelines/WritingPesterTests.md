@@ -311,10 +311,10 @@ The reason for it are line-ends.
 
 They cause problems for two reasons:
 
-* They are different on different platforms (`\r\n` on windows and `\n` on unix).
+* They are different on different platforms (`\r\n` on Windows and `\n` on Unix).
 * Even on the same system, they depends on the way how the repo was cloned.
 
-Particularly, in the default AppVeyour CI windows image, you will get `\n` line ends in all your files.
+Particularly, in the default AppVeyor CI Windows image, you will get `\n` line ends in all your files.
 That causes problems, because at runtime `Get-MultiLineString` would likely produce `\r\n` line ends on windows.
 
 Some workaround could be added, but they are sub-optimal and make reading test code harder.
@@ -343,11 +343,11 @@ Pester Do and Don't
 ===================
 
 ## Do
-1. Name your files <descriptivetest>.tests.ps1
-2. Keep tests simple
-    1. Test only what you need
-    2. Reduce dependencies
-3. Be sure to tag your `Describe` blocks based on their purpose
+1. Name your files `<descriptivetest>.tests.ps1`.
+2. Keep tests simple:
+    1. Test only what you need.
+    2. Reduce dependencies.
+3. Be sure to tag your `Describe` blocks based on their purpose:
     1. Tag `CI` indicates that it will be run as part of the continuous integration process. These should be unit test like, and generally take less than a second.
     2. Tag `Feature` indicates a higher level feature test (we will run these on a regular basis), for example, tests which go to remote resources, or test broader functionality
     3. Tag `Scenario` indicates tests of integration with other features (these will be run on a less regular basis and test even broader functionality than feature tests.
@@ -356,7 +356,7 @@ Pester Do and Don't
 5. Use `Context` to group tests
     1. Multiple `Context` blocks can help you group your test suite into logical sections
 6. Use `BeforeAll`/`AfterAll`/`BeforeEach`/`AfterEach` instead of custom initiators
-7. Prefer Try-Catch for expected errors and check $_.fullyQualifiedErrorId (don't use `should throw`)
+7. Prefer Try-Catch for expected errors and check `$_.fullyQualifiedErrorId` (don't use `should throw`).
 8. Use `-testcases` when iterating over multiple `It` blocks
 9. Use code coverage functionality where appropriate
 10. Use `Mock` functionality when you don't have your entire environment
