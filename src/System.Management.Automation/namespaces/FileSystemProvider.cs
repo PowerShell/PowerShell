@@ -8242,24 +8242,54 @@ namespace System.Management.Automation.Internal
         /// <returns>A FileStream that can be used to interact with the file.</returns>
         internal static FileStream CreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share)
         {
-            if (path == null) throw new ArgumentNullException("path");
-            if (streamName == null) throw new ArgumentNullException("streamName");
+            if (!TryCreateFileStream(path, streamName, mode, access, share, out var stream))
+            {
+                string errorMessage = StringUtil.Format(
+                    FileSystemProviderStrings.AlternateDataStreamNotFound, streamName, path);
+                throw new FileNotFoundException(errorMessage, $"{path}:{streamName}");
+            }
 
-            string adjustedStreamName = streamName.Trim();
-            adjustedStreamName = ":" + adjustedStreamName;
-            string resultPath = path + adjustedStreamName;
+            return stream;
+        }
 
-            if (mode == FileMode.Append) mode = FileMode.OpenOrCreate;
+        /// <summary>
+        /// Tries to create a file stream on a file.
+        /// </summary>
+        /// <param name="path">The fully-qualified path to the file.</param>
+        /// <param name="streamName">The name of the alternate data stream to open.</param>
+        /// <param name="mode">The FileMode of the file.</param>
+        /// <param name="access">The FileAccess of the file.</param>
+        /// <param name="share">The FileShare of the file.</param>
+        /// <param name="stream">A FileStream that can be used to interact with the file.</param>
+        /// <returns>true if the stream was successfully created, otherwise false.</returns>
+        internal static bool TryCreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share, out FileStream stream)
+        {
+            if (path == null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
+            if (streamName == null)
+            {
+                throw new ArgumentNullException(nameof(streamName));
+            }
+
+            if (mode == FileMode.Append)
+            {
+                mode = FileMode.OpenOrCreate;
+            }
+
+            var resultPath = $"{path}:{streamName}";
             SafeFileHandle handle = NativeMethods.CreateFile(resultPath, access, share, IntPtr.Zero, mode, 0, IntPtr.Zero);
 
             if (handle.IsInvalid)
             {
-                string errorMessage = StringUtil.Format(
-                    FileSystemProviderStrings.AlternateDataStreamNotFound, streamName, path);
-                throw new FileNotFoundException(errorMessage, resultPath);
+                stream = null;
+                return false;
             }
 
-            return new FileStream(handle, access);
+            stream = new FileStream(handle, access);
+            return true;
         }
 
         /// <summary>
