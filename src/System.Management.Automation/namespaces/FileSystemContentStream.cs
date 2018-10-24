@@ -568,7 +568,8 @@ namespace Microsoft.PowerShell.Commands
                     blocks.Add(contentRead);
                 }
 
-                return _reader.Peek() != -1;
+                // We already read whole file so return EOF.
+                return false;
             }
 
             // Since the delimiter is a string, we're essentially
