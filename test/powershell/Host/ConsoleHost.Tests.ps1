@@ -298,6 +298,19 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             # Join (multiple lines) and remove whitespace (we don't care about spacing) to verify we converted to string (by generating a table)
             -join (& $powershell -noprofile -outputFormat text { [PSCustomObject]@{X=10;Y=20} }) -replace "\s","" | Should -Be "XY--1020"
         }
+
+        It "errors are in text if error is redirected, encoded command, non-interactive, and outputformat specified" {
+            $p = [Diagnostics.Process]::new()
+            $p.StartInfo.FileName = "pwsh"
+            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes("throw 'boom'"))
+            $p.StartInfo.Arguments = "-EncodedCommand $encoded -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -OutputFormat text"
+            $p.StartInfo.UseShellExecute = $false
+            $p.StartInfo.RedirectStandardError = $true
+            $p.Start() | Out-Null
+            $out = $p.StandardError.ReadToEnd()
+            $out | Should -Not -BeNullOrEmpty
+            $out.Split([Environment]::NewLine)[0] | Should -BeExactly "boom"
+        }
     }
 
     Context "Redirected standard output" {

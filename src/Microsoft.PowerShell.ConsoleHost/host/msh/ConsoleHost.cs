@@ -1202,6 +1202,7 @@ namespace Microsoft.PowerShell
         }
 
         internal WrappedSerializer.DataFormat OutputFormat { get; private set; }
+        internal bool OutputFormatSpecified { get; private set; }
 
         internal WrappedSerializer.DataFormat InputFormat { get; private set; }
 
@@ -1211,9 +1212,9 @@ namespace Microsoft.PowerShell
             {
                 WrappedDeserializer.DataFormat format = OutputFormat;
 
-                //If this shell is invoked in minishell interop mode and error is redirected,
-                //always write data in error stream in xml format.
-                if (IsInteractive == false && Console.IsErrorRedirected && _wasInitialCommandEncoded)
+                // If this shell is invoked in non-interactive, error is redirected, and OutputFormat was not
+                // specified write data in error stream in xml format assuming PowerShell->PowerShell usage.
+                if (!OutputFormatSpecified && IsInteractive == false && Console.IsErrorRedirected && _wasInitialCommandEncoded)
                 {
                     format = Serialization.DataFormat.XML;
                 }
@@ -1323,6 +1324,7 @@ namespace Microsoft.PowerShell
                 }
 
                 OutputFormat = cpp.OutputFormat;
+                OutputFormatSpecified = cpp.OutputFormatSpecified;
                 InputFormat = cpp.InputFormat;
                 _wasInitialCommandEncoded = cpp.WasInitialCommandEncoded;
 
