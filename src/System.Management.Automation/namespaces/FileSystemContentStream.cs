@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Management.Automation;
@@ -56,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _usingByteEncoding;
         private const char DefaultDelimiter = '\n';
         private string _delimiter = $"{DefaultDelimiter}";
-        private Dictionary<char, int> _offsetDictionary;
+        private int[] _offsetDictionary;
         private bool _usingDelimiter;
         private StringBuilder _currentLineContent;
         private bool _waitForChanges;
@@ -287,13 +288,34 @@ namespace Microsoft.PowerShell.Commands
                 // For Boyer-Moore string search algorithm.
                 // Populate the offset lookups.
                 // These will tell us the maximum number of characters
-                // we can read to generate another possible match.
+                // we can read to generate another possible match (safe shift).
                 // If we read more characters than this, we risk consuming
                 // more of the stream than we need.
-                _offsetDictionary = new Dictionary<char, int>(_delimiter.Length);
-                foreach (char currentChar in _delimiter)
+                //
+                // Because an unicode character size is 2 byte we would to have use
+                // very large array with 65535 size to keep this safe offsets.
+                // One solution is to pack unicode character to byte.
+                // The workaround is to use low byte from unicode character.
+                // This allow us to use small array with size 256.
+                // This workaround is the fastest and provides excellent results
+                // in regular search scenarios when the file contains
+                // mostly characters from the same alphabet.
+                _offsetDictionary = new int[256];
+
+                // If next char from file is not in search pattern safe shift is the search pattern length.
+                for (var n = 0; n < _offsetDictionary.Length; n++)
                 {
-                    _offsetDictionary[currentChar] = _delimiter.Length - _delimiter.LastIndexOf(currentChar) - 1;
+                    _offsetDictionary[n] = _delimiter.Length;
+                }
+
+                // If next char from file is in search pattern we should calculate a safe shift.
+                char currentChar;
+                byte lowByte;
+                for (var i = 0; i < _delimiter.Length; i++)
+                {
+                    currentChar = _delimiter[i];
+                    lowByte = Unsafe.As<char, byte>(ref currentChar);
+                    _offsetDictionary[lowByte] = _delimiter.Length - _delimiter.LastIndexOf(currentChar) - 1;
                 }
             }
         }
@@ -585,6 +607,7 @@ namespace Microsoft.PowerShell.Commands
             Span<char> readBuffer = stackalloc char[currentOffset];
             bool delimiterNotFound = true;
             _currentLineContent.Clear();
+            char currentChar;
 
             do
             {
@@ -620,10 +643,8 @@ namespace Microsoft.PowerShell.Commands
                     // our search key.  That means the match must happen strictly /after/ the
                     // current position.  Because of that, we can feel confident reading in the
                     // number of characters in the search key, without the risk of reading too many.
-                    if (!_offsetDictionary.TryGetValue(_currentLineContent[_currentLineContent.Length - 1], out currentOffset))
-                    {
-                        currentOffset = actualDelimiter.Length;
-                    }
+                    currentChar = _currentLineContent[_currentLineContent.Length - 1];
+                    currentOffset = _offsetDictionary[Unsafe.As<char, byte>(ref currentChar)];
 
                     // We want to keep reading if delimiter not found and we haven't hit the end of file
                     delimiterNotFound = true;
@@ -1263,7 +1284,7 @@ namespace Microsoft.PowerShell.Commands
         /// Read characters from the current stream into a Span buffer.
         /// </summary>
         /// <param name="buffer">Output buffer.</param>
-        /// <returns>Return the number of characters read, or -1 if we reach the head of the file</returns>
+        /// <returns>Return the number of characters read, or -1 if we reach the head of the file.</returns>
         public override int Read(Span<char> buffer)
         {
             return ReadSpan(buffer);
