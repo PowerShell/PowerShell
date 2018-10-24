@@ -3003,9 +3003,12 @@ function New-TestPackage
         $rootFolder = $env:AGENT_WORKFOLDER
     }
 
+    Write-Verbose -Verbose "RootFolder: $rootFolder"
+
     $packageRoot = Join-Path $rootFolder ('TestPackage-' + (new-guid))
     $null = New-Item -ItemType Directory -Path $packageRoot -Force
     $packagePath = Join-Path $Destination "TestPackage.zip"
+    Write-Verbose -Verbose "PackagePath: $packagePath"
 
     # Build test tools so they are placed in appropriate folders under 'test' then copy to package root.
     $null = Publish-PSTestTools
