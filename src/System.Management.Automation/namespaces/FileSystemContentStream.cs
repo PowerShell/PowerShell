@@ -607,7 +607,6 @@ namespace Microsoft.PowerShell.Commands
             Span<char> readBuffer = stackalloc char[currentOffset];
             bool delimiterNotFound = true;
             _currentLineContent.Clear();
-            char currentChar;
 
             do
             {
@@ -643,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
                     // our search key.  That means the match must happen strictly /after/ the
                     // current position.  Because of that, we can feel confident reading in the
                     // number of characters in the search key, without the risk of reading too many.
-                    currentChar = _currentLineContent[_currentLineContent.Length - 1];
+                    var currentChar = _currentLineContent[_currentLineContent.Length - 1];
                     currentOffset = _offsetDictionary[Unsafe.As<char, byte>(ref currentChar)];
 
                     // We want to keep reading if delimiter not found and we haven't hit the end of file
