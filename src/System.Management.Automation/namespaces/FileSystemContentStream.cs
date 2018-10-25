@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     currentChar = _delimiter[i];
                     lowByte = Unsafe.As<char, byte>(ref currentChar);
-                    _offsetDictionary[lowByte] = _delimiter.Length - _delimiter.LastIndexOf(currentChar) - 1;
+                    _offsetDictionary[lowByte] = _delimiter.Length - i - 1;
                 }
             }
         }
