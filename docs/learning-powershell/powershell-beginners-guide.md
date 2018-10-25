@@ -87,6 +87,7 @@ CommandType     Name
 
 Alias           cd -> Set-Location
 Alias           cls -> Clear-Host
+Alias           clear -> Clear-Host
 Alias           copy -> Copy-Item
 Alias           dir -> Get-ChildItem
 Alias           gc -> Get-Content
@@ -101,7 +102,7 @@ As you can see `cls` or `clear` is an alias of `Clear-Host`.
 Now try it:
 ```powershell
 PS /> Get-Process
-PS /> cls or clear
+PS /> cls
 ```
 
 4. `cd -> Set-Location`: Sets the current working location to a specified location.
