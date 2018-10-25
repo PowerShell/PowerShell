@@ -39,6 +39,19 @@ Describe "Test-Path" -Tags "CI" {
         { Test-Path -Path $testdirectory } | Should -BeTrue
     }
 
+    It 'Should return false for an empty string' {
+        Test-Path -Path '' | Should -BeFalse
+    }
+
+    It 'Should return false for a whitespace string' {
+        Test-Path -Path '  ' | Should -BeFalse
+    }
+
+    It 'Should write a non-terminating error when given a null path' {
+        { Test-Path -Path $null -ErrorAction Stop }             | Should -Throw -ErrorId 'NullPathNotPermitted'
+        { Test-Path -Path $null -ErrorAction SilentlyContinue } | Should -Not -Throw
+    }
+
     It "Should be able to accept a regular expression" {
         { Test-Path -Path (Join-Path -Path $testdirectory -ChildPath "u*") }           | Should -Not -Throw
         { Test-Path -Path (Join-Path -Path $testdirectory -ChildPath "u[a-z]r") }      | Should -Not -Throw
