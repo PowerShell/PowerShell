@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteError(new ErrorRecord(
                     new ArgumentNullException("The path was null or an empty collection."),
-                    "NullPath",
+                    "NullPathNotPermitted",
                     ErrorCategory.InvalidArgument,
                     Path));
 
