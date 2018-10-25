@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
 
@@ -130,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (this.PathType == TestPathType.Any && !IsValid)
             {
-                if (Path != null && Path.Length > 0)
+                if (Path != null && Path.Length > 0 && Path[0] != null)
                 {
                     result = InvokeProvider.Item.ItemExistsDynamicParameters(Path[0], context);
                 }
@@ -139,6 +140,7 @@ namespace Microsoft.PowerShell.Commands
                     result = InvokeProvider.Item.ItemExistsDynamicParameters(".", context);
                 }
             }
+
             return result;
         } // GetDynamicParameters
 
@@ -162,7 +164,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_paths == null || _paths.Length == 0)
             {
-                WriteObject(false);
+                WriteError(new ErrorRecord(
+                    new ArgumentNullException("The path was null or an empty collection."),
+                    "NullPath",
+                    ErrorCategory.InvalidArgument,
+                    Path));
+
                 return;
             }
 
@@ -171,6 +178,16 @@ namespace Microsoft.PowerShell.Commands
             foreach (string path in _paths)
             {
                 bool result = false;
+
+                if (path == null)
+                {
+                    WriteError(new ErrorRecord(
+                        new ArgumentNullException("The path was null or an empty collection."),
+                        "NullPath",
+                        ErrorCategory.InvalidArgument,
+                        Path));
+                    continue;
+                }
 
                 if (string.IsNullOrWhiteSpace(path))
                 {
