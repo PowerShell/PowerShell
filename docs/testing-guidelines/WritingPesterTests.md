@@ -1,4 +1,5 @@
 ### Writing Pester Tests
+
 Note that this document does not replace the documents found in the [Pester](https://github.com/pester/pester "Pester") project.
 This is just some quick tips and suggestions for creating Pester tests for this project.
 The Pester community is vibrant and active, if you have questions about Pester or creating tests, the [Pester Wiki](https://github.com/pester/pester/wiki) has a lot of great information.
@@ -78,21 +79,26 @@ However, if you need to check the `InnerException` or other members of the Error
 ```
 
 ### Describe/Context/It
+
 For creation of PowerShell tests, the `Describe` block is the level of granularity suggested and one of three tags should be used: "CI", "Feature", or "Scenario". If the tag is not provided, tests in that describe block will be run any time tests are executed.
 
 #### Describe
+
 Creates a logical group of tests.
 All `Mocks` and `TestDrive` contents defined within a `Describe` block are scoped to that `Describe`;
 they will no longer be present when the `Describe` block exits.
 A `Describe` block may contain any number of Context and `It` blocks.
 
 #### Context
+
 Provides logical grouping of `It` blocks within a single `Describe` block. Any Mocks defined inside a `Context` are removed at the end of the `Context` scope, as are any files or folders added to the `TestDrive:` during the Context block's execution. Any `BeforeEach` or `AfterEach` blocks defined inside a `Context` also only apply to tests within that `Context`.
 
 #### It
+
 The  `It` block is intended to be used inside of a `Describe` or `Context` block. If you are familiar with the AAA pattern (Arrange-Act-Assert), the body of the  `It`  block is the appropriate location for an assert. The convention is to assert a single expectation for each `It` block. The code inside of the `It` block should throw a terminating error if the expectation of the test is not met and thus cause the test to fail. The name of the `It` block should expressively state the expectation of the test.
 
 ### Admin privileges in tests
+
 Tests that require admin privileges **on Windows** should be additionally marked with `RequireAdminOnWindows` Pester tag.
 In the AppVeyor CI, we run two different passes:
 
@@ -110,6 +116,7 @@ Similarly as above, we run the tests in Travis CI in two passes:
 ### Selected Features
 
 #### Test Drive
+
 A `PSDrive` is available for file activity during a tests and this drive is limited to the scope of a single `Describe` block. The contents of the drive are cleared when a `Context` block is exited.
 A test may need to work with file operations and validate certain types of file activities. It is usually desirable not to perform file activity tests that will produce side effects outside of an individual test. Pester creates a `PSDrive` inside the user's temporary drive that is accessible via `TestDrive:` or `$TestDrive`. Pester will remove this drive after the test completes. You may use this drive to isolate the file operations of your test to a temporary store.
 
@@ -155,6 +162,7 @@ Describe "A test" {
 You can also construct loops and pass values as parameters, including the expected value, but Pester does this for you.
 
 #### Mocking
+
 Mocks the behavior of an existing command with an alternate implementation. This creates new behavior for any existing command within the scope of a `Describe` or `Context` block. The function allows you to specify a script block that will become the command's new behavior.
 The following example illustrates simple use:
 
@@ -168,7 +176,9 @@ Context "Get-Random is not random" {
 ```
 
 More information may be found on the [wiki](https://github.com/pester/Pester/wiki/Mock)
+
 ### Free Code in a Describe block
+
 Code execution in Pester can be very subtle and can cause issues when executing test code. The execution of code which lays outside of the usual code blocks may not happen as you expect. Consider the following:
 
 ```powershell
@@ -231,6 +241,7 @@ that the `BeforeAll` block in `Context` is executed before any other code in tha
 Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those blocks rely on state set by free code elsewhere in the block.
 
 #### Skipping tests in bulk
+
 Sometimes it is beneficial to skip all the tests in a particular `Describe` block. For example, tests which are not applicable to a platform could be skipped, and they would be reported as skipped. The following is an example of how this may be done:
 ```powershell
 Describe "Should not run these tests on non-Windows platforms" {
@@ -292,7 +303,6 @@ Describing Should not run these tests on non-Windows platforms
 
 this technique uses the `$PSDefaultParameterValues` feature of PowerShell to temporarily set the It block parameter `-skip` to true (or in the case of Windows, it is not set at all)
 
-
 #### Multi-line strings
 
 You may want to have a test like
@@ -343,6 +353,7 @@ Pester Do and Don't
 ===================
 
 ## Do
+
 1. Name your files `<descriptivetest>.tests.ps1`.
 2. Keep tests simple:
     1. Test only what you need.
@@ -371,6 +382,7 @@ Pester Do and Don't
     1. ex: checking for the count of loaded format files, check rather for format data for a specific type
 
 ## Don't
+
 1. Don't have too many evaluations in a single `It` block
     1. The first `Should` failure will stop that block
 2. Don't use `Should` outside of an `It` Block
