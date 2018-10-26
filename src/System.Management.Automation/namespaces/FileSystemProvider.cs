@@ -1569,7 +1569,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // Filter the directories
-                        target.Add(directory.EnumerateDirectories(Filter));
+                        target.Add(directory.EnumerateDirectories(Filter, new System.IO.EnumerationOptions { MatchCasing = MatchCasing.CaseInsensitive }));
                     }
 
                     // Making sure to obey the StopProcessing.
@@ -1580,7 +1580,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Use the specified filter when retrieving the
                     // children
-                    target.Add(directory.EnumerateFiles(Filter));
+                    target.Add(directory.EnumerateFiles(Filter, new System.IO.EnumerationOptions { MatchCasing = MatchCasing.CaseInsensitive }));
                 }
                 else
                 {

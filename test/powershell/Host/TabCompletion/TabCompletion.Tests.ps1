@@ -318,6 +318,36 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
         }
+
+        It "Test case insensitive file path" -Skip:(!$IsLinux) {
+            $testFiles = "foo", "Foo", "fOO"
+            $testFiles | ForEach-Object {
+                $filePath = Join-Path $testdrive $_
+                New-Item -ItemType File -Path $filePath
+            }
+            Push-Location $testdrive
+            $beforeTab = "Get-Content f"
+            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches | Should -HaveCount 3
+            for ($i = 0; $i -lt $testFiles.Count; $i++) {
+                $res.CompletionMatches[$i].CompletionText | Should -BeExactly "./$($testFiles[$i])"
+            }
+        }
+
+        It "Test case insensitive folder path" -Skip:(!$IsLinux) {
+            $testDirs = "AA", "Aa", "aa"
+            $testDirs | ForEach-Object {
+                $dirPath = Join-Path $testdrive $_
+                New-Item -ItemType Directory -Path $dirPath
+            }
+            Push-Location $testdrive
+            $beforeTab = "cd a"
+            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches | Should -HaveCount 3
+            for ($i = 0; $i -lt $testDirs.Count; $i++) {
+                $res.CompletionMatches[$i].CompletionText | Should -BeExactly "./$($testDirs[$i])"
+            }
+        }
     }
 
     Context "Cmdlet name completion" {
