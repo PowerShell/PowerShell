@@ -329,8 +329,13 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = "Get-Content f"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches | Should -HaveCount 3
-            for ($i = 0; $i -lt $testFiles.Count; $i++) {
-                $res.CompletionMatches[$i].CompletionText | Should -BeExactly "./$($testFiles[$i])"
+
+            # order isn't guaranteed so we'll sort them first
+            $completions = $res.CompletionMatches | Sort-Object CompletionText -CaseSensitive
+            $expected = $testFiles | Sort-Object -CaseSensitive
+
+            for ($i = 0; $i -lt $expected.Count; $i++) {
+                $completions[$i].CompletionText | Should -BeExactly "./$($expected[$i])"
             }
         }
 
@@ -344,8 +349,13 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = "cd a"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches | Should -HaveCount 3
-            for ($i = 0; $i -lt $testDirs.Count; $i++) {
-                $res.CompletionMatches[$i].CompletionText | Should -BeExactly "./$($testDirs[$i])"
+
+            # order isn't guaranteed so we'll sort them first
+            $completions = $res.CompletionMatches | Sort-Object CompletionText -CaseSensitive
+            $expected = $testDirs | Sort-Object -CaseSensitive
+
+            for ($i = 0; $i -lt $expected.Count; $i++) {
+                $completions[$i].CompletionText | Should -BeExactly "./$($expected[$i])"
             }
         }
     }
