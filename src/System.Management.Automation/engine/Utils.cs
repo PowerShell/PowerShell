@@ -1416,13 +1416,11 @@ namespace System.Management.Automation
                     ps.Runspace = runspace;
 
                     // Check commands
-                    ps.Commands.AddCommand("Get-Command").AddParameter("Name", checker.Commands.ToArray());
-                    var cmdInfoList = ps.Invoke<CommandInfo>();
-                    if (ps.Streams.Error.Count > 0)
+                    if (!TryGetCommandInfoList(ps, checker.Commands, out Collection<CommandInfo> cmdInfoList))
                     {
-                        // Cannot continue
                         return false;
                     }
+
                     // All command modules must be implicit remoting modules from the same PSSession
                     var success = true;
                     var psSessionId = Guid.Empty;
@@ -1521,6 +1519,47 @@ namespace System.Management.Automation
 
             return false;
         }
+
+        private const string WhereObjectCommandAlias = "?";
+        private static bool TryGetCommandInfoList(PowerShell ps, HashSet<string> commandNames, out Collection<CommandInfo> cmdInfoList)
+        {
+            if (commandNames.Count == 0)
+            {
+                cmdInfoList = null;
+                return false;
+            }
+
+            bool specialCaseWhereCommandAlias = commandNames.Contains(WhereObjectCommandAlias);
+            if (specialCaseWhereCommandAlias)
+            {
+                commandNames.Remove(WhereObjectCommandAlias);
+            }
+
+            // Use Get-Command to collect CommandInfo from candidate commands, with correct precedence so
+            // that implicit remoting proxy commands will appear when available.
+            ps.Commands.Clear();
+            ps.Commands.AddCommand("Get-Command").AddParameter("Name", commandNames.ToArray());
+            cmdInfoList = ps.Invoke<CommandInfo>();
+            if (ps.Streams.Error.Count > 0)
+            {
+                return false;
+            }
+
+            // For special case '?' alias don't use Get-Command to retrieve command info, and instead
+            // use the GetCommand API.
+            if (specialCaseWhereCommandAlias)
+            {
+                var cmdInfo = ps.Runspace.ExecutionContext.SessionState.InvokeCommand.GetCommand(WhereObjectCommandAlias, CommandTypes.Alias);
+                if (cmdInfo == null)
+                {
+                    return false;
+                }
+                cmdInfoList.Add(cmdInfo);
+            }
+
+            return true;
+        }
+
         #endregion
     }
 
