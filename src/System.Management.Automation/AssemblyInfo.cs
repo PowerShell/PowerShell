@@ -12,6 +12,8 @@ using System.Resources;
 #if NOT_SIGNED
 // These attributes aren't every used, it's just a hack to get VS to not complain
 // about access when editing using the project files that don't actually build.
+[assembly: InternalsVisibleTo(@"powershell-perf-tests")]
+[assembly: InternalsVisibleTo(@"powershell-xunit-tests")]
 [assembly: InternalsVisibleTo(@"Microsoft.PowerShell.Commands.Utility")]
 [assembly: InternalsVisibleTo(@"Microsoft.PowerShell.Commands.Management")]
 [assembly: InternalsVisibleTo(@"Microsoft.PowerShell.Security")]
@@ -19,6 +21,8 @@ using System.Resources;
 [assembly: InternalsVisibleTo(@"Export-Command")]
 [assembly: InternalsVisibleTo(@"Microsoft.PowerShell.ConsoleHost")]
 #else
+[assembly: InternalsVisibleTo(@"powershell-perf-tests" + @",PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
+[assembly: InternalsVisibleTo(@"powershell-xunit-tests" + @",PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
 [assembly: InternalsVisibleTo(@"Microsoft.PowerShell.Commands.Utility" + @",PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
 [assembly: InternalsVisibleTo(@"Microsoft.PowerShell.Commands.Management" + @",PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
 [assembly: InternalsVisibleTo(@"Microsoft.PowerShell.Security" + @",PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
