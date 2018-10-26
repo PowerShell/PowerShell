@@ -212,10 +212,10 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    // If they didn't specify -Append, delete the file
+                    // If they didn't specify -Append, empty the file
                     if (!_shouldAppend)
                     {
-                        System.IO.File.Delete(effectiveFilePath);
+                        System.IO.File.WriteAllText(effectiveFilePath, String.Empty);
                     }
                 }
 
