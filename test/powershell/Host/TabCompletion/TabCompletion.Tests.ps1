@@ -319,44 +319,30 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
         }
 
-        It "Test case insensitive file path" -Skip:(!$IsLinux) {
-            $testFiles = "foo", "Foo", "fOO"
-            $testFiles | ForEach-Object {
-                $filePath = Join-Path $testdrive $_
-                New-Item -ItemType File -Path $filePath
+        It "Test case insensitive <type> path" -Skip:(!$IsLinux) -TestCases @(
+            @{ type = "File"     ; beforeTab = "Get-Content f" },
+            @{ type = "Directory"; beforeTab = "cd f" }
+        ) {
+            param ($type, $beforeTab)
+
+            $testPath = Join-Path $testdrive "CaseTest"
+            Remove-Item $testPath -Recurse -Force -ErrorAction SilentlyContinue
+            New-Item -ItemType Directory -Path $testPath
+
+            $testItems = "foo", "Foo", "fOO"
+            $testItems | ForEach-Object {
+                $itemPath = Join-Path $testPath $_
+                New-Item -ItemType $type -Path $itemPath
             }
-            Push-Location $testdrive
-            $beforeTab = "Get-Content f"
+            Push-Location $testPath
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches | Should -HaveCount 3
+            $res.CompletionMatches | Should -HaveCount $testItems.Count
 
             # order isn't guaranteed so we'll sort them first
-            $completions = $res.CompletionMatches | Sort-Object CompletionText -CaseSensitive
-            $expected = $testFiles | Sort-Object -CaseSensitive
+            $completions = ($res.CompletionMatches | Sort-Object CompletionText -CaseSensitive).CompletionText -join ":"
+            $expected = ($testItems | Sort-Object -CaseSensitive | ForEach-Object { "./$_" }) -join ":"
 
-            for ($i = 0; $i -lt $expected.Count; $i++) {
-                $completions[$i].CompletionText | Should -BeExactly "./$($expected[$i])"
-            }
-        }
-
-        It "Test case insensitive folder path" -Skip:(!$IsLinux) {
-            $testDirs = "AA", "Aa", "aa"
-            $testDirs | ForEach-Object {
-                $dirPath = Join-Path $testdrive $_
-                New-Item -ItemType Directory -Path $dirPath
-            }
-            Push-Location $testdrive
-            $beforeTab = "cd a"
-            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches | Should -HaveCount 3
-
-            # order isn't guaranteed so we'll sort them first
-            $completions = $res.CompletionMatches | Sort-Object CompletionText -CaseSensitive
-            $expected = $testDirs | Sort-Object -CaseSensitive
-
-            for ($i = 0; $i -lt $expected.Count; $i++) {
-                $completions[$i].CompletionText | Should -BeExactly "./$($expected[$i])"
-            }
+            $completions | Should -BeExactly $expected
         }
     }
 

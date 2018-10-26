@@ -81,6 +81,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Collection<WildcardPattern> _excludeMatcher = null;
+        private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
+        {
+            MatchCasing = MatchCasing.CaseInsensitive,
+            AttributesToSkip = 0
+        };
 
         /// <summary>
         /// Converts all / in the path to \
@@ -1561,12 +1566,6 @@ namespace Microsoft.PowerShell.Commands
                 if (Filter != null &&
                     Filter.Length > 0)
                 {
-                    var enumOptions = new EnumerationOptions
-                    {
-                        MatchCasing = MatchCasing.CaseInsensitive,
-                        AttributesToSkip = 0
-                    };
-
                     if (returnContainers == ReturnContainers.ReturnAllContainers)
                     {
                         // Don't filter directories
@@ -1575,7 +1574,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // Filter the directories
-                        target.Add(directory.EnumerateDirectories(Filter, enumOptions));
+                        target.Add(directory.EnumerateDirectories(Filter, _enumerationOptions));
                     }
 
                     // Making sure to obey the StopProcessing.
@@ -1586,7 +1585,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Use the specified filter when retrieving the
                     // children
-                    target.Add(directory.EnumerateFiles(Filter, enumOptions));
+                    target.Add(directory.EnumerateFiles(Filter, _enumerationOptions));
                 }
                 else
                 {
