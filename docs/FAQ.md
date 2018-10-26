@@ -3,6 +3,7 @@
 ## Where can I learn PowerShell's syntax?
 
 [SS64.com](http://ss64.com/ps/syntax.html) is a good resource.
+[Microsoft Docs](https://docs.microsoft.com/en-us/powershell/scripting/powershell-scripting) is another excellent resource.
 
 ## What are the best practices and style?
 
