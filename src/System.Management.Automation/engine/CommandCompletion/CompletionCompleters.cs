@@ -4407,7 +4407,7 @@ namespace System.Management.Automation
         private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchCasing = MatchCasing.CaseInsensitive,
-            AttributesToSkip = 0
+            AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
         };
 
         [DllImport("Netapi32.dll", CharSet = CharSet.Unicode)]
