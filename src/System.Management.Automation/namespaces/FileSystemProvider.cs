@@ -1561,6 +1561,12 @@ namespace Microsoft.PowerShell.Commands
                 if (Filter != null &&
                     Filter.Length > 0)
                 {
+                    var enumOptions = new EnumerationOptions
+                    {
+                        MatchCasing = MatchCasing.CaseInsensitive,
+                        AttributesToSkip = 0
+                    };
+
                     if (returnContainers == ReturnContainers.ReturnAllContainers)
                     {
                         // Don't filter directories
@@ -1569,7 +1575,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // Filter the directories
-                        target.Add(directory.EnumerateDirectories(Filter, new System.IO.EnumerationOptions { MatchCasing = MatchCasing.CaseInsensitive }));
+                        target.Add(directory.EnumerateDirectories(Filter, enumOptions));
                     }
 
                     // Making sure to obey the StopProcessing.
@@ -1580,7 +1586,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Use the specified filter when retrieving the
                     // children
-                    target.Add(directory.EnumerateFiles(Filter, new System.IO.EnumerationOptions { MatchCasing = MatchCasing.CaseInsensitive }));
+                    target.Add(directory.EnumerateFiles(Filter, enumOptions));
                 }
                 else
                 {
