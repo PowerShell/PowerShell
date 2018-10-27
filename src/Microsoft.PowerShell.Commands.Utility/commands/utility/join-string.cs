@@ -23,6 +23,7 @@ namespace Microsoft.PowerShell.Commands.Utility
         /// <summary>A bigger default to not get re-allocations in common use cases.</summary>
         private const int DefaultOutputStringCapacity = 256;
         private readonly StringBuilder _outputBuilder = new StringBuilder(DefaultOutputStringCapacity);
+        private CultureInfo _cultureInfo = CultureInfo.InvariantCulture;
         private string _separator;
         private char _quoteChar;
         private bool _firstInputObject = true;
@@ -80,6 +81,12 @@ namespace Microsoft.PowerShell.Commands.Utility
         public string FormatString { get; set; }
 
         /// <summary>
+        /// Gets of sets if the current culture should be used with formatting instead of the invariant culture.
+        /// </summary>
+        [Parameter(ParameterSetName = "Format")]
+        public SwitchParameter UseCulture { get; set; }
+
+        /// <summary>
         /// Gets or sets the input object to join into text.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
@@ -90,6 +97,10 @@ namespace Microsoft.PowerShell.Commands.Utility
         {
             _quoteChar = SingleQuote ? '\'' : DoubleQuote ? '"' : char.MinValue;
             _outputBuilder.Append(OutputPrefix);
+            if (UseCulture)
+            {
+                _cultureInfo = CultureInfo.CurrentCulture;;
+            }
         }
 
         /// <inheritdoc />
@@ -123,7 +134,7 @@ namespace Microsoft.PowerShell.Commands.Utility
                 }
                 else
                 {
-                    _outputBuilder.AppendFormat(CultureInfo.CurrentCulture, FormatString, stringValue);
+                    _outputBuilder.AppendFormat(_cultureInfo, FormatString, stringValue);
                 }
             }
         }
