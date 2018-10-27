@@ -256,7 +256,7 @@ Describe "TabCompletion" -Tags CI {
         }
 
         BeforeEach {
-            New-Item -ItemType Directory -Path $caseTestPath
+            New-Item -ItemType Directory -Path $caseTestPath > $null
         }
 
         AfterAll {
