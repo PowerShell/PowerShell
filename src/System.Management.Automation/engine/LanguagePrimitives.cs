@@ -3243,7 +3243,7 @@ namespace System.Management.Automation
             try
             {
                 typeConversion.WriteLine("Converting object to string.");
-                return PSObject.ToStringParser(ecFromTLS, valueToConvert);
+                return PSObject.ToStringParser(ecFromTLS, valueToConvert, formatProvider);
             }
             catch (ExtendedTypeSystemException e)
             {

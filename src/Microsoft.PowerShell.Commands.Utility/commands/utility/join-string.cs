@@ -81,9 +81,9 @@ namespace Microsoft.PowerShell.Commands.Utility
         public string FormatString { get; set; }
 
         /// <summary>
-        /// Gets of sets if the current culture should be used with formatting instead of the invariant culture.
+        /// Gets or sets if the current culture should be used with formatting instead of the invariant culture.
         /// </summary>
-        [Parameter(ParameterSetName = "Format")]
+        [Parameter]
         public SwitchParameter UseCulture { get; set; }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             _outputBuilder.Append(OutputPrefix);
             if (UseCulture)
             {
-                _cultureInfo = CultureInfo.CurrentCulture;;
+                _cultureInfo = CultureInfo.CurrentCulture;
             }
         }
 
@@ -111,7 +111,12 @@ namespace Microsoft.PowerShell.Commands.Utility
                 var inputValue = Property == null
                                     ? InputObject
                                     : Property.GetValues(InputObject, false, true).FirstOrDefault()?.Result;
-                var stringValue = LanguagePrimitives.ConvertTo<string>(inputValue);
+
+                // conversion to string always succeeds.
+                if (!LanguagePrimitives.TryConvertTo<string>(inputValue, _cultureInfo, out var stringValue))
+                {
+                    throw new PSInvalidCastException("InvalidCastFromAnyTypeToString", ExtendedTypeSystem.InvalidCastCannotRetrieveString, null);
+                }
 
                 if (_firstInputObject)
                 {
