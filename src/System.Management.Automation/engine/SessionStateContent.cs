@@ -3,6 +3,7 @@
 
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
+using System.IO;
 using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -848,6 +849,10 @@ namespace System.Management.Automation
 
             try
             {
+                if (Directory.Exists(path))
+                {
+                    throw PSTraceSource.NewNotSupportedException(SessionStateStrings.ClearDirectoryContent, path);
+                }
                 providerInstance.ClearContent(path, context);
             }
             catch (NotSupportedException)
@@ -1025,4 +1030,3 @@ namespace System.Management.Automation
 }
 
 #pragma warning restore 56500
-
