@@ -6601,9 +6601,7 @@ namespace Microsoft.PowerShell.Commands
             if (Directory.Exists(path))
             {
                 string errorMsg = StringUtil.Format(SessionStateStrings.ClearDirectoryContent, path);
-                var errorRecord = new ErrorRecord(new NotSupportedException(errorMsg), "ClearDirectoryContent",
-                        ErrorCategory.InvalidOperation, path);
-                WriteError(errorRecord);
+                WriteError(new ErrorRecord(new NotSupportedException(errorMsg), "ClearDirectoryContent",ErrorCategory.InvalidOperation, path));
                 return;
             }
 
