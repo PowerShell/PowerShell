@@ -6598,6 +6598,15 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("path");
             }
 
+            if (Directory.Exists(path))
+            {
+                string errorMsg = StringUtil.Format(SessionStateStrings.ClearDirectoryContent, path);
+                var errorRecord = new ErrorRecord(new NotSupportedException(errorMsg), "ClearDirectoryContent",
+                        ErrorCategory.InvalidOperation, path);
+                WriteError(errorRecord);
+                return;
+            }
+
             path = NormalizePath(path);
 
             try
