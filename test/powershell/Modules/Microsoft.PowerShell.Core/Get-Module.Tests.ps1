@@ -13,8 +13,8 @@ Describe "Get-Module" -Tags "CI" {
 
         New-ModuleManifest -Path "$testdrive\Modules\Foo\1.1\Foo.psd1" -ModuleVersion 1.1
         New-ModuleManifest -Path "$testdrive\Modules\Foo\2.0\Foo.psd1" -ModuleVersion 2.0
-        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1"
-        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1" -CompatiblePSEditions Desktop
+        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1" -CompatiblePSEditions Core
 
         New-Item -ItemType File -Path "$testdrive\Modules\Foo\1.1\Foo.psm1" > $null
         New-Item -ItemType File -Path "$testdrive\Modules\Foo\2.0\Foo.psm1" > $null
@@ -98,5 +98,37 @@ Describe "Get-Module" -Tags "CI" {
         $modules = $modules | Sort-Object -Property Name, Path
         $modules.Name -join "," | Should -BeExactly "Bar,Foo,Foo,Zoo,Zoo"
         $modules[3].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Too\Zoo.psm1").Path
+    }
+
+    It "Get-Module -FullyQualifiedName <FullyQualifiedName> -ListAvailable" {
+        $moduleSpecification  = @{ModuleName = "Foo"; ModuleVersion = "2.0"}
+        $modules = Get-Module -FullyQualifiedName $moduleSpecification -ListAvailable
+        $modules | Should -HaveCount 1
+        $modules.Name | Should -BeExactly "Foo"
+        $modules.Version | Should -Be "2.0"
+    }
+
+    It "Get-Module -PSEdition <PSEdition> -ListAvailable" {
+        $modules = Get-Module -PSEdition 'Desktop' -ListAvailable
+        $modules | Should -HaveCount 1
+        $modules.Name | Should -BeExactly "Bar"
+
+        $modules = Get-Module -PSEdition 'Core' -ListAvailable
+        $modules | Should -HaveCount 1
+        $modules.Name | Should -BeExactly "Zoo"
+    }
+
+    It "Get-Module <Name> -Refresh -ListAvailable" {
+        $modules = Get-Module -Name 'Zoo' -ListAvailable
+        $modules | Should -HaveCount 1
+        $modules.Name | Should -BeExactly "Zoo"
+        $modules.ExportedFunctions.Count | Should -Be 0 -Because 'No exports were defined'
+
+        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1" -CompatiblePSEditions Core -FunctionsToExport 'Test-ZooFunction'
+
+        $modules = Get-Module -Name 'Zoo' -ListAvailable -Refresh
+        $modules | Should -HaveCount 1
+        $modules.Name | Should -BeExactly "Zoo"
+        $modules.ExportedFunctions.Count | Should -Be 1 -Because 'We added a new function to export'
     }
 }
