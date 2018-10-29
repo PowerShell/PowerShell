@@ -53,7 +53,6 @@ phases:
 
   # Uploads any packages as an artifact
   - powershell: |
-      Write-Host "PWD == $pwd"
       Get-ChildItem -Path *.pkg, *.tar.gz, TestPackage.zip -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
         Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts]$_"
       }
