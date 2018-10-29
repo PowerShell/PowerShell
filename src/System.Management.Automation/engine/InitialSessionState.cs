@@ -4235,7 +4235,9 @@ param(
     else
     {
         # Respect PAGER, use more on Windows, and use less on Linux
-        $moreCommand,$moreArgs = $env:PAGER -split '\s+'
+        $path = split-path $env:PAGER
+        $file,$moreArgs = split-path $env:PAGER -leaf | % {$_ -split '\s+'}
+        $moreCommand = join-path $path $file
         if ($moreCommand) {
             $help | & $moreCommand $moreArgs
         } elseif ($IsWindows) {
