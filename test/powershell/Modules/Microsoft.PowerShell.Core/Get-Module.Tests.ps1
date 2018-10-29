@@ -1,29 +1,103 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+function New-GmoTestModule
+{
+    param(
+        [Parameter()]
+        [string]
+        $Name,
+
+        [Parameter()]
+        [hashtable]
+        $Structure,
+
+        [Parameter()]
+        [string]
+        $ModuleDirPath
+    )
+
+    $modRootPath = Join-Path $ModuleDirPath $Name
+
+    $null = New-Item -Path $modRootPAth -ItemType Directory
+
+    $null = New-TestModuleStructure -Structure $Structure -Dir $modRootPath
+}
+
+function New-TestModuleStructure
+{
+    param(
+        [Parameter()]
+        [hashtable]
+        $Structure,
+
+        [Parameter()]
+        [string]
+        $Dir
+    )
+
+    foreach ($item in $Structure.Keys)
+    {
+        $itemPath = Join-Path $Dir $item
+
+        if ($item.EndsWith('.psd1'))
+        {
+            $version = (Split-Path -Leaf $Dir) -as [Version]
+
+            if ($version)
+            {
+                $null = New-ModuleManifest -Path $itemPath -ModuleVersion $version
+            }
+            else
+            {
+                $null = New-ModuleManifest -Path $itemPath
+            }
+
+            continue
+        }
+
+        if ($Structure[$item] -is [hashtable])
+        {
+            $null = New-Item -Path $itemPath -ItemType Directory
+            $null = New-TestModuleStructure -Structure $Structure[$item] -Dir $itemPath
+            continue
+        }
+
+        if ($item.EndsWith('.psm1'))
+        {
+            if ($Structure[$item])
+            {
+                $null = New-Item -ItemType File -Path $itemPath -Value $Structure[$item]
+            }
+            else
+            {
+                $null = New-Item -ItemType File -Path $itemPath
+            }
+
+            continue
+        }
+    }
+}
+
+$script:Modules = @(
+    @{ Name = 'Foo'; Structure = @{ '1.1' = @{ 'Foo.psd1' = $null; 'Foo.psm1' = $null }; '2.0' = @{ 'Foo.psd1' = $null; 'Foo.psm1' = $null } } }
+    @{ Name = 'Bar'; Structure = @{ 'Download' = @{ 'Download.psm1' = $null }; 'Bar.psd1' = $null; 'Bar.psm1' = $null } }
+    @{ Name = 'Zoo'; Structure = @{ 'Zoo.psd1' = $null; 'Zoo.psm1' = $null; 'Too' = @{ 'Zoo.psm1' = $null } } }
+)
+
 Describe "Get-Module" -Tags "CI" {
 
     BeforeAll {
         $originalPSModulePath = $env:PSModulePath
 
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\1.1" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Foo\2.0" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Bar\Download" -Force > $null
-        New-Item -ItemType Directory -Path "$testdrive\Modules\Zoo\Too" -Force > $null
+        $testModulePath = Join-Path $testdrive "Modules"
 
-        New-ModuleManifest -Path "$testdrive\Modules\Foo\1.1\Foo.psd1" -ModuleVersion 1.1
-        New-ModuleManifest -Path "$testdrive\Modules\Foo\2.0\Foo.psd1" -ModuleVersion 2.0
-        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1"
-        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1"
+        foreach ($mod in $script:Modules)
+        {
+            New-GmoTestModule @mod -ModuleDirPath $testModulePath
+        }
 
-        New-Item -ItemType File -Path "$testdrive\Modules\Foo\1.1\Foo.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Foo\2.0\Foo.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Bar\Download\Download.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Zoo.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Too\Zoo.psm1" > $null
-
-        $env:PSModulePath = Join-Path $testdrive "Modules"
+        $env:PSModulePath = $testModulePath
     }
 
     AfterAll {
