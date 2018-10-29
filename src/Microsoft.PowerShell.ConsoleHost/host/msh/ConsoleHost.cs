@@ -148,9 +148,6 @@ namespace Microsoft.PowerShell
 
             try
             {
-                string[] tempArgs = new string[args.GetLength(0)];
-                args.CopyTo(tempArgs, 0);
-
                 // We might be able to ignore console host creation error if we are running in
                 // server mode, which does not require a console.
                 HostException hostException = null;
@@ -163,16 +160,11 @@ namespace Microsoft.PowerShell
                     hostException = e;
                 }
 
-                if (args == null)
-                {
-                    args = new string[0];
-                }
-
                 s_cpp = new CommandLineParameterParser(
                     (s_theConsoleHost != null) ? s_theConsoleHost.UI : (new NullHostUserInterface()),
                     bannerText, helpText);
 
-                s_cpp.Parse(tempArgs);
+                s_cpp.Parse(args);
 
 #if UNIX
                 // On Unix, logging has to be deferred until after command-line parsing
