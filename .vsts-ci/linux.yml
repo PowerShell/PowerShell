@@ -78,7 +78,7 @@ phases:
 
   # Uploads any packages as an artifact
   - powershell: |
-      Get-ChildItem -Path *.rpm, *.deb, *.tar.gz, *.zip -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
+      Get-ChildItem -Path *.rpm, *.deb, *.tar.gz, TestPackage.zip -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
         Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts]$_"
       }
     displayName: Publish Artifacts

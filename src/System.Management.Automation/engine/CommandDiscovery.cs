@@ -1742,7 +1742,7 @@ namespace System.Management.Automation
             {
                 string path = this[index];
                 if (!String.IsNullOrEmpty(path) &&
-                    path.StartsWith(".", StringComparison.CurrentCulture))
+                    path.StartsWith(".", StringComparison.Ordinal))
                 {
                     result.Add(index);
                 }

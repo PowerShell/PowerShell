@@ -222,6 +222,7 @@ Describe "TabCompletion" -Tags CI {
             $oneSubDir = Join-Path -Path $tempDir -ChildPath "oneSubDir"
             $oneSubDirPrime = Join-Path -Path $tempDir -ChildPath "prime"
             $twoSubDir = Join-Path -Path $oneSubDir -ChildPath "twoSubDir"
+            $caseTestPath = Join-Path $testdrive "CaseTest"
 
             New-Item -Path $tempDir -ItemType Directory -Force > $null
             New-Item -Path $oneSubDir -ItemType Directory -Force > $null
@@ -254,12 +255,17 @@ Describe "TabCompletion" -Tags CI {
             }
         }
 
+        BeforeEach {
+            New-Item -ItemType Directory -Path $caseTestPath > $null
+        }
+
         AfterAll {
             Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
         }
 
         AfterEach {
             Pop-Location
+            Remove-Item -Path $caseTestPath -Recurse -Force -ErrorAction SilentlyContinue
         }
 
         It "Input '<inputStr>' should successfully complete" -TestCases $testCases {
@@ -317,6 +323,48 @@ Describe "TabCompletion" -Tags CI {
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
+        }
+
+        It "Test case insensitive <type> path" -Skip:(!$IsLinux) -TestCases @(
+            @{ type = "File"     ; beforeTab = "Get-Content f" },
+            @{ type = "Directory"; beforeTab = "cd f" }
+        ) {
+            param ($type, $beforeTab)
+
+            $testItems = "foo", "Foo", "fOO"
+            $testItems | ForEach-Object {
+                $itemPath = Join-Path $caseTestPath $_
+                New-Item -ItemType $type -Path $itemPath
+            }
+            Push-Location $caseTestPath
+            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches | Should -HaveCount $testItems.Count
+
+            # order isn't guaranteed so we'll sort them first
+            $completions = ($res.CompletionMatches | Sort-Object CompletionText -CaseSensitive).CompletionText -join ":"
+            $expected = ($testItems | Sort-Object -CaseSensitive | ForEach-Object { "./$_" }) -join ":"
+
+            $completions | Should -BeExactly $expected
+        }
+
+        It "Test case insensitive file and folder path completing for <type>" -Skip:(!$IsLinux) -TestCases @(
+            @{ type = "File"     ; beforeTab = "Get-Content f"; expected = "foo","Foo" },  # Get-Content passes thru to provider
+            @{ type = "Directory"; beforeTab = "cd f"         ; expected = "Foo" }  # Set-Location is aware of Files vs Folders
+        ) {
+            param ($beforeTab, $expected)
+
+            $filePath = Join-Path $caseTestPath "foo"
+            $folderPath = Join-Path $caseTestPath "Foo"
+            New-Item -ItemType File -Path $filePath
+            New-Item -ItemType Directory -Path $folderPath
+            Push-Location $caseTestPath
+            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches | Should -HaveCount $expected.Count
+
+            # order isn't guaranteed so we'll sort them first
+            $completions = ($res.CompletionMatches | Sort-Object CompletionText -CaseSensitive).CompletionText -join ":"
+            $expected = ($expected | Sort-Object -CaseSensitive | ForEach-Object { "./$_" }) -join ":"
+
         }
     }
 
@@ -643,6 +691,13 @@ dir -Recurse `
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "-LiteralPath"
+        }
+
+        It "Test member completion of a static method invocation" {
+            $inputStr = '[powershell]::Create().'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 31
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "Commands"
         }
     }
 

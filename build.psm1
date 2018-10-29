@@ -2997,9 +2997,18 @@ function New-TestPackage
         Write-Verbose -Message "Creating destination folder: $Destination"
     }
 
-    $packageRoot = Join-Path $env:TEMP ('TestPackage-' + (new-guid))
+    $rootFolder = $env:TEMP
+
+    if (-not $rootFolder -and $env:TF_BUILD) {
+        $rootFolder = $env:AGENT_WORKFOLDER
+    }
+
+    Write-Verbose -Verbose "RootFolder: $rootFolder"
+
+    $packageRoot = Join-Path $rootFolder ('TestPackage-' + (new-guid))
     $null = New-Item -ItemType Directory -Path $packageRoot -Force
     $packagePath = Join-Path $Destination "TestPackage.zip"
+    Write-Verbose -Verbose "PackagePath: $packagePath"
 
     # Build test tools so they are placed in appropriate folders under 'test' then copy to package root.
     $null = Publish-PSTestTools

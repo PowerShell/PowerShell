@@ -390,7 +390,7 @@ namespace System.Management.Automation.Provider
                     }
                     else
                     {
-                        if (child.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.CurrentCulture))
+                        if (child.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
                         {
                             if (parent.Length == 0)
                             {

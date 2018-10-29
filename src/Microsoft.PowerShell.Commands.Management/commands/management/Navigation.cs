@@ -801,7 +801,7 @@ namespace Microsoft.PowerShell.Commands
                             Path = SessionState.Internal.GetSingleProvider(Commands.FileSystemProvider.ProviderName).Home;
                         }
 
-                        result = SessionState.Path.SetLocation(Path, CmdletProviderContext);
+                        result = SessionState.Path.SetLocation(Path, CmdletProviderContext, ParameterSetName == literalPathSet);
                     }
                     catch (PSNotSupportedException notSupported)
                     {

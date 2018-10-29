@@ -567,6 +567,25 @@ foo
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
             $output | Should -Not -BeNullOrEmpty
         }
+
+        It "-WorkingDirectory should be processed before profiles" {
+
+            $currentProfile = Get-Content $PROFILE
+            @"
+                (Get-Location).Path
+                Set-Location $testdrive
+"@ > $PROFILE
+
+            try {
+                $out = pwsh -workingdirectory ~ -c '(Get-Location).Path'
+                $out | Should -HaveCount 2
+                $out[0] | Should -BeExactly (Get-Item ~).FullName
+                $out[1] | Should -BeExactly "$testdrive"
+            }
+            finally {
+                Set-Content $PROFILE -Value $currentProfile
+            }
+        }
     }
 }
 

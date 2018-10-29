@@ -603,7 +603,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("drive");
             }
 
-            return String.Compare(Name, drive.Name, StringComparison.CurrentCultureIgnoreCase);
+            return String.Compare(Name, drive.Name, StringComparison.OrdinalIgnoreCase);
 
 #pragma warning restore 56506
         }

@@ -1050,7 +1050,7 @@ namespace Microsoft.PowerShell.Commands
                                                 {
                                                     return string.Compare(s,
                                                                           name,
-                                                                          StringComparison.CurrentCultureIgnoreCase) == 0;
+                                                                          StringComparison.OrdinalIgnoreCase) == 0;
                                                 };
                     var propertyName = availableProperties.Find(pred);
 
