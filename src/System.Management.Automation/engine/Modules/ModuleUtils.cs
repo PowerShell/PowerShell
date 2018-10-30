@@ -25,6 +25,16 @@ namespace System.Management.Automation.Internal
                                         new System.IO.EnumerationOptions() { AttributesToSkip = 0, BufferSize = 16384 };
 
         /// <summary>
+        /// Whitelist for modules whose names collide with culture names, so that they aren't skipped
+        /// by IsPossibleModuleDirectory(). While this is private, having a static HashSet means that
+        /// further modules could be added using reflection in case a workaround is needed.
+        /// </summary>
+        private readonly static HashSet<string> s_moduleNameCultureWhitelist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Az"
+        };
+
+        /// <summary>
         /// Check if a directory could be a module folder.
         /// </summary>
         internal static bool IsPossibleModuleDirectory(string dir)
@@ -45,9 +55,7 @@ namespace System.Management.Automation.Internal
 
             dir = Path.GetFileName(dir);
             // Use some simple pattern matching to avoid the call into GetCultureInfo when we know it will fail (and throw).
-            if ((dir.Length == 2 && char.IsLetter(dir[0]) && char.IsLetter(dir[1]))
-                ||
-                (dir.Length == 5 && char.IsLetter(dir[0]) && char.IsLetter(dir[1]) && (dir[2] == '-') && char.IsLetter(dir[3]) && char.IsLetter(dir[4])))
+            if (CouldBeCultureName(dir) && !s_moduleNameCultureWhitelist.Contains(dir))
             {
                 try
                 {
@@ -550,6 +558,33 @@ namespace System.Management.Automation.Internal
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Check if a string could represent a culture/language/locale name code that could
+        /// be passed to the CultureInfo constructor.
+        /// </summary>
+        /// <param name="s">The string to check.</param>
+        /// <returns>True if the string could represent a culture code, false otherwise.</returns>
+        private static bool CouldBeCultureName(string s)
+        {
+            // Look for e.g. "en" or "fr"
+            if (s.Length == 2)
+            {
+                return char.IsLetter(s[0]) && char.IsLetter(s[1]);
+            }
+
+            // Look for "en-US" or "fr-FR"
+            if (s.Length == 5)
+            {
+                return char.IsLetter(s[0])
+                    && char.IsLetter(s[1])
+                    && s[2] == '-'
+                    && char.IsLetter(s[3])
+                    && char.IsLetter(s[4]);
+            }
+
+            return false;
         }
     }
 }
