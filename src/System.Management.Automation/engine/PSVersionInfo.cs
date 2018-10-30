@@ -15,7 +15,8 @@ namespace System.Management.Automation
     /// <summary>
     /// <para>
     /// Encapsulates $PSVersionTable.
-    /// </para><para>
+    /// </para>
+    /// <para>
     /// Provides a simple interface to retrieve details from the PowerShell version table:
     /// <code>
     ///    PSVersionInfo.PSVersion;
