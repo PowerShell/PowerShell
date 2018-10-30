@@ -203,6 +203,8 @@ function Start-PSBuild {
         [switch]$StopDevPowerShell,
 
         [switch]$Restore,
+        # Accept a path to the output directory
+        # When specified, --output <path> will be passed to dotnet
         [string]$Output,
         [switch]$ResGen,
         [switch]$TypeGen,
@@ -323,11 +325,8 @@ Fix steps:
 
     # setup arguments
     $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true")
-    if ($Output) {
-        $Arguments += "--output", $Output
-    }
-    elseif ($SMAOnly) {
-        $Arguments += "--output", (Split-Path $script:Options.Output)
+    if ($Output -or $SMAOnly) {
+        $Arguments += "--output", (Split-Path $Options.Output)
     }
 
     $Arguments += "--configuration", $Options.Configuration
@@ -605,6 +604,10 @@ function New-PSOptions {
 
         [switch]$CrossGen,
 
+        # Accept a path to the output directory
+        # If not null or empty, name of the executable will be appended to
+        # this path, otherwise, to the default path, and then the full path
+        # of the output executable will be assigned to the Output property
         [string]$Output,
 
         [switch]$SMAOnly,
@@ -683,6 +686,8 @@ function New-PSOptions {
         } else {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
         }
+    } else {
+        $Output = [IO.Path]::Combine($Output, $Executable)
     }
 
     if ($SMAOnly)
@@ -3003,9 +3008,12 @@ function New-TestPackage
         $rootFolder = $env:AGENT_WORKFOLDER
     }
 
+    Write-Verbose -Verbose "RootFolder: $rootFolder"
+
     $packageRoot = Join-Path $rootFolder ('TestPackage-' + (new-guid))
     $null = New-Item -ItemType Directory -Path $packageRoot -Force
     $packagePath = Join-Path $Destination "TestPackage.zip"
+    Write-Verbose -Verbose "PackagePath: $packagePath"
 
     # Build test tools so they are placed in appropriate folders under 'test' then copy to package root.
     $null = Publish-PSTestTools

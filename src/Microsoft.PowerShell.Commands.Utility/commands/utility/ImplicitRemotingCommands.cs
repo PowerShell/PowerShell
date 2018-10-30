@@ -1985,6 +1985,7 @@ namespace Microsoft.PowerShell.Commands
 
     PrivateData = @{{
         ImplicitRemoting = $true
+        ImplicitSessionId = '{4}'
     }}
 }}
         ";
@@ -2003,7 +2004,8 @@ namespace Microsoft.PowerShell.Commands
                 CodeGeneration.EscapeSingleQuotedStringContent(_moduleGuid.ToString()),
                 CodeGeneration.EscapeSingleQuotedStringContent(StringUtil.Format(ImplicitRemotingStrings.ProxyModuleDescription, this.GetConnectionString())),
                 CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(psm1fileName)),
-                CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(formatPs1xmlFileName)));
+                CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(formatPs1xmlFileName)),
+                this._remoteRunspaceInfo.InstanceId);
         }
 
         #endregion
