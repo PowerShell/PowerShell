@@ -388,7 +388,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 PSModuleInfo alreadyLoadedModule = null;
                 Context.Modules.ModuleTable.TryGetValue(module.Path, out alreadyLoadedModule);
-                if (!BaseForce && IsModuleAlreadyLoaded(alreadyLoadedModule))
+                if (!BaseForce && DoesAlreadyLoadedModuleSatisfyConstraints(alreadyLoadedModule))
                 {
                     AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, alreadyLoadedModule);
 

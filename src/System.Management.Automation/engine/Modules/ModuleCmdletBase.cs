@@ -1583,7 +1583,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (importingModule && IsModuleAlreadyLoaded(loadedModule))
+                if (importingModule && DoesAlreadyLoadedModuleSatisfyConstraints(loadedModule))
                 {
                     if (!BaseForce)
                     {
@@ -4993,7 +4993,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="alreadyLoadedModule">The already loaded module that matched the name of the module to load.</param>
         /// <returns>True if the pre-loaded module matches all GUID and version constraints provided, false otherwise.</returns>
-        internal bool IsModuleAlreadyLoaded(PSModuleInfo alreadyLoadedModule)
+        internal bool DoesAlreadyLoadedModuleSatisfyConstraints(PSModuleInfo alreadyLoadedModule)
         {
             return ModuleIntrinsics.IsModuleMatchingConstraints(
                 alreadyLoadedModule,
@@ -5017,7 +5017,7 @@ namespace Microsoft.PowerShell.Commands
             PSModuleInfo alreadyLoadedModule;
             if (this.Context.Modules.ModuleTable.TryGetValue(modulePath, out alreadyLoadedModule))
             {
-                if (this.IsModuleAlreadyLoaded(alreadyLoadedModule))
+                if (this.DoesAlreadyLoadedModuleSatisfyConstraints(alreadyLoadedModule))
                 {
                     if (this.BaseForce) // remove the previously imported module + return null (null = please proceed with regular import)
                     {
@@ -5155,7 +5155,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If the module has already been loaded, just emit it and continue...
                 Context.Modules.ModuleTable.TryGetValue(fileName, out module);
-                if (!BaseForce && importingModule && IsModuleAlreadyLoaded(module))
+                if (!BaseForce && importingModule && DoesAlreadyLoadedModuleSatisfyConstraints(module))
                 {
                     moduleFileFound = true;
                     module = Context.Modules.ModuleTable[fileName];
@@ -5200,7 +5200,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     moduleFileFound = true;
                     // Win8: 325243 - Added the version check so that we do not unload modules with the same name but different version
-                    if (BaseForce && IsModuleAlreadyLoaded(module))
+                    if (BaseForce && DoesAlreadyLoadedModuleSatisfyConstraints(module))
                     {
                         RemoveModule(module);
                     }
