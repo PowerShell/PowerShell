@@ -85,7 +85,7 @@ Function IsPathInRegistryPath([string] $Path) {
     $InstalledPaths = @()
     #Possible gotcha: don't use Get-ItemPropertyValue (see https://github.com/PowerShell/PowerShell/issues/5906)
     #Possible gotcha: coerce the (possibly null) property to string before calling ExpandEnvironmentVariables
-    [string] $HKCURegKeyPath = Get-ItemProperty -Path 'HKCU:\Environment' -Name 'PATH' -ErrorAction SilentlyContinue
+    [string] $HKCURegKeyPath = [System.Environment]::GetEnvironmentVariable('PATH','User')
     $InstalledPaths += @([System.Environment]::ExpandEnvironmentVariables(($HKCURegKeyPath)).Split(';'))
     [string] $HKLMRegKeyPath = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -Name 'PATH' -ErrorAction SilentlyContinue
     $InstalledPaths += @([System.Environment]::ExpandEnvironmentVariables(($HKLMRegKeyPath)).Split(';'))
