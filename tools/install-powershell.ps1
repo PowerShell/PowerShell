@@ -87,7 +87,7 @@ Function IsPathInRegistryPath([string] $Path) {
     #Possible gotcha: coerce the (possibly null) property to string before calling ExpandEnvironmentVariables
     [string] $HKCURegKeyPath = [System.Environment]::GetEnvironmentVariable('PATH','User')
     $InstalledPaths += @([System.Environment]::ExpandEnvironmentVariables(($HKCURegKeyPath)).Split(';'))
-    [string] $HKLMRegKeyPath = Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -Name 'PATH' -ErrorAction SilentlyContinue
+    [string] $HKLMRegKeyPath = [System.Environment]::GetEnvironmentVariable('Path','Machine')
     $InstalledPaths += @([System.Environment]::ExpandEnvironmentVariables(($HKLMRegKeyPath)).Split(';'))
     #Remove ending DirectorySeparatorChar in all items of array for comparison purposes
     $InstalledPaths = $InstalledPaths.ForEach( { $_.Replace('\\$', '') })
