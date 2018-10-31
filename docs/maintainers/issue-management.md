@@ -95,7 +95,6 @@ The following labels are used on PRs:
 * `Compliance` : Issues with the compliance label are required to be fixed either in the long term or short term for
   Microsoft to continue to sign and release packages from the project as official Microsoft packages.
   The time frame in which it needs to be fixed should be identified in the issue.
-* `Documentation Needed` : The PR has changes that require a documentation change or new documentation added to [PowerShell-Docs](http://github.com/powershell/powershell-docs)
 * `Porting` : An issue that affects a feature not yet ported to other platforms.
 * `Up-for-Grabs` : We've acknowledged the issue but have no immediate plans to address it.
   If you're looking for a way to contribute, these issues can be a good place to start.
