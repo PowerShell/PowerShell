@@ -583,7 +583,13 @@ foo
 
         It "-WorkingDirectory should be processed before profiles" {
 
-            $currentProfile = Get-Content $PROFILE
+            if (Test-Path $PROFILE) {
+                $currentProfile = Get-Content $PROFILE
+            }
+            else {
+                New-Item -ItemType File -Path $PROFILE -Force
+            }
+
             @"
                 (Get-Location).Path
                 Set-Location $testdrive
@@ -596,7 +602,12 @@ foo
                 $out[1] | Should -BeExactly "$testdrive"
             }
             finally {
-                Set-Content $PROFILE -Value $currentProfile
+                if ($currentProfile) {
+                    Set-Content $PROFILE -Value $currentProfile
+                }
+                else {
+                    Remove-Item $PROFILE
+                }
             }
         }
     }
