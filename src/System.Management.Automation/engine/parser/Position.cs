@@ -4,6 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
+using System.Linq;
 #if !STANDALONE
 using System.Management.Automation.Internal;
 #endif
@@ -250,16 +251,23 @@ namespace System.Management.Automation.Language
         /// </summary>
         internal static string BriefMessage(IScriptPosition position)
         {
-            StringBuilder message = new StringBuilder(position.Line);
-            if (position.ColumnNumber > message.Length)
+            int lineNumber = position.LineNumber;
+            var lines = position.GetFullScript().Split(Environment.NewLine).Skip(lineNumber-1).ToArray();
+            StringBuilder message = new StringBuilder();
+            foreach (var line in lines)
             {
-                message.Append(" <<<< ");
+                StringBuilder lineEdit = new StringBuilder(line);
+                if (position.ColumnNumber > lineEdit.Length)
+                {
+                    lineEdit.Append(" <<<< ");
+                }
+                else
+                {
+                    lineEdit.Insert(position.ColumnNumber - 1, " >>>> ");
+                }
+                message.AppendLine(StringUtil.Format(ParserStrings.TraceScriptLineMessage, lineNumber++, lineEdit.ToString()));
             }
-            else
-            {
-                message.Insert(position.ColumnNumber - 1, " >>>> ");
-            }
-            return StringUtil.Format(ParserStrings.TraceScriptLineMessage, position.LineNumber, message.ToString());
+            return message.ToString();
         }
 
         internal static IScriptExtent NewScriptExtent(IScriptExtent start, IScriptExtent end)
