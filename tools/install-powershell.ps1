@@ -114,7 +114,7 @@ Function Set-Path([Microsoft.Win32.RegistryKey] $Key, [string] $Path) {
     $Key.SetValue("PATH", $NewPathValue, $PathValueKind)
 }
 
-Function AddPathToPathWinEnv([string]$Path) {
+Function Update-Path([string]$Path) {
     if (-not (IsPathInRegistryPath($Path))) {
         #Do not save user paths in machine wide registry path
         #USERPROFILE is not a subpath of APPDATA or LOCALAPPDATA for roaming profiles
