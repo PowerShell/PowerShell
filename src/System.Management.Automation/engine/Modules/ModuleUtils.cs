@@ -29,7 +29,7 @@ namespace System.Management.Automation.Internal
         /// by IsPossibleModuleDirectory(). While this is private, having a static HashSet means that
         /// further modules could be added using reflection in case a workaround is needed.
         /// </summary>
-        private readonly static HashSet<string> s_moduleNameCultureWhitelist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> s_moduleNameCultureWhitelist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "Az"
         };
