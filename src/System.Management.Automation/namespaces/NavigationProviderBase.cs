@@ -345,7 +345,7 @@ namespace System.Management.Automation.Provider
 
                     // Append the default path separator
 
-                    if (parent.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                    if (parent.EndsWith(StringLiterals.DefaultPathSeparator))
                     {
                         result = parent;
                     }
@@ -377,9 +377,9 @@ namespace System.Management.Automation.Provider
 
                     StringBuilder builder = new StringBuilder(parent, parent.Length + child.Length + 1);
 
-                    if (parent.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                    if (parent.EndsWith(StringLiterals.DefaultPathSeparator))
                     {
-                        if (child.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                        if (child.StartsWith(StringLiterals.DefaultPathSeparator))
                         {
                             builder.Append(child, 1, child.Length - 1);
                         }
@@ -390,7 +390,7 @@ namespace System.Management.Automation.Provider
                     }
                     else
                     {
-                        if (child.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                        if (child.StartsWith(StringLiterals.DefaultPathSeparator))
                         {
                             if (parent.Length == 0)
                             {
@@ -598,7 +598,7 @@ namespace System.Management.Automation.Provider
                 string originalPath = path;
                 Stack<string> tokenizedPathStack = null;
 
-                if (path.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase))
+                if (path.EndsWith(StringLiterals.DefaultPathSeparator))
                 {
                     path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
                     originalPathHadTrailingSlash = true;
@@ -608,7 +608,7 @@ namespace System.Management.Automation.Provider
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
                 if (String.Equals(normalizedPath, normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
-                    (!originalPath.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
+                    (!originalPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                 {
                     string childName = GetChildName(path);
                     result = MakePath("..", childName);
@@ -648,7 +648,7 @@ namespace System.Management.Automation.Provider
                     if (!String.IsNullOrEmpty(commonBase))
                     {
                         if (String.Equals(normalizedPath, commonBase, StringComparison.OrdinalIgnoreCase) &&
-                            (!normalizedPath.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
+                            (!normalizedPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                         {
                             string childName = GetChildName(path);
                             result = MakePath("..", result);
