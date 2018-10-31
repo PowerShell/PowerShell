@@ -97,7 +97,7 @@ Function IsPathInRegistryPath([string] $Path) {
     return $False
 }
 
-Function SavePathInRegistryKey([Microsoft.Win32.RegistryKey] $Key, [string] $Path) {
+Function Set-Path([Microsoft.Win32.RegistryKey] $Key, [string] $Path) {
     [string] $CurrentUnexpandedValue = $Key.GetValue('PATH', '', [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
     #Keep current PathValueKind if possible/appropriate
     try {
