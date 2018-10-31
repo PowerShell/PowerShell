@@ -50,13 +50,13 @@ Describe "Test-Path" -Tags "CI" {
     It 'Should write a non-terminating error when given a null path' {
         # This ensures the error is non-terminating; a terminating error would fail the first test
         { Test-Path -Path $null -ErrorAction SilentlyContinue } | Should -Not -Throw
-        { Test-Path -Path $null -ErrorAction Stop }             | Should -Throw -ErrorId 'NullPathNotPermitted'
+        { Test-Path -Path $null -ErrorAction Stop }             | Should -Throw -ErrorId 'NullPath,Microsoft.PowerShell.Commands.TestPathCommand'
     }
 
     It 'Should write a non-terminating error when given an array of null paths' {
         # This ensures the error is non-terminating; a terminating error would fail the first test
         { Test-Path -Path $null, $null -ErrorAction SilentlyContinue } | Should -Not -Throw
-        { Test-Path -Path $null, $null -ErrorAction Stop }             | Should -Throw -ErrorId 'NullPathNotPermitted'
+        { Test-Path -Path $null, $null -ErrorAction Stop }             | Should -Throw -ErrorId 'NullPath,Microsoft.PowerShell.Commands.TestPathCommand'
     }
 
     It "Should be able to accept a regular expression" {
