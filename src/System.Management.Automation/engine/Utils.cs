@@ -1438,8 +1438,7 @@ namespace System.Management.Automation
                         // Commands must be from implicit remoting module
                         if (cmdInfo.Module == null || string.IsNullOrEmpty(cmdInfo.ModuleName))
                         {
-                            WriteVerbose(ps, 
-                                string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
+                            WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
                             success = false;
                             break;
                         }
@@ -1450,8 +1449,7 @@ namespace System.Management.Automation
                             var sessionIdString = privateData["ImplicitSessionId"] as string;
                             if (string.IsNullOrEmpty(sessionIdString))
                             {
-                                WriteVerbose(ps,
-                                    string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
+                                WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
                                 success = false;
                                 break;
                             }
@@ -1463,16 +1461,14 @@ namespace System.Management.Automation
                             }
                             else if (psSessionId != sessionId)
                             {
-                                WriteVerbose(ps,
-                                    string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingWrongSession, cmdInfo.Name));
+                                WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingWrongSession, cmdInfo.Name));
                                 success = false;
                                 break;
                             }
                         }
                         else
                         {
-                            WriteVerbose(ps,
-                                string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
+                            WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
                             success = false;
                             break;
                         }
@@ -1529,13 +1525,11 @@ namespace System.Management.Automation
                 }
                 catch (ImplicitRemotingBatchingNotSupportedException ex)
                 {
-                    WriteVerbose(ps,
-                        string.Format(CultureInfo.CurrentCulture, "{0} : {1}", ex.Message, ex.ErrorId));
+                    WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, "{0} : {1}", ex.Message, ex.ErrorId));
                 }
                 catch (Exception ex)
                 {
-                    WriteVerbose(ps,
-                        string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingException, ex.Message));
+                    WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingException, ex.Message));
                 }
             }
             
