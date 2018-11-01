@@ -1474,10 +1474,10 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Command is not a simple pipeline and cannot be batched.</value>
   </data>
   <data name="ImplicitRemotingPipelineBatchingNotImplicitCommand" xml:space="preserve">
-    <value>The pipeline command, {0}, is not an implicit remoting command or approved batching command.</value>
+    <value>The pipeline command '{0}' is not an implicit remoting command or approved batching command.</value>
   </data>
   <data name="ImplicitRemotingPipelineBatchingWrongSession" xml:space="preserve">
-    <value>The pipeline command, {0}, is for a different remote session and cannot be batched.</value>
+    <value>The pipeline command '{0}' is for a different remote session and cannot be batched.</value>
   </data>
   <data name="ImplicitRemotingPipelineBatchingNoPSSession" xml:space="preserve">
     <value>The implicit remoting PSSession for batching could not be retrieved.</value>
