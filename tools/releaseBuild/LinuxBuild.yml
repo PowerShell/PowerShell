@@ -3,7 +3,7 @@ resources:
   clean: true
 jobs:
 
-- job: Job_1
+- job: BuildJob
   displayName: Build
   condition: succeeded()
   pool: Hosted Ubuntu 1604
@@ -37,13 +37,6 @@ jobs:
       Write-Host -Object "##$vstsCommandString"
     displayName: 'Skip FxDependent for PS v6.0.*'
 
-  - task: ShellScript@2
-    displayName: 'Shell Script tools/installpsh-debian.sh'
-    inputs:
-      scriptPath: 'tools/installpsh-debian.sh'
-      args: '-skip-sudo-check'
-    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
-
   - powershell: |
       import-module ./build.psm1
       Sync-PSTags -AddRemoteIfMissing
@@ -56,9 +49,9 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
 
 
-- job: Job_2
+- job: UploadJob
   displayName: Upload to Azure
-  dependsOn: Job_1
+  dependsOn: BuildJob
   condition: succeeded()
   pool: Package ES CodeHub Lab E
   steps:
