@@ -185,6 +185,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewInvalidOperationException();
 
                 sb.SessionStateInternal = ss.Internal;
+                module.LanguageMode = sb.LanguageMode;
 
                 InvocationInfo invocationInfo = new InvocationInfo(scriptInfo, scriptPosition);
 
@@ -1077,6 +1078,29 @@ namespace System.Management.Automation
             return null;
         }
 
+        /// <summary>
+        /// Removes all functions not belonging to the parent module.
+        /// </summary>
+        /// <param name="module">Parent module</param>
+        static internal void RemoveNestedModuleFunctions(PSModuleInfo module)
+        {
+            var input = module.SessionState?.Internal?.ExportedFunctions;
+            if ((input == null) || (input.Count == 0))
+            { return; }
+
+            List<FunctionInfo> output = new List<FunctionInfo>(input.Count);
+            foreach (var fnInfo in input)
+            {
+                if (module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase))
+                {
+                    output.Add(fnInfo);
+                }
+            }
+
+            input.Clear();
+            input.AddRange(output);
+        }
+
         private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
         {
             Dbg.Assert(input != null, "Caller should verify that input != null");
@@ -1135,6 +1159,12 @@ namespace System.Management.Automation
 
             if (functionPatterns != null)
             {
+                sessionState.FunctionsExported = true;
+                if (PatternContainsWildcard(functionPatterns))
+                {
+                    sessionState.FunctionsExportedWithWildcard = true;
+                }
+
                 IDictionary<string, FunctionInfo> ft = sessionState.ModuleScope.FunctionTable;
 
                 foreach (KeyValuePair<string, FunctionInfo> entry in ft)
@@ -1271,6 +1301,27 @@ namespace System.Management.Automation
 
                 SortAndRemoveDuplicates(sessionState.ExportedAliases, delegate (AliasInfo ci) { return ci.Name; });
             }
+        }
+
+        /// <summary>
+        /// Checks pattern list for wildcard characters.
+        /// </summary>
+        /// <param name="list">Pattern list</param>
+        /// <returns>True if pattern contains '*'</returns>
+        internal static bool PatternContainsWildcard(List<WildcardPattern> list)
+        {
+            if (list != null)
+            {
+                foreach (var item in list)
+                {
+                    if (WildcardPattern.ContainsWildcardCharacters(item.Pattern))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private static AliasInfo NewAliasInfo(AliasInfo alias, SessionStateInternal sessionState)

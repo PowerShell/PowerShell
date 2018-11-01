@@ -211,7 +211,7 @@ namespace System.Management.Automation
                     }
 
                     // parse the script into an expression tree...
-                    ScriptBlock newScriptBlock = ScriptBlock.Create(new Parser(), _path, ScriptContents);
+                    ScriptBlock newScriptBlock = ParseScriptContents(new Parser(), _path, ScriptContents, DefiningLanguageMode);
                     this.ScriptBlock = newScriptBlock;
                 }
 
@@ -229,6 +229,31 @@ namespace System.Management.Automation
         private ScriptBlock _scriptBlock;
         private ScriptBlockAst _scriptBlockAst;
 
+        private static ScriptBlock ParseScriptContents(Parser parser, string fileName, string fileContents, PSLanguageMode? definingLanguageMode)
+        {
+            // If we are in ConstrainedLanguage mode but the defining language mode is FullLanguage, then we need
+            // to parse the script contents in FullLanguage mode context.  Otherwise we will get bogus parsing errors
+            // such as "Configuration keyword not allowed".
+            if (definingLanguageMode.HasValue && (definingLanguageMode == PSLanguageMode.FullLanguage))
+            {
+                var context = LocalPipeline.GetExecutionContextFromTLS();
+                if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
+                {
+                    context.LanguageMode = PSLanguageMode.FullLanguage;
+                    try
+                    {
+                        return ScriptBlock.Create(parser, fileName, fileContents);
+                    }
+                    finally
+                    {
+                        context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                    }
+                }
+            }
+
+            return ScriptBlock.Create(parser, fileName, fileContents);
+        }
+
         internal ScriptBlockAst GetScriptBlockAst()
         {
             var scriptContents = ScriptContents;
@@ -244,7 +269,29 @@ namespace System.Management.Automation
             {
                 ParseError[] errors;
                 Parser parser = new Parser();
-                _scriptBlockAst = parser.Parse(_path, ScriptContents, null, out errors, ParseMode.Default);
+
+                // If we are in ConstrainedLanguage mode but the defining language mode is FullLanguage, then we need
+                // to parse the script contents in FullLanguage mode context.  Otherwise we will get bogus parsing errors
+                // such as "Configuration keyword not allowed".
+                var context = LocalPipeline.GetExecutionContextFromTLS();
+                if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                    DefiningLanguageMode == PSLanguageMode.FullLanguage)
+                {
+                    context.LanguageMode = PSLanguageMode.FullLanguage;
+                    try
+                    {
+                        _scriptBlockAst = parser.Parse(_path, ScriptContents, null, out errors, ParseMode.Default);
+                    }
+                    finally
+                    {
+                        context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                    }
+                }
+                else
+                {
+                    _scriptBlockAst = parser.Parse(_path, ScriptContents, null, out errors, ParseMode.Default);
+                }
+
                 if (errors.Length == 0)
                 {
                     this.ScriptBlock = new ScriptBlock(_scriptBlockAst, isFilter: false);

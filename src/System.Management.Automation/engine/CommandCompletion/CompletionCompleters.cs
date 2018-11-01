@@ -6736,7 +6736,7 @@ namespace System.Management.Automation
             try
             {
                 // ConstrainedLanguage has already been applied as necessary when we construct CompletionContext
-                Diagnostics.Assert(!(ExecutionContext.HasEverUsedConstrainedLanguage && executionContext.LanguageMode != PSLanguageMode.ConstrainedLanguage),
+                Diagnostics.Assert(!(executionContext.HasRunspaceEverUsedConstrainedLanguageMode && executionContext.LanguageMode != PSLanguageMode.ConstrainedLanguage),
                                    "If the runspace has ever used constrained language mode, then the current language mode should already be set to constrained language");
 
                 // We're passing 'true' here for isTrustedInput, because SafeExprEvaluator ensures that the AST
