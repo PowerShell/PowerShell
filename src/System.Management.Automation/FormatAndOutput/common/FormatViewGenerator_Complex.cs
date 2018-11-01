@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             TypeMatch match = new TypeMatch(_expressionFactory, _db, typeNames);
             foreach (ComplexControlEntryDefinition x in complexBody.optionalEntryList)
             {
-                if (match.PerfectMatch(new TypeMatchItem(x, x.appliesTo)))
+                if (match.PerfectMatch(new TypeMatchItem(x, x.appliesTo, so)))
                 {
                     return x;
                 }

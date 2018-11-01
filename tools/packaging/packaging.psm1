@@ -269,6 +269,11 @@ function Start-PSPackage {
                 }
             }
             "fxdependent" {
+                ## Remove PDBs from package to reduce size.
+                if(-not $IncludeSymbols.IsPresent) {
+                    Get-ChildItem -Recurse $Source -Filter *.pdb | Remove-Item -Force
+                }
+
                 if ($IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
@@ -1112,6 +1117,11 @@ function Get-PackageDependencies
                 "openssl-libs",
                 "libicu"
             )
+        } elseif ($Environment.IsSUSEFamily) {
+            $Dependencies = @(
+                "libopenssl1_0_0",
+                "libicu"
+            )
         }
 
         return $Dependencies
@@ -1848,16 +1858,17 @@ function New-ReferenceAssembly
     #region Cleanup SMA.cs
 
     $patternsToRemove = @(
-        '[System.Management.Automation.ArgumentToEncodingTransformationAttribute]',
-        'typeof(System.Security.AccessControl.FileSecurity)',
-        '[System.Management.Automation.ArgumentTypeConverterAttribute',
-        '[System.Runtime.CompilerServices.IteratorStateMachineAttribute',
-        '[Microsoft.PowerShell.Commands.ArgumentToModuleTransformationAttribute]',
-        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ArgumentToVersionTransformationAttribute]',
-        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ValidateVersionAttribute]',
-        '[System.Management.Automation.OutputTypeAttribute(typeof(System.Management.Automation.PSRemotingJob))]',
-        'typeof(System.Management.Automation.LanguagePrimitives.EnumMultipleTypeConverter)',
+        '[System.Management.Automation.ArgumentToEncodingTransformationAttribute]'
+        'typeof(System.Security.AccessControl.FileSecurity)'
+        '[System.Management.Automation.ArgumentTypeConverterAttribute'
+        '[System.Runtime.CompilerServices.IteratorStateMachineAttribute'
+        '[Microsoft.PowerShell.Commands.ArgumentToModuleTransformationAttribute]'
+        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ArgumentToVersionTransformationAttribute]'
+        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ValidateVersionAttribute]'
+        '[System.Management.Automation.OutputTypeAttribute(typeof(System.Management.Automation.PSRemotingJob))]'
+        'typeof(System.Management.Automation.LanguagePrimitives.EnumMultipleTypeConverter)'
         '[System.Management.Automation.Internal.CommonParameters.ValidateVariableName]'
+        '[System.Management.Automation.ArgumentEncodingCompletionsAttribute]'
         )
 
     $reader = [System.IO.File]::OpenText($smaCs)
@@ -1901,9 +1912,12 @@ function New-ReferenceAssembly
 
         $csProj | Out-File -FilePath "$smaProjectFolder/System.Management.Automation.csproj" -Force
 
+        Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$smaProjectFolder/System.Management.Automation.csproj"
+        Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$smaCs"
+
         $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
 
-        Start-NativeExecution { dotnet build -c Release } > $null
+        Start-NativeExecution { dotnet build -c Release }
 
         $refBinPath = Join-Path $smaProjectFolder 'bin/Release/netstandard2.0/System.Management.Automation.dll'
 

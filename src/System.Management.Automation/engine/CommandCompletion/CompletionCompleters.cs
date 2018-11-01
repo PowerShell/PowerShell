@@ -4174,7 +4174,7 @@ namespace System.Management.Automation
                                     string[] entries = null;
                                     try
                                     {
-                                        entries = Directory.GetFileSystemEntries(parentPath, leaf);
+                                        entries = Directory.GetFileSystemEntries(parentPath, leaf, _enumerationOptions);
                                     }
                                     catch (Exception)
                                     {
@@ -4404,6 +4404,11 @@ namespace System.Management.Automation
         private const int ERROR_MORE_DATA = 234;
         private const int STYPE_DISKTREE = 0;
         private const int STYPE_MASK = 0x000000FF;
+        private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
+        {
+            MatchCasing = MatchCasing.CaseInsensitive,
+            AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
+        };
 
         [DllImport("Netapi32.dll", CharSet = CharSet.Unicode)]
         private static extern int NetShareEnum(string serverName, int level, out IntPtr bufptr, int prefMaxLen,

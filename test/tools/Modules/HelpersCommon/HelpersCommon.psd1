@@ -21,6 +21,7 @@ FunctionsToExport = @(
         'Disable-Testhook'
         'Enable-Testhook'
         'Get-RandomFileName'
+        'New-RandomHexString'
         'Send-VstsLogFile'
         'Set-TesthookResult'
         'Start-NativeExecution'

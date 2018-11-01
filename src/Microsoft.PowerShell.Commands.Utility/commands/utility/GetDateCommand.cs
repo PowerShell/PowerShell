@@ -372,6 +372,10 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append(StringUtil.Format("{0,2}", dateTime.Day));
                             break;
 
+                        case 'F':
+                            sb.Append("{0:yyyy}-{0:MM}-{0:dd}");
+                            break;
+                            
                         case 'G':
                             sb.Append("{0:yyyy}");
                             break;

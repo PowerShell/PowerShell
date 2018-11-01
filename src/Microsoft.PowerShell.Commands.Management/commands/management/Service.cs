@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
         // sort by servicename
         private static int ServiceComparison(ServiceController x, ServiceController y)
         {
-            return String.Compare(x.ServiceName, y.ServiceName, StringComparison.CurrentCultureIgnoreCase);
+            return String.Compare(x.ServiceName, y.ServiceName, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -1791,7 +1791,7 @@ namespace Microsoft.PowerShell.Commands
                                     DoStartService(service);
                             }
                         }
-                        else if (Status.Equals("Stopped", StringComparison.CurrentCultureIgnoreCase))
+                        else if (Status.Equals("Stopped", StringComparison.OrdinalIgnoreCase))
                         {
                             if (!service.Status.Equals(ServiceControllerStatus.Stopped))
                             {
@@ -1808,7 +1808,7 @@ namespace Microsoft.PowerShell.Commands
                                 DoStopService(service, Force, waitForServiceToStop: true);
                             }
                         }
-                        else if (Status.Equals("Paused", StringComparison.CurrentCultureIgnoreCase))
+                        else if (Status.Equals("Paused", StringComparison.OrdinalIgnoreCase))
                         {
                             if (!service.Status.Equals(ServiceControllerStatus.Paused))
                             {

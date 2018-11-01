@@ -782,7 +782,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new InvalidOperationException(RemotingErrorIdStrings.AsJobAndDisconnectedError);
             }
 
-            if (MyInvocation.BoundParameters.ContainsKey("SessionName") && !this.InvokeAndDisconnect)
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(SessionName)) && !this.InvokeAndDisconnect)
             {
                 throw new InvalidOperationException(RemotingErrorIdStrings.SessionNameWithoutInvokeDisconnected);
             }

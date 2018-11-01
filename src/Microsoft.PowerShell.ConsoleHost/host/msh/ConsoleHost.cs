@@ -148,9 +148,6 @@ namespace Microsoft.PowerShell
 
             try
             {
-                string[] tempArgs = new string[args.GetLength(0)];
-                args.CopyTo(tempArgs, 0);
-
                 // We might be able to ignore console host creation error if we are running in
                 // server mode, which does not require a console.
                 HostException hostException = null;
@@ -163,16 +160,11 @@ namespace Microsoft.PowerShell
                     hostException = e;
                 }
 
-                if (args == null)
-                {
-                    args = new string[0];
-                }
-
                 s_cpp = new CommandLineParameterParser(
                     (s_theConsoleHost != null) ? s_theConsoleHost.UI : (new NullHostUserInterface()),
                     bannerText, helpText);
 
-                s_cpp.Parse(tempArgs);
+                s_cpp.Parse(args);
 
 #if UNIX
                 // On Unix, logging has to be deferred until after command-line parsing
@@ -1202,6 +1194,7 @@ namespace Microsoft.PowerShell
         }
 
         internal WrappedSerializer.DataFormat OutputFormat { get; private set; }
+        internal bool OutputFormatSpecified { get; private set; }
 
         internal WrappedSerializer.DataFormat InputFormat { get; private set; }
 
@@ -1211,9 +1204,9 @@ namespace Microsoft.PowerShell
             {
                 WrappedDeserializer.DataFormat format = OutputFormat;
 
-                //If this shell is invoked in minishell interop mode and error is redirected,
-                //always write data in error stream in xml format.
-                if (IsInteractive == false && Console.IsErrorRedirected && _wasInitialCommandEncoded)
+                // If this shell is invoked in non-interactive, error is redirected, and OutputFormat was not
+                // specified write data in error stream in xml format assuming PowerShell->PowerShell usage.
+                if (!OutputFormatSpecified && IsInteractive == false && Console.IsErrorRedirected && _wasInitialCommandEncoded)
                 {
                     format = Serialization.DataFormat.XML;
                 }
@@ -1323,6 +1316,7 @@ namespace Microsoft.PowerShell
                 }
 
                 OutputFormat = cpp.OutputFormat;
+                OutputFormatSpecified = cpp.OutputFormatSpecified;
                 InputFormat = cpp.InputFormat;
                 _wasInitialCommandEncoded = cpp.WasInitialCommandEncoded;
 
@@ -1614,6 +1608,31 @@ namespace Microsoft.PowerShell
 
             Executor exec = new Executor(this, false, false);
 
+            // If working directory was specified, set it
+            if (s_cpp != null && s_cpp.WorkingDirectory != null)
+            {
+                Pipeline tempPipeline = exec.CreatePipeline();
+                var command = new Command("Set-Location");
+                command.Parameters.Add("LiteralPath", s_cpp.WorkingDirectory);
+                tempPipeline.Commands.Add(command);
+
+                Exception exception;
+                if (IsRunningAsync)
+                {
+                    exec.ExecuteCommandAsyncHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
+                }
+                else
+                {
+                    exec.ExecuteCommandHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
+                }
+
+                if (exception != null)
+                {
+                    _lastRunspaceInitializationException = exception;
+                    ReportException(exception, exec);
+                }
+            }
+
             if (!string.IsNullOrEmpty(configurationName))
             {
                 // If an endpoint configuration is specified then create a loop-back remote runspace targeting
@@ -1693,31 +1712,6 @@ namespace Microsoft.PowerShell
             // if one is specified.
             TelemetryAPI.ReportStartupTelemetry(this);
 #endif
-
-            // If working directory was specified, set it
-            if (s_cpp != null && s_cpp.WorkingDirectory != null)
-            {
-                Pipeline tempPipeline = exec.CreatePipeline();
-                var command = new Command("Set-Location");
-                command.Parameters.Add("LiteralPath", s_cpp.WorkingDirectory);
-                tempPipeline.Commands.Add(command);
-
-                Exception exception;
-                if (IsRunningAsync)
-                {
-                    exec.ExecuteCommandAsyncHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
-                }
-                else
-                {
-                    exec.ExecuteCommandHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
-                }
-
-                if (exception != null)
-                {
-                    _lastRunspaceInitializationException = exception;
-                    ReportException(exception, exec);
-                }
-            }
 
             // If a file was specified as the argument to run, then run it...
             if (s_cpp != null && s_cpp.File != null)

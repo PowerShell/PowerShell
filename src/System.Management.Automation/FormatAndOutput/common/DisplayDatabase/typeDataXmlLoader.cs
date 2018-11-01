@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             bool viewDefinitionsFound = false;
             bool controlDefinitionsFound = false;
 
-            if (MatchNodeName(documentElement, XmlTags.ConfigurationNode))
+            if (MatchNodeNameWithAttributes(documentElement, XmlTags.ConfigurationNode))
             {
                 // load the various sections
                 using (this.StackFrame(documentElement))
@@ -883,11 +883,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     fpt.expression = expression;
                     fpt.fieldFormattingDirective.formatString = listItem.FormatString;
                     lvid.formatTokenList.Add(fpt);
-                    if (listItem.ItemSelectionCondition != null)
-                    {
-                        var conditionToken = LoadExpressionFromObjectModel(listItem.ItemSelectionCondition, viewIndex, typeName);
-                        lvid.conditionToken = conditionToken;
-                    }
                 }
 
                 if (!String.IsNullOrEmpty(listItem.Label))

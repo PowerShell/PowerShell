@@ -189,4 +189,7 @@
   <data name="InvalidKeyLength" xml:space="preserve">
     <value>The specified {0} is not valid. Valid {0} length settings are either 128 bits, 192 bits, or 256 bits.</value>
   </data>
+  <data name="DeserializeSecureStringNotSupported" xml:space="preserve">
+    <value>Deserialization of SecureString is currently only supported on Windows.</value>
+  </data>
 </root>

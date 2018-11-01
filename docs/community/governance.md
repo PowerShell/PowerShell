@@ -38,7 +38,7 @@ Committee Members are responsible for reviewing and approving [PowerShell RFCs][
 The following types of decisions require a written RFC and ample time for the community to respond with their feedback before a contributor begins work on the issue:
 
 * new features or capabilities in PowerShell (e.g. PowerShell classes, PSRP over SSH, etc.)
-* anything that might require a breaking changes as defined in our [Breaking Changes Contract][breaking-changes]
+* anything that might require a breaking change, as defined in our [Breaking Changes Contract][breaking-changes]
 * new modules, cmdlets, or parameters that ship in the core PowerShell modules (e.g. `Microsoft.PowerShell.*`, `PackageManagement`, `PSReadLine`)
 * the addition of new PowerShell Committee Members or Repository Maintainers
 * any changes to the process of maintaining the PowerShell repository (including the responsibilities of Committee Members, Repository Maintainers, and Area Experts)

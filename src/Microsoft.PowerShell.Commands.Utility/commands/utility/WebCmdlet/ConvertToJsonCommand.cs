@@ -2,15 +2,16 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Collections.Generic;
-using System.Management.Automation;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
-using System.Globalization;
 using Dbg = System.Management.Automation;
+using System.Management.Automation;
 using System.Management.Automation.Internal;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -73,6 +74,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter AsArray { get; set; }
 
+        /// <summary>
+        /// Specifies how strings are escaped when writing JSON text.
+        /// If the EscapeHandling property is set to EscapeHtml, the result JSON string will
+        /// be returned with HTML (<, >, &, ', ") and control characters (e.g. newline) are escaped.
+        /// </summary>
+        [Parameter]
+        public StringEscapeHandling EscapeHandling { get; set; } = StringEscapeHandling.Default;
+
         #endregion parameters
 
         #region overrides
@@ -125,7 +134,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return;
                 }
-                JsonSerializerSettings jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 };
+                JsonSerializerSettings jsonSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.None,
+                        MaxDepth = 1024,
+                        StringEscapeHandling = EscapeHandling
+                    };
                 if (EnumsAsStrings)
                 {
                     jsonSettings.Converters.Add(new StringEnumConverter());

@@ -727,6 +727,7 @@ v6.0.0
 v6.0.1
 v6.0.2
 v6.1.0
+v6.2.0
 validatenotnullorempty
 versioned
 versioning
@@ -767,6 +768,17 @@ xpath
 xunit
 youtube
 zackjknight
+vexx32
+perf
+britishben
+felixfbecker
+vpondala
+dependabot
+jellyfrog
+1redone
+tommymaynard
+vmsilvamolina
+fbehrens
  - CHANGELOG.md
 chucklu
 honour
@@ -775,6 +787,7 @@ yurko7
 zhenggu
 Claustn
 ThreeFive-O
+uninstallation
  - docs/debugging/README.md
 corehost
  - docs/testing-guidelines/TestRoadmap.md

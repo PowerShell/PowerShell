@@ -1842,10 +1842,13 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="name">The modules to add</param>
         /// <returns></returns>
-        public void ImportPSModule(string[] name)
+        public void ImportPSModule(params string[] name)
         {
             if (name == null)
+            {
                 throw new ArgumentNullException("name");
+            }
+
             foreach (string n in name)
             {
                 ModuleSpecificationsToImport.Add(new ModuleSpecification(n));
@@ -4238,7 +4241,7 @@ param(
         } elseif ($IsWindows) {
             $help | more.com
         } else {
-            $help | less
+            $help | less -Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""
         }
     }
 ";
