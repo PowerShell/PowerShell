@@ -6605,6 +6605,13 @@ namespace Microsoft.PowerShell.Commands
 
             path = NormalizePath(path);
 
+            if (Directory.Exists(path))
+            {
+                string errorMsg = StringUtil.Format(SessionStateStrings.ClearDirectoryContent, path);
+                WriteError(new ErrorRecord(new NotSupportedException(errorMsg), "ClearDirectoryContent", ErrorCategory.InvalidOperation, path));
+                return;
+            }
+
             try
             {
 #if !UNIX
