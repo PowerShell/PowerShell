@@ -2074,7 +2074,7 @@ function Start-CrossGen {
         $Runtime
     )
 
-    function Generate-CrossGenAssembly {
+    function New-CrossGenAssembly {
         param (
             [Parameter(Mandatory= $true)]
             [ValidateNotNullOrEmpty()]
@@ -2224,7 +2224,7 @@ function Start-CrossGen {
 
     foreach ($assemblyName in $fullAssemblyList) {
         $assemblyPath = Join-Path $PublishPath $assemblyName
-        Generate-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
+        New-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
     }
 
     #

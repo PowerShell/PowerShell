@@ -545,7 +545,7 @@ namespace System.Management.Automation
                 // Remove the root slash since it is implied that the
                 // current working directory is relative to the root.
                 if (!LocationGlobber.IsProviderDirectPath(path) &&
-                    path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) &&
+                    path.StartsWith(StringLiterals.DefaultPathSeparator) &&
                     !pathIsProviderQualifiedPath)
                 {
                     path = path.Substring(1);

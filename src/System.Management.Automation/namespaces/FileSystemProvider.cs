@@ -1425,8 +1425,8 @@ namespace Microsoft.PowerShell.Commands
             // Don't handle full paths, paths that the user is already trying to
             // filter, or paths they are trying to escape.
             if ((!String.IsNullOrEmpty(filter)) ||
-                (path.Contains(StringLiterals.DefaultPathSeparatorString)) ||
-                (path.Contains(StringLiterals.AlternatePathSeparatorString)) ||
+                (path.Contains(StringLiterals.DefaultPathSeparator, StringComparison.Ordinal)) ||
+                (path.Contains(StringLiterals.AlternatePathSeparator, StringComparison.Ordinal)) ||
                 (path.Contains(StringLiterals.EscapeCharacter)))
             {
                 return false;
@@ -4814,13 +4814,13 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     string originalPathComparison = path;
-                    if (!originalPathComparison.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase))
+                    if (!originalPathComparison.EndsWith(StringLiterals.DefaultPathSeparator))
                     {
                         originalPathComparison += StringLiterals.DefaultPathSeparator;
                     }
 
                     string basePathComparison = basePath;
-                    if (!basePathComparison.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase))
+                    if (!basePathComparison.EndsWith(StringLiterals.DefaultPathSeparator))
                     {
                         basePathComparison += StringLiterals.DefaultPathSeparator;
                     }
@@ -5018,7 +5018,7 @@ namespace Microsoft.PowerShell.Commands
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
                 if (String.Equals(path, basePath, StringComparison.OrdinalIgnoreCase) &&
-                    (!originalPath.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
+                    (!originalPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                 {
                     string childName = GetChildName(path);
                     result = MakePath("..", childName);
@@ -5065,7 +5065,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!String.IsNullOrEmpty(commonBase))
                     {
                         if (String.Equals(path, commonBase, StringComparison.OrdinalIgnoreCase) &&
-                            (!path.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
+                            (!path.EndsWith(StringLiterals.DefaultPathSeparator)))
                         {
                             string childName = GetChildName(path);
                             result = MakePath("..", result);
@@ -6604,6 +6604,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             path = NormalizePath(path);
+
+            if (Directory.Exists(path))
+            {
+                string errorMsg = StringUtil.Format(SessionStateStrings.ClearDirectoryContent, path);
+                WriteError(new ErrorRecord(new NotSupportedException(errorMsg), "ClearDirectoryContent", ErrorCategory.InvalidOperation, path));
+                return;
+            }
 
             try
             {
