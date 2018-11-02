@@ -125,7 +125,7 @@ Describe "Get-Module" -Tags "CI" {
 
     It "Get-Module -ListAvailable -All" {
         $modules = Get-Module -ListAvailable -All
-        $modules.Count | Should -Be 11
+        $modules | Should -HaveCount 11
         $modules = $modules | Sort-Object -Property Name, Path
         $modules.Name -join "," | Should -BeExactly "Az,Bar,Bar,Download,Foo,Foo,Foo,Foo,Zoo,Zoo,Zoo"
 
