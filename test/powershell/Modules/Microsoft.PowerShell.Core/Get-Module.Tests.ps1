@@ -107,7 +107,7 @@ Describe "Get-Module" -Tags "CI" {
 
     It "Get-Module -ListAvailable" {
         $modules = Get-Module -ListAvailable
-        $modules.Count | Should -Be 5
+        $modules | Should -HaveCount 5
         $modules = $modules | Sort-Object -Property Name, Version
         $modules.Name -join "," | Should -BeExactly "Az,Bar,Foo,Foo,Zoo"
         $modules[2].Version | Should -Be "1.1"
