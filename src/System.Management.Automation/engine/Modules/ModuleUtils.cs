@@ -29,7 +29,7 @@ namespace System.Management.Automation.Internal
         /// by IsPossibleModuleDirectory(). While this is private, having a static HashSet means that
         /// further modules could be added using reflection in case a workaround is needed.
         /// </summary>
-        private static readonly HashSet<string> _moduleNameCultureWhitelist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> s_moduleNameCultureWhitelist = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "Az" // Microsoft Azure uber module -- conflicts with Azerbijani culture name
         };
@@ -55,7 +55,7 @@ namespace System.Management.Automation.Internal
 
             dir = Path.GetFileName(dir);
             // Use some simple pattern matching to avoid the call into GetCultureInfo when we know it will fail (and throw).
-            if (CouldBeCultureName(dir) && !_moduleNameCultureWhitelist.Contains(dir))
+            if (CouldBeCultureName(dir) && !s_moduleNameCultureWhitelist.Contains(dir))
             {
                 try
                 {
