@@ -1507,6 +1507,10 @@ namespace System.Management.Automation
                         ps.Commands.Clear();
                         ps.AddCommand("Invoke-Command").AddParameter("Session", psSession).AddParameter("ScriptBlock", scriptBlock).AddParameter("HideComputerName", true)
                             .AddCommand("Out-Default");
+                        foreach (var cmd in ps.Commands.Commands)
+                        {
+                            cmd.MergeMyResults(PipelineResultTypes.Error, PipelineResultTypes.Output);
+                        }
 
                         try
                         {
