@@ -170,7 +170,7 @@ Describe "Get-Module" -Tags "CI" {
 
     It "Get-Module <Path> -ListAvailable -All" {
         $modules = Get-Module "$testdrive\Modules\*" -ListAvailable -All
-        $modules.Count | Should -Be 6
+        $modules | Should -HaveCount 6
         $modules = $modules | Sort-Object -Property Name, Path
         $modules.Name -join "," | Should -BeExactly "Az,Bar,Foo,Foo,Zoo,Zoo"
         $modules[4].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Too\Zoo.psm1").Path
