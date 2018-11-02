@@ -134,7 +134,7 @@ Describe "Get-Module" -Tags "CI" {
         $modules[2].ModuleType | Should -BeExactly "Script"
         $modules[3].ModuleType | Should -BeExactly "Script"
         $modules[4].ModuleType | Should -BeExactly "Manifest"
-        $modules[4].Version | Should -Be "1.1"
+        $modules[4].Version | Should -BeExactly "1.1"
         $modules[5].ModuleType | Should -BeExactly "Script"
         $modules[6].ModuleType | Should -BeExactly "Manifest"
         $modules[6].Version | Should -Be "2.0"
