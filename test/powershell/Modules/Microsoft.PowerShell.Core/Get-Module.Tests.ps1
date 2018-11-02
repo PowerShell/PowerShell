@@ -165,7 +165,7 @@ Describe "Get-Module" -Tags "CI" {
         $modules = $modules | Sort-Object -Property Name, Version
         $modules.Name -join "," | Should -BeExactly "Az,Bar,Foo,Foo,Zoo"
         $modules[2].Version | Should -BeExactly "1.1"
-        $modules[3].Version | Should -Be '2.0'
+        $modules[3].Version | Should -BeExactly '2.0'
     }
 
     It "Get-Module <Path> -ListAvailable -All" {
