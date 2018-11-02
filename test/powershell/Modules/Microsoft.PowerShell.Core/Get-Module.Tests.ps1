@@ -137,7 +137,7 @@ Describe "Get-Module" -Tags "CI" {
         $modules[4].Version | Should -BeExactly "1.1"
         $modules[5].ModuleType | Should -BeExactly "Script"
         $modules[6].ModuleType | Should -BeExactly "Manifest"
-        $modules[6].Version | Should -Be "2.0"
+        $modules[6].Version | Should -BeExactly "2.0"
         $modules[7].ModuleType | Should -BeExactly "Script"
         $modules[8].ModuleType | Should -BeExactly "Script"
         $modules[8].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Too\Zoo.psm1").Path
