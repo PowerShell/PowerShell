@@ -186,18 +186,10 @@ If you have any problems building, please consult the developer [FAQ][].
 
 ## Downloading the Source Code
 
-The PowerShell repository has a number of other repositories embedded as submodules.
-
-To make things easy, you can just clone recursively:
+You can just clone the repository:
 
 ```sh
-git clone --recursive https://github.com/PowerShell/PowerShell.git
-```
-
-If you have already cloned but forgot to use `--recursive`, you can update submodules manually:
-
-```sh
-git submodule update --init
+git clone https://github.com/PowerShell/PowerShell.git
 ```
 
 See [working with the PowerShell repository](https://github.com/PowerShell/PowerShell/tree/master/docs/git) for more information.

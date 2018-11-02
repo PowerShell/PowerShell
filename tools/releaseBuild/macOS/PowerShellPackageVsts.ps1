@@ -54,7 +54,6 @@ Push-Location
 try {
     Write-Verbose -Message "Init..." -Verbose
     Set-Location $repoRoot
-    git submodule update --init --recursive --quiet
     Import-Module "$repoRoot/build.psm1"
     Import-Module "$repoRoot/tools/packaging"
     Sync-PSTags -AddRemoteIfMissing
