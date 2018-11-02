@@ -161,7 +161,7 @@ Describe "Get-Module" -Tags "CI" {
 
     It "Get-Module <Path> -ListAvailable" {
         $modules = Get-Module "$testdrive\Modules\*" -ListAvailable
-        $modules.Count | Should -Be 5
+        $modules | Should -HaveCount 5
         $modules = $modules | Sort-Object -Property Name, Version
         $modules.Name -join "," | Should -BeExactly "Az,Bar,Foo,Foo,Zoo"
         $modules[2].Version | Should -BeExactly "1.1"
