@@ -108,6 +108,25 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $expectedError = "CannotStartTranscription,Microsoft.PowerShell.Commands.StartTranscriptCommand"
         ValidateTranscription -scriptToExecute $script -outputFilePath $null -expectedError $expectedError
     }
+    It "Should not delete the file if it already exist" {
+        # Create an existing file
+        $transcriptFilePath = Join-Path $TestDrive ([System.IO.Path]::GetRandomFileName())
+        Out-File $transcriptFilePath
+
+        $FileSystemWatcher = [System.IO.FileSystemWatcher]::new((Split-Path -Parent $transcriptFilePath), (Split-Path -Leaf $transcriptFilePath))
+
+        $Job = Register-ObjectEvent -InputObject $FileSystemWatcher -EventName "Deleted" -SourceIdentifier "FileDeleted" -Action {
+            return "FileDeleted"
+        }
+
+        Start-Transcript -Path $transcriptFilePath
+        Stop-Transcript
+
+        Unregister-Event -SourceIdentifier "FileDeleted"
+
+        # Nothing should have been returned by the FileSystemWatcher
+        Receive-Job $job | Should -Be $null
+    }
     It "Transcription should remain active if other runspace in the host get closed" {
         try {
             $ps = [powershell]::Create()
