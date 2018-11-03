@@ -131,7 +131,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
             New-ModuleManifest -Path "$testdrive\Modules\DesktopOnlyModule\DesktopOnlyModule.psd1" -CompatiblePSEditions Desktop
             New-ModuleManifest -Path "$testdrive\Modules\CoreOnlyModule\CoreOnlyModule.psd1" -CompatiblePSEditions Core
-            New-ModuleManifest -Path "$testdrive\Modules\CoreAndDesktopModule\CoreAndDesktopModule.psd1" -CompatiblePSEditions Core,Desktop
+            New-ModuleManifest -Path "$testdrive\Modules\CoreAndDesktopModule\CoreAndDesktopModule.psd1" -CompatiblePSEditions Core, Desktop
 
             New-Item -ItemType File -Path "$testdrive\Modules\DesktopOnlyModule\DesktopOnlyModule.psm1" > $null
             New-Item -ItemType File -Path "$testdrive\Modules\CoreOnlyModule\CoreOnlyModule.psm1" > $null
@@ -139,8 +139,8 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         }
 
         It "Get-Module -PSEdition <CompatiblePSEditions> -ListAvailable" -TestCases @(
-            @{ CompatiblePSEditions = 'Desktop'       ; ExpectedModule = 'CoreAndDesktopModule','DesktopOnlyModule' },
-            @{ CompatiblePSEditions = 'Core'          ; ExpectedModule = 'CoreAndDesktopModule','CoreOnlyModule' }
+            @{ CompatiblePSEditions = 'Desktop'; ExpectedModule = 'CoreAndDesktopModule', 'DesktopOnlyModule' },
+            @{ CompatiblePSEditions = 'Core'   ; ExpectedModule = 'CoreAndDesktopModule', 'CoreOnlyModule' }
         ) {
             param ($CompatiblePSEditions, $ExpectedModule)
             $modules = Get-Module -PSEdition $CompatiblePSEditions -ListAvailable
