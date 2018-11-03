@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "Get-Module" -Tags "CI" {
+Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     BeforeAll {
         $originalPSModulePath = $env:PSModulePath
@@ -13,8 +13,8 @@ Describe "Get-Module" -Tags "CI" {
 
         New-ModuleManifest -Path "$testdrive\Modules\Foo\1.1\Foo.psd1" -ModuleVersion 1.1
         New-ModuleManifest -Path "$testdrive\Modules\Foo\2.0\Foo.psd1" -ModuleVersion 2.0
-        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1" -CompatiblePSEditions Desktop
-        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1" -CompatiblePSEditions Core
+        New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1"
 
         New-Item -ItemType File -Path "$testdrive\Modules\Foo\1.1\Foo.psm1" > $null
         New-Item -ItemType File -Path "$testdrive\Modules\Foo\2.0\Foo.psm1" > $null
@@ -108,27 +108,44 @@ Describe "Get-Module" -Tags "CI" {
         $modules.Version | Should -Be "2.0"
     }
 
-    It "Get-Module -PSEdition <PSEdition> -ListAvailable" {
-        $modules = Get-Module -PSEdition 'Desktop' -ListAvailable
-        $modules | Should -HaveCount 1
-        $modules.Name | Should -BeExactly "Bar"
-
-        $modules = Get-Module -PSEdition 'Core' -ListAvailable
-        $modules | Should -HaveCount 1
-        $modules.Name | Should -BeExactly "Zoo"
-    }
-
     It "Get-Module <Name> -Refresh -ListAvailable" {
         $modules = Get-Module -Name 'Zoo' -ListAvailable
         $modules | Should -HaveCount 1
         $modules.Name | Should -BeExactly "Zoo"
         $modules.ExportedFunctions.Count | Should -Be 0 -Because 'No exports were defined'
 
-        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1" -CompatiblePSEditions Core -FunctionsToExport 'Test-ZooFunction'
+        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1" -FunctionsToExport 'Test-ZooFunction'
 
         $modules = Get-Module -Name 'Zoo' -ListAvailable -Refresh
         $modules | Should -HaveCount 1
         $modules.Name | Should -BeExactly "Zoo"
         $modules.ExportedFunctions.Count | Should -Be 1 -Because 'We added a new function to export'
+    }
+
+    Context "PSEdition" {
+
+        BeforeAll {
+            New-Item -ItemType Directory -Path "$testdrive\Modules\DesktopOnlyModule" -Force > $null
+            New-Item -ItemType Directory -Path "$testdrive\Modules\CoreOnlyModule" -Force > $null
+            New-Item -ItemType Directory -Path "$testdrive\Modules\CoreAndDesktopModule" -Force > $null
+
+            New-ModuleManifest -Path "$testdrive\Modules\DesktopOnlyModule\DesktopOnlyModule.psd1" -CompatiblePSEditions Desktop
+            New-ModuleManifest -Path "$testdrive\Modules\CoreOnlyModule\CoreOnlyModule.psd1" -CompatiblePSEditions Core
+            New-ModuleManifest -Path "$testdrive\Modules\CoreAndDesktopModule\CoreAndDesktopModule.psd1" -CompatiblePSEditions Core,Desktop
+
+            New-Item -ItemType File -Path "$testdrive\Modules\DesktopOnlyModule\DesktopOnlyModule.psm1" > $null
+            New-Item -ItemType File -Path "$testdrive\Modules\CoreOnlyModule\CoreOnlyModule.psm1" > $null
+            New-Item -ItemType File -Path "$testdrive\Modules\CoreAndDesktopModule\CoreAndDesktopModule.psm1" > $null
+        }
+
+        It "Get-Module -PSEdition <CompatiblePSEditions> -ListAvailable" -TestCases @(
+            @{ CompatiblePSEditions = 'Desktop'       ; ExpectedModule = 'CoreAndDesktopModule','DesktopOnlyModule' },
+            @{ CompatiblePSEditions = 'Core'          ; ExpectedModule = 'CoreAndDesktopModule','CoreOnlyModule' }
+        ) {
+            param ($CompatiblePSEditions, $ExpectedModule)
+            $modules = Get-Module -PSEdition $CompatiblePSEditions -ListAvailable
+            $modules | Should -HaveCount $ExpectedModule.Count
+            $modules.Name | Sort-Object | Should -Be $ExpectedModule
+        }
     }
 }
