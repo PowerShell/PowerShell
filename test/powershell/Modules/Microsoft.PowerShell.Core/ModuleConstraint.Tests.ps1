@@ -865,7 +865,7 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
         { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
     }
 
-    It "Does not load the module with FullyQualifiedName from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases -Pending {
+    It "Does not load the module with FullyQualifiedName from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
         param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
 
         $modSpec = New-ModuleSpecification -ModuleName $manifestPath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid
@@ -1088,7 +1088,7 @@ Describe "Preloaded modules with versioned directory version checking" -Tag "Fea
         { Import-Module -FullyQualifiedName $modSpec -ErrorAction Stop } | Should -Throw -ErrorId 'Modules_ModuleWithVersionNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand'
     }
 
-    It "Does not load the module with FullyQualifiedName from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases -Pending {
+    It "Does not load the module with FullyQualifiedName from the manifest when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidFailCases {
         param($ModuleVersion, $MaximumVersion, $RequiredVersion, $Guid)
 
         $modSpec = New-ModuleSpecification -ModuleName $manifestPath -ModuleVersion $ModuleVersion -MaximumVersion $MaximumVersion -RequiredVersion $RequiredVersion -Guid $Guid

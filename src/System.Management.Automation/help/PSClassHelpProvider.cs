@@ -185,7 +185,7 @@ namespace System.Management.Automation
         {
             Debug.Assert(!String.IsNullOrEmpty(helpFile), "helpFile cannot be null.");
 
-            if (helpFile.EndsWith(".maml", StringComparison.CurrentCultureIgnoreCase))
+            if (helpFile.EndsWith(".maml", StringComparison.OrdinalIgnoreCase))
                 return true;
 
             if (helpItemsNode.Attributes == null)

@@ -1,8 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Describe "Add-Content cmdlet tests" -Tags "CI" {
-  $file1 = "file1.txt"
-  Setup -File "$file1"
+
+  BeforeAll {
+    $file1 = "file1.txt"
+    Setup -File "$file1"
+  }
 
   Context "Add-Content should actually add content" {
     It "should Add-Content to TestDrive:\$file1" {
@@ -40,7 +43,7 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       { Add-Content -Path $() -Value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddContentCommand"
     }
 
-    It "Should throw an error on a directory" { 
+    It "Should throw an error on a directory" {
       { Add-Content -Path . -Value "WriteContainerContentException" -ErrorAction Stop } | Should -Throw -ErrorId "WriteContainerContentException,Microsoft.PowerShell.Commands.AddContentCommand"
     }
 
@@ -56,6 +59,23 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       $result.length | Should -Be 2
       $result[0]     | Should -BeExactly "hello"
       $result[1]     | Should -BeExactly "world"
+    }
+
+    It "Should not block reads while writing" {
+      $logpath = Join-Path $testdrive "test.log"
+
+      Set-Content $logpath -Value "hello"
+
+      $f = [System.IO.FileStream]::new($logpath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+
+      Add-Content $logpath -Value "world"
+
+      $f.Close()
+
+      $content = Get-Content $logpath
+      $content | Should -HaveCount 2
+      $content[0] | Should -BeExactly "hello"
+      $content[1] | Should -BeExactly "world"
     }
   }
 }

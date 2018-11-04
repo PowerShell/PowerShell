@@ -925,7 +925,7 @@ namespace System.Management.Automation
             var typeName = GetMemberTypeProjection(typename.Name, membersTypes);
             var members = new List<PSMemberNameAndType>();
             members.AddRange(membersTypes);
-            members.Sort((c1,c2) =>string.Compare(c1.Name, c2.Name, StringComparison.CurrentCultureIgnoreCase));
+            members.Sort((c1,c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
             return new PSSyntheticTypeName(typeName, typename.Type, members);
         }
 
@@ -949,7 +949,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static bool IsPSTypeName(PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.CurrentCultureIgnoreCase);
+        private static bool IsPSTypeName(PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
 
         private static string GetMemberTypeProjection(string typename, IList<PSMemberNameAndType> members)
         {
