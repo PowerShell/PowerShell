@@ -1,20 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.Management.Infrastructure;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
-using System.Threading;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis; // for fxcop.
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
-using System.Diagnostics.CodeAnalysis; // for fxcop.
+using System.Runtime.Serialization;
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Diagnostics;
-using Microsoft.Management.Infrastructure;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
