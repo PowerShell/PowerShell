@@ -278,6 +278,15 @@ baz
         } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetContentCommand"
     }
 
+    It "Should throw ItemNotFound when path matches no files with <variation>" -TestCases @(
+        @{ variation = "no additional parameters"; params = @{} },
+        @{ variation = "dynamic parameter"       ; params = @{ Raw = $true }}
+    ) {
+        param($params)
+
+        { Get-Content -Path "/DoesNotExist*.txt" @params -ErrorAction Stop } | Should -Throw -ErrorId "ItemNotFound,Microsoft.PowerShell.Commands.GetContentCommand"
+    }
+
     Context "Check Get-Content containing multi-byte chars" {
         BeforeAll {
             $firstLine = "Hello,World"

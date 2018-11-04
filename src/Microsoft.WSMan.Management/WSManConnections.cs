@@ -140,7 +140,7 @@ namespace Microsoft.WSMan.Management
             set
             {
                 computername = value;
-                if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.CurrentCultureIgnoreCase)))
+                if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
                     computername = "localhost";
                 }
@@ -254,7 +254,7 @@ namespace Microsoft.WSMan.Management
             {
                 crtComputerName = "localhost";
             }
-            if (this.SessionState.Path.CurrentProviderLocation(WSManStringLiterals.rootpath).Path.StartsWith(this.SessionState.Drive.Current.Name + ":" + WSManStringLiterals.DefaultPathSeparator + crtComputerName, StringComparison.CurrentCultureIgnoreCase))
+            if (this.SessionState.Path.CurrentProviderLocation(WSManStringLiterals.rootpath).Path.StartsWith(this.SessionState.Drive.Current.Name + ":" + WSManStringLiterals.DefaultPathSeparator + crtComputerName, StringComparison.OrdinalIgnoreCase))
             {
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("ConnectFailure"), false, computername);
             }
@@ -289,7 +289,7 @@ namespace Microsoft.WSMan.Management
             {
 
                 computername = value;
-                if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.CurrentCultureIgnoreCase)))
+                if ((string.IsNullOrEmpty(computername)) || (computername.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
                     computername = "localhost";
                 }
@@ -333,11 +333,11 @@ namespace Microsoft.WSMan.Management
             {
                 computername = "localhost";
             }
-            if (this.SessionState.Path.CurrentProviderLocation(WSManStringLiterals.rootpath).Path.StartsWith(WSManStringLiterals.rootpath + ":" + WSManStringLiterals.DefaultPathSeparator + computername, StringComparison.CurrentCultureIgnoreCase))
+            if (this.SessionState.Path.CurrentProviderLocation(WSManStringLiterals.rootpath).Path.StartsWith(WSManStringLiterals.rootpath + ":" + WSManStringLiterals.DefaultPathSeparator + computername, StringComparison.OrdinalIgnoreCase))
             {
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("DisconnectFailure"), false, computername);
             }
-            if (computername.Equals("localhost", StringComparison.CurrentCultureIgnoreCase))
+            if (computername.Equals("localhost", StringComparison.OrdinalIgnoreCase))
             {
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("LocalHost"), false, computername);
             }

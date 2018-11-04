@@ -1211,7 +1211,7 @@ namespace System.Management.Automation
 
                 foreach (var propertyName in properties)
                 {
-                    if (name.Equals(propertyName, StringComparison.CurrentCultureIgnoreCase))
+                    if (name.Equals(propertyName, StringComparison.OrdinalIgnoreCase))
                     {
                         return true;
                     }
@@ -1336,7 +1336,7 @@ namespace System.Management.Automation
                             {
                                 case string propertyName:
                                 {
-                                    if (string.Compare(name, propertyName, StringComparison.CurrentCultureIgnoreCase) == 0)
+                                    if (string.Compare(name, propertyName, StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         return includeMatchedProperties;
                                     }
@@ -1603,21 +1603,7 @@ namespace System.Management.Automation
                     if (methodCacheEntry[0].method.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
                     {
                         maybeWantDefaultCtor = false;
-                        if (isInvokeMemberExpressionAst)
-                        {
-                            foreach (var method in methodCacheEntry.methodInformationStructures)
-                            {
-                                if (method.method is MethodInfo methodInfo && !methodInfo.ReturnType.ContainsGenericParameters)
-                                {
-                                    result.Add(new PSTypeName(methodInfo.ReturnType));
-                                }
-                            }
-
-                            return true;
-                        }
-
-                        // Accessing a method as a property, we'd return a wrapper over the method.
-                        result.Add(new PSTypeName(typeof(PSMethod)));
+                        AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
                         return true;
                     }
 
@@ -1667,6 +1653,16 @@ namespace System.Management.Automation
                     ScriptBlock scriptBlock = null;
                     switch (memberInfo)
                     {
+                        case PSMethod m:
+                        {
+                            if (m.adapterData is DotNetAdapter.MethodCacheEntry methodCacheEntry)
+                            {
+                                AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
+                                return true;
+                            }
+
+                            return false;
+                        }
                         case PSProperty p:
                         {
                             result.Add(new PSTypeName(p.Value.GetType()));
@@ -1737,6 +1733,28 @@ namespace System.Management.Automation
             }
 
             return false;
+        }
+
+        private void AddTypesFromMethodCacheEntry(
+            DotNetAdapter.MethodCacheEntry methodCacheEntry,
+            List<PSTypeName> result,
+            bool isInvokeMemberExpressionAst)
+        {
+            if (isInvokeMemberExpressionAst)
+            {
+                foreach (var method in methodCacheEntry.methodInformationStructures)
+                {
+                    if (method.method is MethodInfo methodInfo && !methodInfo.ReturnType.ContainsGenericParameters)
+                    {
+                        result.Add(new PSTypeName(methodInfo.ReturnType));
+                    }
+                }
+
+                return;
+            }
+
+            // Accessing a method as a property, we'd return a wrapper over the method.
+            result.Add(new PSTypeName(typeof(PSMethod)));
         }
 
         private PSTypeName[] GetExpressionType(ExpressionAst expression, bool isStatic)

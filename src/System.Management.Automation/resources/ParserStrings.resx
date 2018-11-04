@@ -1467,4 +1467,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>
   </data>
+  <data name="ImplicitRemotingPipelineBatchingNotSupported" xml:space="preserve">
+    <value>Command pipeline not supported for implicit remoting batching.</value>
+  </data>
 </root>

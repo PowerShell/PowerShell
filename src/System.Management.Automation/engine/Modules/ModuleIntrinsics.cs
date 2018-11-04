@@ -50,6 +50,15 @@ namespace System.Management.Automation
 
         private const int MaxModuleNestingDepth = 10;
 
+        /// <summary>
+        /// Gets and sets boolean that indicates when an implicit remoting module is loaded.
+        /// </summary>
+        internal bool IsImplicitRemotingModuleLoaded
+        {
+            get;
+            set;
+        }
+
         internal void IncrementModuleNestingDepth(PSCmdlet cmdlet, string path)
         {
             if (++ModuleNestingDepth > MaxModuleNestingDepth)
@@ -401,21 +410,253 @@ namespace System.Management.Automation
             return modulesMatched.OrderBy(m => m.Name).ToList();
         }
 
+
+        /// <summary>
+        /// Check if a given module info object matches a given module specification.
+        /// </summary>
+        /// <param name="moduleInfo">The module info object to check.</param>
+        /// <param name="moduleSpec">The module specification to match the module info object against.</param>
+        /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
         internal static bool IsModuleMatchingModuleSpec(PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
         {
-            if (moduleInfo != null && moduleSpec != null &&
-                moduleInfo.Name.Equals(moduleSpec.Name, StringComparison.OrdinalIgnoreCase) &&
-                (!moduleSpec.Guid.HasValue || moduleSpec.Guid.Equals(moduleInfo.Guid)) &&
-                ((moduleSpec.Version == null && moduleSpec.RequiredVersion == null && moduleSpec.MaximumVersion == null)
-                 || (moduleSpec.RequiredVersion != null && moduleSpec.RequiredVersion.Equals(moduleInfo.Version))
-                 || (moduleSpec.MaximumVersion == null && moduleSpec.Version != null && moduleSpec.RequiredVersion == null && moduleSpec.Version <= moduleInfo.Version)
-                 || (moduleSpec.MaximumVersion != null && moduleSpec.Version == null && moduleSpec.RequiredVersion == null && ModuleCmdletBase.GetMaximumVersion(moduleSpec.MaximumVersion) >= moduleInfo.Version)
-                 || (moduleSpec.MaximumVersion != null && moduleSpec.Version != null && moduleSpec.RequiredVersion == null && ModuleCmdletBase.GetMaximumVersion(moduleSpec.MaximumVersion) >= moduleInfo.Version && moduleSpec.Version <= moduleInfo.Version)))
+            return IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, moduleInfo, moduleSpec);
+        }
+
+        /// <summary>
+        /// Check if a given module info object matches a given module specification.
+        /// </summary>
+        /// <param name="matchFailureReason">The constraint that caused the match failure, if any.</param>
+        /// <param name="moduleInfo">The module info object to check.</param>
+        /// <param name="moduleSpec">The module specification to match the module info object against.</param>
+        /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
+        internal static bool IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
+        {
+            if (moduleSpec == null)
             {
-                return true;
+                matchFailureReason = ModuleMatchFailure.NullModuleSpecification;
+                return false;
             }
 
-            return false;
+            return IsModuleMatchingConstraints(
+                out matchFailureReason,
+                moduleInfo,
+                moduleSpec.Name,
+                moduleSpec.Guid,
+                moduleSpec.RequiredVersion,
+                moduleSpec.Version,
+                moduleSpec.MaximumVersion == null ? null : ModuleCmdletBase.GetMaximumVersion(moduleSpec.MaximumVersion));
+        }
+
+        /// <summary>
+        /// Check if a given module info object matches the given constraints.
+        /// Constraints given as null are ignored.
+        /// </summary>
+        /// <param name="moduleInfo">The module info object to check.</param>
+        /// <param name="name">The name of the expected module.</param>
+        /// <param name="guid">The guid of the expected module.</param>
+        /// <param name="requiredVersion">The required version of the expected module.</param>
+        /// <param name="minimumVersion">The minimum required version of the expected module.</param>
+        /// <param name="maximumVersion">The maximum required version of the expected module.</param>
+        /// <returns>True if the module info object matches all given constraints, false otherwise.</returns>
+        internal static bool IsModuleMatchingConstraints(
+            PSModuleInfo moduleInfo,
+            string name = null,
+            Guid? guid = null,
+            Version requiredVersion = null,
+            Version minimumVersion = null,
+            Version maximumVersion = null)
+        {
+            return IsModuleMatchingConstraints(
+                out ModuleMatchFailure matchFailureReason,
+                moduleInfo,
+                name,
+                guid,
+                requiredVersion,
+                minimumVersion,
+                maximumVersion);
+        }
+
+        /// <summary>
+        /// Check if a given module info object matches the given constraints.
+        /// Constraints given as null are ignored.
+        /// </summary>
+        /// <param name="matchFailureReason">The reason for the module constraint match failing.</param>
+        /// <param name="moduleInfo">The module info object to check.</param>
+        /// <param name="name">The name of the expected module.</param>
+        /// <param name="guid">The guid of the expected module.</param>
+        /// <param name="requiredVersion">The required version of the expected module.</param>
+        /// <param name="minimumVersion">The minimum required version of the expected module.</param>
+        /// <param name="maximumVersion">The maximum required version of the expected module.</param>
+        /// <returns>True if the module info object matches all given constraints, false otherwise.</returns>
+        internal static bool IsModuleMatchingConstraints(
+            out ModuleMatchFailure matchFailureReason,
+            PSModuleInfo moduleInfo,
+            string name,
+            Guid? guid,
+            Version requiredVersion,
+            Version minimumVersion,
+            Version maximumVersion)
+        {
+            // Define that a null module does not meet any constraints
+            if (moduleInfo == null)
+            {
+                matchFailureReason = ModuleMatchFailure.NullModule;
+                return false;
+            }
+
+            return AreModuleFieldsMatchingConstraints(
+                out matchFailureReason,
+                moduleInfo.Name,
+                moduleInfo.Guid,
+                moduleInfo.Version,
+                name,
+                guid,
+                requiredVersion,
+                minimumVersion,
+                maximumVersion
+            );
+        }
+
+        /// <summary>
+        /// Check that given module fields meet any given constraints.
+        /// </summary>
+        /// <param name="moduleName">The name of the module to check.</param>
+        /// <param name="moduleGuid">The GUID of the module to check.</param>
+        /// <param name="moduleVersion">The version of the module to check.</param>
+        /// <param name="requiredName">The name the module must have, if any.</param>
+        /// <param name="requiredGuid">The GUID the module must have, if any.</param>
+        /// <param name="requiredVersion">The exact version the module must have, if any.</param>
+        /// <param name="minimumRequiredVersion">The minimum version the module may have, if any.</param>
+        /// <param name="maximumRequiredVersion">The maximum version the module may have, if any.</param>
+        /// <returns>True if the module parameters match all given constraints, false otherwise.</returns>
+        internal static bool AreModuleFieldsMatchingConstraints(
+            string moduleName = null,
+            Guid? moduleGuid = null,
+            Version moduleVersion = null,
+            string requiredName = null,
+            Guid? requiredGuid = null,
+            Version requiredVersion = null,
+            Version minimumRequiredVersion = null,
+            Version maximumRequiredVersion = null)
+        {
+            return AreModuleFieldsMatchingConstraints(
+                out ModuleMatchFailure matchFailureReason,
+                moduleName,
+                moduleGuid,
+                moduleVersion,
+                requiredName,
+                requiredGuid,
+                requiredVersion,
+                minimumRequiredVersion,
+                maximumRequiredVersion);
+        }
+
+        /// <summary>
+        /// Check that given module fields meet any given constraints.
+        /// </summary>
+        /// <param name="matchFailureReason">The reason the match failed, if any.</param>
+        /// <param name="moduleName">The name of the module to check.</param>
+        /// <param name="moduleGuid">The GUID of the module to check.</param>
+        /// <param name="moduleVersion">The version of the module to check.</param>
+        /// <param name="requiredName">The name the module must have, if any.</param>
+        /// <param name="requiredGuid">The GUID the module must have, if any.</param>
+        /// <param name="requiredVersion">The exact version the module must have, if any.</param>
+        /// <param name="minimumRequiredVersion">The minimum version the module may have, if any.</param>
+        /// <param name="maximumRequiredVersion">The maximum version the module may have, if any.</param>
+        /// <returns>True if the module parameters match all given constraints, false otherwise.</returns>
+        internal static bool AreModuleFieldsMatchingConstraints(
+            out ModuleMatchFailure matchFailureReason,
+            string moduleName,
+            Guid? moduleGuid,
+            Version moduleVersion,
+            string requiredName,
+            Guid? requiredGuid,
+            Version requiredVersion,
+            Version minimumRequiredVersion,
+            Version maximumRequiredVersion)
+        {
+            // If a name is required, check it matches
+            if (requiredName != null && !requiredName.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
+            {
+                matchFailureReason = ModuleMatchFailure.Name;
+                return false;
+            }
+
+            // If a GUID is required, check it matches
+            if (requiredGuid != null && !requiredGuid.Equals(moduleGuid))
+            {
+                matchFailureReason = ModuleMatchFailure.Guid;
+                return false;
+            }
+
+            // Check the versions
+            return IsVersionMatchingConstraints(out matchFailureReason, moduleVersion, requiredVersion, minimumRequiredVersion, maximumRequiredVersion);
+        }
+
+        /// <summary>
+        /// Check that a given module version matches the required or minimum/maximum version constraints.
+        /// Null constraints are not checked.
+        /// </summary>
+        /// <param name="version">The module version to check. Must not be null</param>
+        /// <param name="requiredVersion">The version that the given version must be, if not null.</param>
+        /// <param name="minimumVersion">The minimum version that the given version must be greater than or equal to, if not null.</param>
+        /// <param name="maximumVersion">The maximum version that the given version must be less then or equal to, if not null.</param>
+        /// <returns>
+        /// True if the version matches the required version, or if it is absent, is between the minimum and maximum versions, and false otherwise.
+        /// </returns>
+        internal static bool IsVersionMatchingConstraints(
+            Version version,
+            Version requiredVersion = null,
+            Version minimumVersion = null,
+            Version maximumVersion = null)
+        {
+            return IsVersionMatchingConstraints(out ModuleMatchFailure matchFailureReason, version, requiredVersion, minimumVersion, maximumVersion);
+        }
+
+        /// <summary>
+        /// Check that a given module version matches the required or minimum/maximum version constraints.
+        /// Null constraints are not checked.
+        /// </summary>
+        /// <param name="matchFailureReason">The reason why the match failed.</param>
+        /// <param name="version">The module version to check. Must not be null</param>
+        /// <param name="requiredVersion">The version that the given version must be, if not null.</param>
+        /// <param name="minimumVersion">The minimum version that the given version must be greater than or equal to, if not null.</param>
+        /// <param name="maximumVersion">The maximum version that the given version must be less then or equal to, if not null.</param>
+        /// <returns>
+        /// True if the version matches the required version, or if it is absent, is between the minimum and maximum versions, and false otherwise.
+        /// </returns>
+        internal static bool IsVersionMatchingConstraints(
+            out ModuleMatchFailure matchFailureReason,
+            Version version,
+            Version requiredVersion = null,
+            Version minimumVersion = null,
+            Version maximumVersion = null)
+        {
+            Dbg.Assert(version != null, $"Caller to verify that {nameof(version)} is not null");
+
+            // If a RequiredVersion is given it overrides other version settings
+            if (requiredVersion != null)
+            {
+                matchFailureReason = ModuleMatchFailure.RequiredVersion;
+                return requiredVersion.Equals(version);
+            }
+
+            // Check the version is at least the minimum version
+            if (minimumVersion != null && version < minimumVersion)
+            {
+                matchFailureReason = ModuleMatchFailure.MinimumVersion;
+                return false;
+            }
+
+            // Check the version is at most the maximum version
+            if (maximumVersion != null && version > maximumVersion)
+            {
+                matchFailureReason = ModuleMatchFailure.MaximumVersion;
+                return false;
+            }
+
+            matchFailureReason = ModuleMatchFailure.None;
+            return true;
         }
 
         internal static Version GetManifestModuleVersion(string manifestPath)
@@ -1296,6 +1537,36 @@ namespace System.Management.Automation
             return aliasCopy;
         }
     } // ModuleIntrinsics
+
+    /// <summary>
+    /// Enumeration of reasons for a failure to match a module by constraints.
+    /// </summary>
+    internal enum ModuleMatchFailure
+    {
+        /// <summary>Match did not fail.</summary>
+        None,
+
+        /// <summary>Match failed because the module was null.</summary>
+        NullModule,
+
+        /// <summary>Module name did not match.</summary>
+        Name,
+
+        /// <summary>Module GUID did not match.</summary>
+        Guid,
+
+        /// <summary>Module version did not match the required version.</summary>
+        RequiredVersion,
+
+        /// <summary>Module version was lower than the minimum version.</summary>
+        MinimumVersion,
+
+        /// <summary>Module version was greater than the maximum version.</summary>
+        MaximumVersion,
+
+        /// <summary>The module specifcation passed in was null.</summary>
+        NullModuleSpecification,
+    }
 
     /// <summary>
     /// Used by Modules/Snapins to provide a hook to the engine for startup initialization
