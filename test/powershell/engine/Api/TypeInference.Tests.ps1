@@ -242,6 +242,12 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Type'
     }
 
+    It "Infers type from static member method" {
+        $res = [AstTypeInference]::InferTypeOf( { [powershell]::Create() }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Management.Automation.PowerShell'
+    }
+
     It "Infers type from integer * stringliteral" {
         $res = [AstTypeInference]::InferTypeOf( {  5 * "5" }.Ast)
         $res.Count | Should -Be 1
@@ -412,7 +418,7 @@ Describe "Type inference Tests" -tags "CI" {
     It "Infers typeof Select-Object when Parameter is ExcludeProperty" {
         $res = [AstTypeInference]::InferTypeOf( {  [io.fileinfo]::new("file")  |  Select-Object -ExcludeProperty *Time*, E* }.Ast)
         $res.Count | Should -Be 1
-        $res[0].Name | Should -Be "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LinkType:Mode:Name:Target"
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LinkType:Mode:Name:Target:VersionInfo"
         $names = $res[0].Members.Name
         $names -contains "BaseName" | Should -BeTrue
         $names -contains "Name" | Should -BeTrue
@@ -924,6 +930,90 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be 1
         $res.Name | Should -Be System.Int32
+    }
+
+    It 'Infers type of variable $_ in catch block' {
+        $variableAst = { try {} catch { $_ } }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
+        $res = [AstTypeInference]::InferTypeOf($variableAst)
+
+        $res | Should -HaveCount 1
+        $res.Name | Should -Be System.Management.Automation.ErrorRecord
+    }
+
+    It 'Infers type of untyped $_.Exception in catch block' {
+        $memberAst = { try {} catch { $_.Exception } }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] }, $true)
+        $res = [AstTypeInference]::InferTypeOf($memberAst)
+
+        $res | Should -HaveCount 1
+        $res.Name | Should -Be System.Exception
+    }
+
+    $catchClauseTypes = @(
+        @{ Type = 'System.ArgumentException' }
+        @{ Type = 'System.ArgumentNullException' }
+        @{ Type = 'System.ArgumentOutOfRangeException' }
+        @{ Type = 'System.Collections.Generic.KeyNotFoundException' }
+        @{ Type = 'System.DivideByZeroException' }
+        @{ Type = 'System.FormatException' }
+        @{ Type = 'System.IndexOutOfRangeException' }
+        @{ Type = 'System.InvalidOperationException' }
+        @{ Type = 'System.IO.DirectoryNotFoundException' }
+        @{ Type = 'System.IO.DriveNotFoundException' }
+        @{ Type = 'System.IO.FileNotFoundException' }
+        @{ Type = 'System.IO.PathTooLongException' }
+        @{ Type = 'System.Management.Automation.CommandNotFoundException' }
+        @{ Type = 'System.Management.Automation.JobFailedException' }
+        @{ Type = 'System.Management.Automation.RuntimeException' }
+        @{ Type = 'System.Management.Automation.ValidationMetadataException' }
+        @{ Type = 'System.NotImplementedException' }
+        @{ Type = 'System.NotSupportedException' }
+        @{ Type = 'System.ObjectDisposedException' }
+        @{ Type = 'System.OverflowException' }
+        @{ Type = 'System.PlatformNotSupportedException' }
+        @{ Type = 'System.RankException' }
+        @{ Type = 'System.TimeoutException' }
+        @{ Type = 'System.UriFormatException' }
+    )
+
+    It 'Infers type of $_.Exception in [<Type>] typed catch block' -TestCases $catchClauseTypes {
+        param($Type)
+
+        $memberAst = [scriptblock]::Create("try {} catch [$Type] { `$_.Exception }").Ast.Find(
+            { param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] },
+            $true
+        )
+        $res = [AstTypeInference]::InferTypeOf($memberAst)
+
+        $res | Should -HaveCount 1
+        $res.Name | Should -Be $Type
+    }
+
+    It 'Infers possible types of $_.Exception in multi-typed catch block' {
+        $memberAst = { try {} catch [System.ArgumentException], [System.NotImplementedException] { $_.Exception } }.Ast.Find(
+            { param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] },
+            $true
+        )
+        $res = [AstTypeInference]::InferTypeOf($memberAst)
+
+        $res | Should -HaveCount 2
+        $res[0].Name | Should -Be System.ArgumentException
+        $res[1].Name | Should -Be System.NotImplementedException
+    }
+
+    It 'Infers type of $_.Exception in each successive catch block' {
+        $memberAst = {
+            try {}
+            catch [System.ArgumentException] { $_.Exception }
+            catch { $_.Exception }
+        }.Ast.FindAll(
+            { param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] },
+            $true
+        )
+        $res = foreach ($item in $memberAst) { [AstTypeInference]::InferTypeOf($item) }
+
+        $res | Should -HaveCount 2
+        $res[0].Name | Should -Be System.ArgumentException
+        $res[1].Name | Should -Be System.Exception
     }
 
     It 'Infers type of function member' {

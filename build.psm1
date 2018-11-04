@@ -203,6 +203,8 @@ function Start-PSBuild {
         [switch]$StopDevPowerShell,
 
         [switch]$Restore,
+        # Accept a path to the output directory
+        # When specified, --output <path> will be passed to dotnet
         [string]$Output,
         [switch]$ResGen,
         [switch]$TypeGen,
@@ -323,11 +325,8 @@ Fix steps:
 
     # setup arguments
     $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true")
-    if ($Output) {
-        $Arguments += "--output", $Output
-    }
-    elseif ($SMAOnly) {
-        $Arguments += "--output", (Split-Path $script:Options.Output)
+    if ($Output -or $SMAOnly) {
+        $Arguments += "--output", (Split-Path $Options.Output)
     }
 
     $Arguments += "--configuration", $Options.Configuration
@@ -362,7 +361,13 @@ Fix steps:
     }
 
     # Get the folder path where pwsh.exe is located.
-    $publishPath = Split-Path $Options.Output -Parent
+    if ((Split-Path $Options.Output -Leaf) -like "pwsh*") {
+        $publishPath = Split-Path $Options.Output -Parent
+    }
+    else {
+        $publishPath = $Options.Output
+    }
+
     try {
         # Relative paths do not work well if cwd is not changed to project
         Push-Location $Options.Top
@@ -599,6 +604,10 @@ function New-PSOptions {
 
         [switch]$CrossGen,
 
+        # Accept a path to the output directory
+        # If not null or empty, name of the executable will be appended to
+        # this path, otherwise, to the default path, and then the full path
+        # of the output executable will be assigned to the Output property
         [string]$Output,
 
         [switch]$SMAOnly,
@@ -677,6 +686,8 @@ function New-PSOptions {
         } else {
             $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
         }
+    } else {
+        $Output = [IO.Path]::Combine($Output, $Executable)
     }
 
     if ($SMAOnly)
@@ -2063,7 +2074,7 @@ function Start-CrossGen {
         $Runtime
     )
 
-    function Generate-CrossGenAssembly {
+    function New-CrossGenAssembly {
         param (
             [Parameter(Mandatory= $true)]
             [ValidateNotNullOrEmpty()]
@@ -2213,7 +2224,7 @@ function Start-CrossGen {
 
     foreach ($assemblyName in $fullAssemblyList) {
         $assemblyPath = Join-Path $PublishPath $assemblyName
-        Generate-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
+        New-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
     }
 
     #
@@ -2972,3 +2983,73 @@ $script:RESX_TEMPLATE = @'
 {0}
 </root>
 '@
+
+function New-TestPackage
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $Destination
+    )
+
+    if (Test-Path $Destination -PathType Leaf)
+    {
+        throw "Destination: '$Destination' is not a directory or does not exist."
+    }
+    else
+    {
+        $null = New-Item -Path $Destination -ItemType Directory -Force
+        Write-Verbose -Message "Creating destination folder: $Destination"
+    }
+
+    $rootFolder = $env:TEMP
+
+    if (-not $rootFolder -and $env:TF_BUILD) {
+        $rootFolder = $env:AGENT_WORKFOLDER
+    }
+
+    Write-Verbose -Verbose "RootFolder: $rootFolder"
+
+    $packageRoot = Join-Path $rootFolder ('TestPackage-' + (new-guid))
+    $null = New-Item -ItemType Directory -Path $packageRoot -Force
+    $packagePath = Join-Path $Destination "TestPackage.zip"
+    Write-Verbose -Verbose "PackagePath: $packagePath"
+
+    # Build test tools so they are placed in appropriate folders under 'test' then copy to package root.
+    $null = Publish-PSTestTools
+    $powerShellTestRoot =  Join-Path $PSScriptRoot 'test'
+    Copy-Item $powerShellTestRoot -Recurse -Destination $packageRoot -Force
+    Write-Verbose -Message "Copied test directory"
+
+    # Copy assests folder to package root for wix related tests.
+    $assetsPath = Join-Path $PSScriptRoot 'assets'
+    Copy-Item $assetsPath -Recurse -Destination $packageRoot -Force
+    Write-Verbose -Message "Copied assests directory"
+
+    # Create expected folder structure for resx files in package root.
+    $srcRootForResx = New-Item -Path "$packageRoot/src" -Force -ItemType Directory
+
+    $resourceDirectories = Get-ChildItem -Recurse "$PSScriptRoot/src" -Directory -Filter 'resources'
+
+    $resourceDirectories | ForEach-Object {
+        $directoryFullName = $_.FullName
+
+        $partToRemove = Join-Path $PSScriptRoot "src"
+
+        $assemblyPart = $directoryFullName.Replace($partToRemove, '')
+        $assemblyPart = $assemblyPart.TrimStart([io.path]::DirectorySeparatorChar)
+        $resxDestPath = Join-Path $srcRootForResx $assemblyPart
+        $null = New-Item -Path $resxDestPath -Force -ItemType Directory
+        Write-Verbose -Message "Created resx directory : $resxDestPath"
+        Copy-Item -Path "$directoryFullName\*" -Recurse $resxDestPath -Force
+    }
+
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+    if(Test-Path $packagePath)
+    {
+        Remove-Item -Path $packagePath -Force
+    }
+
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($packageRoot, $packagePath)
+}

@@ -275,13 +275,7 @@ namespace System.Management.Automation
                     out provider,
                     out providerInstance);
 
-            if (providerPaths.Count > 0)
-            {
-                // Get the dynamic parameters for the first resolved path
-
-                return GetContentReaderDynamicParameters(providerInstance, providerPaths[0], newContext);
-            }
-            return null;
+            return GetContentReaderDynamicParameters(providerInstance, path, newContext);
         } // GetContentReaderDynamicParameters
 
         /// <summary>
@@ -1031,4 +1025,3 @@ namespace System.Management.Automation
 }
 
 #pragma warning restore 56500
-

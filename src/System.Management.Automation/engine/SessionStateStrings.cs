@@ -170,7 +170,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The escape character used in the language.
         /// </summary>
-        internal const string EscapeCharacter = "`";
+        internal const char EscapeCharacter = '`';
 
         /// <summary>
         /// The default cmdlet adapter for cmdletization / cdxml modules

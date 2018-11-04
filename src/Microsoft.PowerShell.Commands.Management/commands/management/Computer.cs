@@ -837,7 +837,7 @@ $result
                     bool isLocal = false;
                     string compname;
 
-                    if (computer.Equals("localhost", StringComparison.CurrentCultureIgnoreCase))
+                    if (computer.Equals("localhost", StringComparison.OrdinalIgnoreCase))
                     {
                         compname = _shortLocalMachineName;
                         isLocal = true;
@@ -1209,7 +1209,7 @@ $result
 
                 if (_cancel.Token.IsCancellationRequested) { break; }
 
-                if ((computer.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if ((computer.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
                     compname = Dns.GetHostName();
                     strLocal = "localhost";
@@ -1826,7 +1826,7 @@ $result
         internal static string GetScopeString(string computer, string namespaceParameter)
         {
             StringBuilder returnValue = new StringBuilder("\\\\");
-            if (computer.Equals("::1", StringComparison.CurrentCultureIgnoreCase) || computer.Equals("[::1]", StringComparison.CurrentCultureIgnoreCase))
+            if (computer.Equals("::1", StringComparison.OrdinalIgnoreCase) || computer.Equals("[::1]", StringComparison.OrdinalIgnoreCase))
             {
                 returnValue.Append("localhost");
             }
@@ -1868,13 +1868,13 @@ $result
             string driveApp;
             foreach (string drive in drives)
             {
-                if (!drive.EndsWith("\\", StringComparison.CurrentCultureIgnoreCase))
+                if (!drive.EndsWith("\\", StringComparison.OrdinalIgnoreCase))
                 {
                     driveApp = String.Concat(drive, "\\");
                 }
                 else
                     driveApp = drive;
-                if (driveApp.Equals(sysdrive, StringComparison.CurrentCultureIgnoreCase))
+                if (driveApp.Equals(sysdrive, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
             return false;
@@ -1911,7 +1911,7 @@ $result
                     i++;
                 }
 
-                if ((computer.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if ((computer.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
                     compname = Dns.GetHostName();
                 }

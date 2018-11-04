@@ -165,6 +165,19 @@ Describe "Set-Location" -Tags "CI" {
         }
     }
 
+    It 'Should nativate to literal path "<path>"' -TestCases @(
+        @{ path = "-" },
+        @{ path = "+" }
+    ) {
+        param($path)
+
+        Set-Location $TestDrive
+        $literalPath = Join-Path $TestDrive $path
+        New-Item -ItemType Directory -Path $literalPath
+        Set-Location -LiteralPath $path
+        (Get-Location).Path | Should -BeExactly $literalPath
+    }
+
     Context 'Test the LocationChangedAction event handler' {
 
         AfterEach {

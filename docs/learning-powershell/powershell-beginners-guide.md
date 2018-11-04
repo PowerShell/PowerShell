@@ -41,7 +41,7 @@ Handles   NPM(K)    PM(K)     WS(K)     CPU(s)     Id    ProcessName
 …
 ```
 
-Only interested in the instance of firefox process that are running on your computer?
+Only interested in the instance of Firefox process that is running on your computer?
 
 Try this:
 
@@ -87,6 +87,7 @@ CommandType     Name
 
 Alias           cd -> Set-Location
 Alias           cls -> Clear-Host
+Alias           clear -> Clear-Host
 Alias           copy -> Copy-Item
 Alias           dir -> Get-ChildItem
 Alias           gc -> Get-Content
@@ -96,7 +97,7 @@ Alias           type -> Get-Content
 …
 ```
 
-As you can see `cls` is an alias of `Clear-Host`.
+As you can see `cls` or `clear` is an alias of `Clear-Host`.
 
 Now try it:
 ```powershell

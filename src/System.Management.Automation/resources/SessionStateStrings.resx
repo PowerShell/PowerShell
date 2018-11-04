@@ -284,7 +284,7 @@
   </data>
   <data name="WriteContainerContentException" xml:space="preserve">
     <value>Unable to write content because it is a directory: '{0}'.</value>
-  </data>   
+  </data>
   <data name="LocationUndoStackIsEmpty" xml:space="preserve">
     <value>There is no location history left to navigate backwards.</value>
   </data>
@@ -296,6 +296,9 @@
   </data>
   <data name="ClearContentProviderException" xml:space="preserve">
     <value>Attempting to perform the ClearContent operation on the '{0}' provider failed for path '{1}'. {2}</value>
+  </data>
+  <data name="ClearDirectoryContent" xml:space="preserve">
+    <value>Unable to clear content of '{0}' because it is a directory. Clear-Content is only supported on files.</value>
   </data>
   <data name="ClearContentDynamicParametersProviderException" xml:space="preserve">
     <value>The dynamic parameters for the ClearContent operation cannot be retrieved from the '{0}' provider for path '{1}'. {2}</value>

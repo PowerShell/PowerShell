@@ -1489,7 +1489,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                     if (keyInfo.Key == ConsoleKey.Enter)
 #else
-                if (s.EndsWith(Crlf, StringComparison.CurrentCulture))
+                if (s.EndsWith(Crlf, StringComparison.Ordinal))
 #endif
                     {
                         result = ReadLineResult.endedOnEnter;
@@ -1509,7 +1509,7 @@ namespace Microsoft.PowerShell
                         continue;
                     }
 #else
-                int i = s.IndexOf(Tab, StringComparison.CurrentCulture);
+                int i = s.IndexOf(Tab, StringComparison.Ordinal);
 
                 if (endOnTab && i != -1)
                 {
@@ -1805,7 +1805,7 @@ namespace Microsoft.PowerShell
 
                 if (rlResult == ReadLineResult.endedOnTab || rlResult == ReadLineResult.endedOnShiftTab)
                 {
-                    int tabIndex = input.IndexOf(Tab, StringComparison.CurrentCulture);
+                    int tabIndex = input.IndexOf(Tab, StringComparison.Ordinal);
                     Dbg.Assert(tabIndex != -1, "tab should appear in the input");
 
                     string restOfLine = string.Empty;
