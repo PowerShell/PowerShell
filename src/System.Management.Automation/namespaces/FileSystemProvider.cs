@@ -81,6 +81,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Collection<WildcardPattern> _excludeMatcher = null;
+        private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
+        {
+            MatchCasing = MatchCasing.CaseInsensitive,
+            AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
+        };
 
         /// <summary>
         /// Converts all / in the path to \
@@ -1420,8 +1425,8 @@ namespace Microsoft.PowerShell.Commands
             // Don't handle full paths, paths that the user is already trying to
             // filter, or paths they are trying to escape.
             if ((!String.IsNullOrEmpty(filter)) ||
-                (path.Contains(StringLiterals.DefaultPathSeparatorString)) ||
-                (path.Contains(StringLiterals.AlternatePathSeparatorString)) ||
+                (path.Contains(StringLiterals.DefaultPathSeparator, StringComparison.Ordinal)) ||
+                (path.Contains(StringLiterals.AlternatePathSeparator, StringComparison.Ordinal)) ||
                 (path.Contains(StringLiterals.EscapeCharacter)))
             {
                 return false;
@@ -1569,7 +1574,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         // Filter the directories
-                        target.Add(directory.EnumerateDirectories(Filter));
+                        target.Add(directory.EnumerateDirectories(Filter, _enumerationOptions));
                     }
 
                     // Making sure to obey the StopProcessing.
@@ -1580,7 +1585,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Use the specified filter when retrieving the
                     // children
-                    target.Add(directory.EnumerateFiles(Filter));
+                    target.Add(directory.EnumerateFiles(Filter, _enumerationOptions));
                 }
                 else
                 {
@@ -4809,13 +4814,13 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     string originalPathComparison = path;
-                    if (!originalPathComparison.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase))
+                    if (!originalPathComparison.EndsWith(StringLiterals.DefaultPathSeparator))
                     {
                         originalPathComparison += StringLiterals.DefaultPathSeparator;
                     }
 
                     string basePathComparison = basePath;
-                    if (!basePathComparison.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase))
+                    if (!basePathComparison.EndsWith(StringLiterals.DefaultPathSeparator))
                     {
                         basePathComparison += StringLiterals.DefaultPathSeparator;
                     }
@@ -5013,7 +5018,7 @@ namespace Microsoft.PowerShell.Commands
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
                 if (String.Equals(path, basePath, StringComparison.OrdinalIgnoreCase) &&
-                    (!originalPath.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
+                    (!originalPath.EndsWith(StringLiterals.DefaultPathSeparator)))
                 {
                     string childName = GetChildName(path);
                     result = MakePath("..", childName);
@@ -5060,7 +5065,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!String.IsNullOrEmpty(commonBase))
                     {
                         if (String.Equals(path, commonBase, StringComparison.OrdinalIgnoreCase) &&
-                            (!path.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
+                            (!path.EndsWith(StringLiterals.DefaultPathSeparator)))
                         {
                             string childName = GetChildName(path);
                             result = MakePath("..", result);
@@ -6530,7 +6535,7 @@ namespace Microsoft.PowerShell.Commands
                     return stream;
                 }
 
-                stream = new FileSystemContentReaderWriter(path, streamName, filemode, FileAccess.Write, FileShare.Write, encoding, usingByteEncoding, false, this, false, suppressNewline);
+                stream = new FileSystemContentReaderWriter(path, streamName, filemode, FileAccess.Write, FileShare.ReadWrite, encoding, usingByteEncoding, false, this, false, suppressNewline);
             }
             catch (PathTooLongException pathTooLong)
             {
@@ -6599,6 +6604,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             path = NormalizePath(path);
+
+            if (Directory.Exists(path))
+            {
+                string errorMsg = StringUtil.Format(SessionStateStrings.ClearDirectoryContent, path);
+                WriteError(new ErrorRecord(new NotSupportedException(errorMsg), "ClearDirectoryContent", ErrorCategory.InvalidOperation, path));
+                return;
+            }
 
             try
             {
@@ -8242,24 +8254,54 @@ namespace System.Management.Automation.Internal
         /// <returns>A FileStream that can be used to interact with the file.</returns>
         internal static FileStream CreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share)
         {
-            if (path == null) throw new ArgumentNullException("path");
-            if (streamName == null) throw new ArgumentNullException("streamName");
+            if (!TryCreateFileStream(path, streamName, mode, access, share, out var stream))
+            {
+                string errorMessage = StringUtil.Format(
+                    FileSystemProviderStrings.AlternateDataStreamNotFound, streamName, path);
+                throw new FileNotFoundException(errorMessage, $"{path}:{streamName}");
+            }
 
-            string adjustedStreamName = streamName.Trim();
-            adjustedStreamName = ":" + adjustedStreamName;
-            string resultPath = path + adjustedStreamName;
+            return stream;
+        }
 
-            if (mode == FileMode.Append) mode = FileMode.OpenOrCreate;
+        /// <summary>
+        /// Tries to create a file stream on a file.
+        /// </summary>
+        /// <param name="path">The fully-qualified path to the file.</param>
+        /// <param name="streamName">The name of the alternate data stream to open.</param>
+        /// <param name="mode">The FileMode of the file.</param>
+        /// <param name="access">The FileAccess of the file.</param>
+        /// <param name="share">The FileShare of the file.</param>
+        /// <param name="stream">A FileStream that can be used to interact with the file.</param>
+        /// <returns>true if the stream was successfully created, otherwise false.</returns>
+        internal static bool TryCreateFileStream(string path, string streamName, FileMode mode, FileAccess access, FileShare share, out FileStream stream)
+        {
+            if (path == null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
+            if (streamName == null)
+            {
+                throw new ArgumentNullException(nameof(streamName));
+            }
+
+            if (mode == FileMode.Append)
+            {
+                mode = FileMode.OpenOrCreate;
+            }
+
+            var resultPath = $"{path}:{streamName}";
             SafeFileHandle handle = NativeMethods.CreateFile(resultPath, access, share, IntPtr.Zero, mode, 0, IntPtr.Zero);
 
             if (handle.IsInvalid)
             {
-                string errorMessage = StringUtil.Format(
-                    FileSystemProviderStrings.AlternateDataStreamNotFound, streamName, path);
-                throw new FileNotFoundException(errorMessage, resultPath);
+                stream = null;
+                return false;
             }
 
-            return new FileStream(handle, access);
+            stream = new FileStream(handle, access);
+            return true;
         }
 
         /// <summary>

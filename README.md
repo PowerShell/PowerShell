@@ -77,22 +77,22 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/powershell-6.1.0-linux-arm32.tar.gz
 [rl-snap]: https://snapcraft.io/powershell
 
-[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/PowerShell-6.1.0-win-x64.msi
-[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/PowerShell-6.1.0-win-x86.msi
-[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/powershell_6.1.0-1.ubuntu.18.04_amd64.deb
-[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/powershell_6.1.0-1.ubuntu.16.04_amd64.deb
-[pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/powershell_6.1.0-1.ubuntu.14.04_amd64.deb
-[pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/powershell_6.1.0-1.debian.8_amd64.deb
-[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/powershell_6.1.0-1.debian.9_amd64.deb
-[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/powershell-6.1.0-1.rhel.7.x86_64.rpm
-[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/powershell-6.1.0-osx-x64.pkg
-[pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/PowerShell-6.1.0-win-arm32.zip
-[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/PowerShell-6.1.0-win-arm64.zip
-[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/PowerShell-6.1.0-win-x86.zip
-[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/PowerShell-6.1.0-win-x64.zip
-[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/powershell-6.1.0-osx-x64.tar.gz
-[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/powershell-6.1.0-linux-x64.tar.gz
-[pv-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.1.0/powershell-6.1.0-linux-arm32.tar.gz
+[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-x64.msi
+[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-x86.msi
+[pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell_6.2.0-preview.1-1.ubuntu.18.04_amd64.deb
+[pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell_6.2.0-preview.1-1.ubuntu.16.04_amd64.deb
+[pv-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell_6.2.0-preview.1-1.ubuntu.14.04_amd64.deb
+[pv-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell_6.2.0-preview.1-1.debian.8_amd64.deb
+[pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell_6.2.0-preview.1-1.debian.9_amd64.deb
+[pv-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell-6.2.0-preview.1-1.rhel.7.x86_64.rpm
+[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell-6.2.0-preview.1-osx-x64.pkg
+[pv-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-arm32.zip
+[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-arm64.zip
+[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-x86.zip
+[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/PowerShell-6.2.0-preview.1-win-x64.zip
+[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell-6.2.0-preview.1-osx-x64.tar.gz
+[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell-6.2.0-preview.1-linux-x64.tar.gz
+[pv-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.2.0-preview.1/powershell-6.2.0-preview.1-linux-arm32.tar.gz
 [pv-snap]: https://snapcraft.io/powershell-preview
 
 [in-windows]: https://docs.microsoft.com/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6
@@ -134,13 +134,13 @@ We have a Gitter Room which you can join below.
 
 [![Join the chat at https://gitter.im/PowerShell/PowerShell](https://badges.gitter.im/PowerShell/PowerShell.svg)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-There is also the community driven PowerShell Slack Team which you can sign up for at [Slack Sign up].
+There is also the community driven PowerShell Slack Team which you can sign up for at [Slack].
 
-[Slack Sign up]: http://slack.poshcode.org
+[Slack]: http://slack.poshcode.org
 
 ## Add-ons and libraries
 
-[Awesome PowerShell](https://github.com/janikvonrotz/awesome-powershell) is a great curated list of add-ons and resources.
+[Awesome PowerShell](https://github.com/janikvonrotz/awesome-powershell) has a great curated list of add-ons and resources.
 
 ## Building the Repository
 
@@ -194,7 +194,7 @@ To make things easy, you can just clone recursively:
 git clone --recursive https://github.com/PowerShell/PowerShell.git
 ```
 
-If you already cloned but forgot to use `--recursive`, you can update submodules manually:
+If you have already cloned but forgot to use `--recursive`, you can update submodules manually:
 
 ```sh
 git submodule update --init

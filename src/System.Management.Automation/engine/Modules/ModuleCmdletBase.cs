@@ -361,9 +361,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (var version in ModuleUtils.GetModuleVersionSubfolders(moduleBase))
             {
                 // Skip the version folder if it is not equal to the required version or does not satisfy the minimum/maximum version criteria
-                if ((BaseRequiredVersion != null && !BaseRequiredVersion.Equals(version))
-                    || (BaseMinimumVersion != null && BaseRequiredVersion == null && version < BaseMinimumVersion)
-                    || (BaseMaximumVersion != null && BaseRequiredVersion == null && version > BaseMaximumVersion))
+                if (!ModuleIntrinsics.IsVersionMatchingConstraints(version, BaseRequiredVersion, BaseMinimumVersion, BaseMaximumVersion))
                 {
                     continue;
                 }
@@ -1585,22 +1583,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior
-                // if (IsModuleAlreadyLoaded(loadedModule) &&
-                //    ((manifestProcessingFlags & ManifestProcessingFlags.LoadElements) == ManifestProcessingFlags.LoadElements))
-                if (loadedModule != null &&
-                    (BaseRequiredVersion == null || loadedModule.Version.Equals(BaseRequiredVersion)) &&
-                    ((BaseMinimumVersion == null && BaseMaximumVersion == null)
-                     ||
-                     (BaseMaximumVersion != null && BaseMinimumVersion == null &&
-                      loadedModule.Version <= BaseMaximumVersion)
-                     ||
-                     (BaseMaximumVersion == null && BaseMinimumVersion != null &&
-                      loadedModule.Version >= BaseMinimumVersion)
-                     ||
-                     (BaseMaximumVersion != null && BaseMinimumVersion != null &&
-                      loadedModule.Version >= BaseMinimumVersion && loadedModule.Version <= BaseMaximumVersion)) &&
-                    (BaseGuid == null || loadedModule.Guid.Equals(BaseGuid)) && importingModule)
+                if (importingModule && DoesAlreadyLoadedModuleSatisfyConstraints(loadedModule))
                 {
                     if (!BaseForce)
                     {
@@ -1672,21 +1655,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (bailOnFirstError) return null;
                 }
-                else if (requiredVersion != null && !moduleVersion.Equals(requiredVersion))
+                else if (!ModuleIntrinsics.AreModuleFieldsMatchingConstraints(
+                    moduleGuid: manifestGuid,
+                    moduleVersion: moduleVersion,
+                    requiredGuid: requiredModuleGuid,
+                    requiredVersion: requiredVersion,
+                    minimumRequiredVersion: minimumVersion,
+                    maximumRequiredVersion: maximumVersion))
                 {
-                    if (bailOnFirstError) return null;
-                }
-                else
-                {
-                    if (moduleVersion < minimumVersion || (maximumVersion != null && moduleVersion > maximumVersion))
+                    if (bailOnFirstError)
                     {
-                        if (bailOnFirstError) return null;
+                        return null;
                     }
-                }
-
-                if (requiredModuleGuid != null && !requiredModuleGuid.Equals(manifestGuid))
-                {
-                    if (bailOnFirstError) return null;
                 }
 
                 // Verify that the module version from the module manifest is equal to module version folder.
@@ -3644,91 +3624,27 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="context">Execution Context.</param>
         /// <param name="requiredModule">Either a string or a hash of ModuleName, optional Guid, and ModuleVersion.</param>
-        /// <param name="wrongVersion">Sets if the module cannot be found due to incorrect version.</param>
-        /// <param name="wrongGuid">Sets if the module cannot be found due to incorrect guid.</param>
+        /// <param name="matchFailureReason">The reason the module failed to load, or null on success.</param>
         /// <param name="loaded">Sets if the module/snapin is already present.</param>
         /// <returns>null if the module is not loaded or loadElements is false, the loaded module otherwise.</returns>
-        internal static object IsModuleLoaded(ExecutionContext context, ModuleSpecification requiredModule, out bool wrongVersion, out bool wrongGuid, out bool loaded)
+        internal static object IsModuleLoaded(ExecutionContext context, ModuleSpecification requiredModule, out ModuleMatchFailure matchFailureReason, out bool loaded)
         {
             loaded = false;
             Dbg.Assert(requiredModule != null, "Caller should verify requiredModuleSpecification != null");
 
             // Assume the module is not loaded.
             object result = null;
-            wrongVersion = false;
-            wrongGuid = false;
 
-            string moduleName = requiredModule.Name;
-            Guid? moduleGuid = requiredModule.Guid;
-
-            Dbg.Assert(moduleName != null, "GetModuleSpecification should guarantee that moduleName != null");
+            Dbg.Assert(requiredModule.Name != null, "GetModuleSpecification should guarantee that moduleName != null");
+            ModuleMatchFailure matchFailure = ModuleMatchFailure.None;
             foreach (PSModuleInfo module in context.Modules.GetModules(new string[] { "*" }, false))
             {
-                if (moduleName.Equals(module.Name, StringComparison.OrdinalIgnoreCase))
+                // Check that the module meets the module constraints give
+                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(out matchFailure, module, requiredModule))
                 {
-                    if (!moduleGuid.HasValue || moduleGuid.Value.Equals(module.Guid))
-                    {
-                        if (requiredModule.RequiredVersion != null)
-                        {
-                            if (requiredModule.RequiredVersion.Equals(module.Version))
-                            {
-                                result = module;
-                                loaded = true;
-                                break;
-                            }
-
-                            wrongVersion = true;
-                        }
-                        else if (requiredModule.Version != null)
-                        {
-                            if (requiredModule.MaximumVersion != null)
-                            {
-                                if (GetMaximumVersion(requiredModule.MaximumVersion) >= module.Version && requiredModule.Version <= module.Version)
-                                {
-                                    result = module;
-                                    loaded = true;
-                                    break;
-                                }
-                                else
-                                {
-                                    wrongVersion = true;
-                                }
-                            }
-                            else if (requiredModule.Version <= module.Version)
-                            {
-                                result = module;
-                                loaded = true;
-                                break;
-                            }
-                            else
-                            {
-                                wrongVersion = true;
-                            }
-                        }
-                        else if (requiredModule.MaximumVersion != null)
-                        {
-                            if (GetMaximumVersion(requiredModule.MaximumVersion) >= module.Version)
-                            {
-                                result = module;
-                                loaded = true;
-                                break;
-                            }
-                            else
-                            {
-                                wrongVersion = true;
-                            }
-                        }
-                        else
-                        {
-                            result = module;
-                            loaded = true;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        wrongGuid = true;
-                    }
+                    result = module;
+                    loaded = true;
+                    break;
                 }
             }
 
@@ -3742,6 +3658,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            matchFailureReason = matchFailure;
             return result;
         }
 
@@ -3795,10 +3712,9 @@ namespace Microsoft.PowerShell.Commands
             Guid? moduleGuid = requiredModuleSpecification.Guid;
             PSModuleInfo result = null;
 
-            bool wrongVersion = false;
-            bool wrongGuid = false;
+            ModuleMatchFailure loadFailureReason = ModuleMatchFailure.None;
             bool loaded = false;
-            object loadedModule = IsModuleLoaded(context, requiredModuleSpecification, out wrongVersion, out wrongGuid, out loaded);
+            object loadedModule = IsModuleLoaded(context, requiredModuleSpecification, out loadFailureReason, out loaded);
 
             if (loadedModule == null)
             {
@@ -3855,33 +3771,73 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors))
                         {
-                            if (wrongVersion)
+                            switch (loadFailureReason)
                             {
-                                if (requiredModuleSpecification.RequiredVersion != null)
-                                {
-                                    message = StringUtil.Format(Modules.RequiredModuleNotLoadedWrongVersion, moduleManifestPath, moduleName, requiredModuleSpecification.RequiredVersion);
-                                }
-                                else if (requiredModuleSpecification.Version != null && requiredModuleSpecification.MaximumVersion == null)
-                                {
-                                    message = StringUtil.Format(Modules.RequiredModuleNotLoadedWrongVersion, moduleManifestPath, moduleName, requiredModuleSpecification.Version);
-                                }
-                                else if (requiredModuleSpecification.Version == null && requiredModuleSpecification.MaximumVersion != null)
-                                {
-                                    message = StringUtil.Format(Modules.RequiredModuleNotLoadedWrongMaximumVersion, moduleManifestPath, moduleName, requiredModuleSpecification.MaximumVersion);
-                                }
-                                else
-                                {
-                                    message = StringUtil.Format(Modules.RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion, moduleManifestPath, moduleName, requiredModuleSpecification.Version, requiredModuleSpecification.MaximumVersion);
-                                }
+                                case ModuleMatchFailure.RequiredVersion:
+                                    message = StringUtil.Format(
+                                        Modules.RequiredModuleNotLoadedWrongVersion,
+                                        moduleManifestPath,
+                                        moduleName,
+                                        requiredModuleSpecification.RequiredVersion);
+                                    break;
+
+                                case ModuleMatchFailure.MinimumVersion:
+                                    // If both max and min versions were specified, use a different error message
+                                    if (requiredModuleSpecification.MaximumVersion == null)
+                                    {
+                                        message = StringUtil.Format(
+                                            Modules.RequiredModuleNotLoadedWrongVersion,
+                                            moduleManifestPath, moduleName,
+                                            requiredModuleSpecification.Version);
+                                    }
+                                    else
+                                    {
+                                        message = StringUtil.Format(
+                                            Modules.RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion,
+                                            moduleManifestPath,
+                                            moduleName,
+                                            requiredModuleSpecification.Version,
+                                            requiredModuleSpecification.MaximumVersion);
+                                    }
+                                    break;
+
+                                case ModuleMatchFailure.MaximumVersion:
+                                    // If both max and min versions were specified, use a different error message
+                                    if (requiredModuleSpecification.Version == null)
+                                    {
+                                        message = StringUtil.Format(
+                                            Modules.RequiredModuleNotLoadedWrongMaximumVersion,
+                                            moduleManifestPath,
+                                            moduleName,
+                                            requiredModuleSpecification.MaximumVersion);
+                                    }
+                                    else
+                                    {
+                                        message = StringUtil.Format(
+                                            Modules.RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion,
+                                            moduleManifestPath,
+                                            moduleName,
+                                            requiredModuleSpecification.Version,
+                                            requiredModuleSpecification.MaximumVersion);
+                                    }
+                                    break;
+
+                                case ModuleMatchFailure.Guid:
+                                    message = StringUtil.Format(
+                                        Modules.RequiredModuleNotLoadedWrongGuid,
+                                        moduleManifestPath,
+                                        moduleName,
+                                        moduleGuid.Value);
+                                    break;
+
+                                default:
+                                    message = StringUtil.Format(
+                                        Modules.RequiredModuleNotLoaded,
+                                        moduleManifestPath,
+                                        moduleName);
+                                    break;
                             }
-                            else if (wrongGuid)
-                            {
-                                message = StringUtil.Format(Modules.RequiredModuleNotLoadedWrongGuid, moduleManifestPath, moduleName, moduleGuid.Value);
-                            }
-                            else
-                            {
-                                message = StringUtil.Format(Modules.RequiredModuleNotLoaded, moduleManifestPath, moduleName);
-                            }
+
                             MissingMemberException mm = new MissingMemberException(message);
                             error = new ErrorRecord(mm, "Modules_InvalidManifest",
                                                     ErrorCategory.ResourceUnavailable, moduleManifestPath);
@@ -3943,8 +3899,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    bool wrongVersion = false;
-                    bool wrongGuid = false;
                     // Check if the correct module is loaded using Version , Guid Information.
                     string moduleNameToCheckAgainst = requiredModule.Name;
                     string manifestPath = string.Empty;
@@ -3953,6 +3907,7 @@ namespace Microsoft.PowerShell.Commands
                         manifestPath = moduleNameToCheckAgainst;
                         moduleNameToCheckAgainst = Path.GetFileNameWithoutExtension(moduleNameToCheckAgainst);
                     }
+
                     ModuleSpecification ms = new ModuleSpecification(moduleNameToCheckAgainst);
                     if (requiredModule.Guid != null)
                     {
@@ -3970,9 +3925,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ms.MaximumVersion = requiredModule.MaximumVersion;
                     }
+
+                    ModuleMatchFailure loadFailureReason;
                     bool loaded = false;
-                    object r = IsModuleLoaded(context, ms, out wrongVersion, out wrongGuid, out loaded);
+                    object r = IsModuleLoaded(context, ms, out loadFailureReason, out loaded);
+
                     Dbg.Assert(r is PSModuleInfo, "The returned value should be PSModuleInfo");
+
                     result = r as PSModuleInfo;
                     if (result == null)
                     {
@@ -4099,43 +4058,13 @@ namespace Microsoft.PowerShell.Commands
 
                 tempResult = powerShell.Invoke<PSModuleInfo>();
             }
+
             // Check if the available module is of the correct version and GUID
-            foreach (var m in tempResult)
+            foreach (var module in tempResult)
             {
-                if (!requiredModule.Guid.HasValue || requiredModule.Guid.Value.Equals(m.Guid))
+                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(module, requiredModule))
                 {
-                    if (requiredModule.RequiredVersion != null)
-                    {
-                        if (requiredModule.RequiredVersion.Equals(m.Version))
-                        {
-                            result.Add(m);
-                        }
-                    }
-                    else if (requiredModule.Version != null)
-                    {
-                        if (requiredModule.MaximumVersion != null)
-                        {
-                            if (GetMaximumVersion(requiredModule.MaximumVersion) >= m.Version && requiredModule.Version <= m.Version)
-                            {
-                                result.Add(m);
-                            }
-                        }
-                        else if (requiredModule.Version <= m.Version)
-                        {
-                            result.Add(m);
-                        }
-                    }
-                    else if (requiredModule.MaximumVersion != null)
-                    {
-                        if (GetMaximumVersion(requiredModule.MaximumVersion) >= m.Version)
-                        {
-                            result.Add(m);
-                        }
-                    }
-                    else
-                    {
-                        result.Add(m);
-                    }
+                    result.Add(module);
                 }
             }
             return result;
@@ -5034,6 +4963,21 @@ namespace Microsoft.PowerShell.Commands
 
                     // And the appdomain level module path cache.
                     PSModuleInfo.RemoveFromAppDomainLevelCache(module.Name);
+
+                    // Update implicit module loaded property
+                    if (Context.Modules.IsImplicitRemotingModuleLoaded)
+                    {
+                        Context.Modules.IsImplicitRemotingModuleLoaded = false;
+                        foreach (var modInfo in Context.Modules.ModuleTable.Values)
+                        {
+                            var privateData = modInfo.PrivateData as Hashtable;
+                            if ((privateData != null) && privateData.ContainsKey("ImplicitRemoting"))
+                            {
+                                Context.Modules.IsImplicitRemotingModuleLoaded = true;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -5059,34 +5003,19 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        internal bool IsModuleAlreadyLoaded(PSModuleInfo alreadyLoadedModule)
+        /// <summary>
+        /// Checks if an already loaded module meets the constraints passed to the module cmdlet by the user.
+        /// </summary>
+        /// <param name="alreadyLoadedModule">The already loaded module that matched the name of the module to load.</param>
+        /// <returns>True if the pre-loaded module matches all GUID and version constraints provided, false otherwise.</returns>
+        internal bool DoesAlreadyLoadedModuleSatisfyConstraints(PSModuleInfo alreadyLoadedModule)
         {
-            if (alreadyLoadedModule == null)
-            {
-                return false;
-            }
-            if (this.BaseRequiredVersion != null && !alreadyLoadedModule.Version.Equals(this.BaseRequiredVersion))
-            {
-                // "alreadyLoadedModule" is a different module (than the one we want to load)
-                return false;
-            }
-            if (this.BaseMinimumVersion != null && alreadyLoadedModule.Version < this.BaseMinimumVersion)
-            {
-                // "alreadyLoadedModule" is a different module (than the one we want to load)
-                return false;
-            }
-            if (this.BaseMaximumVersion != null && alreadyLoadedModule.Version > this.BaseMaximumVersion)
-            {
-                // "alreadyLoadedModule" is a different module (than the one we want to load)
-                return false;
-            }
-            if (BaseGuid != null && !alreadyLoadedModule.Guid.Equals(this.BaseGuid))
-            {
-                // "alreadyLoadedModule" is a different module (than the one we want to load)
-                return false;
-            }
-
-            return true;
+            return ModuleIntrinsics.IsModuleMatchingConstraints(
+                alreadyLoadedModule,
+                guid: BaseGuid,
+                requiredVersion: BaseRequiredVersion,
+                minimumVersion: BaseMinimumVersion,
+                maximumVersion: BaseMaximumVersion);
         }
 
         /// <summary>
@@ -5103,7 +5032,7 @@ namespace Microsoft.PowerShell.Commands
             PSModuleInfo alreadyLoadedModule;
             if (this.Context.Modules.ModuleTable.TryGetValue(modulePath, out alreadyLoadedModule))
             {
-                if (this.IsModuleAlreadyLoaded(alreadyLoadedModule))
+                if (this.DoesAlreadyLoadedModuleSatisfyConstraints(alreadyLoadedModule))
                 {
                     if (this.BaseForce) // remove the previously imported module + return null (null = please proceed with regular import)
                     {
@@ -5241,17 +5170,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If the module has already been loaded, just emit it and continue...
                 Context.Modules.ModuleTable.TryGetValue(fileName, out module);
-                // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior
-                // if (!BaseForce &&
-                //    IsModuleAlreadyLoaded(module) &&
-                //    ((manifestProcessingFlags & ManifestProcessingFlags.LoadElements) == ManifestProcessingFlags.LoadElements))
-                if (!BaseForce && module != null &&
-                    (BaseRequiredVersion == null || module.Version.Equals(BaseRequiredVersion)) &&
-                    ((BaseMinimumVersion == null && BaseMaximumVersion == null)
-                        || (BaseMaximumVersion != null && BaseMinimumVersion == null && module.Version <= BaseMaximumVersion)
-                        || (BaseMaximumVersion == null && BaseMinimumVersion != null && module.Version >= BaseMinimumVersion)
-                        || (BaseMaximumVersion != null && BaseMinimumVersion != null && module.Version >= BaseMinimumVersion && module.Version <= BaseMaximumVersion)) &&
-                    (BaseGuid == null || module.Guid.Equals(BaseGuid)) && importingModule)
+                if (!BaseForce && importingModule && DoesAlreadyLoadedModuleSatisfyConstraints(module))
                 {
                     moduleFileFound = true;
                     module = Context.Modules.ModuleTable[fileName];
@@ -5296,12 +5215,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     moduleFileFound = true;
                     // Win8: 325243 - Added the version check so that we do not unload modules with the same name but different version
-                    if (BaseForce && module != null &&
-                        (this.BaseRequiredVersion == null || module.Version.Equals(this.BaseRequiredVersion)) &&
-                        (BaseGuid == null || module.Guid.Equals(BaseGuid)))
-                    // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior
-                    // TODO/FIXME: (for example the checks above are not lookint at this.BaseMinimumVersion)
-                    // if (BaseForce && IsModuleAlreadyLoaded(module))
+                    if (BaseForce && DoesAlreadyLoadedModuleSatisfyConstraints(module))
                     {
                         RemoveModule(module);
                     }
@@ -5478,14 +5392,11 @@ namespace Microsoft.PowerShell.Commands
                 // This will allow the search to continue and load a different version of the module.
                 if (Context.Modules.ModuleTable.TryGetValue(fileName, out module))
                 {
-                    if (BaseMinimumVersion != null && module.Version >= BaseMinimumVersion)
+                    if (!ModuleIntrinsics.IsVersionMatchingConstraints(module.Version, minimumVersion: BaseMinimumVersion, maximumVersion: BaseMaximumVersion))
                     {
-                        if (BaseMaximumVersion == null || module.Version <= BaseMaximumVersion)
-                        {
-                            found = false;
-                            moduleFileFound = false;
-                            return null;
-                        }
+                        found = false;
+                        moduleFileFound = false;
+                        return null;
                     }
                 }
             }
@@ -6882,6 +6793,13 @@ namespace Microsoft.PowerShell.Commands
             if (targetSessionState.Module != null)
             {
                 targetSessionState.Module.AddNestedModule(module);
+            }
+
+            var privateDataHashTable = module.PrivateData as Hashtable;
+            if (context.Modules.IsImplicitRemotingModuleLoaded == false &&
+                privateDataHashTable != null && privateDataHashTable.ContainsKey("ImplicitRemoting"))
+            {
+                context.Modules.IsImplicitRemotingModuleLoaded = true;
             }
         }
 
