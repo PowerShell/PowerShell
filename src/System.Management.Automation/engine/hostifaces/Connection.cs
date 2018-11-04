@@ -691,8 +691,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets execution context.
         /// </summary>
-        /// <exception cref="InvalidRunspaceStateException">Runspace is not opened.
-        /// </exception>
         internal System.Management.Automation.ExecutionContext ExecutionContext
         {
             get
@@ -704,8 +702,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the engine intrinsics.
         /// </summary>
-        /// <exception cref="InvalidRunspaceStateException">Runspace is not opened.
-        /// </exception>
         public EngineIntrinsics EngineIntrinsics
         {
             get => ExecutionContext?.EngineIntrinsics;
