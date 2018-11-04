@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Threading;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
@@ -867,6 +868,11 @@ namespace System.Management.Automation
         /// <returns>An instance of PowerShell.</returns>
         public static PowerShell Create(Runspace runspace)
         {
+            if (runspace == null)
+            {
+                throw new PSArgumentNullException(nameof(runspace));
+            }
+
             PowerShell result = Create();
 
             result.Runspace = runspace;
