@@ -4505,13 +4505,15 @@ namespace Microsoft.PowerShell.Commands
                 result += extension;
             }
 
-            //For dlls, we cannot get the path from the provider.
-            //We need to load the assembly and then get the path.
-            //If the module is already loaded, this is not expensive since the assembly is already loaded in the AppDomain
+            // For dlls, we cannot get the path from the provider.
+            // We need to load the assembly and then get the path.
+            // If the module is already loaded, this is not expensive since the assembly is already loaded in the AppDomain
+            // If the dll is not loaded, we load it from the resolved path.
+            // We attempt to load it from the resolved path before we try to look up in GAC on Windows.
             if (!string.IsNullOrEmpty(ext) && ext.Equals(".dll", StringComparison.OrdinalIgnoreCase))
             {
                 Exception ignored = null;
-                Assembly assembly = ExecutionContext.LoadAssembly(name, null, out ignored);
+                Assembly assembly = ExecutionContext.LoadAssembly(name, result, out ignored);
                 if (assembly != null)
                 {
                     result = assembly.Location;
