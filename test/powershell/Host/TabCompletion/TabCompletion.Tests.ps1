@@ -330,7 +330,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = "set-al"; expected = "Set-Alias" }
                 @{ inputStr = "set-a?i"; expected = "Set-Alias" }
                 @{ inputStr = "set-?lias"; expected = "Set-Alias" }
-                @{ inputStr = "get-*ditem"; expected = "Get-ChildItem" }
+                @{ inputStr = "get-c*ditem"; expected = "Get-ChildItem" }
                 @{ inputStr = "Microsoft.PowerShell.Management\get-c*item"; expected = "Microsoft.PowerShell.Management\Get-ChildItem" }
                 @{ inputStr = "Microsoft.PowerShell.Utility\set-alia?"; expected = "Microsoft.PowerShell.Utility\Set-Alias" }
                 @{ inputStr = "Microsoft.PowerShell.Utility\s*-alias"; expected = "Microsoft.PowerShell.Utility\Set-Alias" }
@@ -387,7 +387,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'Get-PSDrive -PSProvider Variable '; expected = 'Variable'; setup = $null }
                 @{ inputStr = 'Get-Command Get-Chil'; expected = 'Get-ChildItem'; setup = $null }
                 @{ inputStr = 'Get-Variable psver'; expected = 'PSVersionTable'; setup = $null }
-                @{ inputStr = 'Get-Help *child'; expected = 'Get-ChildItem'; setup = $null }
+                @{ inputStr = 'Get-Help get-c*ditem'; expected = 'Get-ChildItem'; setup = $null }
                 @{ inputStr = 'Trace-Command e'; expected = 'ETS'; setup = $null }
                 @{ inputStr = 'Get-TraceSource e'; expected = 'ETS'; setup = $null }
                 @{ inputStr = '[int]:: max'; expected = 'MaxValue'; setup = $null }
