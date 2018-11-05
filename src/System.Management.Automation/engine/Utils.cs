@@ -1382,38 +1382,40 @@ namespace System.Management.Automation
         //  c. Commands must be in a simple pipeline
         internal static bool TryRunAsImplicitBatch(string command, Runspace runspace)
         {
-            try
+            using (var ps = System.Management.Automation.PowerShell.Create())
             {
-                var scriptBlock = ScriptBlock.Create(command);
-                var scriptBlockAst = scriptBlock.Ast as ScriptBlockAst;
-                if (scriptBlockAst == null)
-                {
-                    return false;
-                }
+                ps.Runspace = runspace;
 
-                // Make sure that this is a simple pipeline
-                string errorId;
-                string errorMsg;
-                scriptBlockAst.GetSimplePipeline(true, out errorId, out errorMsg);
-                if (errorId != null)
+                try
                 {
-                    return false;
-                }
+                    var scriptBlock = ScriptBlock.Create(command);
+                    var scriptBlockAst = scriptBlock.Ast as ScriptBlockAst;
+                    if (scriptBlockAst == null)
+                    {
+                        return false;
+                    }
 
-                // Run checker
-                var checker = new PipelineForBatchingChecker { ScriptBeingConverted = scriptBlockAst };
-                scriptBlockAst.InternalVisit(checker);
+                    // Make sure that this is a simple pipeline
+                    string errorId;
+                    string errorMsg;
+                    scriptBlockAst.GetSimplePipeline(true, out errorId, out errorMsg);
+                    if (errorId != null)
+                    {
+                        WriteVerbose(ps, ParserStrings.ImplicitRemotingPipelineBatchingNotASimplePipeline);
+                        return false;
+                    }
 
-                // If this is just a single command, there is no point in batching it
-                if (checker.Commands.Count < 2)
-                {
-                    return false;
-                }
+                    // Run checker
+                    var checker = new PipelineForBatchingChecker { ScriptBeingConverted = scriptBlockAst };
+                    scriptBlockAst.InternalVisit(checker);
 
-                // We have a valid batching candidate
-                using (var ps = System.Management.Automation.PowerShell.Create())
-                {
-                    ps.Runspace = runspace;
+                    // If this is just a single command, there is no point in batching it
+                    if (checker.Commands.Count < 2)
+                    {
+                        return false;
+                    }
+
+                    // We have a valid batching candidate
 
                     // Check commands
                     if (!TryGetCommandInfoList(ps, checker.Commands, out Collection<CommandInfo> cmdInfoList))
@@ -1436,6 +1438,7 @@ namespace System.Management.Automation
                         // Commands must be from implicit remoting module
                         if (cmdInfo.Module == null || string.IsNullOrEmpty(cmdInfo.ModuleName))
                         {
+                            WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
                             success = false;
                             break;
                         }
@@ -1446,6 +1449,7 @@ namespace System.Management.Automation
                             var sessionIdString = privateData["ImplicitSessionId"] as string;
                             if (string.IsNullOrEmpty(sessionIdString))
                             {
+                                WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
                                 success = false;
                                 break;
                             }
@@ -1457,12 +1461,14 @@ namespace System.Management.Automation
                             }
                             else if (psSessionId != sessionId)
                             {
+                                WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingWrongSession, cmdInfo.Name));
                                 success = false;
                                 break;
                             }
                         }
                         else
                         {
+                            WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
                             success = false;
                             break;
                         }
@@ -1491,13 +1497,20 @@ namespace System.Management.Automation
                         var psSession = ps.Invoke<System.Management.Automation.Runspaces.PSSession>().FirstOrDefault();
                         if (psSession == null || (ps.Streams.Error.Count > 0) || (psSession.Availability != RunspaceAvailability.Available))
                         {
+                            WriteVerbose(ps, ParserStrings.ImplicitRemotingPipelineBatchingNoPSSession);
                             return false;
                         }
+
+                        WriteVerbose(ps, ParserStrings.ImplicitRemotingPipelineBatchingSuccess);
 
                         // Create and invoke implicit remoting command pipeline
                         ps.Commands.Clear();
                         ps.AddCommand("Invoke-Command").AddParameter("Session", psSession).AddParameter("ScriptBlock", scriptBlock).AddParameter("HideComputerName", true)
                             .AddCommand("Out-Default");
+                        foreach (var cmd in ps.Commands.Commands)
+                        {
+                            cmd.MergeMyResults(PipelineResultTypes.Error, PipelineResultTypes.Output);
+                        }
 
                         try
                         {
@@ -1514,10 +1527,23 @@ namespace System.Management.Automation
                         return true;
                     }
                 }
+                catch (ImplicitRemotingBatchingNotSupportedException ex)
+                {
+                    WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, "{0} : {1}", ex.Message, ex.ErrorId));
+                }
+                catch (Exception ex)
+                {
+                    WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingException, ex.Message));
+                }
             }
-            catch (Exception) { }
-
+            
             return false;
+        }
+
+        private static void WriteVerbose(PowerShell ps, string msg)
+        {
+            ps.Commands.Clear();
+            ps.AddCommand("Write-Verbose").AddParameter("Message", msg).Invoke();
         }
 
         private const string WhereObjectCommandAlias = "?";
