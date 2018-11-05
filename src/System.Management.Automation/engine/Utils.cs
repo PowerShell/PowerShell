@@ -502,10 +502,10 @@ namespace System.Management.Automation
         /// </summary>
         internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
-        internal readonly static ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.SystemWide };
+        internal readonly static ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
         internal readonly static ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
-        internal readonly static ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.SystemWide, ConfigScope.CurrentUser };
-        internal readonly static ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.SystemWide };
+        internal readonly static ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };
+        internal readonly static ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.AllUsers };
 
         internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
@@ -586,7 +586,7 @@ namespace System.Management.Automation
         {
             Type tType = typeof(T);
             // SystemWide scope means 'LocalMachine' root key when query from registry
-            RegistryKey rootKey = (scope == ConfigScope.SystemWide) ? Registry.LocalMachine : Registry.CurrentUser;
+            RegistryKey rootKey = (scope == ConfigScope.AllUsers) ? Registry.LocalMachine : Registry.CurrentUser;
 
             GroupPolicyKeys.TryGetValue(tType.Name, out string gpoKeyPath);
             Diagnostics.Assert(gpoKeyPath != null, StringUtil.Format("The GPO registry key path should be pre-defined for {0}", tType.Name));
@@ -1813,7 +1813,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Test hook used to test implicit remoting batching.  A local runspace must be provided that has imported a 
+        /// Test hook used to test implicit remoting batching.  A local runspace must be provided that has imported a
         /// remote session, i.e., has run the Import-PSSession cmdlet.  This hook will return true if the provided commandPipeline
         /// is successfully batched and run in the remote session, and false if it is rejected for batching.
         /// </summary>

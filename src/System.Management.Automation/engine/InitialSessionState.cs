@@ -5272,6 +5272,8 @@ end
                 {"Connect-PSSession",                 new SessionStateCmdletEntry("Connect-PSSession", typeof(ConnectPSSessionCommand), helpFile) },
                 {"Disconnect-PSSession",              new SessionStateCmdletEntry("Disconnect-PSSession", typeof(DisconnectPSSessionCommand), helpFile) },
 #endif
+                {"Disable-ExperimentalFeature",       new SessionStateCmdletEntry("Disable-ExperimentalFeature", typeof(DisableExperimentalFeatureCommand), helpFile) },
+                {"Enable-ExperimentalFeature",        new SessionStateCmdletEntry("Enable-ExperimentalFeature", typeof(EnableExperimentalFeatureCommand), helpFile) },
                 {"Enter-PSHostProcess",               new SessionStateCmdletEntry("Enter-PSHostProcess", typeof(EnterPSHostProcessCommand), helpFile) },
                 {"Enter-PSSession",                   new SessionStateCmdletEntry("Enter-PSSession", typeof(EnterPSSessionCommand), helpFile) },
                 {"Exit-PSHostProcess",                new SessionStateCmdletEntry("Exit-PSHostProcess", typeof(ExitPSHostProcessCommand), helpFile) },

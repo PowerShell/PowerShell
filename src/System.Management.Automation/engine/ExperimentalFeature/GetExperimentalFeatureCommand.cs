@@ -20,14 +20,9 @@ namespace Microsoft.PowerShell.Commands
         /// Get and set the feature names.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Position = 0)]
+        [ArgumentCompleter(typeof(NameArgumentCompleter))]
         [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
-
-        /// <summary>
-        /// Get and set the switch flag to search module paths to find all available experimental features.
-        /// </summary>
-        [Parameter]
-        public SwitchParameter ListAvailable { get; set; }
 
         /// <summary>
         /// ProcessRecord method of this cmdlet.
@@ -37,19 +32,9 @@ namespace Microsoft.PowerShell.Commands
             const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
             IEnumerable<WildcardPattern> namePatterns = SessionStateUtilities.CreateWildcardsFromStrings(Name, wildcardOptions);
 
-            if (ListAvailable)
+            foreach (ExperimentalFeature feature in GetAvailableExperimentalFeatures(namePatterns).OrderBy(GetSortingString))
             {
-                foreach (ExperimentalFeature feature in GetAvailableExperimentalFeatures(namePatterns).OrderBy(GetSortingString))
-                {
-                    WriteObject(feature);
-                }
-            }
-            else if (ExperimentalFeature.EnabledExperimentalFeatureNames.Count > 0)
-            {
-                foreach (ExperimentalFeature feature in GetEnabledExperimentalFeatures(namePatterns).OrderBy(GetSortingString))
-                {
-                    WriteObject(feature);
-                }
+                WriteObject(feature);
             }
         }
 
@@ -121,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get available experimental features based on the specified name patterns.
         /// </summary>
-        private IEnumerable<ExperimentalFeature> GetAvailableExperimentalFeatures(IEnumerable<WildcardPattern> namePatterns)
+        internal IEnumerable<ExperimentalFeature> GetAvailableExperimentalFeatures(IEnumerable<WildcardPattern> namePatterns)
         {
             foreach (ExperimentalFeature feature in ExperimentalFeature.EngineExperimentalFeatures)
             {
