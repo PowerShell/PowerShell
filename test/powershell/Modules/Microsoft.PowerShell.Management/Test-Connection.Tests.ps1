@@ -157,7 +157,7 @@ Describe "Test-Connection" -tags "CI" {
 
         It "ResolveDestination for address" {
             $result = Test-Connection $targetAddress -ResolveDestination -Count 1
-            $resolvedName = [System.Net.DNS]::GetHostByName($targetName).HostName
+            $resolvedName = [System.Net.DNS]::GetHostEntry($targetAddress).HostName
 
             $result.Destination | Should -BeExactly $resolvedName
             $result.Replies[0].Address     | Should -BeExactly $targetAddress
