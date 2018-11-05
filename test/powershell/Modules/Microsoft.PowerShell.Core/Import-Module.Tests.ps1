@@ -179,6 +179,23 @@ namespace ModuleCmdlets
         }
 
     }
+
+    It 'Should load from ModuleBase path before looking up in GAC' -Skip:(-not $IsWindows) {
+        $module = Get-Module PSScheduledJob -ListAvailable -SkipEditionCheck
+        $moduleBasePath = Split-Path $module.Path
+        $destPath = New-Item -ItemType Directory -Path "$TestDrive/PSScheduledJob"
+        $gacAssemblyPath = (Get-ChildItem "${env:WinDir}\Microsoft.NET\assembly\GAC_MSIL\Microsoft.PowerShell.ScheduledJob" -Recurse -Filter 'Microsoft.PowerShell.ScheduledJob.dll').FullName
+
+        # Copy format, type and psd1
+        Copy-Item "$moduleBasePath/PSScheduledJob*.*" -Destination $destPath -Force
+
+        # Copy assembly to temp module folder"
+        Copy-Item $gacAssemblyPath -Destination $destPath -Force
+
+        # Use a different pwsh so that we do not have the PSScheduledJob module already loaded.
+        $loadedAssemblyLocation = pwsh -noprofile -c "Import-Module $destPath -Force; [Microsoft.PowerShell.ScheduledJob.AddJobTriggerCommand].Assembly.Location"
+        $loadedAssemblyLocation | Should -BeLike "$TestDrive*\Microsoft.PowerShell.ScheduledJob.dll"
+    }
  }
 
 Describe "Import-Module should be case insensitive" -Tags 'CI' {
