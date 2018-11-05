@@ -696,7 +696,7 @@ dir -Recurse `
         It "Test member completion of a static method invocation" {
             $inputStr = '[powershell]::Create().'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches | Should -HaveCount 31
+            $res.CompletionMatches | Should -HaveCount 32
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "Commands"
         }
     }
