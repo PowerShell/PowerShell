@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Class WebListener
 {
     [int]$HttpPort
@@ -17,6 +18,67 @@ Class WebListener
 }
 
 [WebListener]$WebListener
+
+function New-ClientCertificate
+{
+    param([string]$CertificatePath, [string]$Password)
+
+    if ($Password)
+    {
+        $Passphrase = ConvertTo-SecureString -Force -AsPlainText $Password
+    }
+
+    $distinguishedName = @{
+        CN = 'adatum.com'
+        C = 'US'
+        S = 'Washington'
+        L = 'Redmond'
+        O = 'A. Datum Corporation'
+        OU = 'R&D'
+        E = 'randd@adatum.com'
+    }
+
+    $certificateParameters = @{
+        OutCertPath = $CertificatePath
+        StartDate = [datetime]::Now.Subtract([timespan]::FromDays(30))
+        Duration = [timespan]::FromDays(365)
+        Passphrase = $Passphrase
+        CertificateFormat = 'Pfx'
+        KeyLength = 4096
+        ForCertificateAuthority = $true
+        Force = $true
+    } + $distinguishedName
+
+    SelfSignedCertificate\New-SelfSignedCertificate @certificateParameters
+}
+
+function New-ServerCertificate
+{
+    param([string]$CertificatePath, [string]$Password)
+
+    if ($Password)
+    {
+        $Passphrase = ConvertTo-SecureString -Force -AsPlainText $Password
+    }
+
+    $distinguishedName = @{
+        CN = 'localhost'
+    }
+
+    $certificateParameters = @{
+        OutCertPath = $CertificatePath
+        StartDate = [datetime]::Now.Subtract([timespan]::FromDays(30))
+        Duration = [timespan]::FromDays(1000)
+        Passphrase = $Passphrase
+        KeyUsage = 'DigitalSignature','KeyEncipherment'
+        EnhancedKeyUsage = 'ServerAuthentication','ClientAuthentication'
+        CertificateFormat = 'Pfx'
+        KeyLength = 2048
+        Force = $true
+    } + $distinguishedName
+
+    SelfSignedCertificate\New-SelfSignedCertificate @certificateParameters
+}
 
 function Get-WebListener
 {
@@ -60,11 +122,17 @@ function Start-WebListener
         $initTimeoutSeconds  = 15
         $appDll              = 'WebListener.dll'
         $serverPfx           = 'ServerCert.pfx'
-        $serverPfxPassword   = 'password'
+        $serverPfxPassword   = New-RandomHexString
+        $clientPfx           = 'ClientCert.pfx'
         $initCompleteMessage = 'Now listening on'
         $sleepMilliseconds   = 100
 
-        $serverPfxPath = Join-Path $MyInvocation.MyCommand.Module.ModuleBase $serverPfx
+        $serverPfxPath = Join-Path ([System.IO.Path]::GetTempPath()) $serverPfx
+        $Script:ClientPfxPath = Join-Path ([System.IO.Path]::GetTempPath()) $clientPfx
+        $Script:ClientPfxPassword = New-RandomHexString
+        New-ServerCertificate -CertificatePath $serverPfxPath -Password $serverPfxPassword
+        New-ClientCertificate -CertificatePath $Script:ClientPfxPath -Password $Script:ClientPfxPassword
+
         $Job = Start-Job {
             $path = Split-Path -parent (get-command WebListener).Path -Verbose
             Push-Location $path -Verbose
@@ -130,8 +198,7 @@ function Get-WebListenerClientCertificate {
     [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
     param()
     process {
-        $pfxPath = Join-Path $MyInvocation.MyCommand.Module.ModuleBase 'ClientCert.pfx'
-        [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($pfxPath,'password')
+        [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($Script:ClientPfxPath, $Script:ClientPfxPassword)
     }
 }
 

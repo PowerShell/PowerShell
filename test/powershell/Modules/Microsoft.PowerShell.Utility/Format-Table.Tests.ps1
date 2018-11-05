@@ -228,7 +228,7 @@ Describe "Format-Table" -Tags "CI" {
 </Configuration>
 "@
 
-            $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "test.format.ps1xml"
+            $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "alignment.format.ps1xml"
             Set-Content -Path $ps1xmlPath -Value $ps1xml
             # run in own runspace so not affect global sessionstate
             $ps = [powershell]::Create()
@@ -315,7 +315,7 @@ Left Center Right
 </Configuration>
 "@
 
-            $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "test.format.ps1xml"
+            $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "truncation.format.ps1xml"
             Set-Content -Path $ps1xmlPath -Value $ps1xml
             # run in own runspace so not affect global sessionstate
             $ps = [powershell]::Create()
@@ -456,7 +456,7 @@ er
 </Configuration>
 "@
             $ps1xml = $ps1xml.Replace("{0}", $widths[0]).Replace("{1}", $widths[1]).Replace("{2}", $widths[2])
-            $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "test.format.ps1xml"
+            $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "span.format.ps1xml"
             Set-Content -Path $ps1xmlPath -Value $ps1xml
             # run in own runspace so not affect global sessionstate
             $ps = [powershell]::Create()
@@ -662,7 +662,7 @@ er
 </Configuration>
 "@
             $ps1xml = $ps1xml.Replace("{0}", $widths[0]).Replace("{1}", $widths[1]).Replace("{2}", $widths[2])
-            $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "test.format.ps1xml"
+            $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "render.format.ps1xml"
             Set-Content -Path $ps1xmlPath -Value $ps1xml
             # run in own runspace so not affect global sessionstate
             $ps = [powershell]::Create()

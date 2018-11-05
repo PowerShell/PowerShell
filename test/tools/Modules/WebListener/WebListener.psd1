@@ -4,6 +4,9 @@
     Author = 'Mark Kraus'
     Description = 'An HTTP and HTTPS Listener for testing purposes'
     RootModule = 'WebListener.psm1'
+    RequiredModules = @(
+        'SelfSignedCertificate'
+    )
     FunctionsToExport = @(
         'Get-WebListener'
         'Get-WebListenerClientCertificate'

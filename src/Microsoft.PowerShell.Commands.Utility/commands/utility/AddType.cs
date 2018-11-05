@@ -965,7 +965,7 @@ namespace Microsoft.PowerShell.Commands
                 case FromLiteralPathParameterSetName:
                     foreach (string filePath in _paths)
                     {
-                        using (var sourceFile = new FileStream(filePath, FileMode.Open))
+                        using (var sourceFile = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                         {
                             sourceText = SourceText.From(sourceFile);
                             syntaxTrees.Add(ParseSourceText(sourceText, parseOptions, path: filePath));
