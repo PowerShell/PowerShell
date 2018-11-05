@@ -21,6 +21,10 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a value indicating whether a stable sort is required.
         /// </summary>
         /// <value></value>
+        /// <remarks>
+        /// Items that are duplicate according to the sort algorithm will appear
+        /// in the same relative order in a stable sort.
+        /// </remarks>
         [Parameter(ParameterSetName = "Default")]
         public SwitchParameter Stable { get; set; }
 
@@ -250,7 +254,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 sortedItemCount = FullSort(dataToProcess, comparer);
             }
-            // Otherwise, use an indexed min-/max-heap to perform an in-place, stable sort of all objects
+            // Otherwise, use an indexed min-/max-heap to perform an in-place heap sort (heap
+            // sorts are inheritantly stable, meaning they will preserve the respective order
+            // of duplicate objects as they are sorted on the heap)
             else
             {
                 sortedItemCount = Heapify(dataToProcess, comparer);
