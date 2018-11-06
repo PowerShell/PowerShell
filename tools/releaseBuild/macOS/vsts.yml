@@ -1,3 +1,9 @@
+resources:
+- repo: self
+  clean: true
+queue:
+  name: Hosted macOS Preview
+name: macOS_$(Build.SourceBranchName)_$(Build.BuildId)
 steps:
 #- task: <task type name>@<version>
 #  inputs:
@@ -21,10 +27,8 @@ steps:
     scriptPath: 'tools/releaseBuild/macOS/PowerShellPackageVsts.sh'
     args: '-location $(Build.SourcesDirectory) -BootStrap'
   displayName: 'Bootstrap VM'
-- task: ShellScript@2
-  inputs:
-    scriptPath: 'tools/releaseBuild/macOS/PowerShellPackageVsts.sh'
-    args: '-ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -ExtraPackage "tar" -location $(Build.SourcesDirectory) -Build'
-    disableAutoCwd: true
-    cwd: 'tools/releaseBuild/macOS'
+- powershell: |
+    $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
+    .\PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -ExtraPackage "tar" -location $(Build.SourcesDirectory) -Build
+    $env:AZDEVOPSFEEDPAT = $null
   displayName: 'Build and Package'
