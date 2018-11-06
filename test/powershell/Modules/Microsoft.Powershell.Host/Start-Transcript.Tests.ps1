@@ -119,10 +119,12 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             return "FileDeleted"
         }
 
-        Start-Transcript -Path $transcriptFilePath
-        Stop-Transcript
-
-        Unregister-Event -SourceIdentifier "FileDeleted"
+        try {
+            Start-Transcript -Path $transcriptFilePath
+            Stop-Transcript
+        } finally {
+            Unregister-Event -SourceIdentifier "FileDeleted"
+        }
 
         # Nothing should have been returned by the FileSystemWatcher
         Receive-Job $job | Should -Be $null
