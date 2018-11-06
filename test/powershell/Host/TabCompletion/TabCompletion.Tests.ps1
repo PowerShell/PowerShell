@@ -1117,7 +1117,18 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         $listener = Get-ChildItem WSMan:\localhost\Listener
         $res.CompletionMatches.Count | Should -Be $listener.Count
         for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
-            $res.CompletionMatches[$i].ListItemText | Should -Be $listener[$i].Name
+            $match = $false
+            for ($j=0; $j -lt $listener.Count; $j++)
+            {
+                if ($res.CompletionMatches[$i].ListItemText -eq $listener[$j].Name)
+                {
+                    $match = $true
+                    break
+                }
+            }
+            $match | Should Be $true
+
+            #$res.CompletionMatches[$i].ListItemText | Should -Be $listener[$i].Name
         }
     }
 

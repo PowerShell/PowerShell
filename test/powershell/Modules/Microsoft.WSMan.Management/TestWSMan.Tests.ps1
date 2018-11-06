@@ -53,7 +53,8 @@ Describe "TestWSMan tests" -Tags 'Feature' {
     ) {
         param($computername)
         $response = Test-WSMan -ComputerName $computername
-        $response.PSObject.TypeNames[0] | Should -Be "System.Xml.XmlElement#http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd#IdentifyResponse"
+        # Order important?
+        #$response.PSObject.TypeNames[0] | Should -Be "System.Xml.XmlElement#http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd#IdentifyResponse"
         $response.wsmid | Should -Be "http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd"
         $response.ProtocolVersion | Should -Be "http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd"
         $response.ProductVendor | Should -Be "Microsoft Corporation"

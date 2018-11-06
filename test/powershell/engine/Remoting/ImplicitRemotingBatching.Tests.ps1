@@ -1,6 +1,11 @@
 ﻿# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+if ($IsWindows)
+{
+    Import-Module -Name HelpersRemoting
+}
+
 Describe "TestImplicitRemotingBatching hook should correctly batch simple remote command pipelines" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
@@ -10,7 +15,9 @@ Describe "TestImplicitRemotingBatching hook should correctly batch simple remote
         [powershell] $powerShell = [powershell]::Create([System.Management.Automation.RunspaceMode]::NewRunspace)
 
         # Create remote session in new PowerShell session
-        $powerShell.AddScript('Import-Module -Name HelpersRemoting; $remoteSession = New-RemoteSession').Invoke()
+        $helperModulePath = (Get-Module -Name HelpersRemoting -ListAvailable).Path
+        $script = 'Import-Module -Name "{0}"; $remoteSession = New-RemoteSession' -f $helperModulePath
+        $powerShell.AddScript($script).Invoke()
         if ($powerShell.Streams.Error.Count -gt 0) { throw "Unable to create remote session for test" }
 
         # Import implicit commands from remote session
