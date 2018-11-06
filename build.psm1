@@ -660,7 +660,13 @@ function Restore-PSModuleToBuild
     # Save module will always install the newest PackageManagement when installing PowerShellGet, remove it, and install the correct one
     Remove-Item (Join-Path $modulesDir -ChildPath 'PackageManagement') -Recurse
     Restore-PSModule -Destination $modulesDir -Name 'PackageManagement' -RequiredVersion '1.1.7.0' -SourceLocation "https://www.powershellgallery.com/api/v2/"
-    Restore-PSModule -Destination $modulesDir -Name 'Microsoft.PowerShell.Archive' -SourceLocation "https://www.powershellgallery.com/api/v2/"
+
+    if($env:AZDEVOPSFEED) {
+        $cred = [PSCredential]::new($env:AZDEVOPSFEEDUSERNAME, (ConvertTo-SecureString -String $env:AZDEVOPSFEEDPAT -AsPlainText -Force))
+        Restore-PSModule -Destination $modulesDir -Name 'Microsoft.PowerShell.Archive' -SourceLocation $env:AZDEVOPSFEED -Credential $cred -RequiredVersion '1.2.2.0'
+    } else {
+        Restore-PSModule -Destination $modulesDir -Name 'Microsoft.PowerShell.Archive' -SourceLocation "https://www.powershellgallery.com/api/v2/" -RequiredVersion '1.2.2.0'
+    }
 
     if($CI.IsPresent)
     {
@@ -2348,7 +2354,9 @@ function Restore-PSModule
 
         [string]$SourceLocation="https://powershell.myget.org/F/powershellmodule/api/v2/",
 
-        [string]$RequiredVersion
+        [string]$RequiredVersion,
+
+        [PSCredential] $Credential
         )
 
     $needRegister = $true
@@ -2381,7 +2389,13 @@ function Restore-PSModule
         }
 
         log "Registering PSRepository with name: $RepositoryName and sourcelocation: $SourceLocation"
-        PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorVariable ev -verbose
+
+        if($Credential) {
+            PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorVariable ev -verbose -Credential $Credential
+        } else {
+            PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorVariable ev -verbose
+        }
+
         if($ev)
         {
             throw ("Failed to register repository '{0}'" -f $RepositoryName)
@@ -2406,6 +2420,10 @@ function Restore-PSModule
                         Repository =$RepositoryName
                     }
 
+        if($Credential) {
+            $command.Add('Credential', $Credential)
+        }
+
         if($RequiredVersion)
         {
             $command.Add("RequiredVersion", $RequiredVersion)
@@ -2416,7 +2434,13 @@ function Restore-PSModule
         PowerShellGet\Save-Module @command -Force
 
         # Remove PSGetModuleInfo.xml file
-        Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
+        $modules =  if($Credential) {
+            Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies -Credential $Credential
+        } else {
+            Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies
+        }
+
+        $modules | ForEach-Object {
             Remove-Item -Path $Destination\$($_.Name)\*\PSGetModuleInfo.xml -Force
         }
     }
