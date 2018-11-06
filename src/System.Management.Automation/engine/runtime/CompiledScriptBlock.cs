@@ -2141,7 +2141,7 @@ namespace System.Management.Automation
             if (_commandRuntime.IsDebugFlagSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Debug,
-                                                   _commandRuntime.Debug ? ActionPreference.Inquire : ActionPreference.SilentlyContinue);
+                                                   _commandRuntime.Debug ? ActionPreference.Continue : ActionPreference.SilentlyContinue);
             }
             if (_commandRuntime.IsVerboseFlagSet)
             {

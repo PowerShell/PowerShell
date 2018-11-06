@@ -2924,23 +2924,7 @@ namespace System.Management.Automation
                 if (_isDebugPreferenceSet)
                     return _debugPreference;
                 if (IsDebugFlagSet)
-                {
-                    if (Debug)
-                    {
-                        // If the host couldn't prompt for the debug action anyways, use 'Continue'.
-                        // This lets hosts still see debug output without having to implement the prompting logic.
-                        if (CBhost.ExternalHost.UI == null)
-                        {
-                            return ActionPreference.Continue;
-                        }
-                        else
-                        {
-                            return ActionPreference.Inquire;
-                        }
-                    }
-                    else
-                        return ActionPreference.SilentlyContinue;
-                }
+                    return Debug ? ActionPreference.Continue : ActionPreference.SilentlyContinue;
 
                 if (!_isDebugPreferenceCached)
                 {
