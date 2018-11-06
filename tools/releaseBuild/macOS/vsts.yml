@@ -39,6 +39,6 @@ steps:
   displayName: 'Bootstrap VM'
 - powershell: |
     $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
-    .\PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -ExtraPackage "tar" -location $(Build.SourcesDirectory) -Build
+    $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -ExtraPackage "tar" -location $(Build.SourcesDirectory) -Build
     $env:AZDEVOPSFEEDPAT = $null
   displayName: 'Build and Package'
