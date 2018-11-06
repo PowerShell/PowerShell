@@ -1045,7 +1045,7 @@ dir -Recurse `
     }
 }
 
-Describe "Tab completion tests with remote Runspace" -Tags Feature {
+Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
     BeforeAll {
         if ($IsWindows) {
             $session = New-RemoteSession
