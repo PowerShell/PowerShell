@@ -105,7 +105,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         $modules = Get-Module -FullyQualifiedName $moduleSpecification -ListAvailable
         $modules | Should -HaveCount 1
         $modules.Name | Should -BeExactly "Foo"
-        $modules.Version | Should -Be "2.0"
+        $modules.Version | Should -BeExactly "2.0"
     }
 
     It "Get-Module <Name> -Refresh -ListAvailable" {
@@ -145,7 +145,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             param ($CompatiblePSEditions, $ExpectedModule)
             $modules = Get-Module -PSEdition $CompatiblePSEditions -ListAvailable
             $modules | Should -HaveCount $ExpectedModule.Count
-            $modules.Name | Sort-Object | Should -Be $ExpectedModule
+            $modules.Name | Sort-Object | Should -BeExactly $ExpectedModule
         }
     }
 }
