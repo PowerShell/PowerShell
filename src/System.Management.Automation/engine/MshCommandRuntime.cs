@@ -2922,9 +2922,13 @@ namespace System.Management.Automation
             get
             {
                 if (_isDebugPreferenceSet)
+                {
                     return _debugPreference;
+                }
                 if (IsDebugFlagSet)
+                {
                     return Debug ? ActionPreference.Continue : ActionPreference.SilentlyContinue;
+                }
 
                 if (!_isDebugPreferenceCached)
                 {
