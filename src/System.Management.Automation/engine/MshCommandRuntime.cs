@@ -2925,6 +2925,7 @@ namespace System.Management.Automation
                 {
                     return _debugPreference;
                 }
+                
                 if (IsDebugFlagSet)
                 {
                     return Debug ? ActionPreference.Continue : ActionPreference.SilentlyContinue;
@@ -2945,6 +2946,7 @@ namespace System.Management.Automation
 
                     _isDebugPreferenceCached = true;
                 }
+                
                 return _debugPreference;
             }
             set
