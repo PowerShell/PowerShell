@@ -6,7 +6,7 @@ if ($IsWindows)
     Import-Module -Name HelpersRemoting
 }
 
-Describe "TestImplicitRemotingBatching hook should correctly batch simple remote command pipelines" -Tags 'Feature','RequireAdminOnWindows' {
+Describe "TestImplicitRemotingBatching hook should correctly batch simple remote command pipelines" -Tag 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
 
@@ -26,6 +26,17 @@ Describe "TestImplicitRemotingBatching hook should correctly batch simple remote
             }
 
             throw "$errorMessage : '$msg'"
+        }
+
+        # Make sure we can create a remote session
+        $remotePSSession = New-RemoteSession
+        if ($remotePSSession -eq $null)
+        {
+            Write-Verbose "Unable to create a remote session in test."
+        }
+        else
+        {
+            Remove-PSSession $remotePSSession
         }
 
         [powershell] $powerShell = [powershell]::Create([System.Management.Automation.RunspaceMode]::NewRunspace)
