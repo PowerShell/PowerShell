@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Describe "Start-Process" -Tags @("Feature") {
+Describe "Start-Process" -Tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
         $isNanoServer = [System.Management.Automation.Platform]::IsNanoServer

@@ -12,18 +12,38 @@ Describe "TestImplicitRemotingBatching hook should correctly batch simple remote
 
         if (! $isWindows) { return }
 
+        function ThrowSetupError
+        {
+            param (
+                [string] $errorMessage,
+                [System.Management.Automation.ErrorRecord[]] $eRecords
+            )
+
+            $msg = @()
+            foreach ($err in $powerShell.Streams.Error)
+            {
+                $msg += $err.ToString() + "`n"
+            }
+
+            throw "$errorMessage : '$msg'"
+        }
+
         [powershell] $powerShell = [powershell]::Create([System.Management.Automation.RunspaceMode]::NewRunspace)
 
         # Create remote session in new PowerShell session
-        $helperModulePath = (Get-Module -Name HelpersRemoting -ListAvailable).Path
-        $script = 'Import-Module -Name "{0}"; $remoteSession = New-RemoteSession' -f $helperModulePath
-        $powerShell.AddScript($script).Invoke()
-        if ($powerShell.Streams.Error.Count -gt 0) { throw "Unable to create remote session for test" }
+        $powerShell.AddScript('Import-Module -Name HelpersRemoting; $remoteSession = New-RemoteSession').Invoke()
+        if ($powerShell.Streams.Error.Count -gt 0) 
+        {
+            ThrowSetupError -errorMessage "Unable to create remote session for test with error" -eRecords $powerShell.Streams.Error
+        }
 
         # Import implicit commands from remote session
         $powerShell.Commands.Clear()
         $powerShell.AddScript('Import-PSSession -Session $remoteSession -CommandName Get-Process,Write-Output -AllowClobber').Invoke()
-        if ($powerShell.Streams.Error.Count -gt 0) { throw "Unable to import pssession for test" }
+        if ($powerShell.Streams.Error.Count -gt 0) 
+        {
+            ThrowSetupError -errorMessage "Unable to import pssession for test" -eRecords $powerShell.Streams.Error
+        }
 
         # Define $filter variable in local session
         $powerShell.Commands.Clear()
