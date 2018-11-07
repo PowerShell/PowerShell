@@ -440,12 +440,9 @@ function Start-PSBuild {
         log "Cleaning your working directory. You can also do it with 'git clean -fdX'"
         Push-Location $PSScriptRoot
         try {
-            git clean -fdX
-            # Extra cleaning is required to delete the CMake temporary files.
-            # These are not cleaned when using "X" and cause CMake to retain state, leading to
-            # mis-configured environment issues when switching between x86 and x64 compilation
-            # environments.
-            git clean -fdx .\src\powershell-native
+            # Excluded sqlite3 folder is due to this Roslyn issue: https://github.com/dotnet/roslyn/issues/23060
+            # Excluded src/Modules/nuget.config as this is required for release build.
+            git clean -fdx --exclude .vs/PowerShell/v15/Server/sqlite3 --exclude src/Modules/nuget.config
         } finally {
             Pop-Location
         }
@@ -522,9 +519,22 @@ Fix steps:
         $Arguments += "/property:ReleaseTag=$ReleaseTagToUse"
     }
 
+    $nugetConfigExists = Test-Path "$PSScriptRoot/src/Modules/nuget.config"
+    Write-Verbose -Verbose "Before Restore $PSScriptRoot/src/Modules/nuget.config exists - $nugetConfigExists"
+
+    if($nugetConfigExists)
+    {
+        Get-Content "$PSScriptRoot/src/Modules/nuget.config" -raw | Write-Verbose -Verbose
+    }
+    else
+    {
+        Get-ChildItem "$PSScriptRoot/src/Modules" | Out-String | Write-Verbose -Verbose
+    }
+
     # handle Restore
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
-        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen")
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules/PSGalleryModules.csproj")
+        $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | ForEach-Object { [System.IO.Path]::GetDirectoryName($_) }
 
         $RestoreArguments = @("--runtime",$Options.Runtime,"--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
@@ -533,7 +543,7 @@ Fix steps:
             $RestoreArguments += "quiet"
         }
 
-        $srcProjectDirs | ForEach-Object {
+        ($srcProjectDirs + $testProjectDirs) | ForEach-Object {
             log "Run dotnet restore $_ $RestoreArguments"
             Start-NativeExecution { dotnet restore $_ $RestoreArguments }
         }
@@ -649,24 +659,11 @@ function Restore-PSModuleToBuild
         $CI
     )
 
-    $ProgressPreference = "SilentlyContinue"
     log "Restore PowerShell modules to $publishPath"
 
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
 
-    # Restore modules from powershellgallery feed
-    # PowerShellGet depends on PackageManagement module, so we will install PackageManagement module first.
-    Restore-PSModule -Destination $modulesDir -Name 'PowerShellGet' -RequiredVersion '1.6.0' -SourceLocation "https://www.powershellgallery.com/api/v2/"
-    # Save module will always install the newest PackageManagement when installing PowerShellGet, remove it, and install the correct one
-    Remove-Item (Join-Path $modulesDir -ChildPath 'PackageManagement') -Recurse
-    Restore-PSModule -Destination $modulesDir -Name 'PackageManagement' -RequiredVersion '1.1.7.0' -SourceLocation "https://www.powershellgallery.com/api/v2/"
-
-    if($env:AZDEVOPSFEED) {
-        $cred = [PSCredential]::new($env:AZDEVOPSFEEDUSERNAME, (ConvertTo-SecureString -String $env:AZDEVOPSFEEDPAT -AsPlainText -Force))
-        Restore-PSModule -Destination $modulesDir -Name 'Microsoft.PowerShell.Archive' -SourceLocation $env:AZDEVOPSFEED -Credential $cred -RequiredVersion '1.2.2.0'
-    } else {
-        Restore-PSModule -Destination $modulesDir -Name 'Microsoft.PowerShell.Archive' -SourceLocation "https://www.powershellgallery.com/api/v2/" -RequiredVersion '1.2.2.0'
-    }
+    Copy-PSGalleryModules -Destination $modulesDir
 
     if($CI.IsPresent)
     {
@@ -685,6 +682,7 @@ function Restore-PSPester
 
     Restore-GitModule -Destination $Destination -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha '1f546b6aaa0893e215e940a14f57c96f56f7eff1'
 }
+
 function Compress-TestContent {
     [CmdletBinding()]
     param(
@@ -2340,120 +2338,55 @@ function Restore-GitModule
 }
 
 # Install PowerShell modules such as PackageManagement, PowerShellGet
-function Restore-PSModule
+function Copy-PSGalleryModules
 {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string[]]$Name,
+        [string]$Destination
+    )
 
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Destination,
-
-        [string]$SourceLocation="https://powershell.myget.org/F/powershellmodule/api/v2/",
-
-        [string]$RequiredVersion,
-
-        [PSCredential] $Credential
-        )
-
-    $needRegister = $true
-    $RepositoryName = "mygetpsmodule"
-
-    # Check if the PackageManagement works in the base-oS or PowerShellCore
-    $null = Get-PackageProvider -Name NuGet -ForceBootstrap -Verbose:$VerbosePreference
-    $null = Get-PackageProvider -Name PowerShellGet -Verbose:$VerbosePreference
-
-    # Get the existing registered PowerShellGet repositories
-    $psrepos = PowerShellGet\Get-PSRepository
-
-    foreach ($repo in $psrepos)
-    {
-        if(($repo.SourceLocation -eq $SourceLocation) -or ($repo.SourceLocation.TrimEnd("/") -eq $SourceLocation.TrimEnd("/")))
-        {
-            # found a registered repository that matches the source location
-            $needRegister = $false
-            $RepositoryName = $repo.Name
-            break
-        }
+    if (!$Destination.EndsWith("Modules")) {
+        throw "Installing to an unexpected location"
     }
 
-    if($needRegister)
-    {
-        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
-        if($regVar)
-        {
-            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
-        }
+    $cache = dotnet nuget locals global-packages -l
+    if ($cache -match "info : global-packages: (.*)") {
+        $nugetCache = $matches[1]
+    }
+    else {
+        throw "Can't find nuget global cache"
+    }
 
-        log "Registering PSRepository with name: $RepositoryName and sourcelocation: $SourceLocation"
+    $psGalleryProj = [xml](Get-Content -Raw $PSScriptRoot\src\Modules\PSGalleryModules.csproj)
 
-        if($Credential) {
-            PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorVariable ev -verbose -Credential $Credential
+    foreach ($m in $psGalleryProj.Project.ItemGroup.PackageReference) {
+        $name = $m.Include
+        $version = $m.Version
+        log "Name='$Name', Version='$version', Destination='$Destination'"
+
+        # Remove the build revision from the src (nuget drops it).
+        $srcVer = if ($version -match "(\d+.\d+.\d+).0") {
+            $matches[1]
         } else {
-            PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorVariable ev -verbose
+            $version
         }
 
-        if($ev)
-        {
-            throw ("Failed to register repository '{0}'" -f $RepositoryName)
-        }
-
-        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName
-        if(-not $regVar)
-        {
-            throw ("'{0}' is not registered" -f $RepositoryName)
-        }
-    }
-
-    log ("Name='{0}', Destination='{1}', Repository='{2}'" -f ($Name -join ','), $Destination, $RepositoryName)
-
-    # do not output progress
-    $ProgressPreference = "SilentlyContinue"
-    $Name | ForEach-Object {
-
-        $command = @{
-                        Name=$_
-                        Path = $Destination
-                        Repository =$RepositoryName
-                    }
-
-        if($Credential) {
-            $command.Add('Credential', $Credential)
-        }
-
-        if($RequiredVersion)
-        {
-            $command.Add("RequiredVersion", $RequiredVersion)
-        }
-
-        # pull down the module
-        log "running save-module $_"
-        PowerShellGet\Save-Module @command -Force
-
-        # Remove PSGetModuleInfo.xml file
-        $modules =  if($Credential) {
-            Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies -Credential $Credential
+        # Remove semantic version in the destination directory
+        $destVer = if ($version -match "(\d+.\d+.\d+)-.+") {
+            $matches[1]
         } else {
-            Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies
+            $version
         }
 
-        $modules | ForEach-Object {
-            Remove-Item -Path $Destination\$($_.Name)\*\PSGetModuleInfo.xml -Force
-        }
-    }
+        # Nuget seems to always use lowercase in the cache
+        $src = "$nugetCache/$($name.ToLower())/$srcVer"
+        $dest = "$Destination/$name/$destVer"
 
-    # Clean up
-    if($needRegister)
-    {
-        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
-        if($regVar)
-        {
-            log "Unregistering PSRepository with name: $RepositoryName"
-            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
-        }
+        Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
+        New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
+        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll'
+        Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
     }
 }
 
@@ -2581,3 +2514,35 @@ $script:RESX_TEMPLATE = @'
 {0}
 </root>
 '@
+
+function New-NugetConfigFile
+{
+    param(
+        [Parameter(Mandatory=$true)] [string] $NugetFeedUrl,
+        [Parameter(Mandatory=$true)] [string] $FeedName,
+        [Parameter(Mandatory=$true)] [string] $UserName,
+        [Parameter(Mandatory=$true)] [string] $ClearTextPAT,
+        [Parameter(Mandatory=$true)] [string] $Destination
+    )
+
+    $nugetConfigTemplate = @'
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <clear />
+    <add key="[FEEDNAME]" value="[FEED]" />
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+  </packageSources>
+  <packageSourceCredentials>
+    <[FEEDNAME]>
+      <add key="Username" value="[USERNAME]" />
+      <add key="ClearTextPassword" value="[PASSWORD]" />
+    </[FEEDNAME]>
+  </packageSourceCredentials>
+</configuration>
+'@
+
+    $content = $nugetConfigTemplate.Replace('[FEED]', $NugetFeedUrl).Replace('[FEEDNAME]', $FeedName).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
+
+    Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
+}
