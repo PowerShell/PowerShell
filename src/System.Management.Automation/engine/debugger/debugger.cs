@@ -468,7 +468,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The object that triggered the current breakpoint.
+        /// Gets the object that triggered the current breakpoint.
         /// </summary>
         protected object TriggerObject
         {
@@ -5231,11 +5231,11 @@ namespace System.Management.Automation
     public class PSDebugContext
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="PSDebugContext"/> class.
         /// </summary>
-        /// <param name="invocationInfo">InvocationInfo</param>
-        /// <param name="breakpoints">Breakpoints</param>
-        /// <param name="triggerObject">TriggerObject</param>
+        /// <param name="invocationInfo">The invocation information for the current command.</param>
+        /// <param name="breakpoints">The breakpoint(s) that caused the script to break in the debugger.</param>
+        /// <param name="triggerObject">The object that caused the script to break in the debugger.</param>
         public PSDebugContext(InvocationInfo invocationInfo, List<Breakpoint> breakpoints, object triggerObject = null)
         {
             if (breakpoints == null)
@@ -5260,7 +5260,7 @@ namespace System.Management.Automation
         public Breakpoint[] Breakpoints { get; private set; }
 
         /// <summary>
-        /// The object that triggered the current dynamic breakpoint.
+        /// Gets the object that triggered the current dynamic breakpoint.
         /// </summary>
         public object Trigger { get; private set; }
     }
