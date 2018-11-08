@@ -378,13 +378,25 @@ namespace System.Management.Automation
         }
         private bool _supportsTransactions = false;
 
+        private ConfirmImpact _confirmImpact = ConfirmImpact.Medium;
+
         /// <summary>
         /// Gets and sets a ConfirmImpact value that indicates
         /// the "destructiveness" of the operation and when it
         /// should be confirmed.  This should only be used when
         /// SupportsShouldProcess is specified.
         /// </summary>
-        public ConfirmImpact ConfirmImpact { get; set; } = ConfirmImpact.Medium;
+        public ConfirmImpact ConfirmImpact
+        {
+            get
+            {
+                return SupportsShouldProcess ? _confirmImpact : ConfirmImpact.None;
+            }
+            set
+            {
+                _confirmImpact = value;
+            }
+        }
 
         /// <summary>
         /// Gets and sets a HelpUri value that indicates
@@ -439,6 +451,11 @@ namespace System.Management.Automation
 
             NounName = nounName;
             VerbName = verbName;
+
+            if (VerbName == VerbsCommon.Get)
+            {
+                ConfirmImpact = ConfirmImpact.Low;
+            }
         }
     }
 
