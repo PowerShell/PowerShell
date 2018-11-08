@@ -402,15 +402,19 @@ Describe "Type accelerators" -Tags "CI" {
                     Accelerator = 'pspropertyexpression'
                     Type = [Microsoft.PowerShell.Commands.PSPropertyExpression]
                 }
+                @{
+                    Accelerator = 'actionpreference'
+                    Type        = [System.Management.Automation.ActionPreference]
+                }
             )
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 98
+                $totalAccelerators = 99
             }
             else
             {
-                $totalAccelerators = 103
+                $totalAccelerators = 104
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{
