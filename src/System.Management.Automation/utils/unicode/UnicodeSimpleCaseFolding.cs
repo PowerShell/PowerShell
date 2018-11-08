@@ -1,11 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 
 namespace System.Management.Automation.Unicode
 {
@@ -213,7 +216,7 @@ namespace System.Management.Automation.Unicode
             }
         }
 
-        private static void SpanFold(Span<char> destination, ReadOnlySpan<char> source)
+        internal static void SpanFold(Span<char> destination, ReadOnlySpan<char> source)
         {
             Diagnostics.Assert(destination.Length >= source.Length, "Destination span length must be equal or greater then source span length.");
             ref char res = ref MemoryMarshal.GetReference(destination);
@@ -503,10 +506,77 @@ namespace System.Management.Automation.Unicode
 
             if (obj is string s)
             {
-                return GetHashCode(s);
+                return GetHashCodeSimpleCaseFolding(s);
             }
 
             return obj.GetHashCode();
+        }
+
+        private static int GetHashCodeSimpleCaseFolding(string source)
+        {
+            Diagnostics.Assert(source != null, "source must not be null");
+
+            // Do not allocate on the stack if string is empty
+            if (source.Length == 0)
+            {
+                return source.GetHashCode();
+            }
+
+            char[] borrowedArr = null;
+            Span<char> span = source.Length <= 255 ?
+                stackalloc char[source.Length] :
+                (borrowedArr = ArrayPool<char>.Shared.Rent(source.Length));
+
+            SimpleCaseFolding.SpanFold(span, source);
+
+            int hash = HashByteArray(MemoryMarshal.AsBytes(span));
+
+            // Return the borrowed array if necessary.
+            if (borrowedArr != null)
+            {
+                ArrayPool<char>.Shared.Return(borrowedArr);
+            }
+
+            return hash;
+        }
+
+        // The code come from CoreFX SqlBinary.HashByteArray()
+        internal static int HashByteArray(ReadOnlySpan<byte> rgbValue)
+        {
+            int length = rgbValue.Length;
+
+            if (length <= 0)
+                return 0;
+
+            int ulValue = DefaultSeed;
+            int ulHi;
+
+            // Size of CRC window (hashing bytes, ssstr, sswstr, numeric)
+            const int x_cbCrcWindow = 4;
+            // const int iShiftVal = (sizeof ulValue) * (8*sizeof(char)) - x_cbCrcWindow;
+            const int iShiftVal = 4 * 8 - x_cbCrcWindow;
+
+            for (int i = 0; i < length; i++)
+            {
+                ulHi = (ulValue >> iShiftVal) & 0xff;
+                ulValue <<= x_cbCrcWindow;
+                ulValue = ulValue ^ rgbValue[i] ^ ulHi;
+            }
+
+            return ulValue;
+        }
+
+        private static int DefaultSeed { get; } = GenerateSeed();
+
+        private static int GenerateSeed()
+        {
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            {
+                var bytes = new byte[sizeof(ulong)];
+                rng.GetBytes(bytes);
+                var hash64 = BitConverter.ToUInt64(bytes, 0);
+                return ((int)(hash64 >> 32)) ^ (int)hash64;
+            }
         }
 
         /// <summary>
@@ -556,7 +626,7 @@ namespace System.Management.Automation.Unicode
             {
                 throw new ArgumentNullException(nameof(obj));
             }
-            return obj.GetHashCode();
+            return GetHashCodeSimpleCaseFolding(obj);
         }
     }
 }
