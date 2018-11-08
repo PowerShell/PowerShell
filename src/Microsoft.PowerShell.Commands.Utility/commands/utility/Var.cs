@@ -367,7 +367,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class implementing new-variable command.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113361")]
+    [Cmdlet(VerbsCommon.New, "Variable", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113361")]
     public sealed class NewVariableCommand : VariableCommandBase
     {
         #region parameters
