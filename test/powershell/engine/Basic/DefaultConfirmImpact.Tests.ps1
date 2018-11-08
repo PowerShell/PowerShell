@@ -241,14 +241,29 @@ Describe 'Default Cmdlet ConfirmImpact Ratings' -Tags 'CI' {
     }
 
     It 'List of cmdlets should match available commands' {
-        $Commands = (Get-Command -CommandType Cmdlet).Where{$_.ImplementingType}.Count
-        $DefaultCommands | Should -HaveCount $Commands
+        $Commands = Get-Command -CommandType Cmdlet |
+            ForEach-Object {
+                $type = $_.ImplementingType
+                if ($type -ne $null) {
+                    $type.GetCustomAttributes($true) |
+                        Where-Object { $_.VerbName -ne $null } |
+                        Select-Object @{Name='Name'; Expression={'{0}-{1}' -f $_.VerbName, $_.NounName}}, ConfirmImpact
+                }
+            } |
+            Sort-Object -Property @{Expression = 'ConfirmImpact'; Descending = $true}, Name
+
+        $DefaultCommands.Cmdlet | Should -Be $Commands.Name
     }
 
-    It '<Cmdlet> should have a ConfirmImpact rating of <Rating>' -TestCases $TestCases {
+    It '<Cmdlet> should have a ConfirmImpact rating of <ConfirmImpact>' -TestCases $DefaultCommands {
         param($Cmdlet, $ConfirmImpact)
 
-        (Get-Command -Name $Cmdlet).ImplementingType.GetCustomAttributes($true).Where{$_.VerbName -ne $null}.ConfirmImpact |
-            Should -Be $ConfirmImpact
+        $Type = (Get-Command -Name $Cmdlet).ImplementingType
+        if ($Type) {
+            $Type.GetCustomAttributes($true).Where{ $_.VerbName }.ConfirmImpact | Should -Be $ConfirmImpact
+        }
+        else {
+            Set-TestInconclusive
+        }
     }
 }
