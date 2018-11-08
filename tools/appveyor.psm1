@@ -610,7 +610,14 @@ function Invoke-AppveyorFinish
                 $previewLabel= "daily{0}" -f $previewLabel
             }
 
-            $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
+            if ($env:TF_BUILD)
+            {
+                $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+            }
+            else
+            {
+                $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
+            }
         }
 
         # the packaging tests find the MSI package using env:PSMsiX64Path
