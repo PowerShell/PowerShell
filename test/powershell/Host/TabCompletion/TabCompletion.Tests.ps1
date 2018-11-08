@@ -1116,18 +1116,30 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         $res = TabExpansion2 -inputScript $path -cursorColumn $path.Length
         $listener = Get-ChildItem WSMan:\localhost\Listener
         $res.CompletionMatches.Count | Should -Be $listener.Count
+
+        foreach ($item in $res.CompletionMatches)
+        {
+            Write-Verbose $item.ListItemText
+        }
+        foreach ($item in $listener)
+        {
+            Write-Verbose $item.Name
+        }
+
+        $match = $true
         for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
-            $match = $false
+            $found = $false
             for ($j=0; $j -lt $listener.Count; $j++)
             {
                 if ($res.CompletionMatches[$i].ListItemText -eq $listener[$j].Name)
                 {
-                    $match = $true
+                    $found = $true
                     break
                 }
             }
-            $match | Should Be $true
+            if (! $found) { $match = $false; break }
         }
+        $match | Should Be $true
     }
 
     It "Tab completion gets dynamic parameters for '<path>' using '<parameter>'" -TestCases @(
