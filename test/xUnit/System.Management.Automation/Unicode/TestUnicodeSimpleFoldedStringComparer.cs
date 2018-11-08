@@ -8,11 +8,11 @@ using System.Globalization;
 using System.Management.Automation.Unicode;
 using Xunit;
 
-namespace System.Management.Automation
+namespace System.Management.Automation.Unicode.Tests
 {
     public class SimpleFoldedStringComparerTests
     {
-        // The tests come from CoreFX tests.
+        // The tests come from CoreFX tests: src/System.Runtime.Extensions/tests/System/StringComparer.cs
 
         [Fact]
         public static void TestOrdinal_EmbeddedNull_ReturnsDifferentHashCodes()

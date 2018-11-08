@@ -26,4 +26,11 @@
     <ProjectReference Include="..\..\..\src\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Data\CaseFolding.txt">
+      <Link>CharUnicode\CaseFolding.txt</Link>
+      <LogicalName>CaseFolding.txt</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

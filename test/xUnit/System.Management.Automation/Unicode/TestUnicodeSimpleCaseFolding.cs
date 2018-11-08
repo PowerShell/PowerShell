@@ -5,7 +5,7 @@ using System;
 using System.Management.Automation.Unicode;
 using Xunit;
 
-namespace System.Management.Automation
+namespace System.Management.Automation.Unicode.Tests
 {
     public class UnitTest1
     {
