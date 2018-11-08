@@ -63,7 +63,7 @@ Describe 'Default Cmdlet ConfirmImpact Ratings' -Tags 'CI' {
             @{ Cmdlet = 'Get-Date'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-Event'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-EventSubscriber'; ConfirmImpact = 'Medium' }
-            @{ Cmdlet = 'Get-ExperimentalFeatur'; ConfirmImpact = 'Medium' }
+            @{ Cmdlet = 'Get-ExperimentalFeature'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-FileHash'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-FormatData'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-Help'; ConfirmImpact = 'Medium' }
@@ -83,11 +83,11 @@ Describe 'Default Cmdlet ConfirmImpact Ratings' -Tags 'CI' {
             @{ Cmdlet = 'Get-PSDrive'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-PSHostProcessInfo'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-PSProvider'; ConfirmImpact = 'Medium' }
-            @{ Cmdlet = 'Get-PSReadLineKeyHandl'; ConfirmImpact = 'Medium' }
+            @{ Cmdlet = 'Get-PSReadLineKeyHandler'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-PSReadLineOption'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-PSSession'; ConfirmImpact = 'Medium' }
-            @{ Cmdlet = 'Get-PSSessionCapabilit'; ConfirmImpact = 'Medium' }
-            @{ Cmdlet = 'Get-PSSessionConfigura'; ConfirmImpact = 'Medium' }
+            @{ Cmdlet = 'Get-PSSessionCapability'; ConfirmImpact = 'Medium' }
+            @{ Cmdlet = 'Get-PSSessionConfiguration'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-Random'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-Runspace'; ConfirmImpact = 'Medium' }
             @{ Cmdlet = 'Get-RunspaceDebug'; ConfirmImpact = 'Medium' }
@@ -238,31 +238,28 @@ Describe 'Default Cmdlet ConfirmImpact Ratings' -Tags 'CI' {
         # ConfirmImpact.None
             # No default cmdlets currently will report ConfirmImpact.None
         ) # $DefaultCommands
-    }
 
-    It 'List of cmdlets should match available commands' {
-        $Commands = Get-Command -CommandType Cmdlet |
+
+        $CommandList = Get-Command -ListAvailable -CommandType Cmdlet |
             ForEach-Object {
-                $type = $_.ImplementingType
-                if ($type -ne $null) {
-                    $type.GetCustomAttributes($true) |
-                        Where-Object { $_.VerbName -ne $null } |
-                        Select-Object @{Name='Name'; Expression={'{0}-{1}' -f $_.VerbName, $_.NounName}}, ConfirmImpact
-                }
-            } |
-            Sort-Object -Property @{Expression = 'ConfirmImpact'; Descending = $true}, Name
-
-        $DefaultCommands.Cmdlet | Should -Be $Commands.Name
+            $type = $_.ImplementingType
+            if ($type -ne $null) {
+                $type.GetCustomAttributes($true) |
+                    Where-Object { $_.VerbName -ne $null } |
+                    Select-Object @{Name = 'Name'; Expression = {'{0}-{1}' -f $_.VerbName, $_.NounName}}, ConfirmImpact
+            }
+        }
     }
 
     It '<Cmdlet> should have a ConfirmImpact rating of <ConfirmImpact>' -TestCases $DefaultCommands {
         param($Cmdlet, $ConfirmImpact)
 
+        $Cmdlet | Should -BeIn $CommandList.Name
+
         $Type = (Get-Command -Name $Cmdlet).ImplementingType
         if ($Type) {
             $Type.GetCustomAttributes($true).Where{ $_.VerbName }.ConfirmImpact | Should -Be $ConfirmImpact
-        }
-        else {
+        } else {
             Set-TestInconclusive
         }
     }
