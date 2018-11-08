@@ -1117,15 +1117,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         $listener = Get-ChildItem WSMan:\localhost\Listener
         $res.CompletionMatches.Count | Should -Be $listener.Count
 
-        foreach ($item in $res.CompletionMatches)
-        {
-            Write-Verbose $item.ListItemText
-        }
-        foreach ($item in $listener)
-        {
-            Write-Verbose $item.Name
-        }
-
+        # Listeners will have no duplicate names.  Don't rely on order.
         $match = $true
         for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
             $found = $false
