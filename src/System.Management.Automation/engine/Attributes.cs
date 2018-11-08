@@ -388,14 +388,8 @@ namespace System.Management.Automation
         /// </summary>
         public ConfirmImpact ConfirmImpact
         {
-            get
-            {
-                return SupportsShouldProcess ? _confirmImpact : ConfirmImpact.None;
-            }
-            set
-            {
-                _confirmImpact = value;
-            }
+            get => SupportsShouldProcess ? _confirmImpact : ConfirmImpact.None;
+            set => _confirmImpact = value;
         }
 
         /// <summary>
