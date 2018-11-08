@@ -2,22 +2,22 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
 using System.Linq;
-using System.Threading;
 using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 
 namespace System.Management.Automation
 {
@@ -467,6 +467,14 @@ namespace System.Management.Automation
             get { return DebuggerStopped; }
         }
 
+        /// <summary>
+        /// The object that triggered the current breakpoint.
+        /// </summary>
+        protected object TriggerObject
+        {
+            get; private set;
+        }
+
         #endregion
 
         #region Protected Methods
@@ -643,6 +651,27 @@ namespace System.Management.Automation
         #endregion
 
         #region Internal Methods
+
+        /// <summary>
+        /// Breaks into the debugger.
+        /// </summary>
+        /// <param name="triggerObject">The object that triggered the breakpoint, if there is one.</param>
+        internal virtual void Break(object triggerObject = null)
+        {
+            if (!IsDebugHandlerSubscribed &&
+                (UnhandledBreakpointMode == UnhandledBreakpointProcessingMode.Ignore))
+            {
+                // No debugger attached and runspace debugging is not enabled.  Enable runspace debugging here
+                // so that this command is effective.
+                UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
+            }
+
+            // Store the triggerObject so that we can add it to PSDebugContext
+            TriggerObject = triggerObject;
+
+            // Set debugger to step mode so that a break can occur.
+            SetDebuggerStepMode(true);
+        }
 
         /// <summary>
         /// Passes the debugger command to the internal script debugger command processor.  This
@@ -1699,7 +1728,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            _context.SetVariable(SpecialVariables.PSDebugContextVarPath, new PSDebugContext(invocationInfo, breakpoints));
+            _context.SetVariable(SpecialVariables.PSDebugContextVarPath, new PSDebugContext(invocationInfo, breakpoints, TriggerObject));
 
             FunctionInfo defaultPromptInfo = null;
             string originalPromptString = null;
@@ -2412,6 +2441,24 @@ namespace System.Management.Automation
             else
             {
                 DisableDebuggerStepping();
+            }
+        }
+
+        /// <summary>
+        /// Breaks into the debugger.
+        /// </summary>
+        /// <param name="triggerObject">The object that triggered the breakpoint, if there is one.</param>
+        internal override void Break(object triggerObject = null)
+        {
+            base.Break(triggerObject);
+
+            // If the debugger is running and we are not in a breakpoint, trigger an immediate break in the current location
+            using (IEnumerator<CallStackFrame> enumerator = GetCallStack().GetEnumerator())
+            {
+                if (enumerator.MoveNext() && _context._debuggingMode > 0)
+                {
+                    OnSequencePointHit(enumerator.Current.FunctionContext);
+                }
             }
         }
 
@@ -4152,6 +4199,15 @@ namespace System.Management.Automation
             get { return _wrappedDebugger.IsActive; }
         }
 
+        /// <summary>
+        /// Breaks into the debugger.
+        /// </summary>
+        /// <param name="triggerObject">The object that triggered the breakpoint, if there is one.</param>
+        internal override void Break(object triggerObject = null)
+        {
+            _wrappedDebugger.Break(triggerObject);
+        }
+
         #endregion
 
         #region IDisposable
@@ -5179,7 +5235,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="invocationInfo">InvocationInfo</param>
         /// <param name="breakpoints">Breakpoints</param>
-        public PSDebugContext(InvocationInfo invocationInfo, List<Breakpoint> breakpoints)
+        /// <param name="triggerObject">TriggerObject</param>
+        public PSDebugContext(InvocationInfo invocationInfo, List<Breakpoint> breakpoints, object triggerObject = null)
         {
             if (breakpoints == null)
             {
@@ -5188,6 +5245,7 @@ namespace System.Management.Automation
 
             this.InvocationInfo = invocationInfo;
             this.Breakpoints = breakpoints.ToArray();
+            this.Trigger = triggerObject;
         }
 
         /// <summary>
@@ -5200,6 +5258,11 @@ namespace System.Management.Automation
         /// were hit. Otherwise, the execution was suspended as part of a step operation.
         /// </summary>
         public Breakpoint[] Breakpoints { get; private set; }
+
+        /// <summary>
+        /// The object that triggered the current dynamic breakpoint.
+        /// </summary>
+        public object Trigger { get; private set; }
     }
 
     #endregion

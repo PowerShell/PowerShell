@@ -5,13 +5,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading;
-using System.Security;
 using System.Management.Automation.Host;
-using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
+using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -409,6 +408,12 @@ namespace System.Management.Automation
             if (WriteHelper_ShouldWrite(
                 preference, lastProgressContinueStatus))
             {
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(progressRecord);
+                }
+
                 ui.WriteProgress(sourceId, progressRecord);
             }
 
@@ -472,6 +477,12 @@ namespace System.Management.Automation
                 if (record.InvocationInfo == null)
                 {
                     record.SetInvocationInfo(MyInvocation);
+                }
+
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(record);
                 }
 
                 if (DebugOutputPipe != null)
@@ -565,6 +576,12 @@ namespace System.Management.Automation
                     record.SetInvocationInfo(MyInvocation);
                 }
 
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(record);
+                }
+
                 if (VerboseOutputPipe != null)
                 {
                     if (CBhost != null && CBhost.InternalUI != null &&
@@ -656,6 +673,12 @@ namespace System.Management.Automation
                     record.SetInvocationInfo(MyInvocation);
                 }
 
+                // Break into the debugger if requested
+                if (preference == ActionPreference.Break)
+                {
+                    CBhost?.Runspace?.Debugger?.Break(record);
+                }
+
                 if (WarningOutputPipe != null)
                 {
                     if (CBhost != null && CBhost.InternalUI != null &&
@@ -718,6 +741,12 @@ namespace System.Management.Automation
             ActionPreference preference = InformationPreference;
             if (overrideInquire && preference == ActionPreference.Inquire)
                 preference = ActionPreference.Continue;
+
+            // Break into the debugger if requested
+            if (preference == ActionPreference.Break)
+            {
+                CBhost?.Runspace?.Debugger?.Break(record);
+            }
 
             if (preference != ActionPreference.Ignore)
             {
@@ -2663,6 +2692,12 @@ namespace System.Management.Automation
                 preference = ActionPreference.Continue;
             }
 
+            // Break into the debugger if requested
+            if (preference == ActionPreference.Break)
+            {
+                CBhost?.Runspace?.Debugger?.Break(errorRecord);
+            }
+
 #if CORECLR
             // SecurityContext is not supported in CoreCLR
             DoWriteError(new KeyValuePair<ErrorRecord, ActionPreference>(errorRecord, preference));
@@ -3361,6 +3396,7 @@ namespace System.Management.Automation
                 case ActionPreference.Continue:
                 case ActionPreference.Stop:
                 case ActionPreference.Inquire:
+                case ActionPreference.Break:
                     return true;
 
                 default:
@@ -3413,6 +3449,7 @@ namespace System.Management.Automation
                 case ActionPreference.Ignore: // YesToAll
                 case ActionPreference.SilentlyContinue:
                 case ActionPreference.Continue:
+                case ActionPreference.Break:
                     return ContinueStatus.Yes;
 
                 case ActionPreference.Stop:
