@@ -194,7 +194,7 @@ Describe "CliXml test" -Tags "CI" {
 
         It "should import PSCredential" -Skip:(!$IsWindows) {
             $UserName = "Foo"
-            $pass = ConvertTo-SecureString "bar" -AsPlainText -Force
+            $pass = ConvertTo-SecureString (New-RandomHexString) -AsPlainText -Force
             $cred =  [PSCredential]::new($UserName, $pass)
             $path = "$testdrive/cred.xml"
             $cred | Export-Clixml -Path $path
