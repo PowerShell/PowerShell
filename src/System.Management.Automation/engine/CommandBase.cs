@@ -273,12 +273,14 @@ namespace System.Management.Automation
         Stop,
         /// <summary>Handle this event as normal and continue</summary>
         Continue,
-        /// <summary>Ask whether to stop or continue</summary>
+        /// <summary>Ask whether to stop or continue (legacy; use Break instead)</summary>
         Inquire,
         /// <summary>Ignore the event completely (not even logging it to the target stream)</summary>
         Ignore,
         /// <summary>Suspend the command for further diagnosis. Supported only for workflows.</summary>
         Suspend,
+        /// <summary>Enter the debugger.</summary>
+        Break,
     } // enum ActionPreference
     #endregion ActionPreference
 
