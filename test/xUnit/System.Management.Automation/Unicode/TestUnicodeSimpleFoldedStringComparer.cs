@@ -22,6 +22,18 @@ namespace System.Management.Automation.Unicode.Tests
         }
 
         [Fact]
+        public static void TestHash_ReturnsSameHashCodes()
+        {
+            SimpleFoldedStringComparer sc = new SimpleFoldedStringComparer();
+            Assert.Equal(sc.GetHashCode("AAA"), sc.GetHashCode("aaa"));
+            Assert.Equal(sc.GetHashCode("BaC"), sc.GetHashCode("bAc"));
+            Assert.Equal(sc.GetHashCode((object)"BaC"), sc.GetHashCode((object)"bAc"));
+            Assert.NotEqual(sc.GetHashCode("AAA"), sc.GetHashCode("AAB"));
+            Assert.NotEqual(sc.GetHashCode("AAA"), sc.GetHashCode("AAb"));
+            Assert.NotEqual(sc.GetHashCode((object)"AAA"), sc.GetHashCode((object)"AAb"));
+        }
+
+        [Fact]
         public static void VerifyComparer()
         {
             SimpleFoldedStringComparer sc = new SimpleFoldedStringComparer();
@@ -33,7 +45,7 @@ namespace System.Management.Automation.Unicode.Tests
             string bb = "\0BBBBBBBBBBBB";
 
             Assert.True(sc.Equals(s1, s1a));
-            Assert.True(sc.Equals(s1, s1a));
+            Assert.True(sc.Equals((object)s1, (object)s1a));
 
             Assert.Equal(0, sc.Compare(s1, s1a));
             Assert.Equal(0, ((IComparer)sc).Compare(s1, s1a));
@@ -62,56 +74,6 @@ namespace System.Management.Automation.Unicode.Tests
 
             result = ((IComparer)sc).Compare(s1, s1b);
             Assert.Equal(0, result);
-        }
-
-        public static IEnumerable<object[]> UpperLowerCasing_TestData()
-        {
-            //                          lower                upper          Culture
-            yield return new object[] { "abcd",             "ABCD",         "en-US" };
-            yield return new object[] { "latin i",          "LATIN I",      "en-US" };
-            yield return new object[] { "turky \u0131",     "TURKY I",      "tr-TR" };
-            yield return new object[] { "turky i",          "TURKY \u0130", "tr-TR" };
-        }
-
-        [Theory]
-        [MemberData(nameof(UpperLowerCasing_TestData))]
-        public static void CreateWithCulturesTest(string lowerForm, string upperForm, string cultureName)
-        {
-            CultureInfo ci = CultureInfo.GetCultureInfo(cultureName);
-            StringComparer sc = StringComparer.Create(ci, false);
-            Assert.False(sc.Equals(lowerForm, upperForm), "Not expected to have the lowercase equals the uppercase with ignore case is false");
-            Assert.False(sc.Equals((object) lowerForm, (object) upperForm), "Not expected to have the lowercase object equals the uppercase with ignore case is false");
-            Assert.NotEqual(sc.GetHashCode(lowerForm), sc.GetHashCode(upperForm));
-            Assert.NotEqual(sc.GetHashCode((object) lowerForm), sc.GetHashCode((object) upperForm));
-
-            sc = StringComparer.Create(ci, true);
-            Assert.True(sc.Equals(lowerForm, upperForm), "It is expected to have the lowercase equals the uppercase with ignore case is true");
-            Assert.True(sc.Equals((object) lowerForm, (object) upperForm), "It is expected to have the lowercase object equals the uppercase with ignore case is true");
-            Assert.Equal(sc.GetHashCode(lowerForm), sc.GetHashCode(upperForm));
-            Assert.Equal(sc.GetHashCode((object) lowerForm), sc.GetHashCode((object) upperForm));
-        }
-
-        [Fact]
-        public static void InvariantTest()
-        {
-            Assert.True(StringComparer.InvariantCulture.Equals("test", "test"), "Same casing strings with StringComparer.InvariantCulture should be equal");
-            Assert.True(StringComparer.InvariantCulture.Equals((object) "test", (object) "test"), "Same casing objects with StringComparer.InvariantCulture should be equal");
-            Assert.Equal(StringComparer.InvariantCulture.GetHashCode("test"), StringComparer.InvariantCulture.GetHashCode("test"));
-            Assert.Equal(0, StringComparer.InvariantCulture.Compare("test", "test"));
-
-            Assert.False(StringComparer.InvariantCulture.Equals("test", "TEST"), "different casing strings with StringComparer.InvariantCulture should not be equal");
-            Assert.False(StringComparer.InvariantCulture.Equals((object) "test", (object) "TEST"), "different casing objects with StringComparer.InvariantCulture should not be equal");
-            Assert.NotEqual(StringComparer.InvariantCulture.GetHashCode("test"), StringComparer.InvariantCulture.GetHashCode("TEST"));
-            Assert.NotEqual(0, StringComparer.InvariantCulture.Compare("test", "TEST"));
-
-            Assert.True(StringComparer.InvariantCultureIgnoreCase.Equals("test", "test"), "Same casing strings with StringComparer.InvariantCultureIgnoreCase should be equal");
-            Assert.True(StringComparer.InvariantCultureIgnoreCase.Equals((object) "test", (object) "test"), "Same casing objects with StringComparer.InvariantCultureIgnoreCase should be equal");
-            Assert.Equal(0, StringComparer.InvariantCultureIgnoreCase.Compare("test", "test"));
-
-            Assert.True(StringComparer.InvariantCultureIgnoreCase.Equals("test", "TEST"), "same strings with different casing with StringComparer.InvariantCultureIgnoreCase should be equal");
-            Assert.True(StringComparer.InvariantCultureIgnoreCase.Equals((object) "test", (object) "TEST"), "same objects with different casing with StringComparer.InvariantCultureIgnoreCase should be equal");
-            Assert.Equal(StringComparer.InvariantCultureIgnoreCase.GetHashCode("test"), StringComparer.InvariantCultureIgnoreCase.GetHashCode("TEST"));
-            Assert.Equal(0, StringComparer.InvariantCultureIgnoreCase.Compare("test", "TEST"));
         }
     }
 }
