@@ -10,6 +10,24 @@ using Xunit;
 
 namespace System.Management.Automation.Unicode.Tests
 {
+
+    public class CharUnicodeInfoGetUnicodeCategoryTests
+    {
+        [Fact]
+        public void GetNumericValue()
+        {
+            foreach (CharUnicodeInfoTestCase testCase in CharUnicodeInfoTestData.TestCases)
+            {
+                if (testCase.Utf32CodeValue.Length == 1)
+                {
+                    // Test the char overload for a single char
+                    System.IO.File.AppendAllText(@"C:\tmp\WriteText.txt", testCase.Utf32CodeValue);
+                }
+                // Test the string overload for a surrogate pair
+            }
+        }
+    }
+
     // The tests come from CoreFX tests: src\System.Runtime\tests\System\
 
     public class CharTests

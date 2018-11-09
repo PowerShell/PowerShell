@@ -13,12 +13,34 @@ namespace System.Management.Automation.Unicode.Tests
 
     public static class CharUnicodeInfoTestData
     {
+        private static readonly Lazy<Dictionary<int, int>> s_caseFoldingPairs = new Lazy<Dictionary<int, int>>(() =>
+        {
+            Dictionary<int, int> caseFoldingPairs = new Dictionary<int, int>();
+            string fileName = "CaseFolding.txt";
+            Stream stream = typeof(CharTests).GetTypeInfo().Assembly.GetManifestResourceStream(fileName);
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                while (!reader.EndOfStream)
+                {
+                    string[] data = reader.ReadLine().Split(';');
+                    string strFrom = data[0];
+                    string strTo = data[2];
+
+                    int codePointFrom = int.Parse(strFrom, NumberStyles.HexNumber);
+                    int codePointTo = int.Parse(strTo, NumberStyles.HexNumber);
+
+                    caseFoldingPairs.Add(codePointFrom, codePointTo);
+                }
+            }
+            return caseFoldingPairs;
+        });
+
+        public static Dictionary<int, int> CaseFoldingPairs => s_caseFoldingPairs.Value;
+
         private static readonly Lazy<List<CharUnicodeInfoTestCase>> s_testCases = new Lazy<List<CharUnicodeInfoTestCase>>(() =>
         {
             List<CharUnicodeInfoTestCase> testCases = new List<CharUnicodeInfoTestCase>();
-            string fileName =
-                CharUnicodeInfo.GetUnicodeCategory('\u10D0') == UnicodeCategory.LowercaseLetter  ? "UnicodeData.11.0.txt" :
-                CharUnicodeInfo.GetUnicodeCategory('\u037f') == UnicodeCategory.OtherNotAssigned ? "UnicodeData6.3.txt"   : "UnicodeData.8.0.txt";
+            string fileName = "UnicodeData.11.0.txt";
             Stream stream = typeof(CharTests).GetTypeInfo().Assembly.GetManifestResourceStream(fileName);
             using (StreamReader reader = new StreamReader(stream))
             {
