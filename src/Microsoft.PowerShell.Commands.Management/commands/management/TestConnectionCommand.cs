@@ -779,7 +779,7 @@ namespace Microsoft.PowerShell.Commands
             public string Destination { get; }
 
             /// <summary>
-            /// Number of bytes sent.
+            /// Gets the number of bytes sent.
             /// </summary>
             public int Bytes { get => Reply.Buffer.Length; }
 
@@ -794,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
             public IPStatus Status { get => Reply.Status; }
 
             /// <summary>
-            /// Ping results for every ping attempt.
+            /// Gets ping results for every ping attempt.
             /// </summary>
             public PingReply Reply { get; }
         }
