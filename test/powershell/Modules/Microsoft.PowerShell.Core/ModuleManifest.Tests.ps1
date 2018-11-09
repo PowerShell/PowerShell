@@ -80,7 +80,7 @@ Describe "Manifest required module autoloading from module path with simple name
     }
 
     It "Importing main module loads required modules successfully" {
-        $mainMod = Import-Module $mainModule -PassThru
+        $mainMod = Import-Module $mainModule -PassThru -ErrorAction Stop
         $reqMod = Get-Module -Name $requiredModule
 
         $mainMod.Name | Should -BeExactly $mainModule
@@ -116,7 +116,7 @@ Describe "Manifest required module autoloading with relative path to dir" -Tags 
     }
 
     It "Importing main module loads required modules successfully" {
-        $mainMod = Import-Module $mainModPath -PassThru
+        $mainMod = Import-Module $mainModPath -PassThru -ErrorAction Stop
         $reqMod = Get-Module -Name $requiredModule
 
         $mainMod.Name | Should -BeExactly $mainModule
@@ -153,7 +153,7 @@ Describe "Manifest required module autoloading with relative path to manifest" -
     }
 
     It "Importing main module loads required modules successfully" {
-        $mainMod = Import-Module $mainModPath -PassThru
+        $mainMod = Import-Module $mainModPath -PassThru -ErrorAction Stop
         $reqMod = Get-Module -Name $requiredModule
 
         $mainMod.Name | Should -BeExactly $mainModule
@@ -190,7 +190,7 @@ Describe "Manifest required module autoloading with absolute path to dir" -Tags 
     }
 
     It "Importing main module loads required modules successfully" {
-        $mainMod = Import-Module $mainModPath -PassThru
+        $mainMod = Import-Module $mainModPath -PassThru -ErrorAction Stop
         $reqMod = Get-Module -Name $requiredModule
 
         $mainMod.Name | Should -BeExactly $mainModule
@@ -227,7 +227,7 @@ Describe "Manifest required module autoloading with absolute path to manifest" -
     }
 
     It "Importing main module loads required modules successfully" {
-        $mainMod = Import-Module $mainModPath -PassThru
+        $mainMod = Import-Module $mainModPath -PassThru -ErrorAction Stop
         $reqMod = Get-Module -Name $requiredModule
 
         $mainMod.Name | Should -BeExactly $mainModule
