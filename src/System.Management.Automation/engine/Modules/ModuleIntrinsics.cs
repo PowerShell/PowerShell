@@ -686,10 +686,20 @@ namespace System.Management.Automation
             // since we lack to context to resolve any relative paths.
             // So either the module is a simple name, or it's an absolute path.
             Dbg.Assert(Path.IsPathRooted(requiredPath) || !(requiredPath.Contains('/') || requiredPath.Contains('\\')), "Relative paths must be resolved by the calling context");
+
+            // The required module may point to the module base directory
+            string moduleDirPath = Path.GetDirectoryName(modulePath);
+
+            // The module itself may be in a versioned directory
+            if (Version.TryParse(Path.GetFileName(moduleDirPath), out Version unused))
+            {
+                moduleDirPath = Path.GetDirectoryName(moduleDirPath);
+            }
 #if UNIX
-            return String.Equals(modulePath, requiredPath);
+            return modulePath.Equals(requiredPath) || moduleDirPath.Equals(requiredPath);
 #else
-            return String.Equals(modulePath, requiredPath, StringComparison.OrdinalIgnoreCase);
+            return modulePath.Equals(requiredPath, StringComparison.OrdinalIgnoreCase)
+                || moduleDirPath.Equals(requiredPath, StringComparison.OrdinalIgnoreCase);
 #endif
         }
 
