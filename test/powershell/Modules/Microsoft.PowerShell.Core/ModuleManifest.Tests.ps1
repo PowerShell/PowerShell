@@ -91,7 +91,6 @@ Describe "Manifest required module autoloading with relative path to dir" -Tags 
         $requiredModule = 'reqmod'
 
         $mainModPath = Join-Path $TestDrive $mainModule
-        $reqModPath = Join-Path $TestDrive $requiredModule
 
         # Test to ensure that we treat backslashes as path separators on UNIX and vice-versa
         $altSep = [System.IO.Path]::AltDirectorySeparatorChar
@@ -128,7 +127,6 @@ Describe "Manifest required module autoloading with relative path to manifest" -
         $requiredModule = 'reqmod'
 
         $mainModPath = Join-Path $TestDrive $mainModule "$mainModule.psd1"
-        $reqModPath = Join-Path $TestDrive $requiredModule "$requiredModule.psd1"
 
         # Test to ensure that we treat backslashes as path separators on UNIX and vice-versa
         $altSep = [System.IO.Path]::AltDirectorySeparatorChar
@@ -166,7 +164,6 @@ Describe "Manifest required module autoloading with absolute path to dir" -Tags 
         $requiredModule = 'reqmod'
 
         $mainModPath = Join-Path $TestDrive $mainModule "$mainModule.psd1"
-        $reqModPath = Join-Path $TestDrive $requiredModule "$requiredModule.psd1"
 
         # Test to ensure that we treat backslashes as path separators on UNIX and vice-versa
         $altSep = [System.IO.Path]::AltDirectorySeparatorChar
@@ -204,7 +201,6 @@ Describe "Manifest required module autoloading with absolute path to manifest" -
         $requiredModule = 'reqmod'
 
         $mainModPath = Join-Path $TestDrive $mainModule "$mainModule.psd1"
-        $reqModPath = Join-Path $TestDrive $requiredModule "$requiredModule.psd1"
 
         # Test to ensure that we treat backslashes as path separators on UNIX and vice-versa
         $altSep = [System.IO.Path]::AltDirectorySeparatorChar
