@@ -1,0 +1,28 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using System.Management.Automation.Unicode;
+using Xunit;
+
+namespace System.Management.Automation.Unicode.Tests
+{
+    public class FoldStringAndSpanTests
+    {
+        [Fact]
+        public static void Fold_String_Span_Roundtrips()
+        {
+            string s = "Turkish I \u0131s TROUBL\u0130NG!";
+            ReadOnlySpan<char> span = s.AsSpan();
+            Span<char> span2 = stackalloc char[s.Length];
+            s.AsSpan().CopyTo(span2);
+            var foldedString = s.Fold();
+            ReadOnlySpan<char> foldedSpan1 = span.Fold();
+
+            Assert.Equal(foldedString, foldedSpan1.ToString());
+
+            span2.Fold();
+            Assert.Equal(foldedString, span2.ToString());
+            Assert.Equal(foldedSpan1.ToString(), span2.ToString());
+        }
+    }
+}
