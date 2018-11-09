@@ -788,7 +788,7 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Roundtrip time in ms.
             /// </summary>
-            public long RoundtripTime { get => Reply.RoundtripTime; }
+            public long Roundtrip { get => Reply.RoundtripTime; }
 
             /// <summary>
             /// Status of response, success or reason for failure.
