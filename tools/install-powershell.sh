@@ -9,7 +9,7 @@ install(){
     #bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) <ARGUMENTS>
 
 
-    #Usage - if you do not have the ability to run scripts directly from the web, 
+    #Usage - if you do not have the ability to run scripts directly from the web,
     #        pull all files in this repo folder and execute, this script
     #        automatically prefers local copies of sub-scripts
 
@@ -132,7 +132,7 @@ install(){
         bash <(wget -qO- $gitreposcriptroot/appimage.sh) $@
     fi
     elif [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ] || [ "$DistroBasedOn" == "amazonlinux" ]; then
-        echo "Configuring PowerShell Core Enviornment for: $DistroBasedOn $DIST $REV"
+        echo "Configuring PowerShell Core Environment for: $DistroBasedOn $DIST $REV"
         if [ -f $SCRIPTFOLDER/installpsh-$DistroBasedOn.sh ]; then
         #Script files were copied local - use them
         . $SCRIPTFOLDER/installpsh-$DistroBasedOn.sh
