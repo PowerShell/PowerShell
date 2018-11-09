@@ -330,6 +330,27 @@ namespace System.Management.Automation.Unicode
         }
 
         /// <summary>
+        /// Search the char position in the ReadOnlySpan<char> with simple case folding.
+        /// </summary>
+        /// <return>
+        /// Return an index the char in the ReadOnlySpan<char> or -1 if not found.
+        /// </return>
+        public static int IndexOfFolded(this ReadOnlySpan<char> source, char ch)
+        {
+            var foldedChar = Fold(ch);
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                if (Fold(source[i]) == foldedChar)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// Compare strings with simple case folding.
         /// </summary>
         /// <return>
