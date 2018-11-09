@@ -1958,13 +1958,23 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (ModuleSpecification requiredModule in requiredModules)
                     {
+                        // The required module name is essentially raw user input.
+                        // We need to deal with absolute and relative paths here.
                         string requiredName = requiredModule.Name;
                         if (requiredName != null
-                            && (requiredName.Contains('/') || requiredName.Contains('\\'))
-                            && !IsRooted(requiredName, relativeRooted: false))
+                            && (requiredName.Contains('/') || requiredName.Contains('\\')))
                         {
-                            string fullRequiredPath = Path.Combine(moduleBase, requiredName);
-                            requiredModule.Name = ResolveRootedFilePath(fullRequiredPath, Context);
+                            // Normalize the path to the platform standard
+                            requiredName = requiredName.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+
+                            // Root the path if needed
+                            if (!IsRooted(requiredName, relativeRooted: false))
+                            {
+                                requiredName = Path.Combine(moduleBase, requiredName);
+                            }
+
+                            // Use the filesystem provider to resolve the path
+                            requiredModule.Name = ResolveRootedFilePath(requiredName, Context);
                         }
 
                         ErrorRecord error = null;

@@ -687,7 +687,26 @@ namespace System.Management.Automation
             // So either the module is a simple name, or it's an absolute path.
             Dbg.Assert(Path.IsPathRooted(requiredPath) || !(requiredPath.Contains('/') || requiredPath.Contains('\\')), "Relative paths must be resolved by the calling context");
 
-            // The required module may point to the module base directory
+#if UNIX
+            StringComparison strcmp = StringComparison.Ordinal;
+#else
+            StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
+#endif
+
+            // If the required module just matches the module path, we are done
+            if (modulePath.Equals(requiredPath, strcmp))
+            {
+                return true;
+            }
+
+            // Save some allocations here if module path doesn't sit under the required path
+            // (the required path may still refer to some nested module though)
+            if (!modulePath.StartsWith(requiredPath, strcmp))
+            {
+                return false;
+            }
+
+            // Otherwise, the required module may point to the module base directory
             string moduleDirPath = Path.GetDirectoryName(modulePath);
 
             // The module itself may be in a versioned directory
@@ -695,12 +714,11 @@ namespace System.Management.Automation
             {
                 moduleDirPath = Path.GetDirectoryName(moduleDirPath);
             }
-#if UNIX
-            return modulePath.Equals(requiredPath) || moduleDirPath.Equals(requiredPath);
-#else
-            return modulePath.Equals(requiredPath, StringComparison.OrdinalIgnoreCase)
-                || moduleDirPath.Equals(requiredPath, StringComparison.OrdinalIgnoreCase);
-#endif
+
+            // Make sure there are no trailing separator chars on the required path
+            requiredPath = requiredPath.TrimEnd(Path.DirectorySeparatorChar);
+
+            return moduleDirPath.Equals(requiredPath);
         }
 
         internal static Version GetManifestModuleVersion(string manifestPath)
