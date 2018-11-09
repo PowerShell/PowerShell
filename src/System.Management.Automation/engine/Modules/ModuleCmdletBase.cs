@@ -4069,7 +4069,7 @@ namespace Microsoft.PowerShell.Commands
                     guid: requiredModule.Guid,
                     requiredVersion: requiredModule.RequiredVersion,
                     minimumVersion: requiredModule.Version,
-                    maximumVersion: GetMaximumVersion(requiredModule.MaximumVersion)))
+                    maximumVersion: requiredModule.MaximumVersion == null ? null : GetMaximumVersion(requiredModule.MaximumVersion)))
                 {
                     result.Add(module);
                 }
