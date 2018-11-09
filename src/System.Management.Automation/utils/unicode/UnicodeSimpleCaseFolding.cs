@@ -17,7 +17,7 @@ namespace System.Management.Automation.Unicode
     internal static partial class SimpleCaseFolding
     {
         /// <summary>
-        /// Simple case folding of the unicode point (Utf32).
+        /// Simple case folding of the char (Utf16).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static char Fold(char ch)
