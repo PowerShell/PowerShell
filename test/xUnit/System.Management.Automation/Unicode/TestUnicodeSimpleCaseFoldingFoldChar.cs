@@ -6,7 +6,7 @@ using Xunit;
 
 namespace System.Management.Automation.Unicode.Tests
 {
-    public class TestFoldChar
+    public class FoldCharTests
     {
         [Fact]
         public static void Fold_Char()

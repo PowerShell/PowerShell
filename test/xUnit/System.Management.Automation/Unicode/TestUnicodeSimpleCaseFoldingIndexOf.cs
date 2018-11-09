@@ -9,7 +9,7 @@ using Xunit;
 
 namespace System.Management.Automation.Unicode.Tests
 {
-    public class UnitTest1
+    public class IndexOfTests
     {
         [Theory]
         [InlineData("", '\u007f', -1)]
