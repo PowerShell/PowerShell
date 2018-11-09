@@ -1958,6 +1958,15 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (ModuleSpecification requiredModule in requiredModules)
                     {
+                        string requiredName = requiredModule.Name;
+                        if (requiredName != null
+                            && (requiredName.Contains('/') || requiredName.Contains('\\'))
+                            && !IsRooted(requiredName, relativeRooted: false))
+                        {
+                            string fullRequiredPath = Path.Combine(moduleBase, requiredName);
+                            requiredModule.Name = ResolveRootedFilePath(fullRequiredPath, Context);
+                        }
+
                         ErrorRecord error = null;
                         PSModuleInfo module = LoadRequiredModule(fakeManifestInfo, requiredModule, moduleManifestPath,
                             manifestProcessingFlags, containedErrors, out error);
@@ -4548,16 +4557,30 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal static bool IsRooted(string filePath)
+        /// <summary>
+        /// Check if a path is rooted or "relative rooted".
+        /// </summary>
+        /// <param name="filePath">The file path to check.</param>
+        /// <param name="relativeRooted">If true, paths like "./here" and "..\there" count as rooted ("relative rooted").</param>
+        /// <returns>True if the path is rooted, false otherwise.</returns>
+        internal static bool IsRooted(string filePath, bool relativeRooted = true)
         {
-            return (Path.IsPathRooted(filePath) ||
-                filePath.StartsWith(@".\", StringComparison.Ordinal) ||
+            if (Path.IsPathRooted(filePath) || filePath.IndexOf(":", StringComparison.Ordinal) >= 0)
+            {
+                return true;
+            }
+
+            if (!relativeRooted)
+            {
+                return false;
+            }
+
+            return filePath.StartsWith(@".\", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"./", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"..\", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"../", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~/", StringComparison.Ordinal) ||
-                filePath.StartsWith(@"~\", StringComparison.Ordinal) ||
-                filePath.IndexOf(":", StringComparison.Ordinal) >= 0);
+                filePath.StartsWith(@"~\", StringComparison.Ordinal);
         }
 
         /// <summary>

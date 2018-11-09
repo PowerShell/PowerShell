@@ -507,6 +507,7 @@ namespace System.Management.Automation
             return AreModuleFieldsMatchingConstraints(
                 out matchFailureReason,
                 moduleInfo.Name,
+                moduleInfo.Path,
                 moduleInfo.Guid,
                 moduleInfo.Version,
                 name,
@@ -521,6 +522,7 @@ namespace System.Management.Automation
         /// Check that given module fields meet any given constraints.
         /// </summary>
         /// <param name="moduleName">The name of the module to check.</param>
+        /// <param name="modulePath">The path of the module to check.</param>
         /// <param name="moduleGuid">The GUID of the module to check.</param>
         /// <param name="moduleVersion">The version of the module to check.</param>
         /// <param name="requiredName">The name the module must have, if any.</param>
@@ -531,6 +533,7 @@ namespace System.Management.Automation
         /// <returns>True if the module parameters match all given constraints, false otherwise.</returns>
         internal static bool AreModuleFieldsMatchingConstraints(
             string moduleName = null,
+            string modulePath = null,
             Guid? moduleGuid = null,
             Version moduleVersion = null,
             string requiredName = null,
@@ -542,6 +545,7 @@ namespace System.Management.Automation
             return AreModuleFieldsMatchingConstraints(
                 out ModuleMatchFailure matchFailureReason,
                 moduleName,
+                modulePath,
                 moduleGuid,
                 moduleVersion,
                 requiredName,
@@ -556,6 +560,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="matchFailureReason">The reason the match failed, if any.</param>
         /// <param name="moduleName">The name of the module to check.</param>
+        /// <param name="modulePath">The path of the module to check.</param>
         /// <param name="moduleGuid">The GUID of the module to check.</param>
         /// <param name="moduleVersion">The version of the module to check.</param>
         /// <param name="requiredName">The name the module must have, if any.</param>
@@ -567,6 +572,7 @@ namespace System.Management.Automation
         internal static bool AreModuleFieldsMatchingConstraints(
             out ModuleMatchFailure matchFailureReason,
             string moduleName,
+            string modulePath,
             Guid? moduleGuid,
             Version moduleVersion,
             string requiredName,
@@ -576,7 +582,10 @@ namespace System.Management.Automation
             Version maximumRequiredVersion)
         {
             // If a name is required, check it matches
-            if (requiredName != null && !requiredName.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
+            // A required module name may also be an absolute path,
+            // so check the module path as well.
+            if ((requiredName != null && !requiredName.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
+                && !MatchesModulePath(modulePath, requiredName))
             {
                 matchFailureReason = ModuleMatchFailure.Name;
                 return false;
@@ -657,6 +666,31 @@ namespace System.Management.Automation
 
             matchFailureReason = ModuleMatchFailure.None;
             return true;
+        }
+
+        /// <summary>
+        /// Checks whether a given module path is the same as
+        /// a required path.
+        /// </summary>
+        /// <param name="modulePath">The path of the module whose path to check.</param>
+        /// <param name="requiredPath">The path of the required module.</param>
+        /// <returns></returns>
+        internal static bool MatchesModulePath(string modulePath, string requiredPath)
+        {
+            Dbg.Assert(requiredPath != null, $"Caller to verify that {nameof(requiredPath)} is not null");
+
+            // If the module has no path, then it cannot match
+            if (modulePath == null) { return false; }
+
+            // We have to trust that paths have been properly normalized and made absolute at this point,
+            // since we lack to context to resolve any relative paths.
+            // So either the module is a simple name, or it's an absolute path.
+            Dbg.Assert(Path.IsPathRooted(requiredPath) || !(requiredPath.Contains('/') || requiredPath.Contains('\\')), "Relative paths must be resolved by the calling context");
+#if UNIX
+            return String.Equals(modulePath, requiredPath);
+#else
+            return String.Equals(modulePath, requiredPath, StringComparison.OrdinalIgnoreCase);
+#endif
         }
 
         internal static Version GetManifestModuleVersion(string manifestPath)
