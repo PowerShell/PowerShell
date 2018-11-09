@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Describe "TestWSMan tests" -Tags 'Feature' {
+Describe "TestWSMan tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
@@ -46,13 +46,14 @@ Describe "TestWSMan tests" -Tags 'Feature' {
         { Test-WSMan -Authentication foo -ErrorAction Stop } | Should -Throw -ErrorId "CannotConvertArgumentNoMessage,Microsoft.WSMan.Management.TestWSManCommand"
     }
 
-    It "Test-WSMan works for '<computername>'" -TestCases @(
-        @{ computername = $null },
-        @{ computername = "localhost" },
-        @{ computername = $env:COMPUTERNAME }
+    It "Test-WSMan works for <testName>" -TestCases @(
+        @{ testName = "Null"; computername = $null },
+        @{ testName = "localhost"; computername = "localhost" },
+        @{ testName = "computername"; computername = $env:COMPUTERNAME }
     ) {
         param($computername)
         $response = Test-WSMan -ComputerName $computername
+        $response | Should -Not -BeNullOrEmpty
         $response.PSObject.TypeNames[0] | Should -Be "System.Xml.XmlElement#http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd#IdentifyResponse"
         $response.wsmid | Should -Be "http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd"
         $response.ProtocolVersion | Should -Be "http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd"
