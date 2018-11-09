@@ -15,7 +15,7 @@ pr:
   paths:
     include:
     - '*.md'
-  
+
 resources:
 - repo: self
   clean: true
