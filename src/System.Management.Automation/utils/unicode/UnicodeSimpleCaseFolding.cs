@@ -20,7 +20,7 @@ namespace System.Management.Automation.Unicode
         /// Simple case folding of the char (Utf16).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static char Fold(char ch)
+        internal static char Fold(char ch)
         {
             return s_simpleCaseFoldingTableBMPane1[ch];
 

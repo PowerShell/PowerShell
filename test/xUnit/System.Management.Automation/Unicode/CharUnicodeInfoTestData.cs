@@ -22,7 +22,16 @@ namespace System.Management.Automation.Unicode.Tests
             {
                 while (!reader.EndOfStream)
                 {
-                    string[] data = reader.ReadLine().Split(';');
+                    string line = reader.ReadLine();
+                    if (line.StartsWith('#'))
+                    {
+                        continue;
+                    }
+                    string[] data = line.Split(';');
+                    if (data.Length != 4 || (data[1] != " C" && data[1] != " S"))
+                    {
+                        continue;
+                    }
                     string strFrom = data[0];
                     string strTo = data[2];
 
