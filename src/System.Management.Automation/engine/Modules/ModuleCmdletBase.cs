@@ -1656,6 +1656,8 @@ namespace Microsoft.PowerShell.Commands
                     if (bailOnFirstError) return null;
                 }
                 else if (!ModuleIntrinsics.AreModuleFieldsMatchingConstraints(
+                    moduleBase,
+                    Context,
                     moduleGuid: manifestGuid,
                     moduleVersion: moduleVersion,
                     requiredGuid: requiredModuleGuid,
@@ -3641,12 +3643,13 @@ namespace Microsoft.PowerShell.Commands
         /// If loadElements is false, we check requireModule for correctness but do
         /// not check if the modules are loaded.
         /// </summary>
+        /// <param name="basePath">Path to resolve relative module paths in the specification against.</param>
         /// <param name="context">Execution Context.</param>
         /// <param name="requiredModule">Either a string or a hash of ModuleName, optional Guid, and ModuleVersion.</param>
         /// <param name="matchFailureReason">The reason the module failed to load, or null on success.</param>
         /// <param name="loaded">Sets if the module/snapin is already present.</param>
         /// <returns>null if the module is not loaded or loadElements is false, the loaded module otherwise.</returns>
-        internal static object IsModuleLoaded(ExecutionContext context, ModuleSpecification requiredModule, out ModuleMatchFailure matchFailureReason, out bool loaded)
+        internal static object IsModuleLoaded(string basePath, ExecutionContext context, ModuleSpecification requiredModule, out ModuleMatchFailure matchFailureReason, out bool loaded)
         {
             loaded = false;
             Dbg.Assert(requiredModule != null, "Caller should verify requiredModuleSpecification != null");
@@ -3659,7 +3662,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSModuleInfo module in context.Modules.GetModules(new string[] { "*" }, false))
             {
                 // Check that the module meets the module constraints give
-                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(out matchFailure, module, requiredModule))
+                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(out matchFailure, basePath, context, module, requiredModule))
                 {
                     result = module;
                     loaded = true;
@@ -3733,7 +3736,7 @@ namespace Microsoft.PowerShell.Commands
 
             ModuleMatchFailure loadFailureReason = ModuleMatchFailure.None;
             bool loaded = false;
-            object loadedModule = IsModuleLoaded(context, requiredModuleSpecification, out loadFailureReason, out loaded);
+            object loadedModule = IsModuleLoaded(currentModule.ModuleBase, context, requiredModuleSpecification, out loadFailureReason, out loaded);
 
             if (loadedModule == null)
             {
@@ -3765,7 +3768,7 @@ namespace Microsoft.PowerShell.Commands
                                                                                           out error);
                     if (!hasRequiredModulesCyclicReference)
                     {
-                        result = ImportRequiredModule(context, requiredModuleSpecification, out error);
+                        result = ImportRequiredModule(currentModule.ModuleBase, context, requiredModuleSpecification, out error);
                     }
                     else
                     {
@@ -3889,7 +3892,11 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static PSModuleInfo ImportRequiredModule(ExecutionContext context, ModuleSpecification requiredModule, out ErrorRecord error)
+        private static PSModuleInfo ImportRequiredModule(
+            string basePath,
+            ExecutionContext context,
+            ModuleSpecification requiredModule,
+            out ErrorRecord error)
         {
             error = null;
             PSModuleInfo result = null;
@@ -3947,7 +3954,7 @@ namespace Microsoft.PowerShell.Commands
 
                     ModuleMatchFailure loadFailureReason;
                     bool loaded = false;
-                    object r = IsModuleLoaded(context, ms, out loadFailureReason, out loaded);
+                    object r = IsModuleLoaded(basePath, context, ms, out loadFailureReason, out loaded);
 
                     Dbg.Assert(r is PSModuleInfo, "The returned value should be PSModuleInfo");
 
@@ -4045,7 +4052,8 @@ namespace Microsoft.PowerShell.Commands
         // Checks if module is available to be loaded
         // ModuleName ---> checks if module can be loaded using Module loading rules
         // ModuleManifest --> checks if manifest is valid
-        internal static Collection<PSModuleInfo> GetModuleIfAvailable(ModuleSpecification requiredModule,
+        internal static Collection<PSModuleInfo> GetModuleIfAvailable(
+            ModuleSpecification requiredModule,
             Runspace rsToUse = null)
         {
             Collection<PSModuleInfo> result = new Collection<PSModuleInfo>();
@@ -4084,6 +4092,8 @@ namespace Microsoft.PowerShell.Commands
             foreach (var module in tempResult)
             {
                 if (ModuleIntrinsics.IsModuleMatchingConstraints(
+                    basePath: null, // basePath is not needed, since we don't need path resolution
+                    context: null, // context is also only required for path resolution
                     module,
                     guid: requiredModule.Guid,
                     requiredVersion: requiredModule.RequiredVersion,
@@ -5053,6 +5063,8 @@ namespace Microsoft.PowerShell.Commands
         internal bool DoesAlreadyLoadedModuleSatisfyConstraints(PSModuleInfo alreadyLoadedModule)
         {
             return ModuleIntrinsics.IsModuleMatchingConstraints(
+                basePath: null, // basePath is not needed here, since we are only checking the version
+                context: null, // context is not needed, since we don't need path resolution
                 alreadyLoadedModule,
                 guid: BaseGuid,
                 requiredVersion: BaseRequiredVersion,

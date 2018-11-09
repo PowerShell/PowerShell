@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="modules">The modules to filter by specification match.</param>
         /// <param name="moduleSpecificationTable">The specification lookup table to filter the modules on.</param>
         /// <returns>The modules that match their corresponding table entry, or which have no table entry.</returns>
-        private static IEnumerable<PSModuleInfo> FilterModulesForSpecificationMatch(
+        private IEnumerable<PSModuleInfo> FilterModulesForSpecificationMatch(
             IEnumerable<PSModuleInfo> modules,
             IDictionary<string, ModuleSpecification> moduleSpecificationTable)
         {
@@ -548,7 +548,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Modules with table entries only get returned if they match them
-                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(module, moduleSpecification))
+                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(SessionState.Path.CurrentLocation.Path, Context, module, moduleSpecification))
                 {
                     yield return module;
                 }

@@ -351,7 +351,11 @@ namespace System.Management.Automation
             return modulesMatched.OrderBy(m => m.Name).ToList();
         }
 
-        internal List<PSModuleInfo> GetModules(ModuleSpecification[] fullyQualifiedName, bool all)
+        internal List<PSModuleInfo> GetModules(
+            string basePath,
+            ExecutionContext context,
+            ModuleSpecification[] fullyQualifiedName,
+            bool all)
         {
             List<PSModuleInfo> modulesMatched = new List<PSModuleInfo>();
 
@@ -362,7 +366,7 @@ namespace System.Management.Automation
                     foreach (PSModuleInfo module in ModuleTable.Values)
                     {
                         // See if this is the requested module...
-                        if (IsModuleMatchingModuleSpec(module, moduleSpec))
+                        if (IsModuleMatchingModuleSpec(basePath, context, module, moduleSpec))
                         {
                             modulesMatched.Add(module);
                         }
@@ -381,7 +385,7 @@ namespace System.Management.Automation
                         string path = pair.Key;
                         PSModuleInfo module = pair.Value;
                         // See if this is the requested module...
-                        if (IsModuleMatchingModuleSpec(module, moduleSpec))
+                        if (IsModuleMatchingModuleSpec(basePath, context, module, moduleSpec))
                         {
                             modulesMatched.Add(module);
                             found[path] = true;
@@ -397,7 +401,7 @@ namespace System.Management.Automation
                             {
                                 PSModuleInfo module = pair.Value;
                                 // See if this is the requested module...
-                                if (IsModuleMatchingModuleSpec(module, moduleSpec))
+                                if (IsModuleMatchingModuleSpec(basePath, context, module, moduleSpec))
                                 {
                                     modulesMatched.Add(module);
                                 }
@@ -414,22 +418,40 @@ namespace System.Management.Automation
         /// <summary>
         /// Check if a given module info object matches a given module specification.
         /// </summary>
+        /// <param name="basePath">The base path to resolve relative required paths from.</param>
+        /// <param name="context">The current execution context.</param>
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="moduleSpec">The module specification to match the module info object against.</param>
         /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
-        internal static bool IsModuleMatchingModuleSpec(PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
+        internal static bool IsModuleMatchingModuleSpec(
+            string basePath,
+            ExecutionContext context,
+            PSModuleInfo moduleInfo,
+            ModuleSpecification moduleSpec)
         {
-            return IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, moduleInfo, moduleSpec);
+            return IsModuleMatchingModuleSpec(
+                out ModuleMatchFailure matchFailureReason,
+                basePath,
+                context,
+                moduleInfo,
+                moduleSpec);
         }
 
         /// <summary>
         /// Check if a given module info object matches a given module specification.
         /// </summary>
         /// <param name="matchFailureReason">The constraint that caused the match failure, if any.</param>
+        /// <param name="basePath">The base path to resolve relative required paths against.</param>
+        /// <param name="context">The current execution context.</param>
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="moduleSpec">The module specification to match the module info object against.</param>
         /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
-        internal static bool IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
+        internal static bool IsModuleMatchingModuleSpec(
+            out ModuleMatchFailure matchFailureReason,
+            string basePath,
+            ExecutionContext context,
+            PSModuleInfo moduleInfo,
+            ModuleSpecification moduleSpec)
         {
             if (moduleSpec == null)
             {
@@ -439,6 +461,8 @@ namespace System.Management.Automation
 
             return IsModuleMatchingConstraints(
                 out matchFailureReason,
+                basePath,
+                context,
                 moduleInfo,
                 moduleSpec.Name,
                 moduleSpec.Guid,
@@ -451,6 +475,8 @@ namespace System.Management.Automation
         /// Check if a given module info object matches the given constraints.
         /// Constraints given as null are ignored.
         /// </summary>
+        /// <param name="basePath">The base path to resolve required paths against.</param>
+        /// <param name="context">The current execution context.</param>
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="name">The name of the expected module.</param>
         /// <param name="guid">The guid of the expected module.</param>
@@ -459,6 +485,8 @@ namespace System.Management.Automation
         /// <param name="maximumVersion">The maximum required version of the expected module.</param>
         /// <returns>True if the module info object matches all given constraints, false otherwise.</returns>
         internal static bool IsModuleMatchingConstraints(
+            string basePath,
+            ExecutionContext context,
             PSModuleInfo moduleInfo,
             string name = null,
             Guid? guid = null,
@@ -468,6 +496,8 @@ namespace System.Management.Automation
         {
             return IsModuleMatchingConstraints(
                 out ModuleMatchFailure matchFailureReason,
+                basePath,
+                context,
                 moduleInfo,
                 name,
                 guid,
@@ -481,6 +511,8 @@ namespace System.Management.Automation
         /// Constraints given as null are ignored.
         /// </summary>
         /// <param name="matchFailureReason">The reason for the module constraint match failing.</param>
+        /// <param name="basePath">The base path to resolve relative required paths against.</param>
+        /// <param name="context">The current execution context.</param>
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="name">The name of the expected module.</param>
         /// <param name="guid">The guid of the expected module.</param>
@@ -490,6 +522,8 @@ namespace System.Management.Automation
         /// <returns>True if the module info object matches all given constraints, false otherwise.</returns>
         internal static bool IsModuleMatchingConstraints(
             out ModuleMatchFailure matchFailureReason,
+            string basePath,
+            ExecutionContext context,
             PSModuleInfo moduleInfo,
             string name,
             Guid? guid,
@@ -506,6 +540,8 @@ namespace System.Management.Automation
 
             return AreModuleFieldsMatchingConstraints(
                 out matchFailureReason,
+                basePath,
+                context,
                 moduleInfo.Name,
                 moduleInfo.Path,
                 moduleInfo.Guid,
@@ -521,6 +557,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Check that given module fields meet any given constraints.
         /// </summary>
+        /// <param name="basePath">The base path to resolve relative required paths against.</param>
+        /// <param name="context">The current execution context.</param>
         /// <param name="moduleName">The name of the module to check.</param>
         /// <param name="modulePath">The path of the module to check.</param>
         /// <param name="moduleGuid">The GUID of the module to check.</param>
@@ -532,6 +570,8 @@ namespace System.Management.Automation
         /// <param name="maximumRequiredVersion">The maximum version the module may have, if any.</param>
         /// <returns>True if the module parameters match all given constraints, false otherwise.</returns>
         internal static bool AreModuleFieldsMatchingConstraints(
+            string basePath,
+            ExecutionContext context,
             string moduleName = null,
             string modulePath = null,
             Guid? moduleGuid = null,
@@ -544,6 +584,8 @@ namespace System.Management.Automation
         {
             return AreModuleFieldsMatchingConstraints(
                 out ModuleMatchFailure matchFailureReason,
+                basePath,
+                context,
                 moduleName,
                 modulePath,
                 moduleGuid,
@@ -559,6 +601,8 @@ namespace System.Management.Automation
         /// Check that given module fields meet any given constraints.
         /// </summary>
         /// <param name="matchFailureReason">The reason the match failed, if any.</param>
+        /// <param name="basePath">The base path to resolve relative required paths against.</param>
+        /// <param name="context">The current execution context.</param>
         /// <param name="moduleName">The name of the module to check.</param>
         /// <param name="modulePath">The path of the module to check.</param>
         /// <param name="moduleGuid">The GUID of the module to check.</param>
@@ -571,6 +615,8 @@ namespace System.Management.Automation
         /// <returns>True if the module parameters match all given constraints, false otherwise.</returns>
         internal static bool AreModuleFieldsMatchingConstraints(
             out ModuleMatchFailure matchFailureReason,
+            string basePath,
+            ExecutionContext context,
             string moduleName,
             string modulePath,
             Guid? moduleGuid,
@@ -585,7 +631,7 @@ namespace System.Management.Automation
             // A required module name may also be an absolute path,
             // so check the module path as well.
             if ((requiredName != null && !requiredName.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
-                && !MatchesModulePath(modulePath, requiredName))
+                && !MatchesModulePath(modulePath, requiredName, basePath, context))
             {
                 matchFailureReason = ModuleMatchFailure.Name;
                 return false;
@@ -674,8 +720,16 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="modulePath">The path of the module whose path to check.</param>
         /// <param name="requiredPath">The path of the required module.</param>
+        /// <param name="basePath">The base path to resolve relative required module paths against.</param>
+        /// <param name="context">The current execution context.</param>
         /// <returns>True if the module path matches the required path, false otherwise.</returns>
-        internal static bool MatchesModulePath(string modulePath, string requiredPath)
+        /// <remarks>
+        /// Because a module specification can contain a relative path, we are
+        /// forced to pass a base path and context down to this point.
+        /// A better solution would be to consolidate the module specification
+        /// codepath to force path normalization in the caller.
+        /// </remarks>
+        internal static bool MatchesModulePath(string modulePath, string requiredPath, string basePath, ExecutionContext context)
         {
             Dbg.Assert(requiredPath != null, $"Caller to verify that {nameof(requiredPath)} is not null");
 
@@ -685,11 +739,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // We have to trust that paths have been properly normalized and made absolute at this point,
-            // since we lack to context to resolve any relative paths.
-            // So either the module is a simple name, or it's an absolute path.
-            Dbg.Assert(Path.IsPathRooted(requiredPath) || !(requiredPath.Contains('/') || requiredPath.Contains('\\')), "Relative paths must be resolved by the calling context");
-
+            requiredPath = NormalizeModuleName(requiredPath, basePath, context);
 #if UNIX
             StringComparison strcmp = StringComparison.Ordinal;
 #else
@@ -718,10 +768,55 @@ namespace System.Management.Automation
                 moduleDirPath = Path.GetDirectoryName(moduleDirPath);
             }
 
-            // Make sure there are no trailing separator chars on the required path
-            requiredPath = requiredPath.TrimEnd(Path.DirectorySeparatorChar);
-
             return moduleDirPath.Equals(requiredPath);
+        }
+
+        /// <summary>
+        /// Takes the name of a module as used in a module specification
+        /// and either returns it as a simple name (if it was a simple name)
+        /// or a fully qualified, PowerShell-resolved path.
+        /// </summary>
+        /// <param name="moduleName">The name of the module from the specification.</param>
+        /// <param name="basePath">The path to base relative paths off.</param>
+        /// <param name="executionContext">The current execution context.</param>
+        /// <returns>
+        /// The simple module name if the given one was simple,
+        /// otherwise a fully resolved, absolute path to the module.
+        /// </returns>
+        /// <remarks>
+        /// 2018-11-09 rjmholt:
+        /// There are several, possibly inconsistent, path handling mechanisms
+        /// in the module cmdlets. After looking through all of them and seeing
+        /// they all make some assumptions about their caller I wrote this method.
+        /// Hopefully we can find a standard path resolution API to settle on.
+        /// </remarks>
+        internal static string NormalizeModuleName(
+            string moduleName,
+            string basePath,
+            ExecutionContext executionContext)
+        {
+            if (moduleName == null)
+            {
+                return null;
+            }
+
+            // The module name may be a simple name rather than a path
+            if (!moduleName.Contains(Path.DirectorySeparatorChar) && !moduleName.Contains(Path.AltDirectorySeparatorChar))
+            {
+                return moduleName;
+            }
+
+            // Standardize directory separators
+            moduleName = moduleName.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+
+            // Path.IsRooted() is deprecated -- see https://github.com/dotnet/corefx/issues/22345
+            if (!Path.IsPathFullyQualified(moduleName))
+            {
+                moduleName = Path.Join(basePath, moduleName);
+            }
+
+            // Use the PowerShell filesystem provider to fully resolve the path
+            return ModuleCmdletBase.GetResolvedPath(moduleName, executionContext).TrimEnd(Path.DirectorySeparatorChar);
         }
 
         internal static Version GetManifestModuleVersion(string manifestPath)
