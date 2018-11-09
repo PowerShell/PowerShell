@@ -79,22 +79,28 @@ namespace System.Management.Automation.Unicode.Tests
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
             string s = "Turkish I \u0131s TROUBL\u0130NG!";
+            ReadOnlySpan<char> span = s.AsSpan();
             char value = '\u0130';
             Assert.Equal(19, s.IndexOfFolded(value));
+            Assert.Equal(19, span.IndexOfFolded(value));
 
             value = '\u0131';
             Assert.Equal(10, s.IndexOfFolded(value));
+            Assert.Equal(10, span.IndexOfFolded(value));
         }
 
         [Fact]
         public static void IndexOf_EquivalentDiacritics_Char()
         {
             string s = "Exhibit a\u0300\u00C0";
+            ReadOnlySpan<char> span = s.AsSpan();
             char value = '\u00C0';
             Assert.Equal(10, s.IndexOfFolded(value));
+            Assert.Equal(10, span.IndexOfFolded(value));
 
             value = '\u0300';
             Assert.Equal(9, s.IndexOfFolded(value));
+            Assert.Equal(9, span.IndexOfFolded(value));
         }
 
         [Fact]

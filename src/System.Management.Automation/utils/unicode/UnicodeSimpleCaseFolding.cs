@@ -316,17 +316,12 @@ namespace System.Management.Automation.Unicode
         /// </return>
         public static int IndexOfFolded(this string source, char ch)
         {
-            var foldedChar = Fold(ch);
-
-            for (int i = 0; i < source.Length; i++)
+            if (source == null)
             {
-                if (Fold(source[i]) == foldedChar)
-                {
-                    return i;
-                }
+                throw new ArgumentNullException(nameof(source));
             }
 
-            return -1;
+            return IndexOfFolded(source.AsSpan(), ch);
         }
 
         /// <summary>
