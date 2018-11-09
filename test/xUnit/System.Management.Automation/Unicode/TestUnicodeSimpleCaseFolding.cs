@@ -35,45 +35,6 @@ namespace System.Management.Automation.Unicode.Tests
 
         // Follow tests comes from src\System.Runtime\tests\System\StringTests.netcoreapp.cs
         [Fact]
-        public static void IndexOf_TurkishI_TurkishCulture_Char()
-        {
-            var savedCulture = CultureInfo.CurrentCulture;
-            try
-            {
-                CultureInfo.CurrentCulture = new CultureInfo("tr-TR");
-
-                string s = "Turkish I \u0131s TROUBL\u0130NG!";
-                char value = '\u0130';
-                Assert.Equal(19, s.IndexOf(value));
-                Assert.Equal(19, s.IndexOf(value, StringComparison.CurrentCulture));
-                Assert.Equal(4, s.IndexOf(value, StringComparison.CurrentCultureIgnoreCase));
-                Assert.Equal(19, s.IndexOf(value, StringComparison.Ordinal));
-                Assert.Equal(19, s.IndexOf(value, StringComparison.OrdinalIgnoreCase));
-
-                ReadOnlySpan<char> span = s.AsSpan();
-                Assert.Equal(19, span.IndexOf(new char[] { value }, StringComparison.CurrentCulture));
-                Assert.Equal(4, span.IndexOf(new char[] { value }, StringComparison.CurrentCultureIgnoreCase));
-                Assert.Equal(19, span.IndexOf(new char[] { value }, StringComparison.Ordinal));
-                Assert.Equal(19, span.IndexOf(new char[] { value }, StringComparison.OrdinalIgnoreCase));
-
-                value = '\u0131';
-                Assert.Equal(10, s.IndexOf(value, StringComparison.CurrentCulture));
-                Assert.Equal(8, s.IndexOf(value, StringComparison.CurrentCultureIgnoreCase));
-                Assert.Equal(10, s.IndexOf(value, StringComparison.Ordinal));
-                Assert.Equal(10, s.IndexOf(value, StringComparison.OrdinalIgnoreCase));
-
-                Assert.Equal(10, span.IndexOf(new char[] { value }, StringComparison.CurrentCulture));
-                Assert.Equal(8, span.IndexOf(new char[] { value }, StringComparison.CurrentCultureIgnoreCase));
-                Assert.Equal(10, span.IndexOf(new char[] { value }, StringComparison.Ordinal));
-                Assert.Equal(10, span.IndexOf(new char[] { value }, StringComparison.OrdinalIgnoreCase));
-            }
-            finally
-            {
-                CultureInfo.CurrentCulture = savedCulture;
-            }
-        }
-
-        [Fact]
         public static void IndexOf_TurkishI_Char()
         {
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
@@ -107,9 +68,11 @@ namespace System.Management.Automation.Unicode.Tests
         public static void IndexOf_CyrillicE_Char()
         {
             string s = "Foo\u0400Bar";
+            ReadOnlySpan<char> span = s.AsSpan();
             char value = '\u0400';
 
             Assert.Equal(3, s.IndexOfFolded(value));
+            Assert.Equal(3, span.IndexOfFolded(value));
         }
     }
 }
