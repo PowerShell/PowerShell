@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+# Recursively creates a module structure given a hashtable to describe it:
+#  - psd1 keys have values splatted to New-ModuleManifest
+#  - psm1 keys have values written to files
+#  - Other keys with hashtable values are treated as recursive module definitions
 function New-ModuleFromLayout
 {
     param(

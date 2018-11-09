@@ -23,6 +23,13 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Zoo.psm1" > $null
         New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Too\Zoo.psm1" > $null
 
+        $relativePathTestCases = @(
+            @{ Location = $TestDrive; ModPath = './Modules\Foo'; Name = 'Foo'; Version = '2.0' }
+            @{ Location = $TestDrive; ModPath = '.\Modules/Foo\1.1/Foo.psd1'; Name = 'Foo'; Version = '1.1' }
+            @{ Location = "$TestDrive/Bar"; ModPath = './Bar.psd1'; Name = 'Bar'; Version = '0.0.1' }
+            @{ Location = "$TestDrive/Bar/Download"; ModPath = '..\Bar.psd1'; Name = 'Bar'; Version = '0.0.1' }
+        )
+
         $env:PSModulePath = Join-Path $testdrive "Modules"
     }
 
@@ -146,6 +153,28 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             $modules = Get-Module -PSEdition $CompatiblePSEditions -ListAvailable
             $modules | Should -HaveCount $ExpectedModule.Count
             $modules.Name | Sort-Object | Should -BeExactly $ExpectedModule
+        }
+
+        It "Get-Module respects relative paths in module specifications" -TestCases $relativePathTestCases {
+            param([string]$Location, [string]$ModPath, [string]$Name, [string]$Version)
+
+            $modSpec = @{
+                ModuleName = $ModPath
+                RequiredVersion = $Version
+            }
+
+            Push-Location $Location
+            try
+            {
+                $modules = Get-Module -ListAvailable -FullyQualifiedName $modSpec
+                $modules | Should -HaveCount 1
+                $modules[0].Name | Should -BeExactly $Name
+                $modules[0].Version | Should -Be $Version
+            }
+            finally
+            {
+                Pop-Location
+            }
         }
     }
 }
