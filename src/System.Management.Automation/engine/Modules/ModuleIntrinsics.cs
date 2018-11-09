@@ -674,13 +674,16 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="modulePath">The path of the module whose path to check.</param>
         /// <param name="requiredPath">The path of the required module.</param>
-        /// <returns></returns>
+        /// <returns>True if the module path matches the required path, false otherwise.</returns>
         internal static bool MatchesModulePath(string modulePath, string requiredPath)
         {
             Dbg.Assert(requiredPath != null, $"Caller to verify that {nameof(requiredPath)} is not null");
 
             // If the module has no path, then it cannot match
-            if (modulePath == null) { return false; }
+            if (modulePath == null)
+            {
+                return false;
+            }
 
             // We have to trust that paths have been properly normalized and made absolute at this point,
             // since we lack to context to resolve any relative paths.
