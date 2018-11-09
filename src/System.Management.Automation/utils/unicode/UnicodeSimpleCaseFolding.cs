@@ -20,7 +20,7 @@ namespace System.Management.Automation.Unicode
         /// Simple case folding of the unicode point (Utf32).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static char Fold(char ch)
+        private static char Fold(char ch)
         {
             return s_simpleCaseFoldingTableBMPane1[ch];
 
@@ -335,7 +335,7 @@ namespace System.Management.Automation.Unicode
         /// <return>
         /// Return -1 if strA < strB, 0 if if strA == strB, 1 if strA < strB.
         /// </return>
-        public static int CompareFolded(this string strA, string strB)
+        internal static int CompareFolded(this string strA, string strB)
         {
             if (object.ReferenceEquals(strA, strB))
             {
