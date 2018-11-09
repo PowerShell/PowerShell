@@ -1,11 +1,6 @@
 ﻿# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-if ($IsWindows)
-{
-    Import-Module -Name HelpersRemoting
-}
-
 Describe "TestImplicitRemotingBatching hook should correctly batch simple remote command pipelines" -Tag 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
@@ -43,7 +38,7 @@ Describe "TestImplicitRemotingBatching hook should correctly batch simple remote
 
         # Create remote session in new PowerShell session
         $powerShell.AddScript('Import-Module -Name HelpersRemoting; $remoteSession = New-RemoteSession').Invoke()
-        if ($powerShell.Streams.Error.Count -gt 0) 
+        if ($powerShell.Streams.Error.Count -gt 0)
         {
             ThrowSetupError -errorMessage "Unable to create remote session for test with error" -eRecords $powerShell.Streams.Error
         }
@@ -51,7 +46,7 @@ Describe "TestImplicitRemotingBatching hook should correctly batch simple remote
         # Import implicit commands from remote session
         $powerShell.Commands.Clear()
         $powerShell.AddScript('Import-PSSession -Session $remoteSession -CommandName Get-Process,Write-Output -AllowClobber').Invoke()
-        if ($powerShell.Streams.Error.Count -gt 0) 
+        if ($powerShell.Streams.Error.Count -gt 0)
         {
             ThrowSetupError -errorMessage "Unable to import pssession for test" -eRecords $powerShell.Streams.Error
         }

@@ -491,7 +491,7 @@ Describe "TabCompletion" -Tags CI {
                 ## if $PSHOME contains a space tabcompletion adds ' around the path
                 @{ inputStr = 'cd $pshome\Modu'; expected = if($PSHOME.Contains(' ')) { "'$(Join-Path $PSHOME 'Modules')'" } else { Join-Path $PSHOME 'Modules' }; setup = $null }
                 @{ inputStr = 'cd "$pshome\Modu"'; expected = "`"$(Join-Path $PSHOME 'Modules')`""; setup = $null }
-                @{ inputStr = '$PSHOME\System.Management.Au'; expected = Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }
+                @{ inputStr = '$PSHOME\System.Management.Au'; expected = if($PSHOME.Contains(' ')) { "`& '$(Join-Path $PSHOME 'System.Management.Automation.dll')'" }  else { Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }}
                 @{ inputStr = '"$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
                 @{ inputStr = '& "$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
                 ## tab completion AST-based tests
@@ -1116,22 +1116,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         $res = TabExpansion2 -inputScript $path -cursorColumn $path.Length
         $listener = Get-ChildItem WSMan:\localhost\Listener
         $res.CompletionMatches.Count | Should -Be $listener.Count
-
-        # Listeners will have no duplicate names.  Don't rely on order.
-        $match = $true
-        for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
-            $found = $false
-            for ($j=0; $j -lt $listener.Count; $j++)
-            {
-                if ($res.CompletionMatches[$i].ListItemText -eq $listener[$j].Name)
-                {
-                    $found = $true
-                    break
-                }
-            }
-            if (! $found) { $match = $false; break }
-        }
-        $match | Should Be $true
+        $res.CompletionMatches.ListItemText | Should -BeIn $listener.Name
     }
 
     It "Tab completion gets dynamic parameters for '<path>' using '<parameter>'" -TestCases @(
