@@ -464,7 +464,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Status = pingReply.Status;
                     }
-
                 }
 
                 if (Status == IPStatus.Unknown)
@@ -474,58 +473,58 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// The index number of the this hop in the overall traceroute.
+            /// Gets the index number of the this hop in the overall traceroute.
             /// </summary>
             public int Hop { get => Reply.Hop; }
 
             /// <summary>
-            /// The overall status of the traceroute hop. If any successes are recorded, it is considered successful.
-            /// Otherwise, the first reply status is
+            /// Gets the overall status of the traceroute hop. If any successes are recorded, it is considered successful.
+            /// Otherwise, the first reply's status is reported.
             /// </summary>
-            public IPStatus Status;
+            public IPStatus Status { get; } = IPStatus.Unknown;
 
             /// <summary>
-            /// The IPAddress of the hop point.
+            /// Gets the IPAddress of the hop point.
             /// </summary>
             public IPAddress Address { get; }
 
             /// <summary>
-            /// The hostname of the hop point.
+            /// Gets the hostname of the hop point.
             /// </summary>
             public string Hostname { get; }
 
             /// <summary>
-            /// Source from which to trace route.
+            /// Gets the source from which to trace route.
             /// </summary>
             public string Source { get; }
 
             /// <summary>
-            /// Destination to which to trace route.
+            /// Gets the destination address to which to trace route.
             /// </summary>
             public IPAddress DestinationAddress { get; }
 
             /// <summary>
-            /// Destination to which to trace route.
+            /// Gets the destination host to which to trace route.
             /// </summary>
             public string DestinationHost { get; }
 
             /// <summary>
-            /// The average roundtrip time in ms to the hop point.
+            /// Gets the average roundtrip time in ms to the hop point.
             /// </summary>
             public long MaxRoundtrip { get; } = 0;
 
             /// <summary>
-            /// The total number of bytes sent to the hop point.
+            /// Gets the total number of bytes sent to the hop point.
             /// </summary>
             public int TotalBytes { get; } = 0;
 
             /// <summary>
-            /// The number of pings that succeeded to the hop point.
+            /// Gets the number of pings that succeeded to the hop point.
             /// </summary>
             public int PingAttempts { get; } = 0;
 
             /// <summary>
-            /// The reply summary object from the Traceroute hop point.
+            /// Gets the reply summary object from the Traceroute hop point.
             /// </summary>
             public TraceRouteReply Reply { get; }
         }
@@ -663,7 +662,6 @@ namespace Microsoft.PowerShell.Commands
             Ping sender = new Ping();
             PingOptions pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
             PingReply reply = null;
-            //PingReport pingReport = new PingReport(Source, resolvedTargetName);
             Int32 timeout = TimeoutSeconds * 1000;
             Int32 delay = Delay * 1000;
 
@@ -786,12 +784,12 @@ namespace Microsoft.PowerShell.Commands
             public int Bytes { get => Reply.Buffer.Length; }
 
             /// <summary>
-            /// Roundtrip time in ms.
+            /// Gets roundtrip time in ms.
             /// </summary>
             public long Roundtrip { get => Reply.RoundtripTime; }
 
             /// <summary>
-            /// Status of response, success or reason for failure.
+            /// Gets status of response, success or reason for failure.
             /// </summary>
             public IPStatus Status { get => Reply.Status; }
 
@@ -911,13 +909,6 @@ namespace Microsoft.PowerShell.Commands
         /// Create the default send buffer once and cache it.
         private const int DefaultSendBufferSize = 32;
         private static byte[] s_DefaultSendBuffer = null;
-
-        // Random value for WriteProgress Activity Id.
-        //private static readonly int s_ProgressId = 174593053;
-
-        // Empty message string for Progress Bar.
-        private const string ProgressRecordSpace = " ";
-
         private const string TestConnectionExceptionId = "TestConnectionException";
     }
 }
