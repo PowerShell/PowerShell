@@ -627,9 +627,8 @@ namespace System.Management.Automation
             Version minimumRequiredVersion,
             Version maximumRequiredVersion)
         {
-            // If a name is required, check it matches
-            // A required module name may also be an absolute path,
-            // so check the module path as well.
+            // If a name is required, check that it matches.
+            // A required module name may also be an absolute path, so check it against the given module's path as well.
             if ((requiredName != null && !requiredName.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
                 && !MatchesModulePath(modulePath, requiredName, basePath, context))
             {

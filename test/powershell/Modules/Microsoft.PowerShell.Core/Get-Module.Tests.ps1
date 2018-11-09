@@ -24,10 +24,11 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Too\Zoo.psm1" > $null
 
         $relativePathTestCases = @(
-            @{ Location = $TestDrive; ModPath = './Modules\Foo'; Name = 'Foo'; Version = '2.0' }
-            @{ Location = $TestDrive; ModPath = '.\Modules/Foo\1.1/Foo.psd1'; Name = 'Foo'; Version = '1.1' }
-            @{ Location = "$TestDrive/Bar"; ModPath = './Bar.psd1'; Name = 'Bar'; Version = '0.0.1' }
-            @{ Location = "$TestDrive/Bar/Download"; ModPath = '..\Bar.psd1'; Name = 'Bar'; Version = '0.0.1' }
+            # The current behaviour in PowerShell is that version gets ignored when using Get-Module -FullyQualifiedName with a path
+            @{ Location = $TestDrive; ModPath = './Modules\Foo'; Name = 'Foo'; Version = '2.0'; Count = 2 }
+            @{ Location = $TestDrive; ModPath = '.\Modules/Foo\1.1/Foo.psd1'; Name = 'Foo'; Version = '1.1'; Count = 1 }
+            @{ Location = "$TestDrive/Modules/Bar"; ModPath = './Bar.psd1'; Name = 'Bar'; Version = '0.0.1'; Count = 1 }
+            @{ Location = "$TestDrive/Modules/Bar/Download"; ModPath = '..\Bar.psd1'; Name = 'Bar'; Version = '0.0.1'; Count = 1 }
         )
 
         $env:PSModulePath = Join-Path $testdrive "Modules"
@@ -155,8 +156,8 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             $modules.Name | Sort-Object | Should -BeExactly $ExpectedModule
         }
 
-        It "Get-Module respects relative paths in module specifications" -TestCases $relativePathTestCases {
-            param([string]$Location, [string]$ModPath, [string]$Name, [string]$Version)
+        It "Get-Module respects relative paths in module specifications: <ModPath>" -TestCases $relativePathTestCases {
+            param([string]$Location, [string]$ModPath, [string]$Name, [string]$Version, [int]$Count)
 
             $modSpec = @{
                 ModuleName = $ModPath
@@ -167,9 +168,9 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             try
             {
                 $modules = Get-Module -ListAvailable -FullyQualifiedName $modSpec
-                $modules | Should -HaveCount 1
+                $modules | Should -HaveCount $Count
                 $modules[0].Name | Should -BeExactly $Name
-                $modules[0].Version | Should -Be $Version
+                $modules.Version | Should -Contain $Version
             }
             finally
             {
