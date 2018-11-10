@@ -3626,13 +3626,12 @@ namespace Microsoft.PowerShell.Commands
         /// If loadElements is false, we check requireModule for correctness but do
         /// not check if the modules are loaded.
         /// </summary>
-        /// <param name="basePath">Path to resolve relative module paths in the specification against.</param>
         /// <param name="context">Execution Context.</param>
         /// <param name="requiredModule">Either a string or a hash of ModuleName, optional Guid, and ModuleVersion.</param>
         /// <param name="matchFailureReason">The reason the module failed to load, or null on success.</param>
         /// <param name="loaded">Sets if the module/snapin is already present.</param>
         /// <returns>null if the module is not loaded or loadElements is false, the loaded module otherwise.</returns>
-        internal static object IsModuleLoaded(string basePath, ExecutionContext context, ModuleSpecification requiredModule, out ModuleMatchFailure matchFailureReason, out bool loaded)
+        internal static object IsModuleLoaded(ExecutionContext context, ModuleSpecification requiredModule, out ModuleMatchFailure matchFailureReason, out bool loaded)
         {
             loaded = false;
             Dbg.Assert(requiredModule != null, "Caller should verify requiredModuleSpecification != null");
@@ -3719,7 +3718,7 @@ namespace Microsoft.PowerShell.Commands
 
             ModuleMatchFailure loadFailureReason = ModuleMatchFailure.None;
             bool loaded = false;
-            object loadedModule = IsModuleLoaded(currentModule.ModuleBase, context, requiredModuleSpecification, out loadFailureReason, out loaded);
+            object loadedModule = IsModuleLoaded(context, requiredModuleSpecification, out loadFailureReason, out loaded);
 
             if (loadedModule == null)
             {
@@ -3751,7 +3750,7 @@ namespace Microsoft.PowerShell.Commands
                                                                                           out error);
                     if (!hasRequiredModulesCyclicReference)
                     {
-                        result = ImportRequiredModule(currentModule.ModuleBase, context, requiredModuleSpecification, out error);
+                        result = ImportRequiredModule(context, requiredModuleSpecification, out error);
                     }
                     else
                     {
@@ -3876,7 +3875,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private static PSModuleInfo ImportRequiredModule(
-            string basePath,
             ExecutionContext context,
             ModuleSpecification requiredModule,
             out ErrorRecord error)
@@ -3937,7 +3935,7 @@ namespace Microsoft.PowerShell.Commands
 
                     ModuleMatchFailure loadFailureReason;
                     bool loaded = false;
-                    object r = IsModuleLoaded(basePath, context, ms, out loadFailureReason, out loaded);
+                    object r = IsModuleLoaded(context, ms, out loadFailureReason, out loaded);
 
                     Dbg.Assert(r is PSModuleInfo, "The returned value should be PSModuleInfo");
 
@@ -4562,26 +4560,17 @@ namespace Microsoft.PowerShell.Commands
         /// Check if a path is rooted or "relative rooted".
         /// </summary>
         /// <param name="filePath">The file path to check.</param>
-        /// <param name="relativeRooted">If true, paths like "./here" and "..\there" count as rooted ("relative rooted").</param>
         /// <returns>True if the path is rooted, false otherwise.</returns>
-        internal static bool IsRooted(string filePath, bool relativeRooted = true)
+        internal static bool IsRooted(string filePath)
         {
-            if (Path.IsPathRooted(filePath) || filePath.IndexOf(":", StringComparison.Ordinal) >= 0)
-            {
-                return true;
-            }
-
-            if (!relativeRooted)
-            {
-                return false;
-            }
-
-            return filePath.StartsWith(@".\", StringComparison.Ordinal) ||
+            return Path.IsPathRooted(filePath) ||
+                filePath.StartsWith(@".\", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"./", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"..\", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"../", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~/", StringComparison.Ordinal) ||
-                filePath.StartsWith(@"~\", StringComparison.Ordinal);
+                filePath.StartsWith(@"~\", StringComparison.Ordinal) ||
+                filePath.IndexOf(":", StringComparison.Ordinal) >= 0;
         }
 
         /// <summary>

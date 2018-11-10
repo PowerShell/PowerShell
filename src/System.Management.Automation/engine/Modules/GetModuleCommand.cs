@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="modules">The modules to filter by specification match.</param>
         /// <param name="moduleSpecificationTable">The specification lookup table to filter the modules on.</param>
         /// <returns>The modules that match their corresponding table entry, or which have no table entry.</returns>
-        private IEnumerable<PSModuleInfo> FilterModulesForSpecificationMatch(
+        private static IEnumerable<PSModuleInfo> FilterModulesForSpecificationMatch(
             IEnumerable<PSModuleInfo> modules,
             IDictionary<string, ModuleSpecification> moduleSpecificationTable)
         {
