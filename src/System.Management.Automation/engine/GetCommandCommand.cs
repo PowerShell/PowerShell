@@ -589,7 +589,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!_moduleSpecifications.Any(
                                 moduleSpecification =>
-                                ModuleIntrinsics.IsModuleMatchingModuleSpec(SessionState.Path.CurrentLocation.Path, Context, command.Module, moduleSpecification)))
+                                ModuleIntrinsics.IsModuleMatchingModuleSpec(command.Module, moduleSpecification)))
                         {
                             break;
                         }
@@ -1113,7 +1113,7 @@ namespace Microsoft.PowerShell.Commands
                         bool foundModuleMatch = false;
                         foreach (var moduleSpecification in _moduleSpecifications)
                         {
-                            if (ModuleIntrinsics.IsModuleMatchingModuleSpec(SessionState.Path.CurrentLocation.Path, Context, current.Module, moduleSpecification))
+                            if (ModuleIntrinsics.IsModuleMatchingModuleSpec(current.Module, moduleSpecification))
                             {
                                 foundModuleMatch = true;
                                 break;
@@ -1261,7 +1261,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         isModuleMatch = SessionStateUtilities.MatchesAnyWildcardPattern(module.Name, _modulePatterns, true);
                     }
-                    else if (_moduleSpecifications.Any(moduleSpecification => ModuleIntrinsics.IsModuleMatchingModuleSpec(SessionState.Path.CurrentLocation.Path, Context, module, moduleSpecification)))
+                    else if (_moduleSpecifications.Any(moduleSpecification => ModuleIntrinsics.IsModuleMatchingModuleSpec(module, moduleSpecification)))
                     {
                         isModuleMatch = true;
                     }

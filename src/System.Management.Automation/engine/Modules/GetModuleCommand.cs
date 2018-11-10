@@ -548,7 +548,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Modules with table entries only get returned if they match them
-                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(SessionState.Path.CurrentLocation.Path, Context, module, moduleSpecification))
+                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(module, moduleSpecification))
                 {
                     yield return module;
                 }

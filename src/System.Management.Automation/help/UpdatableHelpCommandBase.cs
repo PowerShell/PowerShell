@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
             else if (fullyQualifiedName != null)
             {
                 moduleNamePattern = fullyQualifiedName.Name;
-                modules = Utils.GetModules(fullyQualifiedName, SessionState.Path.CurrentLocation.Path, context);
+                modules = Utils.GetModules(fullyQualifiedName, context);
             }
 
             var helpModules = new Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo>();

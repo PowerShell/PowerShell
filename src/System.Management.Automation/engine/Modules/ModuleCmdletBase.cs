@@ -1656,8 +1656,6 @@ namespace Microsoft.PowerShell.Commands
                     if (bailOnFirstError) return null;
                 }
                 else if (!ModuleIntrinsics.AreModuleFieldsMatchingConstraints(
-                    moduleBase,
-                    Context,
                     moduleGuid: manifestGuid,
                     moduleVersion: moduleVersion,
                     requiredGuid: requiredModuleGuid,
@@ -1960,11 +1958,12 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (ModuleSpecification requiredModule in requiredModules)
                     {
-                        // To make things easier, make the path absolute and platform-separator-normal here
-                        requiredModule.Name = ModuleIntrinsics.NormalizeModuleName(requiredModule.Name, moduleBase, Context);
+                        // The required module name is essentially raw user input.
+                        // We must process it so paths work.
+                        ModuleSpecification normalizedRequiredModuleSpec = requiredModule?.CloneWithNormalizedName(Context, moduleBase);
 
                         ErrorRecord error = null;
-                        PSModuleInfo module = LoadRequiredModule(fakeManifestInfo, requiredModule, moduleManifestPath,
+                        PSModuleInfo module = LoadRequiredModule(fakeManifestInfo, normalizedRequiredModuleSpec, moduleManifestPath,
                             manifestProcessingFlags, containedErrors, out error);
                         if (module == null && error != null)
                         {
@@ -3646,7 +3645,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSModuleInfo module in context.Modules.GetModules(new string[] { "*" }, false))
             {
                 // Check that the module meets the module constraints give
-                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(out matchFailure, basePath, context, module, requiredModule))
+                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(out matchFailure, module, requiredModule))
                 {
                     result = module;
                     loaded = true;
@@ -4076,8 +4075,6 @@ namespace Microsoft.PowerShell.Commands
             foreach (var module in tempResult)
             {
                 if (ModuleIntrinsics.IsModuleMatchingConstraints(
-                    basePath: null, // basePath is not needed, since we don't need path resolution
-                    context: null, // context is also only required for path resolution
                     module,
                     guid: requiredModule.Guid,
                     requiredVersion: requiredModule.RequiredVersion,
@@ -5047,8 +5044,6 @@ namespace Microsoft.PowerShell.Commands
         internal bool DoesAlreadyLoadedModuleSatisfyConstraints(PSModuleInfo alreadyLoadedModule)
         {
             return ModuleIntrinsics.IsModuleMatchingConstraints(
-                basePath: null, // basePath is not needed here, since we are only checking the version
-                context: null, // context is not needed, since we don't need path resolution
                 alreadyLoadedModule,
                 guid: BaseGuid,
                 requiredVersion: BaseRequiredVersion,

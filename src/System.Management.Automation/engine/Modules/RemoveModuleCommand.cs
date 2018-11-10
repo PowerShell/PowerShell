@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (FullyQualifiedName != null)
             {
-                foreach (var m in Context.Modules.GetModules(SessionState.Path.CurrentLocation.Path, Context, FullyQualifiedName, false))
+                foreach (var m in Context.Modules.GetModules(FullyQualifiedName, false))
                 {
                     modulesToRemove.Add(m, new List<PSModuleInfo> { m });
                 }

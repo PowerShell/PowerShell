@@ -828,17 +828,16 @@ namespace System.Management.Automation
         /// Uses Get-Module -ListAvailable cmdlet.
         /// </summary>
         /// <param name="fullyQualifiedName"></param>
-        /// <param name="basePath"></param>
         /// <param name="context"></param>
         /// <returns>
         /// List of PSModuleInfo's or Null.
         /// </returns>
-        internal static List<PSModuleInfo> GetModules(ModuleSpecification fullyQualifiedName, string basePath, ExecutionContext context)
+        internal static List<PSModuleInfo> GetModules(ModuleSpecification fullyQualifiedName, ExecutionContext context)
         {
             // first look in the loaded modules and then append the modules from gmo -Listavailable
             // Reason: gmo -li looks only the PSModulepath. There may be cases where a module
             // is imported directly from a path (that is not in PSModulePath).
-            List<PSModuleInfo> result = context.Modules.GetModules(basePath, context, new[] { fullyQualifiedName }, false);
+            List<PSModuleInfo> result = context.Modules.GetModules(new[] { fullyQualifiedName }, false);
             CommandInfo commandInfo = new CmdletInfo("Get-Module", typeof(GetModuleCommand),
                                                      null, null, context);
             var getModuleCommand = new Runspaces.Command(commandInfo);
