@@ -768,7 +768,7 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
             -RequiredVersion $RequiredVersion
     }
 
-    It "Gets the module when a relative path is used in a module specification" -TestCases $relativePathCases {
+    It "Gets the module when a relative path is used in a module specification: <ModPath>" -TestCases $relativePathCases -Pending {
         param([string]$Location, [string]$ModPath)
 
         Push-Location $Location

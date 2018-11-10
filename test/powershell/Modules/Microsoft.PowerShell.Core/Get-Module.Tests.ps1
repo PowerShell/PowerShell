@@ -23,12 +23,12 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Zoo.psm1" > $null
         New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Too\Zoo.psm1" > $null
 
-        $relativePathTestCases = @(
+        $fullyQualifiedPathTestCases = @(
             # The current behaviour in PowerShell is that version gets ignored when using Get-Module -FullyQualifiedName with a path
-            @{ Location = $TestDrive; ModPath = './Modules\Foo'; Name = 'Foo'; Version = '2.0'; Count = 2 }
-            @{ Location = $TestDrive; ModPath = '.\Modules/Foo\1.1/Foo.psd1'; Name = 'Foo'; Version = '1.1'; Count = 1 }
-            @{ Location = "$TestDrive/Modules/Bar"; ModPath = './Bar.psd1'; Name = 'Bar'; Version = '0.0.1'; Count = 1 }
-            @{ Location = "$TestDrive/Modules/Bar/Download"; ModPath = '..\Bar.psd1'; Name = 'Bar'; Version = '0.0.1'; Count = 1 }
+            @{ ModPath = "$TestDrive/Modules\Foo"; Name = 'Foo'; Version = '2.0'; Count = 2 }
+            @{ ModPath = "$TestDrive\Modules/Foo\1.1/Foo.psd1"; Name = 'Foo'; Version = '1.1'; Count = 1 }
+            @{ ModPath = "$TestDrive\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0.1'; Count = 1 }
+            @{ ModPath = "$TestDrive\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0.1'; Count = 1 }
         )
 
         $env:PSModulePath = Join-Path $testdrive "Modules"
@@ -156,8 +156,8 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             $modules.Name | Sort-Object | Should -BeExactly $ExpectedModule
         }
 
-        It "Get-Module respects relative paths in module specifications: <ModPath>" -TestCases $relativePathTestCases {
-            param([string]$Location, [string]$ModPath, [string]$Name, [string]$Version, [int]$Count)
+        It "Get-Module respects absolute paths in module specifications: <ModPath>" -TestCases $relativePathTestCases {
+            param([string]$ModPath, [string]$Name, [string]$Version, [int]$Count)
 
             $modSpec = @{
                 ModuleName = $ModPath
