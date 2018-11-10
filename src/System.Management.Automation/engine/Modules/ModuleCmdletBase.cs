@@ -1960,7 +1960,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // The required module name is essentially raw user input.
                         // We must process it so paths work.
-                        ModuleSpecification normalizedRequiredModuleSpec = requiredModule?.CloneWithNormalizedName(Context, moduleBase);
+                        ModuleSpecification normalizedRequiredModuleSpec = requiredModule?.WithNormalizedName(Context, moduleBase);
 
                         ErrorRecord error = null;
                         PSModuleInfo module = LoadRequiredModule(fakeManifestInfo, normalizedRequiredModuleSpec, moduleManifestPath,
