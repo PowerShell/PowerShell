@@ -590,6 +590,7 @@ namespace System.Management.Automation.Remoting.Server
             originalStdOut = new OutOfProcessTextWriter(namedPipeServer.TextWriter);
             originalStdErr = new NamedPipeErrorTextWriter(namedPipeServer.TextWriter);
 
+#if !UNIX
             // Flow impersonation if requested.
             WindowsIdentity currentIdentity = null;
             try
@@ -599,6 +600,7 @@ namespace System.Management.Automation.Remoting.Server
             catch (System.Security.SecurityException) { }
             _windowsIdentityToImpersonate = ((currentIdentity != null) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation)) ?
                 currentIdentity : null;
+#endif
         }
 
         #endregion

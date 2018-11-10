@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Runtime.InteropServices;
@@ -25,8 +26,13 @@ namespace System.Management.Automation.Remoting
         #region Strings
 
         internal const string DefaultAppDomainName = "DefaultAppDomain";
+#if UNIX
+        internal const string NamedPipeNamePrefix = "PSHost.";
+        internal const string NamedPipeNamePrefixSearch = "CoreFxPipe_PSHost*";
+#else
         internal const string NamedPipeNamePrefix = "PSHost.";
         internal const string NamedPipeNamePrefixSearch = "PSHost*";
+#endif
 
         #endregion
 
@@ -91,12 +97,20 @@ namespace System.Management.Automation.Remoting
             {
                 appDomainName = DefaultAppDomainName;
             }
-
+#if UNIX
+            // there is a limit of 104 characters in total including the temp path to the named pipe file
+            // on non-Windows systems, so we'll exclude the StartTime
+            return NamedPipeNamePrefix +
+                    proc.Id.ToString(CultureInfo.InvariantCulture) + "." +
+                    CleanAppDomainNameForPipeName(appDomainName) + "." +
+                    proc.ProcessName;
+#else
             return NamedPipeNamePrefix +
                     proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture) + "." +
                     proc.Id.ToString(CultureInfo.InvariantCulture) + "." +
                     CleanAppDomainNameForPipeName(appDomainName) + "." +
                     proc.ProcessName;
+#endif
         }
 
         private static string CleanAppDomainNameForPipeName(string appDomainName)
@@ -444,6 +458,7 @@ namespace System.Management.Automation.Remoting
             if (namespaceName == null) { throw new PSArgumentNullException("namespaceName"); }
             if (coreName == null) { throw new PSArgumentNullException("coreName"); }
 
+#if !UNIX
             string fullPipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;
 
             // Create optional security attributes based on provided PipeSecurity.
@@ -494,6 +509,16 @@ namespace System.Management.Automation.Remoting
                 pipeHandle.Dispose();
                 throw;
             }
+#else
+            return new NamedPipeServerStream(
+                pipeName: coreName,
+                direction: PipeDirection.InOut,
+                maxNumberOfServerInstances: 1,
+                transmissionMode: PipeTransmissionMode.Byte,
+                options: PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly,
+                inBufferSize: _namedPipeBufferSizeForRemoting,
+                outBufferSize: _namedPipeBufferSizeForRemoting);
+#endif
         }
 
         static RemoteSessionNamedPipeServer()
@@ -502,10 +527,7 @@ namespace System.Management.Automation.Remoting
 
             // All PowerShell instances will start with the named pipe
             // and listener created and running.
-            if (Platform.IsWindows)
-            {
-                IPCNamedPipeServerEnabled = true;
-            }
+            IPCNamedPipeServerEnabled = true;
 
             CreateIPCNamedPipeServerSingleton();
 #if !CORECLR // There is only one AppDomain per application in CoreCLR, which would be the default
@@ -590,6 +612,11 @@ namespace System.Management.Automation.Remoting
 
         internal static CommonSecurityDescriptor GetServerPipeSecurity()
         {
+            if (!Platform.IsWindows)
+            {
+                return null;
+            }
+
             // Built-in Admin SID
             SecurityIdentifier adminSID = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
             DiscretionaryAcl dacl = new DiscretionaryAcl(false, false, 1);
@@ -658,7 +685,11 @@ namespace System.Management.Automation.Remoting
 
                 try
                 {
+#if UNIX
+                    userName = System.Environment.UserName;
+#else
                     userName = WindowsIdentity.GetCurrent().Name;
+#endif
                 }
                 catch (System.Security.SecurityException) { }
 
@@ -1005,7 +1036,9 @@ namespace System.Management.Automation.Remoting
     {
         #region Members
 
+#if !UNIX
         private volatile bool _connecting;
+#endif
 
         #endregion
 
@@ -1046,7 +1079,11 @@ namespace System.Management.Automation.Remoting
                 throw new PSArgumentNullException("pipeName");
             }
 
+#if UNIX
+            _pipeName = pipeName;
+#else
             _pipeName = @"\\.\pipe\" + pipeName;
+#endif
 
             // Defer creating the .Net NamedPipeClientStream object until we connect.
             // _clientPipeStream == null.
@@ -1082,7 +1119,9 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void AbortConnect()
         {
+#if !UNIX
             _connecting = false;
+#endif
         }
 
         #endregion
@@ -1091,6 +1130,7 @@ namespace System.Management.Automation.Remoting
 
         protected override NamedPipeClientStream DoConnect(int timeout)
         {
+#if !UNIX
             // Repeatedly attempt connection to pipe until timeout expires.
             int startTime = Environment.TickCount;
             int elapsedTime = 0;
@@ -1112,6 +1152,22 @@ namespace System.Management.Automation.Remoting
             _connecting = false;
 
             throw new TimeoutException(RemotingErrorIdStrings.ConnectNamedPipeTimeout);
+#else
+            NamedPipeClientStream namedPipeClientStream = new NamedPipeClientStream(
+                serverName: ".",
+                pipeName: _pipeName,
+                direction: PipeDirection.InOut,
+                options: PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
+            try
+            {
+                namedPipeClientStream.Connect(timeout);
+            }
+            catch (TimeoutException)
+            {
+                throw new TimeoutException(RemotingErrorIdStrings.ConnectNamedPipeTimeout);
+            }
+            return namedPipeClientStream;
+#endif
         }
 
         #endregion

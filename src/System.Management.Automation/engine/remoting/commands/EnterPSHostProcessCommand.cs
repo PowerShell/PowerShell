@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
@@ -393,7 +394,12 @@ namespace Microsoft.PowerShell.Commands
         private const string ProcessParameterSet = "ProcessParameterSet";
         private const string ProcessIdParameterSet = "ProcessIdParameterSet";
         private const string ProcessNameParameterSet = "ProcessNameParameterSet";
+
+#if UNIX
+        private static readonly string NamedPipePath = Path.GetTempPath();
+#else
         private const string NamedPipePath = @"\\.\pipe\";
+#endif
 
         #endregion
 
@@ -524,10 +530,18 @@ namespace Microsoft.PowerShell.Commands
             var procAppDomainInfo = new List<PSHostProcessInfo>();
 
             // Get all named pipe 'files' on local machine.
-            List<string> directories;
             List<string> namedPipes;
+#if !UNIX
+            List<string> directories;
             Utils.NativeEnumerateDirectory(NamedPipePath, out directories, out namedPipes);
-
+#else
+            namedPipes = new List<string>();
+            var namedPipeDirectory = new DirectoryInfo(NamedPipePath);
+            foreach(var pipeFileInfo in namedPipeDirectory.EnumerateFiles(NamedPipeUtils.NamedPipeNamePrefixSearch))
+            {
+                namedPipes.Add(Path.Combine(pipeFileInfo.DirectoryName, pipeFileInfo.Name));
+            }
+#endif
             // Collect all PowerShell named pipes for given process Ids.
             foreach (string namedPipe in namedPipes)
             {
@@ -535,9 +549,13 @@ namespace Microsoft.PowerShell.Commands
                 if (startIndex > -1)
                 {
                     // This is a PowerShell named pipe.  Parse the process Id, AppDomain name, and process name.
+#if !UNIX
                     int pStartTimeIndex = namedPipe.IndexOf(".", startIndex, StringComparison.OrdinalIgnoreCase);
                     if (pStartTimeIndex > -1)
                     {
+#else
+                        int pStartTimeIndex = 0;
+#endif
                         int pIdIndex = namedPipe.IndexOf(".", pStartTimeIndex + 1, StringComparison.OrdinalIgnoreCase);
                         if (pIdIndex > -1)
                         {
@@ -576,7 +594,9 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
                         }
+#if !UNIX
                     }
+#endif
                 }
             }
 
