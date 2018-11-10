@@ -761,10 +761,7 @@ namespace System.Management.Automation
             }
 
             // Check whether the module is a path -- if not, it is a simple name and we just return it.
-            if (!(moduleName.Contains(Path.DirectorySeparatorChar)
-                  || moduleName.Contains(Path.AltDirectorySeparatorChar)
-                  || moduleName.Equals(".")
-                  || moduleName.Equals("..")))
+            if (!IsModuleNamePath(moduleName))
             {
                 return moduleName;
             }
@@ -780,6 +777,19 @@ namespace System.Management.Automation
 
             // Use the PowerShell filesystem provider to fully resolve the path
             return ModuleCmdletBase.GetResolvedPath(moduleName, executionContext).TrimEnd(Path.DirectorySeparatorChar);
+        }
+
+        /// <summary>
+        /// Check if a given module name is a path to a module rather than a simple name.
+        /// </summary>
+        /// <param name="moduleName">The module name to check.</param>
+        /// <returns>True if the module name is a path, false otherwise.</returns>
+        internal static bool IsModuleNamePath(string moduleName)
+        {
+            return moduleName.Contains(Path.DirectorySeparatorChar)
+                || moduleName.Contains(Path.AltDirectorySeparatorChar)
+                || moduleName.Equals("..")
+                || moduleName.Equals(".");
         }
 
         internal static Version GetManifestModuleVersion(string manifestPath)

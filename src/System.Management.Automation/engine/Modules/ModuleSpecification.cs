@@ -254,8 +254,14 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">The current execution context. Used for path normalization.</param>
         /// <param name="basePath">The base path where a relative path should be interpreted with respect to.</param>
         /// <returns>A fresh module specification object with the name normalized for use internally.</returns>
-        internal ModuleSpecification CloneWithNormalizedName(ExecutionContext context, string basePath)
+        internal ModuleSpecification WithNormalizedName(ExecutionContext context, string basePath)
         {
+            // Save allocating a new module spec if we don't need to change anything
+            if (!ModuleIntrinsics.IsModuleNamePath(Name))
+            {
+                return this;
+            }
+            
             return new ModuleSpecification()
             {
                 Guid = Guid,

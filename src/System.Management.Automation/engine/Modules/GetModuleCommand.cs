@@ -374,6 +374,8 @@ namespace Microsoft.PowerShell.Commands
             var moduleSpecTable = new Dictionary<string, ModuleSpecification>(StringComparer.OrdinalIgnoreCase);
             if (FullyQualifiedName != null)
             {
+                // We need to normalize paths from user input. Relative paths are interpreted as relative to PWD.
+                FullyQualifiedName = FullyQualifiedName.Select(ModuleSpecification => ModuleSpecification?.WithNormalizedName(Context, SessionState.Path.CurrentLocation.Path)).ToArray();
                 moduleSpecTable = FullyQualifiedName.ToDictionary(moduleSpecification => moduleSpecification.Name, StringComparer.OrdinalIgnoreCase);
                 strNames.AddRange(FullyQualifiedName.Select(spec => spec.Name));
             }

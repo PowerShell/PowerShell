@@ -84,6 +84,8 @@ namespace Microsoft.PowerShell.Commands
 
             if (FullyQualifiedName != null)
             {
+                // Normalize the names of fully qualified module specifications so paths are absolute
+                FullyQualifiedName = FullyQualifiedName.Select(ms => ms.WithNormalizedName(Context, SessionState.Path.CurrentLocation.Path)).ToArray();
                 foreach (var m in Context.Modules.GetModules(FullyQualifiedName, false))
                 {
                     modulesToRemove.Add(m, new List<PSModuleInfo> { m });
