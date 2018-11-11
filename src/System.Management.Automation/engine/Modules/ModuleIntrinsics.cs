@@ -357,7 +357,7 @@ namespace System.Management.Automation
 
             if (all)
             {
-                foreach (ModuleSpecification moduleSpec in fullyQualifiedName)
+                foreach (var moduleSpec in fullyQualifiedName)
                 {
                     foreach (PSModuleInfo module in ModuleTable.Values)
                     {
@@ -371,7 +371,7 @@ namespace System.Management.Automation
             }
             else
             {
-                foreach (ModuleSpecification moduleSpec in fullyQualifiedName)
+                foreach (var moduleSpec in fullyQualifiedName)
                 {
                     // Create a joint list of local and global modules. Only report a module once.
                     // Local modules are reported before global modules...
@@ -419,10 +419,7 @@ namespace System.Management.Automation
         /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
         internal static bool IsModuleMatchingModuleSpec(PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
         {
-            return IsModuleMatchingModuleSpec(
-                out ModuleMatchFailure matchFailureReason,
-                moduleInfo,
-                moduleSpec);
+            return IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, moduleInfo, moduleSpec);
         }
 
         /// <summary>

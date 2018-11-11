@@ -4030,7 +4030,8 @@ namespace Microsoft.PowerShell.Commands
         // Checks if module is available to be loaded
         // ModuleName ---> checks if module can be loaded using Module loading rules
         // ModuleManifest --> checks if manifest is valid
-        internal static Collection<PSModuleInfo> GetModuleIfAvailable(ModuleSpecification requiredModule, Runspace rsToUse = null)
+        internal static Collection<PSModuleInfo> GetModuleIfAvailable(ModuleSpecification requiredModule,
+            Runspace rsToUse = null)
         {
             Collection<PSModuleInfo> result = new Collection<PSModuleInfo>();
             Collection<PSModuleInfo> tempResult = null;
