@@ -130,6 +130,20 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         $modules.ExportedFunctions.Count | Should -Be 1 -Because 'We added a new function to export'
     }
 
+    It "Get-Module respects absolute paths in module specifications: <ModPath>" -TestCases $fullyQualifiedPathTestCases {
+        param([string]$ModPath, [string]$Name, [string]$Version, [int]$Count)
+
+        $modSpec = @{
+            ModuleName = $ModPath
+            RequiredVersion = $Version
+        }
+
+        $modules = Get-Module -ListAvailable -FullyQualifiedName $modSpec
+        $modules | Should -HaveCount $Count
+        $modules[0].Name | Should -BeExactly $Name
+        $modules.Version | Should -Contain $Version
+    }
+
     Context "PSEdition" {
 
         BeforeAll {
@@ -154,28 +168,6 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             $modules = Get-Module -PSEdition $CompatiblePSEditions -ListAvailable
             $modules | Should -HaveCount $ExpectedModule.Count
             $modules.Name | Sort-Object | Should -BeExactly $ExpectedModule
-        }
-
-        It "Get-Module respects absolute paths in module specifications: <ModPath>" -TestCases $relativePathTestCases {
-            param([string]$ModPath, [string]$Name, [string]$Version, [int]$Count)
-
-            $modSpec = @{
-                ModuleName = $ModPath
-                RequiredVersion = $Version
-            }
-
-            Push-Location $Location
-            try
-            {
-                $modules = Get-Module -ListAvailable -FullyQualifiedName $modSpec
-                $modules | Should -HaveCount $Count
-                $modules[0].Name | Should -BeExactly $Name
-                $modules.Version | Should -Contain $Version
-            }
-            finally
-            {
-                Pop-Location
-            }
         }
     }
 }

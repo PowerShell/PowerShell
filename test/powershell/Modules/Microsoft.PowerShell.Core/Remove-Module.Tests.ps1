@@ -36,7 +36,7 @@ Describe "Remove-Module custom module with FullyQualifiedName" -Tags "Feature" {
         $modulePath = "$TestDrive/Modules/$moduleName"
         $moduleName = 'Banana'
         $moduleVersion = '1.0'
-        New-ModuleManifest -Path "$modulePath/$moduleName.psd1" -Version $moduleVersion
+        New-ModuleManifest -Path "$modulePath/$moduleName.psd1" -ModuleVersion $moduleVersion
 
         $relativePathTestCases = @(
             @{ Location = $TestDrive; ModPath = ".\Modules\$moduleName" }
