@@ -3874,10 +3874,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static PSModuleInfo ImportRequiredModule(
-            ExecutionContext context,
-            ModuleSpecification requiredModule,
-            out ErrorRecord error)
+        private static PSModuleInfo ImportRequiredModule(ExecutionContext context, ModuleSpecification requiredModule, out ErrorRecord error)
         {
             error = null;
             PSModuleInfo result = null;
@@ -4033,9 +4030,7 @@ namespace Microsoft.PowerShell.Commands
         // Checks if module is available to be loaded
         // ModuleName ---> checks if module can be loaded using Module loading rules
         // ModuleManifest --> checks if manifest is valid
-        internal static Collection<PSModuleInfo> GetModuleIfAvailable(
-            ModuleSpecification requiredModule,
-            Runspace rsToUse = null)
+        internal static Collection<PSModuleInfo> GetModuleIfAvailable(ModuleSpecification requiredModule, Runspace rsToUse = null)
         {
             Collection<PSModuleInfo> result = new Collection<PSModuleInfo>();
             Collection<PSModuleInfo> tempResult = null;

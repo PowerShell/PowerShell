@@ -351,9 +351,7 @@ namespace System.Management.Automation
             return modulesMatched.OrderBy(m => m.Name).ToList();
         }
 
-        internal List<PSModuleInfo> GetModules(
-            ModuleSpecification[] fullyQualifiedName,
-            bool all)
+        internal List<PSModuleInfo> GetModules(ModuleSpecification[] fullyQualifiedName, bool all)
         {
             List<PSModuleInfo> modulesMatched = new List<PSModuleInfo>();
 
@@ -419,9 +417,7 @@ namespace System.Management.Automation
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="moduleSpec">The module specification to match the module info object against.</param>
         /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
-        internal static bool IsModuleMatchingModuleSpec(
-            PSModuleInfo moduleInfo,
-            ModuleSpecification moduleSpec)
+        internal static bool IsModuleMatchingModuleSpec(PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
         {
             return IsModuleMatchingModuleSpec(
                 out ModuleMatchFailure matchFailureReason,
@@ -436,10 +432,7 @@ namespace System.Management.Automation
         /// <param name="moduleInfo">The module info object to check.</param>
         /// <param name="moduleSpec">The module specification to match the module info object against.</param>
         /// <returns>True if the module info object meets all the constraints on the module specification, false otherwise.</returns>
-        internal static bool IsModuleMatchingModuleSpec(
-            out ModuleMatchFailure matchFailureReason,
-            PSModuleInfo moduleInfo,
-            ModuleSpecification moduleSpec)
+        internal static bool IsModuleMatchingModuleSpec(out ModuleMatchFailure matchFailureReason, PSModuleInfo moduleInfo, ModuleSpecification moduleSpec)
         {
             if (moduleSpec == null)
             {
