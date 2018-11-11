@@ -48,6 +48,7 @@ Describe "#requires -Modules" -Tags "CI" {
         $moduleName = 'Banana'
         $moduleVersion = '0.12.1'
         $moduleDirPath = Join-Path $TestDrive 'modules'
+        New-Item -Path $moduleDirPath -ItemType Directory
         $modulePath = "$moduleDirPath${sep}$moduleName"
         $manifestPath = "$modulePath${altSep}$moduleName.psd1"
         $psm1Path = Join-Path $modulePath "$moduleName.psm1"
