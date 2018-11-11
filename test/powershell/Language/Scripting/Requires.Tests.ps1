@@ -50,6 +50,7 @@ Describe "#requires -Modules" -Tags "CI" {
         $moduleDirPath = Join-Path $TestDrive 'modules'
         New-Item -Path $moduleDirPath -ItemType Directory
         $modulePath = "$moduleDirPath${sep}$moduleName"
+        New-Item -Path $modulePath -ItemType Directory
         $manifestPath = "$modulePath${altSep}$moduleName.psd1"
         $psm1Path = Join-Path $modulePath "$moduleName.psm1"
         New-Item -Path $psm1Path -Value "function Test-RequiredModule { '$success' }"
