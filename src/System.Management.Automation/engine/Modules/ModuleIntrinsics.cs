@@ -711,7 +711,7 @@ namespace System.Management.Automation
                 moduleDirPath = Path.GetDirectoryName(moduleDirPath);
             }
 
-            return moduleDirPath.Equals(requiredPath);
+            return moduleDirPath.Equals(requiredPath, strcmp);
         }
 
         /// <summary>
