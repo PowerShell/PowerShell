@@ -45,6 +45,8 @@ Describe "#requires -Modules" -Tags "CI" {
         $sep = [System.IO.Path]::DirectorySeparatorChar
         $altSep = [System.IO.Path]::AltDirectorySeparatorChar
 
+        $scriptPath = Join-Path $TestDrive 'script.ps1'
+
         $moduleName = 'Banana'
         $moduleVersion = '0.12.1'
         $moduleDirPath = Join-Path $TestDrive 'modules'
@@ -54,7 +56,7 @@ Describe "#requires -Modules" -Tags "CI" {
         $manifestPath = "$modulePath${altSep}$moduleName.psd1"
         $psm1Path = Join-Path $modulePath "$moduleName.psm1"
         New-Item -Path $psm1Path -Value "function Test-RequiredModule { '$success' }"
-        New-ModuleManifest -Path $manifestPath -ModuleVersion $moduleVersion
+        New-ModuleManifest -Path $manifestPath -ModuleVersion $moduleVersion -RootModule "$moduleName.psm1"
     }
 
     Context "Requiring non-existent modules" {
@@ -73,14 +75,16 @@ Describe "#requires -Modules" -Tags "CI" {
         It "Fails parsing a script that requires module by <Scenario>" -TestCases $testCases {
             param([string]$ModuleRequirement, [string]$Scenario)
 
-            $script = "#requires -Module $ModuleRequirement`n`nWrite-Output 'failed'"
-            { & $script } | Should -Throw -ErrorId 'ParseException'
+            $script = "#requires -Modules $ModuleRequirement`n`nWrite-Output 'failed'"
+            $null = New-Item -Path $scriptPath -Value $script -Force
+
+            { & $scriptPath } | Should -Throw -ErrorId 'ScriptRequiresMissingModules'
         }
     }
 
     Context "Already loaded module" {
         BeforeAll {
-            Import-Module $moduleName
+            Import-Module $modulePath -ErrorAction Stop
             $testCases = @(
                 @{ ModuleRequirement = "'$moduleName'"; Scenario = 'name' }
                 @{ ModuleRequirement = "'$modulePath'"; Scenario = 'path' }
@@ -99,7 +103,7 @@ Describe "#requires -Modules" -Tags "CI" {
             param([string]$ModuleRequirement, [string]$Scenario)
 
             $script = "#requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
-            & $script | Should -BeExactly $success
+            [scriptblock]::Create($script).Invoke() | Should -BeExactly $success
         }
     }
 
@@ -126,7 +130,10 @@ Describe "#requires -Modules" -Tags "CI" {
             param([string]$ModuleRequirement, [string]$Scenario)
 
             $script = "#requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
-            & $script | Should -BeExactly $success
+
+            $null = New-Item -Path $scriptPath -Value $script -Force
+
+            & $scriptPath | Should -BeExactly $success
         }
     }
 
@@ -144,7 +151,10 @@ Describe "#requires -Modules" -Tags "CI" {
             param([string]$ModuleRequirement, [string]$Scenario)
 
             $script = "#requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
-            & $script | Should -BeExactly $success
+
+            $null = New-Item -Path $scriptPath -Value $script -Force
+
+            & $scriptPath | Should -BeExactly $success
         }
     }
 }
