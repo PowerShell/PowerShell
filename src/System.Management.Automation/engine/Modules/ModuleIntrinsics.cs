@@ -682,18 +682,11 @@ namespace System.Management.Automation
         /// a required path.
         /// </summary>
         /// <param name="modulePath">The path of the module whose path to check.</param>
-        /// <param name="requiredPath">The path of the required module.</param>
+        /// <param name="requiredPath">The path of the required module. Only normalized absolute paths will work for this.</param>
         /// <returns>True if the module path matches the required path, false otherwise.</returns>
-        /// <remarks>
-        /// Because a module specification can contain a relative path, we are
-        /// forced to pass a base path and context down to this point.
-        /// A better solution would be to consolidate the module specification
-        /// codepath to force path normalization in the caller.
-        /// </remarks>
         internal static bool MatchesModulePath(string modulePath, string requiredPath)
         {
             Dbg.Assert(requiredPath != null, $"Caller to verify that {nameof(requiredPath)} is not null");
-            Dbg.Assert(Path.IsPathFullyQualified(requiredPath), $"Caller to verify that {nameof(requiredPath)} is an absolute path.");
 
             if (modulePath == null)
             {

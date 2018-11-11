@@ -36,34 +36,30 @@ Describe "Remove-Module custom module with FullyQualifiedName" -Tags "Feature" {
         $modulePath = "$TestDrive/Modules/$moduleName"
         $moduleName = 'Banana'
         $moduleVersion = '1.0'
-        New-ModuleManifest -Path "$modulePath/$moduleName.psd1" -ModuleVersion $moduleVersion
+        $manifestPath = Join-Path $modulePath "$moduleName.psd1"
+        New-ModuleManifest -Path $manifestPath -ModuleVersion $moduleVersion
 
-        $relativePathTestCases = @(
-            @{ Location = $TestDrive; ModPath = ".\Modules\$moduleName" }
-            @{ Location = "$TestDrive/Modules"; ModPath = ".\$moduleName" }
-            @{ Location = "$TestDrive/Modules"; ModPath = ".\$moduleName/$moduleName.psd1" }
-            @{ Location = "$TestDrive/Modules/$moduleName"; ModPath = "./" }
-            @{ Location = "$TestDrive/Modules/$moduleName"; ModPath = "./$moduleName.psd1" }
-            @{ Location = "$TestDrive/Modules/$moduleName/Subanana"; ModPath = "../$moduleName.psd1" }
-            @{ Location = "$TestDrive/Modules/$moduleName/Subanana"; ModPath = "../" }
+        $testCases = @(
+            @{ ModPath = "$TestDrive\Modules/$moduleName" }
+            @{ ModPath = "$TestDrive/Modules\$moduleName/$moduleName.psd1" }
         )
 
         BeforeEach {
             Get-Module $moduleName | Remove-Module
         }
 
-        It "Removes a module with fully qualified name with path <ModPath>" -TestCases $relativePathTestCases {
-            param([string]$Location, [string]$ModPath)
+        It "Removes a module with fully qualified name with path <ModPath>" -TestCases $testCases -Pending {
+            param([string]$ModPath)
 
-            $m = Import-Module -Path $modulePath -PassThru
+            $m = Import-Module $modulePath -PassThru
 
             $m.Name | Should -Be $moduleName
             $m.Version | Should -Be $moduleVersion
-            $m.Path | Should -Be $modulePath
+            $m.Path | Should -Be $manifestPath
 
-            Remove-Module -FullyQualifiedName @{ ModuleName = $ModPath; RequiredVersion = $moduleVersion }
+            Remove-Module -FullyQualifiedName @{ ModuleName = $ModPath; RequiredVersion = $moduleVersion } -ErrorAction Stop
 
-            Get-Module $moduleName | Should -HaveCount 0
+            Get-Module $moduleName | Should -HaveCount 0 -Because "The module should have been removed by its path"
         }
     }
 }

@@ -27,8 +27,8 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             # The current behaviour in PowerShell is that version gets ignored when using Get-Module -FullyQualifiedName with a path
             @{ ModPath = "$TestDrive/Modules\Foo"; Name = 'Foo'; Version = '2.0'; Count = 2 }
             @{ ModPath = "$TestDrive\Modules/Foo\1.1/Foo.psd1"; Name = 'Foo'; Version = '1.1'; Count = 1 }
-            @{ ModPath = "$TestDrive\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0.1'; Count = 1 }
-            @{ ModPath = "$TestDrive\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0.1'; Count = 1 }
+            @{ ModPath = "$TestDrive\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0'; Count = 1 }
+            @{ ModPath = "$TestDrive\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0'; Count = 1 }
         )
 
         $env:PSModulePath = Join-Path $testdrive "Modules"
