@@ -1,19 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Management.Automation.Tracing;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Remoting.Server;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.IO.Pipes;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting.Server;
+using System.Management.Automation.Tracing;
+using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
-using System.Diagnostics.CodeAnalysis;
 using Dbg = System.Diagnostics.Debug;
 
 namespace System.Management.Automation.Remoting
@@ -26,11 +26,10 @@ namespace System.Management.Automation.Remoting
         #region Strings
 
         internal const string DefaultAppDomainName = "DefaultAppDomain";
-#if UNIX
         internal const string NamedPipeNamePrefix = "PSHost.";
+#if UNIX
         internal const string NamedPipeNamePrefixSearch = "CoreFxPipe_PSHost*";
 #else
-        internal const string NamedPipeNamePrefix = "PSHost.";
         internal const string NamedPipeNamePrefixSearch = "PSHost*";
 #endif
 
