@@ -38,15 +38,18 @@ Describe "Requires tests" -Tags "CI" {
     }
 }
 
-Describe "#requires -Modules" {
+Describe "#requires -Modules" -Tags "CI" {
     BeforeAll {
         $success = 'SUCCESS'
+
+        $sep = [System.IO.Path]::DirectorySeparatorChar
+        $altSep = [System.IO.Path]::AltDirectorySeparatorChar
 
         $moduleName = 'Banana'
         $moduleVersion = '0.12.1'
         $moduleDirPath = Join-Path $TestDrive 'modules'
-        $modulePath = Join-Path $moduleDirPath $moduleName
-        $manifestPath = Join-Path $modulePath "$moduleName.psd1"
+        $modulePath = "$moduleDirPath${sep}$moduleName"
+        $manifestPath = "$modulePath${altSep}$moduleName.psd1"
         $psm1Path = Join-Path $modulePath "$moduleName.psm1"
         New-Item -Path $psm1Path -Value "function Test-RequiredModule { '$success' }"
         New-ModuleManifest -Path $manifestPath -ModuleVersion $moduleVersion
