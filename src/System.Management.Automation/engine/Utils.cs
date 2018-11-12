@@ -902,39 +902,6 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static void NativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
-        {
-            IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-            NativeMethods.WIN32_FIND_DATA findData;
-
-            files = new List<string>();
-            directories = new List<string>();
-
-            IntPtr findHandle;
-
-            findHandle = NativeMethods.FindFirstFile(directory + "\\*", out findData);
-            if (findHandle != INVALID_HANDLE_VALUE)
-            {
-                do
-                {
-                    if ((findData.dwFileAttributes & NativeMethods.FileAttributes.Directory) != 0)
-                    {
-                        if ((!String.Equals(".", findData.cFileName, StringComparison.OrdinalIgnoreCase)) &&
-                            (!String.Equals("..", findData.cFileName, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            directories.Add(directory + "\\" + findData.cFileName);
-                        }
-                    }
-                    else
-                    {
-                        files.Add(directory + "\\" + findData.cFileName);
-                    }
-                }
-                while (NativeMethods.FindNextFile(findHandle, out findData));
-                NativeMethods.FindClose(findHandle);
-            }
-        }
-
         internal static bool IsReservedDeviceName(string destinationPath)
         {
 #if !UNIX

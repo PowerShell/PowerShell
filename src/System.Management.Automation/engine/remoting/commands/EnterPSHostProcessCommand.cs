@@ -530,14 +530,9 @@ namespace Microsoft.PowerShell.Commands
             var procAppDomainInfo = new List<PSHostProcessInfo>();
 
             // Get all named pipe 'files' on local machine.
-            List<string> namedPipes;
-#if REMOVEME
-            List<string> directories;
-            Utils.NativeEnumerateDirectory(NamedPipePath, out directories, out namedPipes);
-#endif
-            namedPipes = new List<string>();
+            List<string> namedPipes = new List<string>();
             var namedPipeDirectory = new DirectoryInfo(NamedPipePath);
-            foreach(var pipeFileInfo in namedPipeDirectory.EnumerateFiles(NamedPipeUtils.NamedPipeNamePrefixSearch))
+            foreach (var pipeFileInfo in namedPipeDirectory.EnumerateFiles(NamedPipeUtils.NamedPipeNamePrefixSearch))
             {
                 namedPipes.Add(Path.Combine(pipeFileInfo.DirectoryName, pipeFileInfo.Name));
             }

@@ -457,7 +457,7 @@ namespace System.Management.Automation.Remoting
             if (namespaceName == null) { throw new PSArgumentNullException("namespaceName"); }
             if (coreName == null) { throw new PSArgumentNullException("coreName"); }
 
-#if REMOVEME
+#if !UNIX
             string fullPipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;
 
             // Create optional security attributes based on provided PipeSecurity.
@@ -1035,9 +1035,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Members
 
-#if REMOVEME
         private volatile bool _connecting;
-#endif
 
         #endregion
 
@@ -1079,9 +1077,6 @@ namespace System.Management.Automation.Remoting
             }
 
             _pipeName = pipeName;
-#if REMOVEME
-            _pipeName = @"\\.\pipe\" + pipeName;
-#endif
 
             // Defer creating the .Net NamedPipeClientStream object until we connect.
             // _clientPipeStream == null.
@@ -1117,9 +1112,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void AbortConnect()
         {
-#if REMOVEME
             _connecting = false;
-#endif
         }
 
         #endregion
@@ -1128,88 +1121,35 @@ namespace System.Management.Automation.Remoting
 
         protected override NamedPipeClientStream DoConnect(int timeout)
         {
-#if REMOVEME
             // Repeatedly attempt connection to pipe until timeout expires.
             int startTime = Environment.TickCount;
             int elapsedTime = 0;
             _connecting = true;
 
+            NamedPipeClientStream namedPipeClientStream = new NamedPipeClientStream(
+                serverName: ".",
+                pipeName: _pipeName,
+                direction: PipeDirection.InOut,
+                options: PipeOptions.Asynchronous);
+
+            namedPipeClientStream.Connect();
+
             do
             {
-                // Wait in 100 mSec increments.
-                if (!NamedPipeNative.WaitNamedPipe(_pipeName, 100))
+                if (!namedPipeClientStream.IsConnected)
                 {
+                    Thread.Sleep(100);
                     elapsedTime = unchecked(Environment.TickCount - startTime);
                     continue;
                 }
 
                 _connecting = false;
-                return OpenNamedPipe();
+                return namedPipeClientStream;
             } while (_connecting && (elapsedTime < timeout));
 
             _connecting = false;
 
             throw new TimeoutException(RemotingErrorIdStrings.ConnectNamedPipeTimeout);
-#else
-            NamedPipeClientStream namedPipeClientStream = new NamedPipeClientStream(
-                serverName: ".",
-                pipeName: _pipeName,
-                direction: PipeDirection.InOut,
-                options: PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
-            try
-            {
-                namedPipeClientStream.Connect(timeout);
-            }
-            catch (TimeoutException)
-            {
-                throw new TimeoutException(RemotingErrorIdStrings.ConnectNamedPipeTimeout);
-            }
-            return namedPipeClientStream;
-#endif
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Helper method to open a named pipe via native APIs and return in
-        /// .Net NamedPipeClientStream wrapper object.
-        /// </summary>
-        private NamedPipeClientStream OpenNamedPipe()
-        {
-            // Create pipe flags.
-            uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
-
-            // Get handle to pipe.
-            SafePipeHandle pipeHandle = NamedPipeNative.CreateFile(
-                _pipeName,
-                NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
-                0,
-                IntPtr.Zero,
-                NamedPipeNative.OPEN_EXISTING,
-                pipeFlags,
-                IntPtr.Zero);
-
-            int lastError = Marshal.GetLastWin32Error();
-            if (pipeHandle.IsInvalid)
-            {
-                throw new System.ComponentModel.Win32Exception(lastError);
-            }
-
-            try
-            {
-                return new NamedPipeClientStream(
-                    PipeDirection.InOut,
-                    true,                   // IsAsync
-                    true,                   // IsConnected
-                    pipeHandle);
-            }
-            catch (Exception)
-            {
-                pipeHandle.Dispose();
-                throw;
-            }
         }
 
         #endregion
