@@ -22,7 +22,20 @@ namespace System.Management.Automation.Unicode.Tests
 
             span2.Fold();
             Assert.Equal(foldedString, span2.ToString());
+            Assert.Equal(0, foldedString.AsSpan().SequenceCompareTo(span2));
             Assert.Equal(foldedSpan1.ToString(), span2.ToString());
+            Assert.Equal(0, foldedSpan1.SequenceCompareTo(span2));
+        }
+
+        [Theory]
+        [InlineData("Hello", "hello")]
+        [InlineData("Turkish I \u0131s TROUBL\u0130NG!", "turkish i \u0131s troubl\u0130ng!")]
+        public static void Fold_String_And_Span(string s, string target)
+        {
+            Assert.Equal(0, String.CompareOrdinal(s.Fold(), target));
+
+            Assert.Equal(0, String.CompareOrdinal(s.AsSpan().Fold().ToString(), target));
+            Assert.Equal(0, s.AsSpan().Fold().SequenceCompareTo(target.AsSpan()));
         }
     }
 }
