@@ -476,18 +476,6 @@ foo
             $process.StandardOutput.ReadToEnd() | Should -Be "PS> "
             EnsureChildHasExited $process
         }
-
-        It "Redirected input and sending backspace" {
-            # This test is for issue #8193, in which a backspace at the beginning of a command crashes powershell
-            $si = NewProcessStartInfo "-noprofile -nologo" -RedirectStdIn
-            $process = RunPowerShell $si
-            $process.StandardInput.Write("`$function:prompt = { 'PS> ' }`n")
-            $null = $process.StandardOutput.ReadLine()
-            $process.StandardInput.Write("`bexit`n")
-            $process.StandardOutput.ReadLine() | Should -Be "PS> exit"
-            $process.StandardInput.Close()
-            EnsureChildHasExited $process
-        }
     }
 
     Context "Exception handling" {
