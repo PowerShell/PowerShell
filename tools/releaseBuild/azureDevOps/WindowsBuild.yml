@@ -1,0 +1,47 @@
+resources:
+- repo: self
+  clean: true
+phases:
+
+- phase: Phase_1
+  displayName: 1 - Build
+
+  condition: succeeded()
+  queue:
+    name: PowerShell
+    demands: 
+   - Agent.Image
+   - USERNAME -equals issblder
+   - DotNetFramework
+
+  steps:
+  - task: PkgESSetupBuild@10
+    displayName: 'Initialize build'
+    inputs:
+      useDfs: false
+      productName: PowerShellCore
+      branchVersion: true
+      disableWorkspace: true
+      disableBuildTools: true
+      disableNugetPack: true
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - powershell: |
+        tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTag)
+    displayName: 'Set ReleaseTag Varibale'
+
+  - powershell: |
+       Write-Verbose -Verbose "$(Architecture)"
+       
+       if ('$(Architecture)' -eq 'fxdependent' -and '$(ReleaseTag)' -match '6.0.*')
+       {
+           $vstsCommandString = "vso[task.setvariable variable=SkipFxDependent]true"    
+       }
+       else
+       {
+           $vstsCommandString = "vso[task.setvariable variable=SkipFxDependent]false"
+       }
+       
+       Write-Verbose -Message "$vstsCommandString " -Verbose
+       Write-Host -Object "##$vstsCommandString"
+    displayName: 'Skip FxDependent for PS v6.0.*'
