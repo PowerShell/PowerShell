@@ -97,9 +97,12 @@ namespace System.Management.Automation.Remoting
                 appDomainName = DefaultAppDomainName;
             }
 #if UNIX
-            // there is a limit of 104 characters in total including the temp path to the named pipe file
-            // on non-Windows systems, so we'll exclude the StartTime
+            // The starttime is there to prevent another process easily guessing the pipe name
+            // and squatting on it.
+            // There is a limit of 104 characters in total including the temp path to the named pipe file
+            // on non-Windows systems, so we'll convert the starttime to hex and just take the first 4 characters.
             return NamedPipeNamePrefix +
+                proc.StartTime.ToFileTime().ToString("X4").Substring(1,4) + "." +
                 proc.Id.ToString(CultureInfo.InvariantCulture) + "." +
                 CleanAppDomainNameForPipeName(appDomainName) + "." +
                 proc.ProcessName;
