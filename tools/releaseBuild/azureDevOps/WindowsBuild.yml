@@ -83,6 +83,5 @@ phases:
        }
        exit 0
     displayName: 'remove old images [Port to PSRelease]'
-    failOnStandardError: false
     continueOnError: true
     condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
