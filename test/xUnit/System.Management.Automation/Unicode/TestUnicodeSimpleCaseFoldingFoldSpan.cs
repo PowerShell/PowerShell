@@ -4,7 +4,7 @@
 using System.Management.Automation.Unicode;
 using Xunit;
 
-namespace System.Management.Automation.Unicode.Tests
+namespace PSTests.Parallel.System.Management.Automation.Unicode
 {
     public class FoldStringAndSpanTests
     {
