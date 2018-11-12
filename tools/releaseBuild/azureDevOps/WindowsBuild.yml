@@ -9,9 +9,6 @@ phases:
   condition: succeeded()
   queue:
     name: PowerShell
-    demands: 
-   - USERNAME -equals issblder
-   - DotNetFramework
 
   steps:
   - task: PkgESSetupBuild@10
