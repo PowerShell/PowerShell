@@ -544,17 +544,18 @@ namespace Microsoft.PowerShell.Commands
                 if (startIndex > -1)
                 {
                     // This is a PowerShell named pipe.  Parse the process Id, AppDomain name, and process name.
+                    // UNIX is limited to a 104 character named pipe file path so we must exclude starttime to shorten the length.
 #if !UNIX
-                    int pStartTimeIndex = namedPipe.IndexOf(".", startIndex, StringComparison.OrdinalIgnoreCase);
+                    int pStartTimeIndex = namedPipe.IndexOf('.', startIndex);
                     if (pStartTimeIndex > -1)
                     {
 #else
                         int pStartTimeIndex = 0;
 #endif
-                        int pIdIndex = namedPipe.IndexOf(".", pStartTimeIndex + 1, StringComparison.OrdinalIgnoreCase);
+                        int pIdIndex = namedPipe.IndexOf('.', pStartTimeIndex + 1);
                         if (pIdIndex > -1)
                         {
-                            int pAppDomainIndex = namedPipe.IndexOf(".", pIdIndex + 1, StringComparison.OrdinalIgnoreCase);
+                            int pAppDomainIndex = namedPipe.IndexOf('.', pIdIndex + 1);
                             if (pAppDomainIndex > -1)
                             {
                                 string idString = namedPipe.Substring(pIdIndex + 1, (pAppDomainIndex - pIdIndex - 1));
@@ -578,7 +579,7 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                 }
 
-                                int pNameIndex = namedPipe.IndexOf(".", pAppDomainIndex + 1, StringComparison.OrdinalIgnoreCase);
+                                int pNameIndex = namedPipe.IndexOf('.', pAppDomainIndex + 1);
                                 if (pNameIndex > -1)
                                 {
                                     string appDomainName = namedPipe.Substring(pAppDomainIndex + 1, (pNameIndex - pAppDomainIndex - 1));

@@ -100,15 +100,15 @@ namespace System.Management.Automation.Remoting
             // there is a limit of 104 characters in total including the temp path to the named pipe file
             // on non-Windows systems, so we'll exclude the StartTime
             return NamedPipeNamePrefix +
-                    proc.Id.ToString(CultureInfo.InvariantCulture) + "." +
-                    CleanAppDomainNameForPipeName(appDomainName) + "." +
-                    proc.ProcessName;
+                proc.Id.ToString(CultureInfo.InvariantCulture) + "." +
+                CleanAppDomainNameForPipeName(appDomainName) + "." +
+                proc.ProcessName;
 #else
             return NamedPipeNamePrefix +
-                    proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture) + "." +
-                    proc.Id.ToString(CultureInfo.InvariantCulture) + "." +
-                    CleanAppDomainNameForPipeName(appDomainName) + "." +
-                    proc.ProcessName;
+                proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture) + "." +
+                proc.Id.ToString(CultureInfo.InvariantCulture) + "." +
+                CleanAppDomainNameForPipeName(appDomainName) + "." +
+                proc.ProcessName;
 #endif
         }
 
@@ -611,11 +611,9 @@ namespace System.Management.Automation.Remoting
 
         internal static CommonSecurityDescriptor GetServerPipeSecurity()
         {
-            if (!Platform.IsWindows)
-            {
-                return null;
-            }
-
+#if UNIX
+            return null;
+#else
             // Built-in Admin SID
             SecurityIdentifier adminSID = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
             DiscretionaryAcl dacl = new DiscretionaryAcl(false, false, 1);
@@ -644,6 +642,7 @@ namespace System.Management.Automation.Remoting
             }
 
             return securityDesc;
+#endif
         }
 
         /// <summary>
