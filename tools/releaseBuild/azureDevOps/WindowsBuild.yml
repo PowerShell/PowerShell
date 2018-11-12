@@ -1,16 +1,22 @@
 resources:
 - repo: self
   clean: true
-phases:
 
-- phase: Phase_1
-  displayName: 1 - Build
+jobs:
 
+- job: BuildJob
+  displayName: Build
   condition: succeeded()
-  queue:
-    name: PowerShell
+  pool: PowerShell
+  strategy:
+    matrix:
+      x64-release:
+        BuildConfiguration: release
+        BuildPlatform: any cpu
+        Architecture: x64
 
   steps:
+
   - task: PkgESSetupBuild@10
     displayName: 'Initialize build'
     inputs:
@@ -83,5 +89,24 @@ phases:
        }
        exit 0
     displayName: 'remove old images [Port to PSRelease]'
+    continueOnError: true
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       Write-verbose "--docker info---" -verbose
+       docker info
+       Write-verbose "--docker image ls---" -verbose
+       docker image ls
+       Write-verbose "--docker container ls --all---" -verbose
+       docker container ls --all
+       Write-verbose "--git branch ---" -verbose
+       git branch
+       exit 0
+    displayName: 'Get Environment'
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+      tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTag) -Name win-$(Architecture)-symbols
+    displayName: 'Build Windows Universal - $(Architecture) Symbols zip'
     continueOnError: true
     condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
