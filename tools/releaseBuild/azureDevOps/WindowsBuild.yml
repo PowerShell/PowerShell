@@ -41,3 +41,48 @@ phases:
        Write-Verbose -Message "$vstsCommandString " -Verbose
        Write-Host -Object "##$vstsCommandString"
     displayName: 'Skip FxDependent for PS v6.0.*'
+
+  - powershell: |
+       Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
+       New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination $(Build.SourcesDirectory)/src/Modules
+       
+       if(-not (Test-Path "$(Build.SourcesDirectory)/src/Modules/nuget.config"))
+       {
+           throw "nuget.config is not created"
+       }
+    displayName: 'Add nuget.config for AzDevOps feed for PSGallery modules '
+    condition: ne(Variables['SkipFxDependent'], 'true')
+
+  - powershell: |
+       $version = $env:ReleaseTag.Substring(1)
+       $vstsCommandString = "vso[task.setvariable variable=Version]$version"
+       Write-Host "sending " + $vstsCommandString
+       Write-Host "##$vstsCommandString"
+    displayName: 'Set Version Varibale'
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       docker container prune --force
+       docker container ls --all --format '{{ json .ID }}' | ConvertFrom-Json | %{docker container rm --force --volumes $_}
+    displayName: 'remove all containers  [Port to PSRelease]'
+    continueOnError: true
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       docker image ls --format '{{ json .}}'|ConvertFrom-Json|% {
+           if($_.tag -eq '<none>')
+           {
+               $formatString = 'yyyy-MM-dd HH:mm:ss zz00'
+               $createdAtString = $_.CreatedAt.substring(0,$_.CreatedAt.Length -4)
+               $createdAt = [DateTime]::ParseExact($createdAtString, $formatString,[System.Globalization.CultureInfo]::InvariantCulture)
+               if($createdAt -lt (Get-Date).adddays(-1))
+               {
+                    docker image rm $_.ID
+               }
+           }
+       }
+       exit 0
+    displayName: 'remove old images [Port to PSRelease]'
+    failOnStandardError: false
+    continueOnError: true
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
