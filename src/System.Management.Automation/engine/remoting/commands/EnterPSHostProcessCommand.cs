@@ -531,17 +531,17 @@ namespace Microsoft.PowerShell.Commands
 
             // Get all named pipe 'files' on local machine.
             List<string> namedPipes;
-#if !UNIX
+#if REMOVEME
             List<string> directories;
             Utils.NativeEnumerateDirectory(NamedPipePath, out directories, out namedPipes);
-#else
+#endif
             namedPipes = new List<string>();
             var namedPipeDirectory = new DirectoryInfo(NamedPipePath);
             foreach(var pipeFileInfo in namedPipeDirectory.EnumerateFiles(NamedPipeUtils.NamedPipeNamePrefixSearch))
             {
                 namedPipes.Add(Path.Combine(pipeFileInfo.DirectoryName, pipeFileInfo.Name));
             }
-#endif
+
             // Collect all PowerShell named pipes for given process Ids.
             foreach (string namedPipe in namedPipes)
             {

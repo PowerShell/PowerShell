@@ -457,7 +457,7 @@ namespace System.Management.Automation.Remoting
             if (namespaceName == null) { throw new PSArgumentNullException("namespaceName"); }
             if (coreName == null) { throw new PSArgumentNullException("coreName"); }
 
-#if !UNIX
+#if REMOVEME
             string fullPipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;
 
             // Create optional security attributes based on provided PipeSecurity.
@@ -1035,7 +1035,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Members
 
-#if !UNIX
+#if REMOVEME
         private volatile bool _connecting;
 #endif
 
@@ -1078,9 +1078,8 @@ namespace System.Management.Automation.Remoting
                 throw new PSArgumentNullException("pipeName");
             }
 
-#if UNIX
             _pipeName = pipeName;
-#else
+#if REMOVEME
             _pipeName = @"\\.\pipe\" + pipeName;
 #endif
 
@@ -1118,7 +1117,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void AbortConnect()
         {
-#if !UNIX
+#if REMOVEME
             _connecting = false;
 #endif
         }
@@ -1129,7 +1128,7 @@ namespace System.Management.Automation.Remoting
 
         protected override NamedPipeClientStream DoConnect(int timeout)
         {
-#if !UNIX
+#if REMOVEME
             // Repeatedly attempt connection to pipe until timeout expires.
             int startTime = Environment.TickCount;
             int elapsedTime = 0;
