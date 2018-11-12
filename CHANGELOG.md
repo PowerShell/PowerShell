@@ -1,5 +1,25 @@
 # Changelog
 
+## v6.0.5 - 2018-11-13
+
+### Engine updates and fixes
+
+- Fix issue with logging the null character in `ScriptBlock` logging (Internal 5605)
+
+### General cmdlet updates and fixes
+
+- Use `ZipFile` and `ExtractToDirectory` APIs to extract zip file (Internal 4802)
+
+### Build and Packaging Improvements
+
+- Update `SignType` in signing.xml (Internal 5721)
+- Port changes to pull PowerShell Gallery modules from Modules `csproj` (Internal 5713)
+- Port macOS Release build changes changes from GitHub (#8189, #8188, #8185)
+- Fix script path for `PowerShellPackageVsts.ps1` (#8189)
+- Workaround for accessing `AzDevOps` Artifacts (#8188)
+- Bump various packages to latest patch version (Internal 5675)
+- Update PowerShell SDK NuGet various metadata description (Internal 4527, 4510, 4505)
+
 ## v6.0.4 - 2018-08-10
 
 ### Build and Packaging Improvements

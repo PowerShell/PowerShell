@@ -21,8 +21,6 @@ class CommitNode {
 
         if ($subject -match "\(#(\d+)\)") {
             $this.PullRequest = $Matches[1]
-        } else {
-            throw "PR number is missing from the commit subject. (commit: $hash)"
         }
     }
 }
