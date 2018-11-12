@@ -10,7 +10,6 @@ phases:
   queue:
     name: PowerShell
     demands: 
-   - Agent.Image
    - USERNAME -equals issblder
    - DotNetFramework
 
