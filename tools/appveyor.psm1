@@ -369,7 +369,6 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    $SequentialXUnitTestResultsFile = "$pwd\SequentialXUnitTestResults.xml"
     $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
@@ -443,19 +442,13 @@ function Invoke-AppVeyorTest
         Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
         Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
-        Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+        Start-PSxUnit -ParallelTestResultsFile $ParallelXUnitTestResultsFile
         Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-        Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFile
         Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
 
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsAdminFile
-        @(
-            $SequentialXUnitTestResultsFile,
-            $ParallelXUnitTestResultsFile
-        ) | ForEach-Object {
-            Test-XUnitTestResults -TestResultsFile $_
-        }
+        Test-XUnitTestResults -TestResultsFile $ParallelXUnitTestResultsFile
 
         # Run tests with specified experimental features enabled
         foreach ($entry in $ExperimentalFeatureTests.GetEnumerator()) {
