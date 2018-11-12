@@ -32,6 +32,8 @@ namespace System.Management.Automation.Remoting
 #else
         internal const string NamedPipeNamePrefixSearch = "PSHost*";
 #endif
+        // On non-Windows, .NET named pipes are limited to up to 104 characters
+        internal const int MaxNamedPipeNameSize = 104;
 
         #endregion
 
@@ -96,23 +98,25 @@ namespace System.Management.Automation.Remoting
             {
                 appDomainName = DefaultAppDomainName;
             }
+
+            System.Text.StringBuilder pipeNameBuilder = new System.Text.StringBuilder(MaxNamedPipeNameSize);
+            pipeNameBuilder.Append(NamedPipeNamePrefix);
 #if UNIX
             // The starttime is there to prevent another process easily guessing the pipe name
             // and squatting on it.
             // There is a limit of 104 characters in total including the temp path to the named pipe file
             // on non-Windows systems, so we'll convert the starttime to hex and just take the first 4 characters.
-            return NamedPipeNamePrefix +
-                proc.StartTime.ToFileTime().ToString("X4").Substring(1,4) + "." +
-                proc.Id.ToString(CultureInfo.InvariantCulture) + "." +
-                CleanAppDomainNameForPipeName(appDomainName) + "." +
-                proc.ProcessName;
+            pipeNameBuilder.Append(proc.StartTime.ToFileTime().ToString("X4").Substring(1,4));
 #else
-            return NamedPipeNamePrefix +
-                proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture) + "." +
-                proc.Id.ToString(CultureInfo.InvariantCulture) + "." +
-                CleanAppDomainNameForPipeName(appDomainName) + "." +
-                proc.ProcessName;
+            pipeNameBuilder.Append(proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture));
 #endif
+            pipeNameBuilder.Append('.');
+            pipeNameBuilder.Append(proc.Id.ToString(CultureInfo.InvariantCulture));
+            pipeNameBuilder.Append('.');
+            pipeNameBuilder.Append(CleanAppDomainNameForPipeName(appDomainName));
+            pipeNameBuilder.Append('.');
+            pipeNameBuilder.Append(proc.ProcessName);
+            return pipeNameBuilder.ToString();
         }
 
         private static string CleanAppDomainNameForPipeName(string appDomainName)

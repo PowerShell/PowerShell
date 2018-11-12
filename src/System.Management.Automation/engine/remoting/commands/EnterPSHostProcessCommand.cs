@@ -536,6 +536,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 namedPipes.Add(Path.Combine(pipeFileInfo.DirectoryName, pipeFileInfo.Name));
             }
+            int currentPid = System.Diagnostics.Process.GetCurrentProcess().Id;
 
             // Collect all PowerShell named pipes for given process Ids.
             foreach (string namedPipe in namedPipes)
@@ -579,23 +580,37 @@ namespace Microsoft.PowerShell.Commands
                                     string appDomainName = namedPipe.Substring(pAppDomainIndex + 1, (pNameIndex - pAppDomainIndex - 1));
                                     string pName = namedPipe.Substring(pNameIndex + 1);
 
-                                    // If SMA.dll did not exit cleanly, there could be left over pipes
-                                    // so we check if the process exists and matches the name, otherwise remove.
-                                    var process = System.Diagnostics.Process.GetProcessById(id);
-                                    if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
-                                    {
-                                        procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName));
-                                    }
-                                    else
+                                    Process process = null;
+
+                                    // Only return instances that aren't ourselves since you cannot enter yourself
+                                    if (id != currentPid)
                                     {
                                         try
                                         {
-                                            var pipeFile = new FileInfo(namedPipe);
-                                            pipeFile.Delete();
+                                            process = System.Diagnostics.Process.GetProcessById(id);
                                         }
                                         catch (Exception)
                                         {
-                                            // best effort
+                                            // Do nothing if the process no longer exists
+                                        }
+
+                                        if (process == null)
+                                        {
+                                            try
+                                            {
+                                                // If the process is gone, try removing the PSHost named pipe
+                                                var pipeFile = new FileInfo(namedPipe);
+                                                pipeFile.Delete();
+                                            }
+                                            catch (Exception)
+                                            {
+                                                // best effort to cleanup
+                                            }
+                                        }
+                                        else if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
+                                        {
+                                            // only add if the process name matches
+                                            procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName));
                                         }
                                     }
                                 }
@@ -686,7 +701,7 @@ namespace Microsoft.PowerShell.Commands
             MainWindowTitle = String.Empty;
             try
             {
-                var proc = System.Diagnostics.Process.GetProcessById(processId);
+                var proc = Process.GetProcessById(processId);
                 MainWindowTitle = proc.MainWindowTitle ?? string.Empty;
             }
             catch (ArgumentException) { }
