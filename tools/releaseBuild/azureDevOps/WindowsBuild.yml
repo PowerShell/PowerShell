@@ -14,6 +14,22 @@ jobs:
         BuildConfiguration: release
         BuildPlatform: any cpu
         Architecture: x64
+      x86-release:
+        BuildConfiguration: release
+        BuildPlatform: any cpu
+        Architecture: x86
+      arm-release:
+        BuildConfiguration: release
+        BuildPlatform: any cpu
+        Architecture: arm
+      arm64-release:
+        BuildConfiguration: release
+        BuildPlatform: any cpu
+        Architecture: arm64
+      fxdependent-release:
+        BuildConfiguration: release
+        BuildPlatform: any cpu
+        Architecture: fxdependent
 
   steps:
 
