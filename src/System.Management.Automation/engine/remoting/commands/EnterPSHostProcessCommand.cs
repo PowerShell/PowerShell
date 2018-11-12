@@ -585,8 +585,25 @@ namespace Microsoft.PowerShell.Commands
                                     string appDomainName = namedPipe.Substring(pAppDomainIndex + 1, (pNameIndex - pAppDomainIndex - 1));
                                     string pName = namedPipe.Substring(pNameIndex + 1);
 
-                                    procAppDomainInfo.Add(
-                                        new PSHostProcessInfo(pName, id, appDomainName));
+                                    // If SMA.dll did not exit cleanly, there could be left over pipes
+                                    // so we check if the process exists and matches the name, otherwise remove.
+                                    var process = System.Diagnostics.Process.GetProcessById(id);
+                                    if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
+                                    {
+                                        procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName));
+                                    }
+                                    else
+                                    {
+                                        try
+                                        {
+                                            var pipeFile = new FileInfo(namedPipe);
+                                            pipeFile.Delete();
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // best effort
+                                        }
+                                    }
                                 }
                             }
                         }
