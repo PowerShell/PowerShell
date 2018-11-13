@@ -769,7 +769,7 @@ namespace System.Management.Automation
             string normalizedPath = ModuleCmdletBase.GetResolvedPath(moduleName, executionContext)?.TrimEnd(StringLiterals.DefaultPathSeparator);
 
             // ModuleCmdletBase.GetResolvePath will return null in the unlikely event that it failed.
-            // If it does, we return the fully qualified path we return the fully qualified path generated before.
+            // If it does, we return the fully qualified path generated before.
             return normalizedPath ?? Path.GetFullPath(moduleName);
         }
 
