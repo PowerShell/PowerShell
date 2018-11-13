@@ -467,14 +467,6 @@ namespace System.Management.Automation
             get { return DebuggerStopped; }
         }
 
-        /// <summary>
-        /// Gets the object that triggered the current breakpoint.
-        /// </summary>
-        protected object TriggerObject
-        {
-            get; private set;
-        }
-
         #endregion
 
         #region Protected Methods
@@ -930,6 +922,11 @@ namespace System.Management.Automation
                 return _isLocalSession.Value;
             }
         }
+
+        /// <summary>
+        /// Gets the object that triggered the current breakpoint.
+        /// </summary>
+        private object TriggerObject{ get; set; }
 
         #endregion properties
 
