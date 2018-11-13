@@ -672,7 +672,7 @@ namespace System.Management.Automation
         /// Checks whether a given module path is the same as
         /// a required path.
         /// </summary>
-        /// <param name="modulePath">The path of the module whose path to check. This must be the path to the module file (.psd1, .psm1, .dll, etc.)</param>
+        /// <param name="modulePath">The path of the module whose path to check. This must be the path to the module file (.psd1, .psm1, .dll, etc).</param>
         /// <param name="requiredPath">The path of the required module. This may be the module directory path or the file path. Only normalized absolute paths will work for this.</param>
         /// <returns>True if the module path matches the required path, false otherwise.</returns>
         internal static bool MatchesModulePath(string modulePath, string requiredPath)
