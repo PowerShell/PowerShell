@@ -1958,8 +1958,12 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (ModuleSpecification requiredModule in requiredModules)
                     {
+                        // The required module name is essentially raw user input.
+                        // We must process it so paths work.
+                        ModuleSpecification normalizedRequiredModuleSpec = requiredModule?.WithNormalizedName(Context, moduleBase);
+
                         ErrorRecord error = null;
-                        PSModuleInfo module = LoadRequiredModule(fakeManifestInfo, requiredModule, moduleManifestPath,
+                        PSModuleInfo module = LoadRequiredModule(fakeManifestInfo, normalizedRequiredModuleSpec, moduleManifestPath,
                             manifestProcessingFlags, containedErrors, out error);
                         if (module == null && error != null)
                         {
@@ -4059,10 +4063,17 @@ namespace Microsoft.PowerShell.Commands
                 tempResult = powerShell.Invoke<PSModuleInfo>();
             }
 
-            // Check if the available module is of the correct version and GUID
+            // Check if the available module is of the correct version and GUID. The name is already checked.
+            // GH #8204: The required name here may be the full path, while the module name may be just the module,
+            //           so comparing them may fail incorrectly.
             foreach (var module in tempResult)
             {
-                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(module, requiredModule))
+                if (ModuleIntrinsics.IsModuleMatchingConstraints(
+                    module,
+                    guid: requiredModule.Guid,
+                    requiredVersion: requiredModule.RequiredVersion,
+                    minimumVersion: requiredModule.Version,
+                    maximumVersion: requiredModule.MaximumVersion == null ? null : GetMaximumVersion(requiredModule.MaximumVersion)))
                 {
                     result.Add(module);
                 }
@@ -4541,6 +4552,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Check if a path is rooted or "relative rooted".
+        /// </summary>
+        /// <param name="filePath">The file path to check.</param>
+        /// <returns>True if the path is rooted, false otherwise.</returns>
         internal static bool IsRooted(string filePath)
         {
             return (Path.IsPathRooted(filePath) ||
