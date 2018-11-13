@@ -754,7 +754,7 @@ namespace System.Management.Automation
     // On *nix, Path.AltDirectorySeparatorChar is '/', but PowerShell also supports '\\' as a dir separator
     const char altDirSeparatorChar = '\\';
 #else
-    const char altDirSeparatorChar = Path.AltDirectorySeparatorChar;
+    char altDirSeparatorChar = Path.AltDirectorySeparatorChar;
 #endif
             // Standardize directory separators
             moduleName = moduleName.Replace(altDirSeparatorChar, Path.DirectorySeparatorChar);
