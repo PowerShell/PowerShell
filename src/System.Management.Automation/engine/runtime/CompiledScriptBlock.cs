@@ -1363,14 +1363,13 @@ namespace System.Management.Automation
                 }
             }
 
-            if(!wasEncoded)
+            if (!wasEncoded)
             {
                 // The logging mechanism(s) cannot handle null and rendering may not be able to handle
                 // null as we have the string defined as a null terminated string in the manifest.
-                // So, replace null characters with the Unicode `SYMBOL FOR NULL` 
+                // So, replace null characters with the Unicode `SYMBOL FOR NULL`
                 // We don't just remove the characters to preserve the fact that a null character was there.
-
-                textToLog = textToLog.Replace('\u0000','\u2400');
+                textToLog = textToLog.Replace('\u0000', '\u2400');
             }
 
             if (scriptBlock._scriptBlockData.HasSuspiciousContent)
