@@ -126,3 +126,41 @@ jobs:
     displayName: 'Build Windows Universal - $(Architecture) Symbols zip'
     continueOnError: true
     condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       if ("$env:Architecture" -eq 'fxdependent') 
+       {
+           $(Build.SourcesDirectory)\tools\releaseBuild\updateSigning.ps1 -SkipPwshExe
+       }
+       else
+       {
+           $(Build.SourcesDirectory)\tools\releaseBuild\updateSigning.ps1
+       }
+    displayName: 'Update Signing Xml'
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       $vstsCommandString = "vso[task.setvariable variable=Symbols]${env:Symbols_$(Architecture)}"
+       Write-Host "sending " + $vstsCommandString
+       Write-Host "##$vstsCommandString"
+    displayName: 'Get Symbols path [Update build.json]'
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign $(Architecture)'
+    inputs:
+       signConfigXml: '$(Build.SourcesDirectory)\tools\releaseBuild\signing.xml'
+       inPathRoot: '$(Symbols)'
+       outPathRoot: '$(Symbols)\signed'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'), ne(variables['SkipFxDependent'], 'true'))
+  
+  - powershell: |
+       New-Item -ItemType Directory -Path $(Symbols)\signed -Force
+    displayName: 'Create empty signed folder'
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'Manual'), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+       tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTag) -Name win-$(Architecture)-package -BuildPath $(Symbols) -SignedFilesPath $(Symbols)\signed
+    displayName: 'Build Windows Universal - $(Architecture) Package'
+    continueOnError: true
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
