@@ -490,6 +490,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// This is used to indicate a special loopback remote session used for JEA restrictions.
+        /// </summary>
+        internal bool IsConfiguredLoopBack
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Debugger
         /// </summary>
         public override Debugger Debugger

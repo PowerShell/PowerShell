@@ -1365,7 +1365,14 @@ namespace Microsoft.PowerShell
                 }
 
                 var c = unchecked((char)inC);
-                if (!NoPrompt) Console.Out.Write(c);
+                if (c == '\b' && !NoPrompt && sb.Length == 0)
+                {
+                    continue;
+                }
+                if (!NoPrompt)
+                {
+                    Console.Out.Write(c);
+                }
 
                 if (c == '\r')
                 {
