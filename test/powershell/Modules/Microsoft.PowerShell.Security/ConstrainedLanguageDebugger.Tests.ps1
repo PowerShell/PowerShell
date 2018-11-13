@@ -354,7 +354,7 @@ try
             $debuggerStopHandler.FunctionVariableResult | Should Be $null
 
             # Expected Rename-Item function:\PrivateFn fails with error
-            $debuggerStopHandler.RenameItemResult.FullyQualifiedErrorId | Should Be "InvalidOperation,Microsoft.PowerShell.Commands.RenameItemCommand"
+            $debuggerStopHandler.RenameItemResult.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.RenameItemCommand"
         }
     }
 
