@@ -114,7 +114,7 @@ namespace System.Management.Automation
 
     // Defines the visitor that analyzes a script to determine its exports
     // and dependencies.
-    internal class ExportVisitor : AstVisitor2
+    internal class ExportVisitor : AstVisitor3
     {
         internal ExportVisitor(bool forCompletion)
         {

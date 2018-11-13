@@ -173,8 +173,33 @@ namespace System.Management.Automation.Language
         object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst);
     }
 
+    /// <summary/>
+    public interface ICustomAstVisitor3 : ICustomAstVisitor2
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="abstractPropertyMemberAst"></param>
+        /// <returns></returns>
+        object VisitAbstractPropertyMember(AbstractPropertyMemberAst abstractPropertyMemberAst);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="abstractFunctionMemberAst"></param>
+        /// <returns></returns>
+        object VisitAbstractFunctionMember(AbstractFunctionMemberAst abstractFunctionMemberAst);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="abstractFunctionDefinitionAst"></param>
+        /// <returns></returns>
+        object VisitAbstractFunctionDefinition(AbstractFunctionDefinitionAst abstractFunctionDefinitionAst);
+    }
+
 #if DEBUG
-    class CheckAllParentsSet : AstVisitor2
+    class CheckAllParentsSet : AstVisitor3
     {
         internal CheckAllParentsSet(Ast root)
         {
@@ -256,7 +281,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Check if <see cref="TypeConstraintAst"/> contains <see cref="TypeBuilder "/> type
     /// </summary>
-    class CheckTypeBuilder : AstVisitor2
+    class CheckTypeBuilder : AstVisitor3
     {
         public override AstVisitAction VisitTypeConstraint(TypeConstraintAst ast)
         {
@@ -273,7 +298,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Searches an AST, using the evaluation function provided by either of the constructors
     /// </summary>
-    internal class AstSearcher : AstVisitor2
+    internal class AstSearcher : AstVisitor3
     {
         #region External interface
 

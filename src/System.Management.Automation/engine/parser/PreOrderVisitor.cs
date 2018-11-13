@@ -188,6 +188,22 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
+    /// AstVisitor for even newer Ast node types
+    /// </summary>
+    public abstract class AstVisitor3 : AstVisitor2
+    {
+        /// <summary/>
+        public virtual AstVisitAction VisitAbstractPropertyMember(AbstractPropertyMemberAst abstractPropertyMemberAst) { return AstVisitAction.Continue; }
+
+        /// <summary/>
+        public virtual AstVisitAction VisitAbstractFunctionMember(AbstractFunctionMemberAst abstractFunctionMemberAst) { return AstVisitAction.Continue; }
+
+        /// <summary/>
+        public virtual AstVisitAction VisitAbstractFunctionDefinition(AbstractFunctionDefinitionAst abstractFunctionDefinitionAst) { return AstVisitAction.Continue; }
+    }
+
+
+    /// <summary>
     /// Implement this interface when you implement <see cref="AstVisitor"/> or <see cref="AstVisitor2"/> when
     /// you want to do something after possibly visiting the children of the ast.
     /// </summary>

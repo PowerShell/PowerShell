@@ -270,7 +270,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class SymbolResolver : AstVisitor2, IAstPostVisitHandler
+    internal class SymbolResolver : AstVisitor3, IAstPostVisitHandler
     {
         private readonly SymbolResolvePostActionVisitor _symbolResolvePostActionVisitor;
         internal readonly SymbolTable _symbolTable;

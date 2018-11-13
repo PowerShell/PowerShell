@@ -2058,6 +2058,9 @@ namespace System.Management.Automation.Language
                 case TokenKind.Class:
                     statement = ClassDefinitionRule(attributes, token);
                     break;
+                case TokenKind.Interface:
+                    statement = InterfaceDefinitionRule(attributes, token);
+                    break;
                 case TokenKind.Enum:
                     statement = EnumDefinitionRule(attributes, token);
                     break;
@@ -4215,6 +4218,143 @@ namespace System.Management.Automation.Language
             }
         }
 
+        private StatementAst InterfaceDefinitionRule(List<AttributeBaseAst> customAttributes, Token interfaceToken)
+        {
+            //G  interface-statement:
+            //G      'interface'   new-lines:opt   interface-name   new-lines:opt  '{'  new-lines:opt interface-member-list:opt  '}'
+            //G      'interface'   new-lines:opt   interface-name   new-lines:opt  ':'  base-interface-list  '{'  new-lines:opt  interface-member-list:opt  '}'
+            //G
+            //G  interface-name:
+            //G      simple-name
+            //G
+            //G  base-interface-list:
+            //G      new-lines:opt   interface-name   new-lines:opt
+            //G      base-interface-list  ','   new-lines:opt   interface-name   new-lines:opt
+            //G
+            //G  interface-member-list:
+            //G      interface-member  new-lines:opt
+            //G      interface-member-list   interface-member
+
+            SkipNewlines();
+            Token interfaceNameToken;
+            var name = SimpleNameRule(out interfaceNameToken);
+            if (name == null)
+            {
+                ReportIncompleteInput(After(interfaceToken),
+                    nameof(ParserStrings.MissingNameAfterKeyword),
+                    ParserStrings.MissingNameAfterKeyword,
+                    interfaceToken.Text);
+                return new ErrorStatementAst(interfaceToken.Extent);
+            }
+
+            // Class name token represents a name of type, not a member. Highlight it as a type name.
+            interfaceNameToken.TokenFlags &= ~TokenFlags.MemberName;
+            interfaceNameToken.TokenFlags |= TokenFlags.TypeName;
+
+            SkipNewlines();
+
+            // handle inheritance constraint.
+            var oldTokenizerMode = _tokenizer.Mode;
+            var inheritedInterfacesList = new List<TypeConstraintAst>();
+            try
+            {
+                SetTokenizerMode(TokenizerMode.Signature);
+                Token colonToken = PeekToken();
+                if (colonToken.Kind == TokenKind.Colon)
+                {
+                    this.SkipToken();
+                    SkipNewlines();
+                    ITypeName inheritedInterface;
+                    Token unused;
+                    Token commaToken = null;
+                    while (true)
+                    {
+                        inheritedInterface = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                        if (inheritedInterface == null)
+                        {
+                            ReportIncompleteInput(After(ExtentFromFirstOf(commaToken, colonToken)),
+                                nameof(ParserStrings.TypeNameExpected),
+                                ParserStrings.TypeNameExpected);
+                            break;
+                        }
+
+                        inheritedInterfacesList.Add(new TypeConstraintAst(inheritedInterface.Extent, inheritedInterface));
+                        SkipNewlines();
+                        commaToken = this.PeekToken();
+                        if (commaToken.Kind == TokenKind.Comma)
+                        {
+                            this.SkipToken();
+                            this.SkipNewlines();
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                Token lCurly = NextToken();
+                if (lCurly.Kind != TokenKind.LCurly)
+                {
+                    // ErrorRecovery: If there is no opening curly, assume it hasn't been entered yet and don't consume anything.
+
+                    UngetToken(lCurly);
+                    var lastElement = (inheritedInterfacesList.Count > 0) ? (Ast)inheritedInterfacesList[inheritedInterfacesList.Count - 1] : name;
+                    ReportIncompleteInput(After(lastElement),
+                        nameof(ParserStrings.MissingTypeBody),
+                        ParserStrings.MissingTypeBody,
+                        interfaceToken.Kind.Text());
+                    return new ErrorStatementAst(ExtentOf(interfaceToken, lastElement), inheritedInterfacesList);
+                }
+
+                IScriptExtent lastExtent = lCurly.Extent;
+                List<Ast> nestedAsts = null;
+                MemberAst member;
+                List<MemberAst> members = new List<MemberAst>();
+                List<Ast> astsOnError = null;
+
+                while ((member = InterfaceMemberRule(name.Value, out astsOnError)) != null || astsOnError != null)
+                {
+                    if (member != null)
+                    {
+                        members.Add(member);
+                        lastExtent = member.Extent;
+                    }
+                    if (astsOnError != null && astsOnError.Count > 0)
+                    {
+                        if (nestedAsts == null)
+                        {
+                            nestedAsts = new List<Ast>();
+                        }
+                        nestedAsts.AddRange(astsOnError);
+                        lastExtent = astsOnError.Last().Extent;
+                    }
+                }
+
+                var rCurly = NextToken();
+                if (rCurly.Kind != TokenKind.RCurly)
+                {
+                    UngetToken(rCurly);
+                    ReportIncompleteInput(After(lCurly),
+                        rCurly.Extent,
+                        nameof(ParserStrings.MissingEndCurlyBrace),
+                        ParserStrings.MissingEndCurlyBrace);
+                }
+                else
+                {
+                    lastExtent = rCurly.Extent;
+                }
+
+                var startExtent = interfaceToken.Extent;
+                var extent = ExtentOf(startExtent, lastExtent);
+                return new TypeDefinitionAst(extent, name.Value, null, members, TypeAttributes.Interface, inheritedInterfacesList);
+            }
+            finally
+            {
+                SetTokenizerMode(oldTokenizerMode);
+            }
+        }
+
         private MemberAst ClassMemberRule(string className, out List<Ast> astsOnError)
         {
             //G  class-member:
@@ -4465,6 +4605,164 @@ namespace System.Management.Automation.Language
                     ParserStrings.IncompleteMemberDefinition);
                 RecordErrorAsts(attributeList, ref astsOnError);
                 RecordErrorAsts(typeConstraint, ref astsOnError);
+            }
+
+            return null;
+        }
+
+        private AbstractMemberAst InterfaceMemberRule(string interfaceName, out List<Ast> astsOnError)
+        {
+            //G  interface-member:
+            //G      abstract-method-member
+            //G      abstract-property-member
+            //G
+            //G  abstract-method-member:
+            //G      function-declaration
+            //G
+            //G  abstract-property-member:
+            //G      variable
+
+            IScriptExtent startExtent = null;
+            var attributeList = new List<AttributeAst>();
+            TypeConstraintAst typeConstraint = null;
+            bool scanningAttributes = true;
+            Token token = null;
+            object lastAttribute = null;
+            astsOnError = null;
+#if SUPPORT_PUBLIC_PRIVATE
+// Public/private not yet supported
+            Token publicToken = null;
+            Token privateToken = null;
+#endif
+
+            while (scanningAttributes)
+            {
+                SkipNewlines();
+
+                var attribute = AttributeRule();
+                if (attribute != null)
+                {
+                    lastAttribute = attribute;
+                    if (startExtent == null)
+                    {
+                        startExtent = attribute.Extent;
+                    }
+
+                    var attributeAst = attribute as AttributeAst;
+                    if (attributeAst != null)
+                    {
+                        attributeList.Add(attributeAst);
+                    }
+                    else if (typeConstraint == null)
+                    {
+                        typeConstraint = (TypeConstraintAst)attribute;
+                    }
+                    else
+                    {
+                        ReportError(attribute.Extent, nameof(ParserStrings.TooManyTypes), ParserStrings.TooManyTypes);
+                    }
+                    continue;
+                }
+
+                token = PeekToken();
+                if (startExtent == null)
+                {
+                    startExtent = token.Extent;
+                }
+
+                switch (token.Kind)
+                {
+#if SUPPORT_PUBLIC_PRIVATE
+                case TokenKind.Public:
+                    if (publicToken != null)
+                    {
+                        ReportError(token.Extent,
+                            nameof(ParserStrings.DuplicateQualifier),
+                            ParserStrings.DuplicateQualifier,
+                            token.Text);
+                    }
+                    if (privateToken != null)
+                    {
+                        ReportError(token.Extent,
+                            nameof(ParserStrings.ModifiersCannotBeCombined),
+                            ParserStrings.ModifiersCannotBeCombined,
+                            privateToken.Text,
+                            token.Text);
+                    }
+                    publicToken = token;
+                    SkipToken();
+                    break;
+
+                case TokenKind.Private:
+                    if (privateToken != null)
+                    {
+                        ReportError(token.Extent,
+                            nameof(ParserStrings.DuplicateQualifier),
+                            ParserStrings.DuplicateQualifier,
+                            token.Text);
+                    }
+                    if (publicToken != null)
+                    {
+                        ReportError(token.Extent,
+                            nameof(ParserStrings.ModifiersCannotBeCombined),
+                            ParserStrings.ModifiersCannotBeCombined,
+                            publicToken.Text,
+                            token.Text);
+                    }
+                    privateToken = token;
+                    SkipToken();
+                    break;
+#endif
+                    default:
+                        scanningAttributes = false;
+                        break;
+                }
+            }
+
+            if (token.Kind == TokenKind.Variable)
+            {
+                SkipToken();
+
+                var varToken = token as VariableToken;
+                Token terminatorToken = PeekToken();
+                if (terminatorToken.Kind != TokenKind.NewLine && terminatorToken.Kind != TokenKind.Semi && terminatorToken.Kind != TokenKind.RCurly)
+                {
+                    ReportIncompleteInput(After(varToken),
+                        nameof(ParserStrings.MissingPropertyTerminator),
+                        ParserStrings.MissingPropertyTerminator);
+                }
+                SkipNewlinesAndSemicolons();
+
+                if (!String.IsNullOrEmpty(varToken.Name))
+                {
+                    return new AbstractPropertyMemberAst(startExtent, varToken.Name, typeConstraint);
+                }
+                else
+                {
+                    // Incompleted input like:
+                    // class foo { [type]$ }
+                    // Error message already emitted by tokenizer ScanVariable
+
+                    RecordErrorAsts(typeConstraint, ref astsOnError);
+                    return null;
+                }
+            }
+
+            if (token.Kind == TokenKind.Identifier)
+            {
+                SkipToken();
+                var abstractFunctionDefinition = AbstractMethodDeclarationRule(token, interfaceName) as AbstractFunctionDefinitionAst;
+
+                if (abstractFunctionDefinition == null)
+                {
+                    // TODO: better error recovery - shouldn't assume this was the last class member
+                    Diagnostics.Assert(ErrorList.Count > 0, "Should be an error if we don't have a function");
+                    SyncOnError(false, TokenKind.RCurly);
+                    RecordErrorAsts(typeConstraint, ref astsOnError);
+                    return null;
+                }
+                
+                return new AbstractFunctionMemberAst(ExtentOf(startExtent, abstractFunctionDefinition), abstractFunctionDefinition, typeConstraint);
             }
 
             return null;
@@ -5071,6 +5369,36 @@ namespace System.Management.Automation.Language
             {
                 SetTokenizerMode(oldTokenizerMode);
             }
+        }
+
+        private StatementAst AbstractMethodDeclarationRule(Token functionNameToken, string typeName)
+        {
+            //G  method-statement:
+            //G      new-lines:opt   function-name   function-parameter-declaration
+            //G
+            //G  function-name:
+            //G      command-argument
+
+            var functionName = functionNameToken.Text;
+            List<ParameterAst> parameters;
+            Token lParen = this.PeekToken();
+
+            IScriptExtent endErrorStatement = null;
+            Token rParen = null;
+
+            if (lParen.Kind == TokenKind.LParen)
+            {
+                parameters = this.FunctionParameterDeclarationRule(out endErrorStatement, out rParen);
+            }
+            else
+            {
+                this.ReportIncompleteInput(After(functionNameToken),
+                    nameof(ParserStrings.MissingMethodParameterList),
+                    ParserStrings.MissingMethodParameterList);
+                parameters = new List<ParameterAst>();
+            }
+
+            return new AbstractFunctionDefinitionAst(ExtentOf(functionNameToken, rParen), functionName, parameters);
         }
 
         private StatementAst FunctionDeclarationRule(Token functionToken)

@@ -14,7 +14,7 @@ using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
 {
-    internal class SemanticChecks : AstVisitor2, IAstPostVisitHandler
+    internal class SemanticChecks : AstVisitor3, IAstPostVisitHandler
     {
         private readonly Parser _parser;
         private static readonly IsConstantValueVisitor s_isConstantAttributeArgVisitor = new IsConstantValueVisitor
@@ -1412,7 +1412,7 @@ namespace System.Management.Automation.Language
                 // that's why '|=' instead of just '='.
                 scriptBlockAst.HadErrors |= _parser.ErrorList.Count > 0;
             }
-            else if (ast is MemberAst)
+            else if (ast is MemberAst && !(ast is AbstractMemberAst))
             {
                 _memberScopeStack.Pop();
             }

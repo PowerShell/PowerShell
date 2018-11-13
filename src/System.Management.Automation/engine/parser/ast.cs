@@ -2936,6 +2936,21 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
+    /// An abstract base class for type members.
+    /// </summary>
+    public abstract class AbstractMemberAst : MemberAst
+    {
+        /// <summary>
+        /// Initialize the common fields of a type member.
+        /// </summary>
+        /// <param name="extent">The extent of the type member.</param>
+        protected AbstractMemberAst(IScriptExtent extent) : base(extent)
+        {
+        }
+    }
+
+
+    /// <summary>
     /// The attributes for a property.
     /// </summary>
     [Flags]
@@ -3120,6 +3135,87 @@ namespace System.Management.Automation.Language
 
         #endregion Visitors
     }
+
+    /// <summary>
+    /// The ast for a property.
+    /// </summary>
+    public class AbstractPropertyMemberAst : AbstractMemberAst
+    {
+        /// <summary>
+        /// Construct a property member.
+        /// </summary>
+        /// <param name="extent">The extent of the property starting with any custom attributes.</param>
+        /// <param name="name">The name of the property.</param>
+        /// <param name="propertyType">The ast for the type of the property - may be null.</param>
+        public AbstractPropertyMemberAst(IScriptExtent extent, string name, TypeConstraintAst propertyType)
+            : base(extent)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw PSTraceSource.NewArgumentNullException("name");
+            }
+
+            Name = name;
+            if (propertyType != null)
+            {
+                PropertyType = propertyType;
+                SetParent(PropertyType);
+            }
+        }
+
+        /// <summary>
+        /// The name of the property.
+        /// </summary>
+        public override string Name { get; }
+
+        /// <summary>
+        /// The ast for the type of the property.  This property may be null if no type was specified.
+        /// </summary>
+        public TypeConstraintAst PropertyType { get; private set; }
+
+        /// <summary>
+        /// Copy the PropertyMemberAst.
+        /// </summary>
+        public override Ast Copy()
+        {
+            var newPropertyType = CopyElement(PropertyType);
+            return new AbstractPropertyMemberAst(Extent, Name, newPropertyType);
+        }
+
+        internal override string GetTooltip()
+        {
+            var type = PropertyType != null ? PropertyType.TypeName.FullName : "object";
+            return type + " " + Name;
+        }
+
+        #region Visitors
+
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            var visitor3 = visitor as ICustomAstVisitor3;
+            return visitor3 != null ? visitor3.VisitAbstractPropertyMember(this) : null;
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            var action = AstVisitAction.Continue;
+            var visitor3 = visitor as AstVisitor3;
+            if (visitor3 != null)
+            {
+                action = visitor3.VisitAbstractPropertyMember(this);
+                if (action == AstVisitAction.SkipChildren)
+                    return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+
+                if (action == AstVisitAction.Continue && PropertyType != null)
+                    action = PropertyType.InternalVisit(visitor);
+            }
+
+            return visitor.CheckForPostAction(this, action);
+        }
+
+        #endregion Visitors
+    }
+
 
     /// <summary>
     /// Flags for a method.
@@ -3402,6 +3498,131 @@ namespace System.Management.Automation.Language
         }
         #endregion
     }
+
+    /// <summary>
+    /// The ast for a method.
+    /// </summary>
+    public class AbstractFunctionMemberAst : AbstractMemberAst
+    {
+        private static readonly ReadOnlyCollection<ParameterAst> s_emptyParameterList =
+            Utils.EmptyReadOnlyCollection<ParameterAst>();
+
+        private readonly AbstractFunctionDefinitionAst _abstractFunctionDefinitionAst;
+
+        /// <summary>
+        /// Construct a member function.
+        /// </summary>
+        /// <param name="extent">The extent of the method starting from any attributes to the closing curly.</param>
+        /// <param name="abstractFunctionDefinitionAst">The main body of the method.</param>
+        /// <param name="returnType">The return type of the method, may be null.</param>
+        public AbstractFunctionMemberAst(IScriptExtent extent, AbstractFunctionDefinitionAst abstractFunctionDefinitionAst, TypeConstraintAst returnType)
+            : base(extent)
+        {
+            if (returnType != null)
+            {
+                ReturnType = returnType;
+                SetParent(returnType);
+            }
+
+            _abstractFunctionDefinitionAst = abstractFunctionDefinitionAst;
+            SetParent(abstractFunctionDefinitionAst);
+        }
+
+        /// <summary>
+        /// The name of the method.  This property is never null.
+        /// </summary>
+        public override string Name { get { return _abstractFunctionDefinitionAst.Name; } }
+
+        /// <summary>
+        /// The ast representing the return type for the method.  This property may be null if no return type was specified.
+        /// </summary>
+        public TypeConstraintAst ReturnType { get; private set; }
+
+        /// <summary>
+        /// The parameters specified immediately after the function name.  This property is never null.
+        /// </summary>
+        public ReadOnlyCollection<ParameterAst> Parameters
+        {
+            get { return _abstractFunctionDefinitionAst.Parameters ?? s_emptyParameterList; }
+        }
+
+        internal IScriptExtent NameExtent { get { return _abstractFunctionDefinitionAst.NameExtent; } }
+
+        /// <summary>
+        /// Copy a function member ast.
+        /// </summary>
+        public override Ast Copy()
+        {
+            var newDefn = CopyElement(_abstractFunctionDefinitionAst);
+            var newReturnType = CopyElement(ReturnType);
+
+            return new AbstractFunctionMemberAst(Extent, newDefn, newReturnType);
+        }
+
+        internal override string GetTooltip()
+        {
+            var sb = new StringBuilder();
+            sb.Append(IsReturnTypeVoid() ? "void" : ReturnType.TypeName.FullName);
+            sb.Append(' ');
+            sb.Append(Name);
+            sb.Append('(');
+            for (int i = 0; i < Parameters.Count; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append(Parameters[i].GetTooltip());
+            }
+            sb.Append(')');
+            return sb.ToString();
+        }
+
+        #region Visitors
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            var visitor3 = visitor as ICustomAstVisitor3;
+            return visitor3 != null ? visitor3.VisitAbstractFunctionMember(this) : null;
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            var action = AstVisitAction.Continue;
+            var visitor3 = visitor as AstVisitor3;
+            if (visitor3 != null)
+            {
+                action = visitor3.VisitAbstractFunctionMember(this);
+                if (action == AstVisitAction.SkipChildren)
+                    return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+
+                if (action == AstVisitAction.Continue && ReturnType != null)
+                    action = ReturnType.InternalVisit(visitor);
+
+                if (action == AstVisitAction.Continue)
+                    action = _abstractFunctionDefinitionAst.InternalVisit(visitor);
+            }
+
+            return visitor.CheckForPostAction(this, action);
+        }
+
+        #endregion Visitors
+
+        #region Internal helpers
+        internal bool IsReturnTypeVoid()
+        {
+            if (ReturnType == null)
+                return true;
+            var typeName = ReturnType.TypeName as TypeName;
+            return typeName == null ? false : typeName.IsType(typeof(void));
+        }
+
+        internal Type GetReturnType()
+        {
+            return ReturnType == null ? typeof(void) : ReturnType.TypeName.GetReflectionType();
+        }
+        #endregion
+    }
+
 
     internal enum SpecialMemberFunctionType
     {
@@ -3815,6 +4036,159 @@ namespace System.Management.Automation.Language
 
         #endregion IParameterMetadataProvider implementation
     }
+
+    /// <summary>
+    /// The ast that represents a function or filter definition.  The function is always named.
+    /// </summary>
+    public class AbstractFunctionDefinitionAst : StatementAst
+    {
+        /// <summary>
+        /// Construct a function definition.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the function definition, starting with the function or filter keyword, ending at the closing curly.
+        /// </param>
+        /// <param name="name">The name of the function.</param>
+        /// <param name="parameters">
+        /// The parameters specified after the function name.  This does not include parameters specified with a param statement.
+        /// </param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> or <paramref name="name"/> is null, or
+        /// if <paramref name="name"/> is an empty string.
+        /// </exception>
+        public AbstractFunctionDefinitionAst(IScriptExtent extent,
+                                     string name,
+                                     IEnumerable<ParameterAst> parameters)
+            : base(extent)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw PSTraceSource.NewArgumentNullException("name");
+            }
+
+            this.Name = name;
+            if (parameters != null && parameters.Any())
+            {
+                this.Parameters = new ReadOnlyCollection<ParameterAst>(parameters.ToArray());
+                SetParents(Parameters);
+            }
+        }
+
+        internal AbstractFunctionDefinitionAst(IScriptExtent extent,
+                                       Token functionNameToken,
+                                       IEnumerable<ParameterAst> parameters)
+            : this(extent,
+                   (functionNameToken.Kind == TokenKind.Generic) ? ((StringToken)functionNameToken).Value : functionNameToken.Text,
+                   parameters)
+        {
+            NameExtent = functionNameToken.Extent;
+        }
+
+        /// <summary>
+        /// The name of the function or filter.  This property is never null or empty.
+        /// </summary>
+        public string Name { get; private set; }
+
+        /// <summary>
+        /// The parameters specified immediately after the function name, or null if no parameters were specified.
+        /// <para>It is possible that this property may have a value and <see cref="ScriptBlockAst.ParamBlock"/> to also have a
+        /// value.  Normally this is not allowed in a valid script, but in one rare case it is allowed:</para>
+        /// <c>function foo() { param($a) }</c>
+        /// <para>
+        /// In this example, the parameters specified after the function name must be empty or the script is not valid.
+        /// </para>
+        /// </summary>
+        public ReadOnlyCollection<ParameterAst> Parameters { get; private set; }
+
+        internal IScriptExtent NameExtent { get; private set; }
+
+        /// <summary>
+        /// Copy the FunctionDefinitionAst instance
+        /// </summary>
+        public override Ast Copy()
+        {
+            var newParameters = CopyElements(this.Parameters);
+
+            return new AbstractFunctionDefinitionAst(this.Extent, this.Name, newParameters) { NameExtent = this.NameExtent };
+        }
+
+        internal string GetParamTextFromParameterList(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple = null)
+        {
+            Diagnostics.Assert(Parameters != null, "Caller makes sure that Parameters is not null before calling this method.");
+
+            string additionalNewUsingParams = null;
+            IEnumerator<VariableExpressionAst> orderedUsingVars = null;
+            if (usingVariablesTuple != null)
+            {
+                Diagnostics.Assert(
+                    usingVariablesTuple.Item1 != null && usingVariablesTuple.Item1.Count > 0 && !string.IsNullOrEmpty(usingVariablesTuple.Item2),
+                    "Caller makes sure the value passed in is not null or empty.");
+                orderedUsingVars = usingVariablesTuple.Item1.OrderBy(varAst => varAst.Extent.StartOffset).GetEnumerator();
+                additionalNewUsingParams = usingVariablesTuple.Item2;
+            }
+
+            var sb = new StringBuilder("param(");
+            string separator = string.Empty;
+
+            if (additionalNewUsingParams != null)
+            {
+                // Add the $using variable parameters if necessary
+                sb.Append(additionalNewUsingParams);
+                separator = ", ";
+            }
+
+            for (int i = 0; i < Parameters.Count; i++)
+            {
+                var param = Parameters[i];
+                sb.Append(separator);
+                sb.Append(orderedUsingVars != null
+                              ? param.GetParamTextWithDollarUsingHandling(orderedUsingVars)
+                              : param.ToString());
+                separator = ", ";
+            }
+            sb.Append(")");
+            sb.Append(Environment.NewLine);
+
+            return sb.ToString();
+        }
+
+        #region Visitors
+
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            var visitor3 = visitor as ICustomAstVisitor3;
+            return visitor3 != null ? visitor3.VisitAbstractFunctionDefinition(this) : null;
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            var action = AstVisitAction.Continue;
+            var visitor3 = visitor as AstVisitor3;
+            if (visitor3 != null)
+            {
+                action = visitor3.VisitAbstractFunctionDefinition(this);
+                if (action == AstVisitAction.SkipChildren)
+                    return visitor3.CheckForPostAction(this, AstVisitAction.Continue);
+                if (action == AstVisitAction.Continue)
+                {
+                    if (Parameters != null)
+                    {
+                        for (int index = 0; index < Parameters.Count; index++)
+                        {
+                            var param = Parameters[index];
+                            action = param.InternalVisit(visitor3);
+                            if (action != AstVisitAction.Continue)
+                                break;
+                        }
+                    }
+                }
+            }
+            return visitor3.CheckForPostAction(this, action);
+        }
+
+        #endregion Visitors
+    }
+
 
     /// <summary>
     /// The ast that represents an if statement.
