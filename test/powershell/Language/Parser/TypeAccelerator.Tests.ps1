@@ -410,7 +410,7 @@ Describe "Type accelerators" -Tags "CI" {
             }
             else
             {
-                $totalAccelerators = 103
+                $totalAccelerators = 104
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{
