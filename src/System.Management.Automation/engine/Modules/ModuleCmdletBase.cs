@@ -4559,14 +4559,14 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if the path is rooted, false otherwise.</returns>
         internal static bool IsRooted(string filePath)
         {
-            return Path.IsPathRooted(filePath) ||
+            return (Path.IsPathRooted(filePath) ||
                 filePath.StartsWith(@".\", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"./", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"..\", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"../", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~/", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~\", StringComparison.Ordinal) ||
-                filePath.IndexOf(":", StringComparison.Ordinal) >= 0;
+                filePath.IndexOf(":", StringComparison.Ordinal) >= 0);
         }
 
         /// <summary>
