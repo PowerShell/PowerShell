@@ -760,7 +760,10 @@ namespace System.Management.Automation
             }
 
             // Use the PowerShell filesystem provider to fully resolve the path
-            return ModuleCmdletBase.GetResolvedPath(moduleName, executionContext).TrimEnd(Path.DirectorySeparatorChar);
+            // If there is a problem, null could be returned -- so default back to the pre-normalized path
+            string normalizedPath = ModuleCmdletBase.GetResolvedPath(moduleName, executionContext) ?? moduleName;
+                
+            return normalizedPath.TrimEnd(Path.DirectorySeparatorChar);
         }
 
         /// <summary>
