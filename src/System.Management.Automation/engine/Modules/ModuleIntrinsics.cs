@@ -750,8 +750,14 @@ namespace System.Management.Automation
                 return moduleName;
             }
 
+#if UNIX
+    // On *nix, Path.AltDirectorySeparatorChar is '/', but PowerShell also supports '\\' as a dir separator
+    const char altDirSeparatorChar = '\\';
+#else
+    const char altDirSeparatorChar = Path.AltDirectorySeparatorChar;
+#endif
             // Standardize directory separators
-            moduleName = moduleName.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            moduleName = moduleName.Replace(altDirSeparatorChar, Path.DirectorySeparatorChar);
 
             // Path.IsRooted() is deprecated -- see https://github.com/dotnet/corefx/issues/22345
             if (!Path.IsPathFullyQualified(moduleName))
