@@ -755,26 +755,22 @@ namespace System.Management.Automation
                 return moduleName;
             }
 
-#if UNIX
-    // On *nix, Path.AltDirectorySeparatorChar is '/', but PowerShell also supports '\\' as a dir separator
-    const char altDirSeparatorChar = '\\';
-#else
-    char altDirSeparatorChar = Path.AltDirectorySeparatorChar;
-#endif
-            // Standardize directory separators
-            moduleName = moduleName.Replace(altDirSeparatorChar, Path.DirectorySeparatorChar);
+            // Standardize directory separators -- Path.IsPathRooted() will return false for "\path\here" on *nix and for "/path/there" on Windows
+            moduleName = moduleName.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
-            // Path.IsRooted() is deprecated -- see https://github.com/dotnet/corefx/issues/22345
-            if (!Path.IsPathFullyQualified(moduleName))
+            // Note: Path.IsFullyQualified("\default\root") is false on Windows, but Path.IsPathRooted returns true
+            if (!Path.IsPathRooted(moduleName))
             {
                 moduleName = Path.Join(basePath, moduleName);
             }
 
             // Use the PowerShell filesystem provider to fully resolve the path
             // If there is a problem, null could be returned -- so default back to the pre-normalized path
-            string normalizedPath = ModuleCmdletBase.GetResolvedPath(moduleName, executionContext) ?? moduleName;
-                
-            return normalizedPath.TrimEnd(Path.DirectorySeparatorChar);
+            string normalizedPath = ModuleCmdletBase.GetResolvedPath(moduleName, executionContext)?.TrimEnd(StringLiterals.DefaultPathSeparator);
+
+            // ModuleCmdletBase.GetResolvePath will return null in the unlikely event that it failed.
+            // If it does, we return the fully qualified path we return the fully qualified path generated before.
+            return normalizedPath ?? moduleName;
         }
 
         /// <summary>
