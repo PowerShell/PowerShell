@@ -780,8 +780,8 @@ namespace System.Management.Automation
         /// <returns>True if the module name is a path, false otherwise.</returns>
         internal static bool IsModuleNamePath(string moduleName)
         {
-            return moduleName.Contains(Path.DirectorySeparatorChar)
-                || moduleName.Contains(Path.AltDirectorySeparatorChar)
+            return moduleName.Contains(StringLiterals.DefaultPathSeparator)
+                || moduleName.Contains(StringLiterals.AlternatePathSeparator)
                 || moduleName.Equals("..")
                 || moduleName.Equals(".");
         }
