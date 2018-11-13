@@ -770,7 +770,7 @@ namespace System.Management.Automation
 
             // ModuleCmdletBase.GetResolvePath will return null in the unlikely event that it failed.
             // If it does, we return the fully qualified path we return the fully qualified path generated before.
-            return normalizedPath ?? moduleName;
+            return normalizedPath ?? Path.GetFullPath(moduleName);
         }
 
         /// <summary>
