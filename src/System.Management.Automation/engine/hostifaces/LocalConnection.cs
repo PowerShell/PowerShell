@@ -836,12 +836,6 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
 
-                if (s_IPCNamedPipeServer != null)
-                {
-                    s_IPCNamedPipeServer.Dispose();
-                    s_IPCNamedPipeServer = null;
-                }
-
                 AmsiUtils.Uninitialize();
             }
 

@@ -25,7 +25,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Strings
 
-        internal const string DefaultAppDomainName = "DefaultAppDomain";
+        internal const string DefaultAppDomainName = "Default";
         internal const string NamedPipeNamePrefix = "PSHost.";
 #if UNIX
         internal const string NamedPipeNamePrefixSearch = "CoreFxPipe_PSHost*";
@@ -100,22 +100,30 @@ namespace System.Management.Automation.Remoting
             }
 
             System.Text.StringBuilder pipeNameBuilder = new System.Text.StringBuilder(MaxNamedPipeNameSize);
-            pipeNameBuilder.Append(NamedPipeNamePrefix);
+            pipeNameBuilder.Append(NamedPipeNamePrefix)
 #if UNIX
-            // The starttime is there to prevent another process easily guessing the pipe name
-            // and squatting on it.
-            // There is a limit of 104 characters in total including the temp path to the named pipe file
-            // on non-Windows systems, so we'll convert the starttime to hex and just take the first 4 characters.
-            pipeNameBuilder.Append(proc.StartTime.ToFileTime().ToString("X4").Substring(1,4));
+                // The starttime is there to prevent another process easily guessing the pipe name
+                // and squatting on it.
+                // There is a limit of 104 characters in total including the temp path to the named pipe file
+                // on non-Windows systems, so we'll convert the starttime to hex and just take the first 8 characters.
+                .Append(proc.StartTime.ToFileTime().ToString("X8").Substring(1,8))
 #else
-            pipeNameBuilder.Append(proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture));
+                .Append(proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture))
 #endif
-            pipeNameBuilder.Append('.');
-            pipeNameBuilder.Append(proc.Id.ToString(CultureInfo.InvariantCulture));
-            pipeNameBuilder.Append('.');
-            pipeNameBuilder.Append(CleanAppDomainNameForPipeName(appDomainName));
-            pipeNameBuilder.Append('.');
-            pipeNameBuilder.Append(proc.ProcessName);
+                .Append('.')
+                .Append(proc.Id.ToString(CultureInfo.InvariantCulture))
+                .Append('.')
+                .Append(CleanAppDomainNameForPipeName(appDomainName))
+                .Append('.')
+                .Append(proc.ProcessName);
+#if UNIX
+            int charsToTrim = pipeNameBuilder.Length - MaxNamedPipeNameSize;
+            if (charsToTrim > 0)
+            {
+                pipeNameBuilder.Remove(MaxNamedPipeNameSize + 1, charsToTrim);
+            }
+#endif
+
             return pipeNameBuilder.ToString();
         }
 

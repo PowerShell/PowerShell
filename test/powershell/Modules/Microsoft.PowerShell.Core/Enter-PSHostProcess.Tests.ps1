@@ -19,4 +19,14 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
     It "Can enter and exit another PSHost" {
         "enter-pshostprocess -id $($pwsh.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
     }
+
+    It "Can enter using NamedPipeConnectionInfo" {
+        $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwsh.Id)
+        $rs = [runspacefactory]::CreateRunspace($npInfo)
+        $rs.Open()
+        $ps = [powershell]::Create()
+        $ps.Runspace = $rs
+        $ps.AddScript('$pid').Invoke() | Should -Be $pwsh.Id
+        $rs.Dispose()
+    }
 }
