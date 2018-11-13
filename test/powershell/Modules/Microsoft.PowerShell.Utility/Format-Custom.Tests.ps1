@@ -399,16 +399,14 @@ Describe "Format-Custom with expression based EntrySelectedBy in a CustomControl
 
 
 Entry selected by property
-
 Name
 ----
 testing
 
 
+'@ -replace '\r?\n', "^"
 
-'@ -replace '\r?\n', [Environment]::NewLine
-
-        $ps.Invoke() | Should -BeExactly $expectedOutput
+        $ps.Invoke() -replace '\r?\n', "^" | Should -BeExactly $expectedOutput
         $ps.Streams.Error | Should -BeNullOrEmpty
     }
 
@@ -427,16 +425,14 @@ testing
 
 
 Entry selected by ScriptBlock
-
 Name
 ----
 SelectScriptBlock
 
 
+'@ -replace '\r?\n', "^"
 
-'@ -replace '\r?\n', [Environment]::NewLine
-
-        $ps.Invoke() | Should -BeExactly $expectedOutput
+        $ps.Invoke() -replace '\r?\n', "^" | Should -BeExactly $expectedOutput
         $ps.Streams.Error | Should -BeNullOrEmpty
     }
 }
