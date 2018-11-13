@@ -672,8 +672,8 @@ namespace System.Management.Automation
         /// Checks whether a given module path is the same as
         /// a required path.
         /// </summary>
-        /// <param name="modulePath">The path of the module whose path to check.</param>
-        /// <param name="requiredPath">The path of the required module. Only normalized absolute paths will work for this.</param>
+        /// <param name="modulePath">The path of the module whose path to check. This must be the path to the module file (.psd1, .psm1, .dll, etc.)</param>
+        /// <param name="requiredPath">The path of the required module. This may be the module directory path or the file path. Only normalized absolute paths will work for this.</param>
         /// <returns>True if the module path matches the required path, false otherwise.</returns>
         internal static bool MatchesModulePath(string modulePath, string requiredPath)
         {
@@ -690,23 +690,28 @@ namespace System.Management.Automation
             StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
 #endif
 
-            // If the required module just matches the module path, we are done
+            // We must check modulePath (e.g. /path/to/module/module.psd1) against several possibilities:
+            // 1. "/path/to/module"                 - Module dir path
+            // 2. "/path/to/module/module.psd1"     - Module root file path
+            // 3. "/path/to/module/2.1/module.psd1" - Versioned module path
+
+            // If the required module just matches the module path (case 1), we are done
             if (modulePath.Equals(requiredPath, strcmp))
             {
                 return true;
             }
 
-            // Save some allocations here if module path doesn't sit under the required path
+            // At this point we are looking for the module directory (case 2 or 3).
+            // We can some allocations here if module path doesn't sit under the required path
             // (the required path may still refer to some nested module though)
             if (!modulePath.StartsWith(requiredPath, strcmp))
             {
                 return false;
             }
 
-            // Otherwise, the required module may point to the module base directory
             string moduleDirPath = Path.GetDirectoryName(modulePath);
 
-            // The module itself may be in a versioned directory
+            // The module itself may be in a versioned directory (case 3)
             if (Version.TryParse(Path.GetFileName(moduleDirPath), out Version unused))
             {
                 moduleDirPath = Path.GetDirectoryName(moduleDirPath);
