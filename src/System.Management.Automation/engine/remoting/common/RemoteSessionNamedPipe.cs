@@ -126,8 +126,6 @@ namespace System.Management.Automation.Remoting
             return pipeNameBuilder.ToString();
         }
 
-
-
         private static string CleanAppDomainNameForPipeName(string appDomainName)
         {
             // Pipe names cannot contain the ':' character.  Remove unwanted characters.
