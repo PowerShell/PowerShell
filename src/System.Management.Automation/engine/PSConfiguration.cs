@@ -355,7 +355,7 @@ namespace System.Management.Automation.Configuration
             fileLock.EnterReadLock();
             try
             {
-                using (FileStream readerStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var readerStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 using (var streamReader = new StreamReader(readerStream))
                 using (var jsonReader = new JsonTextReader(streamReader))
                 {
