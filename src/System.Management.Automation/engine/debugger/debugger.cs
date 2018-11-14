@@ -467,14 +467,6 @@ namespace System.Management.Automation
             get { return DebuggerStopped; }
         }
 
-        /// <summary>
-        /// Gets the object that triggered the current breakpoint.
-        /// </summary>
-        protected object TriggerObject
-        {
-            get; private set;
-        }
-
         #endregion
 
         #region Protected Methods
@@ -658,19 +650,7 @@ namespace System.Management.Automation
         /// <param name="triggerObject">The object that triggered the breakpoint, if there is one.</param>
         internal virtual void Break(object triggerObject = null)
         {
-            if (!IsDebugHandlerSubscribed &&
-                (UnhandledBreakpointMode == UnhandledBreakpointProcessingMode.Ignore))
-            {
-                // No debugger attached and runspace debugging is not enabled.  Enable runspace debugging here
-                // so that this command is effective.
-                UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
-            }
-
-            // Store the triggerObject so that we can add it to PSDebugContext
-            TriggerObject = triggerObject;
-
-            // Set debugger to step mode so that a break can occur.
-            SetDebuggerStepMode(true);
+            throw new PSNotImplementedException();
         }
 
         /// <summary>
@@ -942,6 +922,11 @@ namespace System.Management.Automation
                 return _isLocalSession.Value;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the object that triggered the current breakpoint.
+        /// </summary>
+        private object TriggerObject { get; set; }
 
         #endregion properties
 
@@ -2451,9 +2436,21 @@ namespace System.Management.Automation
         /// <param name="triggerObject">The object that triggered the breakpoint, if there is one.</param>
         internal override void Break(object triggerObject = null)
         {
-            base.Break(triggerObject);
+            if (!IsDebugHandlerSubscribed &&
+                (UnhandledBreakpointMode == UnhandledBreakpointProcessingMode.Ignore))
+            {
+                // No debugger attached and runspace debugging is not enabled.  Enable runspace debugging here
+                // so that this command is effective.
+                UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
+            }
 
-            // If the debugger is running and we are not in a breakpoint, trigger an immediate break in the current location
+            // Store the triggerObject so that we can add it to PSDebugContext
+            TriggerObject = triggerObject;
+
+            // Set debugger to step mode so that a break can occur.
+            SetDebuggerStepMode(true);
+
+            // If the debugger is enabled and we are not in a breakpoint, trigger an immediate break in the current location
             using (IEnumerator<CallStackFrame> enumerator = GetCallStack().GetEnumerator())
             {
                 if (enumerator.MoveNext() && _context._debuggingMode > 0)
