@@ -1252,14 +1252,9 @@ namespace System.Management.Automation.Help
 
             try
             {
-                using (FileStream archiveFileStream = new FileStream(source, IO.FileMode.Open, FileAccess.Read))
-                using (ZipArchive zipArchive = new ZipArchive(archiveFileStream, ZipArchiveMode.Read, false))
+                using (ZipArchive zipArchive = ZipFile.Open(source, ZipArchiveMode.Read))
                 {
-                    foreach (ZipArchiveEntry entry in zipArchive.Entries)
-                    {
-                        string extractPath = Path.Combine(destination, entry.FullName);
-                        entry.ExtractToFile(extractPath);
-                    }
+                    zipArchive.ExtractToDirectory(destination);
                     sucessfulDecompression = true;
                 }
             }

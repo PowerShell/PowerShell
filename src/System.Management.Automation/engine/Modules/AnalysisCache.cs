@@ -1071,38 +1071,45 @@ namespace System.Management.Automation
             }
 
             string cacheFileName = "ModuleAnalysisCache";
-            if (ExperimentalFeature.EnabledExperimentalFeatureNames.Count > 0)
+            // When multiple copies of pwsh are on the system, they should use their own copy of the cache.
+            // Append hash of `$PSHOME` to cacheFileName.
+            byte[] hashBytes;
+            using (var sha1 = SHA1.Create())
             {
-                // If any experimental features are enabled, we cannot use the default cache file because those
-                // features may expose commands that are not available in a regular powershell session, and we
-                // should not cache those commands in the default cache file because that will result in wrong
-                // auto-completion suggestions when the default cache file is used in another powershell session.
-                //
-                // Here we will generate a cache file name that represent the combination of enabled feature names.
-                // We first convert enabled feature names to lower case, then we sort the feature names, and then
-                // compute an SHA1 hash from the sorted feature names. We will use a short SHA name (first 8 chars)
-                // to generate the cache file name.
-                int index = 0;
-                string[] featureNames = new string[ExperimentalFeature.EnabledExperimentalFeatureNames.Count];
-                foreach (string featureName in ExperimentalFeature.EnabledExperimentalFeatureNames)
-                {
-                    featureNames[index++] = featureName.ToLowerInvariant();
-                }
+                hashBytes = sha1.ComputeHash(Encoding.UTF8.GetBytes(Utils.DefaultPowerShellAppBase));
 
-                Array.Sort(featureNames);
-                string allNames = string.Join(Environment.NewLine, featureNames);
+                string hashString = BitConverter.ToString(hashBytes, startIndex: 0, length: 4).Replace("-", string.Empty);
+                cacheFileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, hashString);
 
-                // Use SHA1 because it's faster.
-                // It's very unlikely to get collision from hashing the combinations of enabled features names.
-                byte[] hashBytes;
-                using (var sha1 = SHA1.Create())
+                if (ExperimentalFeature.EnabledExperimentalFeatureNames.Count > 0)
                 {
+                    // If any experimental features are enabled, we cannot use the default cache file because those
+                    // features may expose commands that are not available in a regular powershell session, and we
+                    // should not cache those commands in the default cache file because that will result in wrong
+                    // auto-completion suggestions when the default cache file is used in another powershell session.
+                    //
+                    // Here we will generate a cache file name that represent the combination of enabled feature names.
+                    // We first convert enabled feature names to lower case, then we sort the feature names, and then
+                    // compute an SHA1 hash from the sorted feature names. We will use a short SHA name (first 8 chars)
+                    // to generate the cache file name.
+                    int index = 0;
+                    string[] featureNames = new string[ExperimentalFeature.EnabledExperimentalFeatureNames.Count];
+                    foreach (string featureName in ExperimentalFeature.EnabledExperimentalFeatureNames)
+                    {
+                        featureNames[index++] = featureName.ToLowerInvariant();
+                    }
+
+                    Array.Sort(featureNames);
+                    string allNames = string.Join(Environment.NewLine, featureNames);
+
+                    // Use SHA1 because it's faster.
+                    // It's very unlikely to get collision from hashing the combinations of enabled features names.
                     hashBytes = sha1.ComputeHash(Encoding.UTF8.GetBytes(allNames));
-                }
 
-                // Use the first 8 characters of the hash string for a short SHA. 
-                string stringVal = BitConverter.ToString(hashBytes, startIndex: 0, length: 4).Replace("-", String.Empty);
-                cacheFileName = String.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, stringVal);
+                    // Use the first 8 characters of the hash string for a short SHA.
+                    hashString = BitConverter.ToString(hashBytes, startIndex: 0, length: 4).Replace("-", string.Empty);
+                    cacheFileName = string.Format(CultureInfo.InvariantCulture, "{0}-{1}", cacheFileName, hashString);
+                }
             }
 
 #if UNIX

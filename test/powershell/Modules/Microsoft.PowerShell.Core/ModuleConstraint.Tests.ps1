@@ -740,6 +740,13 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
         $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
 
         Import-Module $modulePath
+
+        $relativePathCases = @(
+            @{ Location = $TestDrive; ModPath = (Join-Path "." $moduleName) }
+            @{ Location = $TestDrive; ModPath = (Join-Path "." $moduleName "$moduleName.psd1") }
+            @{ Location = (Join-Path $TestDrive $moduleName); ModPath = (Join-Path "." "$moduleName.psd1") }
+            @{ Location = (Join-Path $TestDrive $moduleName); ModPath = (Join-Path ".." $moduleName) }
+        )
     }
 
     AfterAll {
@@ -759,6 +766,26 @@ Describe "Preloaded module specification checking" -Tags "Feature" {
             -MinVersion $ModuleVersion `
             -MaxVersion $MaximumVersion `
             -RequiredVersion $RequiredVersion
+    }
+
+    It "Gets the module when a relative path is used in a module specification: <ModPath>" -TestCases $relativePathCases -Pending {
+        param([string]$Location, [string]$ModPath)
+
+        Push-Location $Location
+        try
+        {
+            $modSpec = New-ModuleSpecification -ModuleName $ModPath -ModuleVersion $actualVersion
+            $mod = Get-Module -FullyQualifiedName $modSpec
+            Assert-ModuleIsCorrect `
+                -Module $mod `
+                -Name $moduleName
+                -Guid $actualGuid
+                -RequiredVersion $actualVersion
+        }
+        finally
+        {
+            Pop-Location
+        }
     }
 
     It "Loads the module by FullyQualifiedName from absolute path when ModuleVersion=<ModuleVersion>, MaximumVersion=<MaximumVersion>, RequiredVersion=<RequiredVersion>, Guid=<Guid>" -TestCases $guidSuccessCases {

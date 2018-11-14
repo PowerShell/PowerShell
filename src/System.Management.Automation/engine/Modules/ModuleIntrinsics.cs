@@ -194,6 +194,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewInvalidOperationException();
 
                 sb.SessionStateInternal = ss.Internal;
+                module.LanguageMode = sb.LanguageMode;
 
                 InvocationInfo invocationInfo = new InvocationInfo(scriptInfo, scriptPosition);
 
@@ -452,7 +453,7 @@ namespace System.Management.Automation
         /// Constraints given as null are ignored.
         /// </summary>
         /// <param name="moduleInfo">The module info object to check.</param>
-        /// <param name="name">The name of the expected module.</param>
+        /// <param name="name">The name or normalized absolute path of the expected module.</param>
         /// <param name="guid">The guid of the expected module.</param>
         /// <param name="requiredVersion">The required version of the expected module.</param>
         /// <param name="minimumVersion">The minimum required version of the expected module.</param>
@@ -482,7 +483,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="matchFailureReason">The reason for the module constraint match failing.</param>
         /// <param name="moduleInfo">The module info object to check.</param>
-        /// <param name="name">The name of the expected module.</param>
+        /// <param name="name">The name or normalized absolute path of the expected module.</param>
         /// <param name="guid">The guid of the expected module.</param>
         /// <param name="requiredVersion">The required version of the expected module.</param>
         /// <param name="minimumVersion">The minimum required version of the expected module.</param>
@@ -507,6 +508,7 @@ namespace System.Management.Automation
             return AreModuleFieldsMatchingConstraints(
                 out matchFailureReason,
                 moduleInfo.Name,
+                moduleInfo.Path,
                 moduleInfo.Guid,
                 moduleInfo.Version,
                 name,
@@ -521,9 +523,10 @@ namespace System.Management.Automation
         /// Check that given module fields meet any given constraints.
         /// </summary>
         /// <param name="moduleName">The name of the module to check.</param>
+        /// <param name="modulePath">The path of the module to check.</param>
         /// <param name="moduleGuid">The GUID of the module to check.</param>
         /// <param name="moduleVersion">The version of the module to check.</param>
-        /// <param name="requiredName">The name the module must have, if any.</param>
+        /// <param name="requiredName">The name or normalized absolute path the module must have, if any.</param>
         /// <param name="requiredGuid">The GUID the module must have, if any.</param>
         /// <param name="requiredVersion">The exact version the module must have, if any.</param>
         /// <param name="minimumRequiredVersion">The minimum version the module may have, if any.</param>
@@ -531,6 +534,7 @@ namespace System.Management.Automation
         /// <returns>True if the module parameters match all given constraints, false otherwise.</returns>
         internal static bool AreModuleFieldsMatchingConstraints(
             string moduleName = null,
+            string modulePath = null,
             Guid? moduleGuid = null,
             Version moduleVersion = null,
             string requiredName = null,
@@ -542,6 +546,7 @@ namespace System.Management.Automation
             return AreModuleFieldsMatchingConstraints(
                 out ModuleMatchFailure matchFailureReason,
                 moduleName,
+                modulePath,
                 moduleGuid,
                 moduleVersion,
                 requiredName,
@@ -556,9 +561,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="matchFailureReason">The reason the match failed, if any.</param>
         /// <param name="moduleName">The name of the module to check.</param>
+        /// <param name="modulePath">The path of the module to check.</param>
         /// <param name="moduleGuid">The GUID of the module to check.</param>
         /// <param name="moduleVersion">The version of the module to check.</param>
-        /// <param name="requiredName">The name the module must have, if any.</param>
+        /// <param name="requiredName">The name or normalized absolute path the module must have, if any.</param>
         /// <param name="requiredGuid">The GUID the module must have, if any.</param>
         /// <param name="requiredVersion">The exact version the module must have, if any.</param>
         /// <param name="minimumRequiredVersion">The minimum version the module may have, if any.</param>
@@ -567,6 +573,7 @@ namespace System.Management.Automation
         internal static bool AreModuleFieldsMatchingConstraints(
             out ModuleMatchFailure matchFailureReason,
             string moduleName,
+            string modulePath,
             Guid? moduleGuid,
             Version moduleVersion,
             string requiredName,
@@ -575,8 +582,11 @@ namespace System.Management.Automation
             Version minimumRequiredVersion,
             Version maximumRequiredVersion)
         {
-            // If a name is required, check it matches
-            if (requiredName != null && !requiredName.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
+            // If a name is required, check that it matches.
+            // A required module name may also be an absolute path, so check it against the given module's path as well.
+            if (requiredName != null
+                && !requiredName.Equals(moduleName, StringComparison.OrdinalIgnoreCase)
+                && !MatchesModulePath(modulePath, requiredName))
             {
                 matchFailureReason = ModuleMatchFailure.Name;
                 return false;
@@ -657,6 +667,124 @@ namespace System.Management.Automation
 
             matchFailureReason = ModuleMatchFailure.None;
             return true;
+        }
+
+        /// <summary>
+        /// Checks whether a given module path is the same as
+        /// a required path.
+        /// </summary>
+        /// <param name="modulePath">The path of the module whose path to check. This must be the path to the module file (.psd1, .psm1, .dll, etc).</param>
+        /// <param name="requiredPath">The path of the required module. This may be the module directory path or the file path. Only normalized absolute paths will work for this.</param>
+        /// <returns>True if the module path matches the required path, false otherwise.</returns>
+        internal static bool MatchesModulePath(string modulePath, string requiredPath)
+        {
+            Dbg.Assert(requiredPath != null, $"Caller to verify that {nameof(requiredPath)} is not null");
+
+            if (modulePath == null)
+            {
+                return false;
+            }
+
+#if UNIX
+            StringComparison strcmp = StringComparison.Ordinal;
+#else
+            StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
+#endif
+
+            // We must check modulePath (e.g. /path/to/module/module.psd1) against several possibilities:
+            // 1. "/path/to/module"                 - Module dir path
+            // 2. "/path/to/module/module.psd1"     - Module root file path
+            // 3. "/path/to/module/2.1/module.psd1" - Versioned module path
+
+            // If the required module just matches the module path (case 1), we are done
+            if (modulePath.Equals(requiredPath, strcmp))
+            {
+                return true;
+            }
+
+            // At this point we are looking for the module directory (case 2 or 3).
+            // We can some allocations here if module path doesn't sit under the required path
+            // (the required path may still refer to some nested module though)
+            if (!modulePath.StartsWith(requiredPath, strcmp))
+            {
+                return false;
+            }
+
+            string moduleDirPath = Path.GetDirectoryName(modulePath);
+
+            // The module itself may be in a versioned directory (case 3)
+            if (Version.TryParse(Path.GetFileName(moduleDirPath), out Version unused))
+            {
+                moduleDirPath = Path.GetDirectoryName(moduleDirPath);
+            }
+
+            return moduleDirPath.Equals(requiredPath, strcmp);
+        }
+
+        /// <summary>
+        /// Takes the name of a module as used in a module specification
+        /// and either returns it as a simple name (if it was a simple name)
+        /// or a fully qualified, PowerShell-resolved path.
+        /// </summary>
+        /// <param name="moduleName">The name or path of the module from the specification.</param>
+        /// <param name="basePath">The path to base relative paths off.</param>
+        /// <param name="executionContext">The current execution context.</param>
+        /// <returns>
+        /// The simple module name if the given one was simple,
+        /// otherwise a fully resolved, absolute path to the module.
+        /// </returns>
+        /// <remarks>
+        /// 2018-11-09 rjmholt:
+        /// There are several, possibly inconsistent, path handling mechanisms
+        /// in the module cmdlets. After looking through all of them and seeing
+        /// they all make some assumptions about their caller I wrote this method.
+        /// Hopefully we can find a standard path resolution API to settle on.
+        /// </remarks>
+        internal static string NormalizeModuleName(
+            string moduleName,
+            string basePath,
+            ExecutionContext executionContext)
+        {
+            if (moduleName == null)
+            {
+                return null;
+            }
+
+            // Check whether the module is a path -- if not, it is a simple name and we just return it.
+            if (!IsModuleNamePath(moduleName))
+            {
+                return moduleName;
+            }
+
+            // Standardize directory separators -- Path.IsPathRooted() will return false for "\path\here" on *nix and for "/path/there" on Windows
+            moduleName = moduleName.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+
+            // Note: Path.IsFullyQualified("\default\root") is false on Windows, but Path.IsPathRooted returns true
+            if (!Path.IsPathRooted(moduleName))
+            {
+                moduleName = Path.Join(basePath, moduleName);
+            }
+
+            // Use the PowerShell filesystem provider to fully resolve the path
+            // If there is a problem, null could be returned -- so default back to the pre-normalized path
+            string normalizedPath = ModuleCmdletBase.GetResolvedPath(moduleName, executionContext)?.TrimEnd(StringLiterals.DefaultPathSeparator);
+
+            // ModuleCmdletBase.GetResolvePath will return null in the unlikely event that it failed.
+            // If it does, we return the fully qualified path generated before.
+            return normalizedPath ?? Path.GetFullPath(moduleName);
+        }
+
+        /// <summary>
+        /// Check if a given module name is a path to a module rather than a simple name.
+        /// </summary>
+        /// <param name="moduleName">The module name to check.</param>
+        /// <returns>True if the module name is a path, false otherwise.</returns>
+        internal static bool IsModuleNamePath(string moduleName)
+        {
+            return moduleName.Contains(StringLiterals.DefaultPathSeparator)
+                || moduleName.Contains(StringLiterals.AlternatePathSeparator)
+                || moduleName.Equals("..")
+                || moduleName.Equals(".");
         }
 
         internal static Version GetManifestModuleVersion(string manifestPath)
@@ -1327,6 +1455,29 @@ namespace System.Management.Automation
             return null;
         }
 
+        /// <summary>
+        /// Removes all functions not belonging to the parent module.
+        /// </summary>
+        /// <param name="module">Parent module</param>
+        static internal void RemoveNestedModuleFunctions(PSModuleInfo module)
+        {
+            var input = module.SessionState?.Internal?.ExportedFunctions;
+            if ((input == null) || (input.Count == 0))
+            { return; }
+
+            List<FunctionInfo> output = new List<FunctionInfo>(input.Count);
+            foreach (var fnInfo in input)
+            {
+                if (module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase))
+                {
+                    output.Add(fnInfo);
+                }
+            }
+
+            input.Clear();
+            input.AddRange(output);
+        }
+
         private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
         {
             Dbg.Assert(input != null, "Caller should verify that input != null");
@@ -1385,6 +1536,12 @@ namespace System.Management.Automation
 
             if (functionPatterns != null)
             {
+                sessionState.FunctionsExported = true;
+                if (PatternContainsWildcard(functionPatterns))
+                {
+                    sessionState.FunctionsExportedWithWildcard = true;
+                }
+
                 IDictionary<string, FunctionInfo> ft = sessionState.ModuleScope.FunctionTable;
 
                 foreach (KeyValuePair<string, FunctionInfo> entry in ft)
@@ -1521,6 +1678,27 @@ namespace System.Management.Automation
 
                 SortAndRemoveDuplicates(sessionState.ExportedAliases, delegate (AliasInfo ci) { return ci.Name; });
             }
+        }
+
+        /// <summary>
+        /// Checks pattern list for wildcard characters.
+        /// </summary>
+        /// <param name="list">Pattern list</param>
+        /// <returns>True if pattern contains '*'</returns>
+        internal static bool PatternContainsWildcard(List<WildcardPattern> list)
+        {
+            if (list != null)
+            {
+                foreach (var item in list)
+                {
+                    if (WildcardPattern.ContainsWildcardCharacters(item.Pattern))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private static AliasInfo NewAliasInfo(AliasInfo alias, SessionStateInternal sessionState)

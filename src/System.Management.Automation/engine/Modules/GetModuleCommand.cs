@@ -374,6 +374,10 @@ namespace Microsoft.PowerShell.Commands
             var moduleSpecTable = new Dictionary<string, ModuleSpecification>(StringComparer.OrdinalIgnoreCase);
             if (FullyQualifiedName != null)
             {
+                // TODO:
+                // FullyQualifiedName.Name could be a path, in which case it will not match module.Name.
+                // This is potentially a bug (since version checks are ignored).
+                // We should normalize FullyQualifiedName.Name here with ModuleIntrinsics.NormalizeModuleName().
                 moduleSpecTable = FullyQualifiedName.ToDictionary(moduleSpecification => moduleSpecification.Name, StringComparer.OrdinalIgnoreCase);
                 strNames.AddRange(FullyQualifiedName.Select(spec => spec.Name));
             }
@@ -540,6 +544,11 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (PSModuleInfo module in modules)
             {
+                // TODO:
+                // moduleSpecification.Name may be a path and will not match module.Name when they refer to the same module.
+                // This actually causes the module to be returned always, so other specification checks are skipped erroneously.
+                // Instead we need to be able to look up or match modules by path as well (e.g. a new comparer for PSModuleInfo).
+
                 // No table entry means we return the module
                 if (!moduleSpecificationTable.TryGetValue(module.Name, out ModuleSpecification moduleSpecification))
                 {

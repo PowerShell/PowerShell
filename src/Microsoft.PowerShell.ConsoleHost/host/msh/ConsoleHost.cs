@@ -1657,10 +1657,7 @@ namespace Microsoft.PowerShell
 
                 // If the system lockdown policy says "Enforce", do so. Do this after types / formatting, default functions, etc
                 // are loaded so that they are trusted. (Validation of their signatures is done in F&O)
-                if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
-                {
-                    _runspaceRef.Runspace.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
-                }
+                Utils.EnforceSystemLockDownLanguageMode(_runspaceRef.Runspace.ExecutionContext);
 
                 string allUsersProfile = HostUtilities.GetFullProfileFileName(null, false);
                 string allUsersHostSpecificProfile = HostUtilities.GetFullProfileFileName(shellId, false);
