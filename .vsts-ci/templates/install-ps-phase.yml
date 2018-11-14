@@ -23,11 +23,6 @@ jobs:
     displayName: Set Build Name for Non-PR
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
-  - powershell: |
-      Get-ChildItem -Path env:
-    displayName: Capture environment
-    condition: succeededOrFailed()
-
   - bash: |
       $(scriptName)
     displayName: Run Script - $(scriptName)
