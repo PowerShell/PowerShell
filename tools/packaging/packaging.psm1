@@ -767,6 +767,7 @@ function New-UnixPackage {
             $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview
 
             # Change permissions for packaging
+            Write-Log "Setting permissions..."
             Start-NativeExecution {
                 find $Staging -type d | xargs chmod 755
                 find $Staging -type f | xargs chmod 644
@@ -779,6 +780,7 @@ function New-UnixPackage {
         # Add macOS powershell launcher
         if ($Type -eq "osxpkg")
         {
+            Write-Log "Adding macOS launch opplication..."
             if ($pscmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
@@ -816,10 +818,12 @@ function New-UnixPackage {
         # Build package
         try {
             if ($pscmdlet.ShouldProcess("Create $type package")) {
+                Write-Log "Creating package with fpm..."
                 $Output = Start-NativeExecution { fpm $Arguments }
             }
         } finally {
             if ($Environment.IsMacOS) {
+                Write-Log "Starting Cleanup for mac packaging..."
                 if ($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
                 {
                     Clear-MacOSLauncher
@@ -1203,6 +1207,7 @@ function New-ManGzip
         $IsPreview
     )
 
+    Write-Log "Creating man gz..."
     # run ronn to convert man page to roff
     $RonnFile = "$RepoRoot/assets/pwsh.1.ronn"
     if ($IsPreview.IsPresent)
@@ -1215,7 +1220,8 @@ function New-ManGzip
     $RoffFile = $RonnFile -replace "\.ronn$"
 
     # Run ronn on assets file
-    Start-NativeExecution { ronn --roff $RonnFile } -VerboseOutputOnError
+    Write-Log "Creating man gz - running ronn..."
+    Start-NativeExecution { ronn --roff $RonnFile }
 
     if ($IsPreview.IsPresent)
     {
@@ -1224,6 +1230,7 @@ function New-ManGzip
 
     # gzip in assets directory
     $GzipFile = "$RoffFile.gz"
+    Write-Log "Creating man gz - running gzip..."
     Start-NativeExecution { gzip -f $RoffFile } -VerboseOutputOnError
 
     $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
