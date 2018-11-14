@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public string Scope { get; set; }
+        public object Scope { get; set; }
 
         #endregion parameters
 
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         /// A collection of the variables matching the name, include, and exclude
         /// pattern in the specified scope.
         /// </returns>
-        internal List<PSVariable> GetMatchingVariables(string name, string lookupScope, out bool wasFiltered, bool quiet)
+        internal List<PSVariable> GetMatchingVariables(string name, object lookupScope, out bool wasFiltered, bool quiet)
         {
             wasFiltered = false;
 
@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
             // view.
 
             IDictionary<string, PSVariable> variableTable = null;
-            if (String.IsNullOrEmpty(lookupScope))
+            if (lookupScope == null || lookupScope is String && String.IsNullOrEmpty(lookupScope as String))
             {
                 variableTable = SessionState.Internal.GetVariableTable();
             }
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 variableTable = SessionState.Internal.GetVariableTableAtScope(lookupScope);
             }
-
+            
             CommandOrigin origin = MyInvocation.CommandOrigin;
             foreach (KeyValuePair<string, PSVariable> entry in variableTable)
             {
@@ -466,15 +466,15 @@ namespace Microsoft.PowerShell.Commands
             if (!Force)
             {
                 PSVariable varFound = null;
-                if (String.IsNullOrEmpty(Scope))
+                if (Scope == null || Scope is String && String.IsNullOrEmpty(Scope as String))
                 {
                     varFound =
-                        SessionState.PSVariable.GetAtScope(Name, "local");
+                        SessionState.Internal.GetVariableAtScope(Name, "local");
                 }
                 else
                 {
                     varFound =
-                        SessionState.PSVariable.GetAtScope(Name, Scope);
+                        SessionState.Internal.GetVariableAtScope(Name, Scope);
                 }
 
                 if (varFound != null)
@@ -518,7 +518,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (String.IsNullOrEmpty(Scope))
+                    if (Scope == null || Scope is String && String.IsNullOrEmpty(Scope as String))
                     {
                         SessionState.Internal.NewVariable(newVariable, Force);
                     }
@@ -795,8 +795,7 @@ namespace Microsoft.PowerShell.Commands
                 List<PSVariable> matchingVariables = new List<PSVariable>();
 
                 bool wasFiltered = false;
-
-                if (!String.IsNullOrEmpty(Scope))
+                if (Scope == null || Scope is String && !String.IsNullOrEmpty(Scope as String))
                 {
                     // We really only need to find matches if the scope was specified.
                     // If the scope wasn't specified then we need to create the
@@ -828,9 +827,9 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         ScopedItemOptions newOptions = ScopedItemOptions.None;
-
-                        if (!String.IsNullOrEmpty(Scope) &&
-                            String.Equals("private", Scope, StringComparison.OrdinalIgnoreCase))
+                        if (Scope is String &&
+                            !String.IsNullOrEmpty(Scope as String) &&
+                            String.Equals("private", Scope as String, StringComparison.OrdinalIgnoreCase))
                         {
                             newOptions = ScopedItemOptions.Private;
                         }
@@ -872,7 +871,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             object result = null;
 
-                            if (String.IsNullOrEmpty(Scope))
+                            if (Scope == null || Scope is String && String.IsNullOrEmpty(Scope as String))
                             {
                                 result =
                                     SessionState.Internal.SetVariable(varToSet, Force, origin);
@@ -1126,7 +1125,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            if (String.IsNullOrEmpty(Scope))
+                            if (Scope == null || Scope is String && String.IsNullOrEmpty(Scope as String))
                             {
                                 SessionState.Internal.RemoveVariable(matchingVariable, _force);
                             }
@@ -1156,7 +1155,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This class implements set-variable command.
+    /// This class implements clear-variable command.
     /// </summary>
     [Cmdlet(VerbsCommon.Clear, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113285")]
     [OutputType(typeof(PSVariable))]
@@ -1165,7 +1164,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// Name of the PSVariable(s) to set.
+        /// Name of the PSVariable(s) to clear.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true, Mandatory = true)]
         public string[] Name { get; set; }
