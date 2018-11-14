@@ -1,6 +1,6 @@
 ---
 name: Documentation Issue 📚
-about: Issues regarding documentation within this repository.
+about: File issues regarding documentation within the [PowerShell-Docs](https://github.com/powershell/powershell-docs) repository
 
 ---
 
