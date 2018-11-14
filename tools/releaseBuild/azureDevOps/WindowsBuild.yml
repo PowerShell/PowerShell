@@ -165,3 +165,19 @@ jobs:
     continueOnError: true
     condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
 
+
+- job: ComponentRegistrationJob
+  displayName: Component Registration
+  condition: succeeded()
+  pool: PowerShell
+  strategy:
+    matrix:
+      release-anycpu:
+        BuildConfiguration: release
+        BuildPlatform: any cpu
+
+  steps:
+
+  - powershell: |
+      ./tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTag)
+    displayName: 'Set ReleaseTag Variable'
