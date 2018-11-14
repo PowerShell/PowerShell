@@ -924,9 +924,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the object that triggered the current breakpoint.
+        /// Gets or sets the object that triggered the current breakpoint.
         /// </summary>
-        private object TriggerObject{ get; set; }
+        private object TriggerObject { get; set; }
 
         #endregion properties
 
