@@ -25,6 +25,52 @@ namespace System.Management.Automation
         /// Cmdlet parameter name to return in the error message instead of "scopeID".
         /// </summary>
         internal const string ScopeParameterName = "Scope";
+        /// <summary>
+        /// Given a scope identifier, returns the proper session state scope.
+        /// </summary>
+        /// <param name="scopeID">
+        /// A scope identifier that is either one of the "special" scopes like
+        /// "global", "local", or "private, or a numeric ID of a relative scope
+        /// to the current scope.
+        /// </param>
+        /// <returns>
+        /// The scope identified by the scope ID or the current scope if the
+        /// scope ID is not defined as a special or numeric scope identifier.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="scopeID"/> is less than zero, or not
+        /// a number and not "script", "global", "local", or "private"
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
+        /// active scopes.
+        /// </exception>
+        internal SessionStateScope GetScopeByID(object scopeID)
+        {
+            SessionStateScope result = _currentScope;
+            switch (scopeID)
+            {
+                case int scope:
+                    result = GetScopeByID(scope);
+                    break;
+                case string scope:
+                    if (!String.IsNullOrEmpty(scope))
+                    {
+                        result = GetScopeByID(scope);
+                    }
+                    break;
+                case SessionState scope:
+                    result = scope.Internal.CurrentScope;
+                    break;
+                case SessionStateScope ls:
+                    result = ls;
+                    break;
+                default:
+                    // Todo: Figure out correct type of error to throw. Given proper Powershell Resources.
+                    throw new PSArgumentException(String.Format("Scope is not of usable type. {0}", scopeID.GetType() ));
+            }
+            return result;
+        } // GetScopeByID
 
         /// <summary>
         /// Given a scope identifier, returns the proper session state scope.

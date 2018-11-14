@@ -617,6 +617,36 @@ namespace System.Management.Automation
         /// </exception>
         internal PSVariable GetVariableAtScope(string name, string scopeID)
         {
+            return GetVariableAtScope(name, scopeID as object);
+        } // GetVariable
+
+        /// <summary>
+        /// Get a variable out of session state. This interface supports
+        /// the "namespace:name" syntax so you can do things like
+        /// "env:PATH" or "global:foobar"
+        /// </summary>
+        /// <param name="name">
+        /// name of variable to look up
+        /// </param>
+        /// <param name="scopeID">
+        /// The ID of the scope to lookup the variable in.
+        /// </param>
+        /// <returns>
+        /// The value of the specified variable.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="name"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="scopeID"/> is less than zero, or not
+        /// a number and not "script", "global", "local", or "private"
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
+        /// active scopes.
+        /// </exception>
+        internal PSVariable GetVariableAtScope(string name, object scopeID)
+        {
             if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException("name");
@@ -630,7 +660,6 @@ namespace System.Management.Automation
             // ID.
 
             lookupScope = GetScopeByID(scopeID);
-
             PSVariable resultItem = null;
 
             if (variablePath.IsVariable)
@@ -1398,6 +1427,45 @@ namespace System.Management.Automation
         /// </exception>
         internal object SetVariableAtScope(PSVariable variable, string scopeID, bool force, CommandOrigin origin)
         {
+            return SetVariableAtScope(variable, scopeID as object, force, origin);
+        } // SetVariableAtScope
+
+        /// <summary>
+        /// Set a variable in session state.
+        /// </summary>
+        /// <param name="variable">
+        /// The variable to set
+        /// </param>
+        /// <param name="scopeID">
+        /// The ID of the scope to do the lookup in. The ID is either a zero based index
+        /// of the scope tree with the current scope being zero, its parent scope
+        /// being 1 and so on, or "global", "local", "private", or "script"
+        /// </param>
+        /// <param name="force">
+        /// If true, the variable is set even if it is ReadOnly.
+        /// </param>
+        /// <param name="origin">
+        /// The origin of the caller
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="variable"/> is null or its name is null or empty.
+        /// or
+        /// If <paramref name="scopeID"/> is less than zero, or not
+        /// a number and not "script", "global", "local", or "private"
+        /// </exception>
+        /// <returns>
+        /// A PSVariable object if <paramref name="variable"/> refers to a variable.
+        /// An PSObject if <paramref name="variable"/> refers to a provider path.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
+        /// active scopes.
+        /// </exception>
+        /// <exception cref="SessionStateUnauthorizedAccessException">
+        /// If the variable is read-only or constant.
+        /// </exception>
+        internal object SetVariableAtScope(PSVariable variable, object scopeID, bool force, CommandOrigin origin)
+        {
             if (variable == null || String.IsNullOrEmpty(variable.Name))
             {
                 throw PSTraceSource.NewArgumentException("variable");
@@ -1477,6 +1545,41 @@ namespace System.Management.Automation
         /// If the variable is read-only or constant.
         /// </exception>
         internal object NewVariableAtScope(PSVariable variable, string scopeID, bool force)
+        {
+            return NewVariableAtScope(variable, scopeID as object, force);
+        } // NewVariableAtScope
+
+        /// <summary>
+        /// Creates a new variable in the specified scope
+        /// </summary>
+        /// <param name="variable">
+        /// The variable to create
+        /// </param>
+        /// <param name="scopeID">
+        /// The ID of the scope to do the lookup in. The ID is either a zero based index
+        /// of the scope tree with the current scope being zero, its parent scope
+        /// being 1 and so on, or "global", "local", "private", or "script"
+        /// </param>
+        /// <param name="force">
+        /// If true, the variable is set even if it is ReadOnly.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="variable"/> is null or its name is null or empty.
+        /// or
+        /// If <paramref name="scopeID"/> is less than zero, or not
+        /// a number and not "script", "global", "local", or "private"
+        /// </exception>
+        /// <returns>
+        /// A PSVariable representing the variable that was created.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
+        /// active scopes.
+        /// </exception>
+        /// <exception cref="SessionStateUnauthorizedAccessException">
+        /// If the variable is read-only or constant.
+        /// </exception>
+        internal object NewVariableAtScope(PSVariable variable, object scopeID, bool force)
         {
             if (variable == null || String.IsNullOrEmpty(variable.Name))
             {
@@ -1773,6 +1876,33 @@ namespace System.Management.Automation
         /// </exception>
         internal void RemoveVariableAtScope(PSVariable variable, string scopeID, bool force)
         {
+            RemoveVariableAtScope(variable, scopeID as object, force);
+        } // RemoveVariableAtScope
+
+        /// <summary>
+        /// Remove a variable from session state.
+        /// </summary>
+        /// <param name="variable">
+        /// The variable to remove
+        /// </param>
+        /// <param name="scopeID">
+        /// The ID of the scope to lookup the variable in.
+        /// </param>
+        /// <param name="force">
+        /// If true, the variable will be removed even if its ReadOnly.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="variable"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
+        /// active scopes.
+        /// </exception>
+        /// <exception cref="SessionStateUnauthorizedAccessException">
+        /// if the variable is constant.
+        /// </exception>
+        internal void RemoveVariableAtScope(PSVariable variable, object scopeID, bool force)
+        {
             if (variable == null)
             {
                 throw PSTraceSource.NewArgumentNullException("variable");
@@ -1783,7 +1913,7 @@ namespace System.Management.Automation
             // The lookup scope is retrieved by ID.
 
             SessionStateScope lookupScope = GetScopeByID(scopeID);
-
+            
             lookupScope.RemoveVariable(variablePath.QualifiedName, force);
         } // RemoveVariableAtScope
 
@@ -1856,7 +1986,7 @@ namespace System.Management.Automation
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        internal IDictionary<string, PSVariable> GetVariableTableAtScope(string scopeID)
+        internal IDictionary<string, PSVariable> GetVariableTableAtScope(object scopeID)
         {
             var result = new Dictionary<string, PSVariable>(StringComparer.OrdinalIgnoreCase);
             GetScopeVariableTable(GetScopeByID(scopeID), result, includePrivate: true);
