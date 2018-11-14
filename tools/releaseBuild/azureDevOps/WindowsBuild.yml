@@ -181,3 +181,49 @@ jobs:
   - powershell: |
       ./tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTag)
     displayName: 'Set ReleaseTag Variable'
+
+  - powershell: |
+       $version = $env:ReleaseTag.Substring(1)
+       $vstsCommandString = "vso[task.setvariable variable=Version]$version"
+       Write-Host "sending " + $vstsCommandString
+       Write-Host "##$vstsCommandString"
+    displayName: 'Set Version Variable'
+
+  - powershell: |
+       docker container prune --force
+       docker container ls --all --format '{{ json .ID }}' | ConvertFrom-Json | %{docker container rm --force --volumes $_}
+    displayName: 'Remove all containers'
+    continueOnError: true
+
+  - powershell: |
+       docker image ls --format '{{ json .}}'|ConvertFrom-Json|% {
+           if($_.tag -eq '<none>')
+           {
+               $formatString = 'yyyy-MM-dd HH:mm:ss zz00'
+               $createdAtString = $_.CreatedAt.substring(0,$_.CreatedAt.Length -4)
+               $createdAt = [DateTime]::ParseExact($createdAtString, $formatString,[System.Globalization.CultureInfo]::InvariantCulture)
+               if($createdAt -lt (Get-Date).adddays(-1))
+               {
+                    docker image rm $_.ID
+               }
+           }
+       }
+       exit 0
+    displayName: 'Remove old images'
+    continueOnError: true
+
+  - powershell: |
+       Write-verbose "--docker info---" -verbose
+       docker info
+       Write-verbose "--docker image ls---" -verbose
+       docker image ls
+       Write-verbose "--docker container ls --all---" -verbose
+       docker container ls --all
+       Write-verbose "--git branch ---" -verbose
+       git branch
+       exit 0
+    displayName: 'Get Environment'
+
+  - powershell: |
+       ./tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTag) -Name win-x64-component-registration
+    displayName: 'Build Windows Universal - Component Registration'
