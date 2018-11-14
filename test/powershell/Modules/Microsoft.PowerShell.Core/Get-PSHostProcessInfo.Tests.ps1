@@ -16,8 +16,8 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
         $pwsh | Stop-Process
     }
 
-    It "Should not return own self" {
-        Get-PSHostProcessInfo | Select-Object -ExpandProperty ProcessId | Should -Not -Contain $pid
+    It "Should return own self" {
+        Get-PSHostProcessInfo | Select-Object -ExpandProperty ProcessId | Should -Contain $pid
     }
 
     It "Should list info for other PowerShell hosted processes" {

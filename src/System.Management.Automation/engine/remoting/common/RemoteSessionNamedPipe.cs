@@ -25,7 +25,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Strings
 
-        internal const string DefaultAppDomainName = "Default";
+        internal const string DefaultAppDomainName = "None";
         internal const string NamedPipeNamePrefix = "PSHost.";
 #if UNIX
         internal const string NamedPipeNamePrefixSearch = "CoreFxPipe_PSHost*";
@@ -101,15 +101,11 @@ namespace System.Management.Automation.Remoting
 
             System.Text.StringBuilder pipeNameBuilder = new System.Text.StringBuilder(MaxNamedPipeNameSize);
             pipeNameBuilder.Append(NamedPipeNamePrefix)
-#if UNIX
                 // The starttime is there to prevent another process easily guessing the pipe name
                 // and squatting on it.
                 // There is a limit of 104 characters in total including the temp path to the named pipe file
                 // on non-Windows systems, so we'll convert the starttime to hex and just take the first 8 characters.
                 .Append(proc.StartTime.ToFileTime().ToString("X8").Substring(1,8))
-#else
-                .Append(proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture))
-#endif
                 .Append('.')
                 .Append(proc.Id.ToString(CultureInfo.InvariantCulture))
                 .Append('.')
@@ -120,12 +116,17 @@ namespace System.Management.Automation.Remoting
             int charsToTrim = pipeNameBuilder.Length - MaxNamedPipeNameSize;
             if (charsToTrim > 0)
             {
+                // TODO: In the case the pipe name is truncated, the user cannot connect to it using the cmdlet
+                // unless we add a `-Force` type switch as it attempts to validate the current process name
+                // matches the process name in the pipe name
                 pipeNameBuilder.Remove(MaxNamedPipeNameSize + 1, charsToTrim);
             }
 #endif
 
             return pipeNameBuilder.ToString();
         }
+
+
 
         private static string CleanAppDomainNameForPipeName(string appDomainName)
         {

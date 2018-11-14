@@ -396,6 +396,8 @@ namespace Microsoft.PowerShell.Commands
         private const string ProcessNameParameterSet = "ProcessNameParameterSet";
 
 #if UNIX
+        // CoreFx uses the system temp path to store the file used for named pipes and is not settable.
+        // This member is only used by Get-PSHostProcessInfo to know where to look for the named pipe files.
         private static readonly string NamedPipePath = Path.GetTempPath();
 #else
         private const string NamedPipePath = @"\\.\pipe\";
@@ -536,7 +538,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 namedPipes.Add(Path.Combine(pipeFileInfo.DirectoryName, pipeFileInfo.Name));
             }
-            int currentPid = System.Diagnostics.Process.GetCurrentProcess().Id;
 
             // Collect all PowerShell named pipes for given process Ids.
             foreach (string namedPipe in namedPipes)
@@ -573,6 +574,11 @@ namespace Microsoft.PowerShell.Commands
                                         if (!found) { continue; }
                                     }
                                 }
+                                else
+                                {
+                                    // Process id is not valid so we'll skip
+                                    continue;
+                                }
 
                                 int pNameIndex = namedPipe.IndexOf('.', pAppDomainIndex + 1);
                                 if (pNameIndex > -1)
@@ -582,36 +588,32 @@ namespace Microsoft.PowerShell.Commands
 
                                     Process process = null;
 
-                                    // Only return instances that aren't ourselves since you cannot enter yourself
-                                    if (id != currentPid)
+                                    try
+                                    {
+                                        process = System.Diagnostics.Process.GetProcessById(id);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // Do nothing if the process no longer exists
+                                    }
+
+                                    if (process == null)
                                     {
                                         try
                                         {
-                                            process = System.Diagnostics.Process.GetProcessById(id);
+                                            // If the process is gone, try removing the PSHost named pipe
+                                            var pipeFile = new FileInfo(namedPipe);
+                                            pipeFile.Delete();
                                         }
                                         catch (Exception)
                                         {
-                                            // Do nothing if the process no longer exists
+                                            // best effort to cleanup
                                         }
-
-                                        if (process == null)
-                                        {
-                                            try
-                                            {
-                                                // If the process is gone, try removing the PSHost named pipe
-                                                var pipeFile = new FileInfo(namedPipe);
-                                                pipeFile.Delete();
-                                            }
-                                            catch (Exception)
-                                            {
-                                                // best effort to cleanup
-                                            }
-                                        }
-                                        else if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
-                                        {
-                                            // only add if the process name matches
-                                            procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName));
-                                        }
+                                    }
+                                    else if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
+                                    {
+                                        // only add if the process name matches
+                                        procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName));
                                     }
                                 }
                             }
