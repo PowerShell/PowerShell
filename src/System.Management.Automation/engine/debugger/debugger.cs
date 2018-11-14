@@ -1725,6 +1725,22 @@ namespace System.Management.Automation
                 // Ignore, it means they don't have the default prompt
             }
 
+            // Change the context language mode before updating the prompt script.
+            // This way the new prompt scriptblock will pick up the current context language mode.
+            PSLanguageMode? originalLanguageMode = null;
+            if (_context.UseFullLanguageModeInDebugger &&
+                (_context.LanguageMode != PSLanguageMode.FullLanguage))
+            {
+                originalLanguageMode = _context.LanguageMode;
+                _context.LanguageMode = PSLanguageMode.FullLanguage;
+            }
+            else if (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
+                System.Management.Automation.Security.SystemEnforcementMode.Enforce)
+            {
+                // If there is a system lockdown in place, enforce it
+                originalLanguageMode = Utils.EnforceSystemLockDownLanguageMode(this._context);
+            }
+
             // Update the prompt to the debug prompt
             if (hadDefaultPrompt)
             {
@@ -1741,21 +1757,6 @@ namespace System.Management.Automation
                 {
                     hadDefaultPrompt = false;
                 }
-            }
-
-            PSLanguageMode? originalLanguageMode = null;
-            if (_context.UseFullLanguageModeInDebugger &&
-                (_context.LanguageMode != PSLanguageMode.FullLanguage))
-            {
-                originalLanguageMode = _context.LanguageMode;
-                _context.LanguageMode = PSLanguageMode.FullLanguage;
-            }
-            else if (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
-                System.Management.Automation.Security.SystemEnforcementMode.Enforce)
-            {
-                // If there is a system lockdown in place, enforce it
-                originalLanguageMode = _context.LanguageMode;
-                _context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
             }
 
             RunspaceAvailability previousAvailability = _context.CurrentRunspace.RunspaceAvailability;

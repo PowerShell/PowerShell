@@ -142,6 +142,16 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(er);
             }
 
+            // Prevent script injection attack by disallowing ExportModuleMemberCommand to export module members across
+            // language boundaries. This will prevent injected untrusted script from exporting private trusted module functions.
+            if (Context.EngineSessionState.Module != null &&
+                Context.LanguageMode != Context.EngineSessionState.Module.LanguageMode)
+            {
+                var se = new PSSecurityException(Modules.CannotExportMembersAccrossLanguageBoundaries);
+                var er = new ErrorRecord(se, "Modules_CannotExportMembersAccrossLanguageBoundaries", ErrorCategory.SecurityError, this);
+                ThrowTerminatingError(er);
+            }
+
             ModuleIntrinsics.ExportModuleMembers(this,
                 this.Context.EngineSessionState,
                 _functionPatterns, _cmdletPatterns, _aliasPatterns, _variablePatterns, null);

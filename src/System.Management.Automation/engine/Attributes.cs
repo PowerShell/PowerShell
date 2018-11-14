@@ -1745,6 +1745,36 @@ namespace System.Management.Automation
         string[] GetValidValues();
     }
 
+    /// <summary>
+    /// Validates that each parameter argument is Trusted data
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidateTrustedDataAttribute : ValidateArgumentsAttribute
+    {
+        /// <summary>
+        /// Validates that the parameter argument is not untrusted
+        /// </summary>
+        /// <param name="arguments">Object to validate</param>
+        /// <param name="engineIntrinsics">
+        /// The engine APIs for the context under which the validation is being
+        /// evaluated.
+        /// </param>
+        /// <exception cref="ValidationMetadataException">
+        /// if the argument is untrusted.
+        /// </exception>
+        protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
+        {
+            if (ExecutionContext.HasEverUsedConstrainedLanguage &&
+                engineIntrinsics.SessionState.Internal.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage)
+            {
+                if (ExecutionContext.IsMarkedAsUntrusted(arguments))
+                {
+                    throw new ValidationMetadataException("ValidateTrustedDataFailure", null, Metadata.ValidateTrustedDataFailure, arguments);
+                }
+            }
+        }
+    }
+
     #region Allow
 
     /// <summary>
@@ -2150,6 +2180,27 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">should be thrown for invalid arguments</exception>
         /// <exception cref="ArgumentTransformationMetadataException">should be thrown for any problems during transformation</exception>
         public abstract object Transform(EngineIntrinsics engineIntrinsics, object inputData);
+
+        /// <summary>
+        /// Transform inputData and track the flow of untrusted object.
+        /// NOTE: All internal handling of ArgumentTransformationAttribute should use this method to track the trustworthiness of
+        /// the data input source by default.
+        /// </summary>
+        /// <remarks>
+        /// The default value for <paramref name="trackDataInputSource"/> is True.
+        /// You should stick to the default value for this parameter in most cases so that data input source is tracked during the transformation.
+        /// The only acceptable exception is when this method is used in Compiler or Binder where you can generate extra code to track input source
+        /// when it's necessary. This is to minimize the overhead when tracking is not needed.
+        /// </remarks>
+        internal object TransformInternal(EngineIntrinsics engineIntrinsics, object inputData, bool trackDataInputSource = true)
+        {
+            object result = Transform(engineIntrinsics, inputData);
+            if (trackDataInputSource && engineIntrinsics != null)
+            {
+                ExecutionContext.PropagateInputSource(inputData, result, engineIntrinsics.SessionState.Internal.LanguageMode);
+            }
+            return result;
+        }
 
         /// <summary>
         /// The property is only checked when:
