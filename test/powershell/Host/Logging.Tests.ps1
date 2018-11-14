@@ -216,6 +216,35 @@ $pid
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
     }
 
+    It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
+        $configFile = WriteLogSettings -LogId $logId -ScriptBlockLogging -LogLevel Verbose
+        $script = @'
+$pid
+& ([scriptblock]::create("Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"))
+'@
+        $testFileName = 'test01.ps1'
+        $testScriptPath = Join-Path -Path $TestDrive -ChildPath $testFileName
+        $script | Out-File -FilePath $testScriptPath -Force
+        $null = & $powershell -NoProfile -SettingsFile $configFile -Command $testScriptPath
+
+        # Get log entries from the last 100 that match our id and are after the time we launched Powershell
+        $items = Get-PSSysLog -Path $SyslogFile -Id $logId -Tail 100 -Verbose -TotalCount 18
+
+        $items | Should -Not -Be $null
+        $items.Count | Should -BeGreaterThan 2
+        $createdEvents = $items | where-object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
+        $createdEvents.Count | should -BeGreaterOrEqual 3
+
+        # Verify we log that we are executing a file
+        $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
+
+        # Verify we log that we are the script to create the scriptblock
+        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,'#012')))
+
+        # Verify we log that we are excuting the created scriptblock
+        $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
+    }
+
     It 'Verifies logging level filtering works' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
@@ -342,6 +371,44 @@ $pid
         }
     }
 
+    It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
+        try {
+            $script = @'
+$pid
+& ([scriptblock]::create("Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"))
+'@
+            $configFile = WriteLogSettings -ScriptBlockLogging -LogId $logId -LogLevel Verbose
+            $testFileName = 'test01.ps1'
+            $testScriptPath = Join-Path -Path $TestDrive -ChildPath $testFileName
+            $script | Out-File -FilePath $testScriptPath -Force
+            $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command $testScriptPath
+
+            Export-PSOsLog -After $after -LogPid $testPid -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 3000 -MinimumCount 18 |
+                Set-Content -Path $contentFile
+            $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -Verbose)
+
+            $items | Should -Not -Be $null
+            $items.Count | Should -BeGreaterThan 2
+            $createdEvents = $items | where-object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
+            $createdEvents.Count | should -BeGreaterOrEqual 3
+
+            # Verify we log that we are executing a file
+            $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
+
+            # Verify we log that we are the script to create the scriptblock
+            $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script))
+
+            # Verify we log that we are excuting the created scriptblock
+            $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
+        }
+        catch {
+            if (Test-Path $contentFile) {
+                Send-VstsLogFile -Path $contentFile
+            }
+            throw
+        }
+    }
+
     # This is pending because it results in false postitives (-Skip:(!$IsSupportedEnvironment) )
     It 'Verifies logging level filtering works' -Pending {
         try {
@@ -373,6 +440,11 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
                 name = 'normal script block'
                 script = "Write-Verbose 'testheader123' ;Write-verbose 'after'"
                 expectedText="Write-Verbose 'testheader123' ;Write-verbose 'after'`r`n"
+            }
+            @{
+                name = 'script block with Null'
+                script = "Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"
+                expectedText="Write-Verbose 'testheader123␀' ;Write-verbose 'after'`r`n"
             }
         )
 
