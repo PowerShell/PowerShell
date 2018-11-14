@@ -168,6 +168,7 @@ jobs:
 
 - job: ComponentRegistrationJob
   displayName: Component Registration
+  dependsOn: BuildJob 
   condition: succeeded()
   pool: PowerShell
   strategy:
