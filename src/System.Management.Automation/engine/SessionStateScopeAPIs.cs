@@ -48,7 +48,23 @@ namespace System.Management.Automation
         internal SessionStateScope GetScopeByID(object scopeID)
         {
             SessionStateScope result = _currentScope;
-            switch (scopeID)
+
+            // If LanguageMode is not set to FullLanguage prevent access to other scopeID options.
+            if (LanguageMode != PSLanguageMode.FullLanguage && !(scopeID is int || scopeID is string))
+            {
+                String errorMessage = String.Format("Scopes other than \"script\", \"global\", \"local\", or \"private\" or a numeric ID is only allowed in {0} LanguageMode", LanguageMode);
+                throw new System.Exception(errorMessage);
+            }
+
+            // Unwrap PSObject as it automatically gets wrapped when passed down a pipeline.
+            object localScope = scopeID;
+            if (scopeID is PSObject obj)
+            {
+                localScope = obj.BaseObject;
+            }
+            
+            // Quickly type convert objects into usable and acceptable types.
+            switch (localScope)
             {
                 case int scope:
                     result = GetScopeByID(scope);
@@ -62,8 +78,11 @@ namespace System.Management.Automation
                 case SessionState scope:
                     result = scope.Internal.CurrentScope;
                     break;
-                case SessionStateScope ls:
-                    result = ls;
+                case SessionStateScope scope:
+                    result = scope;
+                    break;
+                case PSModuleInfo scope:
+                    result = scope.SessionState.Internal.CurrentScope;
                     break;
                 default:
                     // Todo: Figure out correct type of error to throw. Given proper Powershell Resources.
