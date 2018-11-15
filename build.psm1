@@ -725,7 +725,7 @@ function New-PSOptions {
 # Get the Options of the last build
 function Get-PSOptions {
     param(
-        [Parameter(HelpMessage='Defaults to New-PSOption if a build has not ocurred.')]
+        [Parameter(HelpMessage='Defaults to New-PSOption if a build has not occurred.')]
         [switch]
         $DefaultToNew
     )

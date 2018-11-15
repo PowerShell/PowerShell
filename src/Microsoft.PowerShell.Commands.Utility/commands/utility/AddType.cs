@@ -74,6 +74,7 @@ namespace Microsoft.PowerShell.Commands
         /// The source code of this generated type.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = FromSourceParameterSetName)]
+        [ValidateTrustedData]
         public String TypeDefinition
         {
             get
@@ -90,6 +91,7 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the type (class) used for auto-generated types.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = FromMemberParameterSetName)]
+        [ValidateTrustedData]
         public String Name { get; set; }
 
         /// <summary>
@@ -137,6 +139,7 @@ namespace Microsoft.PowerShell.Commands
         /// The path to the source code or DLL to load.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = FromPathParameterSetName)]
+        [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Path
         {
@@ -183,6 +186,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = FromLiteralPathParameterSetName)]
         [Alias("PSPath", "LP")]
+        [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
@@ -269,6 +273,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = FromAssemblyNameParameterSetName)]
         [Alias("AN")]
+        [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] AssemblyName { get; set; }
 

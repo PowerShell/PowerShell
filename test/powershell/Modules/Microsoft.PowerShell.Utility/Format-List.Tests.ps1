@@ -23,7 +23,7 @@ Describe "Format-List" -Tags "CI" {
     }
 
     It "Should produce the expected output" {
-        $expected = "${nl}${nl}testName : testValue${nl}${nl}${nl}${nl}"
+        $expected = "${nl}testName : testValue${nl}${nl}${nl}"
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
 

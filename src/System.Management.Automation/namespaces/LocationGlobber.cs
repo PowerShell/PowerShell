@@ -433,7 +433,13 @@ namespace System.Management.Automation
 
             s_pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
 
-            string relativePath = GetDriveRootRelativePathFromPSPath(path, context, true, out drive, out providerInstance);
+            string relativePath =
+                GetDriveRootRelativePathFromPSPath(
+                    path,
+                    context,
+                    !context.SuppressWildcardExpansion,
+                    out drive,
+                    out providerInstance);
 
             Dbg.Diagnostics.Assert(
                 drive != null,

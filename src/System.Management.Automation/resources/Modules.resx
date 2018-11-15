@@ -618,4 +618,16 @@
   <data name="SkipEditionCheckNotSupportedWithoutListAvailable" xml:space="preserve">
     <value>The -SkipEditionCheck switch parameter cannot be used without the -ListAvailable switch parameter.</value>
   </data>
+  <data name="ImportPSFileNotAllowedInConstrainedLanguage" xml:space="preserve">
+    <value>Importing *.ps1 files as modules is not allowed in ConstrainedLanguage mode.</value>
+  </data>
+  <data name="MismatchedLanguageModes" xml:space="preserve">
+    <value>An error has occurred while loading script module {0} because it has a different language mode than the module manifest. The manifest language mode is {1} and the module language mode is {2}. Ensure all module files are signed or otherwise part of your application allow list configuration.</value>
+  </data>
+  <data name="CannotUseDotSourceWithWildCardFunctionExport" xml:space="preserve">
+    <value>This module uses the dot-source operator while exporting functions using wildcard characters, and this is disallowed when the system is under application verification enforcement.</value>
+  </data>
+  <data name="CannotExportMembersAccrossLanguageBoundaries" xml:space="preserve">
+    <value>Cannot export module members from a module that has a different language mode from the running session.</value>
+  </data>
 </root>

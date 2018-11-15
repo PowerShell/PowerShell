@@ -190,6 +190,7 @@ namespace System.Management.Automation
         internal void Update(ScriptBlock newFunction, bool force, ScopedItemOptions options)
         {
             Update(newFunction, force, options, null);
+            this.DefiningLanguageMode = newFunction.LanguageMode;
         }
 
         /// <summary/>

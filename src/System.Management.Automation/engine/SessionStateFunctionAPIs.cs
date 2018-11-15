@@ -27,7 +27,7 @@ namespace System.Management.Automation
             FunctionInfo fn = this.SetFunction(entry.Name, sb, null, entry.Options, false, CommandOrigin.Internal, this.ExecutionContext, entry.HelpFile, true);
             fn.Visibility = entry.Visibility;
             fn.Module = entry.Module;
-            fn.ScriptBlock.LanguageMode = PSLanguageMode.FullLanguage;
+            fn.ScriptBlock.LanguageMode = entry.ScriptBlock.LanguageMode ?? PSLanguageMode.FullLanguage;
         }
 
         /// <summary>
@@ -106,6 +106,33 @@ namespace System.Management.Automation
         internal bool UseExportList { get; set; } = false;
 
         /// <summary>
+        /// Set to true when module functions are being explicitly exported using Export-ModuleMember
+        /// </summary>
+        internal bool FunctionsExported { get; set; }
+
+        /// <summary>
+        /// Set to true when any processed module functions are being explicitly exported using '*' wildcard
+        /// </summary>
+        internal bool FunctionsExportedWithWildcard
+        {
+            get { return _functionsExportedWithWildcard; }
+            set
+            {
+                Dbg.Assert((value == true), "This property should never be set/reset to false");
+                if (value == true)
+                {
+                    _functionsExportedWithWildcard = value;
+                }
+            }
+        }
+        private bool _functionsExportedWithWildcard;
+
+        /// <summary>
+        /// Set to true if module loading is performed under a manifest that explicitly exports functions (no wildcards)
+        /// </summary>
+        internal bool ManifestWithExplicitFunctionExport { get; set; }
+
+        /// <summary>
         /// Get a functions out of session state.
         /// </summary>
         /// <param name="name">
@@ -138,8 +165,40 @@ namespace System.Management.Automation
             {
                 result = ((IEnumerator<FunctionInfo>)searcher).Current;
             }
-            return result;
+
+            return (IsFunctionVisibleInDebugger(result, origin)) ? result : null;
         } // GetFunction
+
+        private bool IsFunctionVisibleInDebugger(FunctionInfo fnInfo, CommandOrigin origin)
+        {
+            // Ensure the returned function item is not exposed across language boundaries when in 
+            // a debugger breakpoint or nested prompt.
+            // A debugger breakpoint/nested prompt has access to all current scoped functions.
+            // This includes both running commands from the prompt or via a debugger Action scriptblock.
+
+            // Early out.
+            // Always allow built-in functions needed for command line debugging.
+            if ((this.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage) ||
+                (fnInfo == null) ||
+                (fnInfo.Name.Equals("prompt", StringComparison.OrdinalIgnoreCase)) ||
+                (fnInfo.Name.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase)) ||
+                (fnInfo.Name.Equals("Clear-Host", StringComparison.Ordinal)))
+            {
+                return true;
+            }
+
+            // Check both InNestedPrompt and Debugger.InBreakpoint to ensure we don't miss a case.
+            // Function is not visible if function and context language modes are different.
+            var runspace = this.ExecutionContext.CurrentRunspace;
+            if ((runspace != null) &&
+                (runspace.InNestedPrompt || (runspace.Debugger?.InBreakpoint == true)) &&
+                (fnInfo.DefiningLanguageMode.HasValue && (fnInfo.DefiningLanguageMode != this.ExecutionContext.LanguageMode)))
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Get a functions out of session state.
