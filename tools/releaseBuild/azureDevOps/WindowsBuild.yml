@@ -228,3 +228,9 @@ jobs:
   - powershell: |
        ./tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTag) -Name win-x64-component-registration
     displayName: 'Build Windows Universal - Component Registration'
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(componentregistration)'
+      snapshotForceEnabled: true
