@@ -7,10 +7,12 @@ jobs:
 - job: BuildJob
   displayName: Build
   condition: succeeded()
-  pool: PowerShell
-  demands:
-   - Agent.Image
-   - USERNAME -equals issblder
+  pool:
+    name: PowerShell
+    demands:
+      - Agent.Image
+      - USERNAME -equals issblder
+      - DotNetFramework
   strategy:
     matrix:
       x64-release:
@@ -173,7 +175,11 @@ jobs:
   displayName: Component Registration
   dependsOn: BuildJob 
   condition: succeeded()
-  pool: PowerShell
+  pool:
+    name: PowerShell
+    demands: 
+      - USERNAME -equals issblder
+      - Agent.Image
   strategy:
     matrix:
       release-anycpu:
@@ -243,7 +249,13 @@ jobs:
   displayName: Package signing
   dependsOn: BuildJob 
   condition: succeeded()
-  pool: Package ES CodeHub Lab E
+  pool:
+    name: Package ES CodeHub Lab E
+    demands: 
+      - Agent.Image
+      - USERNAME -equals issblder
+      - DotNetFramework
+      - azureps
   strategy:
     matrix:
       release-anycpu:
