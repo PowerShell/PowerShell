@@ -414,7 +414,7 @@ namespace System.Management.Automation
                                                              parameterMetadata.CannotBeNull ||
                                                              dma.TransformNullOptionalParameters)))
                                     {
-                                        parameterValue = dma.Transform(_engine, parameterValue);
+                                        parameterValue = dma.TransformInternal(_engine, parameterValue);
                                     }
                                 }
 
@@ -991,6 +991,7 @@ namespace System.Management.Automation
                 collectionTypeInfo = new ParameterCollectionTypeInformation(toType);
             }
 
+            object originalValue = currentValue;
             object result = currentValue;
 
             using (bindingTracer.TraceScope(
@@ -1225,29 +1226,23 @@ namespace System.Management.Automation
                         bindingTracer.WriteLine(
                             "CONVERT arg type to param type using LanguagePrimitives.ConvertTo");
 
-                        // If we are in constrained language mode and the target command is trusted,
-                        // allow type conversion to the target command's parameter type.
-                        // Don't allow Hashtable-to-Object conversion (PSObject and IDictionary), though,
-                        // as those can lead to property setters that probably aren't expected.
-                        bool changeLanguageModeForTrustedCommand = false;
-                        if (_context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
-                        {
-                            var basedObject = PSObject.Base(currentValue);
-                            var supportsPropertyConversion = basedObject is PSObject;
-                            var supportsIDictionaryConversion = (basedObject != null) &&
-                                (typeof(IDictionary).IsAssignableFrom(basedObject.GetType()));
-
-                            changeLanguageModeForTrustedCommand =
-                                (this.Command.CommandInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage) &&
-                                (!supportsPropertyConversion) &&
-                                (!supportsIDictionaryConversion);
-                        }
+                        // If we are in constrained language mode and the target command is trusted, which is often
+                        // the case for C# cmdlets, then we allow type conversion to the target parameter type.
+                        //
+                        // However, we don't allow Hashtable-to-Object conversion (PSObject and IDictionary) because
+                        // those can lead to property setters that probably aren't expected. This is enforced by
+                        // setting 'Context.LanguageModeTransitionInParameterBinding' to true before the conversion.
+                        bool changeLanguageModeForTrustedCommand =
+                            Context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                            this.Command.CommandInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage;
+                        bool oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
 
                         try
                         {
                             if (changeLanguageModeForTrustedCommand)
                             {
-                                _context.LanguageMode = PSLanguageMode.FullLanguage;
+                                Context.LanguageMode = PSLanguageMode.FullLanguage;
+                                Context.LanguageModeTransitionInParameterBinding = true;
                             }
 
                             result = LanguagePrimitives.ConvertTo(currentValue, toType, CultureInfo.CurrentCulture);
@@ -1256,7 +1251,8 @@ namespace System.Management.Automation
                         {
                             if (changeLanguageModeForTrustedCommand)
                             {
-                                _context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                                Context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                                Context.LanguageModeTransitionInParameterBinding = oldLangModeTransitionStatus;
                             }
                         }
 
@@ -1311,6 +1307,13 @@ namespace System.Management.Automation
                     throw pbe;
                 }
             } // TraceScope
+
+            if (result != null)
+            {
+                // Set the converted result object untrusted if necessary
+                ExecutionContext.PropagateInputSource(originalValue, result, Context.LanguageMode);
+            }
+
             return result;
         } // CoerceTypeAsNeeded
 
@@ -1444,6 +1447,7 @@ namespace System.Management.Automation
             bool coerceElementTypeIfNeeded,
             out bool coercionRequired)
         {
+            object originalValue = currentValue;
             object result = null;
             coercionRequired = false;
 
@@ -1870,6 +1874,9 @@ namespace System.Management.Automation
                 if (!coercionRequired)
                 {
                     result = resultCollection;
+
+                    // Set the converted result object untrusted if necessary
+                    ExecutionContext.PropagateInputSource(originalValue, result, Context.LanguageMode);
                 }
             } while (false);
 

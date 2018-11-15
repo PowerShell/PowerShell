@@ -8,6 +8,7 @@ using System.IO;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
+using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Runtime.CompilerServices;
 using Microsoft.PowerShell;
@@ -314,16 +315,38 @@ namespace System.Management.Automation
                 // caches. After that, the binding rules encode the language mode.
                 if (value == PSLanguageMode.ConstrainedLanguage)
                 {
-                    ExecutionContext.HasEverUsedConstrainedLanguage = true;
                     HasRunspaceEverUsedConstrainedLanguageMode = true;
 
-                    System.Management.Automation.Language.PSSetMemberBinder.InvalidateCache();
-                    System.Management.Automation.Language.PSInvokeMemberBinder.InvalidateCache();
-                    System.Management.Automation.Language.PSConvertBinder.InvalidateCache();
-                    System.Management.Automation.Language.PSBinaryOperationBinder.InvalidateCache();
-                    System.Management.Automation.Language.PSGetIndexBinder.InvalidateCache();
-                    System.Management.Automation.Language.PSSetIndexBinder.InvalidateCache();
-                    System.Management.Automation.Language.PSCreateInstanceBinder.InvalidateCache();
+                    // If 'ExecutionContext.HasEverUsedConstrainedLanguage' is already set to True, then we have
+                    // already invalidated all cached binders, and binders already started to generate code with
+                    // consideration of 'LanguageMode'. In such case, we don't need to invalidate cached binders
+                    // again.
+                    // Note that when executing script blocks marked as 'FullLanguage' in a 'ConstrainedLanguage'
+                    // environment, we will set and Restore 'context.LanguageMode' very often. But we should not
+                    // invalidate the cached binders every time we restore to 'ConstrainedLanguage'.
+                    if (!ExecutionContext.HasEverUsedConstrainedLanguage)
+                    {
+                        lock (lockObject)
+                        {
+                            // If another thread has already set 'ExecutionContext.HasEverUsedConstrainedLanguage'
+                            // while we are waiting on the lock, then nothing needs to be done.
+                            if (!ExecutionContext.HasEverUsedConstrainedLanguage)
+                            {
+                                PSSetMemberBinder.InvalidateCache();
+                                PSInvokeMemberBinder.InvalidateCache();
+                                PSConvertBinder.InvalidateCache();
+                                PSBinaryOperationBinder.InvalidateCache();
+                                PSGetIndexBinder.InvalidateCache();
+                                PSSetIndexBinder.InvalidateCache();
+                                PSCreateInstanceBinder.InvalidateCache();
+
+                                // Set 'HasEverUsedConstrainedLanguage' at the very end to guarantee other threads to wait until
+                                // all invalidation operations are done.
+                                UntrustedObjects = new ConditionalWeakTable<object, object>();
+                                ExecutionContext.HasEverUsedConstrainedLanguage = true;
+                            }
+                        }
+                    }
                 }
 
                 // Conversion caches don't have version info / binding rules, so must be
@@ -341,10 +364,104 @@ namespace System.Management.Automation
         internal bool HasRunspaceEverUsedConstrainedLanguageMode { get; private set; }
 
         /// <summary>
+        /// Indicate if a parameter binding is happening that transitions the execution from ConstrainedLanguage 
+        /// mode to a trusted FullLanguage command.
+        /// </summary>
+        internal bool LanguageModeTransitionInParameterBinding { get; set; }
+
+        /// <summary>
         /// True if we've ever used ConstrainedLanguage. If this is the case, then the binding restrictions
         /// need to also validate against the language mode.
         /// </summary>
         internal static bool HasEverUsedConstrainedLanguage { get; private set; }
+
+        #region Variable Tracking
+
+        /// <summary>
+        /// Initialized when 'ConstrainedLanguage' is applied.
+        /// The objects contained in this table are considered to be untrusted.
+        /// </summary>
+        private static ConditionalWeakTable<object, object> UntrustedObjects { get; set; }
+
+        /// <summary>
+        /// Helper for checking if the given value is marked as untrusted.
+        /// </summary>
+        internal static bool IsMarkedAsUntrusted(object value)
+        {
+            bool result = false;
+            var baseValue = PSObject.Base(value);
+            if (baseValue != null && baseValue != NullString.Value)
+            {
+                object unused;
+                result = UntrustedObjects.TryGetValue(baseValue, out unused);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Helper for marking a value as untrusted.
+        /// </summary>
+        internal static void MarkObjectAsUntrusted(object value)
+        {
+            // If the value is a PSObject, then we mark its base object untrusted
+            var baseValue = PSObject.Base(value);
+            if (baseValue != null && baseValue != NullString.Value)
+            {
+                // It's actually setting a key value pair when the key doesn't exist
+                UntrustedObjects.GetValue(baseValue, key => null);
+
+                try
+                {
+                    // If it's a PSReference object, we need to also mark the value it's holding on.
+                    // This could result in a recursion if psRef.Value points to itself directly or indirectly, so we check if psRef.Value is already
+                    // marked before making a recursive call. The additional check adds extra overhead for handling PSReference object, but it should
+                    // be rare in practice.
+                    var psRef = baseValue as PSReference;
+                    if (psRef != null && !IsMarkedAsUntrusted(psRef.Value))
+                    {
+                        MarkObjectAsUntrusted(psRef.Value);
+                    }
+                }
+                catch { /* psRef.Value may call PSVariable.Value under the hood, which may throw arbitrary exception */ }
+            }
+        }
+
+        /// <summary>
+        /// Helper for setting the untrusted value of an assignment to either a 'Global:' variable, or a 'Script:' variable in a module scope.
+        /// </summary>
+        /// <remarks>
+        /// This method is for tracking assignment to global variables and module script scope varaibles in ConstrainedLanguage mode. Those variables
+        /// can go across boundaries between ConstrainedLanguage and FullLanguage, and make it easy for a trusted script to use data from an untrusted
+        /// environment. Therefore, in ConstrainedLanguage mode, we need to mark the value objects assigned to those variables as untrusted.
+        /// </remarks>
+        internal static void MarkObjectAsUntrustedForVariableAssignment(PSVariable variable, SessionStateScope scope, SessionStateInternal sessionState)
+        {
+            if (scope.Parent == null ||  // If it's the global scope, OR
+                (sessionState.Module != null &&  // it's running in a module AND
+                 scope.ScriptScope == scope && scope.Parent.Parent == null)) // it's the module's script scope (scope.Parent is global scope and scope.ScriptScope points to itself)
+            {
+                // We are setting value for either a 'Global:' variable, or a 'Script:' variable within a module in 'ConstrainedLanguage' mode.
+                // Global variable may be referenced within trusted script block (scriptBlock.LanguageMode == 'FullLanguage'), and users could
+                // also set a 'Script:' variable in a trusted module scope from 'ConstrainedLanguage' environment via '& $mo { $script:<var> }'.
+                // So we need to mark the value as untrusted.
+                MarkObjectAsUntrusted(variable.Value);
+            }
+        }
+
+        /// <summary>
+        /// The result object is assumed generated by operating on the original object.
+        /// So if the original object is from an untrusted input source, we mark the result object as untrusted.
+        /// </summary>
+        internal static void PropagateInputSource(object originalObject, object resultObject, PSLanguageMode currentLanguageMode)
+        {
+            // The untrusted flag is populated only in FullLanguage mode and ConstrainedLanguage has been used in the process before.
+            if (ExecutionContext.HasEverUsedConstrainedLanguage && currentLanguageMode == PSLanguageMode.FullLanguage && IsMarkedAsUntrusted(originalObject))
+            {
+                MarkObjectAsUntrusted(resultObject);
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// If true the PowerShell debugger will use FullLanguage mode, otherwise it will use the current language mode
@@ -1469,9 +1586,10 @@ namespace System.Management.Automation
             Modules = new ModuleIntrinsics(this);
         }
 
+        private static object lockObject = new Object();
+
 #if !CORECLR // System.AppDomain is not in CoreCLR
         private static bool _assemblyEventHandlerSet = false;
-        private static object lockObject = new Object();
 
         /// <summary>
         /// AssemblyResolve event handler that will look in the assembly cache to see

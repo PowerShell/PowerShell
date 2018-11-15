@@ -338,7 +338,6 @@ gHeader
 1       2       3
 
 
-
 "@ },
             @{ view = "Default"; widths = 4,7,4; variation = "4 row, 1 row, 2 row"; expectedTable = @"
 
@@ -348,7 +347,6 @@ Head
 er
 ---- ------- ----
 1    2       3
-
 
 
 "@ },
@@ -362,7 +360,6 @@ er
 1    2    3
 
 
-
 "@ },
             @{ view = "Default"; widths = 14,7,3; variation = "1 row, 1 row, 3 row"; expectedTable = @"
 
@@ -371,7 +368,6 @@ LongLongHeader Header2 Hea
                        3
 -------------- ------- ---
 1              2       3
-
 
 
 "@ },
@@ -383,7 +379,6 @@ Head
 er
 ----
 1
-
 
 
 "@ }
@@ -487,7 +482,6 @@ er
 1**********2***3
 
 
-
 "@ },
             @{ view = "Default"; widths = 4,7,5; variation = "narrow values with wrap"; values = [PSCustomObject]@{First=1;Second=2;Third=3}; wrap = $true; expectedTable = @"
 
@@ -499,7 +493,6 @@ er
 1**********2*3
 
 
-
 "@ },
             @{ view = "Default"; widths = 4,7,5; variation = "wide values"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $false; expectedTable = @"
 
@@ -509,7 +502,6 @@ Head
 er
 ----*-------*-----
 1...*...5678*12...
-
 
 
 "@ },
@@ -524,7 +516,6 @@ er
 123
 
 
-
 "@ },
             @{ view = "Default"; widths = 4,8,6; variation = "wide values with wrap, 1st column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
 
@@ -535,7 +526,6 @@ er
 ----**-------*------
 1234*12345678*123456
 5
-
 
 
 "@ },
@@ -549,7 +539,6 @@ ader
 ************8
 
 
-
 "@ },
             @{ view = "Default"; widths = 5,8,5; variation = "wide values with wrap, 3rd column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
 
@@ -559,7 +548,6 @@ ader
 -----**-------*-----
 12345*12345678*12345
 ***************6
-
 
 
 "@ },
@@ -574,7 +562,6 @@ er
 5**********8*6
 
 
-
 "@ },
             @{ view = "One"; widths = 3,1,1; variation = "wide values with wrap, with 1 column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
 
@@ -586,7 +573,6 @@ er
 ---
 123
 45
-
 
 
 "@ }
@@ -690,7 +676,6 @@ abc  bcd
 1    1234
 
 
-
 "@ },
             @{ variation = "both columns"; obj = [pscustomobject]@{abc="1234";bcd="1234"},[pscustomobject]@{abc="1";bcd="1"}; expectedTable = @"
 
@@ -700,7 +685,6 @@ abc  bcd
 1    1
 
 
-
 "@ },
             @{ variation = "second column"; obj = [pscustomobject]@{abc="123";bcd="1234"},[pscustomobject]@{abc="1";bcd="123"}; expectedTable = @"
 
@@ -708,7 +692,6 @@ abc bcd
 --- ---
 123 1234
 1   123
-
 
 
 "@ }
@@ -726,14 +709,12 @@ a     b
 abc 123
 
 
-
 "@ },
             @{ variation = "left/left"; obj = [PSCustomObject]@{a="abc";b="abc"}; expectedTable = @"
 
 a   b
 -   -
 abc abc
-
 
 
 "@ },
@@ -744,14 +725,12 @@ abc abc
 123 abc
 
 
-
 "@ },
             @{ variation = "right/right"; obj = [PSCustomObject]@{a=123;b=123}; expectedTable = @"
 
   a   b
   -   -
 123 123
-
 
 
 "@ }
@@ -771,7 +750,6 @@ A B Name
     multiline content
 
 
-
 "@ },
             @{ variation = "left"; obj = [pscustomobject] @{Name="This`nIs some random`nmultiline content";A=1;B=2}; expectedTable = @"
 
@@ -782,7 +760,6 @@ Is some random
 multiline content
 
 
-
 "@ },
             @{ variation = "middle"; obj = [pscustomobject] @{A=1;Name="This`nIs some random`nmultiline content";B=2}; expectedTable = @"
 
@@ -791,7 +768,6 @@ A Name                                  B
 1 This                                  2
   Is some random
   multiline content
-
 
 
 "@ }

@@ -13,7 +13,7 @@ try
     Enable-Testhook -testhookName TestStopComputer
 
     # TEST START HERE
-    Describe "Rename-Computer" -Tag Feature {
+    Describe "Rename-Computer" -Tag Feature,RequireAdminOnWindows {
         # if we throw in BeforeEach, the test will fail and the stop will not be called
         BeforeEach {
             if ( ! (Test-TesthookIsSet -testhookName $RenameTesthook) ) {

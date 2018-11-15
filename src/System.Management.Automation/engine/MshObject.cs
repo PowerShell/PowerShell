@@ -1150,9 +1150,30 @@ namespace System.Management.Automation
         /// </exception>
         internal static string ToStringParser(ExecutionContext context, object obj)
         {
+            return ToStringParser(context, obj, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Returns the string representation of obj.
+        /// </summary>
+        /// <param name="context">ExecutionContext used to fetch the separator. </param>
+        /// <param name="obj">
+        /// object we are trying to call ToString on. If this is not an PSObject we try
+        /// enumerating and if that fails we call obj.ToString.
+        /// If this is an PSObject, we look for a brokered ToString.
+        /// If it is not present, and the BaseObject is null we try listing the properties.
+        /// If the BaseObject is not null we try enumerating. If that fails we try the BaseObject's ToString.
+        /// </param>
+        /// <param name="formatProvider">The formatProvider to be passed to ToString.</param>
+        /// <returns>A string representation of the object.</returns>
+        /// <exception cref="ExtendedTypeSystemException">
+        /// When there is a brokered ToString but it failed, or when the ToString on obj throws an exception.
+        /// </exception>
+        internal static string ToStringParser(ExecutionContext context, object obj, IFormatProvider formatProvider)
+        {
             try
             {
-                return ToString(context, obj, null, null, CultureInfo.InvariantCulture, true, true);
+                return ToString(context, obj, null, null, formatProvider, true, true);
             }
             catch (ExtendedTypeSystemException etse)
             {

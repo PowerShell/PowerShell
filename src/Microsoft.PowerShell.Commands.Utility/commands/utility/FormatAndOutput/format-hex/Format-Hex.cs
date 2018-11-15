@@ -13,9 +13,9 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Displays the hexidecimal equivalent of the input data.
+    /// Displays the hexadecimal equivalent of the input data.
     /// </summary>
-    [Cmdlet(VerbsCommon.Format, "Hex", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526919")]
+    [Cmdlet(VerbsCommon.Format, "Hex", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526919")]
     [OutputType(typeof(Microsoft.PowerShell.Commands.ByteCollection))]
     [Alias("fhx")]
     public sealed class FormatHex : PSCmdlet

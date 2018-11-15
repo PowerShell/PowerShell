@@ -491,7 +491,7 @@ Describe "TabCompletion" -Tags CI {
                 ## if $PSHOME contains a space tabcompletion adds ' around the path
                 @{ inputStr = 'cd $pshome\Modu'; expected = if($PSHOME.Contains(' ')) { "'$(Join-Path $PSHOME 'Modules')'" } else { Join-Path $PSHOME 'Modules' }; setup = $null }
                 @{ inputStr = 'cd "$pshome\Modu"'; expected = "`"$(Join-Path $PSHOME 'Modules')`""; setup = $null }
-                @{ inputStr = '$PSHOME\System.Management.Au'; expected = Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }
+                @{ inputStr = '$PSHOME\System.Management.Au'; expected = if($PSHOME.Contains(' ')) { "`& '$(Join-Path $PSHOME 'System.Management.Automation.dll')'" }  else { Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }}
                 @{ inputStr = '"$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
                 @{ inputStr = '& "$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
                 ## tab completion AST-based tests
@@ -1045,7 +1045,7 @@ dir -Recurse `
     }
 }
 
-Describe "Tab completion tests with remote Runspace" -Tags Feature {
+Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
     BeforeAll {
         if ($IsWindows) {
             $session = New-RemoteSession
@@ -1116,9 +1116,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         $res = TabExpansion2 -inputScript $path -cursorColumn $path.Length
         $listener = Get-ChildItem WSMan:\localhost\Listener
         $res.CompletionMatches.Count | Should -Be $listener.Count
-        for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
-            $res.CompletionMatches[$i].ListItemText | Should -Be $listener[$i].Name
-        }
+        $res.CompletionMatches.ListItemText | Should -BeIn $listener.Name
     }
 
     It "Tab completion gets dynamic parameters for '<path>' using '<parameter>'" -TestCases @(

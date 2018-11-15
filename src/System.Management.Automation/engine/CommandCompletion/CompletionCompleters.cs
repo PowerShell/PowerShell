@@ -3746,7 +3746,7 @@ namespace System.Management.Automation
                 prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
             }
 
-            CompleteMemberByInferredType(context, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+            CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
             result.Add(CompletionResult.Null);
         }
 
@@ -5027,7 +5027,7 @@ namespace System.Management.Automation
                 if (inferredTypes != null && inferredTypes.Length > 0)
                 {
                     // Use inferred types if we have any
-                    CompleteMemberByInferredType(context, inferredTypes, results, memberName, filter: null, isStatic: @static);
+                    CompleteMemberByInferredType(context.TypeInferenceContext, inferredTypes, results, memberName, filter: null, isStatic: @static);
                 }
                 else
                 {
@@ -5131,7 +5131,7 @@ namespace System.Management.Automation
             return Ast.GetAncestorAst<ConfigurationDefinitionAst>(expression) != null;
         }
 
-        private static void CompleteMemberByInferredType(CompletionContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
+        internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
         {
             bool extensionMethodsAdded = false;
             HashSet<string> typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -5142,8 +5142,9 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 typeNameUsed.Add(psTypeName.Name);
-                var members = context.TypeInferenceContext.GetMembersByInferredType(psTypeName, isStatic, filter);
+                var members = context.GetMembersByInferredType(psTypeName, isStatic, filter);
                 foreach (var member in members)
                 {
                     AddInferredMember(member, memberNamePattern, results);
@@ -5276,7 +5277,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static bool IsPropertyMember(object member)
+        internal static bool IsPropertyMember(object member)
         {
             return member is PropertyInfo
                    || member is FieldInfo
@@ -6154,7 +6155,7 @@ namespace System.Management.Automation
             {
                 var result = new List<CompletionResult>();
                 CompleteMemberByInferredType(
-                    completionContext, AstTypeInference.InferTypeOf(typeAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval),
+                    completionContext.TypeInferenceContext, AstTypeInference.InferTypeOf(typeAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval),
                     result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
                 return result;
             }
@@ -6265,7 +6266,7 @@ namespace System.Management.Automation
                                 var inferredType = AstTypeInference.InferTypeOf(commandAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
                                 var result = new List<CompletionResult>();
                                 CompleteMemberByInferredType(
-                                    completionContext, inferredType,
+                                    completionContext.TypeInferenceContext, inferredType,
                                     result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
                                 return result;
                             case "Select-Object":
@@ -6741,7 +6742,7 @@ namespace System.Management.Automation
             try
             {
                 // ConstrainedLanguage has already been applied as necessary when we construct CompletionContext
-                Diagnostics.Assert(!(ExecutionContext.HasEverUsedConstrainedLanguage && executionContext.LanguageMode != PSLanguageMode.ConstrainedLanguage),
+                Diagnostics.Assert(!(executionContext.HasRunspaceEverUsedConstrainedLanguageMode && executionContext.LanguageMode != PSLanguageMode.ConstrainedLanguage),
                                    "If the runspace has ever used constrained language mode, then the current language mode should already be set to constrained language");
 
                 // We're passing 'true' here for isTrustedInput, because SafeExprEvaluator ensures that the AST
@@ -6908,6 +6909,81 @@ namespace System.Management.Automation
         public object VisitParenExpression(ParenExpressionAst parenExpressionAst)
         {
             return parenExpressionAst.Pipeline.Accept(this);
+        }
+    }
+
+    /// <summary>
+    /// Completes with the property names of the InputObject.
+    /// </summary>
+    internal class PropertyNameCompleter : IArgumentCompleter
+    {
+        private readonly string _parameterNameOfInput;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyNameCompleter"/> class.
+        /// </summary>
+        public PropertyNameCompleter()
+        {
+            _parameterNameOfInput = "InputObject";
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyNameCompleter"/> class.
+        /// </summary>
+        /// <param name="parameterNameOfInput">The name of the property of the input object for witch to complete with property names.</param>
+        public PropertyNameCompleter(string parameterNameOfInput)
+        {
+            _parameterNameOfInput = parameterNameOfInput;
+        }
+
+        IEnumerable<CompletionResult> IArgumentCompleter.CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+        {
+            if (!(commandAst.Parent is PipelineAst pipelineAst))
+            {
+                return null;
+            }
+
+            int i;
+            for (i = 0; i < pipelineAst.PipelineElements.Count; i++)
+            {
+                if (pipelineAst.PipelineElements[i] == commandAst)
+                {
+                    break;
+                }
+            }
+
+            var typeInferenceContext = new TypeInferenceContext();
+            IEnumerable<PSTypeName> prevType;
+            if (i == 0)
+            {
+                var parameterAst = (CommandParameterAst)commandAst.Find(ast => ast is CommandParameterAst cpa && cpa.ParameterName == "PropertyName", false);
+                var pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion);
+                if (!pseudoBinding.BoundArguments.TryGetValue(_parameterNameOfInput, out var pair) || !pair.ArgumentSpecified)
+                {
+                    return null;
+                }
+
+                if (pair is AstPair astPair && astPair.Argument != null)
+                {
+                    prevType = AstTypeInference.InferTypeOf(astPair.Argument, typeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+                }
+
+                return null;
+            }
+            else
+            {
+                prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], typeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+            }
+
+            var result = new List<CompletionResult>();
+
+            CompletionCompleters.CompleteMemberByInferredType(typeInferenceContext, prevType, result, wordToComplete + "*", filter: CompletionCompleters.IsPropertyMember, isStatic: false);
+            return result;
         }
     }
 }

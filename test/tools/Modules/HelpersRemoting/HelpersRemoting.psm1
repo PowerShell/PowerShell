@@ -10,9 +10,52 @@ if ($IsWindows) {
     try { $Script:AppVeyorRemoteCred = Import-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" } catch { }
 }
 
+function Get-DefaultEndPointName
+{
+    $endPointName = "PowerShell.$(${PSVersionTable}.GitCommitId)"
+    $endPoint = Get-PSSessionConfiguration -Name $endPointName -ErrorAction SilentlyContinue
+
+    if ($endPoint -eq $null)
+    {
+        Enable-PSRemoting -SkipNetworkProfileCheck
+        $endPoint = Get-PSSessionConfiguration -Name $endPointName -ErrorAction SilentlyContinue
+
+        if ($endPoint -eq $null)
+        {
+            Write-Warning "Unable to create the remoting configuration endpoint for this PowerShell version: $(${PSVersionTable}.PSVersion)"
+            return $endPointName
+        }
+    }
+
+    if ($endPoint.Permission -like "*NT AUTHORITY\NETWORK AccessDenied*")
+    {
+        Enable-PSRemoting -SkipNetworkProfileCheck
+        $endPoint = Get-PSSessionConfiguration -Name $endPointName -ErrorAction SilentlyContinue
+
+        if ($endPoint.Permission -like "*NT AUTHORITY\NETWORK AccessDenied*")
+        {
+            Write-Warning "Unable to enable the remoting configuration endpoint: $(${PSVersionTable}.PSVersion)"
+        }
+    }
+
+    return $endPointName
+}
+
 function New-RemoteRunspace
 {
+    param (
+        [string] $ConfigurationName
+    )
+
+    # For PSCore6, we want to always test against a remoting endpoint running PSCore6 (not Windows PowerShell)
+    if ([string]::IsNullOrEmpty($ConfigurationName))
+    {
+        $ConfigurationName = Get-DefaultEndPointName
+    }
+
     $wsmanConInfo = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
+
+    $wsmanConInfo.ShellUri = 'http://schemas.microsoft.com/powershell/' + $ConfigurationName
 
     if ($Script:AppVeyorRemoteCred)
     {
@@ -27,7 +70,42 @@ function New-RemoteRunspace
     $remoteRunspace = [runspacefactory]::CreateRunspace($Host, $wsmanConInfo)
     $remoteRunspace.Open()
 
+    Write-Verbose "Successfully created remote runspace on endpoint: $ConfigurationName"
+
     return $remoteRunspace
+}
+
+function New-RemoteRunspacePool
+{
+    param (
+        [int] $MinRunspace = 1,
+
+        [int] $MaxRunspace = 6,
+
+        [string] $ConfigurationName
+    )
+
+    $wsmanConnection = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
+
+    if ($ConfigurationName -ne $null)
+    {
+        $wsmanConnection.ShellUri = "http://schemas.microsoft.com/powershell/$ConfigurationName"
+    }
+
+    if ($Script:AppVeyorRemoteCred)
+    {
+        Write-Verbose "Using Global AppVeyor Credential" -Verbose
+        $wsmanConnection.Credential = $Script:AppVeyorRemoteCred
+    }
+    else
+    {
+        Write-Verbose "Using Implicit Credential" -Verbose
+    }
+
+    [System.Management.Automation.Runspaces.RunspacePool] $remoteRunspacePool = [runspacefactory]::CreateRunspacePool($MinRunspace, $MaxRunspace, $wsmanConnection)
+    $remoteRunspacePool.Open()
+    
+    return $remoteRunspacePool
 }
 
 function CreateParameters
@@ -95,7 +173,14 @@ function New-RemoteSession
         [string] $Name,
         [string] $ConfigurationName,
         [switch] $CimSession,
-        [System.Management.Automation.Remoting.PSSessionOption] $SessionOption)
+        [System.Management.Automation.Remoting.PSSessionOption] $SessionOption
+    )
+
+    # For PSCore6, we want to always test against a remoting endpoint running PSCore6 (not Windows PowerShell)
+    if ([string]::IsNullOrEmpty($ConfigurationName))
+    {
+        $ConfigurationName = Get-DefaultEndPointName
+    }
 
     $parameters = CreateParameters -Name $Name -ConfigurationName $ConfigurationName -SessionOption $SessionOption -CimSession:$CimSession.IsPresent
 
@@ -104,6 +189,8 @@ function New-RemoteSession
     } else {
         $session = New-PSSession @parameters
     }
+
+    Write-Verbose "Successfully created remote PSSession on endpoint: $ConfigurationName"
 
     return $session
 }
@@ -114,7 +201,14 @@ function Invoke-RemoteCommand
         [string] $ComputerName,
         [scriptblock] $ScriptBlock,
         [string] $ConfigurationName,
-        [switch] $InDisconnectedSession)
+        [switch] $InDisconnectedSession
+    )
+
+    # For PSCore6, we want to always test against a remoting endpoint running PSCore6 (not Windows PowerShell)
+    if ([string]::IsNullOrEmpty($ConfigurationName))
+    {
+        $ConfigurationName = Get-DefaultEndPointName
+    }
 
     $parameters = CreateParameters -ComputerName $ComputerName -ConfigurationName $ConfigurationName
 
