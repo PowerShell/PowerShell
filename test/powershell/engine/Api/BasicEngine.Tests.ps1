@@ -16,7 +16,7 @@ Describe 'Basic engine APIs' -Tags "CI" {
         }
 
         It 'cannot create instance with null runspace' {
-            { [powershell]::Create($null) } | Should -Throw -ErrorId 'PSArgumentNullException'
+            { [powershell]::Create([runspace]$null) } | Should -Throw -ErrorId 'PSArgumentNullException'
         }
 
         It "can load the default snapin 'Microsoft.WSMan.Management'" -skip:(-not $IsWindows) {
