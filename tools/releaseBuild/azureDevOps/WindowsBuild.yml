@@ -305,3 +305,4 @@ jobs:
       Get-Content "$(System.ArtifactsDirectory)\package.xml"
     displayName: 'print signing xml'
     continueOnError: true
+
