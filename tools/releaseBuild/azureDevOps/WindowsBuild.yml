@@ -8,6 +8,9 @@ jobs:
   displayName: Build
   condition: succeeded()
   pool: PowerShell
+  demands:
+   - Agent.Image
+   - USERNAME -equals issblder
   strategy:
     matrix:
       x64-release:
