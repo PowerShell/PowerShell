@@ -632,11 +632,7 @@ namespace System.Management.Automation
 
             // If the system lockdown policy says "Enforce", do so (unless it's in the
             // more restrictive NoLanguage mode)
-            if ((SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) &&
-                (args.Runspace.ExecutionContext.LanguageMode != PSLanguageMode.NoLanguage))
-            {
-                args.Runspace.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
-            }
+            Utils.EnforceSystemLockDownLanguageMode(args.Runspace.ExecutionContext);
 
             // Set the current location to MyDocuments folder for this runspace.
             // This used to be set to the Personal folder but was changed to MyDocuments folder for

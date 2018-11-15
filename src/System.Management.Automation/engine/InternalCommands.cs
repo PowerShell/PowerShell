@@ -162,6 +162,7 @@ namespace Microsoft.PowerShell.Commands
         /// The property or method name
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "PropertyAndMethodSet")]
+        [ValidateTrustedData]
         [ValidateNotNullOrEmpty]
         public string MemberName
         {
@@ -177,6 +178,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         [Parameter(ParameterSetName = "PropertyAndMethodSet", ValueFromRemainingArguments = true)]
+        [ValidateTrustedData]
         [Alias("Args")]
         public object[] ArgumentList
         {

@@ -2178,7 +2178,7 @@ function Get-PackageSemanticVersion
 }
 
 # Builds coming out of this project can have version number as 'M.m.p-previewName[Number]' OR 'M.m.p'
-# This function converts the above version into semantic version major.minor.patch[~previewName[Number]] format
+# This function converts the above version into semantic version major.minor.patch[-previewName[Number]] format
 function Get-LinuxPackageSemanticVersion
 {
     [CmdletBinding()]
@@ -2198,7 +2198,7 @@ function Get-LinuxPackageSemanticVersion
         $packageSemanticVersion = $Version
     } elseif ($packageVersionTokens.Count -ge 2) {
         $packageRevisionTokens = ($packageVersionTokens[1..($packageVersionTokens.Count-1)] -join '-')
-        $packageSemanticVersion = ('{0}~{1}' -f  $packageVersionTokens[0], $packageRevisionTokens)
+        $packageSemanticVersion = ('{0}-{1}' -f  $packageVersionTokens[0], $packageRevisionTokens)
     }
 
     $packageSemanticVersion

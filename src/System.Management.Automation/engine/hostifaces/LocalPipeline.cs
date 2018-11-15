@@ -847,7 +847,12 @@ namespace System.Management.Automation.Runspaces
                         try
                         {
                             CommandOrigin commandOrigin = command.CommandOrigin;
-                            if (IsNested)
+
+                            // Do not set command origin to internal if this is a script debugger originated command (which always
+                            // runs nested commands).  This prevents the script debugger command line from seeing private commands.
+                            if (IsNested &&
+                                !LocalRunspace.InNestedPrompt &&
+                                !((LocalRunspace.Debugger != null) && (LocalRunspace.Debugger.InBreakpoint)))
                             {
                                 commandOrigin = CommandOrigin.Internal;
                             }

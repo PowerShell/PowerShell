@@ -401,7 +401,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                 Import-Module -Name $moduleFile -Force
                 Test-ValidateSet 'Hello' | Should -BeExactly 'Hello'
             } finally {
-                Remove-Module -Name $moduleFile -Force
+                Remove-Module -Name $moduleFile -Force -ErrorAction SilentlyContinue
             }
         }
     }

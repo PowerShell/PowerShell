@@ -1,22 +1,55 @@
 ﻿# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "TestImplicitRemotingBatching hook should correctly batch simple remote command pipelines" -Tags 'Feature','RequireAdminOnWindows' {
+Describe "TestImplicitRemotingBatching hook should correctly batch simple remote command pipelines" -Tag 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
 
         if (! $isWindows) { return }
 
+        function ThrowSetupError
+        {
+            param (
+                [string] $errorMessage,
+                [System.Management.Automation.ErrorRecord[]] $eRecords
+            )
+
+            $msg = @()
+            foreach ($err in $powerShell.Streams.Error)
+            {
+                $msg += $err.ToString() + "`n"
+            }
+
+            throw "$errorMessage : '$msg'"
+        }
+
+        # Make sure we can create a remote session
+        $remotePSSession = New-RemoteSession
+        if ($remotePSSession -eq $null)
+        {
+            Write-Verbose "Unable to create a remote session in test."
+        }
+        else
+        {
+            Remove-PSSession $remotePSSession
+        }
+
         [powershell] $powerShell = [powershell]::Create([System.Management.Automation.RunspaceMode]::NewRunspace)
 
         # Create remote session in new PowerShell session
         $powerShell.AddScript('Import-Module -Name HelpersRemoting; $remoteSession = New-RemoteSession').Invoke()
-        if ($powerShell.Streams.Error.Count -gt 0) { throw "Unable to create remote session for test" }
+        if ($powerShell.Streams.Error.Count -gt 0)
+        {
+            ThrowSetupError -errorMessage "Unable to create remote session for test with error" -eRecords $powerShell.Streams.Error
+        }
 
         # Import implicit commands from remote session
         $powerShell.Commands.Clear()
         $powerShell.AddScript('Import-PSSession -Session $remoteSession -CommandName Get-Process,Write-Output -AllowClobber').Invoke()
-        if ($powerShell.Streams.Error.Count -gt 0) { throw "Unable to import pssession for test" }
+        if ($powerShell.Streams.Error.Count -gt 0)
+        {
+            ThrowSetupError -errorMessage "Unable to import pssession for test" -eRecords $powerShell.Streams.Error
+        }
 
         # Define $filter variable in local session
         $powerShell.Commands.Clear()

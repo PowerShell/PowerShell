@@ -174,6 +174,8 @@ namespace System.Management.Automation.Security
         }
         private static SystemEnforcementMode? s_cachedWldpSystemPolicy = null;
 
+        private const string AppLockerTestFileName = "__PSScriptPolicyTest_";
+        private const string AppLockerTestFileContents = "# PowerShell test file to determine AppLocker lockdown mode ";
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
             SaferPolicy result = SaferPolicy.Disallowed;
@@ -216,13 +218,14 @@ namespace System.Management.Automation.Security
                                     IO.Directory.CreateDirectory(tempPath);
                                 }
 
-                                testPathScript = IO.Path.Combine(tempPath, IO.Path.GetRandomFileName() + ".ps1");
-                                testPathModule = IO.Path.Combine(tempPath, IO.Path.GetRandomFileName() + ".psm1");
+                                testPathScript = IO.Path.Combine(tempPath, AppLockerTestFileName + IO.Path.GetRandomFileName() + ".ps1");
+                                testPathModule = IO.Path.Combine(tempPath, AppLockerTestFileName + IO.Path.GetRandomFileName() + ".psm1");
 
                                 // AppLocker fails when you try to check a policy on a file
                                 // with no content. So create a scratch file and test on that.
-                                IO.File.WriteAllText(testPathScript, "1");
-                                IO.File.WriteAllText(testPathModule, "1");
+                                String dtAppLockerTestFileContents = AppLockerTestFileContents + DateTime.Now;
+                                IO.File.WriteAllText(testPathScript, dtAppLockerTestFileContents);
+                                IO.File.WriteAllText(testPathModule, dtAppLockerTestFileContents);
                             }
                             catch (System.IO.IOException)
                             {

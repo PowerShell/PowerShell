@@ -320,6 +320,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Invoke-WmiMethod",                                   ,                     $($FullCLR                               )
 "Cmdlet", "Invoke-WSManAction",                                 ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Join-Path",                                          ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Join-String",                                        ,                     $(             $CoreWindows -or $CoreUnix)
 "Cmdlet", "Limit-EventLog",                                     ,                     $($FullCLR                               )
 "Cmdlet", "Measure-Command",                                    ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Measure-Object",                                     ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)

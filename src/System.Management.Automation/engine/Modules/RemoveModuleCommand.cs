@@ -84,6 +84,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (FullyQualifiedName != null)
             {
+                // TODO:
+                // Paths in the module name may fail here because
+                // they the wrong directory separator or are relative.
+                // Fix with the code below:
+                // FullyQualifiedName = FullyQualifiedName.Select(ms => ms.WithNormalizedName(Context, SessionState.Path.CurrentLocation.Path)).ToArray();
                 foreach (var m in Context.Modules.GetModules(FullyQualifiedName, false))
                 {
                     modulesToRemove.Add(m, new List<PSModuleInfo> { m });

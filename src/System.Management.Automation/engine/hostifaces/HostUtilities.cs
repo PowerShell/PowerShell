@@ -853,6 +853,7 @@ namespace System.Management.Automation
                     e);
             }
 
+            remoteRunspace.IsConfiguredLoopBack = true;
             return remoteRunspace;
         }
 
