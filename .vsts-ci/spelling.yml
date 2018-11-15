@@ -5,16 +5,17 @@ trigger:
     - master
     - release*
   paths:
-    include:
-    - '*.md'
+    exclude:
+    - /src/*
+
 pr:
   branches:
     include:
     - master
     - release*
   paths:
-    include:
-    - '*.md'
+    exclude:
+    - /src/*
 
 resources:
 - repo: self
