@@ -137,6 +137,55 @@
 - Update `CONTRIBUTION.md` about adding an empty line after the copyright header (#7706) (Thanks @iSazonov!)
 - Update docs about .NET Core version `2.0` to be about version `2.x` (#7467) (Thanks @bergmeister!)
 
+## v6.1.1 - 2018-11-13
+
+### Engine Updates and Fixes
+
+- Fix issue with logging the null character in `ScriptBlock` logging (Internal 5607)
+- Consolidation of all Windows PowerShell work ported to 6.1 (Internal 5233)
+
+### General Cmdlet Updates and Fixes
+
+- Use `ZipFile` and `ExtractToDirectory` APIs to extract zip file (Internal 5608)
+
+## v6.0.5 - 2018-11-13
+
+### Engine updates and fixes
+
+- Fix issue with logging the null character in `ScriptBlock` logging (Internal 5605)
+
+### General cmdlet updates and fixes
+
+- Use `ZipFile` and `ExtractToDirectory` APIs to extract zip file (Internal 4802)
+
+### Build and Packaging Improvements
+
+- Update `SignType` in `signing.xml` (Internal 5721)
+- Port changes to pull PowerShell Gallery modules from Modules `csproj` (Internal 5713)
+- Port macOS Release build changes changes from GitHub (#8189, #8188, #8185)
+- Fix script path for `PowerShellPackageVsts.ps1` (#8189)
+- Workaround for accessing `AzDevOps` Artifacts (#8188)
+- Bump various packages to latest patch version (Internal 5675)
+- Update PowerShell SDK NuGet various metadata description (Internal 4527, 4510, 4505)
+
+## v6.0.4 - 2018-08-10
+
+### Build and Packaging Improvements
+
+- Update the Archive module version (Internal 5671)
+- Update to .NET Core `2.1.5` with SDK `2.1.403` (#7936) (Thanks @iSazonov!)
+- Disable package major upgrade tests for release branch (Internal 5209)
+- Bump versions for dependencies (Internal 5612)
+- Port changes to allow `AzDevOps` NuGet feeds for macOS build (Internal 5716)
+- Port macOS changes from GitHub (#8189, #8188, #8185)
+- Add function to create a new `nuget.config` file (#8170)
+- Updated `wxs` file to match published packages (Internal 5660)
+
+### Tests
+
+- Change API to match cmdlet which is more reliable in `AzDevOps` Pipelines Windows (#8003)
+- Fix conflict with `Get-AdlStoreChildItem` from `az` module in tab completion tests (#8167)
+
 ## v6.1.0 - 2018-09-13
 
 ### Engine Updates and Fixes
