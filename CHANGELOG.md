@@ -160,7 +160,7 @@
 
 ### Build and Packaging Improvements
 
-- Update `SignType` in signing.xml (Internal 5721)
+- Update `SignType` in `signing.xml` (Internal 5721)
 - Port changes to pull PowerShell Gallery modules from Modules `csproj` (Internal 5713)
 - Port macOS Release build changes changes from GitHub (#8189, #8188, #8185)
 - Fix script path for `PowerShellPackageVsts.ps1` (#8189)
