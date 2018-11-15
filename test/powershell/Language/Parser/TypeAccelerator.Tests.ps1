@@ -410,11 +410,11 @@ Describe "Type accelerators" -Tags "CI" {
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 99
+                $totalAccelerators = 100
             }
             else
             {
-                $totalAccelerators = 104
+                $totalAccelerators = 105
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{
