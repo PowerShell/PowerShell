@@ -234,3 +234,74 @@ jobs:
     inputs:
       sourceScanPath: '$(componentregistration)'
       snapshotForceEnabled: true
+
+
+- job: PackageSigningJob
+  displayName: Package signing
+  dependsOn: BuildJob 
+  condition: succeeded()
+  pool: Package ES CodeHub Lab E
+  strategy:
+    matrix:
+      release-anycpu:
+        BuildConfiguration: release
+        BuildPlatform: any cpu
+
+  steps:
+
+  - powershell: |
+       tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTag)
+    displayName: 'Set ReleaseTag Variable'
+    continueOnError: true
+
+  - powershell: |
+       $version = $env:ReleaseTag.Substring(1)
+       $vstsCommandString = "vso[task.setvariable variable=Version]$version"
+       Write-Host "sending " + $vstsCommandString
+       Write-Host "##$vstsCommandString"
+       
+       $azureVersion = $env:ReleaseTag.ToLowerInvariant() -replace '\.', '-'
+       $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
+       Write-Host "sending " + $vstsCommandString
+       Write-Host "##$vstsCommandString"
+       
+    displayName: 'Set Version Variable'
+    continueOnError: true
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download artifacts'
+    inputs:
+      downloadType: specific
+    continueOnError: true
+
+  - powershell: |
+      dir "$(System.ArtifactsDirectory)\*" -Recurse
+    displayName: 'dir artifacts directory'
+    continueOnError: true
+
+  - powershell: |
+      Expand-Archive -Path "$(System.ArtifactsDirectory)\results\PowerShell-$(Version)-symbols-win-x86.zip" -Destination "$(Build.StagingDirectory)\symbols\x86"
+    displayName: 'Expand symbols zip - x86'
+    continueOnError: true
+    condition: and(succeeded(), contains(variables['Architecture'], 'x86'))
+
+  - powershell: |
+      Expand-Archive -Path "$(System.ArtifactsDirectory)\results\PowerShell-$(Version)-symbols-win-x64.zip" -Destination "$(Build.StagingDirectory)\symbols\x64"
+    displayName: 'Expand symbols zip - x64'
+    continueOnError: true
+    condition: and(succeeded(), contains(variables['Architecture'], 'x64'))
+
+  - powershell: |
+      Expand-Archive -Path "$(System.ArtifactsDirectory)\results\PowerShell-$(Version)-symbols-win-fxdependent.zip" -Destination "$(Build.StagingDirectory)\symbols\fxdependent"
+    displayName: 'Expand symbols zip - fxdependent'
+    continueOnError: true
+    condition: and(succeeded(), contains(variables['Architecture'], 'x64'))
+
+  - powershell: |
+      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi","$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi" -path "$(System.ArtifactsDirectory)\package.xml"
+    displayName: 'Generate Package Signing Xml'
+
+  - powershell: |
+      Get-Content "$(System.ArtifactsDirectory)\package.xml"
+    displayName: 'print signing xml'
+    continueOnError: true
