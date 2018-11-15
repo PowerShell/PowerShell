@@ -526,7 +526,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Mandatory file name to read from.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true)]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         public string[] Path
         {
