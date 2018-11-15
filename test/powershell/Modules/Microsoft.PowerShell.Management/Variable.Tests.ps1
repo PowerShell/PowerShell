@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+Import-Module HelpersSecurity
+
 Describe "Validate basic Variable provider cmdlets" -Tags "CI" {
     BeforeAll {
         $testVarName = "MyTestVarThatWontConflict"
@@ -94,5 +97,108 @@ Describe "Validate basic negative test cases for Variable provider cmdlets" -Tag
 
     It "Verify Negative Get-ItemPropertyValue" {
         { Get-ItemPropertyValue -Path "Variable:" -Name $testVarName -ErrorAction Stop } | Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.GetItemPropertyValueCommand"
+    }
+}
+
+Describe "Validate scope in Variable provider cmdlets" -Tag "Feature" {
+    BeforeAll {
+        Set-Variable -Name Module -Value (New-Module -Name "Test-Variables" {
+            $Script:GetVariable = $true
+            $Script:SetVariable = "False"
+            $Script:ClearVariable = "False"
+            $Script:RemoveVariable = "False"
+        })
+        $Module.Name | Should be "Test-Variables"
+    }
+    It "Validate variable does not exist in current scope" {
+        { Get-Variable -Name GetVariable -ErrorAction Stop } | Should -Throw
+    }
+    It "Verify Get-Variable" {
+        Get-Variable -Scope $Module -Name GetVariable | Should be $true
+    }
+    It "Verify New-Variable" {
+        New-Variable -Scope $Module -Name NewVariable -Value $true
+        Get-Variable -Scope $Module -Name NewVariable | Should be $true
+    }
+    It "Verify Set-Variable" {
+        Set-Variable -Scope $Module -Name SetVariable -Value $true
+        Get-Variable -Scope $Module -Name SetVariable | Should be $true
+    }
+    It "Verify Clear-Variable" {
+        Clear-Variable -Scope $Module -Name ClearVariable
+        Get-Variable -Scope $Module -Name ClearVariable | ForEach-Object Value | Should BeNullOrEmpty
+    }
+    It "Verify Remove-Variable" {
+        Remove-Variable -Scope $Module -Name RemoveVariable
+        { Get-Variable -Scope $Module -Name RemoveVariable -ErrorAction Stop } | should -Throw
+    }
+}
+
+Describe "Validate scope types in Variable provider cmdlets" -Tag "Feature" {
+    BeforeAll {
+        Set-Variable -Name Module -Value (New-Module -Name "Test-Variables" {
+            $Script:GetVariable = $true
+            $Script:SetVariable = "False"
+            $Script:ClearVariable = "False"
+            $Script:RemoveVariable = "False"
+        })
+        $Module.Name | Should be "Test-Variables"
+    }
+    It "Validate Scope Object Type [ModuleInfo]" {
+        Get-Variable -Scope $Module -Name GetVariable | Should be $true
+    }
+    It "Validate Scope Object Type [SessionState]" {
+        Get-Variable -Scope $Module.SessionState -Name GetVariable | Should be $true
+    }
+    It "Validate Scope Object Type [SessionStateScope]" {
+        #Todo: This will get filled in soon Pending Completion of Command Get-CurrentScope
+    }
+    It "Validate Scope Object Type [PSObject]" {
+        $TestPSObject = [PSObject]::AsPSObject($Module)
+        Get-Variable -Scope $TestPSObject -Name GetVariable | Should be $true
+    }
+    It "Validate negative Scope Object Type [<NotSupported>]" {
+        $TestNotSupported = [datetime]::Now
+        { Get-Variable -Scope $TestNotSupported -Name GetVariable -ErrorAction Stop } | Should -Throw
+    }
+}
+
+Describe "Validate Security on scope in Variable provider cmdlets" -Tag "RequireAdminOnWindows" {
+    BeforeAll {
+        Set-Variable -Name TestApprovedScope -Value $true
+        Set-Variable -Name Module -Value (New-Module -Name "Test-Variables" {
+            $Script:GetVariable = $true
+            $Script:SetVariable = "False"
+            $Script:ClearVariable = "False"
+            $Script:RemoveVariable = "False"
+        })
+        $Module.Name | Should be "Test-Variables"
+    }
+    It "Test Security Approved Scope executed in constrained language mode" {
+        try {
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+            Get-Variable -Scope 0 -Name TestApprovedScope | Should be $true
+        }
+        catch {
+            throw $_
+        }
+        finally {
+            Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode -RevertLockdownMode
+        }
+    }
+    It "Test Security Scope executed in constrained language mode" {
+        try {
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+            Get-Variable -Scope $Module -Name GetVariable | Should be $true
+        }
+        catch {
+            return $true
+        }
+        finally {
+            Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode -RevertLockdownMode
+        }
+        throw "Test failed"
     }
 }
