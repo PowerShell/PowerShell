@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
             if (_paths == null || _paths.Length == 0)
             {
                 WriteError(new ErrorRecord(
-                    new ArgumentNullException("The path was null or an empty collection."),
+                    new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),
                     "NullPathNotPermitted",
                     ErrorCategory.InvalidArgument,
                     Path));
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
                 if (path == null)
                 {
                     WriteError(new ErrorRecord(
-                        new ArgumentNullException("The path was null or an empty collection."),
+                        new ArgumentNullException(TestPathResources.PathIsNullOrEmptyCollection),
                         "NullPathNotPermitted",
                         ErrorCategory.InvalidArgument,
                         Path));
