@@ -944,6 +944,364 @@ namespace System.Management.Automation.Language
             }
         }
 
+        private class DefineInterfaceHelper
+        {
+            private readonly Parser _parser;
+            internal readonly TypeDefinitionAst _typeDefinitionAst;
+            internal readonly TypeBuilder _typeBuilder;
+            internal readonly ModuleBuilder _moduleBuilder;
+            private readonly Dictionary<string, AbstractPropertyMemberAst> _definedProperties;
+            private readonly Dictionary<string, List<Tuple<AbstractFunctionMemberAst, Type[]>>> _definedMethods;
+
+            /// <summary>
+            /// If type has fatal errors we cannot construct .NET type from it.
+            /// TypeBuilder.CreateTypeInfo() would throw exception.
+            /// </summary>
+            public bool HasFatalErrors { get; private set; }
+
+            public DefineInterfaceHelper(Parser parser, ModuleBuilder module, TypeDefinitionAst typeDefinitionAst, string typeName)
+            {
+                _moduleBuilder = module;
+                _parser = parser;
+                _typeDefinitionAst = typeDefinitionAst;
+
+                List<Type> interfaces;
+                var baseClass = this.GetBaseTypes(parser, typeDefinitionAst, out interfaces);
+
+                var typeAttributes = Reflection.TypeAttributes.Interface
+                    | Reflection.TypeAttributes.Abstract
+                    | Reflection.TypeAttributes.AnsiClass
+                    | Reflection.TypeAttributes.AutoLayout;
+
+                _typeBuilder = module.DefineType(typeName, typeAttributes | Reflection.TypeAttributes.Public);
+                foreach (var parentInterface in interfaces)
+                {
+                    _typeBuilder.AddInterfaceImplementation(parentInterface);
+                }
+                _typeDefinitionAst.Type = _typeBuilder;
+
+                _definedMethods = new Dictionary<string, List<Tuple<AbstractFunctionMemberAst, Type[]>>>(StringComparer.OrdinalIgnoreCase);
+                _definedProperties = new Dictionary<string, AbstractPropertyMemberAst>(StringComparer.OrdinalIgnoreCase);
+            }
+
+            /// <summary>
+            /// Return base class type, never return null.
+            /// </summary>
+            /// <param name="parser"></param>
+            /// <param name="typeDefinitionAst"></param>
+            /// <param name="interfaces">return declared interfaces</param>
+            /// <returns></returns>
+            private Type GetBaseTypes(Parser parser, TypeDefinitionAst typeDefinitionAst, out List<Type> interfaces)
+            {
+                // Define base types and report errors.
+                Type baseClass = null;
+                interfaces = new List<Type>();
+
+                if (typeDefinitionAst.BaseTypes.Any())
+                {
+                    // base class
+                    var baseTypeAsts = typeDefinitionAst.BaseTypes;
+                    var firstBaseTypeAst = baseTypeAsts[0];
+
+                    if (firstBaseTypeAst.TypeName.IsArray)
+                    {
+                        parser.ReportError(firstBaseTypeAst.Extent,
+                            nameof(ParserStrings.SubtypeArray),
+                            ParserStrings.SubtypeArray,
+                            firstBaseTypeAst.TypeName.FullName);
+                        // fall to the default base type
+                    }
+                    else
+                    {
+                        baseClass = firstBaseTypeAst.TypeName.GetReflectionType();
+                        if (baseClass == null)
+                        {
+                            parser.ReportError(firstBaseTypeAst.Extent,
+                                nameof(ParserStrings.TypeNotFound),
+                                ParserStrings.TypeNotFound,
+                                firstBaseTypeAst.TypeName.FullName);
+                            // fall to the default base type
+                        }
+                        else
+
+                        {
+                            if (baseClass.IsInterface)
+                            {
+                                interfaces.Add(baseClass);
+                                baseClass = null;
+                            }
+                            else 
+                            {
+                                parser.ReportError(firstBaseTypeAst.Extent,
+                                    "InterfaceOnly",
+                                    "Interfaces can only extend other interfaces",
+                                    baseClass.Name);
+                                // ignore base type, we cannot inherit from unclosed generic.
+                                baseClass = null;
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i < baseTypeAsts.Count; i++)
+                    {
+                        if (baseTypeAsts[i].TypeName.IsArray)
+                        {
+                            parser.ReportError(baseTypeAsts[i].Extent,
+                                nameof(ParserStrings.SubtypeArray),
+                                ParserStrings.SubtypeArray,
+                                baseTypeAsts[i].TypeName.FullName);
+                            this.HasFatalErrors = true;
+                        }
+                    }
+
+                    for (int i = 1; i < baseTypeAsts.Count; i++)
+                    {
+                        if (baseTypeAsts[i].TypeName.IsArray)
+                        {
+                            parser.ReportError(baseTypeAsts[i].Extent,
+                                nameof(ParserStrings.SubtypeArray),
+                                ParserStrings.SubtypeArray,
+                                baseTypeAsts[i].TypeName.FullName);
+                        }
+                        else
+                        {
+                            Type interfaceType = baseTypeAsts[i].TypeName.GetReflectionType();
+                            if (interfaceType == null)
+                            {
+                                parser.ReportError(baseTypeAsts[i].Extent,
+                                    nameof(ParserStrings.TypeNotFound),
+                                    ParserStrings.TypeNotFound,
+                                    baseTypeAsts[i].TypeName.FullName);
+                            }
+                            else
+                            {
+                                if (interfaceType.IsInterface)
+                                {
+                                    interfaces.Add(interfaceType);
+                                }
+                                else
+                                {
+                                    parser.ReportError(baseTypeAsts[i].Extent,
+                                        nameof(ParserStrings.InterfaceNameExpected),
+                                        ParserStrings.InterfaceNameExpected,
+                                        interfaceType.Name);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return typeof(object);
+            }
+
+            public void DefineMembers()
+            {
+                foreach (var member in _typeDefinitionAst.Members)
+                {
+                    var propertyMemberAst = member as AbstractPropertyMemberAst;
+                    if (propertyMemberAst != null)
+                    {
+                        DefineProperty(propertyMemberAst);
+                    }
+                    else
+                    {
+                        AbstractFunctionMemberAst method = member as AbstractFunctionMemberAst;
+                        Diagnostics.Assert(method != null, StringUtil.Format("Unexpected subtype of MemberAst '{0}'. Expect `{1}`",
+                            member.GetType().Name, typeof(AbstractFunctionMemberAst).GetType().Name));
+
+                        DefineMethod(method);
+                    }
+                }
+            }
+
+            private void DefineProperty(AbstractPropertyMemberAst abstractPropertyMemberAst)
+            {
+                if (_definedProperties.ContainsKey(abstractPropertyMemberAst.Name))
+                {
+                    _parser.ReportError(abstractPropertyMemberAst.Extent,
+                        nameof(ParserStrings.MemberAlreadyDefined),
+                        ParserStrings.MemberAlreadyDefined,
+                        abstractPropertyMemberAst.Name);
+                    return;
+                }
+
+                _definedProperties.Add(abstractPropertyMemberAst.Name, abstractPropertyMemberAst);
+
+                Type type;
+                if (abstractPropertyMemberAst.PropertyType == null)
+                {
+                    type = typeof(object);
+                }
+                else
+                {
+                    type = abstractPropertyMemberAst.PropertyType.TypeName.GetReflectionType();
+                    Diagnostics.Assert(type != null, "Semantic checks should have ensure type can't be null");
+                }
+
+                PropertyBuilder property = this.EmitAbstractPropertyIl(abstractPropertyMemberAst, type);
+            }
+
+            private PropertyBuilder EmitAbstractPropertyIl(AbstractPropertyMemberAst abstractPropertyMemberAst, Type type)
+            {
+                // The property set and property get methods require a special set of attributes.
+                var getSetAttributes = Reflection.MethodAttributes.HideBySig
+                    | Reflection.MethodAttributes.SpecialName
+                    | Reflection.MethodAttributes.Abstract
+                    | Reflection.MethodAttributes.Virtual
+                    | Reflection.MethodAttributes.NewSlot
+                    | Reflection.MethodAttributes.Public;
+
+                // The last argument of DefineProperty is null, because the property has no parameters.
+                PropertyBuilder property = _typeBuilder.DefineProperty(abstractPropertyMemberAst.Name, Reflection.PropertyAttributes.HasDefault, CallingConventions.HasThis, type, null);
+
+                // Define the "get" accessor method.
+                MethodBuilder getMethod = _typeBuilder.DefineMethod(String.Concat("get_", abstractPropertyMemberAst.Name), getSetAttributes, type, Type.EmptyTypes);
+
+                // Define the "set" accessor method.
+                MethodBuilder setMethod = _typeBuilder.DefineMethod(String.Concat("set_", abstractPropertyMemberAst.Name), getSetAttributes, null, new Type[] { type });
+
+                // Map the two methods created above to our PropertyBuilder to
+                // their corresponding behaviors, "get" and "set" respectively.
+                property.SetGetMethod(getMethod);
+                property.SetSetMethod(setMethod);
+
+                return property;
+            }
+
+            private bool CheckForDuplicateOverload(AbstractFunctionMemberAst abstractFunctionMemberAst, Type[] newParameters)
+            {
+                List<Tuple<AbstractFunctionMemberAst, Type[]>> overloads;
+                if (!_definedMethods.TryGetValue(abstractFunctionMemberAst.Name, out overloads))
+                {
+                    overloads = new List<Tuple<AbstractFunctionMemberAst, Type[]>>();
+                    _definedMethods.Add(abstractFunctionMemberAst.Name, overloads);
+                }
+                else
+                {
+                    foreach (var overload in overloads)
+                    {
+                        var overloadParameters = overload.Item2;
+
+                        // This test won't be correct when defaults are supported
+                        if (newParameters.Length != overloadParameters.Length)
+                        {
+                            continue;
+                        }
+
+                        var sameSignature = true;
+                        for (int i = 0; i < newParameters.Length; i++)
+                        {
+                            if (newParameters[i] != overloadParameters[i])
+                            {
+                                sameSignature = false;
+                                break;
+                            }
+                        }
+
+                        if (sameSignature)
+                        {
+                            _parser.ReportError(abstractFunctionMemberAst.NameExtent ?? abstractFunctionMemberAst.Extent,
+                                nameof(ParserStrings.MemberAlreadyDefined),
+                                ParserStrings.MemberAlreadyDefined,
+                                abstractFunctionMemberAst.Name);
+                            return true;
+                        }
+                    }
+                }
+
+                overloads.Add(Tuple.Create(abstractFunctionMemberAst, newParameters));
+                return false;
+            }
+
+            private Type[] GetParameterTypes(AbstractFunctionMemberAst functionMemberAst)
+            {
+                var parameters = ((IParameterMetadataProvider)functionMemberAst).Parameters;
+                if (parameters == null)
+                {
+                    return PSTypeExtensions.EmptyTypes;
+                }
+
+                bool anyErrors = false;
+                var result = new Type[parameters.Count];
+                for (var i = 0; i < parameters.Count; i++)
+                {
+                    var typeConstraint = parameters[i].Attributes.OfType<TypeConstraintAst>().FirstOrDefault();
+                    var paramType = (typeConstraint != null)
+                                        ? typeConstraint.TypeName.GetReflectionType()
+                                        : typeof(object);
+                    if (paramType == null)
+                    {
+                        _parser.ReportError(typeConstraint.Extent,
+                            nameof(ParserStrings.TypeNotFound),
+                            ParserStrings.TypeNotFound,
+                            typeConstraint.TypeName.FullName);
+                        anyErrors = true;
+                    }
+                    else if (paramType == typeof(void) || paramType.IsGenericTypeDefinition)
+                    {
+                        _parser.ReportError(typeConstraint.Extent,
+                            nameof(ParserStrings.TypeNotAllowedForParameter),
+                            ParserStrings.TypeNotAllowedForParameter,
+                            typeConstraint.TypeName.FullName);
+                        anyErrors = true;
+                    }
+                    result[i] = paramType;
+                }
+                return anyErrors ? null : result;
+            }
+
+            private bool MethodExistsOnBaseClassAndFinal(string methodName, Type[] parameterTypes)
+            {
+                Type baseType = _typeBuilder.BaseType;
+
+                // If baseType is PS class, then method will be virtual, once we define it.
+                if (baseType is TypeBuilder)
+                {
+                    return false;
+                }
+                var mi = baseType.GetMethod(methodName, parameterTypes);
+                return mi != null && mi.IsFinal;
+            }
+
+            private void DefineMethod(AbstractFunctionMemberAst abstractFunctionMemberAst)
+            {
+                var parameterTypes = GetParameterTypes(abstractFunctionMemberAst);
+                if (parameterTypes == null)
+                {
+                    // There must have been an error, just return
+                    return;
+                }
+                if (CheckForDuplicateOverload(abstractFunctionMemberAst, parameterTypes))
+                {
+                    return;
+                }
+
+                var attributes = Reflection.MethodAttributes.Public
+                                | Reflection.MethodAttributes.Abstract
+                                | Reflection.MethodAttributes.Virtual
+                                | Reflection.MethodAttributes.HideBySig
+                                | Reflection.MethodAttributes.NewSlot;
+
+                var returnType = abstractFunctionMemberAst.GetReturnType();
+                if (returnType == null)
+                {
+                    _parser.ReportError(abstractFunctionMemberAst.ReturnType.Extent,
+                        nameof(ParserStrings.TypeNotFound),
+                        ParserStrings.TypeNotFound,
+                        abstractFunctionMemberAst.ReturnType.TypeName.FullName);
+                    return;
+                }
+                var method = _typeBuilder.DefineMethod(abstractFunctionMemberAst.Name, attributes, returnType, parameterTypes);
+            }
+
+            private string GetMetaDataName(string name, int numberOfParameters)
+            {
+                int currentId = Interlocked.Increment(ref s_globalCounter);
+                string metaDataName = name + "_" + numberOfParameters + "_" + currentId;
+                return metaDataName;
+            }
+        }
+
         private class DefineEnumHelper
         {
             private readonly Parser _parser;
@@ -1206,6 +1564,7 @@ namespace System.Management.Automation.Language
 
             var defineTypeHelpers = new List<DefineTypeHelper>();
             var defineEnumHelpers = new List<DefineEnumHelper>();
+            var defineInterfaceHelpers = new List<DefineInterfaceHelper>();
 
             foreach (var typeDefinitionAst in typeDefinitions)
             {
@@ -1221,6 +1580,10 @@ namespace System.Management.Automation.Language
                     {
                         defineEnumHelpers.Add(new DefineEnumHelper(parser, module, typeDefinitionAst, typeName));
                     }
+                    else if ((typeDefinitionAst.TypeAttributes & TypeAttributes.Interface) == TypeAttributes.Interface)
+                    {
+                        defineInterfaceHelpers.Add(new DefineInterfaceHelper(parser, module, typeDefinitionAst, typeName));
+                    }
                 }
             }
 
@@ -1231,9 +1594,48 @@ namespace System.Management.Automation.Language
                 helper.DefineEnum();
             }
 
+            foreach (var helper in defineInterfaceHelpers)
+            {
+                helper.DefineMembers();
+            }
+
             foreach (var helper in defineTypeHelpers)
             {
                 helper.DefineMembers();
+            }
+
+            foreach (var helper in defineInterfaceHelpers)
+            {
+                Diagnostics.Assert(helper._typeDefinitionAst.Type is TypeBuilder, "Type should be the TypeBuilder");
+                bool runtimeTypeAssigned = false;
+                if (!helper.HasFatalErrors)
+                {
+                    try
+                    {
+                        var type = helper._typeBuilder.CreateType();
+                        helper._typeDefinitionAst.Type = type;
+                        runtimeTypeAssigned = true;
+                    }
+                    catch (TypeLoadException e)
+                    {
+                        // This is a cheap way to get error messages about non-implemented abstract/interface methods (and maybe some other errors).
+                        // We use .NET API to perform this check during type creation.
+                        //
+                        // Presumably this catch could go away when we will not create Type at parse time.
+                        // Error checking should be moved/added to semantic checks.
+                        parser.ReportError(helper._typeDefinitionAst.Extent,
+                            nameof(ParserStrings.TypeCreationError),
+                            ParserStrings.TypeCreationError,
+                            helper._typeBuilder.Name,
+                            e.Message);
+                    }
+                }
+
+                if (!runtimeTypeAssigned)
+                {
+                    // Clean up ast
+                    helper._typeDefinitionAst.Type = null;
+                }
             }
 
             foreach (var helper in defineTypeHelpers)

@@ -3502,7 +3502,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The ast for a method.
     /// </summary>
-    public class AbstractFunctionMemberAst : AbstractMemberAst
+    public class AbstractFunctionMemberAst : AbstractMemberAst, IParameterMetadataProvider
     {
         private static readonly ReadOnlyCollection<ParameterAst> s_emptyParameterList =
             Utils.EmptyReadOnlyCollection<ParameterAst>();
@@ -3547,6 +3547,11 @@ namespace System.Management.Automation.Language
         }
 
         internal IScriptExtent NameExtent { get { return _abstractFunctionDefinitionAst.NameExtent; } }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ScriptBlockAst Body => (ScriptBlockAst)ScriptBlock.EmptyScriptBlock.Ast;
 
         /// <summary>
         /// Copy a function member ast.
@@ -3619,6 +3624,52 @@ namespace System.Management.Automation.Language
         internal Type GetReturnType()
         {
             return ReturnType == null ? typeof(void) : ReturnType.TypeName.GetReflectionType();
+        }
+
+        bool IParameterMetadataProvider.HasAnyScriptBlockAttributes()
+        {
+            return false;
+        }
+
+        RuntimeDefinedParameterDictionary IParameterMetadataProvider.GetParameterMetadata(bool automaticPositions, ref bool usesCmdletBinding)
+        {
+            var dictionary = new RuntimeDefinedParameterDictionary();
+            foreach (var paramEntry in Parameters)
+            {
+                string name = paramEntry.Name.VariablePath.UserPath;
+                dictionary.Add(name ,new RuntimeDefinedParameter(name, paramEntry.StaticType, null));
+            }
+            return dictionary;
+        }
+
+        IEnumerable<Attribute> IParameterMetadataProvider.GetScriptBlockAttributes()
+        {
+            return ((IParameterMetadataProvider)Body).GetScriptBlockAttributes();
+        }
+
+        IEnumerable<ExperimentalAttribute> IParameterMetadataProvider.GetExperimentalAttributes()
+        {
+            return ((IParameterMetadataProvider)Body).GetExperimentalAttributes();
+        }
+
+        bool IParameterMetadataProvider.UsesCmdletBinding()
+        {
+            return false;
+        }
+
+        PowerShell IParameterMetadataProvider.GetPowerShell(ExecutionContext context, Dictionary<string, object> variables, bool isTrustedInput, bool filterNonUsingVariables, bool? createLocalScope, params object[] args)
+        {
+            return null;
+        }
+
+        string IParameterMetadataProvider.GetWithInputHandlingForInvokeCommand()
+        {
+            return "";
+        }
+
+        Tuple<string, string> IParameterMetadataProvider.GetWithInputHandlingForInvokeCommandWithUsingExpression(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple)
+        {
+            return ((IParameterMetadataProvider)Body).GetWithInputHandlingForInvokeCommandWithUsingExpression(usingVariablesTuple);
         }
         #endregion
     }
