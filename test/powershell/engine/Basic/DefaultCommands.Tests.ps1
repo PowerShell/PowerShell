@@ -340,7 +340,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "New-PSRoleCapabilityFile",                           ,                     $(             $CoreWindows -or $CoreUnix)
 "Cmdlet", "New-PSSession",                                      ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "New-PSSessionConfigurationFile",                     ,                     $($FullCLR -or $CoreWindows              )
-"Cmdlet", "New-PSSessionOption",                                ,                     $($FullCLR -or $CoreWindows              )
+"Cmdlet", "New-PSSessionOption",                                ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "New-PSTransportOption",                              ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "New-Service",                                        ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "New-TemporaryFile",                                  ,                     $(             $CoreWindows -or $CoreUnix)
