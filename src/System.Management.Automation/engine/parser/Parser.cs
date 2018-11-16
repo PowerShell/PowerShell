@@ -5398,7 +5398,7 @@ namespace System.Management.Automation.Language
                 parameters = new List<ParameterAst>();
             }
 
-            return new AbstractFunctionDefinitionAst(ExtentOf(functionNameToken, rParen), functionName, parameters);
+            return new AbstractFunctionDefinitionAst(ExtentOf(functionNameToken, rParen ?? functionNameToken), functionName, parameters);
         }
 
         private StatementAst FunctionDeclarationRule(Token functionToken)
