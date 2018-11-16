@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
 
             List<PSVariable> result = new List<PSVariable>();
 
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 name = "*";
             }
@@ -108,7 +108,6 @@ namespace Microsoft.PowerShell.Commands
             bool nameContainsWildcard = WildcardPattern.ContainsWildcardCharacters(name);
 
             // Now create the filters
-
             WildcardPattern nameFilter =
                 WildcardPattern.Get(
                     name,
@@ -129,7 +128,6 @@ namespace Microsoft.PowerShell.Commands
                 // Filter the name here against the include and exclude so that
                 // we can report if the name was filtered vs. there being no
                 // variable existing of that name.
-
                 bool isIncludeMatch =
                     SessionStateUtilities.MatchesAnyWildcardPattern(
                         name,
@@ -152,9 +150,8 @@ namespace Microsoft.PowerShell.Commands
             // First get the appropriate view of the variables. If no scope
             // is specified, flatten all scopes to produce a currently active
             // view.
-
             IDictionary<string, PSVariable> variableTable = null;
-            if (lookupScope == null || lookupScope is String && String.IsNullOrEmpty(lookupScope as String))
+            if ((lookupScope == null) || ((lookupScope is string) && (string.IsNullOrEmpty(lookupScope as string))))
             {
                 variableTable = SessionState.Internal.GetVariableTable();
             }
@@ -205,6 +202,7 @@ namespace Microsoft.PowerShell.Commands
                                         new ErrorRecord(
                                             sessionStateException.ErrorRecord,
                                             sessionStateException));
+
                                     // Only report the error once...
                                     wasFiltered = true;
                                     continue;
@@ -467,7 +465,7 @@ namespace Microsoft.PowerShell.Commands
             if (!Force)
             {
                 PSVariable varFound = null;
-                if (Scope == null || Scope is String && String.IsNullOrEmpty(Scope as String))
+                if ((Scope == null) || (Scope is string) && (string.IsNullOrEmpty(Scope as string)))
                 {
                     varFound =
                         SessionState.Internal.GetVariableAtScope(Name, "local");
@@ -519,7 +517,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    if (Scope == null || Scope is String && String.IsNullOrEmpty(Scope as String))
+                    if ((Scope == null) || (Scope is string) && (String.IsNullOrEmpty(Scope as string)))
                     {
                         SessionState.Internal.NewVariable(newVariable, Force);
                     }
@@ -796,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
                 List<PSVariable> matchingVariables = new List<PSVariable>();
 
                 bool wasFiltered = false;
-                if (Scope == null || Scope is String && !String.IsNullOrEmpty(Scope as String))
+                if ((Scope == null) || (Scope is string) && (!string.IsNullOrEmpty(Scope as string)))
                 {
                     // We really only need to find matches if the scope was specified.
                     // If the scope wasn't specified then we need to create the
@@ -828,9 +826,9 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         ScopedItemOptions newOptions = ScopedItemOptions.None;
-                        if (Scope is String &&
-                            !String.IsNullOrEmpty(Scope as String) &&
-                            String.Equals("private", Scope as String, StringComparison.OrdinalIgnoreCase))
+                        if ((Scope is string) &&
+                            (!string.IsNullOrEmpty(Scope as string)) &&
+                            (string.Equals("private", Scope as string, StringComparison.OrdinalIgnoreCase)))
                         {
                             newOptions = ScopedItemOptions.Private;
                         }
@@ -872,7 +870,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             object result = null;
 
-                            if (Scope == null || Scope is String && String.IsNullOrEmpty(Scope as String))
+                            if ((Scope == null) || (Scope is string) && (string.IsNullOrEmpty(Scope as string)))
                             {
                                 result =
                                     SessionState.Internal.SetVariable(varToSet, Force, origin);
@@ -1126,7 +1124,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            if (Scope == null || Scope is String && String.IsNullOrEmpty(Scope as String))
+                            if ((Scope == null) || (Scope is string) && (string.IsNullOrEmpty(Scope as string)))
                             {
                                 SessionState.Internal.RemoveVariable(matchingVariable, _force);
                             }
