@@ -163,7 +163,7 @@ Describe "Validate scope types in Variable provider cmdlets" -Tag "Feature" {
     }
 }
 
-Describe "Validate Security on scope in Variable provider cmdlets" -Tag "RequireAdminOnWindows" {
+Describe "Validate Security on scope in Variable provider cmdlets" -Tag "Feature","RequireAdminOnWindows" {
     BeforeAll {
         Set-Variable -Name TestApprovedScope -Value $true
         Set-Variable -Name Module -Value (New-Module -Name "Test-Variables" {
