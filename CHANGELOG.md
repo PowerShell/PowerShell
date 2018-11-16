@@ -1,5 +1,121 @@
 # Changelog
 
+## v6.2.0-preview.2 - 2018-11-15
+
+### Breaking Changes
+
+- Honor `-OutputFormat` if specified in non-interactive, redirected, encoded command used with `pwsh` (#8115)
+- Load assembly from module base path before trying to load from the `GAC` (#8073)
+- Remove tilde from Linux preview packages (#8244)
+- Move processing of `-WorkingDirectory` before processing of profiles (#8079)
+
+### Known Issues
+
+- PowerShell WSMan remoting does not work on Debian 9 due to missing symbolic links.
+  For more information and a workaround see issue [#7598](https://github.com/PowerShell/PowerShell/issues/7598)
+
+### Engine Updates and Fixes
+
+- Enable case-insensitive tab completion for files and folders on case-sensitive filesystem (#8128)
+- Experimental feature: Implicit remoting batching performance improvements (#8038)
+- Add a path for checking `ZoneInformation` without throwing an exception (#8025) (Thanks @powercode!)
+- Fix [CVE-2018-8256](https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2018-8256),
+  issues with expanding `ZIP` files with relative paths (#8252)
+- Fix [CVE-2018-8415](https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2018-8415),
+  issue logging when the `scriptblock` has a null character (#8253)
+- Make `PSVersionInfo.PSVersion` and `PSVersionInfo.PSEdition` public (#8054) (Thanks @KirkMunro!)
+- Enable distinct `ModuleAnalysisCache` files for each installation of `pwsh` (#8174)
+- Consolidation of all Windows PowerShell work ported to PowerShell Core (#8257)
+- Fix incorrect name check when auto-loading required modules (#8218)
+- Adding verbose output for experimental implicit remoting batching feature (#8166)
+- Add Type Inference for `$_ / $PSItem in catch{ }` blocks (#8020) (Thanks @vexx32!)
+- Fix static method invocation type inference (#8018) (Thanks @SeeminglyScience!)
+
+### General Cmdlet Updates and Fixes
+
+- Reduce allocations in `Get-Content` cmdlet (#8103) (Thanks @iSazonov!)
+- Enable `Set-Location -LiteralPath` to work with folders named `-` and `+` (#8089)
+- Enable `Add-Content` to share read access with other tools while writing content (#8091)
+- Add new `Offset` and `Count` parameters to `Format-Hex` and refactor the cmdlet (#7877) (Thanks @iSazonov!)
+- Add `-Name`, `-NoUserOverrides` and `-ListAvailable` parameters to `Get-Culture` cmdlet (#7702) (Thanks @iSazonov!)
+- Allow dynamic parameter to be returned even if path does not match any provider (#7957)
+- Style fixes in `Format-Hex` (#8083) (Thanks @iSazonov!)
+- Fix logic to rely on PowerShell major and minor version instead of build number to determine whether to output `formatdata` (#8063)
+- Fix `Rename-Item -Path` with wildcard `char` (#7398) (Thanks @kwkam!)
+- When using `Start-Transcript` and file exists, empty file rather than deleting (#8131) (Thanks @paalbra!)
+- Error message enhancement for `Clear-Content` cmdlet when targeting a directory (#8134) (Thanks @kvprasoon!)
+- Make `Select-String` faster by not doing extra work (#7673) (Thanks @powercode!)
+- Remove `ShouldProcess` from `Format-Hex` (#8178)
+
+### Code Cleanup
+
+- Remove clone of command-line arguments array (#7910) (Thanks @iSazonov!)
+- Use `DefaultPathSeparator` `char` instead of `DefaultPathSeparatorString` (#8082) (Thanks @iSazonov!)
+- Replace `StringComparision.CurrentCulture` with `StringComparision.Ordinal` (#8068) (Thanks @iSazonov!)
+- Fix typo in `-icontains` description from `incase sensitive` to `case insensitive` (#7840) (Thanks @StingyJack!)
+- Refactor module version/`GUID` comparison logic (#7125)
+
+### Tools
+
+- Update `installpsh-amazonlinux.sh` for container specific issues (#7907) (Thanks @DarwinJS!)
+- Update the `codeowners` file (#8017)
+
+### Tests
+
+- Filter the `TestPackage` artifact upload by name to avoid other `ZIP` files being uploaded  (#8116)
+- Adding `fxdependent` PowerShell package tests (#7830)
+- Fix Windows Feature tests running in Azure DevOps (#8220)
+- Create `$PROFILE` if it does not exist for `-WorkingDirectory` processing test  (#8152)
+- Add test coverage for additional `Get-Module` parameters (#8137) (Thanks @KevinMarquette!)
+- Fix conflict with `Get-AdlStoreChildItem` from `az` module in tab completion tests (#8167)
+- Fix static secret in code (#8186)
+
+### Build and Packaging Improvements
+
+- Bump `xunit.runner.visualstudio` from `2.4.0` to `2.4.1` (#8139)
+- Bump `xunit` from `2.4.0` to `2.4.1` (#8140)
+- Bump `Microsoft.ApplicationInsights` from `2.8.0` to `2.8.1` (#8104)
+- Bump `NJsonSchema` from `9.11.1` to `9.12.1` (#8183, #8248)
+- Fix `Start-PSBuild -Output` (#7504) (Thanks @kwkam!)
+- Adding `YML` for Linux builds (#8168)
+- Publish test package at `AGENT_WORKFOLDER` if `TEMP` is not available (#8108)
+- Fix `psmodulerestore` path when built in Visual Studio Code (#8075)
+- Use approved verb instead of `Generate-CrossGenAssembly` (#8151) (Thanks @kvprasoon!)
+- Add path filters to CI `YAML` (#8222)
+- Update `SignType` in `signing.xml` (#8223)
+- Update metadata for `6.0.5` and `6.1.1` releases (#8259)
+- Port changes to allow Azure DevOps NuGet feeds for Mac build (Internal 5818)
+- Update version for dependencies (Internal 5822)
+- Add code to use private NuGet feeds when running in internal CI system (#8187)
+- Add title to `Open Here` window for `MSI` installer (#8164)
+- Remove build and documentation references to `git` submodules (#8177) (Thanks @andschwa!)
+- Add function to create a new `nuget.config` file (#8170)
+- Update macOS release build to create the `nuget.config` (#8185)
+- Workaround for accessing Azure Artifacts (#8188)
+- Fix script path for `PowerShellPackageVsts.ps1` (#8189)
+- `Microsoft.PowerShell.Native` now has `MUSL` binaries for Alpine.
+
+### Documentation and Help Content
+
+- Fix grammar in `README.md` (#8059) (Thanks @daviddreher2!)
+- Update `powershell-beginners-guide.md` to add alias for `Clear-Host` (#7912) (Thanks @aavdberg!)
+- Add Microsoft Docs link to FAQ (#8133) (Thanks @vongrippen!)
+- Added updated photo of Visual Studio Code due to new version of Code (#8084) (Thanks @lassehastrup!)
+- Update `license.rtf` to only have major version (#8127)
+- Updated Pester Syntax in Writing Tests Guide (#8039) (Thanks @markwragg!)
+- Remove duplicate parts from license file (#8143) (Thanks @azkarmoulana!)
+- Fix spellings in `CHANGELOG.md` (#8062)
+- Update license RTF to 6.2 (#8065)
+- Combine notes about `ITuple` changes in Change Log (#8077) (Thanks @Jocapear!)
+- Correct typos in `powershell-beginners-guide.md` (#8088) (Thanks @nycjan!)
+- Added `Learn Windows PowerShell in a Month of Lunches` as recommended reading (#8067) (Thanks @tobvil!)
+- Update `README.md` for `v6.1.1` (#8255)
+- Fix some typos (#8206) (Thanks @jeis2497052!)
+- Promote `HTTPS` (#8160) (Thanks @RDIL!)
+- Simple grammatical correction in `README.md` file (#7978) (Thanks @iGotenz!)
+- Update URLs to use `HTTPS` instead of `HTTP` in the documentation (#8165) (Thanks @RDIL!)
+- Remove #7633 from `v6.2.0-preview.1` `CHANGELOG.md` updates. (#8101) (Thanks @stknohg!)
+
 ## v6.2.0-preview.1 - 2018-10-18
 
 ### Breaking Changes
@@ -136,6 +252,55 @@
 - Add a paragraph on `files.wxs` updating (#7695) (Thanks @iSazonov!)
 - Update `CONTRIBUTION.md` about adding an empty line after the copyright header (#7706) (Thanks @iSazonov!)
 - Update docs about .NET Core version `2.0` to be about version `2.x` (#7467) (Thanks @bergmeister!)
+
+## v6.1.1 - 2018-11-13
+
+### Engine Updates and Fixes
+
+- Fix issue with logging the null character in `ScriptBlock` logging (Internal 5607)
+- Consolidation of all Windows PowerShell work ported to 6.1 (Internal 5233)
+
+### General Cmdlet Updates and Fixes
+
+- Use `ZipFile` and `ExtractToDirectory` APIs to extract zip file (Internal 5608)
+
+## v6.0.5 - 2018-11-13
+
+### Engine updates and fixes
+
+- Fix issue with logging the null character in `ScriptBlock` logging (Internal 5605)
+
+### General cmdlet updates and fixes
+
+- Use `ZipFile` and `ExtractToDirectory` APIs to extract zip file (Internal 4802)
+
+### Build and Packaging Improvements
+
+- Update `SignType` in `signing.xml` (Internal 5721)
+- Port changes to pull PowerShell Gallery modules from Modules `csproj` (Internal 5713)
+- Port macOS Release build changes changes from GitHub (#8189, #8188, #8185)
+- Fix script path for `PowerShellPackageVsts.ps1` (#8189)
+- Workaround for accessing `AzDevOps` Artifacts (#8188)
+- Bump various packages to latest patch version (Internal 5675)
+- Update PowerShell SDK NuGet various metadata description (Internal 4527, 4510, 4505)
+
+## v6.0.4 - 2018-08-10
+
+### Build and Packaging Improvements
+
+- Update the Archive module version (Internal 5671)
+- Update to .NET Core `2.1.5` with SDK `2.1.403` (#7936) (Thanks @iSazonov!)
+- Disable package major upgrade tests for release branch (Internal 5209)
+- Bump versions for dependencies (Internal 5612)
+- Port changes to allow `AzDevOps` NuGet feeds for macOS build (Internal 5716)
+- Port macOS changes from GitHub (#8189, #8188, #8185)
+- Add function to create a new `nuget.config` file (#8170)
+- Updated `wxs` file to match published packages (Internal 5660)
+
+### Tests
+
+- Change API to match cmdlet which is more reliable in `AzDevOps` Pipelines Windows (#8003)
+- Fix conflict with `Get-AdlStoreChildItem` from `az` module in tab completion tests (#8167)
 
 ## v6.1.0 - 2018-09-13
 

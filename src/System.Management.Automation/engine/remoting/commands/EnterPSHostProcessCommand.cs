@@ -2,16 +2,17 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
 using System.Management.Automation.Remoting;
-using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation.Runspaces;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -393,7 +394,14 @@ namespace Microsoft.PowerShell.Commands
         private const string ProcessParameterSet = "ProcessParameterSet";
         private const string ProcessIdParameterSet = "ProcessIdParameterSet";
         private const string ProcessNameParameterSet = "ProcessNameParameterSet";
+
+#if UNIX
+        // CoreFx uses the system temp path to store the file used for named pipes and is not settable.
+        // This member is only used by Get-PSHostProcessInfo to know where to look for the named pipe files.
+        private static readonly string NamedPipePath = Path.GetTempPath();
+#else
         private const string NamedPipePath = @"\\.\pipe\";
+#endif
 
         #endregion
 
@@ -524,9 +532,12 @@ namespace Microsoft.PowerShell.Commands
             var procAppDomainInfo = new List<PSHostProcessInfo>();
 
             // Get all named pipe 'files' on local machine.
-            List<string> directories;
-            List<string> namedPipes;
-            Utils.NativeEnumerateDirectory(NamedPipePath, out directories, out namedPipes);
+            List<string> namedPipes = new List<string>();
+            var namedPipeDirectory = new DirectoryInfo(NamedPipePath);
+            foreach (var pipeFileInfo in namedPipeDirectory.EnumerateFiles(NamedPipeUtils.NamedPipeNamePrefixSearch))
+            {
+                namedPipes.Add(Path.Combine(pipeFileInfo.DirectoryName, pipeFileInfo.Name));
+            }
 
             // Collect all PowerShell named pipes for given process Ids.
             foreach (string namedPipe in namedPipes)
@@ -534,14 +545,13 @@ namespace Microsoft.PowerShell.Commands
                 int startIndex = namedPipe.IndexOf(NamedPipeUtils.NamedPipeNamePrefix, StringComparison.OrdinalIgnoreCase);
                 if (startIndex > -1)
                 {
-                    // This is a PowerShell named pipe.  Parse the process Id, AppDomain name, and process name.
-                    int pStartTimeIndex = namedPipe.IndexOf(".", startIndex, StringComparison.OrdinalIgnoreCase);
+                    int pStartTimeIndex = namedPipe.IndexOf('.', startIndex);
                     if (pStartTimeIndex > -1)
                     {
-                        int pIdIndex = namedPipe.IndexOf(".", pStartTimeIndex + 1, StringComparison.OrdinalIgnoreCase);
+                        int pIdIndex = namedPipe.IndexOf('.', pStartTimeIndex + 1);
                         if (pIdIndex > -1)
                         {
-                            int pAppDomainIndex = namedPipe.IndexOf(".", pIdIndex + 1, StringComparison.OrdinalIgnoreCase);
+                            int pAppDomainIndex = namedPipe.IndexOf('.', pIdIndex + 1);
                             if (pAppDomainIndex > -1)
                             {
                                 string idString = namedPipe.Substring(pIdIndex + 1, (pAppDomainIndex - pIdIndex - 1));
@@ -564,15 +574,47 @@ namespace Microsoft.PowerShell.Commands
                                         if (!found) { continue; }
                                     }
                                 }
+                                else
+                                {
+                                    // Process id is not valid so we'll skip
+                                    continue;
+                                }
 
-                                int pNameIndex = namedPipe.IndexOf(".", pAppDomainIndex + 1, StringComparison.OrdinalIgnoreCase);
+                                int pNameIndex = namedPipe.IndexOf('.', pAppDomainIndex + 1);
                                 if (pNameIndex > -1)
                                 {
                                     string appDomainName = namedPipe.Substring(pAppDomainIndex + 1, (pNameIndex - pAppDomainIndex - 1));
                                     string pName = namedPipe.Substring(pNameIndex + 1);
 
-                                    procAppDomainInfo.Add(
-                                        new PSHostProcessInfo(pName, id, appDomainName));
+                                    Process process = null;
+
+                                    try
+                                    {
+                                        process = System.Diagnostics.Process.GetProcessById(id);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // Do nothing if the process no longer exists
+                                    }
+
+                                    if (process == null)
+                                    {
+                                        try
+                                        {
+                                            // If the process is gone, try removing the PSHost named pipe
+                                            var pipeFile = new FileInfo(namedPipe);
+                                            pipeFile.Delete();
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // best effort to cleanup
+                                        }
+                                    }
+                                    else if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
+                                    {
+                                        // only add if the process name matches
+                                        procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName));
+                                    }
                                 }
                             }
                         }
@@ -661,7 +703,7 @@ namespace Microsoft.PowerShell.Commands
             MainWindowTitle = String.Empty;
             try
             {
-                var proc = System.Diagnostics.Process.GetProcessById(processId);
+                var proc = Process.GetProcessById(processId);
                 MainWindowTitle = proc.MainWindowTitle ?? string.Empty;
             }
             catch (ArgumentException) { }
