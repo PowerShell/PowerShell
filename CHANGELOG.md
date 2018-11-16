@@ -1,6 +1,6 @@
 # Changelog
 
-## v6.2.0-preview.2 - 2018-11-14
+## v6.2.0-preview.2 - 2018-11-15
 
 ### Breaking Changes
 
