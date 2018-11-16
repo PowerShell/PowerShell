@@ -52,8 +52,7 @@ namespace System.Management.Automation
             // If LanguageMode is not set to FullLanguage prevent access to other scopeID options.
             if (LanguageMode != PSLanguageMode.FullLanguage && !(scopeID is int || scopeID is string))
             {
-                String errorMessage = String.Format("Scopes other than \"script\", \"global\", \"local\", or \"private\" or a numeric ID is only allowed in {0} LanguageMode", LanguageMode);
-                throw new System.Exception(errorMessage);
+                throw PSTraceSource.NewInvalidOperationException(AutomationExceptions.InvalidSecurityScopeIdArgument, ScopeParameterName, LanguageMode);
             }
 
             // Unwrap PSObject as it automatically gets wrapped when passed down a pipeline.
@@ -85,8 +84,7 @@ namespace System.Management.Automation
                     result = scope.SessionState.Internal.CurrentScope;
                     break;
                 default:
-                    // Todo: Figure out correct type of error to throw. Given proper Powershell Resources.
-                    throw new PSArgumentException(String.Format("Scope is not of usable type. {0}", scopeID.GetType() ));
+                    throw PSTraceSource.NewArgumentException(ScopeParameterName, AutomationExceptions.InvalidScopeIdArgument, ScopeParameterName);
             }
             return result;
         } // GetScopeByID
