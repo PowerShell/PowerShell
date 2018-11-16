@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
+        [ArgumentCompletions(StringLiterals.Global, StringLiterals.Local, StringLiterals.Private, StringLiterals.Script)]
         public object Scope { get; set; }
 
         #endregion parameters
