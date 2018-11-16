@@ -85,7 +85,7 @@ namespace System.Management.Automation
     ///         a. caching and indexing to boost performance
     ///         b. localization.
     /// </summary>
-    internal class HelpSystem
+    internal class HelpSystem : HelpSystemBase
     {
         /// <summary>
         /// Constructor for HelpSystem.
@@ -121,9 +121,9 @@ namespace System.Management.Automation
 
         #region Progress Callback
 
-        internal delegate void HelpProgressHandler(object sender, HelpProgressInfo arg);
+        //internal delegate void HelpProgressHandler(object sender, HelpProgressInfo arg);
 
-        internal event HelpProgressHandler OnProgress;
+        internal override event HelpProgressHandler OnProgress;
 
         #endregion
 
@@ -157,7 +157,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpRequest">HelpRequest object.</param>
         /// <returns>An array of HelpInfo object.</returns>
-        internal IEnumerable<HelpInfo> GetHelp(HelpRequest helpRequest)
+        internal override IEnumerable<HelpInfo> GetHelp(HelpRequest helpRequest)
         {
             if (helpRequest == null)
                 return null;
@@ -173,20 +173,20 @@ namespace System.Management.Automation
 
         #region Error Handling
 
-        private Collection<ErrorRecord> _lastErrors = new Collection<ErrorRecord>();
+        //private Collection<ErrorRecord> _lastErrors = new Collection<ErrorRecord>();
 
         /// <summary>
         /// This is for tracking the last set of errors happened during the help
         /// search.
         /// </summary>
         /// <value></value>
-        internal Collection<ErrorRecord> LastErrors
-        {
-            get
-            {
-                return _lastErrors;
-            }
-        }
+        //internal Collection<ErrorRecord> LastErrors
+        //{
+        //    get
+        //    {
+        //        return _lastErrors;
+        //    }
+        //}
 
         private HelpCategory _lastHelpCategory = HelpCategory.None;
 
@@ -206,7 +206,7 @@ namespace System.Management.Automation
 
         #region Configuration
 
-        private bool _verboseHelpErrors = false;
+        //private bool _verboseHelpErrors = false;
 
         /// <summary>
         /// VerboseHelpErrors is used in the case when end user is interested
@@ -222,13 +222,13 @@ namespace System.Management.Automation
         ///        written to error pipeline.
         /// </summary>
         /// <value></value>
-        internal bool VerboseHelpErrors
-        {
-            get
-            {
-                return _verboseHelpErrors;
-            }
-        }
+        //internal bool VerboseHelpErrors
+        //{
+        //    get
+        //    {
+        //        return _verboseHelpErrors;
+        //    }
+        //}
 
         #endregion
 
@@ -351,7 +351,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpRequest">Help request object.</param>
         /// <returns>HelpInfo object retrieved. Can be Null.</returns>
-        internal IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
+        internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             bool isHelpInfoFound = false;
             for (int i = 0; i < this.HelpProviders.Count; i++)
@@ -540,19 +540,19 @@ namespace System.Management.Automation
 
         #region Help Provider Manager
 
-        private ArrayList _helpProviders = new ArrayList();
+        //private ArrayList _helpProviders = new ArrayList();
 
-        /// <summary>
-        /// Return the list of help providers initialized.
-        /// </summary>
-        /// <value>a list of help providers</value>
-        internal ArrayList HelpProviders
-        {
-            get
-            {
-                return _helpProviders;
-            }
-        }
+        ///// <summary>
+        ///// Return the list of help providers initialized.
+        ///// </summary>
+        ///// <value>A list of help providers.</value>
+        //internal ArrayList HelpProviders
+        //{
+        //    get
+        //    {
+        //        return _helpProviders;
+        //    }
+        //}
 
         /// <summary>
         /// Initialize help providers.
@@ -762,7 +762,7 @@ namespace System.Management.Automation
         /// Normally help providers will remove cached help content to make sure new help
         /// requests will be served with content of right culture.
         /// </summary>
-        internal void ResetHelpProviders()
+        internal override void ResetHelpProviders()
         {
             if (_helpProviders == null)
                 return;
@@ -781,33 +781,33 @@ namespace System.Management.Automation
 
         #region ScriptBlock Parse Tokens Caching/Clearing Functionality
 
-        private readonly Lazy<Dictionary<Ast, Token[]>> _scriptBlockTokenCache = new Lazy<Dictionary<Ast, Token[]>>(isThreadSafe: true);
+        //private readonly Lazy<Dictionary<Ast, Token[]>> _scriptBlockTokenCache = new Lazy<Dictionary<Ast, Token[]>>(isThreadSafe: true);
 
         internal Dictionary<Ast, Token[]> ScriptBlockTokenCache
         {
             get { return _scriptBlockTokenCache.Value; }
         }
 
-        internal void ClearScriptBlockTokenCache()
-        {
-            if (_scriptBlockTokenCache.IsValueCreated)
-            {
-                _scriptBlockTokenCache.Value.Clear();
-            }
-        }
+        //internal void ClearScriptBlockTokenCache()
+        //{
+        //    if (_scriptBlockTokenCache.IsValueCreated)
+        //    {
+        //        _scriptBlockTokenCache.Value.Clear();
+        //    }
+        //}
 
         #endregion
     }
 
-    /// <summary>
-    /// Help progress info.
-    /// </summary>
-    internal class HelpProgressInfo
-    {
-        internal bool Completed;
-        internal string Activity;
-        internal int PercentComplete;
-    }
+    ///// <summary>
+    ///// Help progress info.
+    ///// </summary>
+    //internal class HelpProgressInfo
+    //{
+    //    internal bool Completed;
+    //    internal string Activity;
+    //    internal int PercentComplete;
+    //}
 
     /// <summary>
     /// This is the structure to keep track of HelpProvider Info.
@@ -830,102 +830,5 @@ namespace System.Management.Automation
             this.ClassName = className;
             this.HelpCategory = helpCategory;
         }
-    }
-
-    /// <summary>
-    /// Help categories.
-    /// </summary>
-    [Flags]
-    internal enum HelpCategory
-    {
-        /// <summary>
-        /// Undefined help category.
-        /// </summary>
-        None = 0x00,
-
-        /// <summary>
-        /// Alias help.
-        /// </summary>
-        Alias = 0x01,
-
-        /// <summary>
-        /// Cmdlet help.
-        /// </summary>
-        Cmdlet = 0x02,
-
-        /// <summary>
-        /// Provider help.
-        /// </summary>
-        Provider = 0x04,
-
-        /// <summary>
-        /// General keyword help.
-        /// </summary>
-        General = 0x10,
-
-        /// <summary>
-        /// FAQ's.
-        /// </summary>
-        FAQ = 0x20,
-
-        /// <summary>
-        /// Glossary and term definitions.
-        /// </summary>
-        Glossary = 0x40,
-
-        /// <summary>
-        /// Help that is contained in help file.
-        /// </summary>
-        HelpFile = 0x80,
-
-        /// <summary>
-        /// Help from a script block.
-        /// </summary>
-        ScriptCommand = 0x100,
-
-        /// <summary>
-        /// Help for a function.
-        /// </summary>
-        Function = 0x200,
-
-        /// <summary>
-        /// Help for a filter.
-        /// </summary>
-        Filter = 0x400,
-
-        /// <summary>
-        /// Help for an external script (i.e. for a *.ps1 file)
-        /// </summary>
-        ExternalScript = 0x800,
-
-        /// <summary>
-        /// All help categories.
-        /// </summary>
-        All = 0xFFFFF,
-
-        ///<summary>
-        /// Default Help.
-        /// </summary>
-        DefaultHelp = 0x1000,
-
-        ///<summary>
-        /// Help for a Workflow.
-        /// </summary>
-        Workflow = 0x2000,
-
-        ///<summary>
-        /// Help for a Configuration.
-        /// </summary>
-        Configuration = 0x4000,
-
-        /// <summary>
-        /// Help for DSC Resource.
-        /// </summary>
-        DscResource = 0x8000,
-
-        /// <summary>
-        /// Help for PS Classes.
-        /// </summary>
-        Class = 0x10000
     }
 }

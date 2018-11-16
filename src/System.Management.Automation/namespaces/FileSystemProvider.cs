@@ -314,6 +314,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         public string GetHelpMaml(string helpItemName, string path)
         {
+/*            //
             // Get the verb and noun from helpItemName
             //
             string verb = null;
@@ -405,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return string.Empty;
+*/            return string.Empty;
         }
 
         #endregion

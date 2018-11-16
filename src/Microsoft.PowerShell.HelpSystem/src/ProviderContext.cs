@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The ProviderContext class.
     /// </summary>
-    internal class ProviderContext
+    internal class ProviderContext : ProviderContextBase
     {
         /// <summary>
         /// Requested path.

@@ -3,8 +3,6 @@
 
 using System.IO;
 using System.Management.Automation;
-using System.Management.Automation.Help;
-
 using Microsoft.PowerShell.Commands;
 
 namespace System.Management.Automation

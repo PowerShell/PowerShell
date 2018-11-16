@@ -658,12 +658,11 @@ namespace System.Management.Automation
         /// Help system for this engine context.
         /// </summary>
         /// <value></value>
-        internal HelpSystem HelpSystem
+        internal HelpSystemBase HelpSystem
         {
-            get { return _helpSystem ?? (_helpSystem = new HelpSystem(this)); }
+            get { return _helpSystem ?? (_helpSystem = new HelpSystemDummy(this)); }
         }
-
-        private HelpSystem _helpSystem;
+        private HelpSystemBase _helpSystem;
 
         #endregion
 
