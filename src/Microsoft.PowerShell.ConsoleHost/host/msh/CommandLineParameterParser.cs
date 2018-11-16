@@ -188,7 +188,8 @@ namespace Microsoft.PowerShell
             "command",
             "settingsfile",
             "help",
-            "workingdirectory"
+            "workingdirectory",
+            "removeworkingdirectorytrailingcharacter"
         };
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
@@ -401,7 +402,20 @@ namespace Microsoft.PowerShell
 
         internal string WorkingDirectory
         {
-            get { return _workingDirectory; }
+            get
+            {
+                if (_removeWorkingDirectoryTrailingCharacter && _workingDirectory.Length > 0)
+                {
+                    return _workingDirectory.Remove(_workingDirectory.Length - 1);
+                }
+ 
+                return _workingDirectory;
+            }
+        }
+
+        internal bool RemoveWorkingDirectoryTrailingCharacter
+        {
+            get { return _removeWorkingDirectoryTrailingCharacter; }
         }
 
         #endregion Internal properties
@@ -934,6 +948,10 @@ namespace Microsoft.PowerShell
 
                     _workingDirectory = args[i];
                 }
+                else if (MatchSwitch(switchKey, "removeworkingdirectorytrailingcharacter", "removeworkingdirectorytrailingcharacter"))
+                {
+                    _removeWorkingDirectoryTrailingCharacter = true;
+                }
                 else
                 {
                     // The first parameter we fail to recognize marks the beginning of the file string.
@@ -1364,6 +1382,8 @@ namespace Microsoft.PowerShell
         private string _file;
         private string _executionPolicy;
         private string _workingDirectory;
+
+        private bool _removeWorkingDirectoryTrailingCharacter = false;
     }
 }   // namespace
 
