@@ -726,7 +726,10 @@ v6.0.
 v6.0.0
 v6.0.1
 v6.0.2
+v6.0.4
+v6.0.5
 v6.1.0
+v6.1.1
 v6.2.0
 validatenotnullorempty
 versioned
@@ -780,14 +783,29 @@ tommymaynard
 vmsilvamolina
 fbehrens
  - CHANGELOG.md
+aavdberg
+azkarmoulana
 chucklu
+Claustn
+CVE-2018-8256
+CVE-2018-8415
+daviddreher2
 honour
+iGotenz
+jeis2497052
+Jocapear
+lassehastrup
+markwragg
+nycjan
+paalbra
 SeeminglyScience
+StingyJack
+ThreeFive-O
+tobvil
+uninstallation
+vongrippen
 yurko7
 zhenggu
-Claustn
-ThreeFive-O
-uninstallation
  - docs/debugging/README.md
 corehost
  - docs/testing-guidelines/TestRoadmap.md
