@@ -794,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
                 List<PSVariable> matchingVariables = new List<PSVariable>();
 
                 bool wasFiltered = false;
-                if ((Scope == null) || (Scope is string) && (!string.IsNullOrEmpty(Scope as string)))
+                if ((Scope != null) || (Scope is string) && (!string.IsNullOrEmpty(Scope as string)))
                 {
                     // We really only need to find matches if the scope was specified.
                     // If the scope wasn't specified then we need to create the
