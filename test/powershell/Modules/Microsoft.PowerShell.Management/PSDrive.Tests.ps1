@@ -82,6 +82,12 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
             $localDrive = Get-PSDrive -Name $psDriveName -Scope Local
             $localDrive.Name | Should -BeExactly $psDriveName
         }
+
+        It "Verify Persist not available on UNIX" {
+            if (!$IsWindows) {
+                { New-PSDrive -Name $psDriveName -PSProvider FileSystem -Root $psDriveRoot -Persist -Description "Test PSDrive to remove" } | Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewPSDriveCommand"
+            }
+        }
     }
 
     Context "Valdiate Get-PSDrive Cmdlet Parameters" {
