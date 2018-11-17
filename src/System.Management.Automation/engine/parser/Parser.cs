@@ -4761,7 +4761,8 @@ namespace System.Management.Automation.Language
                     RecordErrorAsts(typeConstraint, ref astsOnError);
                     return null;
                 }
-                
+                SkipNewlinesAndSemicolons();
+
                 return new AbstractFunctionMemberAst(ExtentOf(startExtent, abstractFunctionDefinition), abstractFunctionDefinition, typeConstraint);
             }
 
