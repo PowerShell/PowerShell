@@ -24,13 +24,6 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
             $y
         }
 
-        # Static field
-        interface I6 { static $x; }
-
-        # Static field w/ type - order doesn't matter
-        interface I7a { static [hashtable] $x; }
-        interface I7b { [hashtable] static $x; }
-
         # Field using type defined in this scope
         interface I8a { [I1] $i1; }
         interface I8b { [i1] $i1; }
@@ -65,12 +58,6 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
             f1()
             f1($a)
         }
-
-        # Static method
-        interface I6 { static f() }
-
-        # Static method w/ return type
-        interface I7 { static [hashtable] f1() }
 
         # Method using return type defined in this scope
         interface I8a { [I1] f1() }
