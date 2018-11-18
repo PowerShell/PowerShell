@@ -1395,7 +1395,7 @@ namespace Microsoft.PowerShell.Commands
                             Root,
                             Description,
                             Credential,
-                            false);
+                            persist=false);
 #endif
                     try
                     {
