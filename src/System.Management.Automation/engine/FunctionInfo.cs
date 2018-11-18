@@ -51,8 +51,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context, string helpFile) : base(name, CommandTypes.Function,
-            context)
+        internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context, string helpFile) : base(name, CommandTypes.Function, context)
         {
             if (function == null)
             {
@@ -85,8 +84,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context) : this(name, function, options,
-            context, null)
+        internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context) : this(name, function, options, context, null)
         {
         } // FunctionInfo ctor
 
@@ -111,8 +109,8 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context, string helpFile) : this(name,
-            function, context, helpFile)
+        internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context, string helpFile)
+            : this(name, function, context, helpFile)
         {
             _options = options;
         } // FunctionInfo ctor
@@ -231,16 +229,22 @@ namespace System.Management.Automation
 
             if ((_options & ScopedItemOptions.Constant) != 0)
             {
-                SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(Name, SessionStateCategory.Function,
-                    "FunctionIsConstant", SessionStateStrings.FunctionIsConstant);
+                SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(
+                    Name,
+                    SessionStateCategory.Function,
+                    "FunctionIsConstant",
+                    SessionStateStrings.FunctionIsConstant);
 
                 throw e;
             }
 
             if (!force && (_options & ScopedItemOptions.ReadOnly) != 0)
             {
-                SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(Name, SessionStateCategory.Function,
-                    "FunctionIsReadOnly", SessionStateStrings.FunctionIsReadOnly);
+                SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(
+                    Name,
+                    SessionStateCategory.Function,
+                    "FunctionIsReadOnly",
+                    SessionStateStrings.FunctionIsReadOnly);
 
                 throw e;
             }
@@ -295,7 +299,7 @@ namespace System.Management.Automation
         /// </exception>
         public ScopedItemOptions Options
         {
-            get { return CopiedCommand == null ? _options : ((FunctionInfo)CopiedCommand).Options; }
+            get => ((FunctionInfo) CopiedCommand)?.Options ?? _options;
 
             set
             {
@@ -306,8 +310,11 @@ namespace System.Management.Automation
 
                     if ((_options & ScopedItemOptions.Constant) != 0)
                     {
-                        SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(Name, SessionStateCategory.Function,
-                            "FunctionIsConstant", SessionStateStrings.FunctionIsConstant);
+                        SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(
+                            Name,
+                            SessionStateCategory.Function,
+                            "FunctionIsConstant",
+                            SessionStateStrings.FunctionIsConstant);
 
                         throw e;
                     }
@@ -321,8 +328,11 @@ namespace System.Management.Automation
                         // user is trying to set the function to constant after
                         // creating the function. Do not allow this (as per spec).
 
-                        SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(Name, SessionStateCategory.Function,
-                            "FunctionCannotBeMadeConstant", SessionStateStrings.FunctionCannotBeMadeConstant);
+                        SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(
+                            Name,
+                            SessionStateCategory.Function,
+                            "FunctionCannotBeMadeConstant",
+                            SessionStateStrings.FunctionCannotBeMadeConstant);
 
                         throw e;
                     }
@@ -331,8 +341,10 @@ namespace System.Management.Automation
 
                     if ((value & ScopedItemOptions.AllScope) == 0 && (_options & ScopedItemOptions.AllScope) != 0)
                     {
-                        SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(this.Name,
-                            SessionStateCategory.Function, "FunctionAllScopeOptionCannotBeRemoved",
+                        SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(
+                            this.Name,
+                            SessionStateCategory.Function,
+                            "FunctionAllScopeOptionCannotBeRemoved",
                             SessionStateStrings.FunctionAllScopeOptionCannotBeRemoved);
 
                         throw e;
@@ -350,7 +362,7 @@ namespace System.Management.Automation
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
-        /// Gets or sets the description associated with the function
+        /// Gets or sets the description associated with the function.
         /// </summary>
         public string Description
         {
@@ -424,36 +436,23 @@ namespace System.Management.Automation
         /// <summary>
         /// True if the command has dynamic parameters, false otherwise.
         /// </summary>
-        internal override bool ImplementsDynamicParameters
-        {
-            get { return ScriptBlock.HasDynamicParameters; }
-        }
+        internal override bool ImplementsDynamicParameters => ScriptBlock.HasDynamicParameters;
 
         /// <summary>
         /// The command metadata for the function or filter
         /// </summary>
-        internal override CommandMetadata CommandMetadata
-        {
-            get
-            {
-                return _commandMetadata ??
-                       (_commandMetadata = new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
-            }
-        }
+        internal override CommandMetadata CommandMetadata => _commandMetadata ??
+                                                             (_commandMetadata = new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
 
         private CommandMetadata _commandMetadata;
 
         /// <summary>
-        /// The output type(s) is specified in the script block
+        /// Gets the output type(s) specified in the script block.
         /// </summary>
-        public override ReadOnlyCollection<PSTypeName> OutputType
-        {
-            get { return ScriptBlock.OutputType; }
-        }
-
+        public override ReadOnlyCollection<PSTypeName> OutputType => ScriptBlock.OutputType;
 
         /// <summary>
-        /// Gets the type responsible for infering output types of the function.
+        /// Gets the type responsible for providing output types of the function.
         /// </summary>
         public override Type OutputTypeProvider => ScriptBlock.OutputTypeProvider;
 
@@ -461,6 +460,5 @@ namespace System.Management.Automation
         /// Return a ScriptBlock that can return the output type of a cmdlet.
         /// </summary>
         public override ScriptBlock OutputTypeProviderScriptBlock => ScriptBlock.OutputTypeScriptBlock;
-
-    }// FunctionInfo
+    } // FunctionInfo
 } // namespace System.Management.Automation

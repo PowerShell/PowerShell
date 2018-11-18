@@ -557,17 +557,24 @@ namespace System.Management.Automation
     [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments")]
     public class OutputTypeProviderAttribute : CmdletMetadataAttribute
     {
-        /// <summary/>
+        /// <summary>
+        /// Gets a type implementing the <see cref="IOutputTypeProvider"/> interface.
+        /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
         public Type Type { get; private set; }
 
-        /// <summary/>
+        /// <summary>
+        /// Gets a ScriptBlock used to provide output types for a function.
+        /// </summary>
         public ScriptBlock ScriptBlock { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OutputTypeProviderAttribute"/> class.
+        /// </summary>
         /// <param name="type">The type must implement <see cref="IOutputTypeProvider"/> and have a default constructor.</param>
         public OutputTypeProviderAttribute(Type type)
         {
-            if (type == null || (type.GetInterfaces().All(t => t != typeof(IOutputTypeProvider))))
+            if (type == null || type.GetInterfaces().All(t => t != typeof(IOutputTypeProvider)))
             {
                 throw PSTraceSource.NewArgumentException("type");
             }
@@ -575,6 +582,9 @@ namespace System.Management.Automation
             Type = type;
         }
 
+        /// <summary>
+        /// Initializes a new instance of  <see cref="OutputTypeProviderAttribute"/> class.
+        /// </summary>
         /// <param name="scriptBlock">The scriptBlock must return types or PSTypeNames.</param>
         public OutputTypeProviderAttribute(ScriptBlock scriptBlock)
         {

@@ -398,11 +398,12 @@ namespace System.Management.Automation
             {
                 if (ImplementingType != null)
                 {
-                    foreach (var tia in ImplementingType.GetCustomAttributes<OutputTypeProviderAttribute>(true))
+                    foreach (var outputTypeProviderAttribute in ImplementingType.GetCustomAttributes<OutputTypeProviderAttribute>(true))
                     {
-                        return tia.Type;
+                        return outputTypeProviderAttribute.Type;
                     }
                 }
+
                 return null;
             }
         }
@@ -416,11 +417,12 @@ namespace System.Management.Automation
             {
                 if (ImplementingType != null)
                 {
-                    foreach (var tia in ImplementingType.GetCustomAttributes<OutputTypeProviderAttribute>(true))
+                    foreach (var outputTypeProviderAttribute in ImplementingType.GetCustomAttributes<OutputTypeProviderAttribute>(true))
                     {
-                        return tia.ScriptBlock;
+                        return outputTypeProviderAttribute.ScriptBlock;
                     }
                 }
+
                 return null;
             }
         }

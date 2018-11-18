@@ -1029,6 +1029,11 @@ namespace System.Management.Automation
             // ParameterSetName in OutputType and of the ones I know about, it isn't that useful.
             inferredTypes.AddRange(commandInfo.OutputType);
 
+            AddTypesFromOutputTypeProvider(commandInfo, commandAst, inferredTypes);
+        }
+
+        private void AddTypesFromOutputTypeProvider(CommandInfo commandInfo, CommandAst commandAst, List<PSTypeName> inferredTypes)
+        {
             var inferenceType = commandInfo.OutputTypeProvider;
             if (inferenceType != null)
             {
@@ -1064,7 +1069,6 @@ namespace System.Management.Automation
                 }
             }
         }
-
 
         /// <summary>
         /// Infer types from the well-known object cmdlets, like foreach-object, where-object, sort-object etc.
