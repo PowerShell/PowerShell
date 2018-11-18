@@ -1378,7 +1378,7 @@ namespace Microsoft.PowerShell.Commands
                     // Trimming forward and backward slash for FileSystem provider when -Persist is used.
                     if (Persist && provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                     {
-                        Root = Root.TrimEnd(new[] {'/','\\'});
+                        Root = Root.TrimEnd(new[] { '/', '\\' });
                     }
 
                     // Create the new drive
