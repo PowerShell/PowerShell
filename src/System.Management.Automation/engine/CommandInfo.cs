@@ -180,14 +180,14 @@ namespace System.Management.Automation
         /// </summary>
         public string Name { get; private set; } = String.Empty;
 
-// Name
+        // Name
 
         /// <summary>
         /// Gets the type of the command
         /// </summary>
         public CommandTypes CommandType { get; private set; } = CommandTypes.Application;
 
-// CommandType
+        // CommandType
 
         /// <summary>
         /// Gets the source of the command (shown by default in Get-Command)
@@ -626,6 +626,16 @@ namespace System.Management.Automation
         public abstract ReadOnlyCollection<PSTypeName> OutputType { get; }
 
         /// <summary>
+        /// Gets a type that can infer output types of a command.
+        /// </summary>
+        public virtual Type OutputTypeProvider => null;
+
+        /// <summary>
+        /// Gets a ScriptBlock that can infer output types of a command.
+        /// </summary>
+        public virtual ScriptBlock OutputTypeProviderScriptBlock => null;
+
+        /// <summary>
         /// Specifies whether this command was imported from a module or not.
         /// This is used in Get-Command to figure out which of the commands in module session state were imported.
         /// </summary>
@@ -880,6 +890,9 @@ namespace System.Management.Automation
         /// When a type is defined by PowerShell, the ast for that type.
         /// </summary>
         public TypeDefinitionAst TypeDefinitionAst { get; private set; }
+
+        internal static PSTypeName[] EmptyArray = new PSTypeName[0];
+
         private bool _typeWasCalculated;
 
         /// <summary>
@@ -925,7 +938,7 @@ namespace System.Management.Automation
             var typeName = GetMemberTypeProjection(typename.Name, membersTypes);
             var members = new List<PSMemberNameAndType>();
             members.AddRange(membersTypes);
-            members.Sort((c1,c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
+            members.Sort((c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
             return new PSSyntheticTypeName(typeName, typename.Type, members);
         }
 
@@ -984,5 +997,16 @@ namespace System.Management.Automation
     internal interface IScriptCommandInfo
     {
         ScriptBlock ScriptBlock { get; }
+    }
+
+    /// <summary>
+    /// A type specified by the <see cref="OutputTypeProviderAttribute"/> must implement this interface.
+    /// </summary>
+    public interface IOutputTypeProvider
+    {
+        /// <summary>
+        /// Gets output types that the function annotated with the corresponding <see cref="OutputTypeProviderAttribute"/> can produce.
+        /// </summary>
+        PSTypeName[] GetOutputTypes(CommandAst commandAst, PSTypeName[] pipelineInputTypes);
     }
 } // namespace System.Management.Automation

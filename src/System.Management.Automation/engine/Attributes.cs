@@ -550,6 +550,39 @@ namespace System.Management.Automation
     }
 
     /// <summary>
+    /// TypeInferenceAttribute is used to specify the type than can infer the output types from a CommandAst
+    /// or script.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    [SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments")]
+    public class OutputTypeProviderAttribute : CmdletMetadataAttribute
+    {
+        /// <summary/>
+        [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
+        public Type Type { get; private set; }
+
+        /// <summary/>
+        public ScriptBlock ScriptBlock { get; private set; }
+
+        /// <param name="type">The type must implement <see cref="IOutputTypeProvider"/> and have a default constructor.</param>
+        public OutputTypeProviderAttribute(Type type)
+        {
+            if (type == null || (type.GetInterfaces().All(t => t != typeof(IOutputTypeProvider))))
+            {
+                throw PSTraceSource.NewArgumentException("type");
+            }
+
+            Type = type;
+        }
+
+        /// <param name="scriptBlock">The scriptBlock must return types or PSTypeNames.</param>
+        public OutputTypeProviderAttribute(ScriptBlock scriptBlock)
+        {
+            ScriptBlock = scriptBlock ?? throw PSTraceSource.NewArgumentException("type");
+        }
+    }
+
+    /// <summary>
     /// This attribute is used on a dynamic assembly to mark it as one that is used to implement
     /// a set of classes defined in a PowerShell script.
     /// </summary>
@@ -1113,15 +1146,15 @@ namespace System.Management.Automation
 
         private void ValidateRange(object element, ValidateRangeKind rangeKind)
         {
-            Type commonType = GetCommonType(typeof(int),element.GetType());
+            Type commonType = GetCommonType(typeof(int), element.GetType());
             if (commonType == null)
             {
-                    throw new ValidationMetadataException(
-                    "ValidationRangeElementType",
-                    null,
-                    Metadata.ValidateRangeElementType,
-                    element.GetType().Name,
-                    typeof(int).Name);
+                throw new ValidationMetadataException(
+                "ValidationRangeElementType",
+                null,
+                Metadata.ValidateRangeElementType,
+                element.GetType().Name,
+                typeof(int).Name);
             }
 
             object resultValue;
@@ -1188,7 +1221,7 @@ namespace System.Management.Automation
                             element.ToString());
                     }
                     break;
-                }
+            }
         }
 
         private void ValidateRange(object element)
@@ -2069,7 +2102,8 @@ namespace System.Management.Automation
                 // because a value-type value cannot be null.
                 if (!isEmpty && !isElementValueType)
                 {
-                    do {
+                    do
+                    {
                         object element = ienum.Current;
                         if (element == null || element == AutomationNull.Value)
                         {

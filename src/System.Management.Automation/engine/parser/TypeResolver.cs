@@ -761,6 +761,7 @@ namespace System.Management.Automation
                     { typeof(PSReference),                                 new[] { "ref" } },
                     { typeof(PSTypeNameAttribute),                         new[] { "PSTypeNameAttribute" } },
                     { typeof(Regex),                                       new[] { "regex" } },
+                    { typeof(OutputTypeProviderAttribute),                 new[] { "OutputTypeProvider" } },
                     { typeof(DscPropertyAttribute),                        new[] { "DscProperty" } },
                     { typeof(SByte),                                       new[] { "sbyte" } },
                     { typeof(string),                                      new[] { "string" } },

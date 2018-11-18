@@ -151,6 +151,10 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.OutputTypeAttribute]
                 }
                 @{
+                    Accelerator = 'OutputTypeProvider'
+                    Type        = [System.Management.Automation.OutputTypeProviderAttribute]
+                }
+                @{
                     Accelerator = 'ObjectSecurity'
                     Type        = [System.Security.AccessControl.ObjectSecurity]
                 }
@@ -400,17 +404,14 @@ Describe "Type accelerators" -Tags "CI" {
                 }
                 @{
                     Accelerator = 'pspropertyexpression'
-                    Type = [Microsoft.PowerShell.Commands.PSPropertyExpression]
+                    Type        = [Microsoft.PowerShell.Commands.PSPropertyExpression]
                 }
             )
 
-            if ( !$IsWindows )
-            {
-                $totalAccelerators = 99
-            }
-            else
-            {
-                $totalAccelerators = 104
+            if ( !$IsWindows ) {
+                $totalAccelerators = 100
+            } else {
+                $totalAccelerators = 105
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{

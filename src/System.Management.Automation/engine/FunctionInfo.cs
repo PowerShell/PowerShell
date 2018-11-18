@@ -51,7 +51,8 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context, string helpFile) : base(name, CommandTypes.Function, context)
+        internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context, string helpFile) : base(name, CommandTypes.Function,
+            context)
         {
             if (function == null)
             {
@@ -84,7 +85,8 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context) : this(name, function, options, context, null)
+        internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context) : this(name, function, options,
+            context, null)
         {
         } // FunctionInfo ctor
 
@@ -109,8 +111,8 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context, string helpFile)
-            : this(name, function, context, helpFile)
+        internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context, string helpFile) : this(name,
+            function, context, helpFile)
         {
             _options = options;
         } // FunctionInfo ctor
@@ -118,8 +120,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is a copy constructor, used primarily for get-command.
         /// </summary>
-        internal FunctionInfo(FunctionInfo other)
-            : base(other)
+        internal FunctionInfo(FunctionInfo other) : base(other)
         {
             CopyFieldsFromOther(other);
         }
@@ -137,8 +138,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is a copy constructor, used primarily for get-command.
         /// </summary>
-        internal FunctionInfo(string name, FunctionInfo other)
-            : base(name, other)
+        internal FunctionInfo(string name, FunctionInfo other) : base(name, other)
         {
             CopyFieldsFromOther(other);
 
@@ -152,7 +152,11 @@ namespace System.Management.Automation
         /// </summary>
         internal override CommandInfo CreateGetCommandCopy(object[] arguments)
         {
-            FunctionInfo copy = new FunctionInfo(this) { IsGetCommandCopy = true, Arguments = arguments };
+            FunctionInfo copy = new FunctionInfo(this)
+            {
+                IsGetCommandCopy = true,
+                Arguments = arguments
+            };
             return copy;
         }
 
@@ -170,6 +174,7 @@ namespace System.Management.Automation
         {
             get { return _scriptBlock; }
         }
+
         private ScriptBlock _scriptBlock;
 
         /// <summary>
@@ -226,24 +231,16 @@ namespace System.Management.Automation
 
             if ((_options & ScopedItemOptions.Constant) != 0)
             {
-                SessionStateUnauthorizedAccessException e =
-                    new SessionStateUnauthorizedAccessException(
-                            Name,
-                            SessionStateCategory.Function,
-                            "FunctionIsConstant",
-                            SessionStateStrings.FunctionIsConstant);
+                SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(Name, SessionStateCategory.Function,
+                    "FunctionIsConstant", SessionStateStrings.FunctionIsConstant);
 
                 throw e;
             }
 
             if (!force && (_options & ScopedItemOptions.ReadOnly) != 0)
             {
-                SessionStateUnauthorizedAccessException e =
-                    new SessionStateUnauthorizedAccessException(
-                            Name,
-                            SessionStateCategory.Function,
-                            "FunctionIsReadOnly",
-                            SessionStateStrings.FunctionIsReadOnly);
+                SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(Name, SessionStateCategory.Function,
+                    "FunctionIsReadOnly", SessionStateStrings.FunctionIsReadOnly);
 
                 throw e;
             }
@@ -268,10 +265,7 @@ namespace System.Management.Automation
         /// </summary>
         public bool CmdletBinding
         {
-            get
-            {
-                return this.ScriptBlock.UsesCmdletBinding;
-            }
+            get { return this.ScriptBlock.UsesCmdletBinding; }
         }
 
         /// <summary>
@@ -280,17 +274,17 @@ namespace System.Management.Automation
         /// </summary>
         public string DefaultParameterSet
         {
-            get
-            {
-                return this.CmdletBinding ? this.CommandMetadata.DefaultParameterSetName : null;
-            }
+            get { return this.CmdletBinding ? this.CommandMetadata.DefaultParameterSetName : null; }
         }
 
         /// <summary>
         /// Gets the definition of the function which is the
         /// ToString() of the ScriptBlock that implements the function.
         /// </summary>
-        public override string Definition { get { return _scriptBlock.ToString(); } }
+        public override string Definition
+        {
+            get { return _scriptBlock.ToString(); }
+        }
 
         /// <summary>
         /// Gets or sets the scope options for the function.
@@ -301,10 +295,7 @@ namespace System.Management.Automation
         /// </exception>
         public ScopedItemOptions Options
         {
-            get
-            {
-                return CopiedCommand == null ? _options : ((FunctionInfo)CopiedCommand).Options;
-            }
+            get { return CopiedCommand == null ? _options : ((FunctionInfo)CopiedCommand).Options; }
 
             set
             {
@@ -315,12 +306,8 @@ namespace System.Management.Automation
 
                     if ((_options & ScopedItemOptions.Constant) != 0)
                     {
-                        SessionStateUnauthorizedAccessException e =
-                            new SessionStateUnauthorizedAccessException(
-                                    Name,
-                                    SessionStateCategory.Function,
-                                    "FunctionIsConstant",
-                                    SessionStateStrings.FunctionIsConstant);
+                        SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(Name, SessionStateCategory.Function,
+                            "FunctionIsConstant", SessionStateStrings.FunctionIsConstant);
 
                         throw e;
                     }
@@ -334,27 +321,19 @@ namespace System.Management.Automation
                         // user is trying to set the function to constant after
                         // creating the function. Do not allow this (as per spec).
 
-                        SessionStateUnauthorizedAccessException e =
-                            new SessionStateUnauthorizedAccessException(
-                                    Name,
-                                    SessionStateCategory.Function,
-                                    "FunctionCannotBeMadeConstant",
-                                    SessionStateStrings.FunctionCannotBeMadeConstant);
+                        SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(Name, SessionStateCategory.Function,
+                            "FunctionCannotBeMadeConstant", SessionStateStrings.FunctionCannotBeMadeConstant);
 
                         throw e;
                     }
 
                     // Ensure we are not trying to remove the AllScope option
 
-                    if ((value & ScopedItemOptions.AllScope) == 0 &&
-                        (_options & ScopedItemOptions.AllScope) != 0)
+                    if ((value & ScopedItemOptions.AllScope) == 0 && (_options & ScopedItemOptions.AllScope) != 0)
                     {
-                        SessionStateUnauthorizedAccessException e =
-                            new SessionStateUnauthorizedAccessException(
-                                    this.Name,
-                                    SessionStateCategory.Function,
-                                    "FunctionAllScopeOptionCannotBeRemoved",
-                                    SessionStateStrings.FunctionAllScopeOptionCannotBeRemoved);
+                        SessionStateUnauthorizedAccessException e = new SessionStateUnauthorizedAccessException(this.Name,
+                            SessionStateCategory.Function, "FunctionAllScopeOptionCannotBeRemoved",
+                            SessionStateStrings.FunctionAllScopeOptionCannotBeRemoved);
 
                         throw e;
                     }
@@ -367,6 +346,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private ScopedItemOptions _options = ScopedItemOptions.None;
 
         /// <summary>
@@ -374,10 +354,7 @@ namespace System.Management.Automation
         /// </summary>
         public string Description
         {
-            get
-            {
-                return CopiedCommand == null ? _description : ((FunctionInfo)CopiedCommand).Description;
-            }
+            get { return CopiedCommand == null ? _description : ((FunctionInfo)CopiedCommand).Description; }
 
             set
             {
@@ -391,6 +368,7 @@ namespace System.Management.Automation
                 }
             }
         }
+
         private string _description = null;
 
         /// <summary>
@@ -398,11 +376,9 @@ namespace System.Management.Automation
         /// </summary>
         public string Verb
         {
-            get
-            {
-                return _verb;
-            }
+            get { return _verb; }
         } // Verb
+
         private string _verb = String.Empty;
 
         /// <summary>
@@ -410,11 +386,9 @@ namespace System.Management.Automation
         /// </summary>
         public string Noun
         {
-            get
-            {
-                return _noun;
-            }
+            get { return _noun; }
         } // Noun
+
         private string _noun = String.Empty;
 
         /// <summary>
@@ -422,15 +396,10 @@ namespace System.Management.Automation
         /// </summary>
         public string HelpFile
         {
-            get
-            {
-                return _helpFile;
-            }
-            internal set
-            {
-                _helpFile = value;
-            }
+            get { return _helpFile; }
+            internal set { _helpFile = value; }
         } // HelpFile
+
         private string _helpFile = String.Empty;
 
         /// <summary>
@@ -445,12 +414,7 @@ namespace System.Management.Automation
                 foreach (CommandParameterSetInfo parameterSet in ParameterSets)
                 {
                     synopsis.AppendLine();
-                    synopsis.AppendLine(
-                        String.Format(
-                            Globalization.CultureInfo.CurrentCulture,
-                            "{0} {1}",
-                            Name,
-                            parameterSet.ToString()));
+                    synopsis.AppendLine(String.Format(Globalization.CultureInfo.CurrentCulture, "{0} {1}", Name, parameterSet.ToString()));
                 }
 
                 return synopsis.ToString();
@@ -473,10 +437,10 @@ namespace System.Management.Automation
             get
             {
                 return _commandMetadata ??
-                       (_commandMetadata =
-                        new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
+                       (_commandMetadata = new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
             }
         }
+
         private CommandMetadata _commandMetadata;
 
         /// <summary>
@@ -486,5 +450,17 @@ namespace System.Management.Automation
         {
             get { return ScriptBlock.OutputType; }
         }
-    } // FunctionInfo
+
+
+        /// <summary>
+        /// Gets the type responsible for infering output types of the function.
+        /// </summary>
+        public override Type OutputTypeProvider => ScriptBlock.OutputTypeProvider;
+
+        /// <summary>
+        /// Return a ScriptBlock that can return the output type of a cmdlet.
+        /// </summary>
+        public override ScriptBlock OutputTypeProviderScriptBlock => ScriptBlock.OutputTypeScriptBlock;
+
+    }// FunctionInfo
 } // namespace System.Management.Automation

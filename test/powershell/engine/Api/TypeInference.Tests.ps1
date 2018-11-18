@@ -351,8 +351,7 @@ Describe "Type inference Tests" -tags "CI" {
             $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
             $typeNames.Count | Should -Be 1
             $typeNames[0] | Should -Be 'System.String'
-        }
-        finally {
+        } finally {
             Remove-TypeData -TypeName InferScriptPropLevel1
             Remove-TypeData -TypeName InferScriptPropLevel2
         }
@@ -441,19 +440,19 @@ Describe "Type inference Tests" -tags "CI" {
     It "Infers typeof Group-Object Group" {
         $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object | Foreach-Object Group  }.Ast)
         $res.Count | Should -Be 3
-        ($res.Name | Sort-Object)[1,2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
+        ($res.Name | Sort-Object)[1, 2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
     }
 
     It "Infers typeof Group-Object Values" {
         $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object | Foreach-Object Values  }.Ast)
         $res.Count | Should -Be 3
-        ($res.Name | Sort-Object)[1,2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
+        ($res.Name | Sort-Object)[1, 2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
     }
 
     It "Infers typeof Group-Object Group with Property" {
         $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name | Foreach-Object Group  }.Ast)
         $res.Count | Should -Be 3
-        ($res.Name | Sort-Object)[1,2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
+        ($res.Name | Sort-Object)[1, 2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
     }
 
     It "Infers typeof Group-Object Values with Property" {
@@ -469,9 +468,9 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It "Infers typeof Group-Object Values with Properties" {
-        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name,CreationTime | Foreach-Object Values  }.Ast)
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name, CreationTime | Foreach-Object Values  }.Ast)
         $res.Count | Should -Be 3
-        ($res.Name | Sort-Object)  -join ', ' | Should -Be "System.Collections.ArrayList, System.DateTime, System.String"
+        ($res.Name | Sort-Object) -join ', ' | Should -Be "System.Collections.ArrayList, System.DateTime, System.String"
     }
 
     It "ignores Group-Object Group with Scriptblock" {
@@ -784,11 +783,9 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( {
                 try {
                     1
-                }
-                catch [exception] {
+                } catch [exception] {
                     "Text"
-                }
-                finally {
+                } finally {
                     [int]
                 }
             }.Ast)
@@ -933,7 +930,7 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It 'Infers type of variable $_ in catch block' {
-        $variableAst = { try {} catch { $_ } }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
+        $variableAst = { try {} catch { $_ } }.Ast.Find( { param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
         $res = [AstTypeInference]::InferTypeOf($variableAst)
 
         $res | Should -HaveCount 1
@@ -941,7 +938,7 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It 'Infers type of untyped $_.Exception in catch block' {
-        $memberAst = { try {} catch { $_.Exception } }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] }, $true)
+        $memberAst = { try {} catch { $_.Exception } }.Ast.Find( { param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] }, $true)
         $res = [AstTypeInference]::InferTypeOf($memberAst)
 
         $res | Should -HaveCount 1
@@ -1052,6 +1049,60 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be System.DateTime
     }
 
+    It 'Inferes types from function with OutputTypeProviderAttribute Type' {
+        class OutputTypeProvider : IOutputTypeProvider {
+            [PSTypeName[]] GetOutputTypes([Language.CommandAst] $commandAst, [PSTypeName[]] $pipelineInputTypes) {
+                if ($commandAst.CommandElements.Count -gt 1) {
+                    switch ($commandAst.CommandElements[1].Value) {
+                        'date' {return [DateTime]}
+                        'time' {return [TimeSpan]}
+                        'input' {return $pipelineInputTypes}
+                    }
+                }
+                return [string]
+            }
+        }
+
+        function F {
+            [OutputTypeProvider([OutputTypeProvider])]
+            param(
+                [Parameter(ValueFromPipeline)]
+                $inputObject
+            )
+        }
+
+        [AstTypeInference]::InferTypeOf( { F }.Ast.EndBlock.Statements[0].PipelineElements[0]) | Should -Be System.String
+        [AstTypeInference]::InferTypeOf( { F date }.Ast.EndBlock.Statements[0].PipelineElements[0]) | Should -Be System.DateTime
+        [AstTypeInference]::InferTypeOf( { F time }.Ast.EndBlock.Statements[0].PipelineElements[0]) | Should -Be System.TimeSpan
+        [AstTypeInference]::InferTypeOf( { 1 | F input }.Ast.EndBlock.Statements[0].PipelineElements[1]) | Should -Be System.Int32
+    }
+
+    It 'Inferes types from function with OutputTypeProviderAttribute ScriptBlock' {
+        function GetOutputTypes {
+            param($commandAst, $pipelineInputTypes)
+
+            if ($commandAst.CommandElements.Count -gt 1) {
+                switch ($commandAst.CommandElements[1].Value) {
+                    'date' {return [DateTime]}
+                    'time' {return [TimeSpan]}
+                    'input' {return $pipelineInputTypes}
+                }
+            }
+
+            return [string]
+        }
+
+        function F {
+            [OutputTypeProvider( {GetOutputTypes @args})]
+            param()
+        }
+
+        [AstTypeInference]::InferTypeOf( { F }.Ast.EndBlock.Statements[0].PipelineElements[0]) | Should -Be System.String
+        [AstTypeInference]::InferTypeOf( { F date }.Ast.EndBlock.Statements[0].PipelineElements[0]) | Should -Be System.DateTime
+        [AstTypeInference]::InferTypeOf( { F time }.Ast.EndBlock.Statements[0].PipelineElements[0]) | Should -Be System.TimeSpan
+        [AstTypeInference]::InferTypeOf( { 1 | F input }.Ast.EndBlock.Statements[0].PipelineElements[1]) | Should -Be System.Int32
+    }
+
     It 'Infers type of note property with safe eval' -Skip {
         $res = [AstTypeInference]::InferTypeOf( {
                 [pscustomobject] @{
@@ -1112,5 +1163,4 @@ Describe "AstTypeInference tests" -Tags CI {
         $res = [AstTypeInference]::InferTypeOf( { $v }.Ast, $powerShell, [TypeInferenceRuntimePermissions]::AllowSafeEval)
         $res.Name | Should -Be 'System.Int32'
     }
-
 }

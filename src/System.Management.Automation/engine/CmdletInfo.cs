@@ -390,6 +390,42 @@ namespace System.Management.Automation
         private List<PSTypeName> _outputType = null;
 
         /// <summary>
+        /// Return a type that can infer the output type of a cmdlet.
+        /// </summary>
+        public override Type OutputTypeProvider
+        {
+            get
+            {
+                if (ImplementingType != null)
+                {
+                    foreach (var tia in ImplementingType.GetCustomAttributes<OutputTypeProviderAttribute>(true))
+                    {
+                        return tia.Type;
+                    }
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets a ScriptBlock that returns the output types of the cmdlet
+        /// </summary>
+        public override ScriptBlock OutputTypeProviderScriptBlock
+        {
+            get
+            {
+                if (ImplementingType != null)
+                {
+                    foreach (var tia in ImplementingType.GetCustomAttributes<OutputTypeProviderAttribute>(true))
+                    {
+                        return tia.ScriptBlock;
+                    }
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the scope options for the alias
         /// </summary>
         /// <exception cref="System.Management.Automation.SessionStateUnauthorizedAccessException">
@@ -520,7 +556,8 @@ namespace System.Management.Automation
         /// </exception>
         internal override CommandMetadata CommandMetadata
         {
-            get {
+            get
+            {
                 return _cmdletMetadata ??
                        (_cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context));
             }
