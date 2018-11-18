@@ -1375,6 +1375,12 @@ namespace Microsoft.PowerShell.Commands
                         ThrowTerminatingError(er);
                     }
 
+                    // Trimming forward and backward slash for FileSystem provider when -Persist is used.
+                    if (Persist && provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Root = Root.TrimEnd(new[] {'/','\\'});
+                    }
+
                     // Create the new drive
                     PSDriveInfo newDrive =
                         new PSDriveInfo(
@@ -4544,4 +4550,3 @@ namespace Microsoft.PowerShell.Commands
 
     #endregion Provider commands
 } // namespace Microsoft.PowerShell.Commands
-
