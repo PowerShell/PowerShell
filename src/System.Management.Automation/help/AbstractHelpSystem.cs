@@ -10,12 +10,11 @@ namespace System.Management.Automation
 {
     internal abstract class HelpSystemBase
     {
-        internal static Type s_HelpSystemType;
+        private static Type s_HelpSystemType;
         internal static Type InstanceType => s_HelpSystemType;
 
         internal static void RegisterHelpSystem(Type helpSystemType)
         {
-            // We check 'IsNotPublic' because we don't want allow 'Activator.CreateInstance' create an instance of non-public type.
             if (!(typeof(HelpSystemBase).IsAssignableFrom(helpSystemType)) || helpSystemType.IsPublic)
             {
                 throw PSTraceSource.NewArgumentException("helpSystemType");
