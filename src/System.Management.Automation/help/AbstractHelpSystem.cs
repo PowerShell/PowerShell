@@ -92,14 +92,17 @@ namespace System.Management.Automation
         internal abstract IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest);
 
         internal abstract IEnumerable<HelpInfo> GetHelp(HelpRequest helpRequest);
-
+        internal delegate string GetHelpPagingFunctionText();
+        internal static GetHelpPagingFunctionText GetHelpPagingFunctionTextMethod;
     }
 
     internal class HelpSystemDummy : HelpSystemBase
     {
-        static HelpSystemDummy()
+        internal static void InitHelpSystemDummy()
         {
             RegisterHelpSystem(typeof(HelpSystemDummy));
+
+            GetHelpPagingFunctionTextMethod = GetHelpPagingFunctionTextImpl;
         }
 
         internal HelpSystemDummy(ExecutionContext context)
@@ -127,6 +130,72 @@ namespace System.Management.Automation
             return Array.Empty<HelpInfo>();
         }
 
+        internal static string GetHelpPagingFunctionTextImpl()
+        {
+            return @"
+<#
+.FORWARDHELPTARGETNAME Get-Help
+.FORWARDHELPCATEGORY Cmdlet
+#>
+[CmdletBinding(DefaultParameterSetName='AllUsersView', HelpUri='https://go.microsoft.com/fwlink/?LinkID=113316')]
+param(
+    [Parameter(Position=0, ValueFromPipelineByPropertyName=$true)]
+    [string]
+    ${Name},
+
+    [string]
+    ${Path},
+
+    [ValidateSet('Alias','Cmdlet','Provider','General','FAQ','Glossary','HelpFile','ScriptCommand','Function','Filter','ExternalScript','All','DefaultHelp','Workflow','DscResource','Class','Configuration')]
+    [string[]]
+    ${Category},
+
+    [Parameter(ParameterSetName='DetailedView', Mandatory=$true)]
+    [switch]
+    ${Detailed},
+
+    [Parameter(ParameterSetName='AllUsersView')]
+    [switch]
+    ${Full},
+
+    [Parameter(ParameterSetName='Examples', Mandatory=$true)]
+    [switch]
+    ${Examples},
+
+    [Parameter(ParameterSetName='Parameters', Mandatory=$true)]
+    [string]
+    ${Parameter},
+
+    [string[]]
+    ${Component},
+
+    [string[]]
+    ${Functionality},
+
+    [string[]]
+    ${Role},
+
+    [Parameter(ParameterSetName='Online', Mandatory=$true)]
+    [switch]
+    ${Online},
+
+    [Parameter(ParameterSetName='ShowWindow', Mandatory=$true)]
+    [switch]
+    ${ShowWindow})
+
+    # Display the full help topic by default but only for the AllUsersView parameter set.
+    if (($psCmdlet.ParameterSetName -eq 'AllUsersView') -and !$Full) {
+        $PSBoundParameters['Full'] = $true
+    }
+
+    # Nano needs to use Unicode, but Windows and Linux need the default
+    $OutputEncoding = if ([System.Management.Automation.Platform]::IsNanoServer -or [System.Management.Automation.Platform]::IsIoT) {
+        [System.Text.Encoding]::Unicode
+    } else {
+        [System.Console]::OutputEncoding
+    }
+""`n" + HelpSystemDummyStrings.ShortHelpHint + "`n\"";
+        }
     }
 
         /// <summary>
