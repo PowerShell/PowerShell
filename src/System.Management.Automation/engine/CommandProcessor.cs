@@ -32,7 +32,6 @@ namespace System.Management.Automation
             s_constructInstanceCache.GetOrAdd(typeof(WhereObjectCommand), () => new WhereObjectCommand());
             s_constructInstanceCache.GetOrAdd(typeof(ImportModuleCommand), () => new ImportModuleCommand());
             s_constructInstanceCache.GetOrAdd(typeof(GetModuleCommand), () => new GetModuleCommand());
-            s_constructInstanceCache.GetOrAdd(typeof(GetHelpCommand), () => new GetHelpCommand());
             s_constructInstanceCache.GetOrAdd(typeof(InvokeCommandCommand), () => new InvokeCommandCommand());
             s_constructInstanceCache.GetOrAdd(typeof(GetCommandCommand), () => new GetCommandCommand());
             s_constructInstanceCache.GetOrAdd(typeof(OutDefaultCommand), () => new OutDefaultCommand());
