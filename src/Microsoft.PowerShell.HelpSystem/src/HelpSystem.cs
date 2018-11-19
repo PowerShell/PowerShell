@@ -87,6 +87,14 @@ namespace System.Management.Automation
     /// </summary>
     internal class HelpSystem : HelpSystemBase
     {
+
+        internal static void InitHelpSystem()
+        {
+            RegisterHelpSystem(typeof(HelpSystem));
+
+            GetHelpPagingFunctionTextMethod = GetHelpPagingFunctionTextImpl;
+        }
+
         /// <summary>
         /// Constructor for HelpSystem.
         /// </summary>

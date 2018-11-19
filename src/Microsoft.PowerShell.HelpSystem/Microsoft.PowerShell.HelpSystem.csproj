@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="..\..\PowerShell.Common.props" />
+  <PropertyGroup>
+    <Description>PowerShell Core's Microsoft.PowerShell.HelpSystem project</Description>
+    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <AssemblyName>Microsoft.PowerShell.HelpSystem</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.9.0" />
+  </ItemGroup>
+
+</Project>
