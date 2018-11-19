@@ -221,4 +221,36 @@ namespace System.Management.Automation
     internal abstract class ProviderContextBase
     {
     }
+
+    internal class HelpCommentsParser
+    {
+        internal static Tuple<List<Language.Token>, List<string>> GetHelpCommentTokens(IParameterMetadataProvider ipmp,
+            Dictionary<Ast, Token[]> scriptBlockTokenCache)
+        {
+            return null;
+        }
+
+        internal static CommentHelpInfo GetHelpContents(List<Language.Token> comments, List<string> parameterDescriptions)
+        {
+            return null;
+        }
+
+        internal static HelpInfo CreateFromComments(ExecutionContext context,
+                                                    CommandInfo commandInfo,
+                                                    List<Language.Token> comments,
+                                                    List<string> parameterDescriptions,
+                                                    bool dontSearchOnRemoteComputer,
+                                                    out string helpFile, out string helpUriFromDotLink)
+        {
+            helpFile = null;
+            helpUriFromDotLink = null;
+            return null;
+        }
+
+        internal static readonly string mshURI = "http://msh";
+        internal static readonly string commandURI = "http://schemas.microsoft.com/maml/dev/command/2004/10";
+        internal static readonly string ProviderHelpCommandXPath =
+            "/msh:helpItems/msh:providerHelp/msh:CmdletHelpPaths/msh:CmdletHelpPath{0}/command:command[command:details/command:verb='{1}' and command:details/command:noun='{2}']";
+   }
+
 }
