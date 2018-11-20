@@ -28,11 +28,13 @@ try
     Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSSession on non-Windows platforms" -Tag "CI" {
 
         BeforeAll {
-            $userName = "User_$(Get-Random -Maximum 99999)"
-            $userPassword = "Password_$(Get-Random -Maximum 99999)"
-            $cred = [pscredential]::new($userName, (ConvertTo-SecureString -String $userPassword -AsPlainText -Force))
-            $soSkipCA = New-PSSessionOption -SkipCACheck
-            $soSkipCN = New-PSSessionOption -SkipCNCheck
+            if (! $IsWindows) {
+                $userName = "User_$(Get-Random -Maximum 99999)"
+                $userPassword = "Password_$(Get-Random -Maximum 99999)"
+                $cred = [pscredential]::new($userName, (ConvertTo-SecureString -String $userPassword -AsPlainText -Force))
+                $soSkipCA = New-PSSessionOption -SkipCACheck
+                $soSkipCN = New-PSSessionOption -SkipCNCheck
+            }
         }
 
         $testCases = @(
