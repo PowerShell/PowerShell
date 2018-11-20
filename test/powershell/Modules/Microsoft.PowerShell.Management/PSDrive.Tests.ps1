@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Describe "Tests with elevated permissions" -Tag "CI","WindowsRequireAdmin" {
+Describe "Tests with elevated permissions" -Tag "CI","RequireAdminOnWindows" {
     Context "Validate PSDrive Cmdlets" {
         It "Create a new persistent PSDrive targetting remote Windows share." {
             try {
