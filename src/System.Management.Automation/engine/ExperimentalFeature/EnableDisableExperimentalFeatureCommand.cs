@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     public class EnableExperimentalFeatureCommand : PSCmdlet
     {
         /// <summary>
-        /// Get and set the feature names.
+        /// Gets or sets the feature names.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, Position = 0, Mandatory = true)]
         [ArgumentCompleter(typeof(NameArgumentCompleter))]
@@ -28,9 +28,9 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name { get; set; }
 
         /// <summary>
-        /// Get and set the scope of persistence of updating the PowerShell configuration json.
+        /// Gets or sets the scope of persistence of updating the PowerShell configuration json.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public ConfigScope Scope { get; set; } = ConfigScope.CurrentUser;
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
     public class DisableExperimentalFeatureCommand : PSCmdlet
     {
         /// <summary>
-        /// Get and set the feature names.
+        /// Gets or sets the feature names.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, Position = 0, Mandatory = true)]
         [ArgumentCompleter(typeof(NameArgumentCompleter))]
@@ -57,9 +57,9 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name { get; set; }
 
         /// <summary>
-        /// Get and set the scope of persistence of updating the PowerShell configuration json.
+        /// Gets or sets the scope of persistence of updating the PowerShell configuration JSON.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public ConfigScope Scope { get; set; } = ConfigScope.CurrentUser;
 
         /// <summary>
@@ -73,9 +73,9 @@ namespace Microsoft.PowerShell.Commands
 
     internal class ExperimentalFeatureConfigHelper
     {
-        internal static void UpdateConfig(PSCmdlet cmdlet, string[] Name, ConfigScope scope, bool enable)
+        internal static void UpdateConfig(PSCmdlet cmdlet, string[] name, ConfigScope scope, bool enable)
         {
-            IEnumerable<WildcardPattern> namePatterns = SessionStateUtilities.CreateWildcardsFromStrings(Name, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+            IEnumerable<WildcardPattern> namePatterns = SessionStateUtilities.CreateWildcardsFromStrings(name, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
             GetExperimentalFeatureCommand getExperimentalFeatureCommand = new GetExperimentalFeatureCommand();
             getExperimentalFeatureCommand.Context = cmdlet.Context;
             bool foundFeature = false;
@@ -86,14 +86,15 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return;
                 }
+
                 PowerShellConfig.Instance.SetExperimentalFeatures(scope, feature.Name, enable);
                 cmdlet.WriteObject(feature);
             }
 
             if (!foundFeature)
             {
-                string errMsg = String.Format(CultureInfo.InvariantCulture, ExperimentalFeatureStrings.ExperimentalFeatureNameNotFound, Name);
-                cmdlet.WriteError(new ErrorRecord(new ItemNotFoundException(errMsg), "ItemNotFoundException", ErrorCategory.ObjectNotFound, Name));
+                string errMsg = string.Format(CultureInfo.InvariantCulture, ExperimentalFeatureStrings.ExperimentalFeatureNameNotFound, name);
+                cmdlet.WriteError(new ErrorRecord(new ItemNotFoundException(errMsg), "ItemNotFoundException", ErrorCategory.ObjectNotFound, name));
                 return;
             }
 
@@ -107,8 +108,14 @@ namespace Microsoft.PowerShell.Commands
     public class NameArgumentCompleter : IArgumentCompleter
     {
         /// <summary>
-        /// Implement CompleteArgument()
+        /// Implement CompleteArgument().
         /// </summary>
+        /// <param name="commandName">The command name.</param>
+        /// <param name="parameterName">The parameter name.</param>
+        /// <param name="wordToComplete">The word to complete.</param>
+        /// <param name="commandAst">The command AST.</param>
+        /// <param name="fakeBoundParameters">The fake bound parameters.</param>
+        /// <returns>List of Completion Results.</returns>
         public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
         {
             if (fakeBoundParameters == null)
@@ -117,9 +124,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var commandInfo = new CmdletInfo("Get-ExperimentalFeature", typeof(GetExperimentalFeatureCommand));
-            var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace).
-                AddCommand(commandInfo).
-                AddParameter("Name", wordToComplete + "*");
+            var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
+                .AddCommand(commandInfo)
+                .AddParameter("Name", wordToComplete + "*");
 
             HashSet<string> names = new HashSet<string>();
             var results = ps.Invoke<ExperimentalFeature>();
@@ -129,7 +136,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return names.OrderBy(name => name).Select(name => new CompletionResult(name, name, CompletionResultType.Text, name));
-
         }
     }
 }

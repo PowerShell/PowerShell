@@ -214,6 +214,9 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// Set the enabled list of experimental features in the config file.
         /// </summary>
+        /// <param name="scope">The ConfigScope of the configuration file to update.</param>
+        /// <param name="featureName">The name of the experimental feature to change in the configuration.</param>
+        /// <param name="setEnabled">If true, add to configuration; otherwise, remove from configuration.</param>
         internal void SetExperimentalFeatures(ConfigScope scope, string featureName, bool setEnabled)
         {
             List<string> features = new List<string>(GetExperimentalFeatures());
