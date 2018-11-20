@@ -15,6 +15,13 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
             $si.FileName = "powershell"
             $powershell = [System.Diagnostics.Process]::Start($si)
         }
+
+        if ($env:AppVeyor) {
+            $IsAppveyor = $true
+        }
+        else {
+            $IsAppveyor = $false
+        }
     }
 
     AfterAll {
@@ -26,12 +33,12 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
     }
 
     # Skip on Appveyor due to PSReadline issue.
-    It "Can enter and exit another PSHost" -Skip:($env:AppVeyor) {
+    It "Can enter and exit another PSHost" -Skip:$IsAppVeyor {
         "enter-pshostprocess -id $($pwsh.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
     }
 
     # Skip on Appveyor due to PSReadline issue.
-    It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows -or $env:AppVeyor) {
+    It "Can enter and exit another Windows PowerShell PSHost" -Skip:(!$IsWindows -or $IsAppVeyor) {
         "enter-pshostprocess -id $($powershell.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $powershell.Id
     }
 
