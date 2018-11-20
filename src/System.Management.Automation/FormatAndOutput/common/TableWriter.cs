@@ -385,6 +385,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             StringBuilder sb = new StringBuilder();
 
             bool addPadding = true;
+            bool resetVt100 = false;
             for (int k = 0; k < _si.columnInfo.Length; k++)
             {
                 // don't pad the last column
@@ -413,7 +414,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         sb.Append(StringUtil.Padding(_startColumn));
                     }
                 }
+
+                if (resetVt100)
+                {
+                    sb.Append("\u001b[m");
+                    resetVt100 = false;
+                }
+
                 sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding));
+                if (values[k].Contains("\u001b"))
+                {
+                    resetVt100 = true;
+                }
             }
             return sb.ToString();
         }
@@ -468,7 +480,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // the string is longer than the width of the column
                 // truncate and add ellipsis if it's too long
-                int truncationDisplayLength = width - ellipsis.Length;
+                int truncationDisplayLength = width - EllipsisSize;
 
                 if (truncationDisplayLength > 0)
                 {
@@ -480,7 +492,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 // get from "abcdef" to "...f"
                                 int tailCount = dc.GetTailSplitLength(s, truncationDisplayLength);
                                 s = s.Substring(s.Length - tailCount);
-                                s = ellipsis + s;
+                                s = Ellipsis + s;
                             }
                             break;
 
@@ -488,7 +500,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 // get from "abcdef" to "a..."
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
-                                s += ellipsis;
+                                s += Ellipsis;
                             }
                             break;
 
@@ -497,7 +509,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 // left align is the default
                                 // get from "abcdef" to "a..."
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
-                                s += ellipsis;
+                                s += Ellipsis;
                             }
                             break;
                     }
@@ -574,7 +586,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return s;
         }
 
-        private const string ellipsis = "...";
+        private const char Ellipsis = '\u2026';
+        private const int EllipsisSize = 1;
 
         private bool _disabled = false;
 

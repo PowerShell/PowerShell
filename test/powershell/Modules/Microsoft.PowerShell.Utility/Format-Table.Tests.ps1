@@ -255,8 +255,8 @@ Left Center Right
 
         It "Format-Table should not have trailing whitespace if there is truncation: <view>" -TestCases @(
             # `u{2B758} is a double-byte Japanese character
-            @{view="Test.Format.Left"  ; object=[pscustomobject]@{Left="123`u{2B758}"}    ; expected="Left----1..."      },
-            @{view="Test.Format.Center"; object=[pscustomobject]@{Center="12345`u{2B758}"}; expected="Center------123..."}
+            @{view="Test.Format.Left"  ; object=[pscustomobject]@{Left="123`u{2B758}"}    ; expected="Left----123…"      },
+            @{view="Test.Format.Center"; object=[pscustomobject]@{Center="12345`u{2B758}"}; expected="Center------12345…"}
         ) {
             param($view, $object, $expected)
 
@@ -501,7 +501,7 @@ Long*********r3
 Head
 er
 ----*-------*-----
-1...*...5678*12...
+123…*…345678*1234…
 
 
 "@ },
@@ -513,7 +513,7 @@ ngH
 ead
 er
 ---
-123
+12…
 
 
 "@ },
