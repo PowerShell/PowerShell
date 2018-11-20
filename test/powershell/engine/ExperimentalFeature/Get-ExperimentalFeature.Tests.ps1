@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "Get-ExperimentalFeature Tests" -tags "Feature" {
+Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
         $systemConfigPath = "$PSHOME/powershell.config.json"
