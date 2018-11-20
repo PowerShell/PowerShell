@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
         /// Get and set the feature names.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Position = 0)]
-        [ArgumentCompleter(typeof(NameArgumentCompleter))]
+        [ArgumentCompleter(typeof(ExperimentalFeatureNameCompleter))]
         [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
 

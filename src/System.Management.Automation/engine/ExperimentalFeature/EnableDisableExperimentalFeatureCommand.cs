@@ -14,16 +14,15 @@ using System.Management.Automation.Language;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Implements Enable-ExperimentalFeature cmdlet.
+    /// Base class for Enable/Disable-ExperimentalFeature cmdlet.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Enable, "ExperimentalFeature", SupportsShouldProcess = true, HelpUri = "")]
-    public class EnableExperimentalFeatureCommand : PSCmdlet
+    public class EnableDisableExperimentalFeatureCommandBase : PSCmdlet
     {
         /// <summary>
         /// Gets or sets the feature names.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, Position = 0, Mandatory = true)]
-        [ArgumentCompleter(typeof(NameArgumentCompleter))]
+        [ArgumentCompleter(typeof(ExperimentalFeatureNameCompleter))]
         [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
 
@@ -32,7 +31,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public ConfigScope Scope { get; set; } = ConfigScope.CurrentUser;
+    }
 
+    /// <summary>
+    /// Implements Enable-ExperimentalFeature cmdlet.
+    /// </summary>
+    [Cmdlet(VerbsLifecycle.Enable, "ExperimentalFeature", SupportsShouldProcess = true, HelpUri = "")]
+    public class EnableExperimentalFeatureCommand : EnableDisableExperimentalFeatureCommandBase
+    {
         /// <summary>
         /// ProcessRecord method of this cmdlet.
         /// </summary>
@@ -46,22 +52,8 @@ namespace Microsoft.PowerShell.Commands
     /// Implements Enable-ExperimentalFeature cmdlet.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, "ExperimentalFeature", SupportsShouldProcess = true, HelpUri = "")]
-    public class DisableExperimentalFeatureCommand : PSCmdlet
+    public class DisableExperimentalFeatureCommand : EnableDisableExperimentalFeatureCommandBase
     {
-        /// <summary>
-        /// Gets or sets the feature names.
-        /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true, Position = 0, Mandatory = true)]
-        [ArgumentCompleter(typeof(NameArgumentCompleter))]
-        [ValidateNotNullOrEmpty]
-        public string[] Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the scope of persistence of updating the PowerShell configuration JSON.
-        /// </summary>
-        [Parameter]
-        public ConfigScope Scope { get; set; } = ConfigScope.CurrentUser;
-
         /// <summary>
         /// ProcessRecord method of this cmdlet.
         /// </summary>
@@ -105,10 +97,10 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Provides argument completion for ExperimentalFeature names.
     /// </summary>
-    public class NameArgumentCompleter : IArgumentCompleter
+    public class ExperimentalFeatureNameCompleter : IArgumentCompleter
     {
         /// <summary>
-        /// Implement CompleteArgument().
+        /// Returns completion results for experimental feature names used as arguments to experimental feature cmdlets.
         /// </summary>
         /// <param name="commandName">The command name.</param>
         /// <param name="parameterName">The parameter name.</param>

@@ -1322,10 +1322,10 @@ namespace System.Management.Automation
         private static string SetModulePath()
         {
             string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
-            string systemWideModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
+            string allUsersModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.AllUsers);
             string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser);
 
-            string newModulePathString = GetModulePath(currentModulePath, systemWideModulePath, personalModulePath);
+            string newModulePathString = GetModulePath(currentModulePath, allUsersModulePath, personalModulePath);
 
             if (!string.IsNullOrEmpty(newModulePathString))
             {

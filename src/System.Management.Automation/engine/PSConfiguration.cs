@@ -197,15 +197,15 @@ namespace System.Management.Automation.Configuration
         /// </summary>
         internal string[] GetExperimentalFeatures()
         {
-            string[] features = Utils.EmptyArray<string>();
+            string[] features = Array.Empty<string>();
             if (File.Exists(perUserConfigFile))
             {
-                features = ReadValueFromFile<string[]>(ConfigScope.CurrentUser, "ExperimentalFeatures", Utils.EmptyArray<string>());
+                features = ReadValueFromFile<string[]>(ConfigScope.CurrentUser, "ExperimentalFeatures", Array.Empty<string>());
             }
 
             if (features.Length == 0)
             {
-                features = ReadValueFromFile<string[]>(ConfigScope.AllUsers, "ExperimentalFeatures", Utils.EmptyArray<string>());
+                features = ReadValueFromFile<string[]>(ConfigScope.AllUsers, "ExperimentalFeatures", Array.Empty<string>());
             }
 
             return features;
@@ -219,7 +219,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="setEnabled">If true, add to configuration; otherwise, remove from configuration.</param>
         internal void SetExperimentalFeatures(ConfigScope scope, string featureName, bool setEnabled)
         {
-            List<string> features = new List<string>(GetExperimentalFeatures());
+            var features = new List<string>(GetExperimentalFeatures());
             bool containsFeature = features.Contains(featureName);
             if (setEnabled && !containsFeature)
             {
