@@ -26,7 +26,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
     }
 
     # Skip on Appveyor due to PSReadline issue.
-    It "Can enter and exit another PSHost" -Skip ($env:AppVeyor) {
+    It "Can enter and exit another PSHost" -Skip:($env:AppVeyor) {
         "enter-pshostprocess -id $($pwsh.Id)`n`$pid`nexit-pshostprocess" | pwsh -c - | Should -Be $pwsh.Id
     }
 
