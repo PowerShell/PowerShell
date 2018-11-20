@@ -76,6 +76,28 @@ function SyncGalleryToAzArtifacts {
     foreach ($p in $modulesToUpdate) {
         Save-Package -Provider NuGet -Source $galleryUrl -Name $p.Name -RequiredVersion $p.Version -Path $Destination
     }
+
+    # Remove dependent packages downloaded by Save-Module if there are already present in AzArtifacts feed.
+    try {
+        Register-PackageSource -Name local -Location $Destination -ProviderName NuGet -Force
+        $packageNamesToKeep = @()
+        $savedPackages = Find-Package -Source local -AllVersions -AllowPreReleaseVersion
+
+        foreach($p in $savedPackages) {
+            $foundMatch = $azArtifactsPackages | Where-Object { $_.Name -eq $p.Name -and $_.Version -eq $p.Version }
+
+            if(-not $foundMatch) {
+                Write-Verbose "Keeping package $($p.PackageFileName)"
+                $packageNamesToKeep += $p.PackageFilename
+            }
+        }
+
+        Remove-Item -Path $Destination -Exclude $packageNamesToKeep -Recurse -Force
+    }
+    finally {
+        Unregister-PackageSource -Name local -Force -ErrorAction SilentlyContinue
+    }
+
 }
 
 Export-ModuleMember -Function 'SyncGalleryToAzArtifacts'
