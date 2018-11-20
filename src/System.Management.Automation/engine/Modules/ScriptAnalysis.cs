@@ -184,7 +184,7 @@ namespace System.Management.Automation
             ModuleIntrinsics.Tracer.WriteLine("Discovered function definition: {0}", functionName);
 
             // Check if they've defined any aliases
-            // function Foo-Bar { [Alias("Alias1", "...")] param() ... }
+            // function Foo-Bar { [Alias("Alias1", "…")] param() ... }
             var functionBody = functionDefinitionAst.Body;
             if ((functionBody.ParamBlock != null) && (functionBody.ParamBlock.Attributes != null))
             {

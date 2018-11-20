@@ -250,7 +250,7 @@ namespace System.Management.Automation
 
                 if (lineCount == maxLines)
                 {
-                    returnValue.Append("...");
+                    returnValue.Append('…');
                     break;
                 }
             }

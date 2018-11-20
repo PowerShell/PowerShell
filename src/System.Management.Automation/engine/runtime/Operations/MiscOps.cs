@@ -1234,7 +1234,7 @@ namespace System.Management.Automation
                 var expAttribute = scriptBlock.ExperimentalAttribute;
                 if (expAttribute == null || expAttribute.ToShow)
                 {
-                    context.EngineSessionState.SetFunctionRaw(functionDefinitionAst.Name, 
+                    context.EngineSessionState.SetFunctionRaw(functionDefinitionAst.Name,
                         scriptBlock, context.EngineSessionState.CurrentScope.ScopeOrigin);
                 }
             }
@@ -1294,7 +1294,7 @@ namespace System.Management.Automation
 
                 if (errorKeyString.Length > 40)
                 {
-                    errorKeyString = errorKeyString.Substring(0, 40) + "...";
+                    errorKeyString = errorKeyString.Substring(0, 40) + "…";
                 }
 
                 throw InterpreterError.NewInterpreterException(hashtable, typeof(RuntimeException), errorExtent,

@@ -3984,7 +3984,7 @@ namespace System.Management.Automation
 
             if (valAsString.Length > msgLength)
             {
-                valAsString = valAsString.Substring(0, msgLength) + "...";
+                valAsString = valAsString.Substring(0, msgLength) + "…";
             }
             Trace("TraceVariableAssignment", ParserStrings.TraceVariableAssignment, varName, valAsString);
         }

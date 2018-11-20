@@ -31,7 +31,7 @@ Describe "Format-Table" -Tags "CI" {
                 $info = @{}
                 $info.array = $al
                 $result = $info | Format-Table | Out-String
-                $result | Should -Match "array\s+{0, 1, 2, 3...}"
+                $result | Should -Match "array\s+{0, 1, 2, 3…}"
         }
 
         It "Format-Table with Negative Count should work" {

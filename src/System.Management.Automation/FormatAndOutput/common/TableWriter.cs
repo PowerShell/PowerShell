@@ -385,7 +385,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             StringBuilder sb = new StringBuilder();
 
             bool addPadding = true;
-            bool resetVt100 = false;
             for (int k = 0; k < _si.columnInfo.Length; k++)
             {
                 // don't pad the last column
@@ -415,16 +414,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                if (resetVt100)
-                {
-                    sb.Append("\u001b[m");
-                    resetVt100 = false;
-                }
-
                 sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding));
                 if (values[k].Contains("\u001b"))
                 {
-                    resetVt100 = true;
+                    // Reset the console output if the content of this column contains ESC
+                    sb.Append("\u001b[m");
                 }
             }
             return sb.ToString();

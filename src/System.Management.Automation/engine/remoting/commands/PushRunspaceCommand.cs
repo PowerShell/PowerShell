@@ -1151,7 +1151,7 @@ namespace Microsoft.PowerShell.Commands
 
                     case ContainerIdParameterSet:
                         targetName = (this.ContainerId.Length <= 15) ? this.ContainerId
-                                                                     : this.ContainerId.Remove(12) + "...";
+                                                                     : this.ContainerId.Remove(14) + "…";
                         break;
 
                     case SessionParameterSet:
