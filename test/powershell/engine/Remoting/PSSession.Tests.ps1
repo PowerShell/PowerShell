@@ -4,9 +4,10 @@
 #
 # PSSession tests for non-Windows platforms
 #
-try 
+try
 {
     if ( $IsWindows ) {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues['it:skip'] = $true
     }
 
@@ -27,7 +28,9 @@ try
     Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSSession on non-Windows platforms" -Tag "CI" {
 
         BeforeAll {
-            $cred = [pscredential]::new("BogusUser", (ConvertTo-SecureString -String "BogusPassword" -AsPlainText -Force))
+            $userName = "User_$(Get-Random -Maximum 99999)"
+            $userPassword = "Password_$(Get-Random -Maximum 99999)"
+            $cred = [pscredential]::new($userName, (ConvertTo-SecureString -String $userPassword -AsPlainText -Force))
             $soSkipCA = New-PSSessionOption -SkipCACheck
             $soSkipCN = New-PSSessionOption -SkipCNCheck
         }
@@ -58,12 +61,15 @@ try
                 throw "No Exception!"
             }
             catch {
-                $_.Exception.ErrorCode | Should Be $expectedErrorCode
+                $_.Exception.ErrorCode | Should -Be $expectedErrorCode
             }
         }
     }
 }
 finally
 {
-    $PSDefaultParameterValues.remove("it:skip")
+    if ($originalDefaultParameterValues)
+    {
+        $PSDefaultParameterValues = $originalDefaultParameterValues
+    }
 }
