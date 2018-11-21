@@ -950,6 +950,7 @@ namespace System.Management.Automation.Language
             private readonly TypeDefinitionAst _enumDefinitionAst;
             private readonly ModuleBuilder _moduleBuilder;
             private readonly string _typeName;
+            private readonly Type[] _validBaseTypes = new[] { typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong) };
 
             internal DefineEnumHelper(Parser parser, ModuleBuilder module, TypeDefinitionAst enumDefinitionAst, string typeName)
             {
@@ -1091,10 +1092,20 @@ namespace System.Management.Automation.Language
 
             internal void DefineEnum()
             {
+                var underlyingType = typeof(int);
+                foreach (var type in _enumDefinitionAst.BaseTypes)
+                {
+                    underlyingType = type.TypeName.GetReflectionType() ?? typeof(int);
+                    if (!_validBaseTypes.Contains(underlyingType))
+                    {
+                        throw new TypeInitializationException(underlyingType.FullName, null);
+                    }
+                }
+
                 var definedEnumerators = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                var enumBuilder = _moduleBuilder.DefineEnum(_typeName, Reflection.TypeAttributes.Public, typeof(int));
+                var enumBuilder = _moduleBuilder.DefineEnum(_typeName, Reflection.TypeAttributes.Public, underlyingType);
                 DefineCustomAttributes(enumBuilder, _enumDefinitionAst.Attributes, _parser, AttributeTargets.Enum);
-                int value = 0;
+                dynamic value = 0;
                 bool valueTooBig = false;
                 foreach (var member in _enumDefinitionAst.Members)
                 {
@@ -1104,28 +1115,21 @@ namespace System.Management.Automation.Language
                         object constValue;
                         if (IsConstantValueVisitor.IsConstant(enumerator.InitialValue, out constValue, false, false))
                         {
-                            if (constValue is int)
+                            if (!LanguagePrimitives.TryConvertTo(constValue, underlyingType, out value))
                             {
-                                value = (int)constValue;
-                            }
-                            else
-                            {
-                                if (!LanguagePrimitives.TryConvertTo(constValue, out value))
+                                if (constValue != null &&
+                                    LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constValue.GetType())))
                                 {
-                                    if (constValue != null &&
-                                        LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constValue.GetType())))
-                                    {
-                                        _parser.ReportError(enumerator.InitialValue.Extent,
-                                            nameof(ParserStrings.EnumeratorValueTooLarge),
-                                            ParserStrings.EnumeratorValueTooLarge);
-                                    }
-                                    else
-                                    {
-                                        _parser.ReportError(enumerator.InitialValue.Extent,
-                                            nameof(ParserStrings.CannotConvertValue),
-                                            ParserStrings.CannotConvertValue,
-                                            ToStringCodeMethods.Type(typeof(int)));
-                                    }
+                                    _parser.ReportError(enumerator.InitialValue.Extent,
+                                        nameof(ParserStrings.EnumeratorValueTooLarge),
+                                        ParserStrings.EnumeratorValueTooLarge);
+                                }
+                                else
+                                {
+                                    _parser.ReportError(enumerator.InitialValue.Extent,
+                                        nameof(ParserStrings.CannotConvertValue),
+                                        ParserStrings.CannotConvertValue,
+                                        ToStringCodeMethods.Type(typeof(int)));
                                 }
                             }
                         }
@@ -1152,17 +1156,9 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
+                        value = Convert.ChangeType(value, underlyingType);
                         definedEnumerators.Add(enumerator.Name);
                         enumBuilder.DefineLiteral(enumerator.Name, value);
-                        if (value < int.MaxValue)
-                        {
-                            value += 1;
-                            valueTooBig = false;
-                        }
-                        else
-                        {
-                            valueTooBig = true;
-                        }
                     }
                 }
                 _enumDefinitionAst.Type = enumBuilder.CreateTypeInfo().AsType();
