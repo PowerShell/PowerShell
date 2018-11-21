@@ -64,10 +64,10 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
     }
 
     It 'can implement .NET interface properties' {
-        Add-Type -TypeDefinition 'public interface I1 { int I{ get; set; } }'
-        $C1 = Invoke-Expression 'class C1 : I1 {[int]$I}'
-        $getter = $C1.GetType().GetMember('get_I')
-        $getter.ReturnType |Should -BeOfType System.Int32
+        Add-Type -TypeDefinition 'public interface InterfaceWithProperty { int Integer { get; set; } }'
+        $C1 = Invoke-Expression 'class ClassWithInterfaceProperty : InterfaceWithProperty { [int]$Integer }'
+        $getter = $C1.GetType().GetMember('get_Integer')
+        $getter.ReturnType | Should -BeOfType System.Int32
         $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual |Should -Be ([MethodAttributes]::Virtual)
     }
 
