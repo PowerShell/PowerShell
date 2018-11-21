@@ -1160,6 +1160,15 @@ namespace System.Management.Automation.Language
                         definedEnumerators.Add(enumerator.Name);
                         enumBuilder.DefineLiteral(enumerator.Name, value);
                     }
+
+                    if (_enumDefinitionAst.Attributes.Any(attr => attr.TypeName.GetReflectionType() == typeof(FlagsAttribute)) && value != 0)
+                    {
+                        value *= 2;
+                    }
+                    else
+                    {
+                        value += 1;
+                    }
                 }
                 _enumDefinitionAst.Type = enumBuilder.CreateTypeInfo().AsType();
             }
