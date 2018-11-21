@@ -19,7 +19,7 @@ namespace System.Management.Automation
     {
         private static Type s_HelpSystemType;
         private static HelpCommentsParserBase s_HelpCommentsParser;
-        internal static HelpCommentsParserBase Instance => s_HelpCommentsParser ?? new HelpCommentsParserDummy();
+        internal static HelpCommentsParserBase Instance => s_HelpCommentsParser ?? new DummyHelpCommentsParser();
 
         /// <summary>
         /// Initialize the dummy Help System at PowerShell Core startup.
@@ -28,7 +28,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static void InitHelpSystemDummy()
         {
-            RegisterHelpSystem(typeof(HelpSystemDummy), typeof(HelpCommentsParserDummy), HelpSystemDummy.GetHelpPagingFunctionTextImpl);
+            RegisterHelpSystem(typeof(HelpSystemDummy), typeof(DummyHelpCommentsParser), HelpSystemDummy.GetHelpPagingFunctionTextImpl);
         }
 
         /// <summary>
@@ -86,6 +86,9 @@ namespace System.Management.Automation
             "/msh:helpItems/msh:providerHelp/msh:CmdletHelpPaths/msh:CmdletHelpPath{0}/command:command[command:details/command:verb='{1}' and command:details/command:noun='{2}']";
     }
 
+    /// <summary>
+    /// Help System base class.
+    /// </summary>
     internal abstract class HelpSystemBase
     {
         internal abstract void ResetHelpProviders();
@@ -365,13 +368,19 @@ param(
         Class = 0x10000
     }
 
+    /// <summary>
+    /// The ProviderContext base class.
+    /// </summary>
     internal abstract class ProviderContextBase
     {
     }
 
-    internal class HelpCommentsParserDummy : HelpCommentsParserBase
+    /// <summary>
+    /// Implements redirector for HelpCommentsParser static methods of the dummy Help System.
+    /// </summary>
+    internal class DummyHelpCommentsParser : HelpCommentsParserBase
     {
-        public HelpCommentsParserDummy()
+        public DummyHelpCommentsParser()
         {
         }
 
@@ -398,5 +407,4 @@ param(
             return null;
         }
    }
-
 }
