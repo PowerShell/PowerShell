@@ -507,7 +507,7 @@ function Invoke-AppVeyorAfterTest
         $testPackageFullName = Join-Path $pwd 'TestPackage.zip'
         Write-Verbose "Created TestPackage.zip" -Verbose
         Write-Host -ForegroundColor Green 'Upload test package'
-        Push-AppveyorArtifact $testPackageFullName
+        Push-Artifact $testPackageFullName
     }
 }
 
