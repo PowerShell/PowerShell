@@ -1124,14 +1124,15 @@ namespace System.Management.Automation.Language
                                 {
                                     _parser.ReportError(enumerator.InitialValue.Extent,
                                         nameof(ParserStrings.EnumeratorValueTooLarge),
-                                        ParserStrings.EnumeratorValueTooLarge);
+                                        ParserStrings.EnumeratorValueTooLarge,
+                                        ToStringCodeMethods.Type(underlyingType));
                                 }
                                 else
                                 {
                                     _parser.ReportError(enumerator.InitialValue.Extent,
                                         nameof(ParserStrings.CannotConvertValue),
                                         ParserStrings.CannotConvertValue,
-                                        ToStringCodeMethods.Type(typeof(int)));
+                                        ToStringCodeMethods.Type(underlyingType));
                                 }
                             }
                         }
@@ -1141,12 +1142,16 @@ namespace System.Management.Automation.Language
                                 nameof(ParserStrings.EnumeratorValueMustBeConstant),
                                 ParserStrings.EnumeratorValueMustBeConstant);
                         }
+
+                        valueTooBig = Convert.ToUInt64(value) >= maxValue;
                     }
-                    else if (valueTooBig)
+
+                    if (valueTooBig)
                     {
                         _parser.ReportError(enumerator.Extent,
                             nameof(ParserStrings.EnumeratorValueTooLarge),
-                            ParserStrings.EnumeratorValueTooLarge);
+                            ParserStrings.EnumeratorValueTooLarge,
+                            ToStringCodeMethods.Type(underlyingType));
                     }
 
                     if (definedEnumerators.Contains(enumerator.Name))
@@ -1156,7 +1161,7 @@ namespace System.Management.Automation.Language
                             ParserStrings.MemberAlreadyDefined,
                             enumerator.Name);
                     }
-                    else
+                    else if(value != null)
                     {
                         value = Convert.ChangeType(value, underlyingType);
                         definedEnumerators.Add(enumerator.Name);
