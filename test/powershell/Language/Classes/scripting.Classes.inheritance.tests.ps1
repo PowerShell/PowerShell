@@ -63,6 +63,14 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         [MyComparable].GetInterface("System.IComparable") | Should -Not -BeNullOrEmpty
     }
 
+    It 'can implement .NET interface properties' {
+        Add-Type -TypeDefinition 'public interface I1 { int I{ get; set; } }'
+        $C1 = Invoke-Expression 'class C1 : I1 {[int]$I}'
+        $getter = $C1.GetType().GetMember('get_I')
+        $getter.ReturnType |Should -BeOfType System.Int32
+        $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual |Should -Be ([MethodAttributes]::Virtual)
+    }
+
     It 'allows use of defined later type as a property type' {
         class A { static [B]$b }
         class B : A {}
