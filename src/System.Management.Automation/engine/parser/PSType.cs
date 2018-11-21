@@ -438,9 +438,12 @@ namespace System.Management.Automation.Language
             {
                 foreach (var @interface in _typeBuilder.GetInterfaces())
                 {
-                    if (null != @interface.GetProperty(name, type))
+                    if (@interface.GetProperty(name, type) != null)
+                    {
                         return true;
+                    }
                 }
+
                 return false;
             }
 
