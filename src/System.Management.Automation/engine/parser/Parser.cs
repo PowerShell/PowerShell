@@ -4543,6 +4543,29 @@ namespace System.Management.Automation.Language
                 return new ErrorStatementAst(enumToken.Extent);
             }
 
+            TypeConstraintAst underlyingTypeConstraint = null;
+
+            SetTokenizerMode(TokenizerMode.Signature);
+            Token colonToken = PeekToken();
+            if (colonToken.Kind == TokenKind.Colon)
+            {
+                this.SkipToken();
+                SkipNewlines();
+                ITypeName underlyingType;
+                Token unused;
+                underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                if (underlyingType == null)
+                {
+                    ReportIncompleteInput(After(colonToken),
+                        nameof(ParserStrings.TypeNameExpected),
+                        ParserStrings.TypeNameExpected);
+                }
+                else
+                {
+                    underlyingTypeConstraint = new TypeConstraintAst(underlyingType.Extent, underlyingType);
+                }
+            }
+
             SkipNewlines();
             Token lCurly = NextToken();
             if (lCurly.Kind != TokenKind.LCurly)
@@ -4580,7 +4603,7 @@ namespace System.Management.Automation.Language
                                       ? customAttributes[0].Extent
                                       : enumToken.Extent;
             var extent = ExtentOf(startExtent, rCurly);
-            var enumDefn = new TypeDefinitionAst(extent, name.Value, customAttributes == null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Enum, null);
+            var enumDefn = new TypeDefinitionAst(extent, name.Value, customAttributes == null ? null : customAttributes.OfType<AttributeAst>(), members, TypeAttributes.Enum, underlyingTypeConstraint == null ? null : new[] { underlyingTypeConstraint });
             if (customAttributes != null && customAttributes.OfType<TypeConstraintAst>().Any())
             {
                 //no need to report error since there is error reported in method StatementRule
