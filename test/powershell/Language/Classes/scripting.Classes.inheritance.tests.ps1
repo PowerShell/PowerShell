@@ -65,10 +65,10 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
 
     It 'can implement .NET interface properties' {
         Add-Type -TypeDefinition 'public interface InterfaceWithProperty { int Integer { get; set; } }'
-        $C1 = Invoke-Expression 'class ClassWithInterfaceProperty : InterfaceWithProperty { [int]$Integer }'
+        $C1 = Invoke-Expression 'class ClassWithInterfaceProperty : InterfaceWithProperty { [int]$Integer } [ClassWithInterfaceProperty]::new()'
         $getter = $C1.GetType().GetMember('get_Integer')
         $getter.ReturnType | Should -BeOfType System.Int32
-        $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual |Should -Be ([MethodAttributes]::Virtual)
+        $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual |Should -Be ([System.Reflection.MethodAttributes]::Virtual)
     }
 
     It 'allows use of defined later type as a property type' {
