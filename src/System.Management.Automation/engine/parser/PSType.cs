@@ -1161,7 +1161,7 @@ namespace System.Management.Automation.Language
                             ParserStrings.MemberAlreadyDefined,
                             enumerator.Name);
                     }
-                    else if(value != null)
+                    else if (value != null)
                     {
                         value = Convert.ChangeType(value, underlyingType);
                         definedEnumerators.Add(enumerator.Name);
@@ -1198,7 +1198,7 @@ namespace System.Management.Automation.Language
             {
                 if (underlyingType == typeof(byte))
                 {
-                    maxValue = Convert .ToUInt64(byte.MaxValue);
+                    maxValue = Convert.ToUInt64(byte.MaxValue);
                 }
                 else if (underlyingType == typeof(sbyte))
                 {
