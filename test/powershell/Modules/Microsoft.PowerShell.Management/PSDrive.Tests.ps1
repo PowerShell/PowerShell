@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 Describe "Tests with elevated permissions" -Tag "CI","RequireAdminOnWindows" {
     Context "Validate PSDrive Cmdlets" {
-        It "Create a new persistent PSDrive targetting remote Windows share." {
+        It "Create a new persistent PSDrive targetting remote Windows share." -Skip:(-not $IsWindows) {
             try {
                 #Arrange
                 $RemoteShare = "\\$env:COMPUTERNAME\$($env:SystemDrive.replace(':','$\'))"
@@ -13,7 +13,7 @@ Describe "Tests with elevated permissions" -Tag "CI","RequireAdminOnWindows" {
             finally {
                 Remove-PSDrive -Name "W" -Force -ErrorAction SilentlyContinue
             }
-        } -Skip:(-not $IsWindows)
+        }
     }
 }
 
