@@ -359,8 +359,7 @@ namespace System.Management.Automation
 
         internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
-            ProviderCommandHelpInfo providerCommandHelpInfo = new ProviderCommandHelpInfo(
-                helpInfo, helpRequest.ProviderContext);
+            var providerCommandHelpInfo = new ProviderCommandHelpInfo(helpInfo, helpRequest.ProviderContext as ProviderContext);
             yield return providerCommandHelpInfo;
         }
 #if V2

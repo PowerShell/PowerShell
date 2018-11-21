@@ -15,6 +15,30 @@ using System.Management.Automation.Internal;
 namespace System.Management.Automation
 {
     /// <summary>
+    /// Initialize HelpSystem.
+    /// </summary>
+    public class InitHelpSystem : IModuleAssemblyInitializer, IModuleAssemblyCleanup
+    {
+        /// <summary>
+        /// PowerShell engine will call this method when the HelpSystem module is loaded.
+        /// </summary>
+        public void OnImport()
+        {
+            HelpSystem.RegisterHelpSystem(typeof(HelpSystem));
+            HelpSystem.GetHelpPagingFunctionTextMethod = HelpSystem.GetHelpPagingFunctionTextImpl;
+        }
+
+        /// <summary>
+        /// PowerShell engine will call this method when the HelpSystem module is unloaded.
+        /// </summary>
+        public void OnRemove(PSModuleInfo psModuleInfo)
+        {
+            HelpSystemDummy.RegisterHelpSystem(typeof(HelpSystemDummy));
+            HelpSystemDummy.GetHelpPagingFunctionTextMethod = HelpSystemDummy.GetHelpPagingFunctionTextImpl;
+        }
+    }
+
+    /// <summary>
     /// Monad help is an architecture made up of three layers:
     ///     1. At the top is get-help commandlet from where help functionality is accessed.
     ///     2. At the middle is the help system which collects help objects based on user's request.
@@ -87,19 +111,19 @@ namespace System.Management.Automation
     /// </summary>
     internal class HelpSystem : HelpSystemBase
     {
-
-        internal static void InitHelpSystem()
+        /*
+        static HelpSystem()
         {
             RegisterHelpSystem(typeof(HelpSystem));
 
             GetHelpPagingFunctionTextMethod = GetHelpPagingFunctionTextImpl;
         }
-
+        */
         /// <summary>
         /// Constructor for HelpSystem.
         /// </summary>
         /// <param name="context">Execution context for this help system.</param>
-        internal HelpSystem(ExecutionContext context)
+        public HelpSystem(ExecutionContext context)
         {
             if (context == null)
             {
@@ -810,7 +834,7 @@ namespace System.Management.Automation
         /// This is the default function to use for man/help. It uses
         /// splatting to pass in the parameters.
         /// </summary>
-        internal static string GetHelpPagingFunctionText()
+        internal static string GetHelpPagingFunctionTextImpl()
         {
             // We used to generate the text for this function so you could add a parameter
             // to Get-Help and not worry about adding it here.  That was a little slow at

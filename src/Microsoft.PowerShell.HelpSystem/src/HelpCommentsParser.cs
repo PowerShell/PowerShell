@@ -20,18 +20,18 @@ namespace System.Management.Automation
     /// <summary>
     /// Parses help comments and turns them into HelpInfo objects.
     /// </summary>
-    internal class HelpCommentsParser
+    internal class HelpSystemCommentsParser : HelpCommentsParser
     {
-        private HelpCommentsParser()
+        private HelpSystemCommentsParser()
         {
         }
 
-        private HelpCommentsParser(List<string> parameterDescriptions)
+        private HelpSystemCommentsParser(List<string> parameterDescriptions)
         {
             _parameterDescriptions = parameterDescriptions;
         }
 
-        private HelpCommentsParser(CommandInfo commandInfo, List<string> parameterDescriptions)
+        private HelpSystemCommentsParser(CommandInfo commandInfo, List<string> parameterDescriptions)
         {
             FunctionInfo fi = commandInfo as FunctionInfo;
             if (fi != null)
@@ -66,17 +66,10 @@ namespace System.Management.Automation
         private string _commandName;
         private List<string> _parameterDescriptions;
         private XmlDocument _doc;
-        internal static readonly string mshURI = "http://msh";
         internal static readonly string mamlURI = "http://schemas.microsoft.com/maml/2004/10";
-        internal static readonly string commandURI = "http://schemas.microsoft.com/maml/dev/command/2004/10";
         internal static readonly string devURI = "http://schemas.microsoft.com/maml/dev/2004/10";
         private const string directive = @"^\s*\.(\w+)(\s+(\S.*))?\s*$";
         private const string blankline = @"^\s*$";
-        // Although "http://msh" is the default namespace, it still must be explicitly qualified with non-empty prefix,
-        // because XPath 1.0 will associate empty prefix with "null" namespace (not with "default") and query will fail.
-        // See: http://www.w3.org/TR/1999/REC-xpath-19991116/#node-tests
-        internal static readonly string ProviderHelpCommandXPath =
-            "/msh:helpItems/msh:providerHelp/msh:CmdletHelpPaths/msh:CmdletHelpPath{0}/command:command[command:details/command:verb='{1}' and command:details/command:noun='{2}']";
 
         private void DetermineParameterDescriptions()
         {
@@ -843,50 +836,50 @@ namespace System.Management.Automation
                 _sections.Role);
         }
 
-        internal static CommentHelpInfo GetHelpContents(List<Language.Token> comments, List<string> parameterDescriptions)
+        internal new static CommentHelpInfo GetHelpContents(List<Language.Token> comments, List<string> parameterDescriptions)
         {
-            HelpCommentsParser helpCommentsParser = new HelpCommentsParser(parameterDescriptions);
-            helpCommentsParser.AnalyzeCommentBlock(comments);
-            return helpCommentsParser._sections;
+            HelpSystemCommentsParser HelpSystemCommentsParser = new HelpSystemCommentsParser(parameterDescriptions);
+            HelpSystemCommentsParser.AnalyzeCommentBlock(comments);
+            return HelpSystemCommentsParser._sections;
         }
 
-        internal static HelpInfo CreateFromComments(ExecutionContext context,
+        internal new static HelpInfo CreateFromComments(ExecutionContext context,
                                                     CommandInfo commandInfo,
                                                     List<Language.Token> comments,
                                                     List<string> parameterDescriptions,
                                                     bool dontSearchOnRemoteComputer,
                                                     out string helpFile, out string helpUriFromDotLink)
         {
-            HelpCommentsParser helpCommentsParser = new HelpCommentsParser(commandInfo, parameterDescriptions);
-            helpCommentsParser.AnalyzeCommentBlock(comments);
+            HelpSystemCommentsParser HelpSystemCommentsParser = new HelpSystemCommentsParser(commandInfo, parameterDescriptions);
+            HelpSystemCommentsParser.AnalyzeCommentBlock(comments);
 
-            if (helpCommentsParser._sections.Links != null && helpCommentsParser._sections.Links.Count != 0)
+            if (HelpSystemCommentsParser._sections.Links != null && HelpSystemCommentsParser._sections.Links.Count != 0)
             {
-                helpUriFromDotLink = helpCommentsParser._sections.Links[0];
+                helpUriFromDotLink = HelpSystemCommentsParser._sections.Links[0];
             }
             else
             {
                 helpUriFromDotLink = null;
             }
 
-            helpFile = helpCommentsParser.GetHelpFile(commandInfo);
+            helpFile = HelpSystemCommentsParser.GetHelpFile(commandInfo);
 
             // If only .ExternalHelp is defined and the help file is not found, then we
             // use the metadata driven help
-            if (comments.Count == 1 && helpCommentsParser.isExternalHelpSet && helpFile == null)
+            if (comments.Count == 1 && HelpSystemCommentsParser.isExternalHelpSet && helpFile == null)
             {
                 return null;
             }
 
-            return CreateFromComments(context, commandInfo, helpCommentsParser, dontSearchOnRemoteComputer);
+            return CreateFromComments(context, commandInfo, HelpSystemCommentsParser, dontSearchOnRemoteComputer);
         }
 
-        internal static HelpInfo CreateFromComments(ExecutionContext context, CommandInfo commandInfo, HelpCommentsParser helpCommentsParser,
+        internal static HelpInfo CreateFromComments(ExecutionContext context, CommandInfo commandInfo, HelpSystemCommentsParser HelpSystemCommentsParser,
             bool dontSearchOnRemoteComputer)
         {
             if (!dontSearchOnRemoteComputer)
             {
-                RemoteHelpInfo remoteHelpInfo = helpCommentsParser.GetRemoteHelpInfo(context, commandInfo);
+                RemoteHelpInfo remoteHelpInfo = HelpSystemCommentsParser.GetRemoteHelpInfo(context, commandInfo);
                 if (remoteHelpInfo != null)
                 {
                     // Add HelpUri if necessary
@@ -900,30 +893,29 @@ namespace System.Management.Automation
                 }
             }
 
-            XmlDocument doc = helpCommentsParser.BuildXmlFromComments();
+            XmlDocument doc = HelpSystemCommentsParser.BuildXmlFromComments();
             HelpCategory helpCategory = commandInfo.HelpCategory;
             MamlCommandHelpInfo localHelpInfo = MamlCommandHelpInfo.Load(doc.DocumentElement, helpCategory);
             if (localHelpInfo != null)
             {
-                helpCommentsParser.SetAdditionalData(localHelpInfo);
+                HelpSystemCommentsParser.SetAdditionalData(localHelpInfo);
 
-                if (!string.IsNullOrEmpty(helpCommentsParser._sections.ForwardHelpTargetName)
-                    || !string.IsNullOrEmpty(helpCommentsParser._sections.ForwardHelpCategory))
+                if (!string.IsNullOrEmpty(HelpSystemCommentsParser._sections.ForwardHelpTargetName)
+                    || !string.IsNullOrEmpty(HelpSystemCommentsParser._sections.ForwardHelpCategory))
                 {
-                    if (string.IsNullOrEmpty(helpCommentsParser._sections.ForwardHelpTargetName))
+                    if (string.IsNullOrEmpty(HelpSystemCommentsParser._sections.ForwardHelpTargetName))
                     {
                         localHelpInfo.ForwardTarget = localHelpInfo.Name;
                     }
                     else
                     {
-                        localHelpInfo.ForwardTarget = helpCommentsParser._sections.ForwardHelpTargetName;
+                        localHelpInfo.ForwardTarget = HelpSystemCommentsParser._sections.ForwardHelpTargetName;
                     }
-
-                    if (!string.IsNullOrEmpty(helpCommentsParser._sections.ForwardHelpCategory))
+                    if (!string.IsNullOrEmpty(HelpSystemCommentsParser._sections.ForwardHelpCategory))
                     {
                         try
                         {
-                            localHelpInfo.ForwardHelpCategory = (HelpCategory)Enum.Parse(typeof(HelpCategory), helpCommentsParser._sections.ForwardHelpCategory, true);
+                            localHelpInfo.ForwardHelpCategory = (HelpCategory)Enum.Parse(typeof(HelpCategory), HelpSystemCommentsParser._sections.ForwardHelpCategory, true);
                         }
                         catch (System.ArgumentException)
                         {
@@ -961,7 +953,7 @@ namespace System.Management.Automation
             if ((commentBlock == null) || (commentBlock.Count == 0))
                 return false;
 
-            HelpCommentsParser generator = new HelpCommentsParser();
+            HelpSystemCommentsParser generator = new HelpSystemCommentsParser();
             return generator.AnalyzeCommentBlock(commentBlock);
         }
 
@@ -1111,7 +1103,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        internal static Tuple<List<Language.Token>, List<string>> GetHelpCommentTokens(IParameterMetadataProvider ipmp,
+        internal new static Tuple<List<Language.Token>, List<string>> GetHelpCommentTokens(IParameterMetadataProvider ipmp,
             Dictionary<Ast, Token[]> scriptBlockTokenCache)
         {
             Diagnostics.Assert(scriptBlockTokenCache != null, "scriptBlockTokenCache cannot be null");
@@ -1154,7 +1146,7 @@ namespace System.Management.Automation
 
                 commentBlock = GetPrecedingCommentBlock(tokens, funcOrConfigTokenIndex, CommentBlockProximity);
 
-                if (HelpCommentsParser.IsCommentHelpText(commentBlock))
+                if (HelpSystemCommentsParser.IsCommentHelpText(commentBlock))
                 {
                     return Tuple.Create(commentBlock, GetParameterComments(tokens, ipmp, savedStartIndex));
                 }
@@ -1204,7 +1196,7 @@ namespace System.Management.Automation
                 if (commentBlock.Count == 0)
                     break;
 
-                if (!HelpCommentsParser.IsCommentHelpText(commentBlock))
+                if (!HelpSystemCommentsParser.IsCommentHelpText(commentBlock))
                     continue;
 
                 if (ast == rootAst)
@@ -1234,7 +1226,7 @@ namespace System.Management.Automation
             }
 
             commentBlock = GetPrecedingCommentBlock(tokens, lastTokenIndex, tokens[lastTokenIndex].Extent.StartLineNumber);
-            if (HelpCommentsParser.IsCommentHelpText(commentBlock))
+            if (HelpSystemCommentsParser.IsCommentHelpText(commentBlock))
             {
                 return Tuple.Create(commentBlock, GetParameterComments(tokens, ipmp, savedStartIndex));
             }

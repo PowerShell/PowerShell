@@ -336,6 +336,10 @@ param(
 
         internal static readonly string mshURI = "http://msh";
         internal static readonly string commandURI = "http://schemas.microsoft.com/maml/dev/command/2004/10";
+
+        // Although "http://msh" is the default namespace, it still must be explicitly qualified with non-empty prefix,
+        // because XPath 1.0 will associate empty prefix with "null" namespace (not with "default") and query will fail.
+        // See: http://www.w3.org/TR/1999/REC-xpath-19991116/#node-tests
         internal static readonly string ProviderHelpCommandXPath =
             "/msh:helpItems/msh:providerHelp/msh:CmdletHelpPaths/msh:CmdletHelpPath{0}/command:command[command:details/command:verb='{1}' and command:details/command:noun='{2}']";
    }
