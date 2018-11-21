@@ -361,9 +361,9 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     /// <remarks>
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "Location", DefaultParameterSetName = "Location", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113321")]
-    [OutputType(typeof(PathInfo), ParameterSetName = new string[] { "locationSet" })]
-    [OutputType(typeof(PathInfoStack), ParameterSetName = new string[] { "Stack" })]
+    [Cmdlet(VerbsCommon.Get, "Location", DefaultParameterSetName = locationSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113321")]
+    [OutputType(typeof(PathInfo), ParameterSetName = new string[] { locationSet })]
+    [OutputType(typeof(PathInfoStack), ParameterSetName = new string[] { stackSet })]
     public class GetLocationCommand : DriveMatchingCoreCommandBase
     {
         /// <summary>
@@ -685,7 +685,7 @@ namespace Microsoft.PowerShell.Commands
     /// The core command for setting/changing location.
     /// This is the equivalent of cd command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Location", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113397")]
+    [Cmdlet(VerbsCommon.Set, "Location", DefaultParameterSetName = pathSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113397")]
     [OutputType(typeof(PathInfo), typeof(PathInfoStack))]
     public class SetLocationCommand : CoreCommandBase
     {
@@ -881,15 +881,25 @@ namespace Microsoft.PowerShell.Commands
     /// The core command for setting/changing location and pushing it onto a location stack.
     /// This is the equivalent of the pushd command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Push, "Location", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113370")]
+    [Cmdlet(VerbsCommon.Push, "Location", DefaultParameterSetName = pathSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113370")]
     public class PushLocationCommand : CoreCommandBase
     {
         #region Command parameters
 
         /// <summary>
+        /// The string declaration for the Location parameter set in this command.
+        /// </summary>
+        private const string pathSet = "Path";
+
+        /// <summary>
+        /// The string declaration for the literal location parameter set in this command.
+        /// </summary>
+        private const string literalPathSet = "LiteralPath";
+
+        /// <summary>
         /// Gets or sets the path property
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Path",
+        [Parameter(Position = 0, ParameterSetName = pathSet,
                    ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string Path
         {
@@ -906,7 +916,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal path parameter to the command
         /// </summary>
-        [Parameter(ParameterSetName = "LiteralPath",
+        [Parameter(ParameterSetName = literalPathSet,
                    ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string LiteralPath
@@ -1596,16 +1606,26 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Removes a drive that is mounted in the Monad namespace.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "PSDrive", DefaultParameterSetName = "Name", SupportsShouldProcess = true, SupportsTransactions = true,
+    [Cmdlet(VerbsCommon.Remove, "PSDrive", DefaultParameterSetName = nameSet, SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113376")]
     public class RemovePSDriveCommand : DriveMatchingCoreCommandBase
     {
         #region Command parameters
 
         /// <summary>
+        /// The string declaration for the name parameter set in this command.
+        /// </summary>
+        private const string nameSet = "Name";
+
+        /// <summary>
+        /// The string declaration for the literal name parameter set in this command.
+        /// </summary>
+        private const string literalNameSet = "LiteralName";
+
+        /// <summary>
         /// Gets or sets the name of the drive to remove.
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Name",
+        [Parameter(Position = 0, ParameterSetName = nameSet,
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyCollection]
@@ -1624,7 +1644,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal name parameter to the command
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "LiteralName",
+        [Parameter(Position = 0, ParameterSetName = literalNameSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         public string[] LiteralName
         {
@@ -1790,11 +1810,21 @@ namespace Microsoft.PowerShell.Commands
     /// Gets a specified or listing of drives that are mounted in the Monad
     /// namespace.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSDrive", DefaultParameterSetName = "Name", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113327")]
+    [Cmdlet(VerbsCommon.Get, "PSDrive", DefaultParameterSetName = nameSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113327")]
     [OutputType(typeof(PSDriveInfo))]
     public class GetPSDriveCommand : DriveMatchingCoreCommandBase
     {
         #region Command parameters
+
+        /// <summary>
+        /// The string declaration for the name parameter set in this command.
+        /// </summary>
+        private const string nameSet = "Name";
+
+        /// <summary>
+        /// The string declaration for the literal name parameter set in this command.
+        /// </summary>
+        private const string literalNameSet = "LiteralName";
 
         /// <summary>
         /// Gets or sets the drive name the user is looking for.
@@ -1805,7 +1835,7 @@ namespace Microsoft.PowerShell.Commands
         /// supplied and any drive names that match the expression
         /// will be returned.
         /// </remarks>
-        [Parameter(Position = 0, ParameterSetName = "Name", ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = nameSet, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         public string[] Name
         {
@@ -1823,7 +1853,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal name parameter to the command
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "LiteralName",
+        [Parameter(Position = 0, ParameterSetName = literalNameSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         public string[] LiteralName
         {
@@ -1985,15 +2015,25 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Gets the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Item", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113319")]
+    [Cmdlet(VerbsCommon.Get, "Item", DefaultParameterSetName = pathSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113319")]
     public class GetItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
 
         /// <summary>
+        /// The string declaration for the Location parameter set in this command.
+        /// </summary>
+        private const string pathSet = "Path";
+
+        /// <summary>
+        /// The string declaration for the literal location parameter set in this command.
+        /// </summary>
+        private const string literalPathSet = "LiteralPath";
+
+        /// <summary>
         /// Gets or sets the path to item to get.
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Path",
+        [Parameter(Position = 0, ParameterSetName = pathSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
@@ -2010,7 +2050,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal path parameter to the command
         /// </summary>
-        [Parameter(ParameterSetName = "LiteralPath",
+        [Parameter(ParameterSetName = literalPathSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
@@ -2185,7 +2225,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Creates the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "Item", DefaultParameterSetName = "pathSet", SupportsShouldProcess = true, SupportsTransactions = true,
+    [Cmdlet(VerbsCommon.New, "Item", DefaultParameterSetName = pathSet, SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113353")]
     public class NewItemCommand : CoreCommandWithCredentialsBase
     {
@@ -2197,14 +2237,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the container path to create the item in.
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "pathSet", Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        [Parameter(Position = 0, ParameterSetName = "nameSet", Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = pathSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = nameSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public string[] Path { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the item to create
         /// </summary>
-        [Parameter(ParameterSetName = "nameSet", Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = nameSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyString]
         public string Name { get; set; }
@@ -2342,15 +2382,25 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Sets the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113395")]
+    [Cmdlet(VerbsCommon.Set, "Item", SupportsShouldProcess = true, DefaultParameterSetName = pathSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113395")]
     public class SetItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
 
         /// <summary>
+        /// The string declaration for the Location parameter set in this command.
+        /// </summary>
+        private const string pathSet = "Path";
+
+        /// <summary>
+        /// The string declaration for the literal location parameter set in this command.
+        /// </summary>
+        private const string literalPathSet = "LiteralPath";
+
+        /// <summary>
         /// Gets or sets the path to item to set.
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Path",
+        [Parameter(Position = 0, ParameterSetName = pathSet,
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
@@ -2367,7 +2417,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal path parameter to the command
         /// </summary>
-        [Parameter(ParameterSetName = "LiteralPath",
+        [Parameter(ParameterSetName = literalPathSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
@@ -2553,15 +2603,25 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Removes the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113373")]
+    [Cmdlet(VerbsCommon.Remove, "Item", SupportsShouldProcess = true, DefaultParameterSetName = pathSet, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113373")]
     public class RemoveItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
 
         /// <summary>
+        /// The string declaration for the Location parameter set in this command.
+        /// </summary>
+        private const string pathSet = "Path";
+
+        /// <summary>
+        /// The string declaration for the literal location parameter set in this command.
+        /// </summary>
+        private const string literalPathSet = "LiteralPath";
+
+        /// <summary>
         /// Gets or sets the path property
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Path",
+        [Parameter(Position = 0, ParameterSetName = pathSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
@@ -2578,7 +2638,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal path parameter to the command
         /// </summary>
-        [Parameter(ParameterSetName = "LiteralPath",
+        [Parameter(ParameterSetName = literalPathSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
@@ -3022,15 +3082,26 @@ namespace Microsoft.PowerShell.Commands
     /// Moves an item from the specified location to the specified destination using
     /// the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Move, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
+    [Cmdlet(VerbsCommon.Move, "Item", DefaultParameterSetName = pathSet, SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113350")]
     public class MoveItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
+
+        /// <summary>
+        /// The string declaration for the Location parameter set in this command.
+        /// </summary>
+        private const string pathSet = "Path";
+
+        /// <summary>
+        /// The string declaration for the literal location parameter set in this command.
+        /// </summary>
+        private const string literalPathSet = "LiteralPath";
+
         /// <summary>
         /// Gets or sets the path property
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Path",
+        [Parameter(Position = 0, ParameterSetName = pathSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
@@ -3047,7 +3118,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal path parameter to the command
         /// </summary>
-        [Parameter(ParameterSetName = "LiteralPath",
+        [Parameter(ParameterSetName = literalPathSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
@@ -3405,16 +3476,26 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Renames a specified item to a new name using the namespace providers
     /// </summary>
-    [Cmdlet(VerbsCommon.Rename, "Item", SupportsShouldProcess = true, SupportsTransactions = true, DefaultParameterSetName = "ByPath",
+    [Cmdlet(VerbsCommon.Rename, "Item", SupportsShouldProcess = true, SupportsTransactions = true, DefaultParameterSetName = byPathSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113382")]
     public class RenameItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
 
         /// <summary>
+        /// The string declaration for the Location parameter set in this command.
+        /// </summary>
+        private const string byPathSet = "ByPath";
+
+        /// <summary>
+        /// The string declaration for the literal location parameter set in this command.
+        /// </summary>
+        private const string byLiteralPathSet = "ByLiteralPath";
+
+        /// <summary>
         /// Gets or sets the path property
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = byPathSet)]
         public string Path
         {
             get { return _path; }
@@ -3424,7 +3505,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal path property
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = byLiteralPathSet)]
         [Alias("PSPath", "LP")]
         public string LiteralPath
         {
@@ -3519,87 +3600,22 @@ namespace Microsoft.PowerShell.Commands
 
         #region Command code
 
-        private Collection<PathInfo> GetResolvedPaths(string path)
-        {
-            Collection<PathInfo> results = null;
-            try
-            {
-                results = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
-            }
-            catch (PSNotSupportedException notSupported)
-            {
-                WriteError(
-                    new ErrorRecord(
-                        notSupported.ErrorRecord,
-                        notSupported));
-            }
-            catch (DriveNotFoundException driveNotFound)
-            {
-                WriteError(
-                    new ErrorRecord(
-                        driveNotFound.ErrorRecord,
-                        driveNotFound));
-            }
-            catch (ProviderNotFoundException providerNotFound)
-            {
-                WriteError(
-                    new ErrorRecord(
-                        providerNotFound.ErrorRecord,
-                        providerNotFound));
-            }
-            catch (ItemNotFoundException pathNotFound)
-            {
-                WriteError(
-                    new ErrorRecord(
-                        pathNotFound.ErrorRecord,
-                        pathNotFound));
-            }
-
-            return results;
-        }
-
         /// <summary>
         /// Moves the specified item to the specified destination
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (SuppressWildcardExpansion)
-            {
-                RenameItem(Path, literalPath: true);
-                return;
-            }
-
-            Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);
-
-            if (resolvedPaths == null)
-            {
-                return;
-            }
-
-            if (resolvedPaths.Count == 1)
-            {
-                RenameItem(resolvedPaths[0].Path, literalPath: true);
-            }
-            else
-            {
-                RenameItem(WildcardPattern.Unescape(Path), literalPath: true);
-            }
-        }
-
-        private void RenameItem(string path, bool literalPath = false)
-        {
             CmdletProviderContext currentContext = CmdletProviderContext;
-            currentContext.SuppressWildcardExpansion = literalPath;
 
             try
             {
-                if (!InvokeProvider.Item.Exists(path, currentContext))
+                if (!InvokeProvider.Item.Exists(Path, currentContext))
                 {
                     PSInvalidOperationException invalidOperation =
                         (PSInvalidOperationException)
                         PSTraceSource.NewInvalidOperationException(
                             NavigationResources.RenameItemDoesntExist,
-                            path);
+                            Path);
 
                     WriteError(
                         new ErrorRecord(
@@ -3645,7 +3661,7 @@ namespace Microsoft.PowerShell.Commands
             bool isCurrentLocationOrAncestor = false;
             try
             {
-                isCurrentLocationOrAncestor = SessionState.Path.IsCurrentLocationOrAncestor(path, currentContext);
+                isCurrentLocationOrAncestor = SessionState.Path.IsCurrentLocationOrAncestor(_path, currentContext);
             }
             catch (PSNotSupportedException notSupported)
             {
@@ -3686,7 +3702,7 @@ namespace Microsoft.PowerShell.Commands
                     (PSInvalidOperationException)
                     PSTraceSource.NewInvalidOperationException(
                         NavigationResources.RenamedItemInUse,
-                        path);
+                        Path);
 
                 WriteError(
                     new ErrorRecord(
@@ -3700,12 +3716,12 @@ namespace Microsoft.PowerShell.Commands
 
             currentContext.PassThru = PassThru;
 
-            tracer.WriteLine("Rename {0} to {1}", path, NewName);
+            tracer.WriteLine("Rename {0} to {1}", Path, NewName);
 
             try
             {
                 // Now do the rename
-                InvokeProvider.Item.Rename(path, NewName, currentContext);
+                InvokeProvider.Item.Rename(Path, NewName, currentContext);
             }
             catch (PSNotSupportedException notSupported)
             {
@@ -3739,7 +3755,7 @@ namespace Microsoft.PowerShell.Commands
                         pathNotFound));
                 return;
             }
-        }
+        } // ProcessRecord
         #endregion Command code
 
     } // RenameItemCommand
@@ -3751,15 +3767,26 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Copies a specified item to a new location using the namespace providers
     /// </summary>
-    [Cmdlet(VerbsCommon.Copy, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
+    [Cmdlet(VerbsCommon.Copy, "Item", DefaultParameterSetName = pathSet, SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113292")]
     public class CopyItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
+
+        /// <summary>
+        /// The string declaration for the Location parameter set in this command.
+        /// </summary>
+        private const string pathSet = "Path";
+
+        /// <summary>
+        /// The string declaration for the literal location parameter set in this command.
+        /// </summary>
+        private const string literalPathSet = "LiteralPath";
+
         /// <summary>
         /// Gets or sets the path property
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Path",
+        [Parameter(Position = 0, ParameterSetName = pathSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
@@ -3776,7 +3803,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal path parameter to the command
         /// </summary>
-        [Parameter(ParameterSetName = "LiteralPath",
+        [Parameter(ParameterSetName = literalPathSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
@@ -4018,15 +4045,26 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Clears an item at the specified location
     /// </summary>
-    [Cmdlet(VerbsCommon.Clear, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
+    [Cmdlet(VerbsCommon.Clear, "Item", DefaultParameterSetName = pathSet, SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113283")]
     public class ClearItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
+
+        /// <summary>
+        /// The string declaration for the Location parameter set in this command.
+        /// </summary>
+        private const string pathSet = "Path";
+
+        /// <summary>
+        /// The string declaration for the literal location parameter set in this command.
+        /// </summary>
+        private const string literalPathSet = "LiteralPath";
+
         /// <summary>
         /// Gets or sets the path property
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Path",
+        [Parameter(Position = 0, ParameterSetName = pathSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
@@ -4043,7 +4081,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal path parameter to the command
         /// </summary>
-        [Parameter(ParameterSetName = "LiteralPath",
+        [Parameter(ParameterSetName = literalPathSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
@@ -4244,15 +4282,26 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Invokes an item at the specified location
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
+    [Cmdlet(VerbsLifecycle.Invoke, "Item", DefaultParameterSetName = pathSet, SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113345")]
     public class InvokeItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
+
+        /// <summary>
+        /// The string declaration for the Location parameter set in this command.
+        /// </summary>
+        private const string pathSet = "Path";
+
+        /// <summary>
+        /// The string declaration for the literal location parameter set in this command.
+        /// </summary>
+        private const string literalPathSet = "LiteralPath";
+
         /// <summary>
         /// Gets or sets the path property
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Path",
+        [Parameter(Position = 0, ParameterSetName = pathSet,
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
@@ -4269,7 +4318,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the literal path parameter to the command
         /// </summary>
-        [Parameter(ParameterSetName = "LiteralPath",
+        [Parameter(ParameterSetName = literalPathSet,
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
