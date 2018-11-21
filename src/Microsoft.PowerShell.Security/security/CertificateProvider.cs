@@ -2761,13 +2761,13 @@ namespace Microsoft.PowerShell.Commands
 
                 // Add "msh" and "command" namespaces from the MAML schema
                 XmlNamespaceManager nsMgr = new XmlNamespaceManager(document.NameTable);
-                nsMgr.AddNamespace("msh", HelpCommentsParser.mshURI);
-                nsMgr.AddNamespace("command", HelpCommentsParser.commandURI);
+                nsMgr.AddNamespace("msh", HelpCommentsParserBase.mshURI);
+                nsMgr.AddNamespace("command", HelpCommentsParserBase.commandURI);
 
                 // Compose XPath query to select the appropriate node based on the cmdlet
                 string xpathQuery = string.Format(
                     CultureInfo.InvariantCulture,
-                    HelpCommentsParser.ProviderHelpCommandXPath,
+                    HelpCommentsParserBase.ProviderHelpCommandXPath,
                     string.Empty,
                     verb,
                     noun);

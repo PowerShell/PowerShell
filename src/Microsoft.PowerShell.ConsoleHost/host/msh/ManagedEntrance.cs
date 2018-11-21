@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell
                 System.Diagnostics.Debugger.Break();
             }
 #endif
-            HelpSystemDummy.InitHelpSystemDummy();
+            HelpSystemAccess.InitHelpSystemDummy();
             int exitCode = 0;
             try
             {

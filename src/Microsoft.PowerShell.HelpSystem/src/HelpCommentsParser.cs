@@ -20,9 +20,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Parses help comments and turns them into HelpInfo objects.
     /// </summary>
-    internal class HelpSystemCommentsParser : HelpCommentsParser
+    internal class HelpSystemCommentsParser : HelpCommentsParserBase
     {
-        private HelpSystemCommentsParser()
+        public HelpSystemCommentsParser()
         {
         }
 
@@ -836,14 +836,14 @@ namespace System.Management.Automation
                 _sections.Role);
         }
 
-        internal new static CommentHelpInfo GetHelpContents(List<Language.Token> comments, List<string> parameterDescriptions)
+        internal override CommentHelpInfo GetHelpContents(List<Language.Token> comments, List<string> parameterDescriptions)
         {
             HelpSystemCommentsParser HelpSystemCommentsParser = new HelpSystemCommentsParser(parameterDescriptions);
             HelpSystemCommentsParser.AnalyzeCommentBlock(comments);
             return HelpSystemCommentsParser._sections;
         }
 
-        internal new static HelpInfo CreateFromComments(ExecutionContext context,
+        internal override HelpInfo CreateFromComments(ExecutionContext context,
                                                     CommandInfo commandInfo,
                                                     List<Language.Token> comments,
                                                     List<string> parameterDescriptions,
@@ -1103,7 +1103,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        internal new static Tuple<List<Language.Token>, List<string>> GetHelpCommentTokens(IParameterMetadataProvider ipmp,
+        internal override Tuple<List<Language.Token>, List<string>> GetHelpCommentTokens(IParameterMetadataProvider ipmp,
             Dictionary<Ast, Token[]> scriptBlockTokenCache)
         {
             Diagnostics.Assert(scriptBlockTokenCache != null, "scriptBlockTokenCache cannot be null");

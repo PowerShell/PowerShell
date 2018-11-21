@@ -831,10 +831,10 @@ namespace System.Management.Automation
         {
             helpUriFromDotLink = null;
 
-            var commentTokens = HelpCommentsParser.GetHelpCommentTokens(AstInternal, scriptBlockTokenCache);
+            var commentTokens = HelpSystemAccess.Instance.GetHelpCommentTokens(AstInternal, scriptBlockTokenCache);
             if (commentTokens != null)
             {
-                return HelpCommentsParser.CreateFromComments(context, commandInfo, commentTokens.Item1,
+                return HelpSystemAccess.Instance.CreateFromComments(context, commandInfo, commentTokens.Item1,
                                                              commentTokens.Item2, dontSearchOnRemoteComputer, out helpFile, out helpUriFromDotLink);
             }
 

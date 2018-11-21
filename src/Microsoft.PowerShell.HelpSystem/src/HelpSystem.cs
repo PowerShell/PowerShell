@@ -24,7 +24,7 @@ namespace System.Management.Automation
         /// </summary>
         public void OnImport()
         {
-            HelpSystem.RegisterHelpSystem(typeof(HelpSystem));
+            HelpSystemAccess.RegisterHelpSystem(typeof(HelpSystem), typeof(HelpSystemCommentsParser), HelpSystem.GetHelpPagingFunctionTextImpl);
             HelpSystem.GetHelpPagingFunctionTextMethod = HelpSystem.GetHelpPagingFunctionTextImpl;
         }
 
@@ -33,8 +33,7 @@ namespace System.Management.Automation
         /// </summary>
         public void OnRemove(PSModuleInfo psModuleInfo)
         {
-            HelpSystemDummy.RegisterHelpSystem(typeof(HelpSystemDummy));
-            HelpSystemDummy.GetHelpPagingFunctionTextMethod = HelpSystemDummy.GetHelpPagingFunctionTextImpl;
+            HelpSystemAccess.InitHelpSystemDummy();
         }
     }
 

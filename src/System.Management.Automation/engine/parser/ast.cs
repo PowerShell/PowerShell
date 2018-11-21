@@ -1106,10 +1106,10 @@ namespace System.Management.Automation.Language
         public CommentHelpInfo GetHelpContent()
         {
             Dictionary<Ast, Token[]> scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
-            var commentTokens = HelpCommentsParser.GetHelpCommentTokens(this, scriptBlockTokenCache);
+            var commentTokens = HelpSystemAccess.Instance.GetHelpCommentTokens(this, scriptBlockTokenCache);
             if (commentTokens != null)
             {
-                return HelpCommentsParser.GetHelpContents(commentTokens.Item1, commentTokens.Item2);
+                return HelpSystemAccess.Instance.GetHelpContents(commentTokens.Item1, commentTokens.Item2);
             }
 
             return null;
@@ -3664,10 +3664,10 @@ namespace System.Management.Automation.Language
         public CommentHelpInfo GetHelpContent()
         {
             Dictionary<Ast, Token[]> scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
-            var commentTokens = HelpCommentsParser.GetHelpCommentTokens(this, scriptBlockTokenCache);
+            var commentTokens = HelpSystemAccess.Instance.GetHelpCommentTokens(this, scriptBlockTokenCache);
             if (commentTokens != null)
             {
-                return HelpCommentsParser.GetHelpContents(commentTokens.Item1, commentTokens.Item2);
+                return HelpSystemAccess.Instance.GetHelpContents(commentTokens.Item1, commentTokens.Item2);
             }
 
             return null;
@@ -3690,10 +3690,10 @@ namespace System.Management.Automation.Language
                 throw new ArgumentNullException("scriptBlockTokenCache");
             }
 
-            var commentTokens = HelpCommentsParser.GetHelpCommentTokens(this, scriptBlockTokenCache);
+            var commentTokens = HelpSystemAccess.Instance.GetHelpCommentTokens(this, scriptBlockTokenCache);
             if (commentTokens != null)
             {
-                return HelpCommentsParser.GetHelpContents(commentTokens.Item1, commentTokens.Item2);
+                return HelpSystemAccess.Instance.GetHelpContents(commentTokens.Item1, commentTokens.Item2);
             }
 
             return null;

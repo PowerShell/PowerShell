@@ -6,8 +6,8 @@ Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="6.1.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion="3.0"
-CmdletsToExport= "Get-Help", "Update-Help", "Save-Help", "help"
-FunctionsToExport= ""
+CmdletsToExport= "Get-Help", "Update-Help", "Save-Help"
+FunctionsToExport= "help"
 NestedModules="Microsoft.PowerShell.HelpSystem.dll", "Microsoft.PowerShell.HelpSystem.psm1"
 HelpInfoURI = ''
 }

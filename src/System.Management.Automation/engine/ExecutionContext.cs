@@ -660,7 +660,7 @@ namespace System.Management.Automation
         /// <value></value>
         internal HelpSystemBase HelpSystem
         {
-            get { return _helpSystem ?? (_helpSystem = (HelpSystemBase)Activator.CreateInstance(HelpSystemBase.InstanceType, this)); }
+            get { return _helpSystem ?? (_helpSystem = HelpSystemAccess.CreateInstance(this)); }
         }
         private HelpSystemBase _helpSystem;
 
