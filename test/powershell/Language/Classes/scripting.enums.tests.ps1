@@ -70,6 +70,20 @@ Describe 'enums' -Tags "CI" {
         It 'E5 has correct value' { [E5]::e0 | Should -Be ([E5]40) }
         It 'E6 has correct value' { [E6]::e0 | Should -Be ([E6]38) }
     }
+
+    Context 'Enum with non-default underlying type' {
+        enum EX0 : byte
+        {
+        }
+
+        enum EX1 : System.Int64
+        {
+        }
+
+        It 'EX0 has the specified underlying type' { [Enum]::GetUnderlyingType([EX0]) | Should -Be ([byte]) }
+
+        It 'EX0 has the specified underlying type' { [Enum]::GetUnderlyingType([EX0]) | Should -Be ([long]) }
+    }
 }
 
 Describe 'Basic enum errors' -Tags "CI" {
