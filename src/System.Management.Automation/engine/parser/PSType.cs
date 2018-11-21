@@ -1143,7 +1143,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.EnumeratorValueMustBeConstant);
                         }
 
-                        valueTooBig = Convert.ToUInt64(value) >= maxValue;
+                        valueTooBig = Convert.ToUInt64(value) > maxValue;
                     }
 
                     if (valueTooBig)
