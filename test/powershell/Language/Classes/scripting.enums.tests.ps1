@@ -81,8 +81,7 @@ Describe 'enums' -Tags "CI" {
         }
 
         It 'EX0 has the specified underlying type' { [Enum]::GetUnderlyingType([EX0]) | Should -Be ([byte]) }
-
-        It 'EX0 has the specified underlying type' { [Enum]::GetUnderlyingType([EX0]) | Should -Be ([long]) }
+        It 'EX1 has the specified underlying type' { [Enum]::GetUnderlyingType([EX1]) | Should -Be ([long]) }
     }
 }
 
