@@ -1106,6 +1106,8 @@ namespace System.Management.Automation.Language
                 var enumBuilder = _moduleBuilder.DefineEnum(_typeName, Reflection.TypeAttributes.Public, underlyingType);
                 DefineCustomAttributes(enumBuilder, _enumDefinitionAst.Attributes, _parser, AttributeTargets.Enum);
                 dynamic value = 0;
+                ulong maxValue;
+                GetMaxValue(underlyingType, out maxValue);
                 bool valueTooBig = false;
                 foreach (var member in _enumDefinitionAst.Members)
                 {
@@ -1163,14 +1165,64 @@ namespace System.Management.Automation.Language
 
                     if (_enumDefinitionAst.Attributes.Any(attr => attr.TypeName.GetReflectionType() == typeof(FlagsAttribute)) && value != 0)
                     {
-                        value *= 2;
+                        if (Convert.ToUInt64(value) < maxValue / 2)
+                        {
+                            value *= 2;
+                        }
+                        else
+                        {
+                            valueTooBig = true;
+                        }
                     }
                     else
                     {
-                        value += 1;
+                        if (Convert.ToUInt64(value) < maxValue)
+                        {
+                            value += 1;
+                        }
+                        else
+                        {
+                            valueTooBig = true;
+                        }
                     }
                 }
                 _enumDefinitionAst.Type = enumBuilder.CreateTypeInfo().AsType();
+            }
+
+            private void GetMaxValue(Type underlyingType, out ulong maxValue)
+            {
+                if (underlyingType == typeof(byte))
+                {
+                    maxValue = Convert .ToUInt64(byte.MaxValue);
+                }
+                else if (underlyingType == typeof(sbyte))
+                {
+                    maxValue = Convert.ToUInt64(sbyte.MaxValue);
+                }
+                else if (underlyingType == typeof(short))
+                {
+                    maxValue = Convert.ToUInt64(short.MaxValue);
+                }
+                else if (underlyingType == typeof(ushort))
+                {
+                    maxValue = Convert.ToUInt64(ushort.MaxValue);
+                }
+                else if (underlyingType == typeof(int))
+                {
+                    maxValue = Convert.ToUInt64(int.MaxValue);
+                }
+                else if (underlyingType == typeof(uint))
+                {
+                    maxValue = Convert.ToUInt64(uint.MaxValue);
+                }
+                else if (underlyingType == typeof(long))
+                {
+                    maxValue = Convert.ToUInt64(long.MaxValue);
+                }
+                else
+                {
+                    maxValue = Convert.ToUInt64(ulong.MaxValue);
+                }
             }
         }
 
