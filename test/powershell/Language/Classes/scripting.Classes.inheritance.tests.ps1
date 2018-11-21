@@ -67,7 +67,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         Add-Type -TypeDefinition 'public interface InterfaceWithProperty { int Integer { get; set; } }'
         $C1 = Invoke-Expression 'class ClassWithInterfaceProperty : InterfaceWithProperty { [int]$Integer } [ClassWithInterfaceProperty]::new()'
         $getter = $C1.GetType().GetMember('get_Integer')
-        $getter.ReturnType | Should -Be [int]
+        $getter.ReturnType.FullName | Should -Be System.Int32
         $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual |Should -Be ([System.Reflection.MethodAttributes]::Virtual)
     }
 
