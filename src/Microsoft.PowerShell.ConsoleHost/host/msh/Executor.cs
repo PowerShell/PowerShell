@@ -3,10 +3,12 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Management.Automation.Language;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -160,6 +162,18 @@ namespace Microsoft.PowerShell
             ExecuteCommandAsyncHelper(tempPipeline, out exceptionThrown, options);
         }
 
+        /// <summary>
+        /// Executes a pipeline in the console when we are running asnyc.
+        /// </summary>
+        /// <param name="tempPipeline">
+        /// The pipeline to execute.
+        /// </param>
+        /// <param name="exceptionThrown">
+        /// Any exception thrown trying to run the pipeline.
+        /// </param>
+        /// <param name="options">
+        /// The options to use to execute the pipeline.
+        /// </param>
         internal void ExecuteCommandAsyncHelper(Pipeline tempPipeline, out Exception exceptionThrown, ExecutionOptions options)
         {
             Dbg.Assert(!_isPromptFunctionExecutor, "should not async invoke the prompt");
@@ -192,7 +206,14 @@ namespace Microsoft.PowerShell
 
                 tempPipeline.Output.DataReady += new EventHandler(OutputObjectStreamHandler);
                 tempPipeline.Error.DataReady += new EventHandler(ErrorObjectStreamHandler);
-                PipelineFinishedWaitHandle waiterThereIsAFlyInMySoup = new PipelineFinishedWaitHandle(tempPipeline);
+                PipelineFinishedWaitHandle pipelineWaiter = new PipelineFinishedWaitHandle(tempPipeline);
+
+                // close the input pipeline so the command will do something
+                // if we are not reading input
+                if ((options & Executor.ExecutionOptions.ReadInputObjects) == 0)
+                {
+                    tempPipeline.Input.Close();
+                }
 
                 tempPipeline.InvokeAsync();
                 if ((options & ExecutionOptions.ReadInputObjects) > 0 && Console.IsInputRedirected)
@@ -224,7 +245,7 @@ namespace Microsoft.PowerShell
                 }
                 tempPipeline.Input.Close();
 
-                waiterThereIsAFlyInMySoup.Wait();
+                pipelineWaiter.Wait();
 
                 //report error if pipeline failed
                 if (tempPipeline.PipelineStateInfo.State == PipelineState.Failed && tempPipeline.PipelineStateInfo.Reason != null)
@@ -300,6 +321,22 @@ namespace Microsoft.PowerShell
         internal Collection<PSObject> ExecuteCommand(string command, out Exception exceptionThrown, ExecutionOptions options)
         {
             Dbg.Assert(!String.IsNullOrEmpty(command), "command should have a value");
+
+            // Experimental:
+            // Check for implicit remoting commands that can be batched, and execute as batched if able.
+            if (ExperimentalFeature.IsEnabled("PSImplicitRemotingBatching"))
+            {
+                var addOutputter = ((options & ExecutionOptions.AddOutputter) > 0);
+                if (addOutputter &&
+                    !_parent.RunspaceRef.IsRunspaceOverridden &&
+                    _parent.RunspaceRef.Runspace.ExecutionContext.Modules != null &&
+                    _parent.RunspaceRef.Runspace.ExecutionContext.Modules.IsImplicitRemotingModuleLoaded &&
+                    Utils.TryRunAsImplicitBatch(command, _parent.RunspaceRef.Runspace))
+                {
+                    exceptionThrown = null;
+                    return null;
+                }
+            }
 
             Pipeline tempPipeline = CreatePipeline(command, (options & ExecutionOptions.AddToHistory) > 0);
 

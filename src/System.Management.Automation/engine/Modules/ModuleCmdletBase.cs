@@ -18,6 +18,8 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using Microsoft.PowerShell.Cmdletization;
+using System.Management.Automation.Language;
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 //
@@ -88,6 +90,12 @@ namespace Microsoft.PowerShell.Commands
             /// If Scope parameter is Local, this is true.
             /// </summary>
             internal bool Local;
+
+            /// <summary>
+            /// Lets nested module import to export all of its functions, regardless of language boundaries.
+            /// This will be allowed when the manifest explicitly exports functions which will limit all visible module functions.
+            /// </summary>
+            internal bool AllowNestedModuleFunctionsToExport;
         }
 
         /// <summary>
@@ -361,9 +369,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (var version in ModuleUtils.GetModuleVersionSubfolders(moduleBase))
             {
                 // Skip the version folder if it is not equal to the required version or does not satisfy the minimum/maximum version criteria
-                if ((BaseRequiredVersion != null && !BaseRequiredVersion.Equals(version))
-                    || (BaseMinimumVersion != null && BaseRequiredVersion == null && version < BaseMinimumVersion)
-                    || (BaseMaximumVersion != null && BaseRequiredVersion == null && version > BaseMaximumVersion))
+                if (!ModuleIntrinsics.IsVersionMatchingConstraints(version, BaseRequiredVersion, BaseMinimumVersion, BaseMaximumVersion))
                 {
                     continue;
                 }
@@ -605,7 +611,7 @@ namespace Microsoft.PowerShell.Commands
 
         private PSModuleInfo LoadModuleNamedInManifest(PSModuleInfo parentModule, ModuleSpecification moduleSpecification, string moduleBase, bool searchModulePath,
             string prefix, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, bool loadTypesFiles,
-            bool loadFormatFiles, object privateData, out bool found, string shortModuleName)
+            bool loadFormatFiles, object privateData, out bool found, string shortModuleName, PSLanguageMode? manifestLanguageMode)
         {
             PSModuleInfo module = null;
             PSModuleInfo tempModuleInfoFromVerification = null;
@@ -785,6 +791,21 @@ namespace Microsoft.PowerShell.Commands
                         found = LoadUsingModulePath(parentModule, found, modulePath,
                                                     moduleSpecification.Name, ss,
                                                     options, manifestProcessingFlags, out module);
+                    }
+                }
+
+                if (manifestLanguageMode.HasValue && found && (module != null) && module.LanguageMode.HasValue)
+                {
+                    // Check for script module language mode consistency.  All loaded script modules must have the same language mode as the manifest.
+                    // If not then this indicates a malformed module and a possible exploit to make trusted private functions visible in a
+                    // Constrained Language session.
+                    if (module.LanguageMode != manifestLanguageMode)
+                    {
+                        var languageModeError = PSTraceSource.NewInvalidOperationException(
+                            Modules.MismatchedLanguageModes,
+                            module.Name, manifestLanguageMode, module.LanguageMode);
+                        languageModeError.SetErrorId("Modules_MismatchedLanguageModes");
+                        throw languageModeError;
                     }
                 }
 
@@ -1338,6 +1359,25 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
+        /// <summary>
+        /// Helper function to generate fake PSModuleInfo objects from ModuleSpecification objects.
+        /// </summary>
+        /// <param name="moduleSpecs">Collection of ModuleSpecification objects</param>
+        /// <returns>Collection of fake PSModuleInfo objects</returns>
+        private IEnumerable<PSModuleInfo> CreateFakeModuleObject(IEnumerable<ModuleSpecification> moduleSpecs)
+        {
+            foreach (ModuleSpecification moduleSpec in moduleSpecs)
+            {
+                var fakeModuleInfo = new PSModuleInfo(moduleSpec.Name, Context, null);
+                if (moduleSpec.Guid.HasValue)
+                {
+                    fakeModuleInfo.SetGuid(moduleSpec.Guid.Value);
+                }
+                fakeModuleInfo.SetVersion(moduleSpec.RequiredVersion ?? moduleSpec.Version);
+                yield return fakeModuleInfo;
+            }
+        }
+
         private ErrorRecord GetErrorRecordIfUnsupportedRootCdxmlAndNestedModuleScenario(
             Hashtable data,
             string moduleManifestPath,
@@ -1376,7 +1416,7 @@ namespace Microsoft.PowerShell.Commands
         /// Routine to process the module manifest data language script.
         /// </summary>
         /// <param name="moduleManifestPath">The path to the manifest file</param>
-        /// <param name="scriptInfo">The script info for the manifest script</param>
+        /// <param name="manifestScriptInfo">The script info for the manifest script</param>
         /// <param name="data">Contents of the module manifest</param>
         /// <param name="localizedData">Contents of the localized module manifest</param>
         /// <param name="manifestProcessingFlags">processing flags (whether to write errors / load elements)</param>
@@ -1389,7 +1429,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal PSModuleInfo LoadModuleManifest(
             string moduleManifestPath,
-            ExternalScriptInfo scriptInfo,
+            ExternalScriptInfo manifestScriptInfo,
             Hashtable data,
             Hashtable localizedData,
             ManifestProcessingFlags manifestProcessingFlags,
@@ -1553,35 +1593,20 @@ namespace Microsoft.PowerShell.Commands
                 string mtpExtension = Path.GetExtension(rootedPath);
                 if (!string.IsNullOrEmpty(mtpExtension) && ModuleIntrinsics.IsPowerShellModuleExtension(mtpExtension))
                 {
-                    Context.Modules.ModuleTable.TryGetValue(rootedPath, out loadedModule);
+                    TryGetFromModuleTable(rootedPath, out loadedModule);
                 }
                 else
                 {
                     foreach (string extensionToTry in ModuleIntrinsics.PSModuleExtensions)
                     {
                         rootedPath = this.FixupFileName(moduleBase, actualRootModule, extensionToTry);
-                        Context.Modules.ModuleTable.TryGetValue(rootedPath, out loadedModule);
+                        TryGetFromModuleTable(rootedPath, out loadedModule);
                         if (loadedModule != null)
                             break;
                     }
                 }
 
-                // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior
-                // if (IsModuleAlreadyLoaded(loadedModule) &&
-                //    ((manifestProcessingFlags & ManifestProcessingFlags.LoadElements) == ManifestProcessingFlags.LoadElements))
-                if (loadedModule != null &&
-                    (BaseRequiredVersion == null || loadedModule.Version.Equals(BaseRequiredVersion)) &&
-                    ((BaseMinimumVersion == null && BaseMaximumVersion == null)
-                     ||
-                     (BaseMaximumVersion != null && BaseMinimumVersion == null &&
-                      loadedModule.Version <= BaseMaximumVersion)
-                     ||
-                     (BaseMaximumVersion == null && BaseMinimumVersion != null &&
-                      loadedModule.Version >= BaseMinimumVersion)
-                     ||
-                     (BaseMaximumVersion != null && BaseMinimumVersion != null &&
-                      loadedModule.Version >= BaseMinimumVersion && loadedModule.Version <= BaseMaximumVersion)) &&
-                    (BaseGuid == null || loadedModule.Guid.Equals(BaseGuid)) && importingModule)
+                if (importingModule && DoesAlreadyLoadedModuleSatisfyConstraints(loadedModule))
                 {
                     if (!BaseForce)
                     {
@@ -1653,21 +1678,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (bailOnFirstError) return null;
                 }
-                else if (requiredVersion != null && !moduleVersion.Equals(requiredVersion))
+                else if (!ModuleIntrinsics.AreModuleFieldsMatchingConstraints(
+                    moduleGuid: manifestGuid,
+                    moduleVersion: moduleVersion,
+                    requiredGuid: requiredModuleGuid,
+                    requiredVersion: requiredVersion,
+                    minimumRequiredVersion: minimumVersion,
+                    maximumRequiredVersion: maximumVersion))
                 {
-                    if (bailOnFirstError) return null;
-                }
-                else
-                {
-                    if (moduleVersion < minimumVersion || (maximumVersion != null && moduleVersion > maximumVersion))
+                    if (bailOnFirstError)
                     {
-                        if (bailOnFirstError) return null;
+                        return null;
                     }
-                }
-
-                if (requiredModuleGuid != null && !requiredModuleGuid.Equals(manifestGuid))
-                {
-                    if (bailOnFirstError) return null;
                 }
 
                 // Verify that the module version from the module manifest is equal to module version folder.
@@ -1959,8 +1981,12 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (ModuleSpecification requiredModule in requiredModules)
                     {
+                        // The required module name is essentially raw user input.
+                        // We must process it so paths work.
+                        ModuleSpecification normalizedRequiredModuleSpec = requiredModule?.WithNormalizedName(Context, moduleBase);
+
                         ErrorRecord error = null;
-                        PSModuleInfo module = LoadRequiredModule(fakeManifestInfo, requiredModule, moduleManifestPath,
+                        PSModuleInfo module = LoadRequiredModule(fakeManifestInfo, normalizedRequiredModuleSpec, moduleManifestPath,
                             manifestProcessingFlags, containedErrors, out error);
                         if (module == null && error != null)
                         {
@@ -1977,16 +2003,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    PSModuleInfo fakeRequiredModuleInfo = null;
-                    foreach (ModuleSpecification requiredModule in requiredModules)
+                    foreach (PSModuleInfo fakeRequiredModuleInfo in CreateFakeModuleObject(requiredModules))
                     {
-                        fakeRequiredModuleInfo = new PSModuleInfo(requiredModule.Name, Context, null);
-                        if (requiredModule.Guid.HasValue)
-                        {
-                            fakeRequiredModuleInfo.SetGuid(requiredModule.Guid.Value);
-                        }
-                        fakeRequiredModuleInfo.SetVersion(requiredModule.RequiredVersion ?? requiredModule.Version);
-
                         requiredModulesSpecifiedInModuleManifest.Add(fakeRequiredModuleInfo);
                     }
                 }
@@ -2797,6 +2815,12 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!needToAnalyzeScriptModules)
                 {
+                    // Add nested modules to the manifestInfo when no more analysis needs to be done
+                    foreach (PSModuleInfo fakeNestedModuleInfo in CreateFakeModuleObject(nestedModules))
+                    {
+                        manifestInfo.AddNestedModule(fakeNestedModuleInfo);
+                    }
+
                     return manifestInfo;
                 }
             }
@@ -2892,6 +2916,7 @@ namespace Microsoft.PowerShell.Commands
             BaseDisableNameChecking = true;
 
             SessionStateInternal oldSessionState = Context.EngineSessionState;
+            var exportedFunctionsContainsWildcards = ModuleIntrinsics.PatternContainsWildcard(exportedFunctions);
             try
             {
                 if (importingModule)
@@ -2902,6 +2927,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ss != null)
                 {
+                    ss.Internal.ManifestWithExplicitFunctionExport = !exportedFunctionsContainsWildcards;
                     Context.EngineSessionState = ss.Internal;
                 }
 
@@ -2909,6 +2935,11 @@ namespace Microsoft.PowerShell.Commands
 
                 // For nested modules, we need to set importmoduleoptions to false as they should not use the options set for parent module
                 ImportModuleOptions nestedModuleOptions = new ImportModuleOptions();
+
+                // If the nested manifest explicitly (no wildcards) specifies functions to be exported then allow all functions to be exported
+                // into the session state function table (regardless of language boundaries), because the manifest will filter them later to the 
+                // specified function list.
+                nestedModuleOptions.AllowNestedModuleFunctionsToExport = ((exportedFunctions != null) && !exportedFunctionsContainsWildcards);
 
                 foreach (ModuleSpecification nestedModuleSpecification in nestedModules)
                 {
@@ -2918,19 +2949,20 @@ namespace Microsoft.PowerShell.Commands
                     this.BaseGlobal = false;
 
                     PSModuleInfo nestedModule = LoadModuleNamedInManifest(
-                            manifestInfo,
-                            nestedModuleSpecification, // moduleName
-                            moduleBase,
-                            true, // searchModulePath
-                            string.Empty, // prefix: no -Prefix added for nested modules
-                            null,
-                            nestedModuleOptions,
-                            manifestProcessingFlags,
-                            true,
-                            true,
-                            privateData,
-                            out found,
-                            shortModuleName: null);
+                            parentModule: manifestInfo,
+                            moduleSpecification: nestedModuleSpecification,
+                            moduleBase: moduleBase,
+                            searchModulePath: true,
+                            prefix: string.Empty,
+                            ss: null,
+                            options: nestedModuleOptions,
+                            manifestProcessingFlags: manifestProcessingFlags,
+                            loadTypesFiles: true,
+                            loadFormatFiles: true,
+                            privateData: privateData,
+                            found: out found,
+                            shortModuleName: null,
+                            manifestLanguageMode: ((manifestScriptInfo != null) ? manifestScriptInfo.DefiningLanguageMode.GetValueOrDefault() : (PSLanguageMode?)null));
 
                     this.BaseGlobal = oldGlobal;
 
@@ -3019,16 +3051,21 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     bool found;
-                    newManifestInfo = LoadModuleNamedInManifest(null, new ModuleSpecification(actualRootModule),
-                        moduleBase, /* searchModulePath */ false,
-                        resolvedCommandPrefix, ss, options, manifestProcessingFlags,
-                        // If types files already loaded, don't load snapin files
-                        (exportedTypeFiles == null || 0 == exportedTypeFiles.Count),
-                        // if format files already loaded, don't load snapin files
-                        (exportedFormatFiles == null || 0 == exportedFormatFiles.Count),
-                        privateData,
-                        out found,
-                        null);
+                    newManifestInfo = LoadModuleNamedInManifest(
+                        parentModule: null, 
+                        moduleSpecification: new ModuleSpecification(actualRootModule),
+                        moduleBase: moduleBase, 
+                        searchModulePath: false,
+                        prefix: resolvedCommandPrefix, 
+                        ss: ss, 
+                        options: options, 
+                        manifestProcessingFlags: manifestProcessingFlags,
+                        loadTypesFiles: (exportedTypeFiles == null || 0 == exportedTypeFiles.Count),        // If types files already loaded, don't load snapin files
+                        loadFormatFiles: (exportedFormatFiles == null || 0 == exportedFormatFiles.Count),   // if format files already loaded, don't load snapin files
+                        privateData: privateData,
+                        found: out found,
+                        shortModuleName: null,
+                        manifestLanguageMode: ((manifestScriptInfo != null) ? manifestScriptInfo.DefiningLanguageMode.GetValueOrDefault() : (PSLanguageMode?)null));
 
                     if (!found || (newManifestInfo == null))
                     {
@@ -3351,9 +3388,17 @@ namespace Microsoft.PowerShell.Commands
                     // implicitly export functions and cmdlets.
                     if ((ss != null) && (!ss.Internal.UseExportList))
                     {
-                        ModuleIntrinsics.ExportModuleMembers(this,
+                        // For cross language boundaries, implicitly import all functions only if 
+                        // this manifest *does* exort functions explicitly.
+                        List<WildcardPattern> fnMatchPattern = (
+                                                                (manifestScriptInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage) &&
+                                                                (Context.LanguageMode != PSLanguageMode.FullLanguage) &&
+                                                                (exportedFunctions == null)
+                                                                ) ? null : MatchAll;
+
+                        ModuleIntrinsics.ExportModuleMembers(cmdlet: this,
                                                              sessionState: ss.Internal,
-                                                             functionPatterns: MatchAll,
+                                                             functionPatterns: fnMatchPattern,
                                                              cmdletPatterns: MatchAll,
                                                              aliasPatterns: null,
                                                              variablePatterns: null,
@@ -3365,6 +3410,22 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (ss != null)
                         {
+                            // If module (psm1) functions were not exported because of cross language boundary restrictions,
+                            // then implicitly export them here so that they can be filtered by the exportedFunctions list.
+                            // Unless exportedFunctions contains the wildcard character that isn't allowed across language
+                            // boundaries.
+                            if (!ss.Internal.FunctionsExported && !exportedFunctionsContainsWildcards)
+                            {
+                                ModuleIntrinsics.ExportModuleMembers(
+                                    cmdlet: this,
+                                    sessionState: ss.Internal,
+                                    functionPatterns: MatchAll,
+                                    cmdletPatterns: null,
+                                    aliasPatterns: null,
+                                    variablePatterns: null,
+                                    doNotExportCmdlets: null);
+                            }
+
                             Dbg.Assert(ss.Internal.ExportedFunctions != null,
                                 "ss.Internal.ExportedFunctions should not be null");
 
@@ -3428,6 +3489,7 @@ namespace Microsoft.PowerShell.Commands
                                     updated.Add(element);
                                 }
                             }
+
                             ss.Internal.ExportedVariables.Clear();
                             ss.Internal.ExportedVariables.AddRange(updated);
                         }
@@ -3459,6 +3521,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 ImportModuleMembers(manifestInfo, resolvedCommandPrefix, options);
             }
+
+            manifestInfo.LanguageMode = (manifestScriptInfo != null) ? manifestScriptInfo.DefiningLanguageMode : (PSLanguageMode?)null;
 
             return manifestInfo;
         }
@@ -3626,91 +3690,27 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="context">Execution Context.</param>
         /// <param name="requiredModule">Either a string or a hash of ModuleName, optional Guid, and ModuleVersion.</param>
-        /// <param name="wrongVersion">Sets if the module cannot be found due to incorrect version.</param>
-        /// <param name="wrongGuid">Sets if the module cannot be found due to incorrect guid.</param>
+        /// <param name="matchFailureReason">The reason the module failed to load, or null on success.</param>
         /// <param name="loaded">Sets if the module/snapin is already present.</param>
         /// <returns>null if the module is not loaded or loadElements is false, the loaded module otherwise.</returns>
-        internal static object IsModuleLoaded(ExecutionContext context, ModuleSpecification requiredModule, out bool wrongVersion, out bool wrongGuid, out bool loaded)
+        internal static object IsModuleLoaded(ExecutionContext context, ModuleSpecification requiredModule, out ModuleMatchFailure matchFailureReason, out bool loaded)
         {
             loaded = false;
             Dbg.Assert(requiredModule != null, "Caller should verify requiredModuleSpecification != null");
 
             // Assume the module is not loaded.
             object result = null;
-            wrongVersion = false;
-            wrongGuid = false;
 
-            string moduleName = requiredModule.Name;
-            Guid? moduleGuid = requiredModule.Guid;
-
-            Dbg.Assert(moduleName != null, "GetModuleSpecification should guarantee that moduleName != null");
+            Dbg.Assert(requiredModule.Name != null, "GetModuleSpecification should guarantee that moduleName != null");
+            ModuleMatchFailure matchFailure = ModuleMatchFailure.None;
             foreach (PSModuleInfo module in context.Modules.GetModules(new string[] { "*" }, false))
             {
-                if (moduleName.Equals(module.Name, StringComparison.OrdinalIgnoreCase))
+                // Check that the module meets the module constraints give
+                if (ModuleIntrinsics.IsModuleMatchingModuleSpec(out matchFailure, module, requiredModule))
                 {
-                    if (!moduleGuid.HasValue || moduleGuid.Value.Equals(module.Guid))
-                    {
-                        if (requiredModule.RequiredVersion != null)
-                        {
-                            if (requiredModule.RequiredVersion.Equals(module.Version))
-                            {
-                                result = module;
-                                loaded = true;
-                                break;
-                            }
-
-                            wrongVersion = true;
-                        }
-                        else if (requiredModule.Version != null)
-                        {
-                            if (requiredModule.MaximumVersion != null)
-                            {
-                                if (GetMaximumVersion(requiredModule.MaximumVersion) >= module.Version && requiredModule.Version <= module.Version)
-                                {
-                                    result = module;
-                                    loaded = true;
-                                    break;
-                                }
-                                else
-                                {
-                                    wrongVersion = true;
-                                }
-                            }
-                            else if (requiredModule.Version <= module.Version)
-                            {
-                                result = module;
-                                loaded = true;
-                                break;
-                            }
-                            else
-                            {
-                                wrongVersion = true;
-                            }
-                        }
-                        else if (requiredModule.MaximumVersion != null)
-                        {
-                            if (GetMaximumVersion(requiredModule.MaximumVersion) >= module.Version)
-                            {
-                                result = module;
-                                loaded = true;
-                                break;
-                            }
-                            else
-                            {
-                                wrongVersion = true;
-                            }
-                        }
-                        else
-                        {
-                            result = module;
-                            loaded = true;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        wrongGuid = true;
-                    }
+                    result = module;
+                    loaded = true;
+                    break;
                 }
             }
 
@@ -3724,6 +3724,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            matchFailureReason = matchFailure;
             return result;
         }
 
@@ -3777,10 +3778,9 @@ namespace Microsoft.PowerShell.Commands
             Guid? moduleGuid = requiredModuleSpecification.Guid;
             PSModuleInfo result = null;
 
-            bool wrongVersion = false;
-            bool wrongGuid = false;
+            ModuleMatchFailure loadFailureReason = ModuleMatchFailure.None;
             bool loaded = false;
-            object loadedModule = IsModuleLoaded(context, requiredModuleSpecification, out wrongVersion, out wrongGuid, out loaded);
+            object loadedModule = IsModuleLoaded(context, requiredModuleSpecification, out loadFailureReason, out loaded);
 
             if (loadedModule == null)
             {
@@ -3837,33 +3837,73 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors))
                         {
-                            if (wrongVersion)
+                            switch (loadFailureReason)
                             {
-                                if (requiredModuleSpecification.RequiredVersion != null)
-                                {
-                                    message = StringUtil.Format(Modules.RequiredModuleNotLoadedWrongVersion, moduleManifestPath, moduleName, requiredModuleSpecification.RequiredVersion);
-                                }
-                                else if (requiredModuleSpecification.Version != null && requiredModuleSpecification.MaximumVersion == null)
-                                {
-                                    message = StringUtil.Format(Modules.RequiredModuleNotLoadedWrongVersion, moduleManifestPath, moduleName, requiredModuleSpecification.Version);
-                                }
-                                else if (requiredModuleSpecification.Version == null && requiredModuleSpecification.MaximumVersion != null)
-                                {
-                                    message = StringUtil.Format(Modules.RequiredModuleNotLoadedWrongMaximumVersion, moduleManifestPath, moduleName, requiredModuleSpecification.MaximumVersion);
-                                }
-                                else
-                                {
-                                    message = StringUtil.Format(Modules.RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion, moduleManifestPath, moduleName, requiredModuleSpecification.Version, requiredModuleSpecification.MaximumVersion);
-                                }
+                                case ModuleMatchFailure.RequiredVersion:
+                                    message = StringUtil.Format(
+                                        Modules.RequiredModuleNotLoadedWrongVersion,
+                                        moduleManifestPath,
+                                        moduleName,
+                                        requiredModuleSpecification.RequiredVersion);
+                                    break;
+
+                                case ModuleMatchFailure.MinimumVersion:
+                                    // If both max and min versions were specified, use a different error message
+                                    if (requiredModuleSpecification.MaximumVersion == null)
+                                    {
+                                        message = StringUtil.Format(
+                                            Modules.RequiredModuleNotLoadedWrongVersion,
+                                            moduleManifestPath, moduleName,
+                                            requiredModuleSpecification.Version);
+                                    }
+                                    else
+                                    {
+                                        message = StringUtil.Format(
+                                            Modules.RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion,
+                                            moduleManifestPath,
+                                            moduleName,
+                                            requiredModuleSpecification.Version,
+                                            requiredModuleSpecification.MaximumVersion);
+                                    }
+                                    break;
+
+                                case ModuleMatchFailure.MaximumVersion:
+                                    // If both max and min versions were specified, use a different error message
+                                    if (requiredModuleSpecification.Version == null)
+                                    {
+                                        message = StringUtil.Format(
+                                            Modules.RequiredModuleNotLoadedWrongMaximumVersion,
+                                            moduleManifestPath,
+                                            moduleName,
+                                            requiredModuleSpecification.MaximumVersion);
+                                    }
+                                    else
+                                    {
+                                        message = StringUtil.Format(
+                                            Modules.RequiredModuleNotLoadedWrongMinimumVersionAndMaximumVersion,
+                                            moduleManifestPath,
+                                            moduleName,
+                                            requiredModuleSpecification.Version,
+                                            requiredModuleSpecification.MaximumVersion);
+                                    }
+                                    break;
+
+                                case ModuleMatchFailure.Guid:
+                                    message = StringUtil.Format(
+                                        Modules.RequiredModuleNotLoadedWrongGuid,
+                                        moduleManifestPath,
+                                        moduleName,
+                                        moduleGuid.Value);
+                                    break;
+
+                                default:
+                                    message = StringUtil.Format(
+                                        Modules.RequiredModuleNotLoaded,
+                                        moduleManifestPath,
+                                        moduleName);
+                                    break;
                             }
-                            else if (wrongGuid)
-                            {
-                                message = StringUtil.Format(Modules.RequiredModuleNotLoadedWrongGuid, moduleManifestPath, moduleName, moduleGuid.Value);
-                            }
-                            else
-                            {
-                                message = StringUtil.Format(Modules.RequiredModuleNotLoaded, moduleManifestPath, moduleName);
-                            }
+
                             MissingMemberException mm = new MissingMemberException(message);
                             error = new ErrorRecord(mm, "Modules_InvalidManifest",
                                                     ErrorCategory.ResourceUnavailable, moduleManifestPath);
@@ -3925,8 +3965,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    bool wrongVersion = false;
-                    bool wrongGuid = false;
                     // Check if the correct module is loaded using Version , Guid Information.
                     string moduleNameToCheckAgainst = requiredModule.Name;
                     string manifestPath = string.Empty;
@@ -3935,6 +3973,7 @@ namespace Microsoft.PowerShell.Commands
                         manifestPath = moduleNameToCheckAgainst;
                         moduleNameToCheckAgainst = Path.GetFileNameWithoutExtension(moduleNameToCheckAgainst);
                     }
+
                     ModuleSpecification ms = new ModuleSpecification(moduleNameToCheckAgainst);
                     if (requiredModule.Guid != null)
                     {
@@ -3952,9 +3991,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ms.MaximumVersion = requiredModule.MaximumVersion;
                     }
+
+                    ModuleMatchFailure loadFailureReason;
                     bool loaded = false;
-                    object r = IsModuleLoaded(context, ms, out wrongVersion, out wrongGuid, out loaded);
+                    object r = IsModuleLoaded(context, ms, out loadFailureReason, out loaded);
+
                     Dbg.Assert(r is PSModuleInfo, "The returned value should be PSModuleInfo");
+
                     result = r as PSModuleInfo;
                     if (result == null)
                     {
@@ -4081,43 +4124,20 @@ namespace Microsoft.PowerShell.Commands
 
                 tempResult = powerShell.Invoke<PSModuleInfo>();
             }
-            // Check if the available module is of the correct version and GUID
-            foreach (var m in tempResult)
+
+            // Check if the available module is of the correct version and GUID. The name is already checked.
+            // GH #8204: The required name here may be the full path, while the module name may be just the module,
+            //           so comparing them may fail incorrectly.
+            foreach (var module in tempResult)
             {
-                if (!requiredModule.Guid.HasValue || requiredModule.Guid.Value.Equals(m.Guid))
+                if (ModuleIntrinsics.IsModuleMatchingConstraints(
+                    module,
+                    guid: requiredModule.Guid,
+                    requiredVersion: requiredModule.RequiredVersion,
+                    minimumVersion: requiredModule.Version,
+                    maximumVersion: requiredModule.MaximumVersion == null ? null : GetMaximumVersion(requiredModule.MaximumVersion)))
                 {
-                    if (requiredModule.RequiredVersion != null)
-                    {
-                        if (requiredModule.RequiredVersion.Equals(m.Version))
-                        {
-                            result.Add(m);
-                        }
-                    }
-                    else if (requiredModule.Version != null)
-                    {
-                        if (requiredModule.MaximumVersion != null)
-                        {
-                            if (GetMaximumVersion(requiredModule.MaximumVersion) >= m.Version && requiredModule.Version <= m.Version)
-                            {
-                                result.Add(m);
-                            }
-                        }
-                        else if (requiredModule.Version <= m.Version)
-                        {
-                            result.Add(m);
-                        }
-                    }
-                    else if (requiredModule.MaximumVersion != null)
-                    {
-                        if (GetMaximumVersion(requiredModule.MaximumVersion) >= m.Version)
-                        {
-                            result.Add(m);
-                        }
-                    }
-                    else
-                    {
-                        result.Add(m);
-                    }
+                    result.Add(module);
                 }
             }
             return result;
@@ -4558,13 +4578,15 @@ namespace Microsoft.PowerShell.Commands
                 result += extension;
             }
 
-            //For dlls, we cannot get the path from the provider.
-            //We need to load the assembly and then get the path.
-            //If the module is already loaded, this is not expensive since the assembly is already loaded in the AppDomain
+            // For dlls, we cannot get the path from the provider.
+            // We need to load the assembly and then get the path.
+            // If the module is already loaded, this is not expensive since the assembly is already loaded in the AppDomain
+            // If the dll is not loaded, we load it from the resolved path.
+            // We attempt to load it from the resolved path before we try to look up in GAC on Windows.
             if (!string.IsNullOrEmpty(ext) && ext.Equals(".dll", StringComparison.OrdinalIgnoreCase))
             {
                 Exception ignored = null;
-                Assembly assembly = ExecutionContext.LoadAssembly(name, null, out ignored);
+                Assembly assembly = ExecutionContext.LoadAssembly(name, result, out ignored);
                 if (assembly != null)
                 {
                     result = assembly.Location;
@@ -4592,6 +4614,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Check if a path is rooted or "relative rooted".
+        /// </summary>
+        /// <param name="filePath">The file path to check.</param>
+        /// <returns>True if the path is rooted, false otherwise.</returns>
         internal static bool IsRooted(string filePath)
         {
             return (Path.IsPathRooted(filePath) ||
@@ -5016,6 +5043,21 @@ namespace Microsoft.PowerShell.Commands
 
                     // And the appdomain level module path cache.
                     PSModuleInfo.RemoveFromAppDomainLevelCache(module.Name);
+
+                    // Update implicit module loaded property
+                    if (Context.Modules.IsImplicitRemotingModuleLoaded)
+                    {
+                        Context.Modules.IsImplicitRemotingModuleLoaded = false;
+                        foreach (var modInfo in Context.Modules.ModuleTable.Values)
+                        {
+                            var privateData = modInfo.PrivateData as Hashtable;
+                            if ((privateData != null) && privateData.ContainsKey("ImplicitRemoting"))
+                            {
+                                Context.Modules.IsImplicitRemotingModuleLoaded = true;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -5041,34 +5083,19 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        internal bool IsModuleAlreadyLoaded(PSModuleInfo alreadyLoadedModule)
+        /// <summary>
+        /// Checks if an already loaded module meets the constraints passed to the module cmdlet by the user.
+        /// </summary>
+        /// <param name="alreadyLoadedModule">The already loaded module that matched the name of the module to load.</param>
+        /// <returns>True if the pre-loaded module matches all GUID and version constraints provided, false otherwise.</returns>
+        internal bool DoesAlreadyLoadedModuleSatisfyConstraints(PSModuleInfo alreadyLoadedModule)
         {
-            if (alreadyLoadedModule == null)
-            {
-                return false;
-            }
-            if (this.BaseRequiredVersion != null && !alreadyLoadedModule.Version.Equals(this.BaseRequiredVersion))
-            {
-                // "alreadyLoadedModule" is a different module (than the one we want to load)
-                return false;
-            }
-            if (this.BaseMinimumVersion != null && alreadyLoadedModule.Version < this.BaseMinimumVersion)
-            {
-                // "alreadyLoadedModule" is a different module (than the one we want to load)
-                return false;
-            }
-            if (this.BaseMaximumVersion != null && alreadyLoadedModule.Version > this.BaseMaximumVersion)
-            {
-                // "alreadyLoadedModule" is a different module (than the one we want to load)
-                return false;
-            }
-            if (BaseGuid != null && !alreadyLoadedModule.Guid.Equals(this.BaseGuid))
-            {
-                // "alreadyLoadedModule" is a different module (than the one we want to load)
-                return false;
-            }
-
-            return true;
+            return ModuleIntrinsics.IsModuleMatchingConstraints(
+                alreadyLoadedModule,
+                guid: BaseGuid,
+                requiredVersion: BaseRequiredVersion,
+                minimumVersion: BaseMinimumVersion,
+                maximumVersion: BaseMaximumVersion);
         }
 
         /// <summary>
@@ -5082,10 +5109,9 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal PSModuleInfo IsModuleImportUnnecessaryBecauseModuleIsAlreadyLoaded(string modulePath, string prefix, ImportModuleOptions options)
         {
-            PSModuleInfo alreadyLoadedModule;
-            if (this.Context.Modules.ModuleTable.TryGetValue(modulePath, out alreadyLoadedModule))
+            if (TryGetFromModuleTable(modulePath, out PSModuleInfo alreadyLoadedModule))
             {
-                if (this.IsModuleAlreadyLoaded(alreadyLoadedModule))
+                if (this.DoesAlreadyLoadedModuleSatisfyConstraints(alreadyLoadedModule))
                 {
                     if (this.BaseForce) // remove the previously imported module + return null (null = please proceed with regular import)
                     {
@@ -5191,7 +5217,6 @@ namespace Microsoft.PowerShell.Commands
             string prefix, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out bool found, out bool moduleFileFound)
         {
             string[] extensions;
-            PSModuleInfo module;
             moduleFileFound = false;
 
             if (!string.IsNullOrEmpty(extension))
@@ -5222,21 +5247,11 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // If the module has already been loaded, just emit it and continue...
-                Context.Modules.ModuleTable.TryGetValue(fileName, out module);
-                // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior
-                // if (!BaseForce &&
-                //    IsModuleAlreadyLoaded(module) &&
-                //    ((manifestProcessingFlags & ManifestProcessingFlags.LoadElements) == ManifestProcessingFlags.LoadElements))
-                if (!BaseForce && module != null &&
-                    (BaseRequiredVersion == null || module.Version.Equals(BaseRequiredVersion)) &&
-                    ((BaseMinimumVersion == null && BaseMaximumVersion == null)
-                        || (BaseMaximumVersion != null && BaseMinimumVersion == null && module.Version <= BaseMaximumVersion)
-                        || (BaseMaximumVersion == null && BaseMinimumVersion != null && module.Version >= BaseMinimumVersion)
-                        || (BaseMaximumVersion != null && BaseMinimumVersion != null && module.Version >= BaseMinimumVersion && module.Version <= BaseMaximumVersion)) &&
-                    (BaseGuid == null || module.Guid.Equals(BaseGuid)) && importingModule)
+                TryGetFromModuleTable(fileName, out PSModuleInfo module);
+                if (!BaseForce && importingModule && DoesAlreadyLoadedModuleSatisfyConstraints(module))
                 {
                     moduleFileFound = true;
-                    module = Context.Modules.ModuleTable[fileName];
+ 
                     // If the module has already been loaded, then while loading it the second time, we should load it with the DefaultCommandPrefix specified in the module manifest. (If there is no Prefix from command line)
                     if (string.IsNullOrEmpty(prefix))
                     {
@@ -5278,12 +5293,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     moduleFileFound = true;
                     // Win8: 325243 - Added the version check so that we do not unload modules with the same name but different version
-                    if (BaseForce && module != null &&
-                        (this.BaseRequiredVersion == null || module.Version.Equals(this.BaseRequiredVersion)) &&
-                        (BaseGuid == null || module.Guid.Equals(BaseGuid)))
-                    // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior
-                    // TODO/FIXME: (for example the checks above are not lookint at this.BaseMinimumVersion)
-                    // if (BaseForce && IsModuleAlreadyLoaded(module))
+                    if (BaseForce && DoesAlreadyLoadedModuleSatisfyConstraints(module))
                     {
                         RemoveModule(module);
                     }
@@ -5445,6 +5455,15 @@ namespace Microsoft.PowerShell.Commands
             }
             PSModuleInfo module = null;
 
+            // Block ps1 files from being imported in constrained language.
+            if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage && ext.Equals(StringLiterals.PowerShellScriptFileExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                InvalidOperationException invalidOp = new InvalidOperationException(Modules.ImportPSFileNotAllowedInConstrainedLanguage);
+                ErrorRecord er = new ErrorRecord(invalidOp, "Modules_ImportPSFileNotAllowedInConstrainedLanguage",
+                                                 ErrorCategory.PermissionDenied, null);
+                ThrowTerminatingError(er);
+            }
+
             // If MinimumVersion/RequiredVersion/MaximumVersion has been specified, then only try to process manifest modules...
             if (BaseMinimumVersion != null || BaseMaximumVersion != null || BaseRequiredVersion != null || BaseGuid != null)
             {
@@ -5458,23 +5477,31 @@ namespace Microsoft.PowerShell.Commands
 
                 // If the module is in memory and the versions don't match don't return it.
                 // This will allow the search to continue and load a different version of the module.
-                if (Context.Modules.ModuleTable.TryGetValue(fileName, out module))
+                if (TryGetFromModuleTable(fileName, out module))
                 {
-                    if (BaseMinimumVersion != null && module.Version >= BaseMinimumVersion)
+                    if (!ModuleIntrinsics.IsVersionMatchingConstraints(module.Version, minimumVersion: BaseMinimumVersion, maximumVersion: BaseMaximumVersion))
                     {
-                        if (BaseMaximumVersion == null || module.Version <= BaseMaximumVersion)
-                        {
-                            found = false;
-                            moduleFileFound = false;
-                            return null;
-                        }
+                        found = false;
+                        moduleFileFound = false;
+                        return null;
                     }
                 }
             }
 
             found = false;
             string scriptName;
-            ExternalScriptInfo scriptInfo = null;
+
+            //
+            // !!NOTE!!
+            // If a new module type to load is ever added and if that new module type is based on a script file,
+            // such as the existing .psd1 and .psm1 files,
+            // then be sure to include the script file LanguageMode in the moduleInfo type created for the loaded module.
+            // The PSModuleInfo.LanguageMode property is used to check consistency between the manifest (.psd1) file
+            // and all other script (.psm1) file based modules being loaded by that manifest.
+            // Use the PSModuleInfo class constructor that takes the PSLanguageMode parameter argument.
+            // Look at the LoadModuleNamedInManifest() method to see how the language mode check works.
+            // !!NOTE!!
+            //
 
             string _origModuleBeingProcessed = Context.ModuleBeingProcessed;
             try
@@ -5503,15 +5530,15 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
+                        var psm1ScriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
                         try
                         {
-                            Context.Modules.IncrementModuleNestingDepth(this, scriptInfo.Path);
+                            Context.Modules.IncrementModuleNestingDepth(this, psm1ScriptInfo.Path);
 
                             // Create the module object...
                             try
                             {
-                                module = Context.Modules.CreateModule(fileName, scriptInfo, MyInvocation.ScriptPosition, ss, privateData, BaseArgumentList);
+                                module = Context.Modules.CreateModule(fileName, psm1ScriptInfo, MyInvocation.ScriptPosition, ss, privateData, BaseArgumentList);
                                 module.SetModuleBase(moduleBase);
 
                                 SetModuleLoggingInformation(module);
@@ -5520,9 +5547,39 @@ namespace Microsoft.PowerShell.Commands
                                 // implicitly export functions and cmdlets.
                                 if (!module.SessionState.Internal.UseExportList)
                                 {
-                                    ModuleIntrinsics.ExportModuleMembers(this, module.SessionState.Internal, functionPatterns: MatchAll,
-                                        cmdletPatterns: MatchAll, aliasPatterns: MatchAll, variablePatterns: null, doNotExportCmdlets: null);
+                                    // For cross language boundaries don't implicitly export all functions, unless they are allowed nested modules.
+                                    // Implict function export is allowed when any of the following is true:
+                                    //  - Nested modules are allowed by module manifest
+                                    //  - The import context language mode is FullLanguage
+                                    //  - This script module not running as trusted (FullLanguage)
+                                    module.ModuleAutoExportsAllFunctions = options.AllowNestedModuleFunctionsToExport ||
+                                                                           Context.LanguageMode == PSLanguageMode.FullLanguage ||
+                                                                           psm1ScriptInfo.DefiningLanguageMode != PSLanguageMode.FullLanguage;
+
+                                    List<WildcardPattern> fnMatchPattern = module.ModuleAutoExportsAllFunctions ? MatchAll : null;
+
+                                    ModuleIntrinsics.ExportModuleMembers(
+                                        cmdlet: this,
+                                        sessionState: module.SessionState.Internal,
+                                        functionPatterns: fnMatchPattern,
+                                        cmdletPatterns: MatchAll,
+                                        aliasPatterns: MatchAll,
+                                        variablePatterns: null,
+                                        doNotExportCmdlets: null);
                                 }
+                                else if ((SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) &&
+                                         (module.LanguageMode == PSLanguageMode.FullLanguage) &&
+                                         module.SessionState.Internal.FunctionsExportedWithWildcard &&
+                                         !module.SessionState.Internal.ManifestWithExplicitFunctionExport)
+                                {
+                                    // When in a constrained environment and functions are being exported from this module using wildcards, make sure
+                                    // exported functions only come from this module and not from any imported nested modules.
+                                    // Unless there is a parent manifest that explicitly filters all exported functions (no wildcards).
+                                    // This prevents unintended public exposure of imported functions running in FullLanguage.
+                                    ModuleIntrinsics.RemoveNestedModuleFunctions(module);
+                                }
+
+                                CheckForDisallowedDotSourcing(module.SessionState, psm1ScriptInfo, options);
 
                                 // Add it to the all module tables
                                 ImportModuleMembers(module, prefix, options);
@@ -5583,16 +5640,15 @@ namespace Microsoft.PowerShell.Commands
                         // Removing the module will not remove the commands dot-sourced from the .ps1 file.
                         // This module info is created so that we can keep the behavior consistent between scripts imported as modules and other kind of modules(all of them should have a PSModuleInfo).
                         // Auto-loading expects we always have a PSModuleInfo object for any module. This is how this issue was found.
-                        module = new PSModuleInfo(ModuleIntrinsics.GetModuleName(fileName), fileName, Context, ss);
-
-                        scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
+                        var ps1ScriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
+                        Dbg.Assert(ps1ScriptInfo != null, "Scriptinfo for dotted file can't be null");
+                        module = new PSModuleInfo(ModuleIntrinsics.GetModuleName(fileName), fileName, Context, ss, ps1ScriptInfo.DefiningLanguageMode);
 
                         message = StringUtil.Format(Modules.DottingScriptFile, fileName);
                         WriteVerbose(message);
 
                         try
                         {
-                            Dbg.Assert(scriptInfo != null, "Scriptinfo for dotted file can't be null");
                             found = true;
 
                             InvocationInfo oldInvocationInfo = (InvocationInfo)Context.GetVariableValue(SpecialVariables.MyInvocationVarPath);
@@ -5601,9 +5657,8 @@ namespace Microsoft.PowerShell.Commands
 
                             try
                             {
-                                InvocationInfo invocationInfo = new InvocationInfo(scriptInfo, scriptInfo.ScriptBlock.Ast.Extent,
-                                                                                    Context);
-                                scriptInfo.ScriptBlock.InvokeWithPipe(
+                                InvocationInfo invocationInfo = new InvocationInfo(ps1ScriptInfo, ps1ScriptInfo.ScriptBlock.Ast.Extent, Context);
+                                ps1ScriptInfo.ScriptBlock.InvokeWithPipe(
                                     useLocalScope: false,
                                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                                     dollarUnder: AutomationNull.Value,
@@ -5663,11 +5718,11 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (ext.Equals(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
+                    var psd1ScriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
                     found = true;
-                    Dbg.Assert(scriptInfo != null, "Scriptinfo for module manifest (.psd1) can't be null");
+                    Dbg.Assert(psd1ScriptInfo != null, "Scriptinfo for module manifest (.psd1) can't be null");
                     module = LoadModuleManifest(
-                        scriptInfo,
+                        psd1ScriptInfo,
                         manifestProcessingFlags,
                         BaseMinimumVersion,
                         BaseMaximumVersion,
@@ -5677,6 +5732,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (module != null)
                     {
+                        CheckForDisallowedDotSourcing(module.SessionState, psd1ScriptInfo, options);
+
                         if (importingModule)
                         {
                             // Add it to all the module tables
@@ -5699,6 +5756,9 @@ namespace Microsoft.PowerShell.Commands
                         moduleBase, ss, options, manifestProcessingFlags, prefix, true, true, out found);
                     if (found && module != null)
                     {
+                        // LanguageMode does not apply to binary modules
+                        module.LanguageMode = (PSLanguageMode?)null;
+
                         if (importingModule)
                         {
                             // Add it to all the module tables
@@ -5727,12 +5787,12 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         string moduleName = ModuleIntrinsics.GetModuleName(fileName);
-                        scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
+                        var cdxmlScriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
 
                         try
                         {
                             // generate cmdletization proxies
-                            var cmdletizationXmlReader = new StringReader(scriptInfo.ScriptContents);
+                            var cmdletizationXmlReader = new StringReader(cdxmlScriptInfo.ScriptContents);
                             var cmdletizationProxyModuleWriter = new StringWriter(CultureInfo.InvariantCulture);
                             var scriptWriter = new ScriptWriter(
                                 cmdletizationXmlReader,
@@ -5743,7 +5803,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (!importingModule)
                             {
-                                module = new PSModuleInfo(fileName, null, null);
+                                module = new PSModuleInfo(null, fileName, null, null, cdxmlScriptInfo.DefiningLanguageMode);
                                 scriptWriter.PopulatePSModuleInfo(module);
                                 scriptWriter.ReportExportedCommands(module, prefix);
                             }
@@ -5831,6 +5891,45 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return module;
+        }
+
+        private void CheckForDisallowedDotSourcing(
+            SessionState ss,
+            ExternalScriptInfo scriptInfo,
+            ImportModuleOptions options)
+        {
+            if (ss == null || ss.Internal == null)
+            { return; }
+
+            // A manifest with explicit function export is detected through a shared session state or the nested module options, because nested
+            // module processing does not use a shared session state.
+            var manifestWithExplicitFunctionExport = ss.Internal.ManifestWithExplicitFunctionExport || options.AllowNestedModuleFunctionsToExport;
+
+            // If system is in lock down mode, we disallow trusted modules that use the dotsource operator while simultaneously using
+            // wild cards for exporting module functions, unless there is an overriding manifest that explicitly exports functions
+            // without wild cards.
+            // This is because dotsourcing brings functions into module scope and it is too easy to inadvertently or maliciously 
+            // expose harmful private functions that run in trusted (FullLanguage) mode.
+            if (!manifestWithExplicitFunctionExport && ss.Internal.FunctionsExportedWithWildcard &&
+                (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) &&
+                (scriptInfo.DefiningLanguageMode == PSLanguageMode.FullLanguage))
+            {
+                var dotSourceOperator = scriptInfo.GetScriptBlockAst().FindAll(ast =>
+                {
+                    var cmdAst = ast as CommandAst;
+                    return (cmdAst?.InvocationOperator == TokenKind.Dot);
+                },
+                searchNestedScriptBlocks: true).FirstOrDefault();
+
+                if (dotSourceOperator != null)
+                {
+                    var errorRecord = new ErrorRecord(
+                        new PSSecurityException(Modules.CannotUseDotSourceWithWildCardFunctionExport),
+                        "Modules_SystemLockDown_CannotUseDotSourceWithWildCardFunctionExport",
+                        ErrorCategory.SecurityError, null);
+                    ThrowTerminatingError(errorRecord);
+                }
+            }
         }
 
         private static bool ShouldProcessScriptModule(PSModuleInfo parentModule, ref bool found)
@@ -6865,6 +6964,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 targetSessionState.Module.AddNestedModule(module);
             }
+
+            var privateDataHashTable = module.PrivateData as Hashtable;
+            if (context.Modules.IsImplicitRemotingModuleLoaded == false &&
+                privateDataHashTable != null && privateDataHashTable.ContainsKey("ImplicitRemoting"))
+            {
+                context.Modules.IsImplicitRemotingModuleLoaded = true;
+            }
         }
 
         /// <summary>
@@ -7331,6 +7437,54 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Returns the context cached ModuleTable module for import only if found and has safe language boundaries while
+        /// exporting all functions by default.
+        /// 
+        /// This protects cached trusted modules that exported all functions in a trusted context, from being re-used
+        /// in an untrusted context and thus exposing functions that were meant to be private in that context.
+        /// 
+        /// Returning false forces module import to re-import the module from file with the current context and prevent
+        /// all module functions from being exported by default.
+        /// 
+        /// Note that module loading order is important with this check when the system is *locked down with DeviceGuard*.
+        /// If a submodule that does not explicitly export any functions is imported from the command line, its useless
+        /// because no functions are exported (default fn export is explictly disallowed on locked down systems).
+        /// But if a parentmodule that imports the submodule is then imported, it will get the useless version of the
+        /// module from the ModuleTable and the parent module will not work.
+        ///   $mSub = import-module SubModule  # No functions exported, useless
+        ///   $mParent = import-module ParentModule  # This internally imports SubModule
+        ///   $mParent.DoSomething  # This will likely be broken because SubModule functions are not accessible
+        /// But this is not a realistic scenario because SubModule is useless with DeviceGuard lock down and must explicitly
+        /// export its functions to become useful, at which point this check is no longer in effect and there is no issue.
+        ///   $mSub = import-module SubModule  # Explictly exports functions, useful
+        ///   $mParent = import-module ParentModule  # This internally imports SubModule
+        ///   $mParent.DoSomething  # This works because SubModule functions are exported and accessible
+        /// </summary>
+        /// <param name="key">Key</param>
+        /// <param name="moduleInfo">PSModuleInfo</param>
+        /// <param name="toRemove">True if module item is to be removed</param>
+        /// <returns>True if module found in table and is safe to use</returns>
+        internal bool TryGetFromModuleTable(string key, out PSModuleInfo moduleInfo, bool toRemove = false)
+        {
+            var foundModule = Context.Modules.ModuleTable.TryGetValue(key, out moduleInfo);
+
+            // Check for unsafe language modes between module load context and current context.
+            // But only for script modules that exported all functions in a trusted (FL) context.
+            if (foundModule &&
+                !toRemove &&
+                moduleInfo.ModuleType == ModuleType.Script &&
+                Context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                moduleInfo.LanguageMode == PSLanguageMode.FullLanguage &&
+                moduleInfo.ModuleAutoExportsAllFunctions)
+            {
+                moduleInfo = null;
+                return false;
+            }
+
+            return foundModule;
         }
     } // end ModuleCmdletBase
 

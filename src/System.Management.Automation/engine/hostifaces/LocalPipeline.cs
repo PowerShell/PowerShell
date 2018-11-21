@@ -420,13 +420,6 @@ namespace System.Management.Automation.Runspaces
                             finally
                             {
                                 this.LocalRunspace.ExecutionContext.EngineHostInterface.SetShouldExit(exitCode);
-
-                                // close the remote runspaces available
-                                /*foreach (RemoteRunspaceInfo remoteRunspaceInfo in
-                                    this.LocalRunspace.RunspaceRepository.Runspaces)
-                                {
-                                    remoteRunspaceInfo.RemoteRunspace.CloseAsync();
-                                }*/
                             }
                         }
                     }
@@ -854,7 +847,12 @@ namespace System.Management.Automation.Runspaces
                         try
                         {
                             CommandOrigin commandOrigin = command.CommandOrigin;
-                            if (IsNested)
+
+                            // Do not set command origin to internal if this is a script debugger originated command (which always
+                            // runs nested commands).  This prevents the script debugger command line from seeing private commands.
+                            if (IsNested &&
+                                !LocalRunspace.InNestedPrompt &&
+                                !((LocalRunspace.Debugger != null) && (LocalRunspace.Debugger.InBreakpoint)))
                             {
                                 commandOrigin = CommandOrigin.Internal;
                             }

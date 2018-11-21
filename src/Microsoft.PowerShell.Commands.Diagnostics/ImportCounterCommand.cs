@@ -511,9 +511,9 @@ namespace Microsoft.PowerShell.Commands
                 WriteVerbose(fileName);
                 string curExtension = System.IO.Path.GetExtension(fileName);
 
-                if (!curExtension.Equals(".blg", StringComparison.CurrentCultureIgnoreCase)
-                    && !curExtension.Equals(".csv", StringComparison.CurrentCultureIgnoreCase)
-                    && !curExtension.Equals(".tsv", StringComparison.CurrentCultureIgnoreCase))
+                if (!curExtension.Equals(".blg", StringComparison.OrdinalIgnoreCase)
+                    && !curExtension.Equals(".csv", StringComparison.OrdinalIgnoreCase)
+                    && !curExtension.Equals(".tsv", StringComparison.OrdinalIgnoreCase))
                 {
                     string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterNotALogFile"), fileName);
                     Exception exc = new Exception(msg);
@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                if (!curExtension.Equals(firstExt, StringComparison.CurrentCultureIgnoreCase))
+                if (!curExtension.Equals(firstExt, StringComparison.OrdinalIgnoreCase))
                 {
                     string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterNoMixedLogTypes"), fileName);
                     Exception exc = new Exception(msg);
@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (firstExt.Equals(".blg", StringComparison.CurrentCultureIgnoreCase))
+            if (firstExt.Equals(".blg", StringComparison.OrdinalIgnoreCase))
             {
                 if (_resolvedPaths.Count > 32)
                 {

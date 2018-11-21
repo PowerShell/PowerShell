@@ -88,6 +88,10 @@ namespace System.Management.Automation
                                         source: EngineSource,
                                         isEnabled: false),
                 */
+                new ExperimentalFeature(name: "PSImplicitRemotingBatching",
+                                        description: "Batch implicit remoting proxy commands to improve performance",
+                                        source: EngineSource,
+                                        isEnabled: false)
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

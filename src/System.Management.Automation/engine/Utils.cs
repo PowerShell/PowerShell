@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Reflection;
 using Microsoft.PowerShell.Commands;
@@ -900,39 +902,6 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static void NativeEnumerateDirectory(string directory, out List<string> directories, out List<string> files)
-        {
-            IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-            NativeMethods.WIN32_FIND_DATA findData;
-
-            files = new List<string>();
-            directories = new List<string>();
-
-            IntPtr findHandle;
-
-            findHandle = NativeMethods.FindFirstFile(directory + "\\*", out findData);
-            if (findHandle != INVALID_HANDLE_VALUE)
-            {
-                do
-                {
-                    if ((findData.dwFileAttributes & NativeMethods.FileAttributes.Directory) != 0)
-                    {
-                        if ((!String.Equals(".", findData.cFileName, StringComparison.OrdinalIgnoreCase)) &&
-                            (!String.Equals("..", findData.cFileName, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            directories.Add(directory + "\\" + findData.cFileName);
-                        }
-                    }
-                    else
-                    {
-                        files.Add(directory + "\\" + findData.cFileName);
-                    }
-                }
-                while (NativeMethods.FindNextFile(findHandle, out findData));
-                NativeMethods.FindClose(findHandle);
-            }
-        }
-
         internal static bool IsReservedDeviceName(string destinationPath)
         {
 #if !UNIX
@@ -1359,7 +1328,445 @@ namespace System.Management.Automation
             return obj != null && Marshal.IsComObject(obj);
 #endif
         }
+
+        /// <summary>
+        /// EnforceSystemLockDownLanguageMode
+        ///     FullLangauge        ->  ConstrainedLanguage
+        ///     RestrictedLanguage  ->  NoLanguage
+        ///     ConstrainedLanguage ->  ConstrainedLanguage
+        ///     NoLanguage          ->  NoLanguage
+        /// </summary>
+        /// <param name="context">ExecutionContext</param>
+        /// <returns>Previous language mode or null for no language mode change</returns>
+        internal static PSLanguageMode? EnforceSystemLockDownLanguageMode(ExecutionContext context)
+        {
+            PSLanguageMode? oldMode = null;
+
+            if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
+            {
+                switch (context.LanguageMode)
+                {
+                    case PSLanguageMode.FullLanguage:
+                        oldMode = context.LanguageMode;
+                        context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                        break;
+
+                    case PSLanguageMode.RestrictedLanguage:
+                        oldMode = context.LanguageMode;
+                        context.LanguageMode = PSLanguageMode.NoLanguage;
+                        break;
+
+                    case PSLanguageMode.ConstrainedLanguage:
+                    case PSLanguageMode.NoLanguage:
+                        break;
+
+                    default:
+                        Diagnostics.Assert(false, "Unexpected PSLanguageMode");
+                        oldMode = context.LanguageMode;
+                        context.LanguageMode = PSLanguageMode.NoLanguage;
+                        break;
+                }
+            }
+
+            return oldMode;
+        }
+
+        #region Implicit Remoting Batching
+
+        // Commands allowed to run on target remote session along with implicit remote commands
+        private static readonly HashSet<string> AllowedCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "ForEach-Object",
+            "Measure-Command",
+            "Measure-Object",
+            "Sort-Object",
+            "Where-Object"
+        };
+
+        // Determines if the typed command invokes implicit remoting module proxy functions in such
+        // a way as to allow simple batching, to reduce round trips between client and server sessions.
+        // Requirements:
+        //  a. All commands must be implicit remoting module proxy commands targeted to the same remote session
+        //  b. Except for *allowed* commands that can be safely run on remote session rather than client session
+        //  c. Commands must be in a simple pipeline
+        internal static bool TryRunAsImplicitBatch(string command, Runspace runspace)
+        {
+            using (var ps = System.Management.Automation.PowerShell.Create())
+            {
+                ps.Runspace = runspace;
+
+                try
+                {
+                    var scriptBlock = ScriptBlock.Create(command);
+                    var scriptBlockAst = scriptBlock.Ast as ScriptBlockAst;
+                    if (scriptBlockAst == null)
+                    {
+                        return false;
+                    }
+
+                    // Make sure that this is a simple pipeline
+                    string errorId;
+                    string errorMsg;
+                    scriptBlockAst.GetSimplePipeline(true, out errorId, out errorMsg);
+                    if (errorId != null)
+                    {
+                        WriteVerbose(ps, ParserStrings.ImplicitRemotingPipelineBatchingNotASimplePipeline);
+                        return false;
+                    }
+
+                    // Run checker
+                    var checker = new PipelineForBatchingChecker { ScriptBeingConverted = scriptBlockAst };
+                    scriptBlockAst.InternalVisit(checker);
+
+                    // If this is just a single command, there is no point in batching it
+                    if (checker.Commands.Count < 2)
+                    {
+                        return false;
+                    }
+
+                    // We have a valid batching candidate
+
+                    // Check commands
+                    if (!TryGetCommandInfoList(ps, checker.Commands, out Collection<CommandInfo> cmdInfoList))
+                    {
+                        return false;
+                    }
+
+                    // All command modules must be implicit remoting modules from the same PSSession
+                    var success = true;
+                    var psSessionId = Guid.Empty;
+                    foreach (var cmdInfo in cmdInfoList)
+                    {
+                        // Check for allowed command
+                        string cmdName = (cmdInfo is AliasInfo aliasInfo) ? aliasInfo.ReferencedCommand.Name : cmdInfo.Name;
+                        if (AllowedCommands.Contains(cmdName))
+                        {
+                            continue;
+                        }
+
+                        // Commands must be from implicit remoting module
+                        if (cmdInfo.Module == null || string.IsNullOrEmpty(cmdInfo.ModuleName))
+                        {
+                            WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
+                            success = false;
+                            break;
+                        }
+
+                        // Commands must be from modules imported into the same remote session
+                        if (cmdInfo.Module.PrivateData is System.Collections.Hashtable privateData)
+                        {
+                            var sessionIdString = privateData["ImplicitSessionId"] as string;
+                            if (string.IsNullOrEmpty(sessionIdString))
+                            {
+                                WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
+                                success = false;
+                                break;
+                            }
+
+                            var sessionId = new Guid(sessionIdString);
+                            if (psSessionId == Guid.Empty)
+                            {
+                                psSessionId = sessionId;
+                            }
+                            else if (psSessionId != sessionId)
+                            {
+                                WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingWrongSession, cmdInfo.Name));
+                                success = false;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingNotImplicitCommand, cmdInfo.Name));
+                            success = false;
+                            break;
+                        }
+                    }
+
+                    if (success)
+                    {
+                        //
+                        // Invoke command pipeline as entire pipeline on remote session
+                        //
+
+                        // Update script to declare variables via Using keyword
+                        if (checker.ValidVariables.Count > 0)
+                        {
+                            foreach (var variableName in checker.ValidVariables)
+                            {
+                                command = command.Replace(variableName, ("Using:" + variableName), StringComparison.OrdinalIgnoreCase);
+                            }
+
+                            scriptBlock = ScriptBlock.Create(command);
+                        }
+
+                        // Retrieve the PSSession runspace in which to run the batch script on
+                        ps.Commands.Clear();
+                        ps.Commands.AddCommand("Get-PSSession").AddParameter("InstanceId", psSessionId);
+                        var psSession = ps.Invoke<System.Management.Automation.Runspaces.PSSession>().FirstOrDefault();
+                        if (psSession == null || (ps.Streams.Error.Count > 0) || (psSession.Availability != RunspaceAvailability.Available))
+                        {
+                            WriteVerbose(ps, ParserStrings.ImplicitRemotingPipelineBatchingNoPSSession);
+                            return false;
+                        }
+
+                        WriteVerbose(ps, ParserStrings.ImplicitRemotingPipelineBatchingSuccess);
+
+                        // Create and invoke implicit remoting command pipeline
+                        ps.Commands.Clear();
+                        ps.AddCommand("Invoke-Command").AddParameter("Session", psSession).AddParameter("ScriptBlock", scriptBlock).AddParameter("HideComputerName", true)
+                            .AddCommand("Out-Default");
+                        foreach (var cmd in ps.Commands.Commands)
+                        {
+                            cmd.MergeMyResults(PipelineResultTypes.Error, PipelineResultTypes.Output);
+                        }
+
+                        try
+                        {
+                            ps.Invoke();
+                        }
+                        catch (Exception ex)
+                        {
+                            var errorRecord = new ErrorRecord(ex, "ImplicitRemotingBatchExecutionTerminatingError", ErrorCategory.InvalidOperation, null);
+
+                            ps.Commands.Clear();
+                            ps.AddCommand("Write-Error").AddParameter("InputObject", errorRecord).Invoke();
+                        }
+
+                        return true;
+                    }
+                }
+                catch (ImplicitRemotingBatchingNotSupportedException ex)
+                {
+                    WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, "{0} : {1}", ex.Message, ex.ErrorId));
+                }
+                catch (Exception ex)
+                {
+                    WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingException, ex.Message));
+                }
+            }
+            
+            return false;
+        }
+
+        private static void WriteVerbose(PowerShell ps, string msg)
+        {
+            ps.Commands.Clear();
+            ps.AddCommand("Write-Verbose").AddParameter("Message", msg).Invoke();
+        }
+
+        private const string WhereObjectCommandAlias = "?";
+        private static bool TryGetCommandInfoList(PowerShell ps, HashSet<string> commandNames, out Collection<CommandInfo> cmdInfoList)
+        {
+            if (commandNames.Count == 0)
+            {
+                cmdInfoList = null;
+                return false;
+            }
+
+            bool specialCaseWhereCommandAlias = commandNames.Contains(WhereObjectCommandAlias);
+            if (specialCaseWhereCommandAlias)
+            {
+                commandNames.Remove(WhereObjectCommandAlias);
+            }
+
+            // Use Get-Command to collect CommandInfo from candidate commands, with correct precedence so
+            // that implicit remoting proxy commands will appear when available.
+            ps.Commands.Clear();
+            ps.Commands.AddCommand("Get-Command").AddParameter("Name", commandNames.ToArray());
+            cmdInfoList = ps.Invoke<CommandInfo>();
+            if (ps.Streams.Error.Count > 0)
+            {
+                return false;
+            }
+
+            // For special case '?' alias don't use Get-Command to retrieve command info, and instead
+            // use the GetCommand API.
+            if (specialCaseWhereCommandAlias)
+            {
+                var cmdInfo = ps.Runspace.ExecutionContext.SessionState.InvokeCommand.GetCommand(WhereObjectCommandAlias, CommandTypes.Alias);
+                if (cmdInfo == null)
+                {
+                    return false;
+                }
+                cmdInfoList.Add(cmdInfo);
+            }
+
+            return true;
+        }
+
+        #endregion
     }
+
+    #region ImplicitRemotingBatching
+
+    // A visitor to walk an AST and validate that it is a candidate for implicit remoting batching.
+    // Based on ScriptBlockToPowerShellChecker.
+    internal class PipelineForBatchingChecker : AstVisitor
+    {
+        internal readonly HashSet<string> ValidVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        internal readonly HashSet<string> Commands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        internal ScriptBlockAst ScriptBeingConverted { get; set; }
+
+        public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
+        {
+            if (!variableExpressionAst.VariablePath.IsAnyLocal())
+            {
+                ThrowError(
+                        new ImplicitRemotingBatchingNotSupportedException(
+                            "VariableTypeNotSupported"),
+                        variableExpressionAst);
+            }
+
+            if (variableExpressionAst.VariablePath.UnqualifiedPath != "_")
+            {
+                ValidVariables.Add(variableExpressionAst.VariablePath.UnqualifiedPath);
+            }
+
+            return AstVisitAction.Continue;
+        }
+
+        public override AstVisitAction VisitPipeline(PipelineAst pipelineAst)
+        {
+            if (pipelineAst.PipelineElements[0] is CommandExpressionAst)
+            {
+                // If the first element is a CommandExpression, this pipeline should be the value
+                // of a parameter. We want to avoid a scriptblock that contains only a pure expression.
+                // The check "pipelineAst.Parent.Parent == ScriptBeingConverted" guarantees we throw
+                // error on that kind of scriptblock.
+
+                // Disallow pure expressions at the "top" level, but allow them otherwise.
+                // We want to catch:
+                //     1 | echo
+                // But we don't want to error out on:
+                //     echo $(1)
+                // See the comment in VisitCommand on why it's safe to check Parent.Parent, we
+                // know that we have at least:
+                //     * a NamedBlockAst (the end block)
+                //     * a ScriptBlockAst (the ast we're comparing to)
+                if (pipelineAst.GetPureExpression() == null || pipelineAst.Parent.Parent == ScriptBeingConverted)
+                {
+                    ThrowError(
+                        new ImplicitRemotingBatchingNotSupportedException(
+                            "PipelineStartingWithExpressionNotSupported"),
+                        pipelineAst);
+                }
+            }
+
+            return AstVisitAction.Continue;
+        }
+
+        public override AstVisitAction VisitCommand(CommandAst commandAst)
+        {
+            if (commandAst.InvocationOperator == TokenKind.Dot)
+            {
+                ThrowError(
+                    new ImplicitRemotingBatchingNotSupportedException(
+                        "DotSourcingNotSupported"),
+                    commandAst);
+            }
+
+            /*
+            // Up front checking ensures that we have a simple script block,
+            // so we can safely assume that the parents are:
+            //     * a PipelineAst
+            //     * a NamedBlockAst (the end block)
+            //     * a ScriptBlockAst (the ast we're comparing to)
+            // If that isn't the case, the conversion isn't allowed.  It
+            // is also safe to assume that we have at least 3 parents, a script block can't be simpler.
+            if (commandAst.Parent.Parent.Parent != ScriptBeingConverted)
+            {
+                ThrowError(
+                    new ImplicitRemotingBatchingNotSupportedException(
+                        "CantConvertWithCommandInvocations not supported"),
+                    commandAst);
+            }
+            */
+
+            if (commandAst.CommandElements[0] is ScriptBlockExpressionAst)
+            {
+                ThrowError(
+                    new ImplicitRemotingBatchingNotSupportedException(
+                        "ScriptBlockInvocationNotSupported"),
+                    commandAst);
+            }
+
+            var commandName = commandAst.GetCommandName();
+            if (commandName != null)
+            {
+                Commands.Add(commandName);
+            }
+
+            return AstVisitAction.Continue;
+        }
+
+        public override AstVisitAction VisitMergingRedirection(MergingRedirectionAst redirectionAst)
+        {
+            if (redirectionAst.ToStream != RedirectionStream.Output)
+            {
+                ThrowError(
+                    new ImplicitRemotingBatchingNotSupportedException(
+                        "MergeRedirectionNotSupported"),
+                    redirectionAst);
+            }
+
+            return AstVisitAction.Continue;
+        }
+
+        public override AstVisitAction VisitFileRedirection(FileRedirectionAst redirectionAst)
+        {
+            ThrowError(
+                new ImplicitRemotingBatchingNotSupportedException(
+                    "FileRedirectionNotSupported"),
+                redirectionAst);
+
+            return AstVisitAction.Continue;
+        }
+
+        /*
+        public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst)
+        {
+            ThrowError(new ImplicitRemotingBatchingNotSupportedException(
+                           "ScriptBlocks not supported"),
+                       scriptBlockExpressionAst);
+
+            return AstVisitAction.SkipChildren;
+        }
+        */
+
+        public override AstVisitAction VisitUsingExpression(UsingExpressionAst usingExpressionAst)
+        {
+            // Using expressions are not expected in Implicit remoting commands.
+            ThrowError(new ImplicitRemotingBatchingNotSupportedException(
+                "UsingExpressionNotSupported"),
+                usingExpressionAst);
+
+            return AstVisitAction.SkipChildren;
+        }
+
+        internal static void ThrowError(ImplicitRemotingBatchingNotSupportedException ex, Ast ast)
+        {
+            InterpreterError.UpdateExceptionErrorRecordPosition(ex, ast.Extent);
+            throw ex;
+        }
+    }
+
+    internal class ImplicitRemotingBatchingNotSupportedException : Exception
+    {
+        internal string ErrorId
+        {
+            get;
+            private set;
+        }
+
+        internal ImplicitRemotingBatchingNotSupportedException(string errorId) : base(
+            ParserStrings.ImplicitRemotingPipelineBatchingNotSupported)
+        {
+            ErrorId = errorId;
+        }
+    }
+
+    #endregion
 }
 
 namespace System.Management.Automation.Internal
@@ -1404,20 +1811,81 @@ namespace System.Management.Automation.Internal
                 fieldInfo.SetValue(null, value);
             }
         }
+
+        /// <summary>
+        /// Test hook used to test implicit remoting batching.  A local runspace must be provided that has imported a 
+        /// remote session, i.e., has run the Import-PSSession cmdlet.  This hook will return true if the provided commandPipeline
+        /// is successfully batched and run in the remote session, and false if it is rejected for batching.
+        /// </summary>
+        /// <param name="commandPipeline">Command pipeline to test</param>
+        /// <param name="runspace">Runspace with imported remote session</param>
+        /// <returns>True if commandPipeline is batched successfully</returns>
+        public static bool TestImplicitRemotingBatching(string commandPipeline, System.Management.Automation.Runspaces.Runspace runspace)
+        {
+            return Utils.TryRunAsImplicitBatch(commandPipeline, runspace);
+        }
     }
 
     /// <summary>
-    /// An bounded stack based on a linked list.
+    /// Provides undo/redo functionality by using 2 instances of <seealso cref="BoundedStack{T}"/>.
+    /// </summary>
+    internal class HistoryStack<T>
+    {
+        private readonly BoundedStack<T> _boundedUndoStack;
+        private readonly BoundedStack<T> _boundedRedoStack;
+
+        internal HistoryStack(uint capacity)
+        {
+            _boundedUndoStack = new BoundedStack<T>(capacity);
+            _boundedRedoStack = new BoundedStack<T>(capacity);
+        }
+
+        internal void Push(T item)
+        {
+            _boundedUndoStack.Push(item);
+            if (RedoCount >= 0)
+            {
+                _boundedRedoStack.Clear();
+            }
+        }
+
+        /// <summary>
+        /// Handles bounded history stacks by pushing the current item to the redoStack and returning the item from the popped undoStack.
+        /// </summary>
+        internal T Undo(T currentItem)
+        {
+            T previousItem = _boundedUndoStack.Pop();
+            _boundedRedoStack.Push(currentItem);
+            return previousItem;
+        }
+
+        /// <summary>
+        /// Handles bounded history stacks by pushing the current item to the undoStack and returning the item from the popped redoStack.
+        /// </summary>
+        internal T Redo(T currentItem)
+        {
+            var nextItem = _boundedRedoStack.Pop();
+            _boundedUndoStack.Push(currentItem);
+            return nextItem;
+        }
+
+        internal int UndoCount => _boundedUndoStack.Count;
+
+        internal int RedoCount => _boundedRedoStack.Count;
+    }
+
+    /// <summary>
+    /// A bounded stack based on a linked list.
     /// </summary>
     internal class BoundedStack<T> : LinkedList<T>
     {
-        private readonly int _capacity;
+        private readonly uint _capacity;
 
         /// <summary>
         /// Lazy initialisation, i.e. it sets only its limit but does not allocate the memory for the given capacity.
         /// </summary>
         /// <param name="capacity"></param>
-        internal BoundedStack(int capacity)
+        internal BoundedStack(uint capacity)
         {
             _capacity = capacity;
         }
@@ -1430,7 +1898,7 @@ namespace System.Management.Automation.Internal
         {
             this.AddFirst(item);
 
-            if(this.Count > _capacity)
+            if (this.Count > _capacity)
             {
                 this.RemoveLast();
             }
@@ -1442,6 +1910,11 @@ namespace System.Management.Automation.Internal
         /// <returns></returns>
         internal T Pop()
         {
+            if (this.First == null)
+            {
+                throw new InvalidOperationException(SessionStateStrings.BoundedStackIsEmpty);
+            }
+
             var item = this.First.Value;
             try
             {

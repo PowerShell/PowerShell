@@ -1,0 +1,115 @@
+resources:
+- repo: self
+  clean: true
+jobs:
+
+- job: BuildJob
+  displayName: Build
+  condition: succeeded()
+  pool: Hosted Ubuntu 1604
+  strategy:
+    matrix:
+      deb packages:
+        build: ubuntu.14.04-no-appimage
+      rpm packages:
+        build: centos.7
+      fxdependent package:
+        build: fxdependent
+  steps:
+
+  - powershell: |
+      tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTag)
+    displayName: 'Run setReleaseTag.ps1'
+
+  - powershell: |
+      Write-Verbose -Verbose "$(build)"
+
+      if ('$(build)' -eq 'fxdependent' -and '$(ReleaseTag)' -match '6.0.*')
+      {
+          $vstsCommandString = "vso[task.setvariable variable=SkipFxDependent]true"
+      }
+      else
+      {
+          $vstsCommandString = "vso[task.setvariable variable=SkipFxDependent]false"
+      }
+
+      Write-Verbose -Message "$vstsCommandString " -Verbose
+      Write-Host -Object "##$vstsCommandString"
+    displayName: 'Skip FxDependent for PS v6.0.*'
+
+  - powershell: |
+      import-module ./build.psm1
+      Sync-PSTags -AddRemoteIfMissing
+    displayName: SyncTags
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+  - powershell: |
+      tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTag) -Name '$(build)'
+    displayName: 'Build and package'
+    condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
+
+- job: UploadJob
+  displayName: Upload to Azure
+  dependsOn: BuildJob
+  condition: succeeded()
+  pool: Package ES CodeHub Lab E
+  steps:
+
+  - powershell: |
+      ./tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTag)
+    displayName: 'Set ReleaseTag'
+
+  - powershell: |
+      if ($env:build -eq 'fxdependent' -and $env:ReleaseTag -match '6.0.*')
+      {
+          $vstsCommandString = "vso[task.setvariable variable=SkipFxDependent]true"
+          Write-Host -Object $vstsCommandString
+      }
+    displayName: 'Check if multiplier is applicable '
+
+  - powershell: |
+      $azureVersion = $env:ReleaseTag.ToLowerInvariant() -replace '\.', '-'
+      $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: 'Set Version for Blob Storage'
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download Deb Artifacts'
+    inputs:
+      downloadType: specific
+      itemPattern: '**/*.deb'
+      downloadPath: '$(System.ArtifactsDirectory)\finished'
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download tar.gz Artifacts copy'
+    inputs:
+      downloadType: specific
+      itemPattern: '**/*.tar.gz'
+      downloadPath: '$(System.ArtifactsDirectory)\finished'
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download rpm Artifacts copy'
+    inputs:
+      downloadType: specific
+      itemPattern: '**/*.rpm'
+      downloadPath: '$(System.ArtifactsDirectory)\rpm'
+
+  - task: AzureFileCopy@1
+    displayName: 'Upload to azure deb and tar.gz'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\finished\release'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+
+  - task: AzureFileCopy@1
+    displayName: 'Upload to azure rpm'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\rpm\release'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)-unsigned'

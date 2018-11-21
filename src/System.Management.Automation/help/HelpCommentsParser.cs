@@ -1154,10 +1154,10 @@ namespace System.Management.Automation
                 //     $sb = { }
                 //     set-item function:foo $sb
                 //     help foo
-                startTokenIndex = savedStartIndex = FirstTokenInExtent(tokens, ast.Extent) - 1;
+                startTokenIndex = savedStartIndex = FirstTokenInExtent(tokens, ast.Extent) + 1;
                 lastTokenIndex = LastTokenInExtent(tokens, ast.Extent, startTokenIndex);
 
-                Diagnostics.Assert(tokens[startTokenIndex + 1].Kind == TokenKind.LCurly,
+                Diagnostics.Assert(tokens[startTokenIndex - 1].Kind == TokenKind.LCurly,
                     "Unexpected first token in script block");
                 Diagnostics.Assert(tokens[lastTokenIndex].Kind == TokenKind.RCurly,
                     "Unexpected last token in script block");

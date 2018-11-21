@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes'?>
+<!-- See definitions in C:\Windows\Microsoft.NET\Framework\v4.0.30319\CLR-ETW.man  for .NET events -->
+<!-- Created by Alois Kraus. Free for public use.
+   The JIT time is determined by the MethodJitStart event and the directly on this thread following MethodLoadUnload event which signals when the JIT compilation for this
+   method is complete.
+   Unfortunately the Region sums as it is currently in WPA it will sum not the JIT times of all threads but if e.g. 2 threads JIT for one second each then the WPA sum accross all threads will be only 1s.
+   WPA seems to sum on a timeline only the active time accross all threads and uses this as sum which is not a good measure to compare results. This should be changed although this logic might
+   be well suited for regions where each region signals a bottleneck on which others have to wait e.g. during boot.
+-->
+<InstrumentationManifest>
+  <Instrumentation>
+    <Regions>
+      <RegionRoot Guid="{d8d639a0-1f4c-45fb-976a-0000DEADBEEF}" Name="JIT" FriendlyName="JIT Activity">
+        <Region Guid="{d8d639a1-2f4c-45fb-976a-100000000101}" Name="JITs" FriendlyName="JITs">
+          <Region Guid="{d8d639a1-3f4c-45fb-976a-000000000001}" Name="Method" FriendlyName="Method">
+            <Start>
+              <Event Provider="{e13c0d23-ccbc-4e12-931b-d9cc2eee27e4}" Id="145" Version="1"/> <!-- MethodJittingStarted_V1 -->
+            </Start>
+            <Stop>
+              <Event Provider="{e13c0d23-ccbc-4e12-931b-d9cc2eee27e4}" Id="143" Version="1"/> <!-- MethodLoadUnloadVerbose_V1 -->
+            </Stop>
+            <Match>
+              <Event TID="true"/>
+            </Match>
+            <Naming>
+              <PayloadBased NameField="MethodNamespace" />
+            </Naming>
+          </Region>
+        </Region>
+      </RegionRoot>
+    </Regions>
+  </Instrumentation>
+</InstrumentationManifest>
+

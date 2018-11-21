@@ -61,6 +61,9 @@ namespace System.Management.Automation
             _helpFilePath = helpFile;
             _PSSnapin = PSSnapin;
             _options = ScopedItemOptions.ReadOnly;
+
+            // CmdletInfo represents cmdlets exposed from assemblies.  On a locked down system, only trusted
+            // assemblies will be loaded.  Therefore, a CmdletInfo instance will always be trusted.
             this.DefiningLanguageMode = PSLanguageMode.FullLanguage;
         }
 

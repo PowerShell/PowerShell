@@ -497,12 +497,6 @@ namespace System.Management.Automation
             return Unix.NativeMethods.IsSymLink(fileInfo.FullName);
         }
 
-        internal static string NonWindowsInternalGetTarget(SafeFileHandle handle)
-        {
-            // SafeHandle is a Windows concept.  Use the string version instead.
-            throw new PlatformNotSupportedException();
-        }
-
         internal static string NonWindowsInternalGetTarget(string path)
         {
             return Unix.NativeMethods.FollowSymLink(path);

@@ -433,7 +433,13 @@ namespace System.Management.Automation
 
             s_pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
 
-            string relativePath = GetDriveRootRelativePathFromPSPath(path, context, true, out drive, out providerInstance);
+            string relativePath =
+                GetDriveRootRelativePathFromPSPath(
+                    path,
+                    context,
+                    !context.SuppressWildcardExpansion,
+                    out drive,
+                    out providerInstance);
 
             Dbg.Diagnostics.Assert(
                 drive != null,
@@ -1436,8 +1442,8 @@ namespace System.Management.Automation
         internal static bool IsSingleFileSystemAbsolutePath(string path)
         {
 #if UNIX
-            return path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal)
-                || path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal);
+            return path.StartsWith(StringLiterals.DefaultPathSeparator)
+                || path.StartsWith(StringLiterals.AlternatePathSeparator);
 #else
             return false;
 #endif
@@ -1592,7 +1598,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                int index = path.IndexOf(":", StringComparison.CurrentCulture);
+                int index = path.IndexOf(":", StringComparison.Ordinal);
 
                 if (index == -1)
                 {
@@ -1854,7 +1860,7 @@ namespace System.Management.Automation
                     string normalizedRoot = _sessionState.Drive.Current.Root.Replace(
                         StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
-                    if (normalizedRoot.IndexOf(":", StringComparison.CurrentCulture) >= 0)
+                    if (normalizedRoot.IndexOf(":", StringComparison.Ordinal) >= 0)
                     {
                         string normalizedPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
                         if (normalizedPath.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase))
@@ -2225,8 +2231,8 @@ namespace System.Management.Automation
                         // the loop.
                         break;
                     }
-                } // while
-            } // if (path.StartsWith(@"\", StringComparison.CurrentCulture))
+                }
+            }
 
             // If more relative path remains add that to
             // the known absolute path
@@ -2898,7 +2904,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                        if (path.StartsWith(StringLiterals.DefaultPathSeparator))
                         {
                             formatString = "{0}:{1}";
                         }
@@ -3088,8 +3094,8 @@ namespace System.Management.Automation
                     // Check if the path begins with "\" or "/" (UNC Path or Path in Unix).
                     // Ignore if the path resolves to a drive path, this will happen when path is equal to "\" or "/".
                     // Drive path still need formatting, so treat them as relative.
-                    if (path.Length > 1 && (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) ||
-                        path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal)))
+                    if (path.Length > 1 && (path.StartsWith(StringLiterals.DefaultPathSeparator) ||
+                        path.StartsWith(StringLiterals.AlternatePathSeparator)))
                     {
                         treatAsRelative = false;
                     }
@@ -3109,7 +3115,7 @@ namespace System.Management.Automation
                 if (drive.VolumeSeparatedByColon)
                 {
                     formatString = "{0}:" + StringLiterals.DefaultPathSeparator + "{1}";
-                    if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+                    if (path.StartsWith(StringLiterals.DefaultPathSeparator))
                     {
                         formatString = "{0}:{1}";
                     }

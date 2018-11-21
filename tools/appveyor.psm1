@@ -91,20 +91,46 @@ function Add-UserToGroup
 Function Test-DailyBuild
 {
     $trueString = 'True'
-    if(($env:PS_DAILY_BUILD -eq $trueString) -or ($env:APPVEYOR_SCHEDULED_BUILD -eq $trueString) -or ($env:APPVEYOR_REPO_TAG_NAME))
+    # PS_DAILY_BUILD says that we have previously determined that this is a daily build
+    # APPVEYOR_SCHEDULED_BUILD is True means that we are in an AppVeyor Scheduled build
+    # APPVEYOR_REPO_TAG_NAME means we are building a tag in AppVeyor
+    # BUILD_REASON is Schedule means we are in a VSTS Scheduled build
+    if(($env:PS_DAILY_BUILD -eq $trueString) -or ($env:APPVEYOR_SCHEDULED_BUILD -eq $trueString) -or ($env:APPVEYOR_REPO_TAG_NAME) -or $env:BUILD_REASON -eq 'Schedule')
     {
         return $true
     }
 
     # if [Feature] is in the commit message,
     # Run Daily tests
-    if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '\[feature\]')
+    $commitMessage = Get-CommitMessage
+    Write-Verbose "commitMessage: $commitMessage" -verbose
+
+    if($commitMessage -match '\[feature\]' -or $env:FORCE_FEATURE -eq 'True')
     {
-        Set-AppveyorBuildVariable -Name PS_DAILY_BUILD -Value $trueString
+        Set-BuildVariable -Name PS_DAILY_BUILD -Value $trueString
         return $true
     }
 
     return $false
+}
+
+# Returns the commit message for the current build
+function Get-CommitMessage
+{
+    if ($env:APPVEYOR_REPO_COMMIT_MESSAGE)
+    {
+        return $env:APPVEYOR_REPO_COMMIT_MESSAGE
+    }
+    elseif ($env:BUILD_SOURCEVERSIONMESSAGE -match 'Merge\s*([0-9A-F]*)')
+    {
+        # We are in VSTS and have a commit ID in the Source Version Message
+        $commitId = $Matches[1]
+        return &git log --format=%B -n 1 $commitId
+    }
+    else
+    {
+        Write-Log "Unknown BUILD_SOURCEVERSIONMESSAGE format '$env:BUILD_SOURCEVERSIONMESSAGE'" -Verbose
+    }
 }
 
 # Sets a build variable
@@ -205,28 +231,34 @@ function Invoke-AppVeyorInstall
     }
 
     if(Test-DailyBuild){
-        $buildName = "[Daily]"
+        if($env:APPVEYOR)
+        {
+            $buildName = "[Daily]"
 
-        # Add daily to title if it's not already there
-        # It can be there already for rerun requests
-        if($env:APPVEYOR_PULL_REQUEST_TITLE -and $env:APPVEYOR_PULL_REQUEST_TITLE  -notmatch '^\[Daily\]')
-        {
-            $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
-        }
-        elseif($env:APPVEYOR_PULL_REQUEST_TITLE)
-        {
-            $buildName = $env:APPVEYOR_PULL_REQUEST_TITLE
-        }
-        elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
-        {
-            $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
-        }
-        else
-        {
-            $buildName = $env:APPVEYOR_REPO_COMMIT_MESSAGE
-        }
+            # Add daily to title if it's not already there
+            # It can be there already for rerun requests
+            if($env:APPVEYOR_PULL_REQUEST_TITLE -and $env:APPVEYOR_PULL_REQUEST_TITLE  -notmatch '^\[Daily\]')
+            {
+                $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
+            }
+            elseif($env:APPVEYOR_PULL_REQUEST_TITLE)
+            {
+                $buildName = $env:APPVEYOR_PULL_REQUEST_TITLE
+            }
+            elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
+            {
+                $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
+            }
+            else
+            {
+                $buildName = $env:APPVEYOR_REPO_COMMIT_MESSAGE
+            }
 
-        Update-AppveyorBuild -message $buildName
+            Update-AppveyorBuild -message $buildName
+        }
+        elseif ($env:BUILD_REASON -eq 'Schedule') {
+            Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
+        }
     }
 
     if ($env:APPVEYOR -or $env:TF_BUILD)
@@ -467,7 +499,28 @@ function Invoke-AppVeyorAfterTest
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
-        $codeCoverageArtifacts | ForEach-Object { Push-AppveyorArtifact $_ }
+        $codeCoverageArtifacts | ForEach-Object {
+            Push-Artifact -Path $_
+        }
+    }
+}
+
+# Wrapper to push artifact
+function Push-Artifact
+{
+    param(
+        [Parameter(Mandatory)]
+        [ValidateScript({Test-Path -Path $_})]
+        $Path
+    )
+
+    if($env:Appveyor)
+    {
+        Push-AppveyorArtifact $Path
+    }
+    elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
+        # In VSTS
+        Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts;]$Path"
     }
 }
 
@@ -501,11 +554,17 @@ function Get-ReleaseTag
     $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
 
-    $releaseTag = $metadata.NextReleaseTag
+    $releaseTag = $metadata.PreviewReleaseTag
     if($env:APPVEYOR_BUILD_NUMBER)
     {
         $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-        $releaseTag = $releaseTag+'.'+$env:APPVEYOR_BUILD_NUMBER
+        $releaseTag = $releaseTag + '.' + $env:APPVEYOR_BUILD_NUMBER
+    }
+    elseif($env:BUILD_BUILID)
+    {
+        #In VSTS
+        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
+        $releaseTag = $releaseTag + '.' + $env:BUILD_BUILID
     }
 
     return $releaseTag
@@ -551,7 +610,14 @@ function Invoke-AppveyorFinish
                 $previewLabel= "daily{0}" -f $previewLabel
             }
 
-            $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
+            if ($env:TF_BUILD)
+            {
+                $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+            }
+            else
+            {
+                $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
+            }
         }
 
         # the packaging tests find the MSI package using env:PSMsiX64Path
@@ -598,14 +664,7 @@ function Invoke-AppveyorFinish
             Write-Host "Pushing $_ as Appveyor artifact"
             if(Test-Path $_)
             {
-                if($env:Appveyor)
-                {
-                    Push-AppveyorArtifact $_
-                }
-                elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
-                    # In VSTS
-                    Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts;]$_"
-                }
+                Push-Artifact -Path $_
             }
             else
             {
@@ -626,6 +685,7 @@ function Invoke-AppveyorFinish
     }
     catch {
         Write-Host -Foreground Red $_
+        Write-Host -Foreground Red $_.ScriptStackTrace
         throw $_
     }
 }

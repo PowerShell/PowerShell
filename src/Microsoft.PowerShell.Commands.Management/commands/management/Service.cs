@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
         // sort by servicename
         private static int ServiceComparison(ServiceController x, ServiceController y)
         {
-            return String.Compare(x.ServiceName, y.ServiceName, StringComparison.CurrentCultureIgnoreCase);
+            return String.Compare(x.ServiceName, y.ServiceName, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -1541,6 +1541,15 @@ namespace Microsoft.PowerShell.Commands
         internal string serviceStatus = null;
 
         /// <summary>
+        /// The following is the definition of the input parameter "Force".
+        /// This parameter is useful only when parameter "Stop" is enabled.
+        /// If "Force" is enabled, it will also stop the dependent services.
+        /// If not, it will send an error when this service has dependent ones.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Force { get; set; }
+
+        /// <summary>
         /// This is not a parameter for this cmdlet.
         /// </summary>
         //This has been shadowed from base class and removed parameter tag to fix gcm "Set-Service" -syntax
@@ -1782,31 +1791,24 @@ namespace Microsoft.PowerShell.Commands
                                     DoStartService(service);
                             }
                         }
-                        else if (Status.Equals("Stopped", StringComparison.CurrentCultureIgnoreCase))
+                        else if (Status.Equals("Stopped", StringComparison.OrdinalIgnoreCase))
                         {
                             if (!service.Status.Equals(ServiceControllerStatus.Stopped))
                             {
-                                //check for the dependent services as set-service dont have force parameter
+                                // Check for the dependent services as set-service dont have force parameter
                                 ServiceController[] dependentServices = service.DependentServices;
 
-                                if ((dependentServices != null) && (dependentServices.Length > 0))
+                                if ((!Force) && (dependentServices != null) && (dependentServices.Length > 0))
                                 {
                                     WriteNonTerminatingError(service, null, "ServiceHasDependentServicesNoForce", ServiceResources.ServiceHasDependentServicesNoForce, ErrorCategory.InvalidOperation);
                                     return;
                                 }
 
-                                ServiceController[] servicedependedon = service.ServicesDependedOn;
-
-                                if ((servicedependedon != null) && (servicedependedon.Length > 0))
-                                {
-                                    WriteNonTerminatingError(service, null, "ServiceIsDependentOnNoForce", ServiceResources.ServiceIsDependentOnNoForce, ErrorCategory.InvalidOperation);
-                                    return;
-                                }
                                 // Stop service, pass 'true' to the force parameter as we have already checked for the dependent services.
-                                DoStopService(service, force: true, waitForServiceToStop: true);
+                                DoStopService(service, Force, waitForServiceToStop: true);
                             }
                         }
-                        else if (Status.Equals("Paused", StringComparison.CurrentCultureIgnoreCase))
+                        else if (Status.Equals("Paused", StringComparison.OrdinalIgnoreCase))
                         {
                             if (!service.Status.Equals(ServiceControllerStatus.Paused))
                             {

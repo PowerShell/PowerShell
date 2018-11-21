@@ -589,7 +589,6 @@ visibleX visibleY
       10       12
 
 
-
 "@
 
             $tableOutput = $instance | Format-Table -AutoSize | Out-String

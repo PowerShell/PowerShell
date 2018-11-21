@@ -2,18 +2,10 @@
 # Licensed under the MIT License.
 Describe "Update-FormatData" -Tags "CI" {
 
-    BeforeAll {
-        $path = Join-Path -Path $TestDrive -ChildPath "outputfile.ps1xml"
-        $ps = [powershell]::Create()
-        $iss = [system.management.automation.runspaces.initialsessionstate]::CreateDefault2()
-        $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace($iss)
-        $rs.Open()
-        $ps.Runspace = $rs
+    BeforeEach {
+        $ps = [PowerShell]::Create()
     }
-    AfterAll {
-        $rs.Close()
-        $ps.Dispose()
-    }
+
     Context "Validate Update-FormatData update correctly" {
 
         It "Should not throw upon reloading previous formatting file" {
@@ -21,10 +13,48 @@ Describe "Update-FormatData" -Tags "CI" {
         }
 
         It "Should validly load formatting data" {
+            $path = Join-Path -Path $TestDrive -ChildPath "outputfile.ps1xml"
             Get-FormatData -typename System.Diagnostics.Process | Export-FormatData -Path $path
             $null = $ps.AddScript("Update-FormatData -prependPath $path")
             $ps.Invoke()
             $ps.HadErrors | Should -BeFalse
+        }
+
+        It "Update with atributes on Configuration node should be ignored" {
+            $xmlContent = @"
+    <Configuration xmlns:foo="bar">
+        <ViewDefinitions>
+            <View>
+                <Name>Test</Name>
+                <ViewSelectedBy>
+                    <TypeName>Test</TypeName>
+                </ViewSelectedBy>
+                <ListControl>
+                    <ListEntries>
+                        <ListEntry>
+                            <ListItems>
+                                <ListItem>
+                                    <PropertyName>Test</PropertyName>
+                                </ListItem>
+                            </ListItems>
+                        </ListEntry>
+                    </ListEntries>
+                </ListControl>
+            </View>
+        </ViewDefinitions>
+    </Configuration>
+"@
+            $path = "$testdrive\rootattribute.format.ps1xml"
+            Set-Content -Path $path -Value $xmlContent
+            $null = $ps.AddScript("Update-FormatData -prependPath $path")
+            $ps.Invoke()
+            $ps.HadErrors | Should -BeFalse
+            $ps.Commands.Clear()
+            $null = $ps.AddScript("Get-FormatData test")
+            $formatData = $ps.Invoke()
+            $formatData | Should -HaveCount 1
+            $formatData.TypeNames | Should -BeExactly "Test"
+            $formatData.FormatViewDefinition.Name | Should -BeExactly "Test"
         }
     }
 }
@@ -59,7 +89,7 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
         { Update-FormatData -Prepend $testfile -WhatIf } | Should -Not -Throw
     }
 
-    It "Update with invalid format xml should fail" -Pending {
+    It "Update with invalid format xml should fail" {
         $xmlContent = @"
 <Configuration>
     <ViewDefinitions>
@@ -69,8 +99,8 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
     </ViewDefinitions>
 </Configuration>
 "@
-        $xmlContent | Out-File -FilePath "$testdrive\test.format.ps1xml" -Encoding ascii
-        { Update-FormatData -Path "$testdrive\test.format.ps1xml" -ErrorAction Stop } | Should -Throw -ErrorId "FormatXmlUpdateException,Microsoft.PowerShell.Commands.UpdateFormatDataCommand"
+        $xmlContent | Out-File -FilePath "$testdrive\invalid.format.ps1xml" -Encoding ascii
+        { Update-FormatData -Path "$testdrive\invalid.format.ps1xml" -ErrorAction Stop } | Should -Throw -ErrorId "FormatXmlUpdateException,Microsoft.PowerShell.Commands.UpdateFormatDataCommand"
     }
 }
 

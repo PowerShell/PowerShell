@@ -963,7 +963,7 @@ namespace System.Management.Automation.Language
                     try
                     {
                         // Tab expansion is called from a trusted function - we should apply ConstrainedLanguage if necessary.
-                        if (ExecutionContext.HasEverUsedConstrainedLanguage)
+                        if (executionContext.HasRunspaceEverUsedConstrainedLanguageMode)
                         {
                             previousLanguageMode = executionContext.LanguageMode;
                             executionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;

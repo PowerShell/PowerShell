@@ -19,7 +19,7 @@ You can do this in Bash with `export PATH=$PATH:$HOME/.dotnet` or in PowerShell 
 
 Once the extension is installed, you have to open a C# file to force VS Code to
 install the actual .NET Core debugger (the editor will tell you to do this if
-you attempt to debug and haven't already open a C# file).
+you attempt to debug and haven't already opened a C# file).
 
 The committed `.vscode` folder in the root of this repository contains
 the `launch.json` and `tasks.json` files which provide Core PowerShell
@@ -39,7 +39,7 @@ launch an external console with PowerShell running interactively. If neither of
 these installed, the editor will tell you to do so.
 
 Alternatively, the ".NET Core Attach" configuration will start listening for a
-process named `powershell`, and will attach to it. If you need more fine grained
+process named `powershell`, and will attach to it. If you need more fine-grained
 control, replace `processName` with `processId` and provide a PID. (Please be
 careful not to commit such a change.)
 

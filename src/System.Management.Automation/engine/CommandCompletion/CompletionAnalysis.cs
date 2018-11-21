@@ -308,7 +308,7 @@ namespace System.Management.Automation
             try
             {
                 // Tab expansion is called from a trusted function - we should apply ConstrainedLanguage if necessary.
-                if (ExecutionContext.HasEverUsedConstrainedLanguage)
+                if (completionContext.ExecutionContext.HasRunspaceEverUsedConstrainedLanguageMode)
                 {
                     previousLanguageMode = completionContext.ExecutionContext.LanguageMode;
                     completionContext.ExecutionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;

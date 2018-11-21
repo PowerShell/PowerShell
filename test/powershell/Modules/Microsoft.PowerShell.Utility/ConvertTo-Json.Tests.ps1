@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Describe 'ConvertTo-Json' -tags "CI" {
+    BeforeAll {
+        $newline = [System.Environment]::NewLine
+    }
+
     It 'Newtonsoft.Json.Linq.Jproperty should be converted to Json properly' {
         $EgJObject = New-Object -TypeName Newtonsoft.Json.Linq.JObject
         $EgJObject.Add("TestValue1", "123456")
@@ -47,5 +51,15 @@ Describe 'ConvertTo-Json' -tags "CI" {
     It "The result string is not packed in the array symbols when there is only one input object and AsArray parameter is not used." {
         $output = 1 | ConvertTo-Json
         $output | Should -BeExactly '1'
+    }
+
+    It "The result string should <Name>." -TestCases @(
+        @{name = "be not escaped by default.";                     params = @{};                              expected = "{$newline  ""abc"": ""'def'""$newline}" }
+        @{name = "be not escaped with '-EscapeHandling Default'."; params = @{EscapeHandling = 'Default'};    expected = "{$newline  ""abc"": ""'def'""$newline}" }
+        @{name = "be escaped with '-EscapeHandling EscapeHtml'.";  params = @{EscapeHandling = 'EscapeHtml'}; expected = "{$newline  ""abc"": ""\u0027def\u0027""$newline}" }
+    ) {
+        param ($name, $params ,$expected)
+
+        @{ 'abc' = "'def'" } | ConvertTo-Json @params | Should -BeExactly $expected
     }
 }

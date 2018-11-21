@@ -159,9 +159,10 @@ namespace System.Management.Automation
 
         private void ReallyCompile(bool optimize)
         {
+#if LEGACYTELEMETRY
             var sw = new Stopwatch();
             sw.Start();
-
+#endif
             if (!IsProductCode && SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File))
             {
                 this.IsProductCode = true;
@@ -200,9 +201,19 @@ namespace System.Management.Automation
 
             // Call the AMSI API to determine if the script block has malicious content
             var scriptExtent = scriptBlockAst.Extent;
-            if (AmsiUtils.ScanContent(scriptExtent.Text, scriptExtent.File) == AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
+            var amsiResult = AmsiUtils.ScanContent(scriptExtent.Text, scriptExtent.File);
+
+            if (amsiResult == AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
             {
                 var parseError = new ParseError(scriptExtent, "ScriptContainedMaliciousContent", ParserStrings.ScriptContainedMaliciousContent);
+                throw new ParseException(new[] { parseError });
+            }
+            else if ((amsiResult >= AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_BEGIN) &&
+                     (amsiResult <= AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_END))
+            {
+                // Certain policies set by an administrator blocked this content on this machine
+                var parseError = new ParseError(scriptExtent, "ScriptHasAdminBlockedContent",
+                    StringUtil.Format(ParserStrings.ScriptHasAdminBlockedContent, amsiResult));
                 throw new ParseException(new[] { parseError });
             }
 
@@ -1316,6 +1327,7 @@ namespace System.Management.Automation
             // See if we need to encrypt the event log message. This info is all cached by Utils.GetPolicySetting(),
             // so we're not hitting the configuration file for every script block we compile.
             ProtectedEventLogging logSetting = Utils.GetPolicySetting<ProtectedEventLogging>(Utils.SystemWideOnlyConfig);
+            bool wasEncoded = false;
             if (logSetting != null)
             {
                 lock (s_syncObject)
@@ -1333,6 +1345,7 @@ namespace System.Management.Automation
                     // version.
                     if (s_encryptionRecipients != null)
                     {
+                        // Encrypt the raw Text from the scriptblock.  The user may have to deal with any control characters in the data.
                         ExecutionContext executionContext = LocalPipeline.GetExecutionContextFromTLS();
                         ErrorRecord error = null;
                         byte[] contentBytes = System.Text.Encoding.UTF8.GetBytes(textToLog);
@@ -1354,9 +1367,19 @@ namespace System.Management.Automation
                         else
                         {
                             textToLog = encodedContent;
+                            wasEncoded = true;
                         }
                     }
                 }
+            }
+
+            if (!wasEncoded)
+            {
+                // The logging mechanism(s) cannot handle null and rendering may not be able to handle
+                // null as we have the string defined as a null terminated string in the manifest.
+                // So, replace null characters with the Unicode `SYMBOL FOR NULL`
+                // We don't just remove the characters to preserve the fact that a null character was there.
+                textToLog = textToLog.Replace('\u0000', '\u2400');
             }
 
             if (scriptBlock._scriptBlockData.HasSuspiciousContent)

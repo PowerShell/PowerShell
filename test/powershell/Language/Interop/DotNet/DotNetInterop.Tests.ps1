@@ -6,6 +6,7 @@ Describe "Handle ByRef-like types gracefully" -Tags "CI" {
     BeforeAll {
         $code = @'
 using System;
+using System.Management.Automation;
 namespace DotNetInterop
 {
     public class Test
@@ -32,14 +33,57 @@ namespace DotNetInterop
         {
         }
 
-        public string PrintMySpan(string str, Span<int> mySpan = default)
+        public string PrintMySpan(string str, ReadOnlySpan<char> mySpan = default)
         {
-            return str;
+            if (mySpan.Length == 0)
+            {
+                return str;
+            }
+            else
+            {
+                return str + mySpan.Length;
+            }
         }
-    
+
         public Span<int> GetSpan(int[] array)
         {
             return array.AsSpan();
+        }
+    }
+
+    public class Test2
+    {
+        public Test2(ReadOnlySpan<char> span)
+        {
+            name = $"Number of chars: {span.Length}";
+        }
+
+        public Test2() {}
+
+        private string name = "Hello World";
+        public string this[ReadOnlySpan<char> span]
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        public string Name => name;
+    }
+
+    public class CodeMethods
+    {
+        public static ReadOnlySpan<char> GetProperty(PSObject instance)
+        {
+            return default(ReadOnlySpan<char>);
+        }
+
+        public static void SetProperty(PSObject instance, ReadOnlySpan<char> span)
+        {
+        }
+
+        public static string RunMethod(PSObject instance, string str, ReadOnlySpan<char> span)
+        {
+            return str + span.Length;
         }
     }
 
@@ -47,6 +91,13 @@ namespace DotNetInterop
     {
         public MyByRefLikeType(int i) { }
         public static int Index;
+    }
+
+    public class ExampleProblemClass
+    {
+        public void ProblemMethod(ref MyByRefLikeType value)
+        {
+        }
     }
 }
 '@
@@ -56,6 +107,7 @@ namespace DotNetInterop
         }
 
         $testObj = [DotNetInterop.Test]::new()
+        $test2Obj = [DotNetInterop.Test2]::new()
     }
 
     It "New-Object should fail gracefully when used for a ByRef-like type" {
@@ -180,7 +232,87 @@ namespace DotNetInterop
         }
     }
 
-    It "Set access of an indexer that accepts ByRef-like type should fail gracefully" {
-        { $testObj[1] = 1 } | Should -Throw -ErrorId "InvalidCastToByRefLikeType"
+    It "Set access of an indexer that accepts ByRef-like type value should fail gracefully" {
+        { $testObj[1] = 1 } | Should -Throw -ErrorId "CannotIndexWithByRefLikeReturnType"
+    }
+
+    It "Create instance of type with method that use a ByRef-like type as a ByRef parameter" {
+        $obj = [DotNetInterop.ExampleProblemClass]::new()
+        $obj | Should -BeOfType DotNetInterop.ExampleProblemClass
+    }
+
+    Context "Passing value that is implicitly/explicitly castable to ByRef-like parameter in method invocation" {
+        
+        BeforeAll {
+            $ps = [powershell]::Create()
+
+            # Define the CodeMethod 'RunTest'
+            $ps.AddCommand("Update-TypeData").
+                AddParameter("TypeName", "DotNetInterop.Test2").
+                AddParameter("MemberType", "CodeMethod").
+                AddParameter("MemberName", "RunTest").
+                AddParameter("Value", [DotNetInterop.CodeMethods].GetMethod('RunMethod')).Invoke()
+            $ps.Commands.Clear()
+
+            # Define the CodeProperty 'TestName'
+            $ps.AddCommand("Update-TypeData").
+                AddParameter("TypeName", "DotNetInterop.Test2").
+                AddParameter("MemberType", "CodeProperty").
+                AddParameter("MemberName", "TestName").
+                AddParameter("Value", [DotNetInterop.CodeMethods].GetMethod('GetProperty')).
+                AddParameter("SecondValue", [DotNetInterop.CodeMethods].GetMethod('SetProperty')).Invoke()
+            $ps.Commands.Clear()
+
+            $ps.AddScript('$test = [DotNetInterop.Test2]::new()').Invoke()
+            $ps.Commands.Clear()
+        }
+
+        AfterAll {
+            $ps.Dispose()
+        }
+
+        It "Support method calls with ByRef-like parameter as long as the argument can be casted to the ByRef-like type" {
+            $testObj.PrintMySpan("abc", "def") | Should -BeExactly "abc3"
+            $testObj.PrintMySpan("abc", "Hello".ToCharArray()) | Should -BeExactly "abc5"
+            { $testObj.PrintMySpan("abc", 12) } | Should -Throw -ErrorId "MethodArgumentConversionInvalidCastArgument"
+
+            $path = [System.IO.Path]::GetTempPath()
+            [System.IO.Path]::IsPathRooted($path.ToCharArray()) | Should -Be $true
+        }
+
+        It "Support constructor calls with ByRef-like parameter as long as the argument can be casted to the ByRef-like type" {
+            $result = [DotNetInterop.Test2]::new("abc")
+            $result.Name | Should -BeExactly "Number of chars: 3"
+
+            { [DotNetInterop.Test2]::new(12) } | Should -Throw -ErrorId "MethodCountCouldNotFindBest"
+        }
+
+        It "Support indexing operation with ByRef-like index as long as the argument can be casted to the ByRef-like type" {
+            $test2Obj["abc"] | Should -BeExactly "Hello World"
+            $test2Obj["abc"] = "pwsh"
+            $test2Obj["abc"] | Should -BeExactly "pwsh"
+        }
+
+        It "Support CodeMethod with ByRef-like parameter as long as the argument can be casted to the ByRef-like type" {
+            $result = $ps.AddScript('$test.RunTest("Hello", "World".ToCharArray())').Invoke()
+            $ps.Commands.Clear()
+            $result.Count | Should -Be 1
+            $result[0] | Should -Be 'Hello5'
+        }
+
+        It "Return null for getter access of a CodeProperty that returns a ByRef-like type, even in strict mode" {
+            $result = $ps.AddScript(
+                'try { Set-StrictMode -Version latest; $test.TestName } finally { Set-StrictMode -Off }').Invoke()
+            $ps.Commands.Clear()
+            $result.Count | Should -Be 1
+            $result[0] | Should -Be $null
+        }
+
+        It "Fail gracefully for setter access of a CodeProperty that returns a ByRef-like type" {
+            $result = $ps.AddScript('$test.TestName = "Hello"').Invoke()
+            $ps.Commands.Clear()
+            $result.Count | Should -Be 0
+            $ps.Streams.Error[0].FullyQualifiedErrorId | Should -Be "CannotAccessByRefLikePropertyOrField"
+        }
     }
 }

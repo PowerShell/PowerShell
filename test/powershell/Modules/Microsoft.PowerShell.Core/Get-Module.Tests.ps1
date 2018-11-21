@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "Get-Module" -Tags "CI" {
+Describe "Get-Module -ListAvailable" -Tags "CI" {
 
     BeforeAll {
         $originalPSModulePath = $env:PSModulePath
@@ -22,6 +22,14 @@ Describe "Get-Module" -Tags "CI" {
         New-Item -ItemType File -Path "$testdrive\Modules\Bar\Download\Download.psm1" > $null
         New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Zoo.psm1" > $null
         New-Item -ItemType File -Path "$testdrive\Modules\Zoo\Too\Zoo.psm1" > $null
+
+        $fullyQualifiedPathTestCases = @(
+            # The current behaviour in PowerShell is that version gets ignored when using Get-Module -FullyQualifiedName with a path
+            @{ ModPath = "$TestDrive/Modules\Foo"; Name = 'Foo'; Version = '2.0'; Count = 2 }
+            @{ ModPath = "$TestDrive\Modules/Foo\1.1/Foo.psd1"; Name = 'Foo'; Version = '1.1'; Count = 1 }
+            @{ ModPath = "$TestDrive\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0'; Count = 1 }
+            @{ ModPath = "$TestDrive\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0'; Count = 1 }
+        )
 
         $env:PSModulePath = Join-Path $testdrive "Modules"
     }
@@ -98,5 +106,68 @@ Describe "Get-Module" -Tags "CI" {
         $modules = $modules | Sort-Object -Property Name, Path
         $modules.Name -join "," | Should -BeExactly "Bar,Foo,Foo,Zoo,Zoo"
         $modules[3].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Too\Zoo.psm1").Path
+    }
+
+    It "Get-Module -FullyQualifiedName <FullyQualifiedName> -ListAvailable" {
+        $moduleSpecification  = @{ModuleName = "Foo"; ModuleVersion = "2.0"}
+        $modules = Get-Module -FullyQualifiedName $moduleSpecification -ListAvailable
+        $modules | Should -HaveCount 1
+        $modules.Name | Should -BeExactly "Foo"
+        $modules.Version | Should -BeExactly "2.0"
+    }
+
+    It "Get-Module <Name> -Refresh -ListAvailable" {
+        $modules = Get-Module -Name 'Zoo' -ListAvailable
+        $modules | Should -HaveCount 1
+        $modules.Name | Should -BeExactly "Zoo"
+        $modules.ExportedFunctions.Count | Should -Be 0 -Because 'No exports were defined'
+
+        New-ModuleManifest -Path "$testdrive\Modules\Zoo\Zoo.psd1" -FunctionsToExport 'Test-ZooFunction'
+
+        $modules = Get-Module -Name 'Zoo' -ListAvailable -Refresh
+        $modules | Should -HaveCount 1
+        $modules.Name | Should -BeExactly "Zoo"
+        $modules.ExportedFunctions.Count | Should -Be 1 -Because 'We added a new function to export'
+    }
+
+    It "Get-Module respects absolute paths in module specifications: <ModPath>" -TestCases $fullyQualifiedPathTestCases {
+        param([string]$ModPath, [string]$Name, [string]$Version, [int]$Count)
+
+        $modSpec = @{
+            ModuleName = $ModPath
+            RequiredVersion = $Version
+        }
+
+        $modules = Get-Module -ListAvailable -FullyQualifiedName $modSpec
+        $modules | Should -HaveCount $Count
+        $modules[0].Name | Should -BeExactly $Name
+        $modules.Version | Should -Contain $Version
+    }
+
+    Context "PSEdition" {
+
+        BeforeAll {
+            New-Item -ItemType Directory -Path "$testdrive\Modules\DesktopOnlyModule" -Force > $null
+            New-Item -ItemType Directory -Path "$testdrive\Modules\CoreOnlyModule" -Force > $null
+            New-Item -ItemType Directory -Path "$testdrive\Modules\CoreAndDesktopModule" -Force > $null
+
+            New-ModuleManifest -Path "$testdrive\Modules\DesktopOnlyModule\DesktopOnlyModule.psd1" -CompatiblePSEditions Desktop
+            New-ModuleManifest -Path "$testdrive\Modules\CoreOnlyModule\CoreOnlyModule.psd1" -CompatiblePSEditions Core
+            New-ModuleManifest -Path "$testdrive\Modules\CoreAndDesktopModule\CoreAndDesktopModule.psd1" -CompatiblePSEditions Core, Desktop
+
+            New-Item -ItemType File -Path "$testdrive\Modules\DesktopOnlyModule\DesktopOnlyModule.psm1" > $null
+            New-Item -ItemType File -Path "$testdrive\Modules\CoreOnlyModule\CoreOnlyModule.psm1" > $null
+            New-Item -ItemType File -Path "$testdrive\Modules\CoreAndDesktopModule\CoreAndDesktopModule.psm1" > $null
+        }
+
+        It "Get-Module -PSEdition <CompatiblePSEditions> -ListAvailable" -TestCases @(
+            @{ CompatiblePSEditions = 'Desktop'; ExpectedModule = 'CoreAndDesktopModule', 'DesktopOnlyModule' },
+            @{ CompatiblePSEditions = 'Core'   ; ExpectedModule = 'CoreAndDesktopModule', 'CoreOnlyModule' }
+        ) {
+            param ($CompatiblePSEditions, $ExpectedModule)
+            $modules = Get-Module -PSEdition $CompatiblePSEditions -ListAvailable
+            $modules | Should -HaveCount $ExpectedModule.Count
+            $modules.Name | Sort-Object | Should -BeExactly $ExpectedModule
+        }
     }
 }
