@@ -48,7 +48,8 @@ Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
 Describe 'Get-Help -Online opens the default web browser and navigates to the cmdlet help content' -Tags "Feature" {
 
     $skipTest = [System.Management.Automation.Platform]::IsIoT -or
-                [System.Management.Automation.Platform]::IsNanoServer
+                [System.Management.Automation.Platform]::IsNanoServer -or
+                $env:__InContainer -eq 1
 
     # this code is a workaround for issue: https://github.com/PowerShell/PowerShell/issues/3079
     if((-not ($skipTest)) -and $IsWindows)

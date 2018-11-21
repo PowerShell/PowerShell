@@ -28,9 +28,8 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     }
 
     It "Verify Get-PfxCertificate right password" {
-        #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Test secret.")]
-        $pass = ConvertTo-SecureString "password" -AsPlainText -Force
-        $cert = Get-PfxCertificate $protectedCertLocation -Password $pass
+        $password = Get-CertificatePassword
+        $cert = Get-PfxCertificate $protectedCertLocation -Password $password
         $cert.Subject | Should -Be "CN=localhost"
     }
 

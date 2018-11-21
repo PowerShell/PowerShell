@@ -13,7 +13,7 @@
 #
 # ------------------ PackageManagement Test  -----------------------------------
 
-$InternalGallery = "https://dtlgalleryint.cloudapp.net/api/v2/"
+$InternalGallery = "https://www.poshtestgallery.com/api/v2/"
 $InternalSource = 'OneGetTestSource'
 
 Describe "PackageManagement Acceptance Test" -Tags "Feature" {

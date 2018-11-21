@@ -333,7 +333,7 @@ Describe "Parameter Binding Tests" -Tags "CI" {
 
             $dllPath = Join-Path $tempDir TestBindingCmdlet.dll
 
-            Add-Type -OutputAssembly $dllPath -TypeDefinition '
+            $typeDefinition = '
                 using System;
                 using System.Management.Automation;
 
@@ -354,6 +354,10 @@ Describe "Parameter Binding Tests" -Tags "CI" {
                     }
                 }
             '
+            if ( !(Test-Path $dllPath))
+            {
+                Add-Type -OutputAssembly $dllPath -TypeDefinition $typeDefinition
+            }
 
             Import-Module $dllPath
         }

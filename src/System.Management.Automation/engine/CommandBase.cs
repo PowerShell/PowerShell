@@ -35,7 +35,7 @@ namespace System.Management.Automation.Internal
     /// Ideally this would be an internal class, but C# does not support
     /// public classes deriving from internal classes.
     /// -->
-    [DebuggerDisplay("Command = {commandInfo}")]
+    [DebuggerDisplay("Command = {_commandInfo}")]
     public abstract class InternalCommand
     {
         #region private_members
@@ -107,7 +107,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Internal helper to get to SessionState
         /// </summary>
-        ///
         internal SessionState InternalState
         {
             get { return _state; }

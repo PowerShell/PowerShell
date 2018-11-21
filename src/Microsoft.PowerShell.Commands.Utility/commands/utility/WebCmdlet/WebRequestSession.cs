@@ -14,35 +14,35 @@ namespace Microsoft.PowerShell.Commands
     public class WebRequestSession
     {
         /// <summary>
-        /// gets or sets the Header property
+        /// Gets or sets the Header property.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Dictionary<string, string> Headers { get; set; }
 
         /// <summary>
-        /// gets or sets the content Headers when using HttpClient
+        /// Gets or sets the content Headers when using HttpClient.
         /// </summary>
         internal Dictionary<string, string> ContentHeaders { get; set; }
 
         /// <summary>
-        /// gets or sets the Cookies property
+        /// Gets or sets the Cookies property.
         /// </summary>
         public CookieContainer Cookies { get; set; }
 
         #region Credentials
 
         /// <summary>
-        /// gets or sets the UseDefaultCredentials property
+        /// Gets or sets the UseDefaultCredentials property.
         /// </summary>
         public bool UseDefaultCredentials { get; set; }
 
         /// <summary>
-        /// gets or sets the Credentials property
+        /// Gets or sets the Credentials property.
         /// </summary>
         public ICredentials Credentials { get; set; }
 
         /// <summary>
-        /// gets or sets the Certificates property
+        /// Gets or sets the Certificates property.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public X509CertificateCollection Certificates { get; set; }
@@ -50,17 +50,17 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
-        /// gets or sets the UserAgent property
+        /// Gets or sets the UserAgent property.
         /// </summary>
         public string UserAgent { get; set; }
 
         /// <summary>
-        /// gets or sets the Proxy property
+        /// Gets or sets the Proxy property.
         /// </summary>
         public IWebProxy Proxy { get; set; }
 
         /// <summary>
-        /// gets or sets the RedirectMax property
+        /// Gets or sets the RedirectMax property.
         /// </summary>
         public int MaximumRedirection { get; set; }
 

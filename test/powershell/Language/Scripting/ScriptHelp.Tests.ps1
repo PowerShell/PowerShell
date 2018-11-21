@@ -80,10 +80,66 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         #    Useless
         #
         function helpFunc1 {}
+        
+        Set-Item function:dynamicHelpFunc1 -Value {
+            # .SYNOPSIS
+            #
+            #    A relatively useless function.
+            #
+            # .DESCRIPTION
+            #
+            #    A description
+            #
+            #        with indented text and a blank line.
+            #
+            # .NOTES
+            #
+            #    This function is mostly harmless.
+            #
+            # .LINK
+            #
+            #    http://blogs.msdn.com/powershell
+            #
+            # .LINK
+            #
+            #    other commands
+            #
+            # .EXAMPLE
+            #
+            #    If you need an example, you're hopeless.
+            #
+            # .INPUTS
+            #
+            #    Anything you like.
+            #
+            # .OUTPUTS
+            #
+            #    Nothing.
+            #
+            # .COMPONENT
+            #
+            #    Something
+            #
+            # .ROLE
+            #
+            #    CrazyUser
+            #
+            # .FUNCTIONALITY
+            #
+            #    Useless
+            #
+            
+            process { }
+        }
     }
 
     Context 'Get-Help helpFunc1' {
         $x = get-help helpFunc1
+        TestHelpFunc1 $x
+    }
+
+    Context 'Get-Help dynamicHelpFunc1' {
+        $x = get-help dynamicHelpFunc1
         TestHelpFunc1 $x
     }
 
@@ -556,5 +612,19 @@ Describe 'get-help other tests' -Tags "CI" {
         It '$x.Parameters.parameter[0].globbing' { $x.Parameters.parameter[0].globbing | Should -BeExactly 'true' }
         It '$x.Parameters.parameter[1].defaultValue' { $x.Parameters.parameter[1].defaultValue | Should -BeExactly '42' }
         It '$x.Parameters.parameter[2].defaultValue' { $x.Parameters.parameter[2].defaultValue | Should -BeExactly 'parameter is mandatory' }
+    }
+
+    Context 'get-help -Examples prompt string should have trailing space' {
+        function foo {
+            <#
+              .EXAMPLE
+              foo bar
+            #>
+              param()
+        }
+
+        It 'prompt should be exactly "PS > " with trailing space' {
+            (Get-Help foo -Examples).examples.example.introduction.Text | Should -BeExactly "PS > "
+        }
     }
 }

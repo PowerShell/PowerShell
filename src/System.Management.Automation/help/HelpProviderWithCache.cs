@@ -7,11 +7,9 @@ using System.Collections.Generic;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// Class HelpProviderWithCache provides a pseudo implementation of HelpProvider
     /// at which results are cached in a hashtable so that later retrieval can be
     /// faster.
-    ///
     /// </summary>
     internal abstract class HelpProviderWithCache : HelpProvider
     {

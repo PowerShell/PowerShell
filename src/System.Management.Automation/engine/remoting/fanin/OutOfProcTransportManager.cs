@@ -708,8 +708,32 @@ namespace System.Management.Automation.Remoting.Client
                 //
                 stdInWriter.StopWriting();
             }
-            PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCServerProcessExited,
-                                RemotingErrorIdStrings.IPCServerProcessExited);
+
+            // Try to get details about why the process exited
+            // and if they're not available, give information as to why
+            string processDiagnosticMessage;
+            try
+            {
+                var jobProcess = (Process)sender;
+                processDiagnosticMessage = StringUtil.Format(
+                    RemotingErrorIdStrings.ProcessExitInfo,
+                    jobProcess.ExitCode,
+                    jobProcess.StandardOutput.ReadToEnd(),
+                    jobProcess.StandardError.ReadToEnd());
+            }
+            catch (Exception exception)
+            {
+                processDiagnosticMessage = StringUtil.Format(
+                    RemotingErrorIdStrings.ProcessInfoNotRecoverable,
+                    exception.Message);
+            }
+
+            string exitErrorMsg = StringUtil.Format(
+                RemotingErrorIdStrings.IPCServerProcessExited,
+                processDiagnosticMessage);
+            var psrte = new PSRemotingTransportException(
+                PSRemotingErrorId.IPCServerProcessExited,
+                exitErrorMsg);
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, transportMethod));
         }
 
@@ -1479,20 +1503,19 @@ namespace System.Management.Automation.Remoting.Client
 
         private void CloseConnection()
         {
-            var stdInWriter = _stdInWriter;
+            var stdInWriter = Interlocked.Exchange(ref _stdInWriter, null);
             if (stdInWriter != null) { stdInWriter.Dispose(); }
 
-            var stdOutReader = _stdOutReader;
+            var stdOutReader = Interlocked.Exchange(ref _stdOutReader, null);
             if (stdOutReader != null) { stdOutReader.Dispose(); }
 
-            var stdErrReader = _stdErrReader;
+            var stdErrReader = Interlocked.Exchange(ref _stdErrReader, null);
             if (stdErrReader != null) { stdErrReader.Dispose(); }
 
             // The CloseConnection() method can be called multiple times from multiple places.
             // Set the _sshProcessId to zero here so that we go through the work of finding
             // and terminating the SSH process just once.
-            var sshProcessId = _sshProcessId;
-            _sshProcessId = 0;
+            var sshProcessId = Interlocked.Exchange(ref _sshProcessId, 0);
             if (sshProcessId != 0)
             {
                 try
@@ -1798,7 +1821,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 if (e is ArgumentOutOfRangeException)
                 {
-                    Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
+                    Dbg.Assert(false, "Need to adjust transport fragmentor to accommodate read buffer size.");
                 }
 
                 string errorMsg = (e.Message != null) ? e.Message : string.Empty;

@@ -100,7 +100,7 @@ Note that all bash commands should continue working on PowerShell session.
 | rm -r &lt;folderName>           |Remove-Item &lt;folderName> -Recurse   |Delete a folder
 | find -name build*               |Get-ChildItem build* -Recurse          |Find a file or folder starting with 'build'
 | grep -Rin "sometext" --include="*.cs" |Get-ChildItem -Recurse -Filter *.cs <br> \| Select-String -Pattern "sometext" | Recursively case-insensitive search for text in files
-
+| curl https://github.com | Invoke-RestMethod https://github.com | Transfer data to or from the web
 
 Recommended Training and Reading
 ----
@@ -120,11 +120,13 @@ Commercial Resources
 - [Windows PowerShell in Action][in-action] by Bruce Payette
 - [Introduction to PowerShell][powershell-intro] from Pluralsight
 - [PowerShell Training and Tutorials][lynda-training] from Lynda.com
+- [Learn Windows PowerShell in a Month of Lunches][learn-powershell] by Don Jones and Jeffrey Hicks
 
 
 [in-action]: https://www.amazon.com/Windows-PowerShell-Action-Second-Payette/dp/1935182137
 [powershell-intro]: https://www.pluralsight.com/courses/powershell-intro
 [lynda-training]: https://www.lynda.com/PowerShell-training-tutorials/5779-0.html
+[learn-powershell]: https://www.amazon.com/Learn-Windows-PowerShell-Month-Lunches/dp/1617294160
 
 [getstarted-with-powershell]: https://channel9.msdn.com/Series/GetStartedPowerShell3
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/
@@ -134,3 +136,4 @@ Commercial Resources
 [powershell.com-learn-powershell]: http://powershell.com/cs/media/14/default.aspx
 [quick-reference]: http://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
 [script-guy-how-to]:https://blogs.technet.microsoft.com/tommypatterson/2015/09/04/ed-wilsons-powershell5-videos-now-on-channel9-2/
+[basic-cookbooks]:https://docs.microsoft.com/en-us/powershell/scripting/getting-started/fundamental/sample-scripts-for-administration?view=powershell-6

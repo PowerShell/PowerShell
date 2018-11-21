@@ -27,14 +27,12 @@ namespace System.Management.Automation
     ///     c. CommandLifecycleEvent
     ///     d. ProviderLifecycleEvent
     ///     e. SettingsEvent
-    ///
     /// </summary>
     internal abstract class LogProvider
     {
         /// <summary>
         /// constructor
         /// </summary>
-        ///
         internal LogProvider()
         {
         }
@@ -48,7 +46,6 @@ namespace System.Management.Automation
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
-        ///
         internal abstract void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo);
 
         /// <summary>
@@ -57,7 +54,6 @@ namespace System.Management.Automation
         /// <param name="logContext"></param>
         /// <param name="newState"></param>
         /// <param name="previousState"></param>
-        ///
         internal abstract void LogEngineLifecycleEvent(LogContext logContext, EngineState newState, EngineState previousState);
 
         /// <summary>
@@ -72,7 +68,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="getLogContext"></param>
         /// <param name="newState"></param>
-        ///
         internal abstract void LogCommandLifecycleEvent(Func<LogContext> getLogContext, CommandState newState);
 
         /// <summary>
@@ -88,7 +83,6 @@ namespace System.Management.Automation
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="exception"></param>
-        ///
         internal abstract void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception);
 
         /// <summary>
@@ -97,7 +91,6 @@ namespace System.Management.Automation
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="newState"></param>
-        ///
         internal abstract void LogProviderLifecycleEvent(LogContext logContext, string providerName, ProviderState newState);
 
         /// <summary>
@@ -107,7 +100,6 @@ namespace System.Management.Automation
         /// <param name="variableName"></param>
         /// <param name="value"></param>
         /// <param name="previousValue"></param>
-        ///
         internal abstract void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue);
 
         /// <summary>
@@ -293,7 +285,6 @@ namespace System.Management.Automation
         /// <summary>
         /// constructor
         /// </summary>
-        ///
         internal DummyLogProvider()
         {
         }
@@ -307,7 +298,6 @@ namespace System.Management.Automation
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
-        ///
         internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
         {
         }
@@ -318,7 +308,6 @@ namespace System.Management.Automation
         /// <param name="logContext"></param>
         /// <param name="newState"></param>
         /// <param name="previousState"></param>
-        ///
         internal override void LogEngineLifecycleEvent(LogContext logContext, EngineState newState, EngineState previousState)
         {
         }
@@ -328,7 +317,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="exception"></param>
-        ///
         internal override void LogCommandHealthEvent(LogContext logContext, Exception exception)
         {
         }
@@ -338,7 +326,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="getLogContext"></param>
         /// <param name="newState"></param>
-        ///
         internal override void LogCommandLifecycleEvent(Func<LogContext> getLogContext, CommandState newState)
         {
         }
@@ -358,7 +345,6 @@ namespace System.Management.Automation
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="exception"></param>
-        ///
         internal override void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception)
         {
         }
@@ -369,7 +355,6 @@ namespace System.Management.Automation
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="newState"></param>
-        ///
         internal override void LogProviderLifecycleEvent(LogContext logContext, string providerName, ProviderState newState)
         {
         }
@@ -381,7 +366,6 @@ namespace System.Management.Automation
         /// <param name="variableName"></param>
         /// <param name="value"></param>
         /// <param name="previousValue"></param>
-        ///
         internal override void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue)
         {
         }

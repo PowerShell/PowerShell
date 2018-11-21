@@ -30,6 +30,8 @@ namespace Microsoft.WSMan.Management
         //Plugin Name Storage
         private PSObject objPluginNames = null;
 
+        private ServiceController winrmServiceController;
+
         /// <summary>
         /// Determines if Set-Item user input type validation is required or not.
         /// It is True by default, Clear-Item will set it to false so that it can
@@ -178,7 +180,6 @@ namespace Microsoft.WSMan.Management
 
         #region DriveCmdletProvider
         /// <summary>
-        ///
         /// </summary>
         /// <param name="drive"></param>
         /// <returns></returns>
@@ -4437,15 +4438,16 @@ namespace Microsoft.WSMan.Management
         /// <returns></returns>
         private bool IsWSManServiceRunning()
         {
-            ServiceController svc = new ServiceController("WinRM");
-            if (svc != null)
+            if (winrmServiceController == null)
             {
-                if (svc.Status.Equals(ServiceControllerStatus.Running))
-                {
-                    return true;
-                }
+                winrmServiceController = new ServiceController("WinRM");
             }
-            return false;
+            else
+            {
+                winrmServiceController.Refresh();
+            }
+
+            return (winrmServiceController.Status.Equals(ServiceControllerStatus.Running));
         }
 
         /// <summary>
@@ -5963,13 +5965,11 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// The default path separator used by the base implementation of the providers.
         /// </summary>
-        ///
         internal const char DefaultPathSeparator = '\\';
 
         /// <summary>
         /// The alternate path separator used by the base implementation of the providers.
         /// </summary>
-        ///
         internal const char AlternatePathSeparator = '/';
         /// <summary>
         /// Double Quotes used while constructing XML
@@ -5998,32 +5998,25 @@ namespace Microsoft.WSMan.Management
         internal const string ProviderName = "WSMan";
 
         /// <summary>
-        ///
         /// </summary>
         internal const string WsMan_Schema = "http://schemas.microsoft.com/wbem/wsman/1/config";
         /// <summary>
-        ///
         /// </summary>
         internal const string NS_XSI = "xmlns:xsi=" + "\"http://www.w3.org/2001/XMLSchema-instance\"";
         /// <summary>
-        ///
         /// </summary>
         internal const string ATTR_NIL = "xsi:nil=" + "\"true\"";
         /// <summary>
-        ///
         /// </summary>
         internal const string ATTR_NIL_NAME = "xsi:nil";
         /// <summary>
-        ///
         /// </summary>
         internal const char WinrmPathSeparator = '/';
         /// <summary>
-        ///
         /// </summary>
         internal const string rootpath = "WSMan";
 
         /// <summary>
-        ///
         /// </summary>
         internal const string ContainerChildValue = "Container";
 

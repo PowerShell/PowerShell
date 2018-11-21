@@ -88,7 +88,6 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// stack of DynamicKeywords Cache
         /// </summary>
-        ///
         private static Stack<Dictionary<string, DynamicKeyword>> DynamicKeywordsStack
         {
             get
@@ -126,7 +125,6 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -147,7 +145,6 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -163,7 +160,6 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="keywordToAdd"></param>
         public static void AddKeyword(DynamicKeyword keywordToAdd)
@@ -289,7 +285,6 @@ namespace System.Management.Automation.Language
         /// rewrite the node as a simple direct function call.
         /// If NameMode is other than NoName, then the name of the instance
         /// will be passed as the parameter -InstanceName.
-        ///
         /// </summary>
         public bool DirectCall { get; set; }
 
@@ -480,6 +475,61 @@ namespace System.Management.Automation.Language
         Expression,
         TypeName,
         Signature, // i.e. class or method declaration
+    }
+
+    /// <summary>
+    /// Indicates which suffix character(s) are present in the numeric literal being parsed by TryGetNumberValue.
+    /// </summary>
+    [Flags]
+    internal enum NumberSuffixFlags
+    {
+        /// <summary>
+        /// Indicates no suffix, a raw numeric literal. May be parsed as Int32, Int64, or Double.
+        /// </summary>
+        None = 0x0,
+
+        /// <summary>
+        /// Indicates 'u' suffix for unsigned integers. May be parsed as UInt32 or UInt64, depending on the value.
+        /// </summary>
+        Unsigned = 0x1,
+
+        /// <summary>
+        /// Indicates 'y' suffix for signed byte (sbyte) values.
+        /// </summary>
+        SignedByte = 0x2,
+
+        /// <summary>
+        /// Indicates 'uy' suffix for unsigned byte values.
+        /// This is a compound value, representing both SignedByte and Unsigned flags being set.
+        /// </summary>
+        UnsignedByte = 0x3,
+
+        /// <summary>
+        /// Indicates 's' suffix for short (Int16) integers.
+        /// </summary>
+        Short = 0x4,
+
+        /// <summary>
+        /// Indicates 'us' suffix for ushort (UInt16) integers.
+        /// This is a compound flag value, representing both Unsigned and Short flags being set.
+        /// </summary>
+        UnsignedShort = 0x5,
+
+        /// <summary>
+        /// Indicates 'l' suffix for long (Int64) integers.
+        /// </summary>
+        Long = 0x8,
+
+        /// <summary>
+        /// Indicates 'ul' suffix for ulong (UInt64) integers.
+        /// This is a compound flag value, representing both Unsigned and Long flags being set.
+        /// </summary>
+        UnsignedLong = 0x9,
+
+        /// <summary>
+        /// Indicates 'd' suffix for decimal (128-bit) real numbers.
+        /// </summary>
+        Decimal = 0x10
     }
 
     //
@@ -1312,7 +1362,8 @@ namespace System.Management.Automation.Language
                     }
                     return s_invalidChar;
                 }
-                else if (i == s_maxNumberOfUnicodeHexDigits) {
+                else if (i == s_maxNumberOfUnicodeHexDigits)
+                {
                     UngetChar();
 
                     Release(sb);
@@ -2837,7 +2888,7 @@ namespace System.Management.Automation.Language
                         // occur after a variable.
                         case '.':
                         case '[':
-                            // Something like $a.b or $a[1].
+                        // Something like $a.b or $a[1].
                         case '=':
                             // Something like $a=
                             UngetChar();
@@ -3242,7 +3293,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static bool TryGetNumberValue(string strNum, bool hex, bool real, char suffix, long multiplier, out object result)
+        private static bool TryGetNumberValue(string strNum, bool hex, bool real, NumberSuffixFlags suffix, long multiplier, out object result)
         {
             checked
             {
@@ -3250,10 +3301,12 @@ namespace System.Management.Automation.Language
                 {
                     NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
                                          NumberStyles.AllowExponent;
-                    if (suffix == 'd' || suffix == 'D')
+
+                    // Decimal parser does not accept hex literals, and 'd' is a valid hex character, so will never be read as Decimal literal
+                    // e.g., 0x1d == 29
+                    if (suffix == NumberSuffixFlags.Decimal)
                     {
-                        decimal d;
-                        if (Decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
+                        if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal d))
                         {
                             result = d * multiplier;
                             return true;
@@ -3265,25 +3318,58 @@ namespace System.Management.Automation.Language
 
                     if (real)
                     {
-                        double d;
-                        if (Double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out d))
+                        if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double doubleValue))
                         {
                             // TryParse incorrectly return +0 when the result should be -0, so check for that case
-                            if (d == 0.0 && strNum[0] == '-')
+                            if (doubleValue == 0.0 && strNum[0] == '-')
                             {
-                                d = -0.0;
+                                doubleValue = -0.0;
                             }
-                            if (suffix == 'l' || suffix == 'L')
+
+                            switch (suffix)
                             {
-                                result = ((long)Convert.ChangeType(d, typeof(long), CultureInfo.InvariantCulture)) * multiplier;
+                                case NumberSuffixFlags.None:
+                                    result = doubleValue * multiplier;
+                                    break;
+                                case NumberSuffixFlags.Long:
+                                    result = (long)Convert.ChangeType(doubleValue, typeof(long), CultureInfo.InvariantCulture) * multiplier;
+                                    break;
+                                case NumberSuffixFlags.Short:
+                                    result = (short)((short)Convert.ChangeType(doubleValue, typeof(short), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.SignedByte:
+                                    result = (sbyte)((sbyte)Convert.ChangeType(doubleValue, typeof(sbyte), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.UnsignedLong:
+                                    result = (ulong)Convert.ChangeType(doubleValue, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
+                                    break;
+                                case NumberSuffixFlags.UnsignedShort:
+                                    result = (ushort)((ushort)Convert.ChangeType(doubleValue, typeof(ushort), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.UnsignedByte:
+                                    result = (byte)((byte)Convert.ChangeType(doubleValue, typeof(byte), CultureInfo.InvariantCulture) * multiplier);
+                                    break;
+                                case NumberSuffixFlags.Unsigned:
+                                    ulong testresult = (ulong)Convert.ChangeType(doubleValue, typeof(ulong), CultureInfo.InvariantCulture) * (ulong)multiplier;
+                                    if (testresult < uint.MaxValue)
+                                    {
+                                        result = (uint)testresult;
+                                    }
+                                    else
+                                    {
+                                        result = testresult;
+                                    }
+
+                                    break;
+                                default:
+                                    result = null;
+                                    return false;
                             }
-                            else
-                            {
-                                result = d * multiplier;
-                            }
+
                             return true;
                         }
 
+                        // TryParse on (real) number fails.
                         result = null;
                         return false;
                     }
@@ -3294,39 +3380,111 @@ namespace System.Management.Automation.Language
                         {
                             multiplier = -multiplier;
                         }
+
                         strNum = strNum.Substring(1);
                     }
+
                     style = hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
 
-                    long longValue;
-                    if (suffix == 'l' || suffix == 'L')
+                    switch (suffix)
                     {
-                        if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
-                        {
-                            result = longValue * multiplier;
-                            return true;
-                        }
-                        result = null;
-                        return false;
+                        case NumberSuffixFlags.None:
+                            break;
+                        case NumberSuffixFlags.Long:
+                            if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out long l))
+                            {
+                                result = l * multiplier;
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.Short:
+                            if (short.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out short s))
+                            {
+                                result = (short)(s * multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.SignedByte:
+                            // Multiplier for hex-parsed values can be negative to permit - prefix for hex values
+                            if (Math.Abs(multiplier) == 1 && sbyte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out sbyte sb))
+                            {
+                                result = (sbyte)(sb * multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.Unsigned:
+                            if (ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong u))
+                            {
+                                u *= (ulong)multiplier;
+
+                                if (u <= uint.MaxValue)
+                                {
+                                    result = (uint)u;
+                                }
+                                else
+                                {
+                                    result = u;
+                                }
+
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.UnsignedLong:
+                            if (ulong.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ulong ul))
+                            {
+                                result = (ulong)(ul * (ulong)multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.UnsignedShort:
+                            if (ushort.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out ushort us))
+                            {
+                                result = (ushort)(us * (ushort)multiplier);
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        case NumberSuffixFlags.UnsignedByte:
+                            // If multiplier is negative or greater than 1, we can assume it will fail since the
+                            // minimum multiplier is 1024 (already exceeds byte.MaxValue), and byte is unsigned
+                            if (multiplier == 1 && byte.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out byte b))
+                            {
+                                result = b;
+                                return true;
+                            }
+
+                            result = null;
+                            return false;
+                        default:
+                            result = null;
+                            return false;
                     }
 
                     // From here on - the user hasn't specified the type, so we need to figure it out.
-
                     BigInteger bigValue;
                     TypeCode whichTryParseWorked;
-                    int intValue;
-                    decimal decimalValue;
-                    if (int.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out intValue))
+                    if (int.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out int intValue))
                     {
                         whichTryParseWorked = TypeCode.Int32;
                         bigValue = intValue;
                     }
-                    else if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out longValue))
+                    else if (long.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out long longValue))
                     {
                         whichTryParseWorked = TypeCode.Int64;
                         bigValue = longValue;
                     }
-                    else if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimalValue))
+                    else if (decimal.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out decimal decimalValue))
                     {
                         whichTryParseWorked = TypeCode.Decimal;
                         bigValue = (BigInteger)decimalValue;
@@ -3336,10 +3494,9 @@ namespace System.Management.Automation.Language
                         // The result must be double if we get here.
                         if (!hex)
                         {
-                            double doubleValue;
-                            if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out doubleValue))
+                            if (double.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out double dbl))
                             {
-                                result = doubleValue * multiplier;
+                                result = dbl * multiplier;
                                 return true;
                             }
                         }
@@ -3365,6 +3522,7 @@ namespace System.Management.Automation.Language
                     {
                         result = (double)bigValue;
                     }
+
                     return true;
                 }
                 catch (Exception)
@@ -3382,7 +3540,7 @@ namespace System.Management.Automation.Language
                 || (AllowSignedNumbers && (firstChar == '+' || firstChar.IsDash())), "Number must start with '.', '-', or digit.");
 
             bool hex, real;
-            char suffix;
+            NumberSuffixFlags suffix;
             long multiplier;
 
             string strNum = ScanNumberHelper(firstChar, out hex, out real, out suffix, out multiplier);
@@ -3423,11 +3581,11 @@ namespace System.Management.Automation.Language
         /// OR
         /// return the string format of the number
         /// </returns>
-        private string ScanNumberHelper(char firstChar, out bool hex, out bool real, out char suffix, out long multiplier)
+        private string ScanNumberHelper(char firstChar, out bool hex, out bool real, out NumberSuffixFlags suffix, out long multiplier)
         {
             hex = false;
             real = false;
-            suffix = '\0';
+            suffix = NumberSuffixFlags.None;
             multiplier = 1;
 
             bool notNumber = false;
@@ -3458,6 +3616,7 @@ namespace System.Management.Automation.Language
                     {
                         notNumber = true;
                     }
+
                     hex = true;
                 }
                 else
@@ -3481,6 +3640,7 @@ namespace System.Management.Automation.Language
                                 real = true;
                                 ScanNumberAfterDot(sb, ref signIndex, ref notNumber);
                             }
+
                             break;
                         case 'E':
                         case 'e':
@@ -3497,8 +3657,66 @@ namespace System.Management.Automation.Language
             if (c.IsTypeSuffix())
             {
                 SkipChar();
-                suffix = c;
+                switch (c)
+                {
+                    case 'u':
+                    case 'U':
+                        suffix |= NumberSuffixFlags.Unsigned;
+                        break;
+                    case 's':
+                    case 'S':
+                        suffix |= NumberSuffixFlags.Short;
+                        break;
+                    case 'l':
+                    case 'L':
+                        suffix |= NumberSuffixFlags.Long;
+                        break;
+                    case 'd':
+                    case 'D':
+                        suffix |= NumberSuffixFlags.Decimal;
+                        break;
+                    case 'y':
+                    case 'Y':
+                        suffix |= NumberSuffixFlags.SignedByte;
+                        break;
+                    default:
+                        notNumber = true;
+                        break;
+                }
+
                 c = PeekChar();
+
+                if (c.IsTypeSuffix())
+                {
+                    SkipChar();
+                    if (suffix == NumberSuffixFlags.Unsigned)
+                    {
+                        switch (c)
+                        {
+                            case 'l':
+                            case 'L':
+                                suffix |= NumberSuffixFlags.Long;
+                                break;
+                            case 's':
+                            case 'S':
+                                suffix |= NumberSuffixFlags.Short;
+                                break;
+                            case 'y':
+                            case 'Y':
+                                suffix |= NumberSuffixFlags.SignedByte;
+                                break;
+                            default:
+                                notNumber = true;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        notNumber = true;
+                    }
+
+                    c = PeekChar();
+                }
             }
 
             if (c.IsMultiplierStart())
@@ -4322,7 +4540,7 @@ namespace System.Management.Automation.Language
                     if (InExpressionMode() && (char.IsDigit(c1) || c1 == '.'))
                     {
                         bool hex, real;
-                        char suffix;
+                        NumberSuffixFlags suffix;
                         long multiplier;
 
                         // check if the next token is actually a number

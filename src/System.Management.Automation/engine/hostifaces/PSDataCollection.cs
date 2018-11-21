@@ -1976,7 +1976,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         void IDisposable.Dispose()
         {

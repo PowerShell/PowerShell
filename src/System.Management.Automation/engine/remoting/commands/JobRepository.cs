@@ -64,7 +64,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <returns></returns>
         public List<T> GetItems()

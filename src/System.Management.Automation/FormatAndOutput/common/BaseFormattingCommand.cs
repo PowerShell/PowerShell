@@ -514,7 +514,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    ///
     /// </summary>
     public class OuterFormatShapeCommandBase : FrontEndCommandBase
     {
@@ -633,7 +632,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -675,7 +673,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    ///
     /// </summary>
     public class OuterFormatTableAndListBase : OuterFormatShapeCommandBase
     {
@@ -739,7 +736,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    ///
     /// </summary>
     public class OuterFormatTableBase : OuterFormatTableAndListBase
     {

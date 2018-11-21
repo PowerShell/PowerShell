@@ -71,7 +71,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the credential parameter
         /// </summary>
-        ///
         [Parameter()]
         [Credential()]
         public PSCredential Credential
@@ -160,7 +159,6 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// NOTE: FWLinks for core PowerShell modules are needed since they get loaded as snapins in a Remoting Endpoint.
         /// When we moved to modules in V3, we were not able to make this change as it was a risky change to make at that time.
-        ///
         /// </summary>
         static UpdatableHelpCommandBase()
         {

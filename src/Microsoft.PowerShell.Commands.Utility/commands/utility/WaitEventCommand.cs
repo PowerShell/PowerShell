@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// An identifier for this event subscription
+        /// An identifier for this event subscription.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         public string SourceIdentifier
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         private WildcardPattern _matchPattern;
 
         /// <summary>
-        /// Wait for the event to arrive
+        /// Wait for the event to arrive.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Handle Control-C
+        /// Handle Control-C.
         /// </summary>
         protected override void StopProcessing()
         {

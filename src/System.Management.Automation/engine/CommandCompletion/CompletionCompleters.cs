@@ -27,7 +27,6 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    ///
     /// </summary>
     public static class CompletionCompleters
     {
@@ -47,7 +46,6 @@ namespace System.Management.Automation
         #region Command Names
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <returns></returns>
@@ -57,7 +55,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="moduleName"></param>
@@ -398,7 +395,7 @@ namespace System.Management.Automation
 
         #region Module Names
 
-        internal static List<CompletionResult> CompleteModuleName(CompletionContext context, bool loadedModulesOnly)
+        internal static List<CompletionResult> CompleteModuleName(CompletionContext context, bool loadedModulesOnly, bool skipEditionCheck = false)
         {
             var moduleName = context.WordToComplete ?? string.Empty;
             var result = new List<CompletionResult>();
@@ -413,6 +410,12 @@ namespace System.Management.Automation
             if (!loadedModulesOnly)
             {
                 powershell.AddParameter("ListAvailable", true);
+
+                // -SkipEditionCheck should only be set or apply to -ListAvailable
+                if (skipEditionCheck)
+                {
+                    powershell.AddParameter("SkipEditionCheck", true);
+                }
             }
 
             Exception exceptionThrown;
@@ -1611,7 +1614,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Process a parameter to get the argument completion results
         /// </summary>
-        ///
         /// <remarks>
         /// If the argument completion falls into these pre-defined cases:
         ///   1. The matching parameter is of type Enum
@@ -1698,11 +1700,9 @@ namespace System.Management.Automation
 
             foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
             {
-                if (att is ValidateSetAttribute)
+                if (att is ValidateSetAttribute setAtt)
                 {
                     RemoveLastNullCompletionResult(result);
-
-                    var setAtt = (ValidateSetAttribute)att;
 
                     string wordToComplete = context.WordToComplete;
                     string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
@@ -1712,6 +1712,8 @@ namespace System.Management.Automation
 
                     foreach (string value in setAtt.ValidValues)
                     {
+                        if (value == string.Empty) { continue; }
+
                         if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
                         {
                             string completionText = quote == string.Empty ? value : quote + value + quote;
@@ -2101,17 +2103,19 @@ namespace System.Management.Automation
                 case "Get-Module":
                     {
                         bool loadedModulesOnly = boundArguments == null || !boundArguments.ContainsKey("ListAvailable");
-                        NativeCompletionModuleCommands(context, parameterName, loadedModulesOnly, /* isImportModule: */ false, result);
+                        bool skipEditionCheck = !loadedModulesOnly && boundArguments.ContainsKey("SkipEditionCheck");
+                        NativeCompletionModuleCommands(context, parameterName, result, loadedModulesOnly, skipEditionCheck: skipEditionCheck);
                         break;
                     }
                 case "Remove-Module":
                     {
-                        NativeCompletionModuleCommands(context, parameterName, /* loadedModulesOnly: */ true, /* isImportModule: */ false, result);
+                        NativeCompletionModuleCommands(context, parameterName, result, loadedModulesOnly: true);
                         break;
                     }
                 case "Import-Module":
                     {
-                        NativeCompletionModuleCommands(context, parameterName, /* loadedModulesOnly: */ false, /* isImportModule: */ true, result);
+                        bool skipEditionCheck = boundArguments != null && boundArguments.ContainsKey("SkipEditionCheck");
+                        NativeCompletionModuleCommands(context, parameterName, result, isImportModule: true, skipEditionCheck: skipEditionCheck);
                         break;
                     }
                 case "Debug-Process":
@@ -3046,7 +3050,13 @@ namespace System.Management.Automation
             }
         }
 
-        private static void NativeCompletionModuleCommands(CompletionContext context, string paramName, bool loadedModulesOnly, bool isImportModule, List<CompletionResult> result)
+        private static void NativeCompletionModuleCommands(
+            CompletionContext context,
+            string paramName,
+            List<CompletionResult> result,
+            bool loadedModulesOnly = false,
+            bool isImportModule = false,
+            bool skipEditionCheck = false)
         {
             if (string.IsNullOrEmpty(paramName))
             {
@@ -3067,7 +3077,7 @@ namespace System.Management.Automation
                                 StringLiterals.PowerShellILAssemblyExtension,
                                 StringLiterals.PowerShellCmdletizationFileExtension
                             };
-                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, /* containerOnly: */ false, moduleExtensions));
+                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, containerOnly: false, moduleExtensions));
                     if (moduleFilesResults.Count > 0)
                         result.AddRange(moduleFilesResults);
 
@@ -3079,7 +3089,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                var moduleResults = CompleteModuleName(context, loadedModulesOnly);
+                var moduleResults = CompleteModuleName(context, loadedModulesOnly, skipEditionCheck);
                 if (moduleResults != null && moduleResults.Count > 0)
                     result.AddRange(moduleResults);
 
@@ -3736,7 +3746,7 @@ namespace System.Management.Automation
                 prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
             }
 
-            CompleteMemberByInferredType(context, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+            CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
             result.Add(CompletionResult.Null);
         }
 
@@ -3901,7 +3911,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="prev">the argument that is right before the 'tab' location</param>
         /// <param name="position">the number of positional arguments before the 'tab' location</param>
@@ -3997,7 +4006,6 @@ namespace System.Management.Automation
         #region Filenames
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
@@ -4166,7 +4174,7 @@ namespace System.Management.Automation
                                     string[] entries = null;
                                     try
                                     {
-                                        entries = Directory.GetFileSystemEntries(parentPath, leaf);
+                                        entries = Directory.GetFileSystemEntries(parentPath, leaf, _enumerationOptions);
                                     }
                                     catch (Exception)
                                     {
@@ -4396,6 +4404,11 @@ namespace System.Management.Automation
         private const int ERROR_MORE_DATA = 234;
         private const int STYPE_DISKTREE = 0;
         private const int STYPE_MASK = 0x000000FF;
+        private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
+        {
+            MatchCasing = MatchCasing.CaseInsensitive,
+            AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
+        };
 
         [DllImport("Netapi32.dll", CharSet = CharSet.Unicode)]
         private static extern int NetShareEnum(string serverName, int level, out IntPtr bufptr, int prefMaxLen,
@@ -4447,7 +4460,6 @@ namespace System.Management.Automation
         #region Variable
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="variableName"></param>
         /// <returns></returns>
@@ -5015,7 +5027,7 @@ namespace System.Management.Automation
                 if (inferredTypes != null && inferredTypes.Length > 0)
                 {
                     // Use inferred types if we have any
-                    CompleteMemberByInferredType(context, inferredTypes, results, memberName, filter: null, isStatic: @static);
+                    CompleteMemberByInferredType(context.TypeInferenceContext, inferredTypes, results, memberName, filter: null, isStatic: @static);
                 }
                 else
                 {
@@ -5119,7 +5131,7 @@ namespace System.Management.Automation
             return Ast.GetAncestorAst<ConfigurationDefinitionAst>(expression) != null;
         }
 
-        private static void CompleteMemberByInferredType(CompletionContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
+        internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
         {
             bool extensionMethodsAdded = false;
             HashSet<string> typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -5130,8 +5142,9 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 typeNameUsed.Add(psTypeName.Name);
-                var members = context.TypeInferenceContext.GetMembersByInferredType(psTypeName, isStatic, filter);
+                var members = context.GetMembersByInferredType(psTypeName, isStatic, filter);
                 foreach (var member in members)
                 {
                     AddInferredMember(member, memberNamePattern, results);
@@ -5264,7 +5277,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static bool IsPropertyMember(object member)
+        internal static bool IsPropertyMember(object member)
         {
             return member is PropertyInfo
                    || member is FieldInfo
@@ -6065,7 +6078,6 @@ namespace System.Management.Automation
         ///             D^
         ///         }
         ///     }
-        ///
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="ast"></param>
@@ -6143,7 +6155,7 @@ namespace System.Management.Automation
             {
                 var result = new List<CompletionResult>();
                 CompleteMemberByInferredType(
-                    completionContext, AstTypeInference.InferTypeOf(typeAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval),
+                    completionContext.TypeInferenceContext, AstTypeInference.InferTypeOf(typeAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval),
                     result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
                 return result;
             }
@@ -6254,7 +6266,7 @@ namespace System.Management.Automation
                                 var inferredType = AstTypeInference.InferTypeOf(commandAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
                                 var result = new List<CompletionResult>();
                                 CompleteMemberByInferredType(
-                                    completionContext, inferredType,
+                                    completionContext.TypeInferenceContext, inferredType,
                                     result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
                                 return result;
                             case "Select-Object":
@@ -6730,7 +6742,7 @@ namespace System.Management.Automation
             try
             {
                 // ConstrainedLanguage has already been applied as necessary when we construct CompletionContext
-                Diagnostics.Assert(!(ExecutionContext.HasEverUsedConstrainedLanguage && executionContext.LanguageMode != PSLanguageMode.ConstrainedLanguage),
+                Diagnostics.Assert(!(executionContext.HasRunspaceEverUsedConstrainedLanguageMode && executionContext.LanguageMode != PSLanguageMode.ConstrainedLanguage),
                                    "If the runspace has ever used constrained language mode, then the current language mode should already be set to constrained language");
 
                 // We're passing 'true' here for isTrustedInput, because SafeExprEvaluator ensures that the AST
@@ -6897,6 +6909,81 @@ namespace System.Management.Automation
         public object VisitParenExpression(ParenExpressionAst parenExpressionAst)
         {
             return parenExpressionAst.Pipeline.Accept(this);
+        }
+    }
+
+    /// <summary>
+    /// Completes with the property names of the InputObject.
+    /// </summary>
+    internal class PropertyNameCompleter : IArgumentCompleter
+    {
+        private readonly string _parameterNameOfInput;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyNameCompleter"/> class.
+        /// </summary>
+        public PropertyNameCompleter()
+        {
+            _parameterNameOfInput = "InputObject";
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyNameCompleter"/> class.
+        /// </summary>
+        /// <param name="parameterNameOfInput">The name of the property of the input object for witch to complete with property names.</param>
+        public PropertyNameCompleter(string parameterNameOfInput)
+        {
+            _parameterNameOfInput = parameterNameOfInput;
+        }
+
+        IEnumerable<CompletionResult> IArgumentCompleter.CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            CommandAst commandAst,
+            IDictionary fakeBoundParameters)
+        {
+            if (!(commandAst.Parent is PipelineAst pipelineAst))
+            {
+                return null;
+            }
+
+            int i;
+            for (i = 0; i < pipelineAst.PipelineElements.Count; i++)
+            {
+                if (pipelineAst.PipelineElements[i] == commandAst)
+                {
+                    break;
+                }
+            }
+
+            var typeInferenceContext = new TypeInferenceContext();
+            IEnumerable<PSTypeName> prevType;
+            if (i == 0)
+            {
+                var parameterAst = (CommandParameterAst)commandAst.Find(ast => ast is CommandParameterAst cpa && cpa.ParameterName == "PropertyName", false);
+                var pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion);
+                if (!pseudoBinding.BoundArguments.TryGetValue(_parameterNameOfInput, out var pair) || !pair.ArgumentSpecified)
+                {
+                    return null;
+                }
+
+                if (pair is AstPair astPair && astPair.Argument != null)
+                {
+                    prevType = AstTypeInference.InferTypeOf(astPair.Argument, typeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+                }
+
+                return null;
+            }
+            else
+            {
+                prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], typeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+            }
+
+            var result = new List<CompletionResult>();
+
+            CompletionCompleters.CompleteMemberByInferredType(typeInferenceContext, prevType, result, wordToComplete + "*", filter: CompletionCompleters.IsPropertyMember, isStatic: false);
+            return result;
         }
     }
 }

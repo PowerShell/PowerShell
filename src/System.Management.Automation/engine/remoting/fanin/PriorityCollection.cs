@@ -9,7 +9,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    ///
     /// </summary>
     internal enum DataPriorityType : int
     {
@@ -345,7 +344,6 @@ namespace System.Management.Automation.Remoting
 
         #region Constructor
         /// <summary>
-        ///
         /// </summary>
         /// <param name="defragmentor">
         /// Defragmentor used to deserialize an object.

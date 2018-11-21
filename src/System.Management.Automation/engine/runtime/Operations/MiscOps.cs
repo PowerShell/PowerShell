@@ -51,6 +51,14 @@ namespace System.Management.Automation
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                         null, "CantInvokeInNonImportedModule", ParserStrings.CantInvokeInNonImportedModule, mi.Name);
                 }
+                else if (((invocationToken == TokenKind.Ampersand) || (invocationToken == TokenKind.Dot)) && (mi.LanguageMode != context.LanguageMode))
+                {
+                    // Disallow FullLanguage "& (Get-Module MyModule) MyPrivateFn" from ConstrainedLanguage because it always
+                    // runs "internal" origin and so has access to all functions, including non-exported functions.
+                    // Otherwise we end up leaking non-exported functions that run in FullLanguage.
+                    throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null,
+                        "CantInvokeCallOperatorAcrossLanguageBoundaries", ParserStrings.CantInvokeCallOperatorAcrossLanguageBoundaries);
+                }
                 commandSessionState = mi.SessionState.Internal;
                 commandIndex += 1;
             }
@@ -295,6 +303,15 @@ namespace System.Management.Automation
         internal static IEnumerable<CommandParameterInternal> Splat(object splattedValue, Ast splatAst)
         {
             splattedValue = PSObject.Base(splattedValue);
+
+            var markUntrustedData = false;
+            if (ExecutionContext.HasEverUsedConstrainedLanguage)
+            {
+                // If the value to be splatted is untrusted, then make sure sub-values held by it are
+                // also marked as untrusted.
+                markUntrustedData = ExecutionContext.IsMarkedAsUntrusted(splattedValue);
+            }
+
             IDictionary splattedTable = splattedValue as IDictionary;
             if (splattedTable != null)
             {
@@ -304,6 +321,7 @@ namespace System.Management.Automation
                     object parameterValue = de.Value;
                     string parameterText = GetParameterText(parameterName);
 
+                    if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(parameterValue); }
                     yield return CommandParameterInternal.CreateParameterWithArgument(
                         splatAst, parameterName, parameterText,
                         splatAst, parameterValue, false);
@@ -316,6 +334,7 @@ namespace System.Management.Automation
                 {
                     foreach (object obj in enumerableValue)
                     {
+                        if (markUntrustedData) { ExecutionContext.MarkObjectAsUntrusted(obj); }
                         yield return SplatEnumerableElement(obj, splatAst);
                     }
                 }
@@ -1212,8 +1231,12 @@ namespace System.Management.Automation
                 ScriptBlock scriptBlock = scriptBlockExpressionWrapper.GetScriptBlock(
                     context, functionDefinitionAst.IsFilter);
 
-                context.EngineSessionState.SetFunctionRaw(functionDefinitionAst.Name,
-                                                          scriptBlock, context.EngineSessionState.CurrentScope.ScopeOrigin);
+                var expAttribute = scriptBlock.ExperimentalAttribute;
+                if (expAttribute == null || expAttribute.ToShow)
+                {
+                    context.EngineSessionState.SetFunctionRaw(functionDefinitionAst.Name, 
+                        scriptBlock, context.EngineSessionState.CurrentScope.ScopeOrigin);
+                }
             }
             catch (Exception exception)
             {
@@ -2159,7 +2182,6 @@ namespace System.Management.Automation
         /// Note that AddPowerShellTypesToTheScope() would be call on every foo call, 10 times.
         ///
         /// This method also should be called for 'using module' statements. Then added types would have a different name.
-        ///
         /// </summary>
         /// <param name="types"></param>
         /// <param name="context"></param>

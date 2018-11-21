@@ -476,8 +476,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ComplexWriter writer = new ComplexWriter();
                 writer.Initialize(_lo, _lo.ColumnNumber);
                 writer.WriteObject(goc.Data.groupingEntry.formatValueList);
-
-                this.LineOutput.WriteLine(string.Empty);
             }
             goc.GroupStart();
         }
@@ -493,7 +491,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             GroupOutputContext goc = (GroupOutputContext)c;
 
             goc.GroupEnd();
-            this.LineOutput.WriteLine(string.Empty);
         }
 
         /// <summary>
@@ -761,6 +758,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         static private int GetConsoleWindowWidth(int columnNumber)
         {
+            if (InternalTestHooks.SetConsoleWidthToZero)
+            {
+                return DefaultConsoleWidth;
+            }
+
             if (columnNumber == int.MaxValue)
             {
                 if (_noConsole)
@@ -769,7 +771,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 try
                 {
-                    return Console.WindowWidth;
+                    // if Console width is set to 0, the default width is returned so that the output string is not null.
+                    // This can happen in environments where TERM is not set.
+                    return (Console.WindowWidth != 0) ? Console.WindowWidth : DefaultConsoleWidth;
                 }
                 catch
                 {
@@ -1099,7 +1103,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// </summary>
             internal override void GroupStart()
             {
-                this.InnerCommand._lo.WriteLine(string.Empty);
             }
 
             /// <summary>
@@ -1187,7 +1190,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// </summary>
             internal override void GroupStart()
             {
-                this.InnerCommand._lo.WriteLine(string.Empty);
             }
 
             /// <summary>

@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// This class implements Export-PSSession cmdlet.
-    /// Spec: TBD
+    /// Spec: TBD.
     /// </summary>
     [Cmdlet(VerbsData.Export, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135213")]
     [OutputType(typeof(FileInfo))]
@@ -40,15 +40,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Version of the script generator used (by this Export-PSSession cmdlet) to generate psm1 and psd1 files.
         /// Generated script checks this version to see if it needs to be regenerated.  There are 2 situations where this is needed
-        /// 1. the script needs to be regenerated because a bug fix made previous versions incompatible with the rest of the system (i.e. with ObjectModelWrapper)
-        /// 2. ths script needs to be regenerated because a security vulnerability was found inside generated code (there is no way to service generated code, but we can service the dll that reports the version that the generated script checks against)
+        /// 1. the script needs to be regenerated because a bug fix made previous versions incompatible with the rest of the system (i.e. with ObjectModelWrapper).
+        /// 2. ths script needs to be regenerated because a security vulnerability was found inside generated code (there is no way to service generated code, but we can service the dll that reports the version that the generated script checks against).
         /// </summary>
         public static Version VersionOfScriptGenerator { get { return ImplicitRemotingCodeGenerator.VersionOfScriptWriter; } }
 
         #region Parameters
 
         /// <summary>
-        /// Mandatory file name to write to
+        /// Mandatory file name to write to.
         /// </summary>
         [Parameter(Mandatory = true, Position = 1)]
         [ValidateNotNullOrEmpty]
@@ -73,21 +73,11 @@ namespace Microsoft.PowerShell.Commands
         private bool _force;
 
         /// <summary>
-        /// Encoding optional flag
+        /// Encoding optional flag.
         /// </summary>
         [Parameter]
         [ArgumentToEncodingTransformationAttribute()]
-        [ArgumentCompletions(
-            EncodingConversion.Ascii,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.OEM,
-            EncodingConversion.Unicode,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf8Bom,
-            EncodingConversion.Utf8NoBom,
-            EncodingConversion.Utf32
-            )]
+        [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
@@ -125,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
             // Throw out terminating error if this is the case.
             if (IsModuleSpecified && IsFullyQualifiedModuleSpecified)
             {
-                string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
+                string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, nameof(Module), nameof(FullyQualifiedModule));
                 ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
@@ -162,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// This class implements Import-PSSession cmdlet.
-    /// Spec: http://cmdletdesigner/SpecViewer/Default.aspx?Project=PowerShell&amp;Cmdlet=Import-Command
+    /// Spec: http://cmdletdesigner/SpecViewer/Default.aspx?Project=PowerShell&amp;Cmdlet=Import-Command .
     /// </summary>
     [Cmdlet(VerbsData.Import, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135221")]
     [OutputType(typeof(PSModuleInfo))]
@@ -250,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
         #region Extra parameters
 
         /// <summary>
-        /// This parameter specified a prefix used to modify names of imported commands
+        /// This parameter specified a prefix used to modify names of imported commands.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -285,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
             // Throw out terminating error if this is the case.
             if (IsModuleSpecified && IsFullyQualifiedModuleSpecified)
             {
-                string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "Module", "FullyQualifiedModule");
+                string errMsg = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, nameof(Module), nameof(FullyQualifiedModule));
                 ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "ModuleAndFullyQualifiedModuleCannotBeSpecifiedTogether", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(error);
             }
@@ -323,7 +313,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Base class for implicit remoting cmdlets
+    /// Base class for implicit remoting cmdlets.
     /// </summary>
     public class ImplicitRemotingCommandBase : PSCmdlet
     {
@@ -349,7 +339,7 @@ namespace Microsoft.PowerShell.Commands
         #region related to Get-Command
 
         /// <summary>
-        /// Gets or sets the path(s) or name(s) of the commands to retrieve
+        /// Gets or sets the path(s) or name(s) of the commands to retrieve.
         /// </summary>
         [Parameter(Position = 2)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -373,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
         private Collection<WildcardPattern> _commandNamePatterns; // initialized to default value in the constructor
 
         /// <summary>
-        /// Allows shadowing and/or overwriting of existing local/client commands
+        /// Allows shadowing and/or overwriting of existing local/client commands.
         /// </summary>
         [Parameter]
         public SwitchParameter AllowClobber { get; set; } = new SwitchParameter(false);
@@ -402,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _commandArgs;
 
         /// <summary>
-        /// Gets or sets the type of the command to get
+        /// Gets or sets the type of the command to get.
         /// </summary>
         [Parameter]
         [Alias("Type")]
@@ -422,7 +412,7 @@ namespace Microsoft.PowerShell.Commands
         private CommandTypes _commandType = CommandTypes.All & (~(CommandTypes.Application | CommandTypes.Script | CommandTypes.ExternalScript));
 
         /// <summary>
-        /// Gets or sets the PSSnapin parameter to the cmdlet
+        /// Gets or sets the PSSnapin parameter to the cmdlet.
         /// </summary>
         [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -450,7 +440,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _PSSnapins = new string[0];
         internal bool IsModuleSpecified = false;
         /// <summary>
-        /// Gets or sets the FullyQualifiedModule parameter to the cmdlet
+        /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
         /// </summary>
         [Parameter]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -482,7 +472,7 @@ namespace Microsoft.PowerShell.Commands
         #region related to F&O
 
         /// <summary>
-        /// Gets or sets the types for which we should get formatting and output data
+        /// Gets or sets the types for which we should get formatting and output data.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 3)]
@@ -510,7 +500,7 @@ namespace Microsoft.PowerShell.Commands
         #region Related to modules
 
         /// <summary>
-        /// This parameter specified a prefix used to modify names of imported commands
+        /// This parameter specified a prefix used to modify names of imported commands.
         /// </summary>
         internal string Prefix { set; get; } = string.Empty;
 
@@ -524,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The PSSession object describing the remote runspace
-        /// using which the specified cmdlet operation will be performed
+        /// using which the specified cmdlet operation will be performed.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNull]
@@ -865,7 +855,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns true if command doesn't shadow OR is in the -AllowShadowing parameter
+        /// Returns true if command doesn't shadow OR is in the -AllowShadowing parameter.
         /// </summary>
         /// <param name="commandName"></param>
         /// <returns></returns>
@@ -1089,7 +1079,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Validates that a name or identifier is safe to use in generated code
-        /// (i.e. it can't be used for code injection attacks)
+        /// (i.e. it can't be used for code injection attacks).
         /// </summary>
         /// <param name="name">name to validate</param>
         /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise</returns>
@@ -1107,7 +1097,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Validates that a parameter name is safe to use in generated code
-        /// (i.e. it can't be used for code injection attacks)
+        /// (i.e. it can't be used for code injection attacks).
         /// </summary>
         /// <param name="parameterName">parameter name to validate</param>
         /// <returns><c>true</c> if the name is safe; <c>false</c> otherwise</returns>
@@ -1118,7 +1108,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Validates that a type can be safely used as a type constraint
-        /// (i.e. it doesn't introduce any side effects on the client)
+        /// (i.e. it doesn't introduce any side effects on the client).
         /// </summary>
         /// <param name="type">type to validate</param>
         /// <returns><c>true</c> if the type is safe; <c>false</c> otherwise</returns>
@@ -1379,7 +1369,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Converts remote (deserialized) CommandInfo objects into CommandMetadata equivalents
+        /// Converts remote (deserialized) CommandInfo objects into CommandMetadata equivalents.
         /// </summary>
         /// <param name="name2commandMetadata">Dictionary where rehydrated CommandMetadata are going to be stored</param>
         /// <param name="alias2resolvedCommandName">Dictionary mapping alias names to resolved command names</param>
@@ -1576,7 +1566,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets CommandMetadata objects from remote runspace
+        /// Gets CommandMetadata objects from remote runspace.
         /// </summary>
         /// <returns>(rehydrated) CommandMetadata objects</returns>
         internal List<ExtendedTypeDefinition> GetRemoteFormatData()
@@ -1653,10 +1643,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 powerShell.AddParameter("Name", this.CommandName);
             }
-            powerShell.AddParameter("Module", this.Module);
+            powerShell.AddParameter(nameof(Module), this.Module);
             if (IsFullyQualifiedModuleSpecified)
             {
-                powerShell.AddParameter("FullyQualifiedModule", this.FullyQualifiedModule);
+                powerShell.AddParameter(nameof(FullyQualifiedModule), this.FullyQualifiedModule);
             }
             powerShell.AddParameter("ArgumentList", this.ArgumentList);
 
@@ -1666,7 +1656,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
@@ -1676,7 +1665,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets CommandMetadata objects from remote runspace
+        /// Gets CommandMetadata objects from remote runspace.
         /// </summary>
         /// <returns>(rehydrated) CommandMetadata objects</returns>
         internal List<CommandMetadata> GetRemoteCommandMetadata(out Dictionary<string, string> alias2resolvedCommandName)
@@ -1919,7 +1908,7 @@ namespace Microsoft.PowerShell.Commands
         #region Code generation helpers
 
         /// <summary>
-        /// Gets a connection URI associated with the remote runspace
+        /// Gets a connection URI associated with the remote runspace.
         /// </summary>
         /// <returns>Connection URI associated with the remote runspace</returns>
         private string GetConnectionString()
@@ -1996,6 +1985,7 @@ namespace Microsoft.PowerShell.Commands
 
     PrivateData = @{{
         ImplicitRemoting = $true
+        ImplicitSessionId = '{4}'
     }}
 }}
         ";
@@ -2014,7 +2004,8 @@ namespace Microsoft.PowerShell.Commands
                 CodeGeneration.EscapeSingleQuotedStringContent(_moduleGuid.ToString()),
                 CodeGeneration.EscapeSingleQuotedStringContent(StringUtil.Format(ImplicitRemotingStrings.ProxyModuleDescription, this.GetConnectionString())),
                 CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(psm1fileName)),
-                CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(formatPs1xmlFileName)));
+                CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(formatPs1xmlFileName)),
+                this._remoteRunspaceInfo.InstanceId);
         }
 
         #endregion
@@ -2416,9 +2407,9 @@ function Get-PSImplicitRemotingSession
         {
             StringBuilder result = new StringBuilder();
 
-            if (_invocationInfo.BoundParameters.ContainsKey("Module"))
+            if (_invocationInfo.BoundParameters.ContainsKey(nameof(Module)))
             {
-                string[] moduleNames = (string[])_invocationInfo.BoundParameters["Module"];
+                string[] moduleNames = (string[])_invocationInfo.BoundParameters[nameof(Module)];
                 foreach (string moduleName in moduleNames)
                 {
                     result.AppendFormat(

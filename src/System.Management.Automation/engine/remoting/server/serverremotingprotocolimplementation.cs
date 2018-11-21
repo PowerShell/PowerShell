@@ -165,7 +165,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="dataArg">
         /// The received client data.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>

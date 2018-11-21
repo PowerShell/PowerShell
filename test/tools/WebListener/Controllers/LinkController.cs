@@ -31,14 +31,24 @@ namespace mvc.Controllers
 
             string type = Request.Query.TryGetValue("type", out StringValues typeSV) ? typeSV.FirstOrDefault() : "default";
 
+            string whitespace = " ";
+            if (type.ToUpper() == "EXTRAWHITESPACE")
+            {
+                whitespace = "  ";
+            }
+            else if (type.ToUpper() == "NOWHITESPACE")
+            {
+                whitespace = string.Empty;
+            }
+
             var linkList = new List<String>();
             if (maxLinks > 1 && linkNumber > 1)
             {
-                linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber - 1, type: type, rel: "prev"));
+                linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber - 1, type: type, whitespace: whitespace, rel: "prev"));
             }
-            linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: maxLinks, type: type, rel: "last"));
-            linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: 1, type: type, rel: "first"));
-            linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber, type: type, rel: "self"));
+            linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: maxLinks, type: type, whitespace: whitespace, rel: "last"));
+            linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: 1, type: type, whitespace: whitespace, rel: "first"));
+            linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber, type: type, whitespace: whitespace, rel: "self"));
 
             bool sendMultipleHeaders = false;
             bool skipNextLink = false;
@@ -65,7 +75,7 @@ namespace mvc.Controllers
 
             if (!skipNextLink && maxLinks > 1 && linkNumber < maxLinks)
             {
-                linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber + 1, type: type, rel: "next"));
+                linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber + 1, type: type, whitespace: whitespace, rel: "next"));
             }
 
             StringValues linkHeader;
@@ -96,9 +106,9 @@ namespace mvc.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private string GetLink(string baseUri, int maxLinks, int linkNumber, string type, string rel)
+        private string GetLink(string baseUri, int maxLinks, int linkNumber, string whitespace, string type, string rel)
         {
-            return String.Format(Constants.LinkUriTemplate, baseUri, maxLinks, linkNumber, type, rel);
+            return string.Format(Constants.LinkUriTemplate, baseUri, maxLinks, linkNumber, type, whitespace, rel);
         }
     }
 }

@@ -1,5 +1,586 @@
 # Changelog
 
+## v6.2.0-preview.2 - 2018-11-15
+
+### Breaking Changes
+
+- Honor `-OutputFormat` if specified in non-interactive, redirected, encoded command used with `pwsh` (#8115)
+- Load assembly from module base path before trying to load from the `GAC` (#8073)
+- Remove tilde from Linux preview packages (#8244)
+- Move processing of `-WorkingDirectory` before processing of profiles (#8079)
+
+### Known Issues
+
+- PowerShell WSMan remoting does not work on Debian 9 due to missing symbolic links.
+  For more information and a workaround see issue [#7598](https://github.com/PowerShell/PowerShell/issues/7598)
+
+### Engine Updates and Fixes
+
+- Enable case-insensitive tab completion for files and folders on case-sensitive filesystem (#8128)
+- Experimental feature: Implicit remoting batching performance improvements (#8038)
+- Add a path for checking `ZoneInformation` without throwing an exception (#8025) (Thanks @powercode!)
+- Fix [CVE-2018-8256](https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2018-8256),
+  issues with expanding `ZIP` files with relative paths (#8252)
+- Fix [CVE-2018-8415](https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2018-8415),
+  issue logging when the `scriptblock` has a null character (#8253)
+- Make `PSVersionInfo.PSVersion` and `PSVersionInfo.PSEdition` public (#8054) (Thanks @KirkMunro!)
+- Enable distinct `ModuleAnalysisCache` files for each installation of `pwsh` (#8174)
+- Consolidation of all Windows PowerShell work ported to PowerShell Core (#8257)
+- Fix incorrect name check when auto-loading required modules (#8218)
+- Adding verbose output for experimental implicit remoting batching feature (#8166)
+- Add Type Inference for `$_ / $PSItem in catch{ }` blocks (#8020) (Thanks @vexx32!)
+- Fix static method invocation type inference (#8018) (Thanks @SeeminglyScience!)
+
+### General Cmdlet Updates and Fixes
+
+- Reduce allocations in `Get-Content` cmdlet (#8103) (Thanks @iSazonov!)
+- Enable `Set-Location -LiteralPath` to work with folders named `-` and `+` (#8089)
+- Enable `Add-Content` to share read access with other tools while writing content (#8091)
+- Add new `Offset` and `Count` parameters to `Format-Hex` and refactor the cmdlet (#7877) (Thanks @iSazonov!)
+- Add `-Name`, `-NoUserOverrides` and `-ListAvailable` parameters to `Get-Culture` cmdlet (#7702) (Thanks @iSazonov!)
+- Allow dynamic parameter to be returned even if path does not match any provider (#7957)
+- Style fixes in `Format-Hex` (#8083) (Thanks @iSazonov!)
+- Fix logic to rely on PowerShell major and minor version instead of build number to determine whether to output `formatdata` (#8063)
+- Fix `Rename-Item -Path` with wildcard `char` (#7398) (Thanks @kwkam!)
+- When using `Start-Transcript` and file exists, empty file rather than deleting (#8131) (Thanks @paalbra!)
+- Error message enhancement for `Clear-Content` cmdlet when targeting a directory (#8134) (Thanks @kvprasoon!)
+- Make `Select-String` faster by not doing extra work (#7673) (Thanks @powercode!)
+- Remove `ShouldProcess` from `Format-Hex` (#8178)
+
+### Code Cleanup
+
+- Remove clone of command-line arguments array (#7910) (Thanks @iSazonov!)
+- Use `DefaultPathSeparator` `char` instead of `DefaultPathSeparatorString` (#8082) (Thanks @iSazonov!)
+- Replace `StringComparision.CurrentCulture` with `StringComparision.Ordinal` (#8068) (Thanks @iSazonov!)
+- Fix typo in `-icontains` description from `incase sensitive` to `case insensitive` (#7840) (Thanks @StingyJack!)
+- Refactor module version/`GUID` comparison logic (#7125)
+
+### Tools
+
+- Update `installpsh-amazonlinux.sh` for container specific issues (#7907) (Thanks @DarwinJS!)
+- Update the `codeowners` file (#8017)
+
+### Tests
+
+- Filter the `TestPackage` artifact upload by name to avoid other `ZIP` files being uploaded  (#8116)
+- Adding `fxdependent` PowerShell package tests (#7830)
+- Fix Windows Feature tests running in Azure DevOps (#8220)
+- Create `$PROFILE` if it does not exist for `-WorkingDirectory` processing test  (#8152)
+- Add test coverage for additional `Get-Module` parameters (#8137) (Thanks @KevinMarquette!)
+- Fix conflict with `Get-AdlStoreChildItem` from `az` module in tab completion tests (#8167)
+- Fix static secret in code (#8186)
+
+### Build and Packaging Improvements
+
+- Bump `xunit.runner.visualstudio` from `2.4.0` to `2.4.1` (#8139)
+- Bump `xunit` from `2.4.0` to `2.4.1` (#8140)
+- Bump `Microsoft.ApplicationInsights` from `2.8.0` to `2.8.1` (#8104)
+- Bump `NJsonSchema` from `9.11.1` to `9.12.1` (#8183, #8248)
+- Fix `Start-PSBuild -Output` (#7504) (Thanks @kwkam!)
+- Adding `YML` for Linux builds (#8168)
+- Publish test package at `AGENT_WORKFOLDER` if `TEMP` is not available (#8108)
+- Fix `psmodulerestore` path when built in Visual Studio Code (#8075)
+- Use approved verb instead of `Generate-CrossGenAssembly` (#8151) (Thanks @kvprasoon!)
+- Add path filters to CI `YAML` (#8222)
+- Update `SignType` in `signing.xml` (#8223)
+- Update metadata for `6.0.5` and `6.1.1` releases (#8259)
+- Port changes to allow Azure DevOps NuGet feeds for Mac build (Internal 5818)
+- Update version for dependencies (Internal 5822)
+- Add code to use private NuGet feeds when running in internal CI system (#8187)
+- Add title to `Open Here` window for `MSI` installer (#8164)
+- Remove build and documentation references to `git` submodules (#8177) (Thanks @andschwa!)
+- Add function to create a new `nuget.config` file (#8170)
+- Update macOS release build to create the `nuget.config` (#8185)
+- Workaround for accessing Azure Artifacts (#8188)
+- Fix script path for `PowerShellPackageVsts.ps1` (#8189)
+- `Microsoft.PowerShell.Native` now has `MUSL` binaries for Alpine.
+
+### Documentation and Help Content
+
+- Fix grammar in `README.md` (#8059) (Thanks @daviddreher2!)
+- Update `powershell-beginners-guide.md` to add alias for `Clear-Host` (#7912) (Thanks @aavdberg!)
+- Add Microsoft Docs link to FAQ (#8133) (Thanks @vongrippen!)
+- Added updated photo of Visual Studio Code due to new version of Code (#8084) (Thanks @lassehastrup!)
+- Update `license.rtf` to only have major version (#8127)
+- Updated Pester Syntax in Writing Tests Guide (#8039) (Thanks @markwragg!)
+- Remove duplicate parts from license file (#8143) (Thanks @azkarmoulana!)
+- Fix spellings in `CHANGELOG.md` (#8062)
+- Update license RTF to 6.2 (#8065)
+- Combine notes about `ITuple` changes in Change Log (#8077) (Thanks @Jocapear!)
+- Correct typos in `powershell-beginners-guide.md` (#8088) (Thanks @nycjan!)
+- Added `Learn Windows PowerShell in a Month of Lunches` as recommended reading (#8067) (Thanks @tobvil!)
+- Update `README.md` for `v6.1.1` (#8255)
+- Fix some typos (#8206) (Thanks @jeis2497052!)
+- Promote `HTTPS` (#8160) (Thanks @RDIL!)
+- Simple grammatical correction in `README.md` file (#7978) (Thanks @iGotenz!)
+- Update URLs to use `HTTPS` instead of `HTTP` in the documentation (#8165) (Thanks @RDIL!)
+- Remove #7633 from `v6.2.0-preview.1` `CHANGELOG.md` updates. (#8101) (Thanks @stknohg!)
+
+## v6.2.0-preview.1 - 2018-10-18
+
+### Breaking Changes
+
+- Do not add `PATHEXT` environment variable on Unix (#7697) (Thanks @iSazonov!)
+
+### Known Issues
+
+- Remoting on Windows IOT ARM platforms has an issue loading modules.  See [#8053](https://github.com/PowerShell/PowerShell/issues/8053)
+
+### Engine Updates and Fixes
+
+- Add C# style type accelerators and suffixes for `ushort`, `uint`, `ulong`, and `short` literals (#7813) (Thanks @vexx32!)
+- Create inferred types for `Select-Object`, `Group-Object`, `PSObject` and `Hashtable` (#7231) (Thanks @powercode!)
+- Fix .NET adapter to be able to get members from `System.IntPtr` (#7808)
+- Fix .NET adapter to not throw when fails to create a `PSMethod` due to `ByRef-like` type (#7788)
+- Support calling method with `ByRef-like` type parameters (#7721)
+- Fix perf issue in provider by using `Refresh()` to update the status rather than instantiating `ServiceController` which has a significant perf degradation from .NET Framework (#7680)
+- Update PowerShell to handle the case where the Windows PowerShell module path is already in the environment's `PSModulePath` (#7727)
+- Ensure the `SSHClientSessionTransportManager` stream writer and reader fields are cleared after dispose.  (#7746)
+- Add unified attribute for completion for `Encoding` parameter. (#7732) (Thanks @ThreeFive-O!)
+- Add support for Byte Literals (#7901) (Thanks @vexx32!)
+- Fix Property and `ScriptBlock` expressions in `EntrySelectedBy` tags within custom controls (#7913) (Thanks @SeeminglyScience!)
+- Fix `BeginInvoke`/`EndInvoke` to return results when `Stop` or `BeginStop`/`EndStop` was called previously (#7917)
+- Allow root node of `format.ps1xml` to have attributes that are ignored (#7987)
+- Use non-virtual call to invoke 'family or assembly' methods on base class from PowerShell class (#7622) (#7624) (Thanks @yurko7!)
+- Make the parameter to `ImportPSModule` use `params` so that it is easier to call (#7933) (Thanks @iSazonov!)
+
+### General Cmdlet Updates and Fixes
+
+- Add `EscapeHandling` parameter in `ConvertTo-Json` cmdlet (#7775) (Thanks @iSazonov!)
+- Make `Add-Type` open source files with `FileAccess.Read` and `FileShare.Read` explicitly (#7915) (Thanks @IISResetMe!)
+- No longer skips a column without name if double quote delimiter is used in `Import-Csv` (#7899) (Thanks @Topping!)
+- Add support for `cd +` (#7206) (Thanks @bergmeister!)
+- Allow numeric Ids and name of registered code pages in `-Encoding` parameters (#7636) (Thanks @iSazonov!)
+- Remove extra space in `LastWriteTime` format (#7810) (Thanks @iSazonov!)
+- Fix `Enter-PSSession -ContainerId` for the latest Windows (#7883)
+- `Get/Add-Content` throws improved error when targeting a container (#7823) (Thanks @kvprasoon!)
+- Ensure `NestedModules` property gets populated by `Test-ModuleManifest` (#7859)
+- Add `%F` case to `Get-Date -UFormat` (#7630) (Thanks @britishben!)
+- Fix file blocking issue with web cmdlets (#7676) (Thanks @Claustn!)
+- Improve error message on non-Windows when importing `clixml` with `securestring` (#7997)
+- Add prompt to the use of less in the function 'help' to instruct user how to quit (#7998)
+- Fix `Set-Service -Status Stopped` to stop services with dependencies  (#5525) (Thanks @zhenggu!)
+
+### Code Cleanup
+
+- Use `nameof()` in bound `parameters.contains key()` (#7908) (Thanks @iSazonov!)
+- Cleanup all native code from repository (#7892)
+- Add `XSDs` for Format and `Types.ps1xml` files (#7832) (Thanks @felixfbecker!)
+- Remove unused commented out code (#7935) (Thanks @vpondala!)
+- Add `.editorconfig` (#7357) (Thanks @iSazonov!)
+- Remove unused stopwatch (#7878)
+- Clean up `MshObject.cs` and `MshMemberInfo.cs` (#7446)
+- Add `TimeToLive` and `Hops` aliases to `MaxHops` parameter of `Test-Connection` cmdlet. (#7850) (Thanks @sethvs!)
+- Fix a typo in `Credential.cs` (#7696) (Thanks @sethvs!)
+- Remove workaround on VSTS that is no longer needed (#7666)
+- Improve code style of `Send-MailMessage` cmdlet (#7723) (Thanks @ThreeFive-O!)
+- Cleanup `FileSystemProvider` from runtime checks (#7655) (Thanks @iSazonov!)
+- Remove extra spaces in error messages in `Modules.resx` (#7662) (Thanks @sethvs!)
+- Remove empty XML comment lines (missed in #7401) (#7641) (Thanks @kvprasoon!)
+- Remove `Suspend-Job` and `Resume-Job` cmdlets from compilation (#7650)
+
+### Tools
+
+- Fix syntax error in `installpwsh-amazonlinux.sh` (#7905) (Thanks @DarwinJS!)
+- Add tools for PowerShell perf analysis (#7595) (Thanks @lzybkr!)
+- Started using [Dependabot](https://dependabot.com) to create PRs to update package and module versions
+
+### Tests
+
+- Add test for `$error[0]` tab completion (#7924) (Thanks @iSazonov!)
+- Replace test certificates with self-signed certificate generating command (#7875)
+- Standardize Pester syntax in `ReplaceOperator.Tests.ps1` (#7963) (Thanks @sethvs!)
+- Updating `ModulePath.Tests` for `fxdependent` package (#7772)
+- Add tests for `Import-Module -Force` (#7491)
+- Updates to Docker package tests (#7667)
+- Updating test gallery URL in `PackageManagement` tests (#7879)
+- Add version checking tests for `Import-Module` (#7499)
+- Update Markdown tests (#7838)
+- Change locale of `mdspell` to `en-US` (#7671)
+- Test changes needed for running in a container (#7869)
+- Add daily build non-windows platforms (#7683)
+- Remove workaround on VSTS that is no longer needed (#7666)
+- Fix module specification `hashtable` in `ModuleSpecification.Tests.ps1` (#7663) (Thanks @sethvs!)
+- Use `dotnet test` since the `dotnet xunit` test runner has been deprecated (#7980) (Thanks @bergmeister!)
+- Fix pipeline test where `SmtpServer` key was set wrong in pipeline object (#7745) (Thanks @ThreeFive-O!)
+- Change API to get host name to match cmdlet which is more reliable in Azure DevOps Pipelines `Hosted Windows VS2017` (#8003)
+- Disable `travis-ci` (#7766)
+- Make artifact upload only occur for non-PR builds (#7657)
+- Change logic for downloading zip files based on job id (#7653)
+- Add missing dependency for hosting xUnit tests
+
+### Build and Packaging Improvements
+
+- Change default of `Start-PSBuild` to include `-PSModuleRestore` (#7881)
+- Specify verb, `pwsh`, for shell context menu to avoid overriding the default verb (#7932) (Thanks @bergmeister!)
+- Converting aliases to cmdlets in `build.psm1` (#7964) (Thanks @kvprasoon!)
+- Add dependencies for SUSE (#7938) (Thanks @Jellyfrog!)
+- Wait for package manager not to be locked (#7817)
+- Make `Start-PSPackage` give better message about how to fix `files.wxs` (#7841)
+- Bump to .NET Core `2.1.5` with SDK `2.1.403` and latest packages (#7646, #7834, #7922, #7936) (Thanks @iSazonov!)
+- Bump `Markdig.Signed` NuGet package from `0.15.3` to `0.15.4` (#7960) (Thanks @bergmeister!)
+- Bump `Microsoft.ApplicationInsights` from `2.7.2` to `2.8.0` (#8002)
+- Bump `Microsoft.PowerShell.Native` from `6.1.0-rc.1` to `6.1.0` (#7861)
+- Bump `NJsonSchema` from `9.10.71` to `9.11.1` (#7705, #7764, #7990)
+- Bump `PackageManagement` from `1.1.7.2` to `1.2.2` in /src/Modules (#8014, #8029)
+- Bump `Pester` to use latest version (#8015)
+- Bump `PowerShellGet` to `2.0.0` (#7831)
+- Bump `PSReadLine` to `2.0.0-beta3` (#7711)
+- Bump `Xunit.SkippableFact` from `1.3.6` to `1.3.12` (#7972)
+- Make Windows MSI uninstallation shortcut remove work when more than one version is installed (#7701) (Thanks @bergmeister!)
+- Update Docker files to use MCR (#7726)
+- Update `metadata.json` in preparation for `6.1` release (#7741)
+- Build and package framework dependent package (#7729)
+- Make sure MSI build works when not preview (#7752)
+- Remove `PDBs` from `fxdependent` package (#8006)
+- Improve debugging of NuGet package generation and add type to filtering
+
+### Documentation and Help Content
+
+- Replace ambiguous `hang` term (#7902, #7931) (Thanks @iSazonov!)
+- Updating incorrect example of `PowerShell.Create()` (#7926) (Thanks @1RedOne!)
+- Update `governance.md` (#7927) (Thanks @tommymaynard!)
+- Add `cURL` to the Bash users list in `README.md` (#7948) (Thanks @vmsilvamolina!)
+- Optimize image assets used in documentation (#7874) (Thanks @RDIL!)
+- Update build badges (#7792)
+- Remove packaging, building and installation scripts for Ubuntu 17.10 (#7773)
+- Remove badges for master build as it reflects last PR which is not actionable from the `README` file (#7816)
+- Improve Markdown formatting of beginners guide (#7684) (Thanks @fbehrens!)
+- Fix the `Basic cookbooks` link (#7934) (Thanks @vmsilvamolina!)
+- Update version for PowerShell release `6.1.0` (#7751)
+- Add VSTS CI build badges for master branch to `README.md` (#7691) (Thanks @bergmeister!)
+- Add a paragraph on `files.wxs` updating (#7695) (Thanks @iSazonov!)
+- Update `CONTRIBUTION.md` about adding an empty line after the copyright header (#7706) (Thanks @iSazonov!)
+- Update docs about .NET Core version `2.0` to be about version `2.x` (#7467) (Thanks @bergmeister!)
+
+## v6.1.1 - 2018-11-13
+
+### Engine Updates and Fixes
+
+- Fix issue with logging the null character in `ScriptBlock` logging (Internal 5607)
+- Consolidation of all Windows PowerShell work ported to 6.1 (Internal 5233)
+
+### General Cmdlet Updates and Fixes
+
+- Use `ZipFile` and `ExtractToDirectory` APIs to extract zip file (Internal 5608)
+
+## v6.0.5 - 2018-11-13
+
+### Engine updates and fixes
+
+- Fix issue with logging the null character in `ScriptBlock` logging (Internal 5605)
+
+### General cmdlet updates and fixes
+
+- Use `ZipFile` and `ExtractToDirectory` APIs to extract zip file (Internal 4802)
+
+### Build and Packaging Improvements
+
+- Update `SignType` in `signing.xml` (Internal 5721)
+- Port changes to pull PowerShell Gallery modules from Modules `csproj` (Internal 5713)
+- Port macOS Release build changes changes from GitHub (#8189, #8188, #8185)
+- Fix script path for `PowerShellPackageVsts.ps1` (#8189)
+- Workaround for accessing `AzDevOps` Artifacts (#8188)
+- Bump various packages to latest patch version (Internal 5675)
+- Update PowerShell SDK NuGet various metadata description (Internal 4527, 4510, 4505)
+
+## v6.0.4 - 2018-08-10
+
+### Build and Packaging Improvements
+
+- Update the Archive module version (Internal 5671)
+- Update to .NET Core `2.1.5` with SDK `2.1.403` (#7936) (Thanks @iSazonov!)
+- Disable package major upgrade tests for release branch (Internal 5209)
+- Bump versions for dependencies (Internal 5612)
+- Port changes to allow `AzDevOps` NuGet feeds for macOS build (Internal 5716)
+- Port macOS changes from GitHub (#8189, #8188, #8185)
+- Add function to create a new `nuget.config` file (#8170)
+- Updated `wxs` file to match published packages (Internal 5660)
+
+### Tests
+
+- Change API to match cmdlet which is more reliable in `AzDevOps` Pipelines Windows (#8003)
+- Fix conflict with `Get-AdlStoreChildItem` from `az` module in tab completion tests (#8167)
+
+## v6.1.0 - 2018-09-13
+
+### Engine Updates and Fixes
+
+- Enable indexing operations on `System.Tuple` and `System.ValueTuple` (#7633) (Thanks @SeeminglyScience!)
+- Use non-virtual call to invoke 'family or assembly' methods on base class from PowerShell class (#7624) (Thanks @yurko7!)
+- Handle operations with `ByRef-like` types gracefully in PowerShell (#7533)
+- Make the `-settingfile` flag on `pwsh` work for `ScriptBlock` logging on windows (#7631)
+- Ensure the `SSHClientSessionTransportManager` stream writer and reader fields are cleared after disposing (#7746)
+- Add `LocationChangedAction` handler to support the Windows Compatibility module (#7552)
+
+### General Cmdlet Updates and Fixes
+
+- Fix `Set-Service -Status Stopped` to stop services with dependencies (#5525) (Thanks @zhenggu!)
+- Add the `Duration` property to `HistoryInfo` (#5208) (Thanks @powercode!)
+- Fix null reference in `ConvertFrom-Markdown` when the markdown content is empty (#7463)
+- Fix file blocking issue with WebCmdlets (#7676) (Thanks @Claustn!)
+- Fix performance issue in `WSMan` provider by using `Refresh()` to update the status rather than instantiating `ServiceController` (#7680)
+
+### Code Cleanup
+
+- Remove `Suspend-Job` and `Resume-Job` cmdlets from compilation on Unix platforms (#7650)
+- Remove extra spaces in error messages in `Modules.resx` (#7662) (Thanks @sethvs!)
+- Cleanup the platform runtime checks from `FileSystemProvider` (#7655) (Thanks @iSazonov!)
+- Improve code style of `Send-MailMessage` cmdlet (#7723) (Thanks @ThreeFive-O!)
+
+### Tools
+
+- Add tools for PowerShell performance analysis (#7595) (Thanks @lzybkr!)
+- Update code coverage module to download zip files based on job ID (#7653)
+
+### Tests
+
+- Update test which assumes all previews have the name preview in the version (#7625)
+- Update Pester syntax in `Set-Location` test (#7615) (Thanks @iSazonov!)
+- Add `ScriptBlock` logging test for Linux and macOS (#7599) (#7586)
+- Add tests to report when package references are out of date (#7661)
+- Fix `ModuleSpecification.Tests.ps1` (#7663) (Thanks @sethvs!)
+- Updates Docker package tests (#7667)
+
+### Build and Packaging Improvements
+
+- Update to the latest package references, dotnet core SDK and framework (#7646) (Thanks @iSazonov!)
+- Make the artifact upload only occur for non-PR builds (#7657)
+- Change to not upload artifacts during pull request due to missing VSTS feature (#7588)
+- Remove workaround on VSTS that is no longer needed (#7666)
+- Update docker files to use MCR (#7656)
+- Add symbolic links for `libssl` and `libcrypto` to Debian 9 build to make remoting work (#7609)
+- Simplify the `StartupInfo` type used in Jumplist creation for faster `P/Invoke` (#7580) (Thanks @powercode!)
+- Add VSTS CI for Windows (#7536)
+- Update the version of `PowerShellGet` module to `1.6.7` (#7564)
+- update the version of `PSReadLine` module to `2.0.0-beta3` (#7711)
+- Make sure MSI build works for non-preview builds (#7752)
+- Build and package framework dependent package (#7729)
+- Change locale of `mdspell` to `en-US` (#7671)
+- Add daily build on non-windows platforms (#7683)
+- Fix Windows MSI to remove the `Uninstall` shortcut during an uninstall when more than one version is installed (#7701) (Thanks @bergmeister!)
+- Fix docker image names for release build (#7726)
+
+### Documentation and Help Content
+
+- Update the version of .NET Core in docs (#7467) (Thanks @bergmeister!)
+- Fix links in `README.md` (#7619) (Thanks @iSazonov!)
+- Add VSTS CI build badges for master branch to `README.md` (#7691) (Thanks @bergmeister!)
+- Add a paragraph in `CONTRIBUTING.md` about updating `files.wxs` (#7695) (Thanks @iSazonov!)
+
+## v6.1.0-rc.1 - 2018-08-22
+
+### Engine Updates and Fixes
+
+- Fix to not duplicate the `System32` module path when starting `pwsh` from `pwsh` (#7414)
+- Fix sequence point update for `switch/if/for/while/do-while/do-until` statements (#7305)
+- Set the cursor to the place where a user hits tab key (#7299)
+- Adding `LanguagePrimitives.TryCompare` to provide faster comparisons (#7438) (Thanks @powercode!)
+- Improving performance of `LanguagePrimitives.TryConvertTo` (#7418) (Thanks @powercode!)
+- Set `PowerShellVersion` to `3.0` for built-in modules to make Windows PowerShell work when starting from PowerShell Core (#7365)
+- Avoid extra unnecessary allocations in `PSMemberInfoInternalCollection<T>` (#7435) (Thanks @iSazonov!)
+- Enforce the `CompatiblePSEditions` check for modules from the legacy `System32` module path (#7183)
+- Make sure that `SettingFile` argument is parsed before we load the settings (#7449)
+- Default to `DefaultConsoleWidth` when DotNet says `WindowWidth` is 0 (#7465)
+
+### General Cmdlet Updates and Fixes
+
+- Fix parameter name in the `Get-Variable` cmdlet error message (#7384) (Thanks @sethvs!)
+- Fix `Move-Item -Path` with wildcard character (#7397) (Thanks @kwkam!)
+- Ignore `Newtonsoft.Json` metadata properties in `ConvertFrom-Json` (#7308) (Thanks @louistio!)
+- Fix several issues in Markdown cmdlets (#7329)
+- Add support for parsing Link Header with variable whitespace (#7322)
+- Change parameter order in `Get-Help` and help in order to get first `-Full` and
+  then `-Functionality` when using Get-Help `-Fu` followed by pressing tab and help `-Fu` followed by pressing tab (#7370) (Thanks @sethvs!)
+- Add support for passing files and Markdown directly to `Show-Markdown` (#7354)
+- Add `-SkipIndex` parameter to `Select-Object` (#7483) (Thanks @powercode!)
+- Improve performance of `Import-CSV` up to 10 times (#7413) (Thanks @powercode!)
+- Update `Enable-PSRemoting` so configuration name is unique for Preview releases (#7202)
+- Improve performance on JSON to PSObject conversion (#7482) (Thanks @powercode!)
+- Fix error message for `Add-Type` when `-AssemblyName` with wildcard is not found (#7444)
+- Make native globbing on Unix return an absolute path when it is given an absolute path (#7106)
+- Improve the performance of `Group-Object` (#7410) (Thanks @powercode!)
+- Remove one unneeded verbose output from `ConvertTo-Json` (#7487) (Thanks @devblackops!)
+- Enable `Get-ChildItem` to produce `Mode` property even if cannot determine if hard link (#7355)
+
+### Code Cleanup
+
+- Remove empty XML comment lines (#7401) (Thanks @iSazonov!)
+- Cleanup Docker files (#7328)
+- Correct the comment for `WSManReceiveDataResult.Unmarshal` (#7364)
+- Format Utility `csproj` with updated `codeformatter` (#7263) (Thanks @iSazonov!)
+- Bulk update format for files in Management folder with `codeformatter` (#7346) (Thanks @iSazonov!)
+- Cleanup: replace `Utils.FileExists()/DirectoryExists()/ItemExists()` with DotNet methods (#7129) (Thanks @iSazonov!)
+- Update `Utils.IsComObject` to use `Marshal.IsComObject` since CAS is no longer supported in DotNet Core (#7344)
+- Fix some style issues in engine code (#7246) (Thanks @iSazonov!)
+
+### Test
+
+- Use `-BeExactly` and `-HaveCount` instead of `-Be` in `BugFix.Tests.ps1` (#7386) (Thanks @sethvs!)
+- Use `-BeExactly` and `-HaveCount` instead of `-Be` in `TabCompletion.Tests.ps1` (#7380) (Thanks @sethvs!)
+- Update CI scripts to support running tests for experimental features (#7419)
+- Use `-HaveCount` instead of `-Be` in `Where-Object.Tests.ps1` (#7379) (Thanks @sethvs!)
+- Fix ThreadJob tests so that they will run more reliably (#7360)
+- Make logging tests for macOS pending (#7433)
+
+### Build and Packaging Improvements
+
+- Update Build script owners (#7321)
+- Make `MUSL` NuGet package optional (#7316)
+- Enable `pwsh-preview` to work on Windows (#7345)
+- Fix SDK dependencies
+- Add back the `powershell-core` NuGet source for hosting tests
+- Fix typo in environment checker (#7547 & #7549)
+- Only remove the revision if it is `0` from module version when restoring modules (#7538)
+- Update `WCF` and `NJsonSchema` NuGet packages to latest released patch version (#7411) (Thanks @bergmeister!)
+- Add Linux and macOS VSTS CI (#7490, #7527, #7535, #7515 & #7516)
+- Updated ThreadJob to version `1.1.2` (#7522)
+- Add xUnit project to `PowerShell.sln` and make it runnable from within VisualStudio (#7254) (Thanks @bergmeister!)
+- Update NuGet packaging code for the new markdown assembly (#7431)
+- Update version of modules shipped with PowerShell (#7531)
+- Retry restore on failure (#7544 & #7550)
+- Update `PowerShellGet` version
+- Update NuGet package metadata (#7517)
+- Update reference to use packages from `NuGet.org` (#7525)
+- `Start-DevPowerShell`: add `-Configuration` and handle `-ArgumentList` more properly (#7300) (Thanks @jazzdelightsme!)
+- Add preview icon to macOS launcher (#7448) (Thanks @thezim!)
+- Add `Microsoft.PowerShell.MarkdownRender` to `signing.xml` (#7472)
+- Fix building on RedHat Enterprise Linux (#7489)
+- Build: Also search PATH for `rcedit`  (#7503) (Thanks @kwkam!)
+- Save modules to un-versioned folder to enable servicing (#7518 & #7523)
+- Fix macOS launcher app to allow release and preview versions (#7306) (Thanks @thezim!)
+
+### Documentation and Help Content
+
+- Fix docs comments in utility folder (#7192) (Thanks @iSazonov!)
+- Fix a typo in `issue-management.md` (#7393) (Thanks @alexandair!)
+- Fix casing of `GitHub` in `best-practice.md` (#7392) (Thanks @alexandair!)
+- Fix typos in `docs/maintainers/README.md` (#7390) (Thanks @alexandair!)
+- Add maintainer's best practice document and update maintainer list (#7311)
+- Update Docker link to `PowerShell-Docker` (#7351) (Thanks @JoshuaCooper!)
+- Add `Snapcraft` to spelling dictionary (#7318)
+- Update `README.md` and `metadata.json` for release `v6.0.4` (#7497)
+- Add `Former Repository Maintainers` section in `maintainers/README.md` (#7475)
+- Update the `HelpUri` for `Get-ExperimentalFeature` (#7466)
+
+## v6.1.0-preview.4 - 2018-07-19
+
+### Breaking Changes
+
+- Remove the `VisualBasic` support from Add-Type (#7284)
+- Update PowerShell Direct to try `pwsh` then fallback to `powershell` (#7241)
+- Make pwsh able to start in a directory with wildcards in the name (#7240)
+- Update `Enable-PSRemoting` so configuration name is unique for Preview releases (#7202)
+- Enforce the `CompatiblePSEditions` check for modules from the legacy `System32` module path (#7183)
+
+### Engine Updates and Fixes
+
+- Add support to experimental features (#7242)
+- Fix error when using `Get-ChildItem c:` (#7033) (Thanks @sethvs!)
+- Add location history for `Set-Location` to enable `cd -` scenario (issue #2188) (#5051) (Thanks @bergmeister!)
+- Fix padding for right aligned column in table formatting (#7136)
+- Fix a performance regression to the `-replace` operator after adding `ScriptBlock` support (#7135)
+- Fix tab expansion for `Get-Process` on macOS (#7176)
+- When using PSRP, if we receive text instead of XML, output it as error to help troubleshoot (#7168)
+- Fix trimming of whitespace when table is wrapped (#7184)
+- Modified the `Group-Object -AsHashTable` to use the base object of `PSObject` as the key for the `Hashtable` (#7123)
+- Add back ADSI and WMI type accelerators (#7085)
+- Add `CompatiblePSEditions` to PowerShell Core built-in modules (#7083)
+- Make `Start-Process -ArgumentList` to accept `@()` or `$null` (#6597)
+- Avoid calling native APIs to check for existence of FileSystem items (#6929) (Thanks @iSazonov!)
+- Add copy environment variables from `ProcessStartInfo` to key/pair array used in creating SSH process (#7070)
+- Add markdown rendering feature assemblies to the trusted assembly list (#7280)
+- Don't fail if `SaferPolicy` API is not available on Windows 10 IoT or NanoServer (#7075)
+- Fix conditions for transcription of `Write-Information` command. (#6917) (Thanks @hubuk!)
+- Fix a parsing error when `break` and `continue` are used in a switch statement in a finally block (#7273)
+- Fix prompt string to be platform agnostic and keep its trailing spaces (#7255)
+- Make progress panel display correctly on UNIX when the user is typing. (#6972)
+- Revert change to have `SetLocation()` treat wildcarded path as literal if it exists (#7101)
+- Make `Select-Object`/`ForEach-Object`/`Where-Object` see dynamic properties (#6898) (Thanks @jazzdelightsme!)
+- Fix class searcher to ignore hidden properties (#7188)
+- Update remote prompt when using SSH to show username if different (#7191)
+- Remove `SemanticVersion` from `knowntypes` list in serialization code to enable interop between Windows PowerShell and PowerShell Core (#7016)
+- Add more information to job process failure error (#7251)
+- Use .Net Core `File.Delete()` method to remove symbolic links and alternate streams (#7017) (Thanks @iSazonov!)
+- Enable `UseShellExecute` on all platforms (#7198)
+- Methods with return type `[object]` should return `null` for an empty result (#7138)
+
+### General Cmdlet Updates and Fixes
+
+- Add Markdown rendering cmdlets (#6926)
+- `Send-MailMessage`: Update all parameters to support `ValueFromPipelineByPropertyName`. (#6911) (Thanks @sethvs!)
+- Allow Basic Auth over HTTPS (#6890)
+- Add `ThreadJob` module package and tests (#7169)
+- Fix Windows Event Log channel isolation semantics (#6956) (Thanks @Robo210!)
+- Make `Measure-Object` handle `scriptblock` properties. (#6934)
+- Added functionality to retry in `Invoke-RestMethod` and `Invoke-WebRequest`. (#5760)
+- Add type inference for `Select-Object` command (#7171) (Thanks @powercode!)
+- Add `-AllStats` Switch parameter for `Measure-Object` cmdlet (#7220) (Thanks @kvprasoon!)
+
+### Code Cleanup
+
+- Remove unneeded code that forces ARM platforms to run PowerShell in CL mode (#7046)
+- Bulk update code base to put `null` on the right-hand-side of a comparison expression (#6949) (Thanks @iSazonov!)
+- Remove `MapSecurityZoneWithUrlmon` method and related code (#7103)
+- Cleanup: remove the unneeded type `RemotingCommandUtils` (#7029)
+- Remove unneeded "Windows-Full" modules (#7030)
+- CodeFactor code style cleanup: replace literal empty strings with `string.Empty` (#6950) (Thanks @iSazonov!)
+- Remove dummy comments in Utility module files (#7224) (Thanks @iSazonov!)
+- Use empty array for Functions/Cmdlets/`AliasesToExport` to follow the best practice (#7108)
+- Refactor module code related to `Get-Module -ListAvailable` (#7145)
+- Refactor module specification logic (#7126)
+
+### Test
+
+- Add tests for module specifications (#7140)
+- Update test string for better clarity in `Send-MailMessage.Tests.ps1` (#7195) (Thanks @sethvs!)
+- Add test to verify filesystem provider isn't used when accessing root path in `PSDrive` (#7173)
+- Fix to address `ThreadJob` tests reliability and speed (#7270)
+- Add additional checks for test that passes inconsistently (#7051)
+
+### Build and Packaging Improvements
+
+- `install-powershell.sh` filter pre-releases (when available), `params` documentation (#6849) (Thanks @DarwinJS!)
+- Fedora 28 was released, Fedora 26 and 25 went end of life. (#7079) (Thanks @adelton!)
+- Disambiguate icon on Windows for preview builds/installers to use `Powershell_av_colors` and
+  make daily build use `Powershell_avatar` instead (#7086) (Thanks @bergmeister!)
+- Update to build for Alpine (#7139)
+- Update build and packaging modules for Alpine (#7149)
+- Add ability to install previews side-by-side with production releases (#7194) (Thanks @DarwinJS!)
+- Enable NuGet Package Registration for compliance (#7053)
+- Fix the preview macOS package link (#7061)
+- Remove PSReadLine from then `PowerShell.sln` file (#7137)
+- Fix the file `PowerShell.sln` that was corrupted by accident (#7288)
+- Fix the encoding of `PowerShell.sln` to be `utf-8` (#7289)
+- Make sure all references to the Package ID for previews packages is powershell-preview (#7066)
+- Update `internals.md` with the latest build changes (#7058)
+- When installing using MSI, set the working directory of the shortcut to the user home directory (#7072)
+- Move to dotnet core 2.1.1 (#7161) (Thanks @iSazonov!)
+- Update to latest package references, runtime framework, and SDK (#7272)
+- AppVeyor build matrix: more efficient build job split to reduce total time by another 5 minutes (#7021) (Thanks @bergmeister!)
+- Build: Fix the source location of `PowerShell.Core.Instrumentation.dll` (#7226)
+- Add Andrew to the default reviewers of the build related files (#7019)
+- Build: Fix a check to avoid null argument in case `vcvarsall.bat` is absent (#7218) (Thanks @PetSerAl!)
+- Update `releaseTag` in `tools/metadata.json` (#7214)
+- Update `Start-PSPester` to make it more user friendly (#7210) (Thanks @bergmeister!)
+- Make `Start-PSBuild -Clean` not prompt due to locked files when Visual Studio is open by excluding `sqlite3` folder and use `-x` instead of `-X` option on `git clean` (#7235) (Thanks @bergmeister!)
+
+### Documentation and Help Content
+
+- Fix typos in `DOCSMIGRATION.md` (#7094) (Thanks @alexandair!)
+- Add instructions to update Homebrew formula for the preview version PowerShell (#7067) (Thanks @vors!)
+- Merge Third Party Notices and License updates (#7203)
+- Update third party notices (#7042)
+- Fix Markdown and spelling errors in `CHANGELOG.md` (#7064)
+- Fix `New-TemporaryFile` online help URI (#6608)
+- Fix links to PowerShell install docs (#7001) (Thanks @jokajak!)
+- Update links that contain `en-us` culture (#7013) (Thanks @bergmeister!)
+- Update docs for `ArgumentCompleterAttribute` class (#7227) (Thanks @Meir017!)
+- Fix the name of a `Register-EngineEvent` test (#7222) (Thanks @alexjordan6!)
+- Update README files for native code for migration (#7248)
+- Comment about dynamic members for the `DotNetAdapter`, `GetMember` and `GetMembers` (#7087)
+- Update the PowerShell executable location in building guide docs (#7205) (Thanks @louistio!)
+
 ## v6.1.0-preview.3 - 2018-06-07
 
 ### Breaking Changes
@@ -1065,10 +1646,12 @@ For more information on this, we invite you to read [this blog post explaining P
  Even if the module isn't owned by the PowerShell Team, please tell us what works and what doesn't by leaving a comment in [issue #4062][issue-4062]! (#3981)
 - Enhance type inference in tab completion based on runtime variable values. (#2744) (Thanks to @powercode!)
  This enables tab completion in situations like:
+
  ```powershell
  $p = Get-Process
  $p | Foreach-Object Prio<tab>
  ```
+
 - Add `GitCommitId` to PowerShell Core banner.
  Now you don't have to run `$PSVersionTable` as soon as you start PowerShell to get the version! (#3916) (Thanks to @iSazonov!)
 - Fix a bug in tab completion to make `native.exe --<tab>` call into native completer. (#3633) (Thanks to @powercode!)
@@ -1251,9 +1834,9 @@ We made a number of fixes to the progress bar rendering and the `ProgressRecord`
 - Add the `-TimeOut` parameter to `Test-Connection`. (#2492)
 - Add `ShouldProcess` support to `New-FileCatalog` and `Test-FileCatalog` (fixes `-WhatIf` and `-Confirm`). (#3074) (Thanks to @iSazonov!)
 - Fix `Test-ModuleManifest` to normalize paths correctly before validating.
-  - This fixes some problems when using `Publish-Module` on non-Windows platforms. (#3097)
+    - This fixes some problems when using `Publish-Module` on non-Windows platforms. (#3097)
 - Remove the `AliasProperty "Count"` defined for `System.Array`.
-  - This removes the extraneous `Count` property on some `ConvertFrom-Json` output. (#3231) (Thanks to @PetSerAl!)
+    - This removes the extraneous `Count` property on some `ConvertFrom-Json` output. (#3231) (Thanks to @PetSerAl!)
 - Port `Import-PowerShellDatafile` from PowerShell script to C#. (#2750) (Thanks to @powercode!)
 - Add `-CustomMethod` parameter to web cmdlets to allow for non-standard method verbs. (#3142) (Thanks to @Lee303!)
 - Fix web cmdlets to include the HTTP response in the exception when the response status code is not success. (#3201)

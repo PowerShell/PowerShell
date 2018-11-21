@@ -12,7 +12,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    ///
     /// By design, on the server side, each remote connection is represented by
     /// a ServerRemoteSession object, which contains one instance of this class.
     ///
@@ -67,7 +66,6 @@ namespace System.Management.Automation.Remoting
     ///
     /// This class controls a remote connection by using a Session data structure handler, which
     /// in turn contains a Finite State Machine, and a transport mechanism.
-    ///
     /// </summary>
     internal class ServerRemoteSession : RemoteSession
     {
@@ -273,15 +271,12 @@ namespace System.Management.Automation.Remoting
         /// <param name="dataEventArg">
         /// This parameter contains the remote data received from client.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="dataEventArg" /> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If the parameter <paramref name="dataEventArg" /> does not contain remote data.
         /// </exception>
-        ///
         /// <exception cref="PSRemotingDataStructureException">
         /// If the destination of the data is not for server.
         /// </exception>
@@ -721,7 +716,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="createRunspaceEventArg"></param>
@@ -904,7 +898,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="negotiationEventArg">
         /// This parameter contains the client negotiation capability packet.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="negotiationEventArg"/> is null.
         /// </exception>
@@ -1012,8 +1005,9 @@ namespace System.Management.Automation.Remoting
                 // Win10 server can support reconstruct/reconnect for all 2.x protocol versions
                 // that support reconstruct/reconnect, Protocol 2.2+
                 // Major protocol version differences (2.x -> 3.x) are not supported.
-                if ((serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM) &&
-                    (clientProtocolVersion.Major == serverProtocolVersion.Major))
+                // A reconstruct can only be initiated by a client that understands disconnect (2.2+),
+                // so we only need to check major versions from client and this server for compatibility.
+                if (clientProtocolVersion.Major == RemotingConstants.ProtocolVersion.Major)
                 {
                     if (clientProtocolVersion.Minor == RemotingConstants.ProtocolVersionWin8RTM.Minor)
                     {
@@ -1129,7 +1123,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="clientRunspacePoolId"></param>
         /// <returns></returns>

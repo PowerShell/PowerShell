@@ -559,7 +559,7 @@ namespace System.Management.Automation
     ///
     /// Provides a simple interface to execute a powershell command:
     /// <code>
-    ///    Powershell.Create("get-process").Invoke();
+    ///    Powershell.Create().AddScript("get-process").Invoke();
     /// </code>
     /// The above statement creates a local runspace using default
     /// configuration, executes the command and then closes the runspace.
@@ -665,7 +665,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="inputstream"></param>
         /// <param name="outputstream"></param>
@@ -1331,7 +1330,6 @@ namespace System.Management.Automation
         ///         PowerShell shell = PowerShell.Create("get-process").
         ///                                     AddCommand("select-object").AddParameter("name");
         ///     </code>
-        ///
         /// This will add the value "name" to the positional parameter list of "select-object"
         /// cmdlet. When the command is invoked, this value will get bound to positional parameter 0
         /// of the "select-object" cmdlet which is "Property".
@@ -1688,7 +1686,6 @@ namespace System.Management.Automation
         /// IsChild flag makes it possible for the pipeline to differentiate between
         /// a true v1 nested pipeline and the cmdlets calling cmdlets case. See bug
         /// 211462.
-        ///
         /// </summary>
         internal bool IsChild { get; private set; } = false;
 
@@ -3287,7 +3284,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         private void DetermineIsBatching()
         {
@@ -3409,13 +3405,8 @@ namespace System.Management.Automation
                 psAsyncResult.EndInvoke();
                 EndInvokeAsyncResult = null;
 
-                if (OutputBufferOwner)
-                {
-                    // PowerShell no longer owns the output buffer when it is passed back to the caller.
-                    OutputBufferOwner = false;
-                    OutputBuffer = null;
-                }
-
+                // PowerShell no longer owns the output buffer when it is passed back to the caller.
+                ResetOutputBufferAsNeeded();
                 return psAsyncResult.Output;
             }
             catch (InvalidRunspacePoolStateException exception)
@@ -3446,6 +3437,9 @@ namespace System.Management.Automation
                 IAsyncResult asyncResult = CoreStop(true, null, null);
                 // This is a sync call..Wait for the stop operation to complete.
                 asyncResult.AsyncWaitHandle.WaitOne();
+
+                // PowerShell no longer owns the output buffer when the pipeline is stopped by caller.
+                ResetOutputBufferAsNeeded();
             }
             catch (ObjectDisposedException)
             {
@@ -3507,6 +3501,9 @@ namespace System.Management.Automation
             }
 
             psAsyncResult.EndInvoke();
+
+            // PowerShell no longer owns the output buffer when the pipeline is stopped by caller.
+            ResetOutputBufferAsNeeded();
         }
 
         #endregion
@@ -3563,6 +3560,18 @@ namespace System.Management.Automation
         /// OutputBuffer
         /// </summary>
         internal PSDataCollection<PSObject> OutputBuffer { get; private set; }
+
+        /// <summary>
+        /// Reset the output buffer to null if it's owned by the current powershell instance.
+        /// </summary>
+        private void ResetOutputBufferAsNeeded()
+        {
+            if (OutputBufferOwner)
+            {
+                OutputBufferOwner = false;
+                OutputBuffer = null;
+            }
+        }
 
         /// <summary>
         /// This has been added as a work around for Windows8 bug 803461.
@@ -4658,7 +4667,6 @@ namespace System.Management.Automation
 #endif
 
         /// <summary>
-        ///
         /// </summary>
         /// <typeparam name="TInput">Type for the input collection</typeparam>
         /// <typeparam name="TOutput">Type for the output collection</typeparam>
@@ -5030,7 +5038,6 @@ namespace System.Management.Automation
             private object _syncObject = new object();
 
             /// <summary>
-            ///
             /// </summary>
             /// <param name="inputStream"></param>
             /// <param name="outputStream"></param>

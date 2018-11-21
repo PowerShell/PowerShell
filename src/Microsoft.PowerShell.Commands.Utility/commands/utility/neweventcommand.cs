@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// Adds an event to the event queue
+        /// Adds an event to the event queue.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         public string SourceIdentifier
@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         private string _sourceIdentifier = null;
 
         /// <summary>
-        /// Data relating to this event
+        /// Data relating to this event.
         /// </summary>
         [Parameter(Position = 1)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         private PSObject _sender = null;
 
         /// <summary>
-        /// Data relating to this event
+        /// Data relating to this event.
         /// </summary>
         [Parameter(Position = 2)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         private PSObject[] _eventArguments = new PSObject[0];
 
         /// <summary>
-        /// Data relating to this event
+        /// Data relating to this event.
         /// </summary>
         [Parameter(Position = 3)]
         public PSObject MessageData
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion parameters
 
         /// <summary>
-        /// Add the event to the event queue
+        /// Add the event to the event queue.
         /// </summary>
         protected override void EndProcessing()
         {

@@ -12,12 +12,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// helper class to do wildcard matching on PSPropertyExpressions
+    /// Helper class to do wildcard matching on PSPropertyExpressions.
     /// </summary>
     internal sealed class PSPropertyExpressionFilter
     {
         /// <summary>
-        /// construct the class, using an array of patterns
+        /// Construct the class, using an array of patterns.
         /// </summary>
         /// <param name="wildcardPatternsStrings">array of pattern strings to use</param>
         internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
@@ -35,8 +35,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// try to match the expression against the array of wildcard patterns.
-        /// the first match shortcircuits the search
+        /// Try to match the expression against the array of wildcard patterns.
+        /// The first match shortcircuits the search.
         /// </summary>
         /// <param name="expression">PSPropertyExpression to test against</param>
         /// <returns>true if there is a match, else false</returns>
@@ -63,7 +63,6 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    ///
     /// </summary>
     [Cmdlet(VerbsCommon.Select, "Object", DefaultParameterSetName = "DefaultParameter",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113387", RemotingCapability = RemotingCapability.None)]
@@ -72,14 +71,12 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Switches
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(Position = 0, ParameterSetName = "DefaultParameter")]
@@ -87,7 +84,6 @@ namespace Microsoft.PowerShell.Commands
         public object[] Property { get; set; }
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -95,7 +91,6 @@ namespace Microsoft.PowerShell.Commands
         public string[] ExcludeProperty { get; set; } = null;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -103,7 +98,6 @@ namespace Microsoft.PowerShell.Commands
         public string ExpandProperty { get; set; } = null;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -115,7 +109,6 @@ namespace Microsoft.PowerShell.Commands
         private bool _unique;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -130,7 +123,6 @@ namespace Microsoft.PowerShell.Commands
         private int _last = 0;
 
         /// <summary>
-        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -146,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _firstOrLastSpecified;
 
         /// <summary>
-        /// Skips the specified number of items from top when used with First,from end when used with Last
+        /// Skips the specified number of items from top when used with First, from end when used with Last.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -162,14 +154,14 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// With this switch present, the cmdlet won't "short-circuit"
-        /// (i.e. won't stop upstream cmdlets after it knows that no further objects will be emitted downstream)
+        /// (i.e. won't stop upstream cmdlets after it knows that no further objects will be emitted downstream).
         /// </summary>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [Parameter(ParameterSetName = "IndexParameter")]
         public SwitchParameter Wait { get; set; }
 
         /// <summary>
-        /// Used to display the object at specified index
+        /// Used to display the object at the specified index.
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "IndexParameter")]
@@ -185,11 +177,36 @@ namespace Microsoft.PowerShell.Commands
             {
                 _index = value;
                 _indexSpecified = true;
+                _isIncludeIndex = true;
                 Array.Sort(_index);
             }
         }
+
+        /// <summary>
+        /// Used to display all objects at the specified indices.
+        /// </summary>
+        /// <value></value>
+        [Parameter(ParameterSetName = "SkipIndexParameter")]
+        [ValidateRangeAttribute(0, int.MaxValue)]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public int[] SkipIndex
+        {
+            get
+            {
+                return _index;
+            }
+            set
+            {
+                _index = value;
+                _indexSpecified = true;
+                _isIncludeIndex = false;
+                Array.Sort(_index);
+            }
+        }
+
         private int[] _index;
         private bool _indexSpecified;
+        private bool _isIncludeIndex;
 
         #endregion
 
@@ -276,17 +293,17 @@ namespace Microsoft.PowerShell.Commands
             }
 
             private int _streamedObjectCount;
-            private int _first,_last,_skip,_skipLast;
+            private int _first, _last, _skip, _skipLast;
             private bool _firstOrLastSpecified;
         }
 
         /// <summary>
-        /// list of processed parameters obtained from the Expression array
+        /// List of processed parameters obtained from the Expression array.
         /// </summary>
         private List<MshParameter> _propertyMshParameterList;
 
         /// <summary>
-        /// singleton list of process parameters obtained from ExpandProperty
+        /// Singleton list of process parameters obtained from ExpandProperty.
         /// </summary>
         private List<MshParameter> _expandMshParameterList;
 
@@ -332,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
                 // ExcludeProperty implies -Property * for better UX
                 if ((Property == null) || (Property.Length == 0))
                 {
-                    Property = new Object[]{"*"};
+                    Property = new Object[] { "*" };
                     _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
                 }
             }
@@ -636,7 +653,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -650,16 +666,18 @@ namespace Microsoft.PowerShell.Commands
             _selectObjectQueue = new SelectObjectQueue(_first, _last, Skip, SkipLast, _firstOrLastSpecified);
         }
 
-        private int _indexOfCurrentObject = 0;
-        private int _indexCount = 0;
         /// <summary>
-        ///
+        /// Handles processing of InputObject.
         /// </summary>
         protected override void ProcessRecord()
         {
             if (InputObject != AutomationNull.Value && InputObject != null)
             {
-                if (!_indexSpecified)
+                if (_indexSpecified)
+                {
+                    ProcessIndexed();
+                }
+                else
                 {
                     _selectObjectQueue.Enqueue(InputObject);
                     PSObject streamingInputObject = _selectObjectQueue.StreamingDequeue();
@@ -667,40 +685,82 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ProcessObjectAndHandleErrors(streamingInputObject);
                     }
+
                     if (_selectObjectQueue.AllRequestedObjectsProcessed && !this.Wait)
                     {
                         this.EndProcessing();
                         throw new StopUpstreamCommandsException(this);
                     }
                 }
-                else
-                {
-                    if (_indexOfCurrentObject < _index.Length)
-                    {
-                        int currentlyRequestedIndex = _index[_indexOfCurrentObject];
-                        if (_indexCount == currentlyRequestedIndex)
-                        {
-                            ProcessObjectAndHandleErrors(InputObject);
-                            while ((_indexOfCurrentObject < _index.Length) && (_index[_indexOfCurrentObject] == currentlyRequestedIndex))
-                            {
-                                _indexOfCurrentObject++;
-                            }
-                        }
-                    }
-
-                    if (!this.Wait && _indexOfCurrentObject >= _index.Length)
-                    {
-                        this.EndProcessing();
-                        throw new StopUpstreamCommandsException(this);
-                    }
-
-                    _indexCount++;
-                }
             }
         }
 
         /// <summary>
-        ///
+        /// The index of the active index filter.
+        /// </summary>
+        private int _currentFilterIndex;
+
+        /// <summary>
+        /// The index of the object being processed.
+        /// </summary>
+        private int _currentObjectIndex;
+
+        /// <summary>
+        /// Handles processing of InputObject if -Index or -SkipIndex is specified.
+        /// </summary>
+        private void ProcessIndexed()
+        {
+            if (_isIncludeIndex)
+            {
+                if (_currentFilterIndex < _index.Length)
+                {
+                    int nextIndexToOutput = _index[_currentFilterIndex];
+                    if (_currentObjectIndex == nextIndexToOutput)
+                    {
+                        ProcessObjectAndHandleErrors(InputObject);
+                        while ((_currentFilterIndex < _index.Length) && (_index[_currentFilterIndex] == nextIndexToOutput))
+                        {
+                            _currentFilterIndex++;
+                        }
+                    }
+                }
+
+                if (!Wait && _currentFilterIndex >= _index.Length)
+                {
+                    EndProcessing();
+                    throw new StopUpstreamCommandsException(this);
+                }
+
+                _currentObjectIndex++;
+            }
+            else
+            {
+                if (_currentFilterIndex < _index.Length)
+                {
+                    int nextIndexToSkip = _index[_currentFilterIndex];
+                    if (_currentObjectIndex != nextIndexToSkip)
+                    {
+                        ProcessObjectAndHandleErrors(InputObject);
+                    }
+                    else
+                    {
+                        while ((_currentFilterIndex < _index.Length) && (_index[_currentFilterIndex] == nextIndexToSkip))
+                        {
+                            _currentFilterIndex++;
+                        }
+                    }
+                }
+                else
+                {
+                    ProcessObjectAndHandleErrors(InputObject);
+                }
+
+                _currentObjectIndex++;
+            }
+        }
+
+        /// <summary>
+        /// Completes the processing of Input.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -749,7 +809,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Used only internally for select-object
+    /// Used only internally for select-object.
     /// </summary>
     [SuppressMessage("Microsoft.Usage", "CA2237:MarkISerializableTypesWithSerializable", Justification = "This exception is internal and never thrown by any public API")]
     [SuppressMessage("Microsoft.Design", "CA1032:ImplementStandardExceptionConstructors", Justification = "This exception is internal and never thrown by any public API")]
@@ -764,4 +824,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

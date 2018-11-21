@@ -10,7 +10,8 @@ $script:cmdletsToSkip = @(
     "New-PSRoleCapabilityFile",
     "Get-PSSessionCapability",
     "Disable-PSRemoting", # Content not available: Issue # https://github.com/PowerShell/PowerShell-Docs/issues/1790
-    "Enable-PSRemoting"
+    "Enable-PSRemoting",
+    "Get-ExperimentalFeature"
 )
 
 function UpdateHelpFromLocalContentPath {

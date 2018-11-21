@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
         #region parameters
 
         /// <summary>
-        /// A source identifier for this event subscription
+        /// A source identifier for this event subscription.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "BySource")]
         public string SourceIdentifier
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         private string _sourceIdentifier = null;
 
         /// <summary>
-        /// An identifier for this event subscription
+        /// An identifier for this event subscription.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByIdentifier")]
         public int EventIdentifier
@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
         private WildcardPattern _matchPattern;
 
         /// <summary>
-        /// Remove the event from the queue
+        /// Remove the event from the queue.
         /// </summary>
         protected override void ProcessRecord()
         {

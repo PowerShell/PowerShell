@@ -16,13 +16,14 @@
     <PackageReference Include="System.DirectoryServices" Version="4.5.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.5.0" />
     <PackageReference Include="System.Management" Version="4.5.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
     <PackageReference Include="System.Security.AccessControl" Version="4.5.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.1" />
     <PackageReference Include="System.Security.Permissions" Version="4.5.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
     <!-- the following package(s) are from the powershell org -->
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha*" />
-    <PackageReference Include="PowerShell.Core.Instrumentation" Version="6.0.0-beta*" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="6.2.0-preview.2" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -102,6 +103,8 @@
     <Compile Remove="engine\TransactionManager.cs" />
     <Compile Remove="engine\hostifaces\NativeCultureResolver.cs" />
     <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
+    <Compile Remove="engine\remoting\commands\ResumeJob.cs" />
+    <Compile Remove="engine\remoting\commands\SuspendJob.cs" />
     <Compile Remove="logging\eventlog\EventLogLogProvider.cs" />
     <Compile Remove="namespaces\SafeTransactionHandle.cs" />
     <Compile Remove="namespaces\SafeRegistryHandle.cs" />
@@ -132,12 +135,11 @@
   <ItemGroup Condition=" '$(IsWindows)' != 'true' ">
     <Compile Remove="engine\ExtraAdapter.cs" />
     <Compile Remove="engine\ManagementObjectAdapter.cs" />
-    <Compile Remove="engine\remoting\commands\ReceivePSSession.cs" />
-    <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
     <Compile Remove="engine\remoting\commands\ConnectPSSession.cs" />
-    <Compile Remove="engine\remoting\commands\EnterPSHostProcessCommand.cs" />
-    <Compile Remove="engine\remoting\commands\NewPSSessionOptionCommand.cs" />
     <Compile Remove="engine\remoting\commands\CustomShellCommands.cs" />
+    <Compile Remove="engine\remoting\commands\DisconnectPSSession.cs" />
+    <Compile Remove="engine\remoting\commands\NewPSSessionOptionCommand.cs" />
+    <Compile Remove="engine\remoting\commands\ReceivePSSession.cs" />
     <Compile Remove="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
   </ItemGroup>
 

@@ -435,7 +435,8 @@ namespace Microsoft.PowerShell.Commands
                 var wmiGuard = session.GetFirst<WmiDeviceGuard>(CIMHelper.DeviceGuardNamespace,
                                                                 CIMHelper.ClassNames.DeviceGuard);
 
-                if (wmiGuard != null) {
+                if (wmiGuard != null)
+                {
                     var smartStatus = EnumConverter<DeviceGuardSmartStatus>.Convert((int?)wmiGuard.VirtualizationBasedSecurityStatus ?? 0);
                     if (smartStatus != null)
                     {
@@ -1049,7 +1050,7 @@ namespace Microsoft.PowerShell.Commands
                                                 {
                                                     return string.Compare(s,
                                                                           name,
-                                                                          StringComparison.CurrentCultureIgnoreCase) == 0;
+                                                                          StringComparison.OrdinalIgnoreCase) == 0;
                                                 };
                     var propertyName = availableProperties.Find(pred);
 
@@ -5166,14 +5167,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>An hresult indicating success or failure.</returns>
         [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         internal static extern int SLGetWindowsInformationDWORD(string licenseProperty, out int propertyValue);
-        /*
-         * SLGetWindowsInformationDWORD function returns
-         * S_OK (0x00000000): If the method succeeds
-         * SL_E_RIGHT_NOT_GRANTED (0xC004F013): The caller does not have the permissions necessary to call this function.
-         * SL_E_DATATYPE_MISMATCHED (0xC004F013): The value portion of the name-value pair is not a DWORD.
-        [DllImport("Slc.dll", EntryPoint = "SLGetWindowsInformationDWORD", CharSet = CharSet.Unicode)]
-        public static extern UInt32 SLGetWindowsInformationDWORD(string pwszValueName, ref int pdwValue);
-         */
     }
     #endregion Native
 }

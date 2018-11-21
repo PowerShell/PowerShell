@@ -11,7 +11,6 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    ///
     /// EngineInstaller is a class for facilitating registry of necessary
     /// information for monad engine.
     ///
@@ -25,7 +24,6 @@ namespace Microsoft.PowerShell
     /// This class derives from base class PSInstaller. PSInstaller will
     /// handle the details about how information got written into registry.
     /// Here, the information about registry content is provided.
-    ///
     /// </summary>
     [RunInstaller(true)]
     public sealed class EngineInstaller : PSInstaller
@@ -39,7 +37,6 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        ///
         /// </summary>
         internal sealed override string RegKey
         {
@@ -59,7 +56,6 @@ namespace Microsoft.PowerShell
 
         private Dictionary<String, object> _regValues = null;
         /// <summary>
-        ///
         /// </summary>
         internal sealed override Dictionary<String, object> RegValues
         {

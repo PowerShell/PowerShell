@@ -13,9 +13,22 @@ using Microsoft.Win32;
 namespace System.Management.Automation
 {
     /// <summary>
+    /// <para>
     /// Encapsulates $PSVersionTable.
+    /// </para>
+    /// <para>
+    /// Provides a simple interface to retrieve details from the PowerShell version table:
+    /// <code>
+    ///    PSVersionInfo.PSVersion;
+    /// </code>
+    /// The above statement retrieves the PowerShell version.
+    /// <code>
+    ///    PSVersionInfo.PSEdition;
+    /// </code>
+    /// The above statement retrieves the PowerShell edition.
+    /// </para>
     /// </summary>
-    internal class PSVersionInfo
+    public class PSVersionInfo
     {
         internal const string PSVersionTableName = "PSVersionTable";
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
@@ -78,11 +91,11 @@ namespace System.Management.Automation
 
             if (productVersion.Contains(" Commits: "))
             {
-                rawGitCommitId = "v" + productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
+                rawGitCommitId = productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
             }
             else
             {
-                rawGitCommitId = "v" + mainVersion;
+                rawGitCommitId = mainVersion;
             }
 
             s_psV6Version = new SemanticVersion(mainVersion);
@@ -151,7 +164,10 @@ namespace System.Management.Automation
 
         #region Programmer APIs
 
-        internal static Version PSVersion
+        /// <summary>
+        /// Gets the version of PowerShell.
+        /// </summary>
+        public static Version PSVersion
         {
             get
             {
@@ -175,7 +191,10 @@ namespace System.Management.Automation
             }
         }
 
-        internal static string PSEdition
+        /// <summary>
+        /// Gets the edition of PowerShell.
+        /// </summary>
+        public static string PSEdition
         {
             get
             {
@@ -192,7 +211,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks>
         /// For 2.0 PowerShell, we still use "1" as the registry version key.
@@ -208,7 +226,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <remarks>
         /// For 3.0 PowerShell, we use "3" as the registry version key only for Engine

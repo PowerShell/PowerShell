@@ -20,9 +20,7 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
         $err.Exception.ErrorCode | Should -Be 801
     }
 
-   # Marked as pending due to https://github.com/Microsoft/omi/issues/502
-   # It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
-    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -Pending {
+    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
         $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
         $credential = [PSCredential]::new('username', $password)
 
@@ -279,7 +277,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It 'Can invoke-command as job' {
-        $result = Invoke-Command -ScriptBlock { 1 + 1 } -Session $openSession -AsJob | Receive-Job -AutoRemoveJob -Wait
+        $result = Invoke-Command -ScriptBlock { 1 + 1 } -Session $openSession -AsJob | Receive-Job -AutoRemoveJob -Wait -ErrorAction SilentlyContinue
         $result | Should -Be 2
     }
 

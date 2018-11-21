@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// None is the default and it means OK and Cancel will not be present
         /// and no objects will be written to the pipeline.
-        /// The selectionMode of the actual list will still be multiple
+        /// The selectionMode of the actual list will still be multiple.
         /// </summary>
         None,
         /// <summary>
@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Implementation for the Out-GridView command
+    /// Implementation for the Out-GridView command.
     /// </summary>
     [Cmdlet(VerbsData.Out, "GridView", DefaultParameterSetName = "PassThru", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113364")]
     public class OutGridViewCommand : PSCmdlet, IDisposable
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
-        /// Constructor for OutGridView
+        /// Constructor for OutGridView.
         /// </summary>
         public OutGridViewCommand()
         {
@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         #region Input Parameters
 
         /// <summary>
-        /// This parameter specifies the current pipeline object
+        /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { get; set; } = AutomationNull.Value;
@@ -77,21 +77,21 @@ namespace Microsoft.PowerShell.Commands
         public string Title { get; set; }
 
         /// <summary>
-        /// Get or sets a value indicating whether the cmdlet should wait for the window to be closed
+        /// Get or sets a value indicating whether the cmdlet should wait for the window to be closed.
         /// </summary>
         [Parameter(ParameterSetName = "Wait")]
         public SwitchParameter Wait { get; set; }
 
         /// <summary>
         /// Get or sets a value indicating whether the selected items should be written to the pipeline
-        /// and if it should be possible to select multiple or single list items
+        /// and if it should be possible to select multiple or single list items.
         /// </summary>
         [Parameter(ParameterSetName = "OutputMode")]
         public OutputModeOption OutputMode { set; get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the selected items should be written to the pipeline
-        /// Setting this to true is the same as setting the OutputMode to Multiple
+        /// Gets or sets a value indicating whether the selected items should be written to the pipeline.
+        /// Setting this to true is the same as setting the OutputMode to Multiple.
         /// </summary>
         [Parameter(ParameterSetName = "PassThru")]
         public SwitchParameter PassThru
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Blocks depending on the wait and selected
+        /// Blocks depending on the wait and selected.
         /// </summary>
         protected override void EndProcessing()
         {
@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
         #region Private Methods
 
         /// <summary>
-        /// Execute formatting on a single object
+        /// Execute formatting on a single object.
         /// </summary>
         /// <param name="input">object to process</param>
         private void ProcessObject(PSObject input)
@@ -463,7 +463,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Implements IDisposable logic
+        /// Implements IDisposable logic.
         /// </summary>
         /// <param name="isDisposing">true if being called from Dispose</param>
         private void Dispose(bool isDisposing)
@@ -479,7 +479,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose method in IDisposable
+        /// Dispose method in IDisposable.
         /// </summary>
         public void Dispose()
         {
@@ -488,7 +488,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Finalizer
+        /// Finalizer.
         /// </summary>
         ~OutGridViewCommand()
         {

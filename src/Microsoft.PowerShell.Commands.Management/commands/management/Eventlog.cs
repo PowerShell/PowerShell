@@ -459,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
                 bool entrymatch = false;
                 foreach (string type in _entryTypes)
                 {
-                    if (type.Equals(entry.EntryType.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                    if (type.Equals(entry.EntryType.ToString(), StringComparison.OrdinalIgnoreCase))
                     {
                         entrymatch = true;
                         break;
@@ -629,7 +629,7 @@ namespace Microsoft.PowerShell.Commands
             string computer = string.Empty;
             foreach (string compName in ComputerName)
             {
-                if ((compName.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (compName.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if ((compName.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (compName.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
                     computer = "localhost";
                 }
@@ -777,7 +777,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             string _computerName = string.Empty;
-            if ((ComputerName.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (ComputerName.Equals(".", StringComparison.OrdinalIgnoreCase)))
+            if ((ComputerName.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (ComputerName.Equals(".", StringComparison.OrdinalIgnoreCase)))
             {
                 _computerName = "localhost";
             }
@@ -933,7 +933,7 @@ namespace Microsoft.PowerShell.Commands
             string computer = string.Empty;
             foreach (string compname in ComputerName)
             {
-                if ((compname.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (compname.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if ((compname.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (compname.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
                     computer = "localhost";
                 }
@@ -1141,7 +1141,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The following is the definition of the input parameter "LogName".
         /// Specifies the name of the log
-        ///
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0)]
@@ -1203,7 +1202,7 @@ namespace Microsoft.PowerShell.Commands
             string computer = string.Empty;
             foreach (string compname in ComputerName)
             {
-                if ((compname.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (compname.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                if ((compname.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (compname.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
                     computer = "localhost";
                 }
@@ -1319,7 +1318,7 @@ namespace Microsoft.PowerShell.Commands
                 string computer = string.Empty;
                 foreach (string compName in ComputerName)
                 {
-                    if ((compName.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (compName.Equals(".", StringComparison.OrdinalIgnoreCase)))
+                    if ((compName.Equals("localhost", StringComparison.OrdinalIgnoreCase)) || (compName.Equals(".", StringComparison.OrdinalIgnoreCase)))
                     {
                         computer = "localhost";
                     }

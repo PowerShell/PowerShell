@@ -32,7 +32,7 @@ $rs.Open()
 $ps = [powershell]::Create()
 $ps.RunspacePool = $rs
 $null = $ps.AddScript(1).Invoke()
-write-host should_not_hang_at_exit
+write-host should_not_stop_responding_at_exit
 exit
 '@
         $process = Start-Process pwsh -ArgumentList $command -PassThru
@@ -45,5 +45,46 @@ exit
         } else {
             $expect | Should -Be $expect
         }
+    }
+}
+
+Describe "EndInvoke() should return a collection of results" -Tags "CI" {
+    BeforeAll {
+        $ps = [powershell]::Create()
+        $ps.AddScript("'Hello'; 'World'") > $null
+    }
+
+    It "BeginInvoke() and then EndInvoke() should return a collection of results" {
+        $async = $ps.BeginInvoke()
+        $result = $ps.EndInvoke($async)
+
+        $result.Count | Should -BeExactly 2
+        $result[0] | Should -BeExactly "Hello"
+        $result[1] | Should -BeExactly "World"
+    }
+
+    It "BeginInvoke() and then EndInvoke() should return a collection of results after a previous Stop() call" {
+        $async = $ps.BeginInvoke()
+        $ps.Stop()
+
+        $async = $ps.BeginInvoke()
+        $result = $ps.EndInvoke($async)
+
+        $result.Count | Should -BeExactly 2
+        $result[0] | Should -BeExactly "Hello"
+        $result[1] | Should -BeExactly "World"
+    }
+
+    It "BeginInvoke() and then EndInvoke() should return a collection of results after a previous BeginStop()/EndStop() call" {
+        $asyncInvoke = $ps.BeginInvoke()
+        $asyncStop = $ps.BeginStop($null, $null)
+        $ps.EndStop($asyncStop)
+
+        $asyncInvoke = $ps.BeginInvoke()
+        $result = $ps.EndInvoke($asyncInvoke)
+
+        $result.Count | Should -BeExactly 2
+        $result[0] | Should -BeExactly "Hello"
+        $result[1] | Should -BeExactly "World"
     }
 }

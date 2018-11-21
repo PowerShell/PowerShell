@@ -81,6 +81,16 @@
  InnerException: {3} 
 </value>
 </data>
+<data name="PS_PROVIDEReventE_O_ExperimentalFeatureInvalidName" xml:space="preserve">
+    <value>Experimental Feature Initialization: Ignore the experimental feature '{0}' from the config file. {1}</value>
+</data>
+<data name="PS_PROVIDEReventE_O_ExperimentalFeatureReadConfigError" xml:space="preserve">
+    <value>Experimental Feature Initialization: Failed to read the config file.
+ Exception: {0} 
+ Message: {1} 
+ StackTrace: {2} 
+</value>
+</data>
 <data name="PS_PROVIDEReventE_O_M3PWorkflowPluginStarted" xml:space="preserve">
     <value>Workflow plugin loaded. 
  	 EndpointName: {0} 

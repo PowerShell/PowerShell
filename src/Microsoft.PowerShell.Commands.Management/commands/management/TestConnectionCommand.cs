@@ -17,22 +17,20 @@ namespace Microsoft.PowerShell.Commands
     /// The implementation of the "Test-Connection" cmdlet.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = ParameterSetPingCount, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
-    [OutputType(typeof(PingReport),      ParameterSetName = new string[] { ParameterSetPingCount })]
-    [OutputType(typeof(PingReply),       ParameterSetName = new string[] { ParameterSetPingContinues, ParameterSetDetectionOfMTUSize })]
-    [OutputType(typeof(Boolean),         ParameterSetName = new string[] { ParameterSetPingCount, ParameterSetPingContinues, ParameterSetConnectionByTCPPort })]
-    [OutputType(typeof(Int32),           ParameterSetName = new string[] { ParameterSetDetectionOfMTUSize })]
+    [OutputType(typeof(PingReport), ParameterSetName = new string[] { ParameterSetPingCount })]
+    [OutputType(typeof(PingReply), ParameterSetName = new string[] { ParameterSetPingContinues, ParameterSetDetectionOfMTUSize })]
+    [OutputType(typeof(Boolean), ParameterSetName = new string[] { ParameterSetPingCount, ParameterSetPingContinues, ParameterSetConnectionByTCPPort })]
+    [OutputType(typeof(Int32), ParameterSetName = new string[] { ParameterSetDetectionOfMTUSize })]
     [OutputType(typeof(TraceRouteReply), ParameterSetName = new string[] { ParameterSetTraceRoute })]
     public class TestConnectionCommand : PSCmdlet
     {
         private const string ParameterSetPingCount = "PingCount";
         private const string ParameterSetPingContinues = "PingContinues";
         private const string ParameterSetTraceRoute = "TraceRoute";
-        //private const string ParameterSetPathPing = "PathPing";
         private const string ParameterSetConnectionByTCPPort = "ConnectionByTCPPort";
-        //private const string ParameterSetDetectionOfBlackHole = "DetectionOfBlackHole";
         private const string ParameterSetDetectionOfMTUSize = "DetectionOfMTUSize";
 
-#region Parameters
+        #region Parameters
 
         /// <summary>
         /// Do ping test.
@@ -85,14 +83,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The number of times the Ping data packets can be forwarded by routers.
         /// As gateways and routers transmit packets through a network,
-        /// they decrement the CurrentMTUSize Time-to-Live (TTL) value found in the packet header.
+        /// they decrement the Time-to-Live (TTL) value found in the packet header.
         /// The default (from Windows) is 128 hops.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetPingCount)]
         [Parameter(ParameterSetName = ParameterSetPingContinues)]
         [Parameter(ParameterSetName = ParameterSetTraceRoute)]
         [ValidateRange(0, sMaxHops)]
-        [Alias("Ttl")]
+        [Alias("Ttl", "TimeToLive", "Hops")]
         public int MaxHops { get; set; } = sMaxHops;
 
         private const int sMaxHops = 128;
@@ -187,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = ParameterSetConnectionByTCPPort)]
         public int TCPPort { get; set; }
 
-#endregion Parameters
+        #endregion Parameters
 
         /// <summary>
         /// Init the cmdlet.
@@ -230,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-#region ConnectionTest
+        #region ConnectionTest
 
         private void ProcessConnectionByTCPPort(String targetNameOrAddress)
         {
@@ -251,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
                 Task connectionTask = client.ConnectAsync(targetAddress, TCPPort);
                 String targetString = targetAddress.ToString();
 
-                for (var i=1; i <= TimeoutSeconds; i++)
+                for (var i = 1; i <= TimeoutSeconds; i++)
                 {
                     WriteConnectionTestProgress(targetNameOrAddress, targetString, i);
 
@@ -287,8 +285,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteConnectionTestHeader(string resolvedTargetName, string targetAddress)
         {
-            TestConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.ConnectionTestStart, resolvedTargetName, targetAddress);
-            ProgressRecord record = new ProgressRecord(s_ProgressId, TestConnectionProgressBarActivity, ProgressRecordSpace);
+            _testConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.ConnectionTestStart, resolvedTargetName, targetAddress);
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
             WriteProgress(record);
         }
 
@@ -298,20 +296,20 @@ namespace Microsoft.PowerShell.Commands
                                         targetNameOrAddress,
                                         targetAddress,
                                         timeout);
-            ProgressRecord record = new ProgressRecord(s_ProgressId, TestConnectionProgressBarActivity, msg);
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
             WriteProgress(record);
         }
 
         private void WriteConnectionTestFooter()
         {
-            ProgressRecord record = new ProgressRecord(s_ProgressId, TestConnectionProgressBarActivity, ProgressRecordSpace);
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
             record.RecordType = ProgressRecordType.Completed;
             WriteProgress(record);
         }
 
-#endregion ConnectionTest
+        #endregion ConnectionTest
 
-#region TracerouteTest
+        #region TracerouteTest
         private void ProcessTraceroute(String targetNameOrAddress)
         {
             String resolvedTargetName = null;
@@ -344,7 +342,6 @@ namespace Microsoft.PowerShell.Commands
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
                 for (int i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
-
                     try
                     {
                         reply = sender.Send(targetAddress, timeout, buffer, pingOptions);
@@ -384,7 +381,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteTraceRouteProgress(traceRouteReply);
 
                 traceRouteResult.Replies.Add(traceRouteReply);
-
             } while (reply != null && currentHop <= sMaxHops && (reply.Status == IPStatus.TtlExpired || reply.Status == IPStatus.TimedOut));
 
             WriteTraceRouteFooter();
@@ -401,16 +397,16 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteConsoleTraceRouteHeader(string resolvedTargetName, string targetAddress)
         {
-            TestConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.TraceRouteStart, resolvedTargetName, targetAddress, MaxHops);
+            _testConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.TraceRouteStart, resolvedTargetName, targetAddress, MaxHops);
 
-            WriteInformation(TestConnectionProgressBarActivity, PSHostTag);
+            WriteInformation(_testConnectionProgressBarActivity, s_PSHostTag);
 
-            ProgressRecord record = new ProgressRecord(s_ProgressId, TestConnectionProgressBarActivity, ProgressRecordSpace);
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
             WriteProgress(record);
         }
 
-        private string TestConnectionProgressBarActivity;
-        private static string[] PSHostTag = new string[] { "PSHOST" };
+        private string _testConnectionProgressBarActivity;
+        private static string[] s_PSHostTag = new string[] { "PSHOST" };
 
         private void WriteTraceRouteProgress(TraceRouteReply traceRouteReply)
         {
@@ -431,17 +427,17 @@ namespace Microsoft.PowerShell.Commands
                 msg = StringUtil.Format(TestConnectionResources.TraceRouteTimeOut, traceRouteReply.Hop);
             }
 
-            WriteInformation(msg, PSHostTag);
+            WriteInformation(msg, s_PSHostTag);
 
-            ProgressRecord record = new ProgressRecord(s_ProgressId, TestConnectionProgressBarActivity, msg);
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
             WriteProgress(record);
         }
 
         private void WriteTraceRouteFooter()
         {
-            WriteInformation(TestConnectionResources.TraceRouteComplete, PSHostTag);
+            WriteInformation(TestConnectionResources.TraceRouteComplete, s_PSHostTag);
 
-            ProgressRecord record = new ProgressRecord(s_ProgressId, TestConnectionProgressBarActivity, ProgressRecordSpace);
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
             record.RecordType = ProgressRecordType.Completed;
             WriteProgress(record);
         }
@@ -506,14 +502,13 @@ namespace Microsoft.PowerShell.Commands
             public string DestinationHost { get; }
 
             /// <summary>
-            ///
             /// </summary>
             public List<TraceRouteReply> Replies { get; }
         }
 
-#endregion TracerouteTest
+        #endregion TracerouteTest
 
-#region MTUSizeTest
+        #region MTUSizeTest
         private void ProcessMTUSize(String targetNameOrAddress)
         {
             PingReply reply, replyResult = null;
@@ -540,7 +535,7 @@ namespace Microsoft.PowerShell.Commands
                 PingOptions pingOptions = new PingOptions(MaxHops, true);
                 int retry = 1;
 
-                while (LowMTUSize < (HighMTUSize-1))
+                while (LowMTUSize < (HighMTUSize - 1))
                 {
                     byte[] buffer = GetSendBuffer(CurrentMTUSize);
 
@@ -585,7 +580,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    CurrentMTUSize = (LowMTUSize + HighMTUSize) /2;
+                    CurrentMTUSize = (LowMTUSize + HighMTUSize) / 2;
 
                     // Prevent DoS attack.
                     Thread.Sleep(100);
@@ -627,12 +622,12 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteMTUSizeHeader(string resolvedTargetName, string targetAddress)
         {
-            TestConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.MTUSizeDetectStart,
+            _testConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.MTUSizeDetectStart,
                                                                   resolvedTargetName,
                                                                   targetAddress,
                                                                   BufferSize);
 
-            ProgressRecord record = new ProgressRecord(s_ProgressId, TestConnectionProgressBarActivity, ProgressRecordSpace);
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
             WriteProgress(record);
         }
 
@@ -640,20 +635,20 @@ namespace Microsoft.PowerShell.Commands
         {
             var msg = StringUtil.Format(TestConnectionResources.MTUSizeDetectDescription, currentMTUSize, retry);
 
-            ProgressRecord record = new ProgressRecord(s_ProgressId, TestConnectionProgressBarActivity, msg);
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
             WriteProgress(record);
         }
 
         private void WriteMTUSizeFooter()
         {
-            ProgressRecord record = new ProgressRecord(s_ProgressId, TestConnectionProgressBarActivity, ProgressRecordSpace);
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
             record.RecordType = ProgressRecordType.Completed;
             WriteProgress(record);
         }
 
-#endregion MTUSizeTest
+        #endregion MTUSizeTest
 
-#region PingTest
+        #region PingTest
 
         private void ProcessPing(String targetNameOrAddress)
         {
@@ -743,15 +738,15 @@ namespace Microsoft.PowerShell.Commands
 
         private void WritePingHeader(string resolvedTargetName, string targetAddress)
         {
-            TestConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.MTUSizeDetectStart,
+            _testConnectionProgressBarActivity = StringUtil.Format(TestConnectionResources.MTUSizeDetectStart,
                                                                   resolvedTargetName,
                                                                   targetAddress,
                                                                   BufferSize);
 
-            WriteInformation(TestConnectionProgressBarActivity, PSHostTag);
+            WriteInformation(_testConnectionProgressBarActivity, s_PSHostTag);
 
             ProgressRecord record = new ProgressRecord(s_ProgressId,
-                                                       TestConnectionProgressBarActivity,
+                                                       _testConnectionProgressBarActivity,
                                                        ProgressRecordSpace);
             WriteProgress(record);
         }
@@ -772,17 +767,17 @@ namespace Microsoft.PowerShell.Commands
                                         reply.Options?.Ttl);
             }
 
-            WriteInformation(msg, PSHostTag);
+            WriteInformation(msg, s_PSHostTag);
 
-            ProgressRecord record = new ProgressRecord(s_ProgressId, TestConnectionProgressBarActivity, msg);
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, msg);
             WriteProgress(record);
         }
 
         private void WritePingFooter()
         {
-            WriteInformation(TestConnectionResources.PingComplete, PSHostTag);
+            WriteInformation(TestConnectionResources.PingComplete, s_PSHostTag);
 
-            ProgressRecord record = new ProgressRecord(s_ProgressId, TestConnectionProgressBarActivity, ProgressRecordSpace);
+            ProgressRecord record = new ProgressRecord(s_ProgressId, _testConnectionProgressBarActivity, ProgressRecordSpace);
             record.RecordType = ProgressRecordType.Completed;
             WriteProgress(record);
         }
@@ -815,7 +810,7 @@ namespace Microsoft.PowerShell.Commands
             public List<PingReply> Replies { get; }
         }
 
-#endregion PingTest
+        #endregion PingTest
 
         private bool InitProcessPing(String targetNameOrAddress, out String resolvedTargetName, out IPAddress targetAddress)
         {
@@ -859,9 +854,9 @@ namespace Microsoft.PowerShell.Commands
 
                 if (IPv6 || IPv4)
                 {
-                    AddressFamily addressFamily = IPv6 ? AddressFamily.InterNetworkV6 :AddressFamily.InterNetwork;
+                    AddressFamily addressFamily = IPv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork;
 
-                    foreach(var address in hostEntry.AddressList)
+                    foreach (var address in hostEntry.AddressList)
                     {
                         if (address.AddressFamily == addressFamily)
                         {
@@ -911,7 +906,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer == null)
             {
-                s_DefaultSendBuffer= sendBuffer;
+                s_DefaultSendBuffer = sendBuffer;
             }
 
             return sendBuffer;
@@ -924,7 +919,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// Create the default send buffer once and cache it.
         private const int DefaultSendBufferSize = 32;
-        private static byte[] s_DefaultSendBuffer= null;
+        private static byte[] s_DefaultSendBuffer = null;
 
         // Random value for WriteProgress Activity Id.
         private static readonly int s_ProgressId = 174593053;
@@ -933,5 +928,5 @@ namespace Microsoft.PowerShell.Commands
         private const string ProgressRecordSpace = " ";
 
         private const string TestConnectionExceptionId = "TestConnectionException";
-   }
+    }
 }

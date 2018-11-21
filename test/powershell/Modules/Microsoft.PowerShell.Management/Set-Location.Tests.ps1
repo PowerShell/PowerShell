@@ -54,6 +54,22 @@ Describe "Set-Location" -Tags "CI" {
         $(Get-Location).Path | Should -BeExactly $testPath.FullName
     }
 
+    It "Should not use filesystem root folder if not in filesystem provider" -Skip:(!$IsWindows) {
+        # find filesystem root folder that doesn't exist in HKCU:
+        $foundFolder = $false
+        foreach ($folder in Get-ChildItem "${env:SystemDrive}\" -Directory) {
+            if (-Not (Test-Path "HKCU:\$($folder.Name)")) {
+                $testFolder = $folder.Name
+                $foundFolder = $true
+                break
+            }
+        }
+        $foundFolder | Should -BeTrue
+        Set-Location HKCU:\
+        { Set-Location ([System.IO.Path]::DirectorySeparatorChar + $testFolder) -ErrorAction Stop } |
+            Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
+    }
+
     Context 'Set-Location with no arguments' {
 
         It 'Should go to $env:HOME when Set-Location run with no arguments from FileSystem provider' {
@@ -104,6 +120,18 @@ Describe "Set-Location" -Tags "CI" {
             (Get-Location).Path | Should -Be ($initialLocation).Path
         }
 
+        It 'Should go to last location back, forth and back again when specifying minus, plus and minus as a path' {
+            $initialLocation = (Get-Location).Path
+            Set-Location ([System.IO.Path]::GetTempPath())
+            $tempPath = (Get-Location).Path
+            Set-Location -
+            (Get-Location).Path | Should -Be $initialLocation
+            Set-Location +
+            (Get-Location).Path | Should -Be $tempPath
+            Set-Location -
+            (Get-Location).Path | Should -Be $initialLocation
+        }
+
         It 'Should go back to previous locations when specifying minus twice' {
             $initialLocation = (Get-Location).Path
             Set-Location ([System.IO.Path]::GetTempPath())
@@ -121,11 +149,68 @@ Describe "Set-Location" -Tags "CI" {
             foreach ($i in 1..$maximumLocationHistory) {
                 Set-Location ([System.IO.Path]::GetTempPath())
             }
+            $tempPath = (Get-Location).Path
+            # Go back up to the maximum
             foreach ($i in 1..$maximumLocationHistory) {
                 Set-Location -
             }
             (Get-Location).Path | Should Be $initialLocation
             { Set-Location - } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
+            # Go forwards up to the maximum
+            foreach ($i in 1..($maximumLocationHistory)) {
+                Set-Location +
+            }
+            (Get-Location).Path | Should -Be $tempPath
+            { Set-Location + } | Should -Throw -ErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
+        }
+    }
+
+    It 'Should nativate to literal path "<path>"' -TestCases @(
+        @{ path = "-" },
+        @{ path = "+" }
+    ) {
+        param($path)
+
+        Set-Location $TestDrive
+        $literalPath = Join-Path $TestDrive $path
+        New-Item -ItemType Directory -Path $literalPath
+        Set-Location -LiteralPath $path
+        (Get-Location).Path | Should -BeExactly $literalPath
+    }
+
+    Context 'Test the LocationChangedAction event handler' {
+
+        AfterEach {
+            $ExecutionContext.InvokeCommand.LocationChangedAction = $null
+        }
+
+        It 'The LocationChangedAction should fire when changing location' {
+            $initialPath = $pwd
+            $oldPath = $null
+            $newPath = $null
+            $eventSessionState = $null
+            $eventRunspace = $null
+            $ExecutionContext.InvokeCommand.LocationChangedAction = {
+                (Get-Variable eventRunspace).Value = $this
+                (Get-Variable eventSessionState).Value = $_.SessionState
+                (Get-Variable oldPath).Value = $_.oldPath
+                (Get-Variable newPath).Value = $_.newPath
+            }
+            Set-Location ..
+            $newPath.Path | Should -Be $pwd.Path
+            $oldPath.Path | Should -Be $initialPath.Path
+            $eventSessionState | Should -Be $ExecutionContext.SessionState
+            $eventRunspace | Should -Be ([runspace]::DefaultRunspace)
+        }
+
+        It 'Errors in the LocationChangedAction should be catchable but not fail the cd' {
+            $location = $PWD
+            Set-Location ..
+            $ExecutionContext.InvokeCommand.LocationChangedAction = { throw "Boom" }
+            # Verify that the exception occurred
+            { Set-Location $location } | Should -Throw "Boom"
+            # But the location should still have changed
+            $PWD.Path | Should -Be $location.Path
         }
     }
 }

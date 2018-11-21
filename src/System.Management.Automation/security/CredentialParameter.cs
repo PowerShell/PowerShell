@@ -16,12 +16,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Transforms the input data to an PSCredential.
         /// </summary>
-        ///
         /// <param name="engineIntrinsics">
         /// The engine APIs for the context under which the transformation is being
         /// made.
         /// </param>
-        ///
         /// <param name="inputData">
         /// If Null, the transformation prompts for both Username and Password
         /// If a string, the transformation uses the input for a username, and prompts

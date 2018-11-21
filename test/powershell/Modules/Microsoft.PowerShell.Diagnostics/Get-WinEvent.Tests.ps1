@@ -54,6 +54,21 @@ Describe 'Get-WinEvent' -Tags "CI" {
         It 'Get-WinEvent can use the simplest of filters' {
             $filter = @{ ProviderName = $providerForTests.Name }
             $testEvents = Get-WinEvent -filterhashtable $filter
+
+            $testEventDict = [System.Collections.Generic.Dictionary[int, System.Diagnostics.Eventing.Reader.EventLogRecord]]::new()
+            foreach ($te in $testEvents)
+            {
+                $testEventDict.TryAdd($te.Id, $te)
+            }
+
+            foreach ($e in $events)
+            {
+                if (-not $testEventDict.ContainsKey($e.Id))
+                {
+                    throw new "Unexpected event log: $e"
+                }
+            }
+
             $testEvents.Count | Should -Be $events.Count
         }
         It 'Get-WinEvent can use a filter which includes two items' {

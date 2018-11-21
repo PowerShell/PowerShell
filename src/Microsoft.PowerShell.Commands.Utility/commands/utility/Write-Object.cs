@@ -7,8 +7,7 @@ namespace Microsoft.PowerShell.Commands
 {
     #region WriteOutputCommand
     /// <summary>
-    /// This class implements Write-output command
-    ///
+    /// This class implements Write-Output command.
     /// </summary>
     [Cmdlet(VerbsCommunications.Write, "Output", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113427", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteOutputCommand : PSCmdlet
@@ -16,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
         private PSObject[] _inputObjects = null;
 
         /// <summary>
-        /// Holds the list of objects to be Written
+        /// Holds the list of objects to be written.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromRemainingArguments = true)]
         [AllowNull]
@@ -28,8 +27,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Prevents Write-Output from unravelling collections passed to the InputObject
-        /// parameter.
+        /// Prevents Write-Output from unravelling collections passed to the InputObject parameter.
         /// </summary>
         [Parameter()]
         public SwitchParameter NoEnumerate
@@ -39,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the ProcessRecord method for Write-output command
+        /// This method implements the ProcessRecord method for Write-output command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -56,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             WriteObject(_inputObjects, enumerate);
-        }//processrecord
-    }//WriteOutputCommand
+        }
+    }
     #endregion
 }

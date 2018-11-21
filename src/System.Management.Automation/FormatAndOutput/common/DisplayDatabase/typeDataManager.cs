@@ -48,7 +48,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="formatFiles"></param>
         /// <param name="isShared"></param>

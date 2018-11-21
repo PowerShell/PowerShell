@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Process record
+        /// Process record.
         /// </summary>
         protected override void ProcessRecord()
         {

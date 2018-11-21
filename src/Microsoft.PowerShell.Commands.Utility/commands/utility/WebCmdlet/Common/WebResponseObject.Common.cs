@@ -11,20 +11,20 @@ using System.Collections.Generic;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// WebResponseObject
+    /// WebResponseObject.
     /// </summary>
     public partial class WebResponseObject
     {
         #region Properties
 
         /// <summary>
-        /// gets or protected sets the Content property
+        /// Gets or protected sets the Content property.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public byte[] Content { get; protected set; }
 
         /// <summary>
-        /// gets the StatusCode property
+        /// Gets the StatusCode property.
         /// </summary>
         public int StatusCode
         {
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// gets the StatusDescription property
+        /// Gets the StatusDescription property.
         /// </summary>
         public string StatusDescription
         {
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
 
         private MemoryStream _rawContentStream;
         /// <summary>
-        /// gets the RawContentStream property
+        /// Gets the RawContentStream property.
         /// </summary>
         public MemoryStream RawContentStream
         {
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// gets the RawContentLength property
+        /// Gets the RawContentLength property.
         /// </summary>
         public long RawContentLength
         {
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// gets or protected sets the RawContent property
+        /// Gets or protected sets the RawContent property.
         /// </summary>
         public string RawContent { get; protected set; }
 
@@ -102,25 +102,25 @@ namespace Microsoft.PowerShell.Commands
     // TODO: Merge Partials
 
     /// <summary>
-    /// WebResponseObject
+    /// WebResponseObject.
     /// </summary>
     public partial class WebResponseObject
     {
         #region Properties
 
         /// <summary>
-        /// gets or sets the BaseResponse property
+        /// Gets or sets the BaseResponse property.
         /// </summary>
         public HttpResponseMessage BaseResponse { get; set; }
 
         /// <summary>
-        /// gets the Headers property
+        /// Gets the Headers property.
         /// </summary>
         public Dictionary<string, IEnumerable<string>> Headers
         {
             get
             {
-                if(_headers == null)
+                if (_headers == null)
                 {
                     _headers = WebResponseHelper.GetHeadersDictionary(BaseResponse);
                 }
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
         private Dictionary<string, IEnumerable<string>> _headers = null;
 
         /// <summary>
-        /// gets the RelationLink property
+        /// Gets the RelationLink property.
         /// </summary>
         public Dictionary<string, string> RelationLink { get; internal set; }
 
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constructors
 
         /// <summary>
-        /// Constructor for WebResponseObject
+        /// Constructor for WebResponseObject.
         /// </summary>
         /// <param name="response"></param>
         public WebResponseObject(HttpResponseMessage response)
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
         { }
 
         /// <summary>
-        /// Constructor for WebResponseObject with contentStream
+        /// Constructor for WebResponseObject with contentStream.
         /// </summary>
         /// <param name="response"></param>
         /// <param name="contentStream"></param>
@@ -207,7 +207,6 @@ namespace Microsoft.PowerShell.Commands
             // set the position of the content stream to the beginning
             _rawContentStream.Position = 0;
         }
-
         #endregion
     }
 }

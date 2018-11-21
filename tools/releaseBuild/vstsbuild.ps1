@@ -90,14 +90,6 @@ End {
     & $gitBinFullPath clone -b $psReleaseBranch --quiet https://github.com/$psReleaseFork/PSRelease.git $location
 
     Push-Location -Path $PWD.Path
-    try{
-        Set-Location $location
-        & $gitBinFullPath  submodule update --init --recursive --quiet
-    }
-    finally
-    {
-        Pop-Location
-    }
 
     $unresolvedRepoRoot = Join-Path -Path $PSScriptRoot '../..'
     $resolvedRepoRoot = (Resolve-Path -Path $unresolvedRepoRoot).ProviderPath

@@ -283,7 +283,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="type"></param>
@@ -356,6 +355,11 @@ namespace System.Management.Automation
         /// of the command and should return a CommandInfo object or null.
         /// </summary>
         public System.EventHandler<CommandLookupEventArgs> PostCommandLookupAction { get; set; }
+
+        /// <summary>
+        /// Gets or sets the action that is invoked everytime the runspace location (cwd) is changed.
+        /// </summary>
+        public System.EventHandler<LocationChangedEventArgs> LocationChangedAction { get; set; }
 
         /// <summary>
         /// Returns the CmdletInfo object that corresponds to the name argument
@@ -689,7 +693,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="sessionState"></param>
         /// <param name="scriptBlock"></param>

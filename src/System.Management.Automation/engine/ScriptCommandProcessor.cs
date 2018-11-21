@@ -17,10 +17,9 @@ namespace System.Management.Automation
     internal abstract class ScriptCommandProcessorBase : CommandProcessorBase
     {
         protected ScriptCommandProcessorBase(ScriptBlock scriptBlock, ExecutionContext context, bool useLocalScope, CommandOrigin origin, SessionStateInternal sessionState)
+            : base(new ScriptInfo(String.Empty, scriptBlock, context))
         {
             this._dontUseScopeCommandOrigin = false;
-            this.CommandInfo = new ScriptInfo(String.Empty, scriptBlock, context);
-
             this._fromScriptFile = false;
 
             CommonInitialization(scriptBlock, context, useLocalScope, origin, sessionState);
@@ -163,7 +162,6 @@ namespace System.Management.Automation
     /// This class implements a command processor for script related commands.
     /// </summary>
     /// <remarks>
-    ///
     /// 1. Usage scenarios
     ///
     /// ScriptCommandProcessor is used for four kinds of commands.
@@ -227,7 +225,6 @@ namespace System.Management.Automation
     /// If the command processor is created based on a script file, its exit exception
     /// handling is different in the sense that it indicates an exitcode instead of killing
     /// current powershell session.
-    ///
     /// </remarks>
     internal sealed class DlrScriptCommandProcessor : ScriptCommandProcessorBase
     {
@@ -479,7 +476,26 @@ namespace System.Management.Automation
                         Context.LanguageMode = newLanguageMode.Value;
                     }
 
-                    EnterScope();
+                    bool? oldLangModeTransitionStatus = null;
+                    try
+                    {
+                        // If it's from ConstrainedLanguage to FullLanguage, indicate the transition before parameter binding takes place.
+                        if (oldLanguageMode == PSLanguageMode.ConstrainedLanguage && newLanguageMode == PSLanguageMode.FullLanguage)
+                        {
+                            oldLangModeTransitionStatus = Context.LanguageModeTransitionInParameterBinding;
+                            Context.LanguageModeTransitionInParameterBinding = true;
+                        }
+
+                        EnterScope();
+                    }
+                    finally
+                    {
+                        if (oldLangModeTransitionStatus.HasValue)
+                        {
+                            // Revert the transition state to old value after doing the parameter binding
+                            Context.LanguageModeTransitionInParameterBinding = oldLangModeTransitionStatus.Value;
+                        }
+                    }
 
                     if (commandRuntime.ErrorMergeTo == MshCommandRuntime.MergeDataStream.Output)
                     {

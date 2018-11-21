@@ -1,4 +1,4 @@
-@{
+﻿@{
     Description = @'
 PowerShell is an automation and configuration management platform.
 It consists of a cross-platform command-line shell and associated scripting language.
@@ -48,6 +48,40 @@ case "$1" in
         ;;
 esac
 '@
+    MacOSLauncherScript = @'
+#!/usr/bin/env bash
+open {0}
+'@
+MacOSLauncherPlistTemplate = @'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>PowerShell.sh</string>
+    <key>CFBundleGetInfoString</key>
+    <string>{1}</string>
+    <key>CFBundleIconFile</key>
+    <string>{2}</string>
+    <key>CFBundleIdentifier</key>
+    <string>{0}</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>PowerShell</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>{1}</string>
+    <key>CFBundleSupportedPlatforms</key>
+    <array>
+        <string>MacOSX</string>
+    </array>
+    <key>CFBundleVersion</key>
+    <string>{1}</string>
+</dict>
+</plist>
+'@
 # see https://developer.apple.com/library/content/documentation/DeveloperTools/Reference/DistributionDefinitionRef/Chapters/Distribution_XML_Ref.html
 OsxDistributionTemplate = @'
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
@@ -75,22 +109,27 @@ OsxDistributionTemplate = @'
 '@
 NuspecTemplate = @'
 <?xml version="1.0" encoding="utf-8"?>
-<package
-  xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
-  <metadata>
-    <id>{0}</id>
-    <version>{1}</version>
-    <title>PowerShellRuntime</title>
-    <authors>Powershell</authors>
-    <owners>microsoft,powershell</owners>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>PowerShell runtime for hosting PowerShell</description>
-    <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-    <language>en-US</language>
-    <dependencies>
-      <group targetFramework=".NETCoreApp2.1"></group>
-    </dependencies>
-  </metadata>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+    <metadata>
+        <id>{0}</id>
+        <version>{1}</version>
+        <authors>Microsoft</authors>
+        <owners>Microsoft,PowerShell</owners>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <description>PowerShell runtime for hosting PowerShell Core</description>
+        <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
+        <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
+        <licenseUrl>https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt</licenseUrl>
+        <tags>PowerShell</tags>
+        <language>en-US</language>
+        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <contentFiles>
+            <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
+        </contentFiles>
+        <dependencies>
+            <group targetFramework=".NETCoreApp2.1"></group>
+        </dependencies>
+    </metadata>
 </package>
 '@
 RefAssemblyCsProj = @'

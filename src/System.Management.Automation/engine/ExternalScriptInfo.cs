@@ -23,27 +23,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the ExternalScriptInfo class with the specified name, and path.
         /// </summary>
-        ///
         /// <param name="name">
         /// The name of the script.
         /// </param>
-        ///
         /// <param name="path">
         /// The path to the script
         /// </param>
-        ///
         /// <param name="context">
         /// The context of the currently running engine.
         /// </param>
-        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="context"/> is null.
         /// </exception>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="path"/> is null or empty.
         /// </exception>
-        ///
         internal ExternalScriptInfo(string name, string path, ExecutionContext context)
             : base(name, CommandTypes.ExternalScript, context)
         {
@@ -66,15 +60,12 @@ namespace System.Management.Automation
         /// <param name="name">
         /// The name of the script.
         /// </param>
-        ///
         /// <param name="path">
         /// The path to the script
         /// </param>
-        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="path"/> is null or empty.
         /// </exception>
-        ///
         internal ExternalScriptInfo(string name, string path) : base(name, CommandTypes.ExternalScript)
         {
             if (String.IsNullOrEmpty(path))
@@ -205,7 +196,6 @@ namespace System.Management.Automation
         /// <summary>
         /// The script block that represents the external script
         /// </summary>
-        ///
         public ScriptBlock ScriptBlock
         {
             get
@@ -221,7 +211,7 @@ namespace System.Management.Automation
                     }
 
                     // parse the script into an expression tree...
-                    ScriptBlock newScriptBlock = ScriptBlock.Create(new Parser(), _path, ScriptContents);
+                    ScriptBlock newScriptBlock = ParseScriptContents(new Parser(), _path, ScriptContents, DefiningLanguageMode);
                     this.ScriptBlock = newScriptBlock;
                 }
 
@@ -239,6 +229,31 @@ namespace System.Management.Automation
         private ScriptBlock _scriptBlock;
         private ScriptBlockAst _scriptBlockAst;
 
+        private static ScriptBlock ParseScriptContents(Parser parser, string fileName, string fileContents, PSLanguageMode? definingLanguageMode)
+        {
+            // If we are in ConstrainedLanguage mode but the defining language mode is FullLanguage, then we need
+            // to parse the script contents in FullLanguage mode context.  Otherwise we will get bogus parsing errors
+            // such as "Configuration keyword not allowed".
+            if (definingLanguageMode.HasValue && (definingLanguageMode == PSLanguageMode.FullLanguage))
+            {
+                var context = LocalPipeline.GetExecutionContextFromTLS();
+                if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
+                {
+                    context.LanguageMode = PSLanguageMode.FullLanguage;
+                    try
+                    {
+                        return ScriptBlock.Create(parser, fileName, fileContents);
+                    }
+                    finally
+                    {
+                        context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                    }
+                }
+            }
+
+            return ScriptBlock.Create(parser, fileName, fileContents);
+        }
+
         internal ScriptBlockAst GetScriptBlockAst()
         {
             var scriptContents = ScriptContents;
@@ -254,7 +269,29 @@ namespace System.Management.Automation
             {
                 ParseError[] errors;
                 Parser parser = new Parser();
-                _scriptBlockAst = parser.Parse(_path, ScriptContents, null, out errors, ParseMode.Default);
+
+                // If we are in ConstrainedLanguage mode but the defining language mode is FullLanguage, then we need
+                // to parse the script contents in FullLanguage mode context.  Otherwise we will get bogus parsing errors
+                // such as "Configuration keyword not allowed".
+                var context = LocalPipeline.GetExecutionContextFromTLS();
+                if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage &&
+                    DefiningLanguageMode == PSLanguageMode.FullLanguage)
+                {
+                    context.LanguageMode = PSLanguageMode.FullLanguage;
+                    try
+                    {
+                        _scriptBlockAst = parser.Parse(_path, ScriptContents, null, out errors, ParseMode.Default);
+                    }
+                    finally
+                    {
+                        context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                    }
+                }
+                else
+                {
+                    _scriptBlockAst = parser.Parse(_path, ScriptContents, null, out errors, ParseMode.Default);
+                }
+
                 if (errors.Length == 0)
                 {
                     this.ScriptBlock = new ScriptBlock(_scriptBlockAst, isFilter: false);
@@ -267,9 +304,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Validates the external script info
         /// </summary>
-        ///
         /// <param name="host"></param>
-        ///
         public void ValidateScriptInfo(Host.PSHost host)
         {
             if (!_signatureChecked)

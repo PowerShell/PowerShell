@@ -12,7 +12,7 @@ try
     $PSDefaultParameterValues["it:skip"] = ! $IsWindows
     Enable-Testhook -testhookName $restartTesthookName
 
-    Describe "Restart-Computer" -Tag Feature {
+    Describe "Restart-Computer" -Tag Feature,RequireAdminOnWindows {
         # if we throw in BeforeEach, the test will fail and the restart will not be called
         BeforeEach {
             if ( ! (Test-TesthookIsSet -testhookName $restartTesthookName) ) {

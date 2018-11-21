@@ -7,7 +7,7 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A cmdlet that gets the TraceSource instances that are instantiated in the process
+    /// A cmdlet that gets the TraceSource instances that are instantiated in the process.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TraceSource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113333")]
     [OutputType(typeof(PSTraceSource))]
@@ -16,8 +16,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Gets or sets the category parameter which determines
-        /// which trace switch to get.
+        /// Gets or sets the category parameter which determines which trace switch to get.
         /// </summary>
         /// <value></value>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -38,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
 
                 _names = value;
             }
-        } // TraceSource
+        }
         private string[] _names = new string[] { "*" };
 
         #endregion Parameters
@@ -46,14 +45,14 @@ namespace Microsoft.PowerShell.Commands
         #region Cmdlet code
 
         /// <summary>
-        /// Gets the PSTraceSource for the specified category
+        /// Gets the PSTraceSource for the specified category.
         /// </summary>
         protected override void ProcessRecord()
         {
             var sources = GetMatchingTraceSource(_names, true);
             var result = sources.OrderBy(source => source.Name);
             WriteObject(result, true);
-        } // ProcessRecord
+        }
 
         #endregion Cmdlet code
     }

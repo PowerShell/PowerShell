@@ -109,7 +109,6 @@ namespace System.Management.Automation.Remoting
         #endregion Properties
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="dataType"></param>
@@ -272,7 +271,6 @@ namespace System.Management.Automation.Remoting
         #region Constructors / Factory
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="dataType"></param>
@@ -288,7 +286,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        ///
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="dataType"></param>

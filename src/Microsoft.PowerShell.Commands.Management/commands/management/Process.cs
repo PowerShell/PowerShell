@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
             int diff = String.Compare(
                 SafeGetProcessName(x),
                 SafeGetProcessName(y),
-                StringComparison.CurrentCultureIgnoreCase);
+                StringComparison.OrdinalIgnoreCase);
             if (0 != diff)
                 return diff;
             return SafeGetProcessId(x) - SafeGetProcessId(y);
@@ -642,7 +642,8 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         ProcessModule mainModule = PsUtils.GetMainModule(process);
-                        if (mainModule != null) {
+                        if (mainModule != null)
+                        {
                             WriteObject(mainModule.FileVersionInfo, true);
                         }
                     }
@@ -1211,7 +1212,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // If the process is svchost stop all the dependent services before killing process
-                    if (string.Equals(SafeGetProcessName(process), "SVCHOST", StringComparison.CurrentCultureIgnoreCase))
+                    if (string.Equals(SafeGetProcessName(process), "SVCHOST", StringComparison.OrdinalIgnoreCase))
                     {
                         StopDependentService(process);
                     }
@@ -1269,7 +1270,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Boolean variables to display the warning using ShouldContinue.
         /// </summary>
-        private bool _yesToAll,_noToAll;
+        private bool _yesToAll, _noToAll;
 
         /// <summary>
         /// Current windows user name.
@@ -1299,7 +1300,7 @@ namespace Microsoft.PowerShell.Commands
 
                     using (var processUser = new WindowsIdentity(ph))
                     {
-                        return string.Equals(processUser.Name, _currentUserName, StringComparison.CurrentCultureIgnoreCase);
+                        return string.Equals(processUser.Name, _currentUserName, StringComparison.OrdinalIgnoreCase);
                     }
                 }
             }
@@ -1587,7 +1588,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
-        [Alias("PSPath","Path")]
+        [Alias("PSPath", "Path")]
         public string FilePath { get; set; }
 
         /// <summary>
@@ -1912,7 +1913,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
                     _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
-                    if (_redirectstandardinput.Equals(_redirectstandardoutput, StringComparison.CurrentCultureIgnoreCase))
+                    if (_redirectstandardinput.Equals(_redirectstandardoutput, StringComparison.OrdinalIgnoreCase))
                     {
                         message = StringUtil.Format(ProcessResources.DuplicateEntry, "RedirectStandardInput", "RedirectStandardOutput");
                         ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
@@ -1926,7 +1927,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _redirectstandardinput = ResolveFilePath(_redirectstandardinput);
                     _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
-                    if (_redirectstandardinput.Equals(_redirectstandarderror, StringComparison.CurrentCultureIgnoreCase))
+                    if (_redirectstandardinput.Equals(_redirectstandarderror, StringComparison.OrdinalIgnoreCase))
                     {
                         message = StringUtil.Format(ProcessResources.DuplicateEntry, "RedirectStandardInput", "RedirectStandardError");
                         ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
@@ -1940,7 +1941,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _redirectstandarderror = ResolveFilePath(_redirectstandarderror);
                     _redirectstandardoutput = ResolveFilePath(_redirectstandardoutput);
-                    if (_redirectstandardoutput.Equals(_redirectstandarderror, StringComparison.CurrentCultureIgnoreCase))
+                    if (_redirectstandardoutput.Equals(_redirectstandarderror, StringComparison.OrdinalIgnoreCase))
                     {
                         message = StringUtil.Format(ProcessResources.DuplicateEntry, "RedirectStandardOutput", "RedirectStandardError");
                         ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);

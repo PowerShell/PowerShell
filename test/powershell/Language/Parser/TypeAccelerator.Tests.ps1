@@ -71,6 +71,18 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.DscResourceAttribute]
                 }
                 @{
+                    Accelerator = 'ExperimentAction'
+                    Type        = [System.Management.Automation.ExperimentAction]
+                }
+                @{
+                    Accelerator = 'Experimental'
+                    Type        = [System.Management.Automation.ExperimentalAttribute]
+                }
+                @{
+                    Accelerator = 'ExperimentalFeature'
+                    Type        = [System.Management.Automation.ExperimentalFeature]
+                }
+                @{
                     Accelerator = 'float'
                     Type        = [System.Single]
                 }
@@ -93,6 +105,10 @@ Describe "Type accelerators" -Tags "CI" {
                 @{
                     Accelerator = 'int32'
                     Type        = [System.Int32]
+                }
+                @{
+                    Accelerator = 'short'
+                    Type        = [System.Int16]
                 }
                 @{
                     Accelerator = 'int16'
@@ -219,12 +235,24 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.TimeSpan]
                 }
                 @{
+                    Accelerator = 'ushort'
+                    Type        = [System.UInt16]
+                }
+                @{
                     Accelerator = 'uint16'
                     Type        = [System.UInt16]
                 }
                 @{
+                    Accelerator = 'uint'
+                    Type        = [System.UInt32]
+                }
+                @{
                     Accelerator = 'uint32'
                     Type        = [System.UInt32]
+                }
+                @{
+                    Accelerator = 'ulong'
+                    Type        = [System.Uint64]
                 }
                 @{
                     Accelerator = 'uint64'
@@ -378,11 +406,11 @@ Describe "Type accelerators" -Tags "CI" {
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 91
+                $totalAccelerators = 99
             }
             else
             {
-                $totalAccelerators = 96
+                $totalAccelerators = 104
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{

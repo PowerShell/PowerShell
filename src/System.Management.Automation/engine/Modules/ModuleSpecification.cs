@@ -248,6 +248,31 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Copy the module specification while normalizing the name
+        /// so that paths become absolute and use the right directory separators.
+        /// </summary>
+        /// <param name="context">The current execution context. Used for path normalization.</param>
+        /// <param name="basePath">The base path where a relative path should be interpreted with respect to.</param>
+        /// <returns>A fresh module specification object with the name normalized for use internally.</returns>
+        internal ModuleSpecification WithNormalizedName(ExecutionContext context, string basePath)
+        {
+            // Save allocating a new module spec if we don't need to change anything
+            if (!ModuleIntrinsics.IsModuleNamePath(Name))
+            {
+                return this;
+            }
+            
+            return new ModuleSpecification()
+            {
+                Guid = Guid,
+                MaximumVersion = MaximumVersion,
+                Version = Version,
+                RequiredVersion = RequiredVersion,
+                Name = ModuleIntrinsics.NormalizeModuleName(Name, basePath, context)
+            };
+        }
+
+        /// <summary>
         /// The module name.
         /// </summary>
         public string Name { get; internal set; }

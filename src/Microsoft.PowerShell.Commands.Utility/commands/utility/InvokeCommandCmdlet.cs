@@ -7,7 +7,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Class implementing Invoke-Expression
+    /// Class implementing Invoke-Expression.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "Expression", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113343")]
     public sealed
@@ -20,13 +20,13 @@ namespace Microsoft.PowerShell.Commands
         /// Command to execute.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        [ValidateTrustedData]
         public string Command { get; set; }
 
         #endregion parameters
 
         /// <summary>
-        /// For each record, execute it, and push the results into the
-        /// success stream.
+        /// For each record, execute it, and push the results into the success stream.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -53,4 +53,4 @@ namespace Microsoft.PowerShell.Commands
                 args: emptyArray);
         }
     }
-}   // namespace Microsoft.PowerShell.Commands
+}

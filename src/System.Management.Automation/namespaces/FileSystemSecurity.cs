@@ -14,7 +14,6 @@ namespace Microsoft.PowerShell.Commands
     /// The FileSystemProvider provides stateless namespace navigation
     /// of the file system.
     /// </summary>
-    ///
     public sealed partial class FileSystemProvider : NavigationCmdletProvider, IContentCmdletProvider, IPropertyCmdletProvider, ISecurityDescriptorCmdletProvider
     {
         #region ISecurityDescriptorCmdletProvider members
@@ -23,21 +22,17 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the SecurityDescriptor at the specified path, including only the specified
         /// AccessControlSections.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path of the item to retrieve. It may be a drive or provider-qualified path and may include.
         /// glob characters.
         /// </param>
-        ///
         /// <param name="sections">
         /// The sections of the security descriptor to include.
         /// </param>
-        ///
         /// <returns>
         /// Nothing. An object that represents the security descriptor for the item
         /// specified by path is written to the context's pipeline.
         /// </returns>
-        ///
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         ///     path doesn't exist
@@ -88,21 +83,17 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the SecurityDescriptor at the specified path.
         /// </summary>
-        ///
         /// <param name="path">
         /// The path of the item to set the security descriptor on.
         /// It may be a drive or provider-qualified path and may include.
         /// glob characters.
         /// </param>
-        ///
         /// <param name="securityDescriptor">
         /// The new security descriptor for the item.
         /// </param>
-        ///
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
         /// </exception>
-        ///
         /// <exception cref="System.ArgumentNullException">
         ///     securitydescriptor is null.
         /// </exception>
@@ -259,16 +250,13 @@ namespace Microsoft.PowerShell.Commands
         /// the item specified by the path.  If "path" points to a file system directory,
         /// then the descriptor returned will be of type DirectorySecurity.
         /// </summary>
-        ///
         /// <param name="path">
         /// Path of the item to use to determine the type of resulting
         /// SecurityDescriptor.
         /// </param>
-        ///
         /// <param name="sections">
         /// The sections of the security descriptor to create.
         /// </param>
-        ///
         /// <returns>
         /// A new ObjectSecurity object of the same type as
         /// the item specified by the path.
@@ -294,20 +282,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Creates a new empty security descriptor of the specified type.
         /// </summary>
-        ///
         /// <param name="type">
         /// The type of Security Descriptor to create. Valid types are
         /// "file", "directory," and "container."
         /// </param>
-        ///
         /// <param name="sections">
         /// The sections of the security descriptor to create.
         /// </param>
-        ///
         /// <returns>
         /// A new ObjectSecurity object of the specified type.
         /// </returns>
-        ///
         public ObjectSecurity NewSecurityDescriptorOfType(
             string type,
             AccessControlSections sections)

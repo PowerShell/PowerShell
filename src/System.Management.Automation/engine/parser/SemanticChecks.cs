@@ -619,9 +619,9 @@ namespace System.Management.Automation.Language
                 // If label is not null, we have a break/continue where we know the loop label at compile
                 // time. If we can match the label before finding the finally, then we're not flowing out
                 // of the finally.
-                if (label != null && parent is LoopStatementAst)
+                if (label != null && parent is LabeledStatementAst)
                 {
-                    if (LoopFlowException.MatchLoopLabel(label, ((LoopStatementAst)parent).Label ?? string.Empty))
+                    if (LoopFlowException.MatchLoopLabel(label, ((LabeledStatementAst)parent).Label ?? string.Empty))
                         break;
                 }
 
