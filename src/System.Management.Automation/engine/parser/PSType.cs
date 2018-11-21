@@ -436,9 +436,9 @@ namespace System.Management.Automation.Language
 
             private bool ShouldImplementProperty(string name, Type type)
             {
-                foreach (var @interface in _typeBuilder.GetInterfaces())
+                foreach (var interfaceType in _typeBuilder.GetInterfaces())
                 {
-                    if (@interface.GetProperty(name, type) != null)
+                    if (interfaceType.GetProperty(name, type) != null)
                     {
                         return true;
                     }
