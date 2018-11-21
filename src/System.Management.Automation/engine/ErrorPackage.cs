@@ -462,7 +462,7 @@ namespace System.Management.Automation
         /// control the maximum length of the GetMessage() string, we
         /// ellipsize these strings.  The current heuristic is to take
         /// strings longer than 40 characters and ellipsize them to
-        /// the first and last 19 characters plus "…" in the middle.
+        /// the first and last 19 characters plus "..." in the middle.
         /// </summary>
         /// <param name="uiCultureInfo">culture to retrieve template if needed</param>
         /// <param name="original">original string</param>
@@ -476,8 +476,12 @@ namespace System.Management.Automation
             {
                 return original;
             }
-            string first = original.Substring(0, 19);
-            string last = original.Substring(original.Length - 19, 19);
+
+            // We are splitting a string > 40 chars in half, so left and right can be
+            // at most 19 characters to include the ellipsis in the middle.
+            const int MaxHalfWidth = 19;
+            string first = original.Substring(0, MaxHalfWidth);
+            string last = original.Substring(original.Length - MaxHalfWidth, MaxHalfWidth);
             return
                 string.Format(uiCultureInfo, ErrorPackage.Ellipsize, first, last);
         }

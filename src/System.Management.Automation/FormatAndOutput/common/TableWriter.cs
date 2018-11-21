@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.PowerShell.Commands.Internal.Format;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -37,6 +38,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private ScreenInfo _si;
+        private const char ESC = '\u001b';
+        private const string ResetConsoleVt100Code = "\u001b[m";
 
         internal static int ComputeWideViewBestItemsPerRowFit(int stringLen, int screenColumns)
         {
@@ -415,10 +418,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding));
-                if (values[k].Contains("\u001b"))
+                if (values[k].IndexOf(ESC) != -1)
                 {
                     // Reset the console output if the content of this column contains ESC
-                    sb.Append("\u001b[m");
+                    sb.Append(ResetConsoleVt100Code);
                 }
             }
             return sb.ToString();
@@ -486,7 +489,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 // get from "abcdef" to "...f"
                                 int tailCount = dc.GetTailSplitLength(s, truncationDisplayLength);
                                 s = s.Substring(s.Length - tailCount);
-                                s = Ellipsis + s;
+                                s = PSObjectHelper.Ellipsis + s;
                             }
                             break;
 
@@ -494,7 +497,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 // get from "abcdef" to "a..."
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
-                                s += Ellipsis;
+                                s += PSObjectHelper.Ellipsis;
                             }
                             break;
 
@@ -503,7 +506,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 // left align is the default
                                 // get from "abcdef" to "a..."
                                 s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
-                                s += Ellipsis;
+                                s += PSObjectHelper.Ellipsis;
                             }
                             break;
                     }
@@ -580,7 +583,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return s;
         }
 
-        private const char Ellipsis = '\u2026';
         private const int EllipsisSize = 1;
 
         private bool _disabled = false;

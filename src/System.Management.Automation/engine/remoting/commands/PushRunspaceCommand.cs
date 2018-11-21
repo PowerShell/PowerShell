@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.PowerShell.Commands.Internal.Format;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1151,7 +1152,7 @@ namespace Microsoft.PowerShell.Commands
 
                     case ContainerIdParameterSet:
                         targetName = (this.ContainerId.Length <= 15) ? this.ContainerId
-                                                                     : this.ContainerId.Remove(14) + "…";
+                                                                     : this.ContainerId.Remove(14) + PSObjectHelper.Ellipsis;
                         break;
 
                     case SessionParameterSet:
