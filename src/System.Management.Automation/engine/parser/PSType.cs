@@ -950,7 +950,7 @@ namespace System.Management.Automation.Language
             private readonly TypeDefinitionAst _enumDefinitionAst;
             private readonly ModuleBuilder _moduleBuilder;
             private readonly string _typeName;
-            private readonly Type[] _validBaseTypes = new[] { typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong) };
+            private static readonly Type[] s_validBaseTypes = new[] { typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong) };
 
             internal DefineEnumHelper(Parser parser, ModuleBuilder module, TypeDefinitionAst enumDefinitionAst, string typeName)
             {
@@ -1096,11 +1096,11 @@ namespace System.Management.Automation.Language
                 foreach (var type in _enumDefinitionAst.BaseTypes)
                 {
                     var resolvedType = type.TypeName.GetReflectionType();
-                    if (resolvedType == null || !_validBaseTypes.Contains(resolvedType))
+                    if (resolvedType == null || !s_validBaseTypes.Contains(resolvedType))
                     {
                         _parser.ReportError(type.Extent,
-                            nameof(ParserStrings.IntegralTypeExpected),
-                            ParserStrings.IntegralTypeExpected,
+                            nameof(ParserStrings.InvalidUnderlyingType),
+                            ParserStrings.InvalidUnderlyingType,
                             ToStringCodeMethods.Type(resolvedType));
                     }
                     else

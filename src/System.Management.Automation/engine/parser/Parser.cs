@@ -4532,6 +4532,8 @@ namespace System.Management.Automation.Language
             //G      enum-member  new-lines:opt
             //G      enum-member-list   enum-member
 
+            Type[] validBaseTypes = new[] { typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong) };
+
             SkipNewlines();
             var name = SimpleNameRule();
             if (name == null)
@@ -4564,6 +4566,14 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
+                        var resolvedType = underlyingType.GetReflectionType();
+                        if (resolvedType == null || !validBaseTypes.Contains(resolvedType))
+                        {
+                            ReportError(underlyingType.Extent,
+                                nameof(ParserStrings.InvalidUnderlyingType),
+                                ParserStrings.InvalidUnderlyingType,
+                                underlyingType.Name);
+                        }
                         underlyingTypeConstraint = new TypeConstraintAst(underlyingType.Extent, underlyingType);
                     }
                 }
