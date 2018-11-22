@@ -110,14 +110,6 @@ namespace System.Management.Automation
     /// </summary>
     internal class HelpSystem : HelpSystemBase
     {
-        /*
-        static HelpSystem()
-        {
-            RegisterHelpSystem(typeof(HelpSystem));
-
-            GetHelpPagingFunctionTextMethod = GetHelpPagingFunctionTextImpl;
-        }
-        */
         /// <summary>
         /// Constructor for HelpSystem.
         /// </summary>
@@ -151,8 +143,6 @@ namespace System.Management.Automation
         }
 
         #region Progress Callback
-
-        //internal delegate void HelpProgressHandler(object sender, HelpProgressInfo arg);
 
         internal override event HelpProgressHandler OnProgress;
 
@@ -204,21 +194,6 @@ namespace System.Management.Automation
 
         #region Error Handling
 
-        //private Collection<ErrorRecord> _lastErrors = new Collection<ErrorRecord>();
-
-        /// <summary>
-        /// This is for tracking the last set of errors happened during the help
-        /// search.
-        /// </summary>
-        /// <value></value>
-        //internal Collection<ErrorRecord> LastErrors
-        //{
-        //    get
-        //    {
-        //        return _lastErrors;
-        //    }
-        //}
-
         private HelpCategory _lastHelpCategory = HelpCategory.None;
 
         /// <summary>
@@ -232,34 +207,6 @@ namespace System.Management.Automation
                 return _lastHelpCategory;
             }
         }
-
-        #endregion
-
-        #region Configuration
-
-        //private bool _verboseHelpErrors = false;
-
-        /// <summary>
-        /// VerboseHelpErrors is used in the case when end user is interested
-        /// to know all errors happened during a help search. This property
-        /// is false by default.
-        ///
-        /// If this property is turned on (by setting session variable "VerboseHelpError"),
-        /// following two behaviours will be different,
-        ///     a. Help errors will be written to error pipeline regardless the situation.
-        ///        (Normally, help errors will be written to error pipeline if there is no
-        ///         help found and there is no wildcard in help search target).
-        ///     b. Some additional warnings, including maml processing warnings, will be
-        ///        written to error pipeline.
-        /// </summary>
-        /// <value></value>
-        //internal bool VerboseHelpErrors
-        //{
-        //    get
-        //    {
-        //        return _verboseHelpErrors;
-        //    }
-        //}
 
         #endregion
 
@@ -571,20 +518,6 @@ namespace System.Management.Automation
 
         #region Help Provider Manager
 
-        //private ArrayList _helpProviders = new ArrayList();
-
-        ///// <summary>
-        ///// Return the list of help providers initialized.
-        ///// </summary>
-        ///// <value>A list of help providers.</value>
-        //internal ArrayList HelpProviders
-        //{
-        //    get
-        //    {
-        //        return _helpProviders;
-        //    }
-        //}
-
         /// <summary>
         /// Initialize help providers.
         /// </summary>
@@ -812,20 +745,10 @@ namespace System.Management.Automation
 
         #region ScriptBlock Parse Tokens Caching/Clearing Functionality
 
-        //private readonly Lazy<Dictionary<Ast, Token[]>> _scriptBlockTokenCache = new Lazy<Dictionary<Ast, Token[]>>(isThreadSafe: true);
-
         internal Dictionary<Ast, Token[]> ScriptBlockTokenCache
         {
             get { return _scriptBlockTokenCache.Value; }
         }
-
-        //internal void ClearScriptBlockTokenCache()
-        //{
-        //    if (_scriptBlockTokenCache.IsValueCreated)
-        //    {
-        //        _scriptBlockTokenCache.Value.Clear();
-        //    }
-        //}
 
         #endregion
 
@@ -969,38 +892,6 @@ param(
         }
     }
 ";
-        }
-
-    ///// <summary>
-    ///// Help progress info.
-    ///// </summary>
-    //internal class HelpProgressInfo
-    //{
-    //    internal bool Completed;
-    //    internal string Activity;
-    //    internal int PercentComplete;
-    //}
-
-    /// <summary>
-    /// This is the structure to keep track of HelpProvider Info.
-    /// </summary>
-    internal class HelpProviderInfo
-    {
-        internal string AssemblyName = string.Empty;
-        internal string ClassName = string.Empty;
-        internal HelpCategory HelpCategory = HelpCategory.None;
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="assemblyName">Assembly that contains this help provider.</param>
-        /// <param name="className">The class that implements this help provider.</param>
-        /// <param name="helpCategory">Help category of this help provider.</param>
-        internal HelpProviderInfo(string assemblyName, string className, HelpCategory helpCategory)
-        {
-            this.AssemblyName = assemblyName;
-            this.ClassName = className;
-            this.HelpCategory = helpCategory;
         }
     }
 }
