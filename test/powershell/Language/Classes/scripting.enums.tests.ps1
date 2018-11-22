@@ -119,5 +119,5 @@ Describe 'Basic enum errors' -Tags "CI" {
     ShouldBeParseError 'enum foo { e = $foo }' EnumeratorValueMustBeConstant 15 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { e = "hello" }' CannotConvertValue 15 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { a;b;c;' MissingEndCurlyBrace 10
-    ShouldBeParseError 'enum foo : string { a }' IntegralTypeExpected 11 -SkipAndCheckRuntimeError
+    ShouldBeParseError 'enum foo : string { a }' InvalidUnderlyingType 11 -SkipAndCheckRuntimeError
 }
