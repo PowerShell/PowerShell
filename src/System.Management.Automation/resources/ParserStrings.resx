@@ -1316,6 +1316,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="TypeNameExpected" xml:space="preserve">
     <value>Type name expected.</value>
   </data>
+  <data name="IntegralTypeExpected" xml:space="preserve">
+    <value>'{0}' is not a valid integral type (one of byte, sbyte, short, ushort, int, uint, long or ulong)</value>
+  </data>
   <data name="InterfaceNameExpected" xml:space="preserve">
     <value>'{0}': Interface name expected.</value>
   </data>

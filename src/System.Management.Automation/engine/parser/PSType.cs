@@ -1095,10 +1095,17 @@ namespace System.Management.Automation.Language
                 var underlyingType = typeof(int);
                 foreach (var type in _enumDefinitionAst.BaseTypes)
                 {
-                    underlyingType = type.TypeName.GetReflectionType() ?? typeof(int);
-                    if (!_validBaseTypes.Contains(underlyingType))
+                    var resolvedType = type.TypeName.GetReflectionType();
+                    if (resolvedType == null || !_validBaseTypes.Contains(resolvedType))
                     {
-                        throw new TypeInitializationException(underlyingType.FullName, null);
+                        _parser.ReportError(type.Extent,
+                            nameof(ParserStrings.IntegralTypeExpected),
+                            ParserStrings.IntegralTypeExpected,
+                            ToStringCodeMethods.Type(resolvedType));
+                    }
+                    else
+                    {
+                        underlyingType = resolvedType;
                     }
                 }
 
