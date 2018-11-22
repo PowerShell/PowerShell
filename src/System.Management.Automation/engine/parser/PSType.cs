@@ -1098,7 +1098,7 @@ namespace System.Management.Automation.Language
                 DefineCustomAttributes(enumBuilder, _enumDefinitionAst.Attributes, _parser, AttributeTargets.Enum);
 
                 dynamic value = 0;
-                dynamic maxValue = underlyingType.GetField("MaxValue",BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField).GetValue(null);
+                dynamic maxValue = underlyingType.GetField("MaxValue", BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField).GetValue(null);
                 bool valueTooBig = false;
 
                 foreach (var member in _enumDefinitionAst.Members)

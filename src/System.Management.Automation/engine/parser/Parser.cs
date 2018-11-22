@@ -4585,7 +4585,8 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: If there is no opening curly, assume it hasn't been entered yet and don't consume anything.
 
                     UngetToken(lCurly);
-                    ReportIncompleteInput(After(name),
+                    ReportIncompleteInput(
+                        After(name),
                         nameof(ParserStrings.MissingTypeBody),
                         ParserStrings.MissingTypeBody,
                         enumToken.Kind.Text());
