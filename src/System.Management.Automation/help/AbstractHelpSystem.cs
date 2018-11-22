@@ -62,12 +62,15 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Allow HelpSystemAccess static class to redirect static method calls from engine to a registered Help System.
+    /// Allows HelpSystemAccess static class to redirect static method calls
+    /// from PowerShell Core engine to a registered Help System.
     /// </summary>
     internal abstract class HelpCommentsParserBase
     {
-        internal abstract Tuple<List<Language.Token>, List<string>> GetHelpCommentTokens(IParameterMetadataProvider ipmp, Dictionary<Ast, Token[]> scriptBlockTokenCache);
-        internal abstract CommentHelpInfo GetHelpContents(List<Language.Token> comments, List<string> parameterDescriptions);
+        internal abstract Tuple<List<Language.Token>, List<string>> GetHelpCommentTokens(IParameterMetadataProvider ipmp,
+                                                                                         Dictionary<Ast, Token[]> scriptBlockTokenCache);
+        internal abstract CommentHelpInfo GetHelpContents(List<Language.Token> comments,
+                                                          List<string> parameterDescriptions);
         internal abstract HelpInfo CreateFromComments(ExecutionContext context,
                                                       CommandInfo commandInfo,
                                                       List<Language.Token> comments,
@@ -384,12 +387,14 @@ param(
         {
         }
 
-        internal override Tuple<List<Language.Token>, List<string>> GetHelpCommentTokens(IParameterMetadataProvider ipmp, Dictionary<Ast, Token[]> scriptBlockTokenCache)
+        internal override Tuple<List<Language.Token>, List<string>> GetHelpCommentTokens(IParameterMetadataProvider ipmp,
+                                                                                         Dictionary<Ast, Token[]> scriptBlockTokenCache)
         {
             return null;
         }
 
-        internal override CommentHelpInfo GetHelpContents(List<Language.Token> comments, List<string> parameterDescriptions)
+        internal override CommentHelpInfo GetHelpContents(List<Language.Token> comments,
+                                                          List<string> parameterDescriptions)
         {
             return null;
         }
