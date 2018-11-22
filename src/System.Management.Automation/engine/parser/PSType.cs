@@ -1096,10 +1096,11 @@ namespace System.Management.Automation.Language
                 var definedEnumerators = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 var enumBuilder = _moduleBuilder.DefineEnum(_typeName, Reflection.TypeAttributes.Public, underlyingType);
                 DefineCustomAttributes(enumBuilder, _enumDefinitionAst.Attributes, _parser, AttributeTargets.Enum);
+
                 dynamic value = 0;
-                ulong maxValue;
-                GetMaxValue(underlyingType, out maxValue);
+                dynamic maxValue = underlyingType.GetField("MaxValue",BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField).GetValue(null);
                 bool valueTooBig = false;
+
                 foreach (var member in _enumDefinitionAst.Members)
                 {
                     var enumerator = (PropertyMemberAst)member;
@@ -1134,7 +1135,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.EnumeratorValueMustBeConstant);
                         }
 
-                        valueTooBig = Convert.ToUInt64(value) > maxValue;
+                        valueTooBig = value > maxValue;
                     }
 
                     if (valueTooBig)
@@ -1161,7 +1162,7 @@ namespace System.Management.Automation.Language
 
                     if (value != 0 && _enumDefinitionAst.Attributes.Any(attr => attr.TypeName.GetReflectionType() == typeof(FlagsAttribute)))
                     {
-                        if (Convert.ToUInt64(value) < maxValue / 2)
+                        if (value < maxValue / 2)
                         {
                             value *= 2;
                         }
@@ -1172,7 +1173,7 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        if (Convert.ToUInt64(value) < maxValue)
+                        if (value < maxValue)
                         {
                             value += 1;
                         }
@@ -1183,42 +1184,6 @@ namespace System.Management.Automation.Language
                     }
                 }
                 _enumDefinitionAst.Type = enumBuilder.CreateTypeInfo().AsType();
-            }
-
-            private void GetMaxValue(Type underlyingType, out ulong maxValue)
-            {
-                if (underlyingType == typeof(byte))
-                {
-                    maxValue = Convert.ToUInt64(byte.MaxValue);
-                }
-                else if (underlyingType == typeof(sbyte))
-                {
-                    maxValue = Convert.ToUInt64(sbyte.MaxValue);
-                }
-                else if (underlyingType == typeof(short))
-                {
-                    maxValue = Convert.ToUInt64(short.MaxValue);
-                }
-                else if (underlyingType == typeof(ushort))
-                {
-                    maxValue = Convert.ToUInt64(ushort.MaxValue);
-                }
-                else if (underlyingType == typeof(int))
-                {
-                    maxValue = Convert.ToUInt64(int.MaxValue);
-                }
-                else if (underlyingType == typeof(uint))
-                {
-                    maxValue = Convert.ToUInt64(uint.MaxValue);
-                }
-                else if (underlyingType == typeof(long))
-                {
-                    maxValue = Convert.ToUInt64(long.MaxValue);
-                }
-                else
-                {
-                    maxValue = Convert.ToUInt64(ulong.MaxValue);
-                }
             }
         }
 
