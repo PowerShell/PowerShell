@@ -26,7 +26,7 @@ namespace System.Management.Automation
         /// Also the method should be called after unloading any module
         /// which implements and registers a full-featured Help System.
         /// </summary>
-        internal static void InitHelpSystemDummy()
+        internal static void InitDummyHelpSystem()
         {
             RegisterHelpSystem(typeof(HelpSystemDummy), typeof(DummyHelpCommentsParser), HelpSystemDummy.GetHelpPagingFunctionTextImpl);
         }

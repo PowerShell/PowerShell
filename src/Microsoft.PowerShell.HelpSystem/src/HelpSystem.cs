@@ -33,7 +33,7 @@ namespace System.Management.Automation
         /// </summary>
         public void OnRemove(PSModuleInfo psModuleInfo)
         {
-            HelpSystemAccess.InitHelpSystemDummy();
+            HelpSystemAccess.InitDummyHelpSystem();
         }
     }
 
