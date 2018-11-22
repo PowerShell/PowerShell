@@ -212,7 +212,7 @@ namespace System.Management.Automation
             // If all common parameters are present, group them together
             if (commonParameters.Count == Cmdlet.CommonParameters.Count)
             {
-                commonParameterAction(HelpDisplayStrings.CommonParameters);
+                commonParameterAction(ParameterBinderStrings.CommonParameters);
             }
             // Else, convert to string as before
             else

@@ -252,4 +252,7 @@
   <data name="KeyAlreadyAdded" xml:space="preserve">
     <value>The key '{0}' has already been added to the dictionary.</value>
   </data>
+  <data name="CommonParameters" xml:space="preserve">
+    <value>&lt;CommonParameters&gt;</value>
+  </data>
 </root>

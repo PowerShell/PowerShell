@@ -38,7 +38,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static void RegisterHelpSystem(Type helpSystemType, Type helpCommentsParser, HelpSystemBase.GetHelpPagingFunctionText getHelpPagingFunctionText)
         {
-            if (helpSystemType == null || typeof(HelpSystemBase).IsAssignableFrom(helpSystemType))
+            if (helpSystemType == null || !typeof(HelpSystemBase).IsAssignableFrom(helpSystemType))
             {
                 throw PSTraceSource.NewArgumentException("helpSystemType");
             }
