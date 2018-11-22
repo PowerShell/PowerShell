@@ -72,16 +72,35 @@ Describe 'enums' -Tags "CI" {
     }
 
     Context 'Enum with non-default underlying type' {
-        enum EX0 : byte
-        {
-        }
+        enum EX1 : byte { A;B;C;D }
+        enum EX2 : sbyte { A;B;C;D }
+        enum EX3 : short { A;B;C;D }
+        enum EX4 : ushort { A;B;C;D }
+        enum EX5 : int { A;B;C;D }
+        enum EX6 : uint { A;B;C;D }
+        enum EX7 : long { A;B;C;D }
+        enum EX8 : ulong { A;B;C;D }
 
-        enum EX1 : System.Int64
-        {
-        }
+        It 'EX1 has the specified underlying type' { [Enum]::GetUnderlyingType([EX1]) | Should -Be ([byte]) }
+        It 'EX2 has the specified underlying type' { [Enum]::GetUnderlyingType([EX2]) | Should -Be ([sbyte]) }
+        It 'EX3 has the specified underlying type' { [Enum]::GetUnderlyingType([EX3]) | Should -Be ([short]) }
+        It 'EX4 has the specified underlying type' { [Enum]::GetUnderlyingType([EX4]) | Should -Be ([ushort]) }
+        It 'EX5 has the specified underlying type' { [Enum]::GetUnderlyingType([EX5]) | Should -Be ([int]) }
+        It 'EX6 has the specified underlying type' { [Enum]::GetUnderlyingType([EX6]) | Should -Be ([uint]) }
+        It 'EX7 has the specified underlying type' { [Enum]::GetUnderlyingType([EX7]) | Should -Be ([long]) }
+        It 'EX8 has the specified underlying type' { [Enum]::GetUnderlyingType([EX8]) | Should -Be ([ulong]) }
+    }
 
-        It 'EX0 has the specified underlying type' { [Enum]::GetUnderlyingType([EX0]) | Should -Be ([byte]) }
-        It 'EX1 has the specified underlying type' { [Enum]::GetUnderlyingType([EX1]) | Should -Be ([long]) }
+    Context 'Enum with FlagsAttribute' {
+        [Flags()]
+        enum BitMask { A;B;C;D }
+
+        It 'Consecutive member values double when FlagsAttribute is present' {
+            [BitMask]::A.value__ | Should -Be 0
+            [BitMask]::B.value__ | Should -Be 1
+            [BitMask]::C.value__ | Should -Be 2
+            [BitMask]::D.value__ | Should -Be 4
+        }
     }
 }
 
@@ -100,4 +119,5 @@ Describe 'Basic enum errors' -Tags "CI" {
     ShouldBeParseError 'enum foo { e = $foo }' EnumeratorValueMustBeConstant 15 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { e = "hello" }' CannotConvertValue 15 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { a;b;c;' MissingEndCurlyBrace 10
+    ShouldBeParseError 'enum foo : string { a }' IntegralTypeExpected 11 -SkipAndCheckRuntimeError
 }
