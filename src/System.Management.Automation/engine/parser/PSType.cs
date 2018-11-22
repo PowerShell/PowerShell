@@ -1175,7 +1175,7 @@ namespace System.Management.Automation.Language
                         enumBuilder.DefineLiteral(enumerator.Name, value);
                     }
 
-                    if (_enumDefinitionAst.Attributes.Any(attr => attr.TypeName.GetReflectionType() == typeof(FlagsAttribute)) && value != 0)
+                    if (value != 0 && _enumDefinitionAst.Attributes.Any(attr => attr.TypeName.GetReflectionType() == typeof(FlagsAttribute)))
                     {
                         if (Convert.ToUInt64(value) < maxValue / 2)
                         {
