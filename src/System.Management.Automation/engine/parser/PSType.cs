@@ -950,7 +950,6 @@ namespace System.Management.Automation.Language
             private readonly TypeDefinitionAst _enumDefinitionAst;
             private readonly ModuleBuilder _moduleBuilder;
             private readonly string _typeName;
-            private static readonly Type[] s_validBaseTypes = new[] { typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong) };
 
             internal DefineEnumHelper(Parser parser, ModuleBuilder module, TypeDefinitionAst enumDefinitionAst, string typeName)
             {
@@ -1092,22 +1091,7 @@ namespace System.Management.Automation.Language
 
             internal void DefineEnum()
             {
-                var underlyingType = typeof(int);
-                foreach (var type in _enumDefinitionAst.BaseTypes)
-                {
-                    var resolvedType = type.TypeName.GetReflectionType();
-                    if (resolvedType == null || !s_validBaseTypes.Contains(resolvedType))
-                    {
-                        _parser.ReportError(type.Extent,
-                            nameof(ParserStrings.InvalidUnderlyingType),
-                            ParserStrings.InvalidUnderlyingType,
-                            ToStringCodeMethods.Type(resolvedType));
-                    }
-                    else
-                    {
-                        underlyingType = resolvedType;
-                    }
-                }
+                var underlyingType = _enumDefinitionAst.BaseTypes.Count() == 0 ? typeof(int) : _enumDefinitionAst.BaseTypes[0].TypeName.GetReflectionType();
 
                 var definedEnumerators = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 var enumBuilder = _moduleBuilder.DefineEnum(_typeName, Reflection.TypeAttributes.Public, underlyingType);
