@@ -545,17 +545,15 @@ Describe "Verify approved aliases list" -Tags "CI" {
             Select-Object -Property Name, ConfirmImpact
 
         $currentCmdletList = Get-Command -CommandType Cmdlet |
-            Where-Object { $moduleList -contains $_.Source } |
-            ForEach-Object {
-                if ($t = $_.ImplementingType) {
-                    $t.GetCustomAttributes($true)
+            Where-Object { $moduleList -contains $_.Source -and $_.ImplementingType } |
+            Select-Object -Property Name, @{
+                Name = 'ConfirmImpact'
+                Expression = {
+                    if ($t = $_.ImplementingType) {
+                        $t.GetCustomAttributes($true).Where{$_.VerbName}.ConfirmImpact
+                    }
                 }
-            } |
-            Where-Object { $_.VerbName } |
-            Select-Object -Property @{
-                Name       = 'Name'
-                Expression = {'{0}-{1}' -f $_.VerbName, $_.NounName}
-            }, ConfirmImpact
+            }
 
         $result = Compare-Object -ReferenceObject $currentCmdletList -DifferenceObject $CmdletList
 
