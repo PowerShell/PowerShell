@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return coreCommandContext;
             }
-        } // CmdletProviderContext
+        }
 
         internal virtual SwitchParameter SuppressWildcardExpansion
         {
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 stopContext.StopProcessing();
             }
-        } // StopProcessing
+        }
         internal Collection<CmdletProviderContext> stopContextCollection =
             new Collection<CmdletProviderContext>();
 
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get => _force;
             set => _force = value;
-        } // Force
+        }
         private bool _force;
 
         /// <summary>
@@ -1483,7 +1483,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 base.SuppressWildcardExpansion = true;
                 _names = value;
-            } // 
+            }
         }
 
         /// <summary>
@@ -3240,12 +3240,72 @@ namespace Microsoft.PowerShell.Commands
 
         #region Command code
 
+        private Collection<PathInfo> GetResolvedPaths(string path)	
+        {	
+            Collection<PathInfo> results = null;	
+            try	
+            {	
+                results = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);	
+            }	
+            catch (PSNotSupportedException notSupported)	
+            {	
+                WriteError(	
+                    new ErrorRecord(	
+                        notSupported.ErrorRecord,	
+                        notSupported));	
+            }	
+            catch (DriveNotFoundException driveNotFound)	
+            {	
+                WriteError(	
+                    new ErrorRecord(	
+                        driveNotFound.ErrorRecord,	
+                        driveNotFound));	
+            }	
+            catch (ProviderNotFoundException providerNotFound)	
+            {	
+                WriteError(	
+                    new ErrorRecord(	
+                        providerNotFound.ErrorRecord,	
+                        providerNotFound));	
+            }	
+            catch (ItemNotFoundException pathNotFound)	
+            {	
+                WriteError(	
+                    new ErrorRecord(	
+                        pathNotFound.ErrorRecord,	
+                        pathNotFound));	
+            }	
+             return results;	
+        }
+
         /// <summary>
         /// Moves the specified item to the specified destination
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (SuppressWildcardExpansion)	
+            {	
+                RenameItem(Path, literalPath: true);	
+                return;	
+            }	
+             Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);	
+             if (resolvedPaths == null)	
+            {	
+                return;	
+            }	
+             if (resolvedPaths.Count == 1)	
+            {	
+                RenameItem(resolvedPaths[0].Path, literalPath: true);	
+            }	
+            else	
+            {	
+                RenameItem(WildcardPattern.Unescape(Path), literalPath: true);	
+            }
+        }
+        private void RenameItem(string path, bool literalPath = false)
+        {
             CmdletProviderContext currentContext = CmdletProviderContext;
+            currentContext.SuppressWildcardExpansion = literalPath;
 
             try
             {
@@ -3767,7 +3827,7 @@ namespace Microsoft.PowerShell.Commands
                 return InvokeProvider.Item.ClearItemDynamicParameters(Path[0], context);
             }
             return InvokeProvider.Item.ClearItemDynamicParameters(".", context);
-        } // GetDynamicParameters
+        }
 
         /// <summary>
         /// Determines if the provider for the specified path supports ShouldProcess
