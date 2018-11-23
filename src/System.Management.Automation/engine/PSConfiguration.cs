@@ -379,7 +379,7 @@ namespace System.Management.Automation.Configuration
             return defaultValue;
         }
 
-        FileStream WaitForFile(string fullPath, FileMode mode, FileAccess access, FileShare share)
+        private FileStream WaitForFile(string fullPath, FileMode mode, FileAccess access, FileShare share)
         {
             const int MaxTries = 5;
             for (int numTries = 0; numTries < MaxTries; numTries++)
