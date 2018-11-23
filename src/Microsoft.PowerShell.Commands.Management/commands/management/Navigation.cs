@@ -3240,42 +3240,42 @@ namespace Microsoft.PowerShell.Commands
 
         #region Command code
 
-        private Collection<PathInfo> GetResolvedPaths(string path)	
-        {	
-            Collection<PathInfo> results = null;	
-            try	
-            {	
-                results = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);	
-            }	
-            catch (PSNotSupportedException notSupported)	
-            {	
-                WriteError(	
-                    new ErrorRecord(	
-                        notSupported.ErrorRecord,	
-                        notSupported));	
-            }	
-            catch (DriveNotFoundException driveNotFound)	
-            {	
-                WriteError(	
-                    new ErrorRecord(	
-                        driveNotFound.ErrorRecord,	
-                        driveNotFound));	
-            }	
-            catch (ProviderNotFoundException providerNotFound)	
-            {	
-                WriteError(	
-                    new ErrorRecord(	
-                        providerNotFound.ErrorRecord,	
-                        providerNotFound));	
-            }	
-            catch (ItemNotFoundException pathNotFound)	
-            {	
-                WriteError(	
-                    new ErrorRecord(	
-                        pathNotFound.ErrorRecord,	
-                        pathNotFound));	
-            }	
-             return results;	
+        private Collection<PathInfo> GetResolvedPaths(string path)
+        {
+            Collection<PathInfo> results = null;
+            try
+            {
+                results = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
+            }
+            catch (PSNotSupportedException notSupported)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        notSupported.ErrorRecord,
+                        notSupported));
+            }
+            catch (DriveNotFoundException driveNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        driveNotFound.ErrorRecord,
+                        driveNotFound));
+            }
+            catch (ProviderNotFoundException providerNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        providerNotFound.ErrorRecord,
+                        providerNotFound));
+            }
+            catch (ItemNotFoundException pathNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        pathNotFound.ErrorRecord,
+                        pathNotFound));
+            }
+            return results;
         }
 
         /// <summary>
@@ -3283,23 +3283,23 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (SuppressWildcardExpansion)	
-            {	
-                RenameItem(Path, literalPath: true);	
-                return;	
-            }	
-             Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);	
-             if (resolvedPaths == null)	
-            {	
-                return;	
-            }	
-             if (resolvedPaths.Count == 1)	
-            {	
-                RenameItem(resolvedPaths[0].Path, literalPath: true);	
-            }	
-            else	
-            {	
-                RenameItem(WildcardPattern.Unescape(Path), literalPath: true);	
+            if (SuppressWildcardExpansion)
+            {
+                RenameItem(Path, literalPath: true);
+                return;
+            }
+            Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);
+            if (resolvedPaths == null)
+            {
+                return;
+            }
+            if (resolvedPaths.Count == 1)
+            {
+                RenameItem(resolvedPaths[0].Path, literalPath: true);
+            }
+            else
+            {
+                RenameItem(WildcardPattern.Unescape(Path), literalPath: true);
             }
         }
         private void RenameItem(string path, bool literalPath = false)
