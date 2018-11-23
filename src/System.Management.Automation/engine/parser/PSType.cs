@@ -1091,14 +1091,50 @@ namespace System.Management.Automation.Language
 
             internal void DefineEnum()
             {
-                var underlyingType = _enumDefinitionAst.BaseTypes.Count() == 0 ? typeof(int) : _enumDefinitionAst.BaseTypes[0].TypeName.GetReflectionType();
+                var typeConstraintAst = _enumDefinitionAst.BaseTypes.FirstOrDefault();
+                var underlyingType = typeConstraintAst == null ? typeof(int) : typeConstraintAst.TypeName.GetReflectionType();
 
                 var definedEnumerators = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 var enumBuilder = _moduleBuilder.DefineEnum(_typeName, Reflection.TypeAttributes.Public, underlyingType);
                 DefineCustomAttributes(enumBuilder, _enumDefinitionAst.Attributes, _parser, AttributeTargets.Enum);
 
                 dynamic value = 0;
-                dynamic maxValue = underlyingType.GetField("MaxValue", BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField).GetValue(null);
+                dynamic maxValue = 0;
+                switch (Type.GetTypeCode(underlyingType))
+                {
+                    case TypeCode.Byte:
+                        maxValue = byte.MaxValue;
+                        break;
+                    case TypeCode.Int16:
+                        maxValue = short.MaxValue;
+                        break;
+                    case TypeCode.Int32:
+                        maxValue = int.MaxValue;
+                        break;
+                    case TypeCode.Int64:
+                        maxValue = long.MaxValue;
+                        break;
+                    case TypeCode.SByte:
+                        maxValue = sbyte.MaxValue;
+                        break;
+                    case TypeCode.UInt16:
+                        maxValue = UInt16.MaxValue;
+                        break;
+                    case TypeCode.UInt32:
+                        maxValue = UInt32.MaxValue;
+                        break;
+                    case TypeCode.UInt64:
+                        maxValue = ulong.MaxValue;
+                        break;
+                    default:
+                        _parser.ReportError(
+                            typeConstraintAst.Extent,
+                            nameof(ParserStrings.InvalidUnderlyingType),
+                            ParserStrings.InvalidUnderlyingType,
+                            underlyingType);
+                        break;
+                }
+
                 bool valueTooBig = false;
 
                 foreach (var member in _enumDefinitionAst.Members)
