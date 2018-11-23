@@ -17,9 +17,6 @@ using Microsoft.Win32;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Threading;
-#if CORECLR
-using System.Xml.XPath;
-#endif
 
 namespace Microsoft.WSMan.Management
 {
