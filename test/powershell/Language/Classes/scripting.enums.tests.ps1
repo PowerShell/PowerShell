@@ -102,6 +102,18 @@ Describe 'enums' -Tags "CI" {
             [BitMask]::D.value__ | Should -Be 4
         }
     }
+
+    Context 'Enum with negative user-specified values' {
+        enum V1 {
+            A = -4
+            B
+        }
+
+        It 'Negative values are correctly assigned to members' {
+            [V1]::A.value__ | Should -Be -4
+            [V1]::B.value__ | Should -Be -3
+        }
+    }
 }
 
 Describe 'Basic enum errors' -Tags "CI" {
