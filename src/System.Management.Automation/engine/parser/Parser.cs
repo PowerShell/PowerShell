@@ -4532,7 +4532,7 @@ namespace System.Management.Automation.Language
             //G      enum-member  new-lines:opt
             //G      enum-member-list   enum-member
 
-            Type[] validBaseTypes = new[] { typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong) };
+            TypeCode validUnderlyingTypeCodes = TypeCode.Byte | TypeCode.Int16 | TypeCode.Int32 | TypeCode.Int64 | TypeCode.SByte | TypeCode.UInt16 | TypeCode.UInt32 | TypeCode.UInt64;
 
             SkipNewlines();
             var name = SimpleNameRule();
@@ -4567,7 +4567,7 @@ namespace System.Management.Automation.Language
                     else
                     {
                         var resolvedType = underlyingType.GetReflectionType();
-                        if (resolvedType == null || !validBaseTypes.Contains(resolvedType))
+                        if (resolvedType == null || !validUnderlyingTypeCodes.HasFlag(resolvedType.GetTypeCode()))
                         {
                             ReportError(underlyingType.Extent,
                                 nameof(ParserStrings.InvalidUnderlyingType),
