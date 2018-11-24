@@ -1,23 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Describe "Tests with elevated permissions" -Tag "CI","RequireAdminOnWindows" {
-    Context "Validate PSDrive Cmdlets" {
-        It "Create a new persistent PSDrive targetting remote Windows share." -Skip:(-not $IsWindows) {
-            try {
-                #Arrange
-                $RemoteShare = "\\$env:COMPUTERNAME\$($env:SystemDrive.replace(':','$\'))"
-
-                #Act and Assert
-                {New-PSDrive -Name "W" -PSProvider FileSystem -Root $RemoteShare -Persist} | Should -Not -Throw
-            }
-            finally {
-                Remove-PSDrive -Name "W" -Force -ErrorAction SilentlyContinue
-            }
-        }
-    }
-}
-
 Describe "Basic Alias Provider Tests" -Tags "CI" {
     Context "Validate basic PSDrive Cmdlets" {
         BeforeAll {
@@ -39,7 +22,7 @@ Describe "Basic Alias Provider Tests" -Tags "CI" {
                 $newDrive = New-PSDrive -Name "NewDifferentPSDrive" -PSProvider FileSystem -Root $psDriveRoot
                 $newDrive.Name | Should -BeExactly "NewDifferentPSDrive"
                 $newDrive.Root | Should -BeExactly (Convert-Path $psDriveRoot)
-            }
+      `      }
             finally {
                 Remove-PSDrive -Name "NewDifferentPSDrive" -Force -ErrorAction SilentlyContinue
             }
