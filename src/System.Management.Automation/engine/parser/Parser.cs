@@ -212,8 +212,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    ReportError(
-                        _tokenizer.CurrentExtent(),
+                    ReportError(_tokenizer.CurrentExtent(),
                         nameof(ParserStrings.ScriptTooComplicated),
                         ParserStrings.ScriptTooComplicated);
                 }
@@ -562,8 +561,7 @@ namespace System.Management.Automation.Language
             }
             else if (terminatorToken.Kind != TokenKind.EndOfInput)
             {
-                ReportIncompleteInput(
-                    terminatorToken.Extent,
+                ReportIncompleteInput(terminatorToken.Extent,
                     nameof(ParserStrings.MissingStatementTerminator),
                     ParserStrings.MissingStatementTerminator);
             }
@@ -869,8 +867,7 @@ namespace System.Management.Automation.Language
 
                 UngetToken(rParen);
                 endExtent = Before(rParen);
-                ReportIncompleteInput(
-                    After(parameters != null && parameters.Any() ? parameters.Last().Extent : lparen.Extent),
+                ReportIncompleteInput(After(parameters != null && parameters.Any() ? parameters.Last().Extent : lparen.Extent),
                     nameof(ParserStrings.MissingEndParenthesisInFunctionParameterList),
                     ParserStrings.MissingEndParenthesisInFunctionParameterList);
             }
@@ -890,8 +887,7 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: nothing to do, this is a semantic error that is caught in the parser
                         // because the ast only allows attributes, no type constraints.
 
-                        ReportError(
-                            attr.Extent,
+                        ReportError(attr.Extent,
                             nameof(ParserStrings.TypeNotAllowedBeforeParam),
                             ParserStrings.TypeNotAllowedBeforeParam,
                             attr.TypeName.FullName);
@@ -919,8 +915,7 @@ namespace System.Management.Automation.Language
                     {
                         // ErrorRecovery: ??
 
-                        ReportIncompleteInput(
-                            After(commaToken),
+                        ReportIncompleteInput(After(commaToken),
                             nameof(ParserStrings.MissingExpressionAfterToken),
                             ParserStrings.MissingExpressionAfterToken,
                             commaToken.Kind.Text());
@@ -969,8 +964,7 @@ namespace System.Management.Automation.Language
                     {
                         // ErrorRecovery: skip to closing paren because returning null signals the last parameter.
 
-                        ReportIncompleteInput(
-                            After(attributes.Last()),
+                        ReportIncompleteInput(After(attributes.Last()),
                             nameof(ParserStrings.InvalidFunctionParameter),
                             ParserStrings.InvalidFunctionParameter);
                         SyncOnError(true, TokenKind.RParen);
@@ -994,8 +988,7 @@ namespace System.Management.Automation.Language
                     defaultValue = ExpressionRule();
                     if (defaultValue == null)
                     {
-                        ReportIncompleteInput(
-                            After(equalsToken),
+                        ReportIncompleteInput(After(equalsToken),
                             nameof(ParserStrings.MissingExpressionAfterToken),
                             ParserStrings.MissingExpressionAfterToken,
                             equalsToken.Kind.Text());
@@ -1062,8 +1055,7 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: Return null so we stop looking for attributes.
 
                 Resync(lBracket);  // TypeNameRule might have consumed some tokens
-                ReportIncompleteInput(
-                    After(lBracket),
+                ReportIncompleteInput(After(lBracket),
                     nameof(ParserStrings.MissingTypename),
                     ParserStrings.MissingTypename);
                 return null;
@@ -1097,8 +1089,7 @@ namespace System.Management.Automation.Language
 
                     UngetToken(rParen);
                     rParen = null;
-                    ReportIncompleteInput(
-                        After(lastItemExtent),
+                    ReportIncompleteInput(After(lastItemExtent),
                         nameof(ParserStrings.MissingEndParenthesisInExpression),
                         ParserStrings.MissingEndParenthesisInExpression);
                 }
@@ -1113,8 +1104,7 @@ namespace System.Management.Automation.Language
                     // Don't bother reporting a missing ']' if we reported a missing ')'.
                     if (rParen != null)
                     {
-                        ReportIncompleteInput(
-                            After(rParen),
+                        ReportIncompleteInput(After(rParen),
                             nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
                             ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
                     }
@@ -1134,8 +1124,7 @@ namespace System.Management.Automation.Language
             if (lParenOrRBracket.Kind != TokenKind.RBracket)
             {
                 UngetToken(lParenOrRBracket);
-                ReportError(
-                    Before(lParenOrRBracket),
+                ReportError(Before(lParenOrRBracket),
                     nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
                     ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
                 lParenOrRBracket = null;
@@ -1184,8 +1173,7 @@ namespace System.Management.Automation.Language
                                 // ErrorRecovery: ?
 
                                 IScriptExtent errorPosition = After(token);
-                                ReportIncompleteInput(
-                                    errorPosition,
+                                ReportIncompleteInput(errorPosition,
                                     nameof(ParserStrings.MissingExpressionInNamedArgument),
                                     ParserStrings.MissingExpressionInNamedArgument);
                                 expr = new ErrorExpressionAst(errorPosition);
@@ -1213,8 +1201,7 @@ namespace System.Management.Automation.Language
                         {
                             // ErrorRecovery: this is a semantic error, so just keep parsing.
 
-                            ReportError(
-                                name.Extent,
+                            ReportError(name.Extent,
                                 nameof(ParserStrings.DuplicateNamedArgument),
                                 ParserStrings.DuplicateNamedArgument,
                                 name.Value);
@@ -1235,8 +1222,7 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: Pretend we saw the argument and keep going.
 
                         IScriptExtent errorExtent = After(commaToken);
-                        ReportIncompleteInput(
-                            errorExtent,
+                        ReportIncompleteInput(errorExtent,
                             nameof(ParserStrings.MissingExpressionAfterToken),
                             ParserStrings.MissingExpressionAfterToken,
                             commaToken.Kind.Text());
@@ -1351,8 +1337,7 @@ namespace System.Management.Automation.Language
 
                         if (token.Kind != TokenKind.EndOfInput)
                         {
-                            ReportError(
-                                token.Extent,
+                            ReportError(token.Extent,
                                 nameof(ParserStrings.UnexpectedToken),
                                 ParserStrings.UnexpectedToken,
                                 token.Text);
@@ -1361,8 +1346,7 @@ namespace System.Management.Automation.Language
                         else
                         {
                             UngetToken(token);
-                            ReportIncompleteInput(
-                                After(lbracket),
+                            ReportIncompleteInput(After(lbracket),
                                 nameof(ParserStrings.MissingTypename),
                                 ParserStrings.MissingTypename);
                         }
@@ -1376,8 +1360,7 @@ namespace System.Management.Automation.Language
                 string assemblyNameSpec = _tokenizer.GetAssemblyNameSpec();
                 if (string.IsNullOrWhiteSpace(assemblyNameSpec))
                 {
-                    ReportError(
-                        After(token),
+                    ReportError(After(token),
                         nameof(ParserStrings.MissingAssemblyNameSpecification),
                         ParserStrings.MissingAssemblyNameSpecification);
                     return new TypeName(typeName.Extent, typeName.Text);
@@ -1401,8 +1384,7 @@ namespace System.Management.Automation.Language
             if (token.Kind != TokenKind.Identifier)
             {
                 UngetToken(token);
-                ReportIncompleteInput(
-                    After(token),
+                ReportIncompleteInput(After(token),
                     nameof(ParserStrings.MissingTypename),
                     ParserStrings.MissingTypename);
                 return new TypeName(firstToken.Extent, ":ErrorTypeName:");
@@ -1417,8 +1399,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: pretend we saw the closing bracket.
 
                     UngetToken(rBracket);
-                    ReportIncompleteInput(
-                        Before(rBracket),
+                    ReportIncompleteInput(Before(rBracket),
                         nameof(ParserStrings.EndSquareBracketExpectedAtEndOfType),
                         ParserStrings.EndSquareBracketExpectedAtEndOfType);
                 }
@@ -1456,8 +1437,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    ReportIncompleteInput(
-                        After(commaOrRBracketToken),
+                    ReportIncompleteInput(After(commaOrRBracketToken),
                         nameof(ParserStrings.MissingTypename),
                         ParserStrings.MissingTypename);
                     typeName = new TypeName(commaOrRBracketToken.Extent, ":ErrorTypeName:");
@@ -1470,8 +1450,7 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: pretend we had the closing bracket and just continue on.
 
                 UngetToken(commaOrRBracketToken);
-                ReportIncompleteInput(
-                    Before(commaOrRBracketToken),
+                ReportIncompleteInput(Before(commaOrRBracketToken),
                     nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
                     ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
                 commaOrRBracketToken = null;
@@ -1492,8 +1471,7 @@ namespace System.Management.Automation.Language
                 string assemblyNameSpec = _tokenizer.GetAssemblyNameSpec();
                 if (string.IsNullOrEmpty(assemblyNameSpec))
                 {
-                    ReportError(
-                        After(token),
+                    ReportError(After(token),
                         nameof(ParserStrings.MissingAssemblyNameSpecification),
                         ParserStrings.MissingAssemblyNameSpecification);
                 }
@@ -1528,8 +1506,7 @@ namespace System.Management.Automation.Language
                             // ErrorRecovery: just pretend we saw a ']'.
 
                             UngetToken(token);
-                            ReportError(
-                                After(lastComma),
+                            ReportError(After(lastComma),
                                 nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
                                 ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
                         }
@@ -1543,8 +1520,7 @@ namespace System.Management.Automation.Language
 
                     case TokenKind.EndOfInput:
                         UngetToken(firstTokenAfterLBracket);
-                        ReportError(
-                            Before(firstTokenAfterLBracket),
+                        ReportError(Before(firstTokenAfterLBracket),
                             nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
                             ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
                         break;
@@ -1552,8 +1528,7 @@ namespace System.Management.Automation.Language
                     default:
                         // ErrorRecovery: sync to ']', and return null to avoid cascading errors.
 
-                        ReportError(
-                            firstTokenAfterLBracket.Extent,
+                        ReportError(firstTokenAfterLBracket.Extent,
                             nameof(ParserStrings.UnexpectedToken),
                             ParserStrings.UnexpectedToken,
                             firstTokenAfterLBracket.Text);
@@ -1568,8 +1543,7 @@ namespace System.Management.Automation.Language
                     var assemblyName = _tokenizer.GetAssemblyNameSpec();
                     if (string.IsNullOrEmpty(assemblyName))
                     {
-                        ReportError(
-                            After(token),
+                        ReportError(After(token),
                             nameof(ParserStrings.MissingAssemblyNameSpecification),
                             ParserStrings.MissingAssemblyNameSpecification);
                     }
@@ -1607,8 +1581,7 @@ namespace System.Management.Automation.Language
 
                     UngetToken(rCurly);
                     endScriptBlock = bodyExtent ?? lCurly.Extent;
-                    ReportIncompleteInput(
-                        lCurly.Extent,
+                    ReportIncompleteInput(lCurly.Extent,
                         rCurly.Extent,
                         nameof(ParserStrings.MissingEndCurlyBrace),
                         ParserStrings.MissingEndCurlyBrace);
@@ -1635,8 +1608,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: eat the unexpected token, and continue parsing to find more
                     // of the script.
 
-                    ReportError(
-                        token.Extent,
+                    ReportError(token.Extent,
                         nameof(ParserStrings.UnexpectedToken),
                         ParserStrings.UnexpectedToken,
                         token.Text);
@@ -1732,8 +1704,7 @@ namespace System.Management.Automation.Language
                         }
 
                         // Report error about the unexpected token.
-                        ReportError(
-                            blockNameToken.Extent,
+                        ReportError(blockNameToken.Extent,
                             nameof(ParserStrings.MissingNamedBlocks),
                             ParserStrings.MissingNamedBlocks,
                             blockNameToken.Text);
@@ -1765,8 +1736,7 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: Eat the block name and keep going, there might be a valid block next.
 
-                    ReportIncompleteInput(
-                        After(blockNameToken.Extent),
+                    ReportIncompleteInput(After(blockNameToken.Extent),
                         nameof(ParserStrings.MissingNamedStatementBlock),
                         ParserStrings.MissingNamedStatementBlock,
                         blockNameToken.Kind.Text());
@@ -1798,8 +1768,7 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: this is a semantic error, we can keep parsing w/o trouble.
 
-                    ReportError(
-                        extent,
+                    ReportError(extent,
                         nameof(ParserStrings.DuplicateScriptCommandClause),
                         ParserStrings.DuplicateScriptCommandClause,
                         blockNameToken.Kind.Text());
@@ -1840,8 +1809,7 @@ namespace System.Management.Automation.Language
 
                 UngetToken(rCurly);
                 endBlock = statementListExtent ?? lCurly.Extent;
-                ReportIncompleteInput(
-                    lCurly.Extent,
+                ReportIncompleteInput(lCurly.Extent,
                     rCurly.Extent,
                     nameof(ParserStrings.MissingEndCurlyBrace),
                     ParserStrings.MissingEndCurlyBrace);
@@ -1964,8 +1932,7 @@ namespace System.Management.Automation.Language
                         }
                         else
                         {
-                            ReportError(
-                                attributes[0].Extent,
+                            ReportError(attributes[0].Extent,
                                 nameof(ParserStrings.UnexpectedAttribute),
                                 ParserStrings.UnexpectedAttribute,
                                 attributes[0].TypeName.FullName);
@@ -1975,8 +1942,7 @@ namespace System.Management.Automation.Language
                     {
                         foreach (var attr in attributes.Where(attr => !(attr is AttributeAst)))
                         {
-                            ReportError(
-                                attr.Extent,
+                            ReportError(attr.Extent,
                                 nameof(ParserStrings.TypeNotAllowedBeforeStatement),
                                 ParserStrings.TypeNotAllowedBeforeStatement,
                                 attr.TypeName.FullName);
@@ -2050,8 +2016,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.From:
                 case TokenKind.Define:
                 case TokenKind.Var:
-                    ReportError(
-                        token.Extent,
+                    ReportError(token.Extent,
                         nameof(ParserStrings.ReservedKeywordNotAllowed),
                         ParserStrings.ReservedKeywordNotAllowed,
                         token.Kind.Text());
@@ -2099,8 +2064,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.Using:
                     statement = UsingStatementRule(token);
                     // Report an error - usings must appear before anything else in the script, but parse it anyway
-                    ReportError(
-                        statement.Extent,
+                    ReportError(statement.Extent,
                         nameof(ParserStrings.UsingMustBeAtStartOfScript),
                         ParserStrings.UsingMustBeAtStartOfScript);
                     break;
@@ -2308,8 +2272,7 @@ namespace System.Management.Automation.Language
             // ErrorRecovery: nothing more to look for, so just return the error statement.
             if (body == null)
             {
-                ReportIncompleteInput(
-                    After(kindToken.Extent),
+                ReportIncompleteInput(After(kindToken.Extent),
                     nameof(ParserStrings.MissingStatementAfterKeyword),
                     ParserStrings.MissingStatementAfterKeyword,
                     kindToken.Text);
@@ -2346,8 +2309,7 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: If there is no opening curly, assume it hasn't been entered yet and don't consume anything.
 
                 UngetToken(lCurly);
-                ReportIncompleteInput(
-                    After(inlineScriptToken),
+                ReportIncompleteInput(After(inlineScriptToken),
                     nameof(ParserStrings.MissingStatementAfterKeyword),
                     ParserStrings.MissingStatementAfterKeyword,
                     inlineScriptToken.Text);
@@ -2386,8 +2348,7 @@ namespace System.Management.Automation.Language
                     // else yet.  Next token is likely a newline, so just put it back and keep parsing.
 
                     UngetToken(lParen);
-                    ReportIncompleteInput(
-                        After(keyword),
+                    ReportIncompleteInput(After(keyword),
                         nameof(ParserStrings.MissingOpenParenthesisInIfStatement),
                         ParserStrings.MissingOpenParenthesisInIfStatement,
                         keyword.Text);
@@ -2402,8 +2363,7 @@ namespace System.Management.Automation.Language
                     // to find a close paren and statement block.
 
                     IScriptExtent errorPosition = After(lParen);
-                    ReportIncompleteInput(
-                        errorPosition,
+                    ReportIncompleteInput(errorPosition,
                         nameof(ParserStrings.IfStatementMissingCondition),
                         ParserStrings.IfStatementMissingCondition,
                         keyword.Text);
@@ -2425,8 +2385,7 @@ namespace System.Management.Automation.Language
                     // Don't bother reporting this error if we already reported an empty condition error.
                     if (!(condition is ErrorStatementAst))
                     {
-                        ReportIncompleteInput(
-                            rParen.Extent,
+                        ReportIncompleteInput(rParen.Extent,
                             nameof(ParserStrings.MissingEndParenthesisAfterStatement),
                             ParserStrings.MissingEndParenthesisAfterStatement,
                             keyword.Text);
@@ -2441,8 +2400,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: assume the next token is a newline or part of something else,
                     // so stop parsing the statement and try parsing something else.
 
-                    ReportIncompleteInput(
-                        rParen.Extent,
+                    ReportIncompleteInput(rParen.Extent,
                         nameof(ParserStrings.MissingStatementBlock),
                         ParserStrings.MissingStatementBlock,
                         keyword.Text);
@@ -2481,8 +2439,7 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: assume the next token is a newline or part of something else,
                         // so stop parsing the statement and try parsing something else.
 
-                        ReportIncompleteInput(
-                            After(keyword),
+                        ReportIncompleteInput(After(keyword),
                             nameof(ParserStrings.MissingStatementBlockAfterElse),
                             ParserStrings.MissingStatementBlockAfterElse);
                         return new ErrorStatementAst(ExtentOf(ifToken, keyword), componentAsts);
@@ -2610,8 +2567,7 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: pretend we saw the filename and continue.
 
                         isError = true;
-                        isIncompleteError = ReportIncompleteInput(
-                            After(switchParameterToken),
+                        isIncompleteError = ReportIncompleteInput(After(switchParameterToken),
                             nameof(ParserStrings.MissingFilenameOption),
                             ParserStrings.MissingFilenameOption);
 
@@ -2637,8 +2593,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: just ignore the token, continue parsing.
 
                     isError = true;
-                    ReportError(
-                        switchParameterToken.Extent,
+                    ReportError(switchParameterToken.Extent,
                         nameof(ParserStrings.InvalidSwitchFlag),
                         ParserStrings.InvalidSwitchFlag,
                         ((ParameterToken)switchParameterToken).ParameterName);
@@ -2664,8 +2619,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: nothing special this is a semantic error.
 
                     isError = true;
-                    ReportError(
-                        lParen.Extent,
+                    ReportError(lParen.Extent,
                         nameof(ParserStrings.PipelineValueRequired),
                         ParserStrings.PipelineValueRequired);
                 }
@@ -2678,8 +2632,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: pretend we saw the condition and keep parsing.
 
                     isError = true;
-                    isIncompleteError = ReportIncompleteInput(
-                        After(lParen),
+                    isIncompleteError = ReportIncompleteInput(After(lParen),
                         nameof(ParserStrings.PipelineValueRequired),
                         ParserStrings.PipelineValueRequired);
                 }
@@ -2699,10 +2652,9 @@ namespace System.Management.Automation.Language
                     {
                         isError = true;
                         isIncompleteError =
-                            ReportIncompleteInput(
-                                After(endErrorStatement),
-                                nameof(ParserStrings.MissingEndParenthesisInSwitchStatement),
-                                ParserStrings.MissingEndParenthesisInSwitchStatement);
+                            ReportIncompleteInput(After(endErrorStatement),
+                                                  nameof(ParserStrings.MissingEndParenthesisInSwitchStatement),
+                                                  ParserStrings.MissingEndParenthesisInSwitchStatement);
                     }
                 }
                 else
@@ -2715,11 +2667,9 @@ namespace System.Management.Automation.Language
                 if ((flags & SwitchFlags.File) == 0)
                 {
                     isError = true;
-                    isIncompleteError = 
-                        ReportIncompleteInput(
-                            After(endErrorStatement),
-                            nameof(ParserStrings.PipelineValueRequired),
-                            ParserStrings.PipelineValueRequired);
+                    isIncompleteError = ReportIncompleteInput(After(endErrorStatement),
+                                                              nameof(ParserStrings.PipelineValueRequired),
+                                                              ParserStrings.PipelineValueRequired);
                 }
                 else
                 {
@@ -2741,8 +2691,7 @@ namespace System.Management.Automation.Language
                 if (!isIncompleteError)
                 {
                     isError = true;
-                    ReportIncompleteInput(
-                        After(endErrorStatement),
+                    ReportIncompleteInput(After(endErrorStatement),
                         nameof(ParserStrings.MissingCurlyBraceInSwitchStatement),
                         ParserStrings.MissingCurlyBraceInSwitchStatement);
                 }
@@ -2762,8 +2711,7 @@ namespace System.Management.Automation.Language
                         // So don't look for a body, hope we find the '}' next.
 
                         isError = true;
-                        ReportIncompleteInput(
-                            After(endErrorStatement),
+                        ReportIncompleteInput(After(endErrorStatement),
                             nameof(ParserStrings.MissingSwitchConditionExpression),
                             ParserStrings.MissingSwitchConditionExpression);
                         // Consume a closing curly, if there is one, to avoid an extra error
@@ -2781,11 +2729,9 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: We might find another condition/body pair, so keep going.
 
                         isError = true;
-                        isIncompleteError = 
-                            ReportIncompleteInput(
-                                After(endErrorStatement),
-                                nameof(ParserStrings.MissingSwitchStatementClause),
-                                ParserStrings.MissingSwitchStatementClause);
+                        isIncompleteError = ReportIncompleteInput(After(endErrorStatement),
+                                                                  nameof(ParserStrings.MissingSwitchStatementClause),
+                                                                  ParserStrings.MissingSwitchStatementClause);
                     }
                     else
                     {
@@ -2803,8 +2749,7 @@ namespace System.Management.Automation.Language
                                 // ErrorRecovery: just report the error and continue, forget the previous default clause.
 
                                 isError = true;
-                                ReportError(
-                                    clauseCondition.Extent,
+                                ReportError(clauseCondition.Extent,
                                     nameof(ParserStrings.MultipleSwitchDefaultClauses),
                                     ParserStrings.MultipleSwitchDefaultClauses);
                             }
@@ -2829,8 +2774,7 @@ namespace System.Management.Automation.Language
                         if (!isIncompleteError)
                         {
                             isError = true;
-                            ReportIncompleteInput(
-                                lCurly.Extent,
+                            ReportIncompleteInput(lCurly.Extent,
                                 token.Extent,
                                 nameof(ParserStrings.MissingEndCurlyBrace),
                                 ParserStrings.MissingEndCurlyBrace);
@@ -2873,8 +2817,7 @@ namespace System.Management.Automation.Language
 
             if (configurationNameToken.Kind == TokenKind.LCurly)
             {
-                ReportError(
-                    After(startExtent),
+                ReportError(After(startExtent),
                     nameof(ParserStrings.MissingConfigurationName),
                     ParserStrings.MissingConfigurationName);
 
@@ -2887,10 +2830,9 @@ namespace System.Management.Automation.Language
             {
                 UngetToken(configurationNameToken);
 
-                ReportIncompleteInput(
-                    After(configurationNameToken.Extent),
-                    nameof(ParserStrings.MissingConfigurationName),
-                    ParserStrings.MissingConfigurationName);
+                ReportIncompleteInput(After(configurationNameToken.Extent),
+                                      nameof(ParserStrings.MissingConfigurationName),
+                                      ParserStrings.MissingConfigurationName);
                 return null;
             }
 
@@ -2902,8 +2844,7 @@ namespace System.Management.Automation.Language
             if (configurationName == null)
             {
                 isError = true;
-                ReportIncompleteInput(
-                    configurationNameToken.Extent,
+                ReportIncompleteInput(configurationNameToken.Extent,
                     nameof(ParserStrings.MissingConfigurationName),
                     ParserStrings.MissingConfigurationName);
             }
@@ -2919,8 +2860,7 @@ namespace System.Management.Automation.Language
                         // This is actually a semantics check, the syntax is fine at this point.
                         // Continue parsing to get as much information as possible
                         isError = true;
-                        ReportError(
-                            configurationName.Extent,
+                        ReportError(configurationName.Extent,
                             nameof(ParserStrings.InvalidConfigurationName),
                             ParserStrings.InvalidConfigurationName,
                             simpleConfigurationNameValue ?? string.Empty);
@@ -2951,22 +2891,20 @@ namespace System.Management.Automation.Language
                 // Configuration is not supported on ARM or in ConstrainedLanguage
                 if (PsUtils.IsRunningOnProcessorArchitectureARM() || Runspace.DefaultRunspace.ExecutionContext.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                 {
-                    ReportError(
-                        configurationToken.Extent,
-                        nameof(ParserStrings.ConfigurationNotAllowedInConstrainedLanguage),
-                        ParserStrings.ConfigurationNotAllowedInConstrainedLanguage,
-                        configurationToken.Kind.Text());
+                    ReportError(configurationToken.Extent,
+                                nameof(ParserStrings.ConfigurationNotAllowedInConstrainedLanguage),
+                                ParserStrings.ConfigurationNotAllowedInConstrainedLanguage,
+                                configurationToken.Kind.Text());
                     return null;
                 }
 
                 // Configuration is not supported on WinPE
                 if (Utils.IsWinPEHost())
                 {
-                    ReportError(
-                        configurationToken.Extent,
-                        nameof(ParserStrings.ConfigurationNotAllowedOnWinPE),
-                        ParserStrings.ConfigurationNotAllowedOnWinPE,
-                        configurationToken.Kind.Text());
+                    ReportError(configurationToken.Extent,
+                                nameof(ParserStrings.ConfigurationNotAllowedOnWinPE),
+                                ParserStrings.ConfigurationNotAllowedOnWinPE,
+                                configurationToken.Kind.Text());
                     return null;
                 }
 
@@ -3027,8 +2965,7 @@ namespace System.Management.Automation.Language
                     {
                         // This shouldn't happen - the system classes should always be good, but just in case,
                         // we'll catch the exception and report it as an error.
-                        ReportError(
-                            configurationKeywordToken.Extent,
+                        ReportError(configurationKeywordToken.Extent,
                             nameof(ParserStrings.ParserError),
                             ParserStrings.ParserError,
                             e.ToString());
@@ -3051,8 +2988,7 @@ namespace System.Management.Automation.Language
                 Token lCurly = NextToken();
                 if (lCurly.Kind != TokenKind.LCurly)
                 {
-                    ReportIncompleteInput(
-                        After(lCurly.Extent),
+                    ReportIncompleteInput(After(lCurly.Extent),
                         nameof(ParserStrings.MissingCurlyInConfigurationStatement),
                         ParserStrings.MissingCurlyInConfigurationStatement);
                     isError = true;
@@ -3072,8 +3008,7 @@ namespace System.Management.Automation.Language
                     }
                     if (configurationBodyScriptBlock == null)
                     {
-                        ReportError(
-                            After(lCurly.Extent),
+                        ReportError(After(lCurly.Extent),
                             nameof(ParserStrings.ConfigurationBodyEmpty),
                             ParserStrings.ConfigurationBodyEmpty);
                         return null;
@@ -3219,8 +3154,7 @@ namespace System.Management.Automation.Language
             catch (Exception e)
             {
                 // In theory this should never happen so if it does, we'll report the actual exception rather than introducing a new message
-                ReportError(
-                    configurationKeywordToken.Extent,
+                ReportError(configurationKeywordToken.Extent,
                     nameof(ParserStrings.ParserError),
                     ParserStrings.ParserError,
                     "ConfigurationStatementToken: " + e);
@@ -3268,8 +3202,7 @@ namespace System.Management.Automation.Language
             {
                 // ErrorRecovery: report incomplete statement and return
                 UngetToken(nameToken);
-                ReportIncompleteInput(
-                    After(keywordToken),
+                ReportIncompleteInput(After(keywordToken),
                     nameof(ParserStrings.RequiredNameOrExpressionMissing),
                     ParserStrings.RequiredNameOrExpressionMissing);
                 return null;
@@ -3279,8 +3212,7 @@ namespace System.Management.Automation.Language
             if (argument == null)
             {
                 var extent = keywordToken.Extent;
-                ReportError(
-                    After(extent),
+                ReportError(After(extent),
                     nameof(ParserStrings.ParameterRequiresArgument),
                     ParserStrings.ParameterRequiresArgument,
                     keywordToken.Text);
@@ -3330,8 +3262,7 @@ namespace System.Management.Automation.Language
                     {
                         // ErrorRecovery: pretend we saw the throttle limit and continue.
 
-                        ReportIncompleteInput(
-                            After(foreachParameterToken),
+                        ReportIncompleteInput(After(foreachParameterToken),
                             nameof(ParserStrings.MissingThrottleLimit),
                             ParserStrings.MissingThrottleLimit);
                     }
@@ -3341,8 +3272,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: just ignore the token, continue parsing.
 
                     endErrorStatement = foreachParameterToken.Extent;
-                    ReportError(
-                        foreachParameterToken.Extent,
+                    ReportError(foreachParameterToken.Extent,
                         nameof(ParserStrings.InvalidForeachFlag),
                         ParserStrings.InvalidForeachFlag,
                         ((ParameterToken)foreachParameterToken).ParameterName);
@@ -3359,8 +3289,7 @@ namespace System.Management.Automation.Language
 
                 UngetToken(lParen);
                 endErrorStatement = forEachToken.Extent;
-                ReportIncompleteInput(
-                    After(endErrorStatement),
+                ReportIncompleteInput(After(endErrorStatement),
                     nameof(ParserStrings.MissingOpenParenthesisAfterKeyword),
                     ParserStrings.MissingOpenParenthesisAfterKeyword,
                     forEachToken.Kind.Text());
@@ -3375,8 +3304,7 @@ namespace System.Management.Automation.Language
 
                 UngetToken(token);
                 endErrorStatement = lParen.Extent;
-                ReportIncompleteInput(
-                    After(endErrorStatement),
+                ReportIncompleteInput(After(endErrorStatement),
                     nameof(ParserStrings.MissingVariableNameAfterForeach),
                     ParserStrings.MissingVariableNameAfterForeach);
                 return new ErrorStatementAst(ExtentOf(startOfStatement, endErrorStatement));
@@ -3394,8 +3322,7 @@ namespace System.Management.Automation.Language
 
                 UngetToken(inToken);
                 endErrorStatement = variableAst.Extent;
-                ReportIncompleteInput(
-                    After(endErrorStatement),
+                ReportIncompleteInput(After(endErrorStatement),
                     nameof(ParserStrings.MissingInInForeach),
                     ParserStrings.MissingInInForeach);
             }
@@ -3408,8 +3335,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: assume the rest of the statement is missing.
 
                     endErrorStatement = inToken.Extent;
-                    ReportIncompleteInput(
-                        After(endErrorStatement),
+                    ReportIncompleteInput(After(endErrorStatement),
                         nameof(ParserStrings.MissingForeachExpression),
                         ParserStrings.MissingForeachExpression);
                 }
@@ -3423,8 +3349,7 @@ namespace System.Management.Automation.Language
 
                         UngetToken(rParen);
                         endErrorStatement = pipeline.Extent;
-                        ReportIncompleteInput(
-                            After(endErrorStatement),
+                        ReportIncompleteInput(After(endErrorStatement),
                             nameof(ParserStrings.MissingEndParenthesisAfterForeach),
                             ParserStrings.MissingEndParenthesisAfterForeach);
                     }
@@ -3436,8 +3361,7 @@ namespace System.Management.Automation.Language
                             // ErrorRecovery: nothing more to look for, so just return the error statement.
 
                             endErrorStatement = rParen.Extent;
-                            ReportIncompleteInput(
-                                After(endErrorStatement),
+                            ReportIncompleteInput(After(endErrorStatement),
                                 nameof(ParserStrings.MissingForeachStatement),
                                 ParserStrings.MissingForeachStatement);
                         }
@@ -3488,8 +3412,7 @@ namespace System.Management.Automation.Language
 
                 UngetToken(lParen);
                 endErrorStatement = forToken.Extent;
-                ReportIncompleteInput(
-                    After(endErrorStatement),
+                ReportIncompleteInput(After(endErrorStatement),
                     nameof(ParserStrings.MissingOpenParenthesisAfterKeyword),
                     ParserStrings.MissingOpenParenthesisAfterKeyword,
                     forToken.Kind.Text());
@@ -3533,8 +3456,7 @@ namespace System.Management.Automation.Language
                 {
                     endErrorStatement = lParen.Extent;
                 }
-                ReportIncompleteInput(
-                    After(endErrorStatement),
+                ReportIncompleteInput(After(endErrorStatement),
                     nameof(ParserStrings.MissingEndParenthesisAfterStatement),
                     ParserStrings.MissingEndParenthesisAfterStatement,
                     forToken.Kind.Text());
@@ -3546,11 +3468,10 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: return an error statement.
                     endErrorStatement = rParen.Extent;
-                    ReportIncompleteInput(
-                        After(endErrorStatement),
-                        nameof(ParserStrings.MissingLoopStatement),
-                        ParserStrings.MissingLoopStatement,
-                        forToken.Kind.Text());
+                    ReportIncompleteInput(After(endErrorStatement),
+                                          nameof(ParserStrings.MissingLoopStatement),
+                                          ParserStrings.MissingLoopStatement,
+                                          forToken.Kind.Text());
                 }
             }
 
@@ -3578,8 +3499,7 @@ namespace System.Management.Automation.Language
                 // else yet.  Next token is likely a newline, so just put it back and keep parsing.
 
                 UngetToken(lParen);
-                ReportIncompleteInput(
-                    After(whileToken),
+                ReportIncompleteInput(After(whileToken),
                     nameof(ParserStrings.MissingOpenParenthesisAfterKeyword),
                     ParserStrings.MissingOpenParenthesisAfterKeyword,
                     whileToken.Text);
@@ -3595,8 +3515,7 @@ namespace System.Management.Automation.Language
                 // to find a close paren and statement block.
 
                 IScriptExtent errorPosition = After(lParen);
-                ReportIncompleteInput(
-                    errorPosition,
+                ReportIncompleteInput(errorPosition,
                     nameof(ParserStrings.MissingExpressionAfterKeyword),
                     ParserStrings.MissingExpressionAfterKeyword,
                     whileToken.Kind.Text());
@@ -3618,8 +3537,7 @@ namespace System.Management.Automation.Language
                 UngetToken(rParen);
                 if (!(condition is ErrorStatementAst))
                 {
-                    ReportIncompleteInput(
-                        After(condition),
+                    ReportIncompleteInput(After(condition),
                         nameof(ParserStrings.MissingEndParenthesisAfterStatement),
                         ParserStrings.MissingEndParenthesisAfterStatement,
                         whileToken.Kind.Text());
@@ -3633,8 +3551,7 @@ namespace System.Management.Automation.Language
             {
                 // ErrorRecovery: assume the next token is a newline or part of something else.
 
-                ReportIncompleteInput(
-                    After(rParen),
+                ReportIncompleteInput(After(rParen),
                     nameof(ParserStrings.MissingLoopStatement),
                     ParserStrings.MissingLoopStatement,
                     whileToken.Kind.Text());
@@ -3679,8 +3596,7 @@ namespace System.Management.Automation.Language
                 }
                 catch (Exception e)
                 {
-                    ReportError(
-                        functionName.Extent,
+                    ReportError(functionName.Extent,
                         nameof(ParserStrings.DynamicKeywordPreParseException),
                         ParserStrings.DynamicKeywordPreParseException,
                         keywordData.ResourceName, e.ToString());
@@ -3691,8 +3607,7 @@ namespace System.Management.Automation.Language
             if (keywordData.IsReservedKeyword)
             {
                 // ErrorRecovery: eat the token
-                ReportError(
-                    functionName.Extent,
+                ReportError(functionName.Extent,
                     nameof(ParserStrings.UnsupportedReservedKeyword),
                     ParserStrings.UnsupportedReservedKeyword,
                     keywordData.Keyword);
@@ -3702,8 +3617,7 @@ namespace System.Management.Automation.Language
             if (keywordData.HasReservedProperties)
             {
                 // ErrorRecovery: eat the token
-                ReportError(
-                    functionName.Extent,
+                ReportError(functionName.Extent,
                     nameof(ParserStrings.UnsupportedReservedProperty),
                     ParserStrings.UnsupportedReservedProperty,
                     "'Require', 'Trigger', 'Notify', 'Before', 'After' and 'Subscribe'");
@@ -3734,16 +3648,14 @@ namespace System.Management.Automation.Language
 
                     if (keywordData.NameMode == DynamicKeywordNameMode.NameRequired || keywordData.NameMode == DynamicKeywordNameMode.SimpleNameRequired)
                     {
-                        ReportIncompleteInput(
-                            After(functionName),
+                        ReportIncompleteInput(After(functionName),
                             nameof(ParserStrings.RequiredNameOrExpressionMissing),
                             ParserStrings.RequiredNameOrExpressionMissing);
                     }
                     else
                     {
                         // Name not required so report missing brace
-                        ReportIncompleteInput(
-                            After(functionName.Extent),
+                        ReportIncompleteInput(After(functionName.Extent),
                             nameof(ParserStrings.MissingBraceInObjectDefinition),
                             ParserStrings.MissingBraceInObjectDefinition);
                     }
@@ -3757,8 +3669,7 @@ namespace System.Management.Automation.Language
                     lCurly = nameToken;
                     if (keywordData.NameMode == DynamicKeywordNameMode.NameRequired || keywordData.NameMode == DynamicKeywordNameMode.SimpleNameRequired)
                     {
-                        ReportError(
-                            After(functionName),
+                        ReportError(After(functionName),
                             nameof(ParserStrings.RequiredNameOrExpressionMissing),
                             ParserStrings.RequiredNameOrExpressionMissing);
                         UngetToken(nameToken);
@@ -3769,8 +3680,7 @@ namespace System.Management.Automation.Language
                 {
                     if (keywordData.NameMode == DynamicKeywordNameMode.NoName)
                     {
-                        ReportError(
-                            After(functionName),
+                        ReportError(After(functionName),
                             nameof(ParserStrings.UnexpectedNameForType),
                             ParserStrings.UnexpectedNameForType,
                             functionName.Text,
@@ -3785,8 +3695,7 @@ namespace System.Management.Automation.Language
                     // If only a simple name is allowed, then the string must be non-null.
                     if ((keywordData.NameMode == DynamicKeywordNameMode.SimpleNameRequired || keywordData.NameMode == DynamicKeywordNameMode.SimpleOptionalName) && string.IsNullOrEmpty(elementName))
                     {
-                        ReportIncompleteInput(
-                            After(functionName),
+                        ReportIncompleteInput(After(functionName),
                             nameof(ParserStrings.RequiredNameOrExpressionMissing),
                             ParserStrings.RequiredNameOrExpressionMissing);
                         UngetToken(nameToken);
@@ -3803,16 +3712,14 @@ namespace System.Management.Automation.Language
                     {
                         if (keywordData.NameMode == DynamicKeywordNameMode.SimpleNameRequired || keywordData.NameMode == DynamicKeywordNameMode.SimpleOptionalName)
                         {
-                            ReportError(
-                                After(functionName),
+                            ReportError(After(functionName),
                                 nameof(ParserStrings.RequiredNameOrExpressionMissing),
                                 ParserStrings.RequiredNameOrExpressionMissing);
                         }
                         else
                         {
                             // It wasn't an '{' and it wasn't a name expression so it's a unexpected token.
-                            ReportError(
-                                After(functionName),
+                            ReportError(After(functionName),
                                 nameof(ParserStrings.UnexpectedToken),
                                 ParserStrings.UnexpectedToken,
                                 nameToken.Text);
@@ -3823,8 +3730,7 @@ namespace System.Management.Automation.Language
                     // Ok, we got a name expression, but we're expecting no name, so it's and error.
                     if (keywordData.NameMode == DynamicKeywordNameMode.NoName)
                     {
-                        ReportError(
-                            After(functionName),
+                        ReportError(After(functionName),
                             nameof(ParserStrings.UnexpectedNameForType),
                             ParserStrings.UnexpectedNameForType,
                             functionName.Text,
@@ -3836,8 +3742,7 @@ namespace System.Management.Automation.Language
                     if (keywordData.NameMode == DynamicKeywordNameMode.SimpleNameRequired || keywordData.NameMode == DynamicKeywordNameMode.SimpleOptionalName)
                     {
                         // If no match, then this is an incomplete token BUGBUG fix message
-                        ReportError(
-                            nameToken.Extent,
+                        ReportError(nameToken.Extent,
                             nameof(ParserStrings.UnexpectedToken),
                             ParserStrings.UnexpectedToken,
                             nameToken.Text);
@@ -3868,8 +3773,7 @@ namespace System.Management.Automation.Language
                     if (lCurly.Kind == TokenKind.EndOfInput)
                     {
                         UngetToken(lCurly);
-                        ReportIncompleteInput(
-                            After(functionName.Extent),
+                        ReportIncompleteInput(After(functionName.Extent),
                             nameof(ParserStrings.MissingBraceInObjectDefinition),
                             ParserStrings.MissingBraceInObjectDefinition);
 
@@ -3898,16 +3802,14 @@ namespace System.Management.Automation.Language
                             // the last condition checks that there is no space between "method" name and '{'
                             instanceInvokeMemberExpressionAst.Member.Extent.EndOffset == instanceInvokeMemberExpressionAst.Arguments[0].Extent.StartOffset)
                         {
-                            ReportError(
-                                LastCharacterOf(instanceInvokeMemberExpressionAst.Member.Extent),
+                            ReportError(LastCharacterOf(instanceInvokeMemberExpressionAst.Member.Extent),
                                 nameof(ParserStrings.UnexpectedTokenInDynamicKeyword),
                                 ParserStrings.UnexpectedTokenInDynamicKeyword,
                                 functionName.Text);
                         }
                         else
                         {
-                            ReportError(
-                                lCurly.Extent,
+                            ReportError(lCurly.Extent,
                                 nameof(ParserStrings.UnexpectedToken),
                                 ParserStrings.UnexpectedToken,
                                 lCurly.Text);
@@ -3973,8 +3875,7 @@ namespace System.Management.Automation.Language
                 if (body == null)
                 {
                     // Failed to read the statement body
-                    ReportIncompleteInput(
-                        After(lCurly),
+                    ReportIncompleteInput(After(lCurly),
                         nameof(ParserStrings.MissingStatementAfterKeyword),
                         ParserStrings.MissingStatementAfterKeyword,
                         keywordData.Keyword);
@@ -4032,8 +3933,7 @@ namespace System.Management.Automation.Language
                 }
                 catch (Exception e)
                 {
-                    ReportError(
-                        functionName.Extent,
+                    ReportError(functionName.Extent,
                         nameof(ParserStrings.DynamicKeywordPostParseException),
                         ParserStrings.DynamicKeywordPostParseException,
                         keywordData.Keyword,
@@ -4075,8 +3975,7 @@ namespace System.Management.Automation.Language
                 // comes next.
 
                 endErrorStatement = doToken.Extent;
-                ReportIncompleteInput(
-                    After(endErrorStatement),
+                ReportIncompleteInput(After(endErrorStatement),
                     nameof(ParserStrings.MissingLoopStatement),
                     ParserStrings.MissingLoopStatement,
                     TokenKind.Do.Text());
@@ -4091,8 +3990,7 @@ namespace System.Management.Automation.Language
 
                     UngetToken(whileOrUntilToken);
                     endErrorStatement = body.Extent;
-                    ReportIncompleteInput(
-                        After(endErrorStatement),
+                    ReportIncompleteInput(After(endErrorStatement),
                         nameof(ParserStrings.MissingWhileOrUntilInDoWhile),
                         ParserStrings.MissingWhileOrUntilInDoWhile);
                 }
@@ -4106,8 +4004,7 @@ namespace System.Management.Automation.Language
 
                         UngetToken(lParen);
                         endErrorStatement = whileOrUntilToken.Extent;
-                        ReportIncompleteInput(
-                            After(endErrorStatement),
+                        ReportIncompleteInput(After(endErrorStatement),
                             nameof(ParserStrings.MissingOpenParenthesisAfterKeyword),
                             ParserStrings.MissingOpenParenthesisAfterKeyword,
                             whileOrUntilToken.Kind.Text());
@@ -4121,8 +4018,7 @@ namespace System.Management.Automation.Language
                             // ErrorRecovery: try to get the matching close paren, then return an error statement.
 
                             endErrorStatement = lParen.Extent;
-                            ReportIncompleteInput(
-                                After(endErrorStatement),
+                            ReportIncompleteInput(After(endErrorStatement),
                                 nameof(ParserStrings.MissingExpressionAfterKeyword),
                                 ParserStrings.MissingExpressionAfterKeyword,
                                 whileOrUntilToken.Kind.Text());
@@ -4139,8 +4035,7 @@ namespace System.Management.Automation.Language
                             if (condition != null)
                             {
                                 endErrorStatement = condition.Extent;
-                                ReportIncompleteInput(
-                                    After(endErrorStatement),
+                                ReportIncompleteInput(After(endErrorStatement),
                                     nameof(ParserStrings.MissingEndParenthesisAfterStatement),
                                     ParserStrings.MissingEndParenthesisAfterStatement,
                                     whileOrUntilToken.Kind.Text());
@@ -4186,8 +4081,7 @@ namespace System.Management.Automation.Language
             var name = SimpleNameRule(out classNameToken);
             if (name == null)
             {
-                ReportIncompleteInput(
-                    After(classToken),
+                ReportIncompleteInput(After(classToken),
                     nameof(ParserStrings.MissingNameAfterKeyword),
                     ParserStrings.MissingNameAfterKeyword,
                     classToken.Text);
@@ -4219,8 +4113,7 @@ namespace System.Management.Automation.Language
                         superClass = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
                         if (superClass == null)
                         {
-                            ReportIncompleteInput(
-                                After(ExtentFromFirstOf(commaToken, colonToken)),
+                            ReportIncompleteInput(After(ExtentFromFirstOf(commaToken, colonToken)),
                                 nameof(ParserStrings.TypeNameExpected),
                                 ParserStrings.TypeNameExpected);
                             break;
@@ -4248,8 +4141,7 @@ namespace System.Management.Automation.Language
 
                     UngetToken(lCurly);
                     var lastElement = (superClassesList.Count > 0) ? (Ast)superClassesList[superClassesList.Count - 1] : name;
-                    ReportIncompleteInput(
-                        After(lastElement),
+                    ReportIncompleteInput(After(lastElement),
                         nameof(ParserStrings.MissingTypeBody),
                         ParserStrings.MissingTypeBody,
                         classToken.Kind.Text());
@@ -4284,8 +4176,7 @@ namespace System.Management.Automation.Language
                 if (rCurly.Kind != TokenKind.RCurly)
                 {
                     UngetToken(rCurly);
-                    ReportIncompleteInput(
-                        After(lCurly),
+                    ReportIncompleteInput(After(lCurly),
                         rCurly.Extent,
                         nameof(ParserStrings.MissingEndCurlyBrace),
                         ParserStrings.MissingEndCurlyBrace);
@@ -4402,16 +4293,14 @@ namespace System.Management.Automation.Language
                 case TokenKind.Public:
                     if (publicToken != null)
                     {
-                        ReportError(
-                            token.Extent,
+                        ReportError(token.Extent,
                             nameof(ParserStrings.DuplicateQualifier),
                             ParserStrings.DuplicateQualifier,
                             token.Text);
                     }
                     if (privateToken != null)
                     {
-                        ReportError(
-                            token.Extent,
+                        ReportError(token.Extent,
                             nameof(ParserStrings.ModifiersCannotBeCombined),
                             ParserStrings.ModifiersCannotBeCombined,
                             privateToken.Text,
@@ -4424,16 +4313,14 @@ namespace System.Management.Automation.Language
                 case TokenKind.Private:
                     if (privateToken != null)
                     {
-                        ReportError(
-                            token.Extent,
+                        ReportError(token.Extent,
                             nameof(ParserStrings.DuplicateQualifier),
                             ParserStrings.DuplicateQualifier,
                             token.Text);
                     }
                     if (publicToken != null)
                     {
-                        ReportError(
-                            token.Extent,
+                        ReportError(token.Extent,
                             nameof(ParserStrings.ModifiersCannotBeCombined),
                             ParserStrings.ModifiersCannotBeCombined,
                             publicToken.Text,
@@ -4447,8 +4334,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.Hidden:
                         if (hiddenToken != null)
                         {
-                            ReportError(
-                                token.Extent,
+                            ReportError(token.Extent,
                                 nameof(ParserStrings.DuplicateQualifier),
                                 ParserStrings.DuplicateQualifier,
                                 token.Text);
@@ -4461,8 +4347,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.Static:
                         if (staticToken != null)
                         {
-                            ReportError(
-                                token.Extent,
+                            ReportError(token.Extent,
                                 nameof(ParserStrings.DuplicateQualifier),
                                 ParserStrings.DuplicateQualifier,
                                 token.Text);
@@ -4511,8 +4396,7 @@ namespace System.Management.Automation.Language
                 Token terminatorToken = PeekToken();
                 if (terminatorToken.Kind != TokenKind.NewLine && terminatorToken.Kind != TokenKind.Semi && terminatorToken.Kind != TokenKind.RCurly)
                 {
-                    ReportIncompleteInput(
-                        After(endExtent),
+                    ReportIncompleteInput(After(endExtent),
                         nameof(ParserStrings.MissingPropertyTerminator),
                         ParserStrings.MissingPropertyTerminator);
                 }
@@ -4576,8 +4460,7 @@ namespace System.Management.Automation.Language
             if (lastAttribute != null)
             {
                 // We have the start of a member, but didn't see a variable or 'def'.
-                ReportIncompleteInput(
-                    After(ExtentFromFirstOf(lastAttribute)),
+                ReportIncompleteInput(After(ExtentFromFirstOf(lastAttribute)),
                     nameof(ParserStrings.IncompleteMemberDefinition),
                     ParserStrings.IncompleteMemberDefinition);
                 RecordErrorAsts(attributeList, ref astsOnError);
@@ -4655,8 +4538,7 @@ namespace System.Management.Automation.Language
             var name = SimpleNameRule();
             if (name == null)
             {
-                ReportIncompleteInput(
-                    After(enumToken),
+                ReportIncompleteInput(After(enumToken),
                     nameof(ParserStrings.MissingNameAfterKeyword),
                     ParserStrings.MissingNameAfterKeyword,
                     enumToken.Text);
@@ -4678,8 +4560,7 @@ namespace System.Management.Automation.Language
                     underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
                     if (underlyingType == null)
                     {
-                        ReportIncompleteInput(
-                            After(colonToken),
+                        ReportIncompleteInput(After(colonToken),
                             nameof(ParserStrings.TypeNameExpected),
                             ParserStrings.TypeNameExpected);
                     }
@@ -4688,8 +4569,7 @@ namespace System.Management.Automation.Language
                         var resolvedType = underlyingType.GetReflectionType();
                         if (resolvedType == null || !validUnderlyingTypeCodes.HasFlag(resolvedType.GetTypeCode()))
                         {
-                            ReportError(
-                                underlyingType.Extent,
+                            ReportError(underlyingType.Extent,
                                 nameof(ParserStrings.InvalidUnderlyingType),
                                 ParserStrings.InvalidUnderlyingType,
                                 underlyingType.Name);
@@ -4789,8 +4669,7 @@ namespace System.Management.Automation.Language
                     initialValueAst = ExpressionRule();
                     if (initialValueAst == null)
                     {
-                        ReportError(
-                            After(assignToken),
+                        ReportError(After(assignToken),
                             nameof(ParserStrings.ExpectedValueExpression),
                             ParserStrings.ExpectedValueExpression,
                             assignToken.Kind.Text());
@@ -4814,8 +4693,7 @@ namespace System.Management.Automation.Language
                 // If the initializer is missing, no sense in reporting another error about a missing terminator
                 if (!missingInitializer)
                 {
-                    ReportIncompleteInput(
-                        After(endExtent),
+                    ReportIncompleteInput(After(endExtent),
                         nameof(ParserStrings.MissingPropertyTerminator),
                         ParserStrings.MissingPropertyTerminator);
                 }
@@ -4879,8 +4757,7 @@ namespace System.Management.Automation.Language
 
                 default:
                     UngetToken(directiveToken);
-                    ReportIncompleteInput(
-                        After(usingToken),
+                    ReportIncompleteInput(After(usingToken),
                         nameof(ParserStrings.MissingUsingStatementDirective),
                         ParserStrings.MissingUsingStatementDirective);
                     return new ErrorStatementAst(usingToken.Extent);
@@ -4897,8 +4774,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.Comma:
                 case TokenKind.Semi:
                     {
-                        ReportIncompleteInput(
-                            After(directiveToken),
+                        ReportIncompleteInput(After(directiveToken),
                             nameof(ParserStrings.MissingUsingItemName),
                             ParserStrings.MissingUsingItemName);
                         return new ErrorStatementAst(ExtentOf(usingToken, directiveToken));
@@ -4908,8 +4784,7 @@ namespace System.Management.Automation.Language
             var itemAst = GetCommandArgument(CommandArgumentContext.CommandArgument, itemToken);
             if (itemAst == null)
             {
-                ReportError(
-                    itemToken.Extent,
+                ReportError(itemToken.Extent,
                     nameof(ParserStrings.InvalidValueForUsingItemName),
                     ParserStrings.InvalidValueForUsingItemName,
                     itemToken.Text);
@@ -4920,8 +4795,7 @@ namespace System.Management.Automation.Language
 
             if (!(itemAst is StringConstantExpressionAst) && (kind != UsingStatementKind.Module || !(itemAst is HashtableAst)))
             {
-                ReportError(
-                    ExtentFromFirstOf(itemAst, itemToken),
+                ReportError(ExtentFromFirstOf(itemAst, itemToken),
                     nameof(ParserStrings.InvalidValueForUsingItemName),
                     ParserStrings.InvalidValueForUsingItemName,
                     itemAst.Extent.Text);
@@ -4951,8 +4825,7 @@ namespace System.Management.Automation.Language
                     if (aliasToken.Kind == TokenKind.EndOfInput)
                     {
                         UngetToken(aliasToken);
-                        ReportIncompleteInput(
-                            After(equalsToken),
+                        ReportIncompleteInput(After(equalsToken),
                             nameof(ParserStrings.MissingNamespaceAlias),
                             ParserStrings.MissingNamespaceAlias);
                         return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
@@ -4989,8 +4862,7 @@ namespace System.Management.Automation.Language
 
                 if (aliasRequired)
                 {
-                    ReportIncompleteInput(
-                        After(itemToken),
+                    ReportIncompleteInput(After(itemToken),
                         nameof(ParserStrings.MissingEqualsInUsingAlias),
                         ParserStrings.MissingEqualsInUsingAlias);
                     return new ErrorStatementAst(ExtentOf(usingToken, itemAst), new Ast[] { itemAst });
@@ -5019,8 +4891,7 @@ namespace System.Management.Automation.Language
             {
                 if (uri.IsUnc)
                 {
-                    ReportError(
-                        name.Extent,
+                    ReportError(name.Extent,
                         nameof(ParserStrings.CannotLoadAssemblyFromUncPath),
                         ParserStrings.CannotLoadAssemblyFromUncPath,
                         assemblyName);
@@ -5029,8 +4900,7 @@ namespace System.Management.Automation.Language
                 // don't allow things like 'using assembly http://microsoft.com'
                 if (uri.Scheme != "file")
                 {
-                    ReportError(
-                        name.Extent,
+                    ReportError(name.Extent,
                         nameof(ParserStrings.CannotLoadAssemblyWithUriSchema),
                         ParserStrings.CannotLoadAssemblyWithUriSchema,
                         uri.Scheme);
@@ -5085,8 +4955,7 @@ namespace System.Management.Automation.Language
 
                 if (assemblyFileName == null || !File.Exists(assemblyFileName))
                 {
-                    ReportError(
-                        name.Extent,
+                    ReportError(name.Extent,
                         nameof(ParserStrings.ErrorLoadingAssembly),
                         ParserStrings.ErrorLoadingAssembly,
                         assemblyName);
@@ -5124,8 +4993,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.ReportIncompleteInput(
-                    After(functionNameToken),
+                this.ReportIncompleteInput(After(functionNameToken),
                     nameof(ParserStrings.MissingMethodParameterList),
                     ParserStrings.MissingMethodParameterList);
                 parameters = new List<ParameterAst>();
@@ -5167,8 +5035,7 @@ namespace System.Management.Automation.Language
                             else
                             {
                                 endErrorStatement = baseToken.Extent;
-                                ReportIncompleteInput(
-                                    After(baseToken),
+                                ReportIncompleteInput(After(baseToken),
                                     nameof(ParserStrings.MissingMethodParameterList),
                                     ParserStrings.MissingMethodParameterList);
                             }
@@ -5176,8 +5043,7 @@ namespace System.Management.Automation.Language
                         else
                         {
                             endErrorStatement = colonToken.Extent;
-                            ReportIncompleteInput(
-                                After(colonToken),
+                            ReportIncompleteInput(After(colonToken),
                                 nameof(ParserStrings.MissingBaseCtorCall),
                                 ParserStrings.MissingBaseCtorCall);
                         }
@@ -5204,8 +5070,7 @@ namespace System.Management.Automation.Language
                 if (endErrorStatement == null)
                 {
                     endErrorStatement = ExtentFromFirstOf(rParen, functionNameToken);
-                    ReportIncompleteInput(
-                        After(endErrorStatement),
+                    ReportIncompleteInput(After(endErrorStatement),
                         nameof(ParserStrings.MissingFunctionBody),
                         ParserStrings.MissingFunctionBody);
                 }
@@ -5293,8 +5158,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: Don't continue, assume the function isn't there yet.
 
                     UngetToken(functionNameToken);
-                    ReportIncompleteInput(
-                        After(functionToken),
+                    ReportIncompleteInput(After(functionToken),
                         nameof(ParserStrings.MissingNameAfterKeyword),
                         ParserStrings.MissingNameAfterKeyword,
                         functionToken.Text);
@@ -5317,8 +5181,7 @@ namespace System.Management.Automation.Language
                 if (endErrorStatement == null)
                 {
                     endErrorStatement = ExtentFromFirstOf(rParen, functionNameToken);
-                    ReportIncompleteInput(
-                        After(endErrorStatement),
+                    ReportIncompleteInput(After(endErrorStatement),
                         nameof(ParserStrings.MissingFunctionBody),
                         ParserStrings.MissingFunctionBody);
                 }
@@ -5375,8 +5238,7 @@ namespace System.Management.Automation.Language
 
                     UngetToken(rParen);
                     endErrorStatement = parameters.Any() ? parameters.Last().Extent : lParen.Extent;
-                    ReportIncompleteInput(
-                        After(endErrorStatement),
+                    ReportIncompleteInput(After(endErrorStatement),
                         nameof(ParserStrings.MissingEndParenthesisInFunctionParameterList),
                         ParserStrings.MissingEndParenthesisInFunctionParameterList);
                 }
@@ -5410,8 +5272,7 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: just return an error statement.
 
                 IScriptExtent endErrorStatement = ExtentFromFirstOf(typeConstraintAst, trapToken);
-                ReportIncompleteInput(
-                    After(endErrorStatement),
+                ReportIncompleteInput(After(endErrorStatement),
                     nameof(ParserStrings.MissingTrapStatement),
                     ParserStrings.MissingTrapStatement);
                 return new ErrorStatementAst(ExtentOf(trapToken, endErrorStatement), GetNestedErrorAsts(typeConstraintAst));
@@ -5462,8 +5323,7 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: Just consume the comma, pretend it wasn't there and look for the handler block.
 
                         endErrorStatement = commaToken.Extent;
-                        ReportIncompleteInput(
-                            After(endErrorStatement),
+                        ReportIncompleteInput(After(endErrorStatement),
                             nameof(ParserStrings.MissingTypeLiteralToken),
                             ParserStrings.MissingTypeLiteralToken);
                     }
@@ -5508,8 +5368,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: just use the "missing" block in the result ast.
 
                     endErrorStatement = exceptionTypes != null ? exceptionTypes.Last().Extent : catchToken.Extent;
-                    ReportIncompleteInput(
-                        After(endErrorStatement),
+                    ReportIncompleteInput(After(endErrorStatement),
                         nameof(ParserStrings.MissingCatchHandlerBlock),
                         ParserStrings.MissingCatchHandlerBlock);
                 }
@@ -5554,8 +5413,7 @@ namespace System.Management.Automation.Language
             {
                 // ErrorRecovery: don't parse more, return an error statement.
 
-                ReportIncompleteInput(
-                    After(tryToken),
+                ReportIncompleteInput(After(tryToken),
                     nameof(ParserStrings.MissingTryStatementBlock),
                     ParserStrings.MissingTryStatementBlock);
                 return new ErrorStatementAst(tryToken.Extent);
@@ -5584,11 +5442,10 @@ namespace System.Management.Automation.Language
                     // marking the resulting ast as having an error.)
 
                     endErrorStatement = finallyToken.Extent;
-                    ReportIncompleteInput(
-                        After(endErrorStatement),
-                        nameof(ParserStrings.MissingFinallyStatementBlock),
-                        ParserStrings.MissingFinallyStatementBlock,
-                        finallyToken.Kind.Text());
+                    ReportIncompleteInput(After(endErrorStatement),
+                                          nameof(ParserStrings.MissingFinallyStatementBlock),
+                                          ParserStrings.MissingFinallyStatementBlock,
+                                          finallyToken.Kind.Text());
                 }
             }
 
@@ -5597,8 +5454,7 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: don't parse more, return an error statement.
 
                 endErrorStatement = body.Extent;
-                ReportIncompleteInput(
-                    After(endErrorStatement),
+                ReportIncompleteInput(After(endErrorStatement),
                     nameof(ParserStrings.MissingCatchOrFinally),
                     ParserStrings.MissingCatchOrFinally);
             }
@@ -5643,8 +5499,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: Assume the parameter is just misspelled, look for command names next
 
                     endErrorStatement = supportedCommandToken.Extent;
-                    ReportError(
-                        endErrorStatement,
+                    ReportError(endErrorStatement,
                         nameof(ParserStrings.InvalidParameterForDataSectionStatement),
                         ParserStrings.InvalidParameterForDataSectionStatement,
                         ((ParameterToken)supportedCommandToken).ParameterName);
@@ -5663,8 +5518,7 @@ namespace System.Management.Automation.Language
                         // Only report an error if an error hasn't already been issued.
                         if (endErrorStatement == null)
                         {
-                            ReportIncompleteInput(
-                                After(commaToken ?? supportedCommandToken),
+                            ReportIncompleteInput(After(commaToken ?? supportedCommandToken),
                                 nameof(ParserStrings.MissingValueForSupportedCommandInDataSectionStatement),
                                 ParserStrings.MissingValueForSupportedCommandInDataSectionStatement);
                         }
@@ -5696,8 +5550,7 @@ namespace System.Management.Automation.Language
                     endErrorStatement = commands != null
                                             ? commands.Last().Extent
                                             : ExtentFromFirstOf(dataVariableNameAst, dataToken);
-                    ReportIncompleteInput(
-                        After(endErrorStatement),
+                    ReportIncompleteInput(After(endErrorStatement),
                         nameof(ParserStrings.MissingStatementBlockForDataSection),
                         ParserStrings.MissingStatementBlockForDataSection);
                 }
@@ -5769,8 +5622,7 @@ namespace System.Management.Automation.Language
                     {
                         // ErrorRecovery: this is a semantic error, so just keep parsing.
 
-                        ReportError(
-                            expr.Extent,
+                        ReportError(expr.Extent,
                             nameof(ParserStrings.ExpressionsMustBeFirstInPipeline),
                             ParserStrings.ExpressionsMustBeFirstInPipeline);
                     }
@@ -5786,8 +5638,7 @@ namespace System.Management.Automation.Language
                             // pipeline, so just keep parsing.
 
                             IScriptExtent errorExtent = After(assignToken);
-                            ReportIncompleteInput(
-                                errorExtent,
+                            ReportIncompleteInput(errorExtent,
                                 nameof(ParserStrings.ExpectedValueExpression),
                                 ParserStrings.ExpectedValueExpression,
                                 assignToken.Kind.Text());
@@ -5839,8 +5690,7 @@ namespace System.Management.Automation.Language
                     // point before, but the pipe could be the first character), otherwise the empty element
                     // is after the pipe character.
                     IScriptExtent errorPosition = pipeToken != null ? After(pipeToken) : PeekToken().Extent;
-                    ReportIncompleteInput(
-                        errorPosition,
+                    ReportIncompleteInput(errorPosition,
                         nameof(ParserStrings.EmptyPipeElement),
                         ParserStrings.EmptyPipeElement);
                 }
@@ -5867,8 +5717,7 @@ namespace System.Management.Automation.Language
                         if (PeekToken().Kind == TokenKind.EndOfInput)
                         {
                             scanning = false;
-                            ReportIncompleteInput(
-                                After(pipeToken),
+                            ReportIncompleteInput(After(pipeToken),
                                 nameof(ParserStrings.EmptyPipeElement),
                                 ParserStrings.EmptyPipeElement);
                         }
@@ -5878,8 +5727,7 @@ namespace System.Management.Automation.Language
                         // Parse in a manner similar to a pipe, but issue an error (for now, but should implement this for V3.)
                         SkipToken();
                         SkipNewlines();
-                        ReportError(
-                            pipeToken.Extent,
+                        ReportError(pipeToken.Extent,
                             nameof(ParserStrings.InvalidEndOfLine),
                             ParserStrings.InvalidEndOfLine,
                             pipeToken.Text);
@@ -5892,8 +5740,7 @@ namespace System.Management.Automation.Language
                     default:
                         // ErrorRecovery: don't eat the token, assume it belongs to something else.
 
-                        ReportError(
-                            pipeToken.Extent,
+                        ReportError(pipeToken.Extent,
                             nameof(ParserStrings.UnexpectedToken),
                             ParserStrings.UnexpectedToken,
                             pipeToken.Text);
@@ -5933,8 +5780,7 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: Just pretend we have a filename and continue parsing.
 
-                    ReportError(
-                        After(redirectionToken),
+                    ReportError(After(redirectionToken),
                         nameof(ParserStrings.MissingFileSpecification),
                         ParserStrings.MissingFileSpecification);
                     filename = new ErrorExpressionAst(redirectionToken.Extent);
@@ -5943,8 +5789,7 @@ namespace System.Management.Automation.Language
                 if (fileRedirectionToken == null)
                 {
                     // Must be an input redirection
-                    ReportError(
-                        redirectionToken.Extent,
+                    ReportError(redirectionToken.Extent,
                         nameof(ParserStrings.RedirectionNotSupported),
                         ParserStrings.RedirectionNotSupported,
                         redirectionToken.Text);
@@ -5966,8 +5811,7 @@ namespace System.Management.Automation.Language
                     // Have we seen something like 1>&2 or 2>&3
                     // ErrorRecovery: This is just a semantic error, so no special recovery.
 
-                    ReportError(
-                        redirectionToken.Extent,
+                    ReportError(redirectionToken.Extent,
                         nameof(ParserStrings.RedirectionNotSupported),
                         ParserStrings.RedirectionNotSupported,
                         mergingRedirectionToken.Text);
@@ -5978,8 +5822,7 @@ namespace System.Management.Automation.Language
                     // Make sure 1>&1, 2>&2, etc. is an error.
                     // ErrorRecovery: This is just a semantic error, so no special recovery.
 
-                    ReportError(
-                        redirectionToken.Extent,
+                    ReportError(redirectionToken.Extent,
                         nameof(ParserStrings.RedirectionNotSupported),
                         ParserStrings.RedirectionNotSupported,
                         mergingRedirectionToken.Text);
@@ -6007,8 +5850,7 @@ namespace System.Management.Automation.Language
                     default:
                         throw PSTraceSource.NewArgumentOutOfRangeException("result.FromStream", result.FromStream);
                 }
-                ReportError(
-                    result.Extent,
+                ReportError(result.Extent,
                     nameof(ParserStrings.StreamAlreadyRedirected),
                     ParserStrings.StreamAlreadyRedirected,
                     errorStream);
@@ -6084,8 +5926,7 @@ namespace System.Management.Automation.Language
 
                         // ErrorRecovery: stop looking for additional arguments, exclude the trailing comma
 
-                        ReportIncompleteInput(
-                            After(commaToken),
+                        ReportIncompleteInput(After(commaToken),
                             nameof(ParserStrings.MissingExpression),
                             ParserStrings.MissingExpression,
                             ",");
@@ -6291,8 +6132,7 @@ namespace System.Management.Automation.Language
 
                         case TokenKind.Comma:
                             endExtent = token.Extent;
-                            ReportError(
-                                token.Extent,
+                            ReportError(token.Extent,
                                 nameof(ParserStrings.MissingArgument),
                                 ParserStrings.MissingArgument);
                             SkipNewlines();
@@ -6318,8 +6158,7 @@ namespace System.Management.Automation.Language
                                 if (parameterArgs == null)
                                 {
                                     extent = parameterToken.Extent;
-                                    ReportError(
-                                        After(extent),
+                                    ReportError(After(extent),
                                         nameof(ParserStrings.ParameterRequiresArgument),
                                         ParserStrings.ParameterRequiresArgument,
                                         parameterToken.Text);
@@ -6419,8 +6258,7 @@ namespace System.Management.Automation.Language
                 if (dotSource || ampersand)
                 {
                     IScriptExtent extent = firstToken.Extent;
-                    ReportError(
-                        extent,
+                    ReportError(extent,
                         nameof(ParserStrings.MissingExpression),
                         ParserStrings.MissingExpression,
                         firstToken.Text);
@@ -6529,8 +6367,7 @@ namespace System.Management.Automation.Language
                         IScriptExtent extent = After(token);
                         // Use token.Text, not token.Kind.Text() b/c the kind might not match the actual operator used
                         // when a case insensitive operator is used.
-                        ReportIncompleteInput(
-                            extent,
+                        ReportIncompleteInput(extent,
                             nameof(ParserStrings.ExpectedValueExpression),
                             ParserStrings.ExpectedValueExpression,
                             token.Text);
@@ -6590,8 +6427,7 @@ namespace System.Management.Automation.Language
             // that it's an incomplete operator.  This simplifies analysis later, e.g. trying to autocomplete
             // operators.
 
-            ReportError(
-                paramToken.Extent,
+            ReportError(paramToken.Extent,
                 nameof(ParserStrings.UnexpectedToken),
                 ParserStrings.UnexpectedToken,
                 paramToken.Text);
@@ -6629,8 +6465,7 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: create an error expression for the ast and break.
 
-                    ReportIncompleteInput(
-                        After(commaToken),
+                    ReportIncompleteInput(After(commaToken),
                         nameof(ParserStrings.MissingExpressionAfterToken),
                         ParserStrings.MissingExpressionAfterToken,
                         commaToken.Text);
@@ -6721,8 +6556,7 @@ namespace System.Management.Automation.Language
 
                     // Use token.Text, not token.Kind.Text() b/c the kind might not match the actual operator used
                     // when a case insensitive operator is used.
-                    ReportIncompleteInput(
-                        After(token),
+                    ReportIncompleteInput(After(token),
                         nameof(ParserStrings.MissingExpressionAfterOperator),
                         ParserStrings.MissingExpressionAfterOperator,
                         token.Text);
@@ -6748,8 +6582,7 @@ namespace System.Management.Automation.Language
                         // ErrorRecovery: We have a list of attributes, and we know it's not before a param statement,
                         // so we know we must have some sort of expression.  Return an error expression then.
 
-                        ReportIncompleteInput(
-                            lastAttribute.Extent,
+                        ReportIncompleteInput(lastAttribute.Extent,
                             nameof(ParserStrings.UnexpectedAttribute),
                             ParserStrings.UnexpectedAttribute,
                             lastAttribute.TypeName.FullName);
@@ -7137,8 +6970,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: Assume only the closing paren is missing, continue as though it was present.
 
                     UngetToken(rParen);
-                    ReportIncompleteInput(
-                        rParen.Extent,
+                    ReportIncompleteInput(rParen.Extent,
                         nameof(ParserStrings.MissingEndParenthesisInSubexpression),
                         ParserStrings.MissingEndParenthesisInSubexpression);
                 }
@@ -7183,8 +7015,7 @@ namespace System.Management.Automation.Language
                 if (pipelineAst == null)
                 {
                     IScriptExtent errorPosition = After(lParen);
-                    ReportIncompleteInput(
-                        errorPosition,
+                    ReportIncompleteInput(errorPosition,
                         nameof(ParserStrings.ExpectedExpression),
                         ParserStrings.ExpectedExpression);
                     pipelineAst = new ErrorStatementAst(errorPosition);
@@ -7196,8 +7027,7 @@ namespace System.Management.Automation.Language
                     // ErrorRecovery: Assume only the closing paren is missing, continue as though it was present.
 
                     UngetToken(rParen);
-                    ReportIncompleteInput(
-                        After(pipelineAst),
+                    ReportIncompleteInput(After(pipelineAst),
                         nameof(ParserStrings.MissingEndParenthesisInExpression),
                         ParserStrings.MissingEndParenthesisInExpression);
                     rParen = null;
@@ -7321,8 +7151,7 @@ namespace System.Management.Automation.Language
                 // ErrorRecovery: pretend we saw a property name, don't bother looking for an invocation,
                 // and keep parsing.
 
-                ReportIncompleteInput(
-                    After(operatorToken),
+                ReportIncompleteInput(After(operatorToken),
                     nameof(ParserStrings.MissingPropertyName),
                     ParserStrings.MissingPropertyName);
                 member = GetSingleCommandArgument(CommandArgumentContext.CommandArgument) ??
@@ -7405,8 +7234,7 @@ namespace System.Management.Automation.Language
                         {
                             // ErrorRecovery: sync at closing paren or newline.
 
-                            ReportIncompleteInput(
-                                After(comma),
+                            ReportIncompleteInput(After(comma),
                                 nameof(ParserStrings.MissingExpressionAfterToken),
                                 ParserStrings.MissingExpressionAfterToken,
                                 TokenKind.Comma.Text());
@@ -7434,8 +7262,7 @@ namespace System.Management.Automation.Language
                     UngetToken(rParen);
                     if (!reportedError)
                     {
-                        ReportIncompleteInput(
-                            arguments.Any() ? After(arguments.Last()) : After(lParen),
+                        ReportIncompleteInput(arguments.Any() ? After(arguments.Last()) : After(lParen),
                             nameof(ParserStrings.MissingEndParenthesisInMethodCall),
                             ParserStrings.MissingEndParenthesisInMethodCall);
                     }
@@ -7463,8 +7290,7 @@ namespace System.Management.Automation.Language
                 // the closing bracket, but build an expression that can't compile.
 
                 var errorExtent = After(lBracket);
-                ReportIncompleteInput(
-                    errorExtent,
+                ReportIncompleteInput(errorExtent,
                     nameof(ParserStrings.MissingArrayIndexExpression),
                     ParserStrings.MissingArrayIndexExpression);
                 indexExpr = new ErrorExpressionAst(lBracket.Extent);
@@ -7480,8 +7306,7 @@ namespace System.Management.Automation.Language
                 // Skip reporting the error if we've already reported a missing index.
                 if (!(indexExpr is ErrorExpressionAst))
                 {
-                    ReportIncompleteInput(
-                        After(indexExpr),
+                    ReportIncompleteInput(After(indexExpr),
                         nameof(ParserStrings.MissingEndSquareBracket),
                         ParserStrings.MissingEndSquareBracket);
                 }
