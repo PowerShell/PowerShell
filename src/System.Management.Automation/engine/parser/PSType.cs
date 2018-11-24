@@ -1118,10 +1118,10 @@ namespace System.Management.Automation.Language
                         maxValue = sbyte.MaxValue;
                         break;
                     case TypeCode.UInt16:
-                        maxValue = UInt16.MaxValue;
+                        maxValue = ushort.MaxValue;
                         break;
                     case TypeCode.UInt32:
-                        maxValue = UInt32.MaxValue;
+                        maxValue = uint.MaxValue;
                         break;
                     case TypeCode.UInt64:
                         maxValue = ulong.MaxValue;
