@@ -1419,6 +1419,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="MissingTypeInStaticPropertyAssignment" xml:space="preserve">
     <value>Cannot assign property, use '{0}{1}'.</value>
   </data>
+  <data name="ClassMemberNameAlreadyExists" xml:space="preserve">
+    <value>A method or property named '{0}' already exists.</value>
+  </data>
   <data name="DebugModeShouldHaveOneValue" xml:space="preserve">
     <value>DebugMode should only have one value.</value>
   </data>

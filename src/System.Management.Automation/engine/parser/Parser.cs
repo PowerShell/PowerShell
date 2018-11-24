@@ -4158,8 +4158,19 @@ namespace System.Management.Automation.Language
                 {
                     if (member != null)
                     {
-                        members.Add(member);
-                        lastExtent = member.Extent;
+                        if (members.Any(m => m.Name.EqualsOrdinalIgnoreCase(member.Name)))
+                        {
+                            ReportIncompleteInput(
+                                member.Extent,
+                                nameof(ParserStrings.ClassMemberNameAlreadyExists),
+                                ParserStrings.ClassMemberNameAlreadyExists,
+                                member.Name);
+                        }
+                        else
+                        {
+                            members.Add(member);
+                            lastExtent = member.Extent;
+                        }
                     }
                     if (astsOnError != null && astsOnError.Count > 0)
                     {
