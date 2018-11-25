@@ -22,7 +22,7 @@ Describe "Basic Alias Provider Tests" -Tags "CI" {
                 $newDrive = New-PSDrive -Name "NewDifferentPSDrive" -PSProvider FileSystem -Root $psDriveRoot
                 $newDrive.Name | Should -BeExactly "NewDifferentPSDrive"
                 $newDrive.Root | Should -BeExactly (Convert-Path $psDriveRoot)
-      `      }
+            }
             finally {
                 Remove-PSDrive -Name "NewDifferentPSDrive" -Force -ErrorAction SilentlyContinue
             }
