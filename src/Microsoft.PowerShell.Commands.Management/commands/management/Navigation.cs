@@ -160,6 +160,7 @@ namespace Microsoft.PowerShell.Commands
                 stopContext.StopProcessing();
             }
         }
+
         internal Collection<CmdletProviderContext> stopContextCollection =
             new Collection<CmdletProviderContext>();
 
@@ -222,6 +223,7 @@ namespace Microsoft.PowerShell.Commands
             get => _force;
             set => _force = value;
         }
+
         private bool _force;
 
         /// <summary>
@@ -2253,7 +2255,7 @@ namespace Microsoft.PowerShell.Commands
         /// Determines if the provider for the specified path supports ShouldProcess
         /// </summary>
         /// <value></value>
-        protected override bool ProviderSupportsShouldProcess => base.DoesProviderSupportShouldProcess(_paths);
+        protected override bool ProviderSupportsShouldProcess => DoesProviderSupportShouldProcess(_paths);
         #endregion Command parameters
 
         #region Command data
@@ -3302,6 +3304,7 @@ namespace Microsoft.PowerShell.Commands
                 RenameItem(WildcardPattern.Unescape(Path), literalPath: true);
             }
         }
+
         private void RenameItem(string path, bool literalPath = false)
         {
             CmdletProviderContext currentContext = CmdletProviderContext;
@@ -3413,7 +3416,6 @@ namespace Microsoft.PowerShell.Commands
 
             // Default to the CmdletProviderContext that will direct output to
             // the pipeline.
-
             currentContext.PassThru = PassThru;
 
             tracer.WriteLine("Rename {0} to {1}", path, NewName);
