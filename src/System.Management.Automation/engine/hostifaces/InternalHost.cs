@@ -299,7 +299,6 @@ namespace System.Management.Automation.Internal.Host
                     commandInfoProperty.Value = callingCommand.CommandInfo;
                 }
 
-#if !CORECLR //TODO:CORECLR StackTrace not in CoreCLR
                 stackTraceProperty = newValue.Properties["StackTrace"];
                 if (stackTraceProperty == null)
                 {
@@ -310,7 +309,6 @@ namespace System.Management.Automation.Internal.Host
                     oldStackTrace = stackTraceProperty.Value;
                     stackTraceProperty.Value = new System.Diagnostics.StackTrace();
                 }
-#endif
 
                 Context.SetVariable(SpecialVariables.CurrentlyExecutingCommandVarPath, newValue);
             }
