@@ -64,13 +64,13 @@ function SyncGalleryToAzArtifacts {
         }
     }
 
-    Write-Verbose -Verbose "Gallery Packages:"
+    "Gallery Packages:`n"
     $galleryPackages
 
-    Write-Verbose -Verbose "Az Artifacts Packages:"
+    "Az Artifacts Packages:`n"
     $azArtifactsPackages
 
-    Write-Verbose -Verbose "Modules to update:"
+    "Modules to update:`n"
     $modulesToUpdate
 
     foreach ($p in $modulesToUpdate) {

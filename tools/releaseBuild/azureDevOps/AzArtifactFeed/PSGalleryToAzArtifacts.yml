@@ -21,7 +21,7 @@ steps:
 
   - powershell: |
       Write-Verbose -Verbose "Packages to upload"
-      (Get-ChildItem "$(Build.ArtifactStagingDirectory)/*.nupkg").FullName
+      if(Test-Path $(Build.ArtifactStagingDirectory)) { Get-ChildItem "$(Build.ArtifactStagingDirectory)/*.nupkg" | ForEach-Object { $_.FullName }}
     displayName: List packages to upload
     condition: succeededOrFailed()
 
@@ -29,4 +29,5 @@ steps:
     displayName: 'NuGet push'
     inputs:
       command: push
-      publishVstsFeed: '366dbb95-b0d7-46d9-a50b-d1e6939d4f66'
+      publishVstsFeed: 'https://mscodehub.pkgs.visualstudio.com/_packaging/pscore-release/nuget/v3/index.json'
+      publishFeedCredentials: 'AzArtifactsFeed'
