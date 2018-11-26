@@ -7594,26 +7594,6 @@ namespace Microsoft.PowerShell.Commands
             IntPtr OutBuffer, int nOutBufferSize,
             out int pBytesReturned, IntPtr lpOverlapped);
 
-#if !CORECLR
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern IntPtr FindFirstFileName(
-                string lpFileName,
-                uint flags,
-                ref UInt32 StringLength,
-                StringBuilder LinkName);
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern bool FindNextFileName(
-                IntPtr hFindStream,
-                ref UInt32 StringLength,
-                StringBuilder LinkName);
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern bool FindClose(IntPtr hFindFile);
-
-#endif
-
         [DllImport(PinvokeDllNames.GetFileInformationByHandleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern bool GetFileInformationByHandle(
                 IntPtr hFile,
