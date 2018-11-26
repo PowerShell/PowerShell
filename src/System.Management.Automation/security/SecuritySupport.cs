@@ -1531,11 +1531,11 @@ namespace System.Management.Automation
 #if UNIX
             return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
 #else
-            return WinScanContent(content, sourceMetadata);
+            return WinScanContent(content, sourceMetadata, warmUp: false);
 #endif
         }
 
-        internal static AmsiNativeMethods.AMSI_RESULT WinScanContent(string content, string sourceMetadata)
+        internal static AmsiNativeMethods.AMSI_RESULT WinScanContent(string content, string sourceMetadata, bool warmUp)
         {
             if (String.IsNullOrEmpty(sourceMetadata))
             {
@@ -1593,6 +1593,13 @@ namespace System.Management.Automation
                             s_amsiInitFailed = true;
                             return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                         }
+                    }
+
+                    if (warmUp)
+                    {
+                        // We are warming up the AMSI component in console startup, and that means we initialize AMSI
+                        // and create a AMSI session, but don't really scan anything.
+                        return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                     }
 
                     AmsiNativeMethods.AMSI_RESULT result = AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_CLEAN;

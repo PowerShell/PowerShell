@@ -41,15 +41,13 @@ namespace System.Management.Automation.Runspaces
             //   * have high disk cost
 
             // We shouldn't create too many tasks.
-
-            // This task takes awhile, so it gets it's own task
+#if !UNIX
+            // Amsi initialize can be a little slow
             Task.Run(() =>
             {
-                // Building the catalog is expensive, so force that to happen early on a background thread, and do so
-                // on a file we are very likely to read anyway.
-                var pshome = Utils.DefaultPowerShellAppBase;
-                var unused = SecuritySupport.IsProductBinary(Path.Combine(pshome, "Modules", "Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Utility.psm1"));
+                AmsiUtils.WinScanContent(content: string.Empty, sourceMetadata: string.Empty, warmUp: true);
             });
+#endif
 
             // One other task for other stuff that's faster, but still a little slow.
             Task.Run(() =>
@@ -57,12 +55,6 @@ namespace System.Management.Automation.Runspaces
                 // Loading the resources for System.Management.Automation can be expensive, so force that to
                 // happen early on a background thread.
                 var unused0 = RunspaceInit.OutputEncodingDescription;
-
-                // Amsi initialize can also be a little slow
-                if (Platform.IsWindows)
-                {
-                    AmsiUtils.Init();
-                }
 
                 // This will init some tables and could load some assemblies.
                 var unused1 = TypeAccelerators.builtinTypeAccelerators;

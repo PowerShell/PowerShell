@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
@@ -49,7 +50,10 @@ namespace System.Management.Automation
 
         internal CompiledScriptBlockData(string scriptText, bool isProductCode)
         {
-            this.IsProductCode = isProductCode;
+            if (isProductCode)
+            {
+                _isProductCode = true;
+            }
             _scriptText = scriptText;
             this.Id = Guid.NewGuid();
         }
@@ -163,11 +167,6 @@ namespace System.Management.Automation
             var sw = new Stopwatch();
             sw.Start();
 #endif
-            if (!IsProductCode && SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File))
-            {
-                this.IsProductCode = true;
-            }
-
             bool etwEnabled = ParserEventSource.Log.IsEnabled();
             if (etwEnabled)
             {
@@ -193,15 +192,28 @@ namespace System.Management.Automation
         private void PerformSecurityChecks()
         {
             var scriptBlockAst = Ast as ScriptBlockAst;
-            if (scriptBlockAst == null)
+            if (scriptBlockAst == null || _isProductCode == true)
             {
                 // Checks are only needed at the top level.
+                // Skip the check for built-in scripts in PowerShell engine, such as the built-in functions.
+                return;
+            }
+
+            var scriptExtent = scriptBlockAst.Extent;
+            var scriptFile = scriptExtent.File;
+
+            if (scriptFile != null &&
+                StringLiterals.PowerShellDataFileExtension.Equals(
+                    Path.GetExtension(scriptFile), StringComparison.OrdinalIgnoreCase)
+                && !ForceMaliciousCodeScan)
+            {
+                // Skip the check for .psd1 files, unless it's being executed by 'Import-LocalizedData',
+                // in which case the 'ForceScan' property will be set to true.
                 return;
             }
 
             // Call the AMSI API to determine if the script block has malicious content
-            var scriptExtent = scriptBlockAst.Extent;
-            var amsiResult = AmsiUtils.ScanContent(scriptExtent.Text, scriptExtent.File);
+            var amsiResult = AmsiUtils.ScanContent(scriptExtent.Text, scriptFile);
 
             if (amsiResult == AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
             {
@@ -269,12 +281,24 @@ namespace System.Management.Automation
         private bool _compiledOptimized;
         private bool _compiledUnoptimized;
         private bool _hasSuspiciousContent;
+        private bool? _isProductCode;
         internal bool DebuggerHidden { get; set; }
         internal bool DebuggerStepThrough { get; set; }
         internal Guid Id { get; private set; }
         internal bool HasLogged { get; set; }
         internal bool IsFilter { get; private set; }
-        internal bool IsProductCode { get; private set; }
+        internal bool ForceMaliciousCodeScan { get; set; }
+        internal bool IsProductCode
+        {
+            get
+            {
+                if (_isProductCode == null)
+                {
+                    _isProductCode = SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File);
+                }
+                return _isProductCode.Value;
+            }
+        }
 
         internal bool GetIsConfiguration()
         {
