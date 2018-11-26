@@ -18,9 +18,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Security;
 using System.Threading;
-#if CORECLR
-using System.Xml.XPath;
-#endif
 
 using Dbg = System.Management.Automation;
 
