@@ -4,6 +4,7 @@
     <Description>PowerShell Core on Windows top-level project</Description>
     <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
+    <TieredCompilation>true</TieredCompilation>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
   </PropertyGroup>

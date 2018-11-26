@@ -678,30 +678,27 @@ namespace System.Management.Automation.Runspaces
             s_runspaceInitTracer.WriteLine("runspace opened successfully");
 
             // Now do initial state configuration that requires an active runspace
-            if (InitialSessionState != null)
+            Exception initError = InitialSessionState.BindRunspace(this, s_runspaceInitTracer);
+            if (initError != null)
             {
-                Exception initError = InitialSessionState.BindRunspace(this, s_runspaceInitTracer);
-                if (initError != null)
-                {
-                    // Log engine health event
-                    LogEngineHealthEvent(initError);
+                // Log engine health event
+                LogEngineHealthEvent(initError);
 
-                    // Log engine for end of engine life
-                    Debug.Assert(_engine.Context != null,
-                                "if startLifeCycleEventWritten is true, ExecutionContext must be present");
-                    MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Stopped);
+                // Log engine for end of engine life
+                Debug.Assert(_engine.Context != null,
+                            "if startLifeCycleEventWritten is true, ExecutionContext must be present");
+                MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Stopped);
 
-                    // Open failed. Set the RunspaceState to Broken.
-                    SetRunspaceState(RunspaceState.Broken, initError);
+                // Open failed. Set the RunspaceState to Broken.
+                SetRunspaceState(RunspaceState.Broken, initError);
 
-                    // Raise the event
-                    RaiseRunspaceStateEvents();
+                // Raise the event
+                RaiseRunspaceStateEvents();
 
-                    // Throw the exception. For asynchronous execution,
-                    // OpenThreadProc will catch it. For synchronous execution
-                    // caller of open will catch it.
-                    throw initError;
-                }
+                // Throw the exception. For asynchronous execution,
+                // OpenThreadProc will catch it. For synchronous execution
+                // caller of open will catch it.
+                throw initError;
             }
 
 #if LEGACYTELEMETRY

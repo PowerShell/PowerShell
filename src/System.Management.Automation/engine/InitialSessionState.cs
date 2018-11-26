@@ -2382,9 +2382,6 @@ namespace System.Management.Automation.Runspaces
             // Setting the module to null fixes that.
             initializedRunspace.ExecutionContext.EngineSessionState.Module = null;
 
-            // Set the SessionStateDrive here since we have all the provider information at this point
-            SetSessionStateDrive(initializedRunspace.ExecutionContext, true);
-
             Exception moduleImportException = ProcessImportModule(initializedRunspace, ModuleSpecificationsToImport, string.Empty, publicCommands, unresolvedCmdsToExpose);
             if (moduleImportException != null)
             {
