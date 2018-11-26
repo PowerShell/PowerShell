@@ -24,6 +24,9 @@ dotnet-uninstall-debian-packages.sh
 # Visual Studio IDE directory
 .vs/
 
+# VS Code directory
+/**/.vscode/
+
 # Project Rider IDE files
 .idea.powershell/
 
