@@ -235,12 +235,7 @@ namespace System.Management.Automation.Help
     /// </summary>
     internal class UpdatableHelpSystem : IDisposable
     {
-#if CORECLR
         private TimeSpan _defaultTimeout;
-#else
-        private AutoResetEvent _completionEvent;
-        private bool _completed;
-#endif
         private Collection<UpdatableHelpProgressEventArgs> _progressEvents;
         private bool _stopping;
         private object _syncObject;
@@ -257,12 +252,7 @@ namespace System.Management.Automation.Help
         internal UpdatableHelpSystem(UpdatableHelpCommandBase cmdlet, bool useDefaultCredentials)
         {
             WebClient = new WebClient();
-#if CORECLR
             _defaultTimeout = new TimeSpan(0, 0, 30);
-#else
-            _completionEvent = new AutoResetEvent(false);
-            _completed = false;
-#endif
             _progressEvents = new Collection<UpdatableHelpProgressEventArgs>();
             Errors = new Collection<Exception>();
             _stopping = false;
@@ -348,7 +338,6 @@ namespace System.Management.Automation.Help
                 OnProgressChanged(this, new UpdatableHelpProgressEventArgs(CurrentModule, commandType, StringUtil.Format(
                     HelpDisplayStrings.UpdateProgressLocating), 0));
 
-#if CORECLR
                 string xml;
                 using (HttpClientHandler handler = new HttpClientHandler())
                 {
@@ -364,9 +353,7 @@ namespace System.Management.Automation.Help
                         }
                     }
                 }
-#else
-                string xml = WebClient.DownloadString(uri);
-#endif
+
                 UpdatableHelpInfo helpInfo = CreateHelpInfo(xml, moduleName, moduleGuid,
                                                             currentCulture: culture, pathOverride: null, verbose: true,
                                                             shouldResolveUri: true, ignoreValidationException: false);
@@ -432,7 +419,6 @@ namespace System.Management.Automation.Help
                         return uri;
                     }
 
-#if CORECLR
                     using (HttpClientHandler handler = new HttpClientHandler())
                     {
                         handler.AllowAutoRedirect = false;
@@ -487,64 +473,6 @@ namespace System.Management.Automation.Help
                             }
                         }
                     }
-#else
-                    HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
-
-                    request.AllowAutoRedirect = false;
-                    request.Timeout = 30000;
-
-                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-                    WebHeaderCollection headers = response.Headers;
-
-                    try
-                    {
-                        if (response.StatusCode == HttpStatusCode.Found ||
-                            response.StatusCode == HttpStatusCode.Redirect ||
-                            response.StatusCode == HttpStatusCode.Moved ||
-                            response.StatusCode == HttpStatusCode.MovedPermanently)
-                        {
-                            Uri responseUri = new Uri(headers["Location"], UriKind.RelativeOrAbsolute);
-
-                            if (responseUri.IsAbsoluteUri)
-                            {
-                                uri = responseUri.ToString();
-                            }
-                            else
-                            {
-                                uri = uri.Replace(request.Address.AbsolutePath, responseUri.ToString());
-                            }
-
-                            uri = uri.Trim();
-
-                            if (verbose)
-                            {
-                                _cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.URIRedirectWarningToHost, uri));
-                            }
-
-                            if (uri.EndsWith("/", StringComparison.OrdinalIgnoreCase))
-                            {
-                                return uri;
-                            }
-                        }
-                        else if (response.StatusCode == HttpStatusCode.OK)
-                        {
-                            if (uri.EndsWith("/", StringComparison.OrdinalIgnoreCase))
-                            {
-                                return uri;
-                            }
-                            else
-                            {
-                                throw new UpdatableHelpSystemException("InvalidHelpInfoUri", StringUtil.Format(HelpDisplayStrings.InvalidHelpInfoUri, uri),
-                                    ErrorCategory.InvalidOperation, null, null);
-                            }
-                        }
-                    }
-                    finally
-                    {
-                        response.Close();
-                    }
-#endif
                 }
             }
             catch (UriFormatException e)
@@ -817,16 +745,7 @@ namespace System.Management.Automation.Help
         /// </summary>
         internal void CancelDownload()
         {
-#if CORECLR
             _cancelTokenSource.Cancel();
-#else
-            if (WebClient.IsBusy)
-            {
-                WebClient.CancelAsync();
-                _completed = true;
-                _completionEvent.Set();
-            }
-#endif
             _stopping = true;
         }
 
@@ -890,17 +809,11 @@ namespace System.Management.Automation.Help
 
             string uri = helpContentUri + fileName;
 
-#if CORECLR
             return DownloadHelpContentHttpClient(uri, Path.Combine(path, fileName), commandType);
-#else
-            return DownloadHelpContentWebClient(uri, Path.Combine(path, fileName), culture, commandType);
-#endif
         }
 
-#if CORECLR
         /// <summary>
-        /// Downloads the help content and saves it to a directory. The goal is to achieve
-        /// functional parity with WebClient.DownloadFileAsync() using CoreCLR-compatible APIs.
+        /// Downloads the help content and saves it to a directory.
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="fileName"></param>
@@ -980,34 +893,6 @@ namespace System.Management.Automation.Help
                 }
             }
         }
-
-#else
-
-        /// <summary>
-        /// Downloads help content and saves it in the specified file.
-        /// </summary>
-        /// <param name="uri"></param>
-        /// <param name="fileName"></param>
-        /// <param name="culture"></param>
-        /// <param name="commandType"></param>
-        /// <returns></returns>
-        private bool DownloadHelpContentWebClient(string uri, string fileName, string culture, UpdatableHelpCommandType commandType)
-        {
-            WebClient.DownloadFileAsync(new Uri(uri), fileName, culture);
-
-            OnProgressChanged(this, new UpdatableHelpProgressEventArgs(CurrentModule, commandType, StringUtil.Format(
-                HelpDisplayStrings.UpdateProgressConnecting), 100));
-
-            while (!_completed || WebClient.IsBusy)
-            {
-                _completionEvent.WaitOne();
-
-                SendProgressEvents(commandType);
-            }
-
-            return (Errors.Count == 0);
-        }
-#endif
 
         private void SendProgressEvents(UpdatableHelpCommandType commandType)
         {
