@@ -148,6 +148,7 @@ function Get-EnvironmentInformation
         $environment += @{'IsOpenSUSE42.1' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'}
         $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsRedHat}
         $environment += @{'IsSUSEFamily' = $Environment.IsSLES -or $Environment.IsOpenSUSE}
+        $environment += @{'IsAlpine' = $LinuxInfo.ID -match 'alpine'}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
         # https://github.com/PowerShell/PowerShell/issues/2511
@@ -160,7 +161,8 @@ function Get-EnvironmentInformation
             $environment.IsDebian -or
             $environment.IsUbuntu -or
             $environment.IsRedHatFamily -or
-            $environment.IsSUSEFamily)
+            $environment.IsSUSEFamily -or
+            $environment.IsAlpine)
         ) {
             throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
         }
@@ -224,7 +226,7 @@ function Start-PSBuild {
         # If this parameter is not provided it will get determined automatically.
         [ValidateSet("fxdependent",
                      "linux-arm",
-                     "linux-musl-x64",
+                     "alpine-x64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
@@ -594,7 +596,7 @@ function New-PSOptions {
         [ValidateSet("",
                      "fxdependent",
                      "linux-arm",
-                     "linux-musl-x64",
+                     "alpine-x64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
@@ -1633,6 +1635,12 @@ function Start-PSBootstrap {
 
                 # Install patched version of curl
                 Start-NativeExecution { brew install curl --with-openssl --with-gssapi } -IgnoreExitcode
+            } elseif ($Environment.IsAlpine) {
+                $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
+
+                Start-NativeExecution {
+                    Invoke-Expression "apk add $Deps"
+                }
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
@@ -2054,7 +2062,7 @@ function Start-CrossGen {
 
         [Parameter(Mandatory=$true)]
         [ValidateSet("linux-arm",
-                     "linux-musl-x64",
+                     "alpine-x64",
                      "linux-x64",
                      "osx-x64",
                      "win-arm",
