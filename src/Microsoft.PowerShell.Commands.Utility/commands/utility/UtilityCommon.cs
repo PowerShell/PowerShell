@@ -60,35 +60,6 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Utility class to contain resources for the Microsoft.PowerShell.Utility module.
-    /// </summary>
-    public static class UtilityResources
-    {
-        /// <summary>
-        /// </summary>
-        public static string PathDoesNotExist { get { return UtilityCommonStrings.PathDoesNotExist; } }
-
-        /// <summary>
-        /// </summary>
-        public static string FileReadError { get { return UtilityCommonStrings.FileReadError; } }
-
-        /// <summary>
-        /// The resource string used to indicate 'PATH:' in the formating header.
-        /// </summary>
-        public static string FormatHexPathPrefix { get { return UtilityCommonStrings.FormatHexPathPrefix; } }
-
-        /// <summary>
-        /// Error message to indicate that requested algorithm is not supported on the target platform.
-        /// </summary>
-        public static string AlgorithmTypeNotSupported { get { return UtilityCommonStrings.AlgorithmTypeNotSupported; } }
-
-        /// <summary>
-        /// The file '{0}' could not be parsed as a PowerShell Data File.
-        /// </summary>
-        public static string CouldNotParseAsPowerShellDataFile { get { return UtilityCommonStrings.CouldNotParseAsPowerShellDataFile; } }
-    }
-
-    /// <summary>
     /// ByteCollection is used as a wrapper class for the collection of bytes.
     /// </summary>
     public class ByteCollection
