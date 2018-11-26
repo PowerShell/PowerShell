@@ -2975,6 +2975,31 @@ $script:RESX_TEMPLATE = @'
 </root>
 '@
 
+function Get-UniquePackageFolderName {
+    param(
+        [Parameter(Mandatory)] $Root
+    )
+
+    $packagePath = Join-Path $Root 'TestPackage'
+
+    $triesLeft = 10
+
+    while(Test-Path $packagePath) {
+        $suffix = Get-Random
+
+        # Not using Guid to avoid maxpath problems as in example below.
+        # Example: 'TestPackage-ba0ae1db-8512-46c5-8b6c-1862d33a2d63\test\powershell\Modules\Microsoft.PowerShell.Security\TestData\CatalogTestData\UserConfigProv\DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.schema.mof'
+        $packagePath = Join-Path $Root "TestPackage_$suffix"
+        $triesLeft--
+
+        if ($triesLeft -le 0) {
+            throw "Could find unique folder name for package path"
+        }
+    }
+
+    $packagePath
+}
+
 function New-TestPackage
 {
     [CmdletBinding()]
@@ -2995,13 +3020,14 @@ function New-TestPackage
 
     $rootFolder = $env:TEMP
 
+    # In some build agents, typically macOS on AzDevOps, $env:TEMP might not be set.
     if (-not $rootFolder -and $env:TF_BUILD) {
         $rootFolder = $env:AGENT_WORKFOLDER
     }
 
     Write-Verbose -Verbose "RootFolder: $rootFolder"
+    $packageRoot = Get-UniquePackageFolderName -Root $rootFolder
 
-    $packageRoot = Join-Path $rootFolder ('TestPackage-' + (new-guid))
     $null = New-Item -ItemType Directory -Path $packageRoot -Force
     $packagePath = Join-Path $Destination "TestPackage.zip"
     Write-Verbose -Verbose "PackagePath: $packagePath"
