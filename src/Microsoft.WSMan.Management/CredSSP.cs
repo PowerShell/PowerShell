@@ -330,15 +330,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-#if !CORECLR
-            if (Environment.OSVersion.Version.Major < 6)
-            {
-                //OS is XP/Win2k3. Throw error.
-                WSManHelper helper = new WSManHelper(this);
-                string message = helper.FormatResourceMsgFromResourcetext("CmdletNotAvailable");
-                throw new InvalidOperationException(message);
-            }
-#endif
             //If not running elevated, then throw an "elevation required" error message.
             WSManHelper.ThrowIfNotAdministrator();
 
@@ -440,14 +431,6 @@ namespace Microsoft.WSMan.Management
             //If not running elevated, then throw an "elevation required" error message.
             WSManHelper.ThrowIfNotAdministrator();
             helper = new WSManHelper(this);
-#if !CORECLR
-            if (Environment.OSVersion.Version.Major < 6)
-            {
-                //OS is XP/Win2k3. Throw error.
-                string message = helper.FormatResourceMsgFromResourcetext("CmdletNotAvailable");
-                throw new InvalidOperationException(message);
-            }
-#endif
 
             // DelegateComputer cannot be specified when Role is other than client
             if ((delegatecomputer != null) && !Role.Equals(Client, StringComparison.OrdinalIgnoreCase))
@@ -671,11 +654,7 @@ namespace Microsoft.WSMan.Management
                 //open the registry key.If key is not present,create a new one
                 Credential_Delegation_Key = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation, true);
                 if (Credential_Delegation_Key == null)
-                    Credential_Delegation_Key = rootKey.CreateSubKey(Registry_Path_Credentials_Delegation
-#if !CORECLR
-                        , RegistryKeyPermissionCheck.ReadWriteSubTree
-#endif
-                        );
+                    Credential_Delegation_Key = rootKey.CreateSubKey(Registry_Path_Credentials_Delegation, RegistryKeyPermissionCheck.ReadWriteSubTree);
 
                 Credential_Delegation_Key.SetValue(helper.Key_Allow_Fresh_Credentials, 1, RegistryValueKind.DWord);
                 Credential_Delegation_Key.SetValue(helper.Key_Concatenate_Defaults_AllowFresh, 1, RegistryValueKind.DWord);
@@ -683,11 +662,7 @@ namespace Microsoft.WSMan.Management
                 // add the delegate value
                 Allow_Fresh_Credential_Key = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials, true);
                 if (Allow_Fresh_Credential_Key == null)
-                    Allow_Fresh_Credential_Key = rootKey.CreateSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials
-#if !CORECLR
-                        , RegistryKeyPermissionCheck.ReadWriteSubTree
-#endif
-                        );
+                    Allow_Fresh_Credential_Key = rootKey.CreateSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials, RegistryKeyPermissionCheck.ReadWriteSubTree);
 
                 if (Allow_Fresh_Credential_Key != null)
                 {
@@ -833,17 +808,7 @@ namespace Microsoft.WSMan.Management
         {
             //If not running elevated, then throw an "elevation required" error message.
             WSManHelper.ThrowIfNotAdministrator();
-
             helper = new WSManHelper(this);
-#if !CORECLR
-            if (Environment.OSVersion.Version.Major < 6)
-            {
-                //OS is XP/Win2k3. Throw error.
-                string message = helper.FormatResourceMsgFromResourcetext("CmdletNotAvailable");
-                throw new InvalidOperationException(message);
-            }
-#endif
-
             IWSManSession m_SessionObj = null;
             try
             {
