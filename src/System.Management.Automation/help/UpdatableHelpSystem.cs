@@ -17,13 +17,10 @@ using System.Text;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
 using System.Security;
-#if CORECLR
 using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
-#else
 using System.Xml.Schema;
-#endif
 
 namespace System.Management.Automation.Help
 {
@@ -537,9 +534,7 @@ namespace System.Management.Automation.Help
             try
             {
                 document = CreateValidXmlDocument(xml, HelpInfoXmlNamespace, HelpInfoXmlSchema,
-#if !CORECLR
                     new ValidationEventHandler(HelpInfoValidationHandler),
-#endif
                     true);
             }
             catch (UpdatableHelpSystemException e)
@@ -611,46 +606,6 @@ namespace System.Management.Automation.Help
 
             return helpInfo;
         }
-
-#if CORECLR
-
-        /// <summary>
-        /// Creates a valid xml document
-        /// </summary>
-        /// <param name="xml">input xml</param>
-        /// <param name="ns">schema namespace</param>
-        /// <param name="schema">xml schema</param>
-        /// <param name="helpInfo">HelpInfo or HelpContent?</param>
-        private XmlDocument CreateValidXmlDocument(string xml, string ns, string schema, bool helpInfo)
-        {
-            XmlReaderSettings settings = new XmlReaderSettings();
-
-            XmlReader reader = XmlReader.Create(new StringReader(xml), settings);
-            XmlDocument document = new XmlDocument();
-
-            try
-            {
-                document.Load(reader);
-            }
-            catch (XmlException e)
-            {
-                if (helpInfo)
-                {
-                    throw new UpdatableHelpSystemException(HelpInfoXmlValidationFailure,
-                        StringUtil.Format(HelpDisplayStrings.HelpInfoXmlValidationFailure, e.Message),
-                        ErrorCategory.InvalidData, null, e);
-                }
-                else
-                {
-                    throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
-                        StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure, e.Message),
-                        ErrorCategory.InvalidData, null, e);
-                }
-            }
-            return document;
-        }
-
-#else
 
         /// <summary>
         /// Creates a valid xml document
@@ -733,8 +688,6 @@ namespace System.Management.Automation.Help
                     break;
             }
         }
-
-#endif
 
         #endregion
 
@@ -1269,11 +1222,7 @@ namespace System.Management.Automation.Help
         {
             installed = new Collection<string>();
 
-#if CORECLR // TODO:CORECLR Disabling this because XML Schemas are not supported for CoreCLR
-            string xsd = "Remove this when adding schema support";
-#else
             string xsd = LoadStringFromPath(_cmdlet, xsdPath, null);
-#endif
 
             // We only accept txt files and xml files
             foreach (string file in Directory.GetFiles(sourcePath))
@@ -1383,9 +1332,7 @@ namespace System.Management.Automation.Help
                                 }
 
                                 CreateValidXmlDocument(node.OuterXml, targetNamespace, xsd,
-#if !CORECLR
                                     new ValidationEventHandler(HelpContentValidationHandler),
-#endif
                                     false);
                             }
                         }
