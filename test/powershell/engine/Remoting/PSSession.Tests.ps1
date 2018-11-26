@@ -73,12 +73,7 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
     It "<Name>" -TestCases $testCases {
         param ($scriptBlock, $expectedErrorCode)
 
-        try {
-            & $scriptBlock
-            throw "No Exception!"
-        }
-        catch {
-            $_.Exception.ErrorCode | Should -Be $expectedErrorCode
-        }
+        $er = { & $scriptBlock } | Should -Throw -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand' -PassThru
+        $er.Exception.ErrorCode | Should -Be $expectedErrorCode
     }
 }
