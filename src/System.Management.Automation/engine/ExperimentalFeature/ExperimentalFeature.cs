@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Configuration;
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Experimental feature names that are enabled in the config file.
         /// </summary>
-        internal static readonly ImmutableHashSet<string> EnabledExperimentalFeatureNames;
+        internal static readonly ReadOnlyHashSet<string> EnabledExperimentalFeatureNames;
 
         /// <summary>
         /// Type initializer. Initialize the engine experimental feature list.
@@ -99,7 +99,7 @@ namespace System.Management.Automation
             var engineExpFeatureMap = engineFeatures.ToDictionary(f => f.Name, StringComparer.OrdinalIgnoreCase);
             EngineExperimentalFeatureMap = new ReadOnlyDictionary<string, ExperimentalFeature>(engineExpFeatureMap);
 
-            // Initialize the immutable hashset 'EnabledExperimentalFeatureNames'.
+            // Initialize the readonly hashset 'EnabledExperimentalFeatureNames'.
             // The initialization of 'EnabledExperimentalFeatureNames' is deliberately made in the type initializer so that:
             //   1. 'EnabledExperimentalFeatureNames' can be declared as readonly;
             //   2. No need to deal with initialization from multiple threads;
@@ -119,11 +119,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Process the array of enabled feature names retrieved from configuration.
         /// Ignore invalid feature names and unavailable engine feature names, and
-        /// return an ImmutableHashSet of the valid enabled feature names.
+        /// return an ReadOnlyHashSet of the valid enabled feature names.
         /// </summary>
-        private static ImmutableHashSet<string> ProcessEnabledFeatures(string[] enabledFeatures)
+        private static ReadOnlyHashSet<string> ProcessEnabledFeatures(string[] enabledFeatures)
         {
-            if (enabledFeatures.Length == 0) { return ImmutableHashSet<string>.Empty; }
+            if (enabledFeatures.Length == 0) { return ReadOnlyHashSet<string>.Empty; }
 
             var list = new List<string>(enabledFeatures.Length);
             foreach (string name in enabledFeatures)
@@ -151,7 +151,7 @@ namespace System.Management.Automation
                     LogError(PSEventId.ExperimentalFeature_InvalidName, name, message);
                 }
             }
-            return ImmutableHashSet.CreateRange(StringComparer.OrdinalIgnoreCase, list);
+            return new ReadOnlyHashSet<string>(new HashSet<string>(list, StringComparer.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -338,5 +338,199 @@ namespace System.Management.Automation
             }
         }
         private ExperimentAction _effectiveAction = ExperimentAction.None;
+    }
+
+    /// <summary>
+    /// A readonly Hashset
+    /// </summary>
+    public sealed class ReadOnlyHashSet<T> : ISet<T>
+    {
+        private HashSet<T> _hashset;
+
+        /// <summary>
+        /// Constructor for the readonly Hashset.
+        /// </summary>
+        internal ReadOnlyHashSet(HashSet<T> hashset)
+        {
+            if (hashset == null)
+            {
+                throw new ArgumentNullException(nameof(hashset));
+            }
+            _hashset = hashset;
+        }
+
+        /// <summary>
+        /// Get an empty singleton.
+        /// </summary>
+        public static readonly ReadOnlyHashSet<T> Empty = new ReadOnlyHashSet<T>(new HashSet<T>(capacity: 0));
+
+        /// <summary>
+        /// Get the count of the Hashset.
+        /// </summary>
+        public int Count => _hashset.Count;
+
+        /// <summary>
+        /// Indicate if it's a readonly Hashset.
+        /// </summary>
+        public bool IsReadOnly => true;
+
+        /// <summary>
+        /// Check if the set contains an item.
+        /// </summary>
+        public bool Contains(T item)
+        {
+            return _hashset.Contains(item);
+        }
+
+        /// <summary>
+        /// Copy items to an array.
+        /// </summary>
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            _hashset.CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// GetEnumerator method.
+        /// </summary>
+        public IEnumerator<T> GetEnumerator()
+        {
+            return _hashset.GetEnumerator();
+        }
+
+        /// <summary>
+        /// IsProperSubsetOf method.
+        /// </summary>
+        public bool IsProperSubsetOf(IEnumerable<T> other)
+        {
+            return _hashset.IsProperSubsetOf(other);
+        }
+
+        /// <summary>
+        /// IsProperSupersetOf method.
+        /// </summary>
+        public bool IsProperSupersetOf(IEnumerable<T> other)
+        {
+            return _hashset.IsProperSupersetOf(other);
+        }
+
+        /// <summary>
+        /// IsSubsetOf method.
+        /// </summary>
+        public bool IsSubsetOf(IEnumerable<T> other)
+        {
+            return _hashset.IsSubsetOf(other);
+        }
+
+        /// <summary>
+        /// IsSupersetOf method.
+        /// </summary>
+        public bool IsSupersetOf(IEnumerable<T> other)
+        {
+            return _hashset.IsSupersetOf(other);
+        }
+
+        /// <summary>
+        /// Overlaps method.
+        /// </summary>
+        public bool Overlaps(IEnumerable<T> other)
+        {
+            return _hashset.Overlaps(other);
+        }
+
+        /// <summary>
+        /// SetEquals method.
+        /// </summary>
+        public bool SetEquals(IEnumerable<T> other)
+        {
+            return _hashset.SetEquals(other);
+        }
+
+        /// <summary>
+        /// Add method.
+        /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// Not supported for a readonly Hashset.
+        /// </exception>
+        public bool Add(T item)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Remove method.
+        /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// Not supported for a readonly Hashset.
+        /// </exception>
+        public bool Remove(T item)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Clear method.
+        /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// Not supported for a readonly Hashset.
+        /// </exception>
+        public void Clear()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// ExceptWith method.
+        /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// Not supported for a readonly Hashset.
+        /// </exception>
+        public void ExceptWith(IEnumerable<T> other)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// IntersectWith method.
+        /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// Not supported for a readonly Hashset.
+        /// </exception>
+        public void IntersectWith(IEnumerable<T> other)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// SymmetricExceptWith method.
+        /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// Not supported for a readonly Hashset.
+        /// </exception>
+        public void SymmetricExceptWith(IEnumerable<T> other)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// UnionWith method.
+        /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// Not supported for a readonly Hashset.
+        /// </exception>
+        public void UnionWith(IEnumerable<T> other)
+        {
+            throw new NotSupportedException();
+        }
+
+        void ICollection<T>.Add(T item)
+        {
+            throw new NotSupportedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _hashset.GetEnumerator();
+        }
     }
 }
