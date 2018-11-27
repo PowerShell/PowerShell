@@ -25,7 +25,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm", 'tar-musl', 'fxdependent')]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm", 'tar-alpine', 'fxdependent')]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -67,8 +67,8 @@ function Start-PSPackage {
             $WindowsRuntime, "Release"
         } elseif ($Type -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-        } elseif ($Type -eq "tar-musl") {
-            New-PSOptions -Configuration "Release" -Runtime "Linux-musl-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        } elseif ($Type -eq "tar-alpine") {
+            New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
@@ -112,7 +112,7 @@ function Start-PSPackage {
             $PSModuleRestoreCorrect = $true
         }
 
-        $precheckFailed = if ($Type -eq 'fxdependent') {
+        $precheckFailed = if ($Type -eq 'fxdependent' -or $Type -eq 'tar-alpine') {
             ## We do not check for runtime and crossgen for framework dependent package.
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
@@ -376,13 +376,13 @@ function Start-PSPackage {
                     New-TarballPackage @Arguments
                 }
             }
-            "tar-musl" {
+            "tar-alpine" {
                 $Arguments = @{
                     PackageSourcePath = $Source
                     Name = $Name
                     Version = $Version
                     Force = $Force
-                    Architecture = "musl-x64"
+                    Architecture = "alpine-x64"
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -1499,7 +1499,7 @@ function New-UnifiedNugetPackage
         [string] $LinuxArm32BinPath,
 
         [Parameter(Mandatory = $false)]
-        [string] $LinuxMuslBinPath,
+        [string] $LinuxAlpineBinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $LinuxBinPath,
@@ -1568,9 +1568,9 @@ function New-UnifiedNugetPackage
             {
                 CreateNugetPlatformFolder -Platform 'linux-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxArm32BinPath
 
-                if ($linuxMuslBinPath)
+                if ($linuxAlpineBinPath)
                 {
-                    CreateNugetPlatformFolder -Platform 'linux-musl-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxMuslBinPath
+                    CreateNugetPlatformFolder -Platform 'alpine-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxAlpineBinPath
                 }
 
                 CreateNugetPlatformFolder -Platform 'linux-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxBinPath
