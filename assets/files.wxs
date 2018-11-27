@@ -1641,9 +1641,6 @@
           <Component Id="cmp2DF9FE0BD560EB7DC8489A259330C2C6" Guid="{1C027D01-228F-4878-8E05-A6EC7602253B}">
             <File Id="fil70CD54BF55F5335B82B2BED64BDB246D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1" />
           </Component>
-          <Component Id="cmpA4E56A46B68CE37D7731DB1F96458D10" Guid="{B7F5384B-6F82-4839-ADA2-5C1C2A5FBEAE}">
-            <File Id="fil2471B9979A48B7FA2E1E46E597EB337A" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psm1" />
-          </Component>
         </Directory>
         <Directory Id="dirAB5880051B03D55D6C333CF1F67C7F76" Name="PSDesiredStateConfiguration">
           <Component Id="cmp9723892C7119DFDFD3A6FAE8027B053F" Guid="{C3A2E60E-7F0F-44D0-B54E-2E4B73CE7602}">
@@ -2733,7 +2730,6 @@
       <ComponentRef Id="cmpB924CBBD7AE45EF70866F140D8E133E9" />
       <ComponentRef Id="cmpDC2EF4541FA5A2E63F36A8CD6C5FA51B" />
       <ComponentRef Id="cmp2DF9FE0BD560EB7DC8489A259330C2C6" />
-      <ComponentRef Id="cmpA4E56A46B68CE37D7731DB1F96458D10" />
       <ComponentRef Id="cmp9723892C7119DFDFD3A6FAE8027B053F" />
       <ComponentRef Id="cmp6DAFD01CAA3A4C67185922F445EDE495" />
       <ComponentRef Id="cmp4AF592F1EDC8794BF4A3CCC2DCB717DB" />
