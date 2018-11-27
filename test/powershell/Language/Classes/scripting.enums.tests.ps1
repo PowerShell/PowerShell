@@ -106,12 +106,14 @@ Describe 'enums' -Tags "CI" {
     Context 'Enum with negative user-specified values' {
         enum V1 {
             A = -4
-            B
+            B = [int]::MinValue
+            C
         }
 
         It 'Negative values are correctly assigned to members' {
             [V1]::A.value__ | Should -Be -4
-            [V1]::B.value__ | Should -Be -3
+            [V1]::B.value__ | Should -Be -2147483648
+            [V1]::C.value__ | Should -Be -2147483647
         }
     }
 }
