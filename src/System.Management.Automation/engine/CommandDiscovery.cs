@@ -654,7 +654,7 @@ namespace System.Management.Automation
             processor.Command.MyInvocation.InvocationName = commandInfo.Name;
 
             return processor;
-        } // LookupCommandProcessor
+        }
 
         internal static void ShouldRun(ExecutionContext context, PSHost host, CommandInfo commandInfo, CommandOrigin commandOrigin)
         {
@@ -1332,7 +1332,7 @@ namespace System.Management.Automation
 
             // Construct the CommandPathSearch object and return it.
             return new CommandPathSearch(patterns, lookupPathArray, Context);
-        } // GetCommandPathSearcher
+        }
 
         /// <summary>
         /// Gets the resolved paths contained in the PATH environment
@@ -1388,7 +1388,7 @@ namespace System.Management.Automation
 
             // Cache the new lookup paths
             return _cachedLookupPaths ?? (_cachedLookupPaths = result);
-        } // GetLookupDirectoryPaths
+        }
 
         /// <summary>
         /// The cached list of lookup paths. It can be invalidated by
@@ -1426,8 +1426,8 @@ namespace System.Management.Automation
                 }
 
                 return s_cachedPathExtCollectionWithPs1;
-            } // get
-        } // PathExtensions
+            }
+        }
 
         /// <summary>
         /// Gets the PATHEXT environment variable extensions and tokenizes them.
@@ -1445,8 +1445,8 @@ namespace System.Management.Automation
                 }
 
                 return s_cachedPathExtCollection;
-            } // get
-        } // PathExtensions
+            }
+        }
 
         private static void InitPathExtCache(string pathExt)
         {
@@ -1553,7 +1553,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // GetCmdletInfo
+        }
 
         /// <summary>
         /// Removes a cmdlet from the cmdlet cache.
@@ -1748,7 +1748,7 @@ namespace System.Management.Automation
                 }
             }
             return result;
-        } // IndexOfRelativePath
+        }
 
         /// <summary>
         /// Finds the first index of the specified string. The string
@@ -1782,7 +1782,7 @@ namespace System.Management.Automation
             }
             return result;
         }
-    } // LookupPathCollection
+    }
 
     // Guid is {ea9e8155-5042-5537-0b73-8c0e6b53f398}
     [EventSource(Name = "Microsoft-PowerShell-CommandDiscovery")]

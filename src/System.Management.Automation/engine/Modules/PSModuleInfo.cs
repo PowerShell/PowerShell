@@ -1533,7 +1533,7 @@ namespace System.Management.Automation
 
         private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_appdomainModulePathCache =
             new System.Collections.Concurrent.ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-    } // PSModuleInfo
+    }
 
     /// <summary>
     /// Indicates the type of a module.

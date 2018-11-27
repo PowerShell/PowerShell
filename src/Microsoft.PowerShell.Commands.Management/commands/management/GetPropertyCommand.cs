@@ -26,13 +26,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -45,14 +45,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// The properties to retrieve from the item
@@ -64,13 +64,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _property;
-            } // get
+            }
 
             set
             {
                 _property = value;
             }
-        } // Property
+        }
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
             return InvokeProvider.Property.GetPropertyDynamicParameters(
                 ".",
                 SessionStateUtilities.ConvertArrayToCollection<string>(_property), context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -157,10 +157,10 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
             }
-        } // ProcessRecord
+        }
 
         #endregion Command code
-    } // GetItemPropertyCommand
+    }
 
     /// <summary>
     /// A command to get the property value of an item at a specified path.
@@ -181,13 +181,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 paths = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -200,14 +200,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return paths;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// The properties to retrieve from the item
@@ -220,13 +220,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _property;
-            } // get
+            }
 
             set
             {
                 _property = value;
             }
-        } // Property
+        }
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Commands
             return InvokeProvider.Property.GetPropertyDynamicParameters(
                 ".",
                 SessionStateUtilities.ConvertArrayToCollection<string>(_property), context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -340,4 +340,4 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Command code
     }
-} // namespace Microsoft.PowerShell.Commands
+}

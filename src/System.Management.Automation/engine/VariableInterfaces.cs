@@ -20,7 +20,7 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // PSVariableInterfaces private
+        }
 
         /// <summary>
         /// Constructs a facade for the specified session.
@@ -39,7 +39,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // PSVariableInterfaces internal
+        }
 
         #endregion Constructors
 
@@ -78,7 +78,7 @@ namespace System.Management.Automation
             }
 
             return _sessionState.GetVariable(name);
-        } // Get
+        }
 
         /// <summary>
         /// Gets the specified variable from session state in the specified scope.
@@ -115,7 +115,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetVariableAtScope(name, scope);
-        } // GetAtScope
+        }
 
         /// <summary>
         /// Gets the specified variable value from session state.
@@ -152,7 +152,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetVariableValue(name);
-        } // GetValue
+        }
 
         /// <summary>
         /// Gets the specified variable from session state. If the variable
@@ -194,7 +194,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetVariableValue(name) ?? defaultValue;
-        } // GetValue
+        }
 
         /// <summary>
         /// Gets the specified variable from session state in the specified scope.
@@ -244,7 +244,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetVariableValueAtScope(name, scope);
-        } // GetValueAtScope
+        }
 
         /// <summary>
         /// Sets the variable to the specified value.
@@ -284,7 +284,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.SetVariableValue(name, value, CommandOrigin.Internal);
-        } // SetVariable
+        }
 
         /// <summary>
         /// Sets the variable.
@@ -307,7 +307,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.SetVariable(variable, false, CommandOrigin.Internal);
-        } // SetVariable
+        }
 
         /// <summary>
         /// Removes the specified variable from session state.
@@ -344,7 +344,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RemoveVariable(name);
-        } // RemoveVariable
+        }
 
         /// <summary>
         /// Removes the specified variable from session state.
@@ -367,7 +367,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.RemoveVariable(variable);
-        } // RemoveVariable
+        }
 
         /// <summary>
         /// Removes the specified variable from the specified scope
@@ -444,6 +444,6 @@ namespace System.Management.Automation
         private SessionStateInternal _sessionState;
 
         #endregion private data
-    } // PSVariableIntrinsics
+    }
 }
 

@@ -25,13 +25,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _path;
-            } // get
+            }
 
             set
             {
                 _path = value;
-            } // set
-        } // Path
+            }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -44,14 +44,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _path;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 _path = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// The properties to be renamed on the item
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
                 return InvokeProvider.Property.RenamePropertyDynamicParameters(Path, Name, NewName, context);
             }
             return InvokeProvider.Property.RenamePropertyDynamicParameters(".", Name, NewName, context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -140,8 +140,8 @@ namespace Microsoft.PowerShell.Commands
                         pathNotFound.ErrorRecord,
                         pathNotFound));
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // RenameItemPropertyCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

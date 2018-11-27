@@ -116,6 +116,6 @@ namespace System.Management.Automation
             get { return _message; }
         }
         private string _message;
-    } // PSSecurityException
-} // System.Management.Automation
+    }
+}
 

@@ -4565,7 +4565,7 @@ namespace System.Management.Automation
                                 }
 
                                 pool.RemoteRunspacePoolInternal.CreatePowerShellOnServerAndInvoke(RemotePowerShell);
-                            } // lock
+                            }
 
                             RaiseStateChangeEvent(InvocationStateInfo.Clone());
                         }

@@ -76,7 +76,7 @@ namespace System.Management.Automation
             {
                 base.Target = value;
             }
-        } // Target
+        }
 
         #region Parameter default values
 
@@ -98,7 +98,7 @@ namespace System.Management.Automation
                 result = parameter.Value;
             }
             return result;
-        } // GetDefaultParameterValue
+        }
 
         #endregion Parameter default values
 
@@ -127,8 +127,8 @@ namespace System.Management.Automation
 
             Target[name].Value = value;
             this.CommandLineParameters.Add(name, value);
-        } // BindParameter
+        }
 
         #endregion Parameter binding
-    } // RuntimeDefinedParameterBinder
-} // namespace System.Management.Automation
+    }
+}

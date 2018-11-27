@@ -36,7 +36,7 @@ namespace System.Management.Automation
             {
                 return ((NativeCommandParameterBinder)DefaultParameterBinder).Arguments;
             }
-        } // Arguments
+        }
 
         /// <summary>
         /// Passes the binding directly through to the parameter binder.
@@ -78,7 +78,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(s_emptyReturnCollection.Count == 0, "This list shouldn't be used for anything as it's shared.");
 
             return s_emptyReturnCollection;
-        } // BindParameters
+        }
 
         private static readonly Collection<CommandParameterInternal> s_emptyReturnCollection = new Collection<CommandParameterInternal>();
     }

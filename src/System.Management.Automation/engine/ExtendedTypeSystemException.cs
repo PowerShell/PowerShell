@@ -67,7 +67,7 @@ namespace System.Management.Automation
 
         #endregion ctor
 
-    } // ExtendedTypeSystemException
+    }
 
     /// <summary>
     /// Defines the exception thrown for Method related errors
@@ -134,7 +134,7 @@ namespace System.Management.Automation
 
         #endregion ctor
 
-    } // MethodException
+    }
 
     /// <summary>
     /// Defines the exception thrown for Method invocation exceptions
@@ -199,7 +199,7 @@ namespace System.Management.Automation
 
         #endregion ctor
 
-    } // GetValueInvocationException
+    }
 
     /// <summary>
     /// Defines the exception thrown for errors getting the value of properties
@@ -262,7 +262,7 @@ namespace System.Management.Automation
 
         #endregion ctor
 
-    } // GetValueException
+    }
 
     /// <summary>
     /// Defines the exception thrown for errors getting the value of properties
@@ -326,7 +326,7 @@ namespace System.Management.Automation
 
         #endregion ctor
 
-    } // PropertyNotFoundException
+    }
 
     /// <summary>
     /// Defines the exception thrown for exceptions thrown by property getters
@@ -389,7 +389,7 @@ namespace System.Management.Automation
 
         #endregion ctor
 
-    } // GetValueInvocationException
+    }
 
     /// <summary>
     /// Defines the exception thrown for errors setting the value of properties
@@ -450,7 +450,7 @@ namespace System.Management.Automation
 
         #endregion ctor
 
-    } // SetValueException
+    }
 
     /// <summary>
     /// Defines the exception thrown for exceptions thrown by property setters
@@ -511,7 +511,7 @@ namespace System.Management.Automation
 
         #endregion ctor
 
-    } // SetValueInvocationException
+    }
 
     /// <summary>
     /// Defines the exception thrown for type conversion errors

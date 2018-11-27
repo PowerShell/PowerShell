@@ -399,9 +399,9 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(errorRecord);
                         continue;
                     }
-                } // foreach computerName
+                }
             }
-        } // BeginProcessing
+        }
 
         /// <summary>
         /// Get the class name from a query string
@@ -425,6 +425,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Command code
-    } // GetWmiObjectCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

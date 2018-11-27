@@ -555,7 +555,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendOutputDataToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>
@@ -580,7 +580,7 @@ namespace System.Management.Automation
                     // send the error record to the client
                     DataStructureHandler.SendErrorRecordToClient(errorRecord);
                 }
-            } // lock ...
+            }
         }
 
         /// <summary>
@@ -605,7 +605,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendProgressRecordToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>
@@ -630,7 +630,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendWarningRecordToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>
@@ -655,7 +655,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendVerboseRecordToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>
@@ -680,7 +680,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendDebugRecordToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>
@@ -705,7 +705,7 @@ namespace System.Management.Automation
                     // send the output data to the client
                     DataStructureHandler.SendInformationRecordToClient(data);
                 }
-            } // lock ..
+            }
         }
 
         /// <summary>

@@ -994,12 +994,12 @@ namespace System.Management.Automation.Runspaces
                             disconnectRunspaces.AddRange(jobRunspaces);
                         }
                     }
-                } // foreach job
+                }
 
                 // Stop jobs.
                 throttleManager.EndSubmitOperations();
                 jobsStopCompleted.WaitOne();
-            } // using jobsStopCompleted
+            }
 
             // Disconnect all disconnectable job runspaces found.
             CloseOrDisconnectAllRemoteRunspaces(() =>
@@ -1583,7 +1583,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion Serialization
-    } // RunspaceOpenException
+    }
 
     #endregion Helper Class
 }

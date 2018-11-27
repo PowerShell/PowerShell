@@ -547,7 +547,7 @@ namespace System.Management.Automation
         internal void SetVariable(VariablePath path, object newValue)
         {
             EngineSessionState.SetVariable(path, newValue, true, CommandOrigin.Internal);
-        } // SetVariable
+        }
 
         internal T GetEnumPreference<T>(VariablePath preferenceVariablePath, T defaultPref, out bool defaultUsed)
         {
@@ -883,7 +883,7 @@ namespace System.Management.Automation
                     numToErase);
             }
             arraylist.Insert(0, obj);
-        } // AppendDollarError
+        }
         #endregion
 
         #region Scope or Commands (in pipeline) Depth Count

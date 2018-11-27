@@ -1452,13 +1452,13 @@ namespace System.Management.Automation
                             candidate = null;
                         }
                     }
-                } // parameter loop
+                }
 
                 if (candidate != null)
                 {
                     candidates.Add(candidate);
                 }
-            } // method loop
+            }
 
             if (candidates.Count == 0)
             {

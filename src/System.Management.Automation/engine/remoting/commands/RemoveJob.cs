@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
                         jobFound = true;
                     }
                 }
-            } // foreach ...
+            }
 
             return jobFound;
         }
@@ -901,7 +901,7 @@ namespace Microsoft.PowerShell.Commands
                     RemoveJobAndDispose(job, job2 != null);
                 }
             }
-        } // ProcessRecord
+        }
 
         /// <summary>
         /// Wait for all the stop jobs to be completed

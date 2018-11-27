@@ -399,7 +399,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     this.WriteObject(endFormat);
                     contextManager.Pop();
                 }
-            } // while
+            }
         }
 
         internal void SetCommandLineParameters(FormattingCommandLineParameters commandLineParameters)

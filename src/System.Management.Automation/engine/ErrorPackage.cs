@@ -182,7 +182,7 @@ namespace System.Management.Automation
         /// disabled.
         /// </summary>
         NotEnabled = 31,
-    } // enum ErrorCategory
+    }
 
     /// <summary>
     /// Contains auxiliary information about an
@@ -482,7 +482,7 @@ namespace System.Management.Automation
                 string.Format(uiCultureInfo, ErrorPackage.Ellipsize, first, last);
         }
         #endregion Private
-    } // class ErrorCategoryInfo
+    }
 
     /// <summary>
     /// additional details about an
@@ -806,7 +806,7 @@ namespace System.Management.Automation
                 return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
-        } // BuildMessage
+        }
         private string BuildMessage(
             IResourceSupplier resourceSupplier,
             string baseName,
@@ -839,7 +839,7 @@ namespace System.Management.Automation
                 return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
-        } // BuildMessage
+        }
         private string BuildMessage(
             System.Reflection.Assembly assembly,
             string baseName,
@@ -872,7 +872,7 @@ namespace System.Management.Automation
                 return string.Empty; // fallback to Exception.Message
             }
             return BuildMessage(template, baseName, resourceId, args);
-        } // BuildMessage
+        }
         private string BuildMessage(
             string template,
             string baseName,
@@ -900,10 +900,10 @@ namespace System.Management.Automation
                 _textLookupError = e;
                 return string.Empty; // fallback to Exception.Message
             }
-        } // BuildMessage
+        }
         #endregion Private
 
-    } // class ErrorDetails
+    }
 
     /// <summary>
     /// Represents an error.
@@ -1668,7 +1668,7 @@ namespace System.Management.Automation
         }
         #endregion ToString
 
-    } // class ErrorRecord
+    }
 
     /// <summary>
     /// Dummy generic class for type inference purposes on typed catch blocks.
@@ -1802,6 +1802,6 @@ namespace System.Management.Automation
         /// <returns>the error message template string corresponding to baseName and resourceId</returns>
         string GetResourceString(string baseName, string resourceId);
     }
-} // namespace System.Management.Automation
+}
 
 #pragma warning restore 56506

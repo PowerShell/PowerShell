@@ -1287,5 +1287,5 @@ namespace System.Management.Automation.Host
             return result;
         }
     }
-} // namespace System.Management.Automation.Host
+}
 

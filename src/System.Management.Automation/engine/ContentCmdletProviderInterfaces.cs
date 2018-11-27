@@ -23,7 +23,7 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // CmdletProviderIntrinsics private
+        }
 
         /// <summary>
         /// Constructs a facade over the "real" session state API
@@ -43,7 +43,7 @@ namespace System.Management.Automation
 
             _cmdlet = cmdlet;
             _sessionState = cmdlet.Context.EngineSessionState;
-        } // ContentCmdletProviderIntrinsics internal
+        }
 
         /// <summary>
         /// Constructs a facade over the "real" session state API
@@ -62,7 +62,7 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-        } // ContentCmdletProviderIntrinsics internal
+        }
 
         #endregion Constructors
 
@@ -108,7 +108,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentReader(new string[] { path }, false, false);
-        } // GetContentReader
+        }
 
         /// <summary>
         /// Gets the content reader for the item at the specified path
@@ -195,7 +195,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentReader(new string[] { path }, context);
-        } // GetContentReader
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-content cmdlet.
@@ -238,7 +238,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentReaderDynamicParameters(path, context);
-        } // GetContentReaderDynamicParameters
+        }
 
         #endregion GetContentReader
 
@@ -282,7 +282,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentWriter(new string[] { path }, false, false);
-        } // GetContentWriter
+        }
 
         /// <summary>
         /// Gets the content writer for the item(s) at the specified path.
@@ -328,7 +328,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentWriter(path, force, literalPath);
-        } // GetContentWriter
+        }
 
         /// <summary>
         /// </summary>
@@ -369,7 +369,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentWriter(new string[] { path }, context);
-        } // GetContentWriter
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the set-content and add-content cmdlet.
@@ -412,7 +412,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetContentWriterDynamicParameters(path, context);
-        } // GetContentWriterDynamicParameters
+        }
 
         #endregion GetContentWriter
 
@@ -453,7 +453,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.ClearContent(new string[] { path }, false, false);
-        } // ClearContent
+        }
 
         /// <summary>
         /// Clears the content from the item(s) specified by the path
@@ -536,7 +536,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             _sessionState.ClearContent(new string[] { path }, context);
-        } // ClearContent
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the clear-content cmdlet.
@@ -577,7 +577,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.ClearContentDynamicParameters(path, context);
-        } // ClearContentDynamicParameters
+        }
 
         #endregion ClearContent
 
@@ -589,6 +589,6 @@ namespace System.Management.Automation
         private SessionStateInternal _sessionState;
 
         #endregion private data
-    } // ContentCmdletProviderIntrinsics
+    }
 }
 

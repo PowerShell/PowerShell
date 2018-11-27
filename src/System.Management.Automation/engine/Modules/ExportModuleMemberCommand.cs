@@ -158,4 +158,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion Export-ModuleMember
-} // Microsoft.PowerShell.Commands
+}

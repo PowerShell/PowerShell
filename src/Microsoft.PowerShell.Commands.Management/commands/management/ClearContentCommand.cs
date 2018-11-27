@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
                             pathNotFound));
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return InvokeProvider.Content.ClearContentDynamicParameters(".", context);
-        } // GetDynamicParameters
-    } // ClearContentCommand
-} // namespace Microsoft.PowerShell.Commands
+        }
+    }
+}
 

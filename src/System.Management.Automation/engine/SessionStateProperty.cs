@@ -70,7 +70,7 @@ namespace System.Management.Automation
             Collection<PSObject> results = context.GetAccumulatedObjects();
 
             return results;
-        } // GetProperties
+        }
 
         /// <summary>
         /// Gets the specified properties from the specified item.
@@ -145,7 +145,7 @@ namespace System.Management.Automation
                         context);
                 }
             }
-        } // GetProperty
+        }
 
         /// <summary>
         /// Gets the property from the item at the specified path.
@@ -219,7 +219,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // GetPropertyPrivate
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-itemproperty cmdlet.
@@ -289,7 +289,7 @@ namespace System.Management.Automation
                 return GetPropertyDynamicParameters(providerInstance, providerPaths[0], providerSpecificPickList, newContext);
             }
             return null;
-        } // GetPropertyDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the get-itemproperty cmdlet.
@@ -369,7 +369,7 @@ namespace System.Management.Automation
                     e);
             }
             return result;
-        } // GetPropertyDynamicParameters
+        }
 
         #endregion GetProperty
 
@@ -432,7 +432,7 @@ namespace System.Management.Automation
             Collection<PSObject> results = context.GetAccumulatedObjects();
 
             return results;
-        } // SetProperty
+        }
 
         /// <summary>
         /// Sets the specified properties on specified item.
@@ -511,7 +511,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // SetProperty
+        }
 
         /// <summary>
         /// Sets the property of the item at the specified path.
@@ -589,7 +589,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // SetPropertyPrivate
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the clear-itemproperty cmdlet.
@@ -659,7 +659,7 @@ namespace System.Management.Automation
                 return SetPropertyDynamicParameters(providerInstance, providerPaths[0], propertyValue, newContext);
             }
             return null;
-        } // SetPropertyDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the set-itemproperty cmdlet.
@@ -739,7 +739,7 @@ namespace System.Management.Automation
                     e);
             }
             return result;
-        } // SetPropertyDynamicParameters
+        }
 
         #endregion SetProperty
 
@@ -799,7 +799,7 @@ namespace System.Management.Automation
             ClearProperty(paths, propertyToClear, context);
 
             context.ThrowFirstErrorOrDoNothing();
-        } // ClearProperty
+        }
 
         /// <summary>
         /// Clears the specified property in the specified item.
@@ -871,7 +871,7 @@ namespace System.Management.Automation
                     ClearPropertyPrivate(providerInstance, providerPath, propertyToClear, context);
                 }
             }
-        } // ClearProperty
+        }
 
         /// <summary>
         /// Clears the value of the property from the item at the specified path.
@@ -949,7 +949,7 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-        } // ClearPropertyPrivate
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the clear-itemproperty cmdlet.
@@ -1019,7 +1019,7 @@ namespace System.Management.Automation
                 return ClearPropertyDynamicParameters(providerInstance, providerPaths[0], propertyToClear, newContext);
             }
             return null;
-        } // ClearPropertyDynamicParameters
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the clear-itemproperty cmdlet.
@@ -1100,7 +1100,7 @@ namespace System.Management.Automation
                     e);
             }
             return result;
-        } // ClearPropertyDynamicParameters
+        }
 
         #endregion ClearProperty
 

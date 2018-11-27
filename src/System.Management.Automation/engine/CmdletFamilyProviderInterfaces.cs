@@ -22,7 +22,7 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
-        } // ProviderIntrinsics private
+        }
 
         /// <summary>
         /// Constructs a facade over the "real" session state API
@@ -46,7 +46,7 @@ namespace System.Management.Automation
             Content = new ContentCmdletProviderIntrinsics(cmdlet);
             Property = new PropertyCmdletProviderIntrinsics(cmdlet);
             SecurityDescriptor = new SecurityDescriptorCmdletProviderIntrinsics(cmdlet);
-        } // ProviderIntrinsics internal
+        }
 
         /// <summary>
         /// Constructs a facade over the "real" session state API
@@ -66,7 +66,7 @@ namespace System.Management.Automation
             Content = new ContentCmdletProviderIntrinsics(sessionState);
             Property = new PropertyCmdletProviderIntrinsics(sessionState);
             SecurityDescriptor = new SecurityDescriptorCmdletProviderIntrinsics(sessionState);
-        } // ProviderIntrinsics internal
+        }
 
         #endregion Constructors
 
@@ -104,6 +104,6 @@ namespace System.Management.Automation
         private InternalCommand _cmdlet;
 
         #endregion private data
-    } // ProviderIntrinsics
+    }
 }
 

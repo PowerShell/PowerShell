@@ -58,7 +58,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(false, "Unreachable code");
 
             throw new NotSupportedException();
-        } // BindParameter
+        }
 
         internal override object GetDefaultParameterValue(string name)
         {
@@ -138,7 +138,7 @@ namespace System.Management.Automation
             {
                 return _arguments.ToString();
             }
-        } // Arguments
+        }
         private readonly StringBuilder _arguments = new StringBuilder();
 
         #endregion internal members
@@ -378,4 +378,4 @@ namespace System.Management.Automation
         private NativeCommand _nativeCommand;
 #endregion private members
     }
-} // namespace System.Management.Automation
+}

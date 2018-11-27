@@ -383,7 +383,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(parameter != null, "Caller to verify parameter argument");
             arguments.Add(parameter);
-        } // AddParameter
+        }
 
         /// <summary>
         /// Prepares the command for execution.
@@ -586,7 +586,7 @@ namespace System.Management.Automation
                 // wrap it and bubble it up.
                 throw ManageInvocationException(e);
             }
-        } // Complete
+        }
 
         /// <summary>
         /// Calls the virtual Complete method after setting the appropriate session state scope.

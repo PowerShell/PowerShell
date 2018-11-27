@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         break;
                     }
-                } // while ...
+                }
             }
         }// EndProcessing()
 

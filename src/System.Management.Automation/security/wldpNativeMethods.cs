@@ -249,7 +249,7 @@ namespace System.Management.Automation.Security
                             // https://msdn.microsoft.com/library/dd378457.aspx
                             Guid AppDatalocalLowFolderId = new Guid("A520A1A4-1780-4FF6-BD18-167343C5AF16");
                             tempPath = GetKnownFolderPath(AppDatalocalLowFolderId) + @"\Temp";
-                        } // end while loop
+                        }
 
                         // Test policy.
                         result = TestSaferPolicy(testPathScript, testPathModule);
