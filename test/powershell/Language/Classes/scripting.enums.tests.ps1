@@ -91,18 +91,6 @@ Describe 'enums' -Tags "CI" {
         It 'EX8 has the specified underlying type' { [Enum]::GetUnderlyingType([EX8]) | Should -Be ([ulong]) }
     }
 
-    Context 'Enum with FlagsAttribute' {
-        [Flags()]
-        enum BitMask { A;B;C;D }
-
-        It 'Consecutive member values double when FlagsAttribute is present' {
-            [BitMask]::A.value__ | Should -Be 0
-            [BitMask]::B.value__ | Should -Be 1
-            [BitMask]::C.value__ | Should -Be 2
-            [BitMask]::D.value__ | Should -Be 4
-        }
-    }
-
     Context 'Enum with negative user-specified values' {
         enum V1 {
             A = -4
