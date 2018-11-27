@@ -18,7 +18,8 @@ param (
     [switch]$AppImage,
     [switch]$TarX64,
     [switch]$TarArm,
-    [switch]$FxDependent
+    [switch]$FxDependent,
+    [switch]$Alpine
 )
 
 $releaseTagParam = @{}
@@ -39,6 +40,8 @@ try {
 
     if($FxDependent.IsPresent) {
         $buildParams.Add("Runtime", "fxdependent")
+    } elseif ($Alpine.IsPresent) {
+        $buildParams.Add("Runtime", 'alpine-x64')
     } else {
         $buildParams.Add("Crossgen", $true)
     }
@@ -47,6 +50,8 @@ try {
 
     if($FxDependent) {
         Start-PSPackage -Type 'fxdependent' @releaseTagParam
+    } elseif ($Alpine) {
+        Start-PSPackage -Type 'tar-alpine' @releaseTagParam
     } else {
         Start-PSPackage @releaseTagParam
     }
