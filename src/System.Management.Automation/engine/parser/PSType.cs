@@ -1201,27 +1201,14 @@ namespace System.Management.Automation.Language
                         enumBuilder.DefineLiteral(enumerator.Name, value);
                     }
 
-                    if (value != 0 && _enumDefinitionAst.Attributes.Any(attr => attr.TypeName.GetReflectionType() == typeof(FlagsAttribute)))
+                    if (value < maxValue)
                     {
-                        if (value < maxValue / 2)
-                        {
-                            value *= 2;
-                        }
-                        else
-                        {
-                            valueTooBig = true;
-                        }
+                        value += 1;
+                        valueTooBig = false;
                     }
                     else
                     {
-                        if (value < maxValue)
-                        {
-                            value += 1;
-                        }
-                        else
-                        {
-                            valueTooBig = true;
-                        }
+                        valueTooBig = true;
                     }
                 }
                 _enumDefinitionAst.Type = enumBuilder.CreateTypeInfo().AsType();
