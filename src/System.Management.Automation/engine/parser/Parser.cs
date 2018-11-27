@@ -4524,15 +4524,19 @@ namespace System.Management.Automation.Language
         {
             //G  enum-statement:
             //G      'enum'   new-lines:opt   enum-name   '{'   enum-member-list   '}'
+            //G      'enum'   new-lines:opt   enum-name   ':'  enum-underlying-type  '{'   enum-member-list   '}'
             //G
             //G  enum-name:
             //G      simple-name
+            //G
+            //G  enum-underlying-type:
+            //G      new-lines:opt   valid-type-name   new-lines:opt
             //G
             //G  enum-member-list:
             //G      enum-member  new-lines:opt
             //G      enum-member-list   enum-member
 
-            TypeCode validUnderlyingTypeCodes = TypeCode.Byte | TypeCode.Int16 | TypeCode.Int32 | TypeCode.Int64 | TypeCode.SByte | TypeCode.UInt16 | TypeCode.UInt32 | TypeCode.UInt64;
+            const TypeCode validUnderlyingTypeCodes = TypeCode.Byte | TypeCode.Int16 | TypeCode.Int32 | TypeCode.Int64 | TypeCode.SByte | TypeCode.UInt16 | TypeCode.UInt32 | TypeCode.UInt64;
 
             SkipNewlines();
             var name = SimpleNameRule();
