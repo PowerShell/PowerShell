@@ -1150,14 +1150,16 @@ namespace System.Management.Automation.Language
                                 if (constValue != null &&
                                     LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constValue.GetType())))
                                 {
-                                    _parser.ReportError(enumerator.InitialValue.Extent,
+                                    _parser.ReportError(
+                                        enumerator.InitialValue.Extent,
                                         nameof(ParserStrings.EnumeratorValueTooLarge),
                                         ParserStrings.EnumeratorValueTooLarge,
                                         ToStringCodeMethods.Type(underlyingType));
                                 }
                                 else
                                 {
-                                    _parser.ReportError(enumerator.InitialValue.Extent,
+                                    _parser.ReportError(
+                                        enumerator.InitialValue.Extent,
                                         nameof(ParserStrings.CannotConvertValue),
                                         ParserStrings.CannotConvertValue,
                                         ToStringCodeMethods.Type(underlyingType));
@@ -1166,7 +1168,8 @@ namespace System.Management.Automation.Language
                         }
                         else
                         {
-                            _parser.ReportError(enumerator.InitialValue.Extent,
+                            _parser.ReportError(
+                                enumerator.InitialValue.Extent,
                                 nameof(ParserStrings.EnumeratorValueMustBeConstant),
                                 ParserStrings.EnumeratorValueMustBeConstant);
                         }
@@ -1176,7 +1179,8 @@ namespace System.Management.Automation.Language
 
                     if (valueTooBig)
                     {
-                        _parser.ReportError(enumerator.Extent,
+                        _parser.ReportError(
+                            enumerator.Extent,
                             nameof(ParserStrings.EnumeratorValueTooLarge),
                             ParserStrings.EnumeratorValueTooLarge,
                             ToStringCodeMethods.Type(underlyingType));
@@ -1184,7 +1188,8 @@ namespace System.Management.Automation.Language
 
                     if (definedEnumerators.Contains(enumerator.Name))
                     {
-                        _parser.ReportError(enumerator.Extent,
+                        _parser.ReportError(
+                            enumerator.Extent,
                             nameof(ParserStrings.MemberAlreadyDefined),
                             ParserStrings.MemberAlreadyDefined,
                             enumerator.Name);

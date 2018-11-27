@@ -4542,7 +4542,8 @@ namespace System.Management.Automation.Language
             var name = SimpleNameRule();
             if (name == null)
             {
-                ReportIncompleteInput(After(enumToken),
+                ReportIncompleteInput(
+                    After(enumToken),
                     nameof(ParserStrings.MissingNameAfterKeyword),
                     ParserStrings.MissingNameAfterKeyword,
                     enumToken.Text);
@@ -4564,7 +4565,8 @@ namespace System.Management.Automation.Language
                     underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
                     if (underlyingType == null)
                     {
-                        ReportIncompleteInput(After(colonToken),
+                        ReportIncompleteInput(
+                            After(colonToken),
                             nameof(ParserStrings.TypeNameExpected),
                             ParserStrings.TypeNameExpected);
                     }
@@ -4573,7 +4575,8 @@ namespace System.Management.Automation.Language
                         var resolvedType = underlyingType.GetReflectionType();
                         if (resolvedType == null || !validUnderlyingTypeCodes.HasFlag(resolvedType.GetTypeCode()))
                         {
-                            ReportError(underlyingType.Extent,
+                            ReportError(
+                                underlyingType.Extent,
                                 nameof(ParserStrings.InvalidUnderlyingType),
                                 ParserStrings.InvalidUnderlyingType,
                                 underlyingType.Name);
