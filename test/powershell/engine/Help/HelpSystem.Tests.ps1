@@ -401,7 +401,7 @@ Describe 'help can be found for CurrentUser Scope' -Tags 'CI' {
             Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
         }
 
-        $psreadlineHelpFilePath = Join-Path (Get-Module PSReadLine -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.PSReadLine.dll-Help.xml'
+        $psreadlineHelpFilePath = Join-Path (Get-Module PSReadLine -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.PSReadLine2.dll-Help.xml'
         if (Test-Path $psreadlineHelpFilePath) {
             Remove-Item $psreadlineHelpFilePath -Force -ErrorAction SilentlyContinue
         }
@@ -442,7 +442,7 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
             Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
         }
 
-        $psreadlineHelpFilePath = Join-Path (Get-Module PSReadLine -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.PSReadLine.dll-Help.xml'
+        $psreadlineHelpFilePath = Join-Path (Get-Module PSReadLine -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.PSReadLine2.dll-Help.xml'
         if (Test-Path $psreadlineHelpFilePath) {
             Remove-Item $psreadlineHelpFilePath -Force -ErrorAction SilentlyContinue
         }
