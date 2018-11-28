@@ -150,6 +150,9 @@
   <data name="FormatHexOnlySupportsFileSystemPaths" xml:space="preserve">
     <value>The given path '{0}' is not supported. This command only supports the FileSystem Provider paths.</value>
   </data>
+  <data name="FormatHexPathPrefix" xml:space="preserve">
+    <value>Path: </value>
+  </data>
   <data name="GroupObjectWithHashTable" xml:space="preserve">
     <value>The command cannot be run because the AsString parameter requires that you specify the AsHashtable parameter.</value>
   </data>

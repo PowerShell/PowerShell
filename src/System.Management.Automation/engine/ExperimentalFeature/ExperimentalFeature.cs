@@ -341,9 +341,9 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// A readonly Hashset
+    /// A readonly Hashset.
     /// </summary>
-    public sealed class ReadOnlyHashSet<T> : ISet<T>
+    internal sealed class ReadOnlyHashSet<T> : ISet<T>
     {
         private HashSet<T> _hashset;
 
@@ -362,7 +362,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get an empty singleton.
         /// </summary>
-        public static readonly ReadOnlyHashSet<T> Empty = new ReadOnlyHashSet<T>(new HashSet<T>(capacity: 0));
+        internal static readonly ReadOnlyHashSet<T> Empty = new ReadOnlyHashSet<T>(new HashSet<T>(capacity: 0));
 
         /// <summary>
         /// Get the count of the Hashset.
@@ -377,160 +377,37 @@ namespace System.Management.Automation
         /// <summary>
         /// Check if the set contains an item.
         /// </summary>
-        public bool Contains(T item)
-        {
-            return _hashset.Contains(item);
-        }
+        public bool Contains(T item) => _hashset.Contains(item);
 
         /// <summary>
         /// Copy items to an array.
         /// </summary>
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            _hashset.CopyTo(array, arrayIndex);
-        }
+        public void CopyTo(T[] array, int arrayIndex) => _hashset.CopyTo(array, arrayIndex);
 
         /// <summary>
         /// GetEnumerator method.
         /// </summary>
-        public IEnumerator<T> GetEnumerator()
-        {
-            return _hashset.GetEnumerator();
-        }
+        public IEnumerator<T> GetEnumerator() => _hashset.GetEnumerator();
 
-        /// <summary>
-        /// IsProperSubsetOf method.
-        /// </summary>
-        public bool IsProperSubsetOf(IEnumerable<T> other)
-        {
-            return _hashset.IsProperSubsetOf(other);
-        }
+        #region NonPublic Interface Member Implementation
 
-        /// <summary>
-        /// IsProperSupersetOf method.
-        /// </summary>
-        public bool IsProperSupersetOf(IEnumerable<T> other)
-        {
-            return _hashset.IsProperSupersetOf(other);
-        }
+        bool ISet<T>.IsProperSubsetOf(IEnumerable<T> other) => _hashset.IsProperSubsetOf(other);
+        bool ISet<T>.IsProperSupersetOf(IEnumerable<T> other) => _hashset.IsProperSupersetOf(other);
+        bool ISet<T>.IsSubsetOf(IEnumerable<T> other) => _hashset.IsSubsetOf(other);
+        bool ISet<T>.IsSupersetOf(IEnumerable<T> other) => _hashset.IsSupersetOf(other);
+        bool ISet<T>.Overlaps(IEnumerable<T> other) => _hashset.Overlaps(other);
+        bool ISet<T>.SetEquals(IEnumerable<T> other) => _hashset.SetEquals(other);
+        IEnumerator IEnumerable.GetEnumerator() => _hashset.GetEnumerator();
 
-        /// <summary>
-        /// IsSubsetOf method.
-        /// </summary>
-        public bool IsSubsetOf(IEnumerable<T> other)
-        {
-            return _hashset.IsSubsetOf(other);
-        }
+        bool ISet<T>.Add(T item) => throw new NotSupportedException();
+        void ISet<T>.ExceptWith(IEnumerable<T> other) => throw new NotSupportedException();
+        void ISet<T>.IntersectWith(IEnumerable<T> other) => throw new NotSupportedException();
+        void ISet<T>.SymmetricExceptWith(IEnumerable<T> other) => throw new NotSupportedException();
+        void ISet<T>.UnionWith(IEnumerable<T> other) => throw new NotSupportedException();
+        void ICollection<T>.Add(T item) => throw new NotSupportedException();
+        void ICollection<T>.Clear() => throw new NotSupportedException();
+        bool ICollection<T>.Remove(T item) => throw new NotSupportedException();
 
-        /// <summary>
-        /// IsSupersetOf method.
-        /// </summary>
-        public bool IsSupersetOf(IEnumerable<T> other)
-        {
-            return _hashset.IsSupersetOf(other);
-        }
-
-        /// <summary>
-        /// Overlaps method.
-        /// </summary>
-        public bool Overlaps(IEnumerable<T> other)
-        {
-            return _hashset.Overlaps(other);
-        }
-
-        /// <summary>
-        /// SetEquals method.
-        /// </summary>
-        public bool SetEquals(IEnumerable<T> other)
-        {
-            return _hashset.SetEquals(other);
-        }
-
-        /// <summary>
-        /// Add method.
-        /// </summary>
-        /// <exception cref="NotSupportedException">
-        /// Not supported for a readonly Hashset.
-        /// </exception>
-        public bool Add(T item)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Remove method.
-        /// </summary>
-        /// <exception cref="NotSupportedException">
-        /// Not supported for a readonly Hashset.
-        /// </exception>
-        public bool Remove(T item)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// Clear method.
-        /// </summary>
-        /// <exception cref="NotSupportedException">
-        /// Not supported for a readonly Hashset.
-        /// </exception>
-        public void Clear()
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// ExceptWith method.
-        /// </summary>
-        /// <exception cref="NotSupportedException">
-        /// Not supported for a readonly Hashset.
-        /// </exception>
-        public void ExceptWith(IEnumerable<T> other)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// IntersectWith method.
-        /// </summary>
-        /// <exception cref="NotSupportedException">
-        /// Not supported for a readonly Hashset.
-        /// </exception>
-        public void IntersectWith(IEnumerable<T> other)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// SymmetricExceptWith method.
-        /// </summary>
-        /// <exception cref="NotSupportedException">
-        /// Not supported for a readonly Hashset.
-        /// </exception>
-        public void SymmetricExceptWith(IEnumerable<T> other)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        /// UnionWith method.
-        /// </summary>
-        /// <exception cref="NotSupportedException">
-        /// Not supported for a readonly Hashset.
-        /// </exception>
-        public void UnionWith(IEnumerable<T> other)
-        {
-            throw new NotSupportedException();
-        }
-
-        void ICollection<T>.Add(T item)
-        {
-            throw new NotSupportedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _hashset.GetEnumerator();
-        }
+        #endregion
     }
 }

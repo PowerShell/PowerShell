@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
@@ -50,10 +49,7 @@ namespace System.Management.Automation
 
         internal CompiledScriptBlockData(string scriptText, bool isProductCode)
         {
-            if (isProductCode)
-            {
-                _isProductCode = true;
-            }
+            _isProductCode = isProductCode;
             _scriptText = scriptText;
             this.Id = Guid.NewGuid();
         }
@@ -203,8 +199,7 @@ namespace System.Management.Automation
             var scriptFile = scriptExtent.File;
 
             if (scriptFile != null &&
-                StringLiterals.PowerShellDataFileExtension.Equals(
-                    Path.GetExtension(scriptFile), StringComparison.OrdinalIgnoreCase)
+                scriptFile.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase)
                 && !ForceMaliciousCodeScan)
             {
                 // Skip the check for .psd1 files, unless it's being executed by 'Import-LocalizedData',

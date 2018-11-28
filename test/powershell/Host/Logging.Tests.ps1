@@ -347,7 +347,7 @@ $pid
             $script | Out-File -FilePath $testScriptPath -Force
             $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command $testScriptPath
 
-            Export-PSOsLog -After $after -LogPid $testPid -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 3000 -MinimumCount 18 |
+            Export-PSOsLog -After $after -LogPid $testPid -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 3000 -MinimumCount 17 |
                 Set-Content -Path $contentFile
             $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -Verbose)
 
@@ -385,7 +385,7 @@ $pid
             $script | Out-File -FilePath $testScriptPath -Force
             $testPid = & $powershell -NoProfile -SettingsFile $configFile -Command $testScriptPath
 
-            Export-PSOsLog -After $after -LogPid $testPid -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 3000 -MinimumCount 18 |
+            Export-PSOsLog -After $after -LogPid $testPid -TimeoutInMilliseconds 30000 -IntervalInMilliseconds 3000 -MinimumCount 17 |
                 Set-Content -Path $contentFile
             $items = @(Get-PSOsLog -Path $contentFile -Id $logId -After $after -Verbose)
 

@@ -29,7 +29,7 @@ Describe "ConvertFrom-SddlString Tests" -Tags "CI", "RequireAdminOnWindows" {
         $result = ConvertFrom-SddlString @arguments
         foreach ($property in $expectedProperties)
         {
-            $result.$property | Should Not Be $null
+            $result.$property | Should -Not -Be $null
         }
     }
 
@@ -44,7 +44,7 @@ Describe "ConvertFrom-SddlString Tests" -Tags "CI", "RequireAdminOnWindows" {
         $result = $sddl | ConvertFrom-SddlString @arguments
         foreach ($property in $expectedProperties)
         {
-            $result.$property | Should Not Be $null
+            $result.$property | Should -Not -Be $null
         }
     }
 }
