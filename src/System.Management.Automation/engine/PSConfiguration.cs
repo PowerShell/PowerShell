@@ -386,7 +386,7 @@ namespace System.Management.Automation.Configuration
             {
                 try
                 {
-                    return new FileStream (fullPath, mode, access, share);
+                    return new FileStream(fullPath, mode, access, share);
                 }
                 catch (IOException)
                 {
@@ -395,7 +395,7 @@ namespace System.Management.Automation.Configuration
                         throw;
                     }
 
-                    Thread.Sleep (50);
+                    Thread.Sleep(50);
                 }
             }
 
