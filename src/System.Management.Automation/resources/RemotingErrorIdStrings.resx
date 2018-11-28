@@ -1670,4 +1670,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="CannotGetHostInteropTypes" xml:space="preserve">
     <value>Host system does not have the correct version of Hyper-V schema.</value>
   </data>
+  <data name="UnixOnlyHttpsWithoutSkipCACheckNotSupported" xml:space="preserve">
+    <value>HTTPS on Unix does not currently support CA or CN checks. Use the PSSessionOption -SkipCACheck and -SkipCNCheck if you are certain you trust the server you are connecting to and the network in between.</value>
+  </data>
 </root>
