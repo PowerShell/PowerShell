@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         /// <remarks>
-        /// Items that are duplicate according to the sort algorithm will appear
+        /// Items that are duplicates according to the sort algorithm will appear
         /// in the same relative order in a stable sort.
         /// </remarks>
         [Parameter(ParameterSetName = "Default")]
