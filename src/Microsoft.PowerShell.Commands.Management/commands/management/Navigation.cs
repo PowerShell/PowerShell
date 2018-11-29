@@ -1123,6 +1123,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string Scope { get; set; }
 
+#if !UNIX
         /// <summary>
         /// Gets or sets the Persist Switch parameter.
         /// If this switch parameter is set then the created PSDrive
@@ -1135,7 +1136,7 @@ namespace Microsoft.PowerShell.Commands
             set => _persist = value;
         }
         private bool _persist = false;
-
+#endif
         /// <summary>
         /// Gets the dynamic parameters for the new-psdrive cmdlet.
         /// </summary>
@@ -1223,6 +1224,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ShouldProcess(resource, action))
                 {
+#if !UNIX
                     // -Persist switch parameter is supported only for FileSystem provider.
                     if (Persist && !provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                     {
@@ -1239,7 +1241,17 @@ namespace Microsoft.PowerShell.Commands
                             Description,
                             Credential,
                             Persist);
-
+#else
+                    // Create the new drive
+                    PSDriveInfo newDrive =
+                        new PSDriveInfo(
+                            Name,
+                            provider,
+                            Root,
+                            Description,
+                            Credential,
+                            persist: false);
+#endif
                     try
                     {
                         SessionState.Drive.New(newDrive, Scope, CmdletProviderContext);
