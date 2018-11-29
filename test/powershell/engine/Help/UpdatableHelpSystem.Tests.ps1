@@ -145,7 +145,7 @@ $testCases = @{
     }
 
     "PSReadline" = @{
-        HelpFiles            = "Microsoft.PowerShell.PSReadLine2.dll-help.xml"
+        HelpFiles            = @("Microsoft.PowerShell.PSReadLine2.dll-help.xml", "about_PSReadLine.help.txt")
         HelpInfoFiles        = "PSReadline_5714753b-2afd-4492-a5fd-01d9e2cff8b5_HelpInfo.xml"
         CompressedFiles      = "PSReadline_5714753b-2afd-4492-a5fd-01d9e2cff8b5_en-US_helpcontent$extension"
         HelpInstallationPath = "$pshome\Modules\PSReadLine\en-US"
