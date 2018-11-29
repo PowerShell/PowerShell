@@ -2023,6 +2023,169 @@
       <Component Id="cmp2B1B284B631547EEB86D29E84D2E9611" Guid="{1d6e6de9-0af0-4669-9cf8-d731d43f3e8a}">
         <File Id="fil1B414FC15B084BD9B4F5B1ACC5EC5084" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.26919.02.dll" />
       </Component>
+      <Directory Name="Schemas" Id="dir1DB5B24CC3494785974A51F28F128069">
+        <Directory Name="PSMaml" Id="dirAC38B2C7629B42DC836E01F976A10EC9">
+          <Component Id="cmp8A3254D57ABF4F828B08648187233EE4" Guid="{a3884164-5b6c-4854-9fd7-81a0721f7cab}">
+            <File Id="filC274E1B405F141C6B1E98D2A38CDA614" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\structureTable.xsd" />
+          </Component>
+          <Component Id="cmpC29B22A77B6341C88E4D6CD2876F3BCF" Guid="{8ffcf19d-7484-4606-9838-916ff32892c0}">
+            <File Id="fil4D15DE0E39D94890BEB95FD3550014DC" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedConstructor.xsd" />
+          </Component>
+          <Component Id="cmpCBC6AAA9CB644B3C8FFE80E2339C8C62" Guid="{e1d9cd08-7dcf-4b89-bb50-000a92cc695a}">
+            <File Id="fil8205757B0EE7409E9F2C0879E905AA12" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\troubleshooting.xsd" />
+          </Component>
+          <Component Id="cmp5BFA44F5B74B46108EBB2F57D9A07C5A" Guid="{84834d5e-4cec-4564-af3d-f703eb58f5e9}">
+            <File Id="fil3C12E0C648694CE7A68148C305E72CC2" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\Maml.rld" />
+          </Component>
+          <Component Id="cmp938E195A5A3343D0B7092FC1A81A88CF" Guid="{93654549-71c2-43c4-8833-2d92dcbb2e1f}">
+            <File Id="fil805A9624406A407FBBD7B6D821BFEDE0" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedEnumeration.xsd" />
+          </Component>
+          <Component Id="cmp919C208B21E5491AB8084E7EB6EFF1BF" Guid="{fcbe9b6e-aa1f-403f-a492-6107cc9779eb}">
+            <File Id="fil9989D74C2D5745D3AE7D41BEF0D59489" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\structureGlossary.xsd" />
+          </Component>
+          <Component Id="cmp61A4B0CCC6F94329ADEAA1D04510D5FB" Guid="{1ff06e6d-d117-4d6a-8808-e0cb0db1aab6}">
+            <File Id="filD4DD8651A5694AD692416B468865F2A7" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\task.xsd" />
+          </Component>
+          <Component Id="cmp74112210347249D1ADA863B0C1A12EC0" Guid="{babacbd9-f509-4f66-8138-779d7f99a165}">
+            <File Id="fil860A33A409F64823ABC723171525376B" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerXaml.xsd" />
+          </Component>
+          <Component Id="cmp7C1B3589F57247588C2F554AE79034DF" Guid="{75c16c14-3995-45da-8f33-5c9c00aed370}">
+            <File Id="fil7E06AD46B4BD4E6E8D5EA5D7912BBCDA" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\inlineUi.xsd" />
+          </Component>
+          <Component Id="cmp8779DE02612345D2B990111B5F741951" Guid="{316081ed-950b-4cdd-b7f2-2fb53b8aaef3}">
+            <File Id="fil5B539D2DE8E64D859F9E1D4973BFF0EE" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\command.xsd" />
+          </Component>
+          <Component Id="cmp596F984C35BF43248CFC5AE259623CD6" Guid="{9c929070-43c0-48c5-9ba3-5649aeef33b4}">
+            <File Id="fil2404A1E28D9B4C0A8794532CC56712C2" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\structureProcedure.xsd" />
+          </Component>
+          <Component Id="cmpD7D9163B701E43CDAA5B680BFEC734C0" Guid="{5a7cb302-e3cd-4cc8-8feb-9bce7e927e3a}">
+            <File Id="fil6E7765E030E240BE93B458F8440F7DA5" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedEvent.xsd" />
+          </Component>
+          <Component Id="cmp3F3D5158AF2540C68C6C7B419E336405" Guid="{baddfa29-84ab-4c57-a0fa-57c66cf6ab9b}">
+            <File Id="fil56780AAEF3144E5CB8BF5A5BEBA01394" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\ITPro.xsd" />
+          </Component>
+          <Component Id="cmp2AA555A528ED455E9BE4CD671131EAC8" Guid="{aea28bb7-b000-44f7-9106-e6a0752c1e58}">
+            <File Id="filE637E051D8064836B59CA5CF140D73F6" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedInterface.xsd" />
+          </Component>
+          <Component Id="cmp738AF9ECCDB14F12A8136DEDD1F619F8" Guid="{53e1f530-277c-4e44-baad-34b287c0e6e0}">
+            <File Id="filE42EF85A50ED4AEE9C124AD7A7A5C344" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\Maml.tbr" />
+          </Component>
+          <Component Id="cmp9DD54CCB1A1940C9A686F56231B0D7A0" Guid="{8b0f48d2-9f47-4e11-8ea9-be0f32ff3fee}">
+            <File Id="fil2E3C95BFFE6242C2B90F6D6C7EACBB49" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\structureList.xsd" />
+          </Component>
+          <Component Id="cmp5B64C3BEB8614B7D8ABF9F98776BA799" Guid="{90cc20bc-0b9f-4fa9-bdcc-2944de2794a0}">
+            <File Id="filC1E9B3107EE8429CA77E51F155D0F3BA" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\ManagedDeveloper.xsd" />
+          </Component>
+          <Component Id="cmp8943E1C081C443608960F88006055670" Guid="{b43dbddf-e13c-4f81-b4b1-bf4ba10a6838}">
+            <File Id="fil9FD69766B5E74F16AACD660DBCD43233" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedNamespace.xsd" />
+          </Component>
+          <Component Id="cmp1CB45D745B7947098A2E8CFF89692106" Guid="{ead0a4bf-9b8a-45d8-b5a5-2cccc88367f0}">
+            <File Id="fil13D93E8612384E9AA2005A15E10DEB67" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\Maml.xsx" />
+          </Component>
+          <Component Id="cmp341278D0E5674EB7A0AA8D692B09C2DA" Guid="{9317254e-3e39-49a2-8332-ccd8d04c00ce}">
+            <File Id="filD4B3CCF00D1A4B25BE32CF91962DE059" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedClass.xsd" />
+          </Component>
+          <Component Id="cmp80D2B2F1503D480482AB6356D8239F1A" Guid="{a99a8fd4-4ac8-4e0e-b1bf-3891570863a5}">
+            <File Id="fil12C301468DB142BC8067894C80959B30" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedProperty.xsd" />
+          </Component>
+          <Component Id="cmp702A1A95334640599D929176921C3AA5" Guid="{d5837ca5-1749-40b2-bca2-937d5b13ce06}">
+            <File Id="fil2A4F2E1346C941A5BC38BD9426E3F852" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developer.xsd" />
+          </Component>
+          <Component Id="cmpE69FC94442424AEAB7BF8D668BE67881" Guid="{623150fe-a43b-4886-8df3-6f04daae19cc}">
+            <File Id="fil3F35876A557F4BEEBAB108F61C91F764" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedStructure.xsd" />
+          </Component>
+          <Component Id="cmpDBEB4CA15AED41EAAB3B9999FFB49688" Guid="{4f1ee152-611e-4804-975c-106536d8cd39}">
+            <File Id="fil9D97966701C24163A7D90C8394476CAD" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\Maml_HTML_Style.xsl" />
+          </Component>
+          <Component Id="cmpA9398651278B48A98281D4B1B99C0E02" Guid="{c6ee57ad-b656-4215-a1a0-fd6cc2e29eb7}">
+            <File Id="fil0B05ED043FB24495BE051DD21F56FB52" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerReference.xsd" />
+          </Component>
+          <Component Id="cmp71BD297E5534459C9FF0BD2BD5044E8A" Guid="{a5d4305b-1106-439e-9a7b-528616601cf7}">
+            <File Id="fil991CE890846F408FA113549291C9DCF4" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\structureTaskExecution.xsd" />
+          </Component>
+          <Component Id="cmp2748DD46812C4D7AA23B87131BCA7D28" Guid="{ea0b07b4-b21a-4b74-9d7c-355adf3572d2}">
+            <File Id="fil91A7915D85C24E2BB70395DD80E42ED6" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedMethod.xsd" />
+          </Component>
+          <Component Id="cmpBEF1E51AC0E14994B91C0398A0BF9904" Guid="{3c2016f5-db94-4540-a7ac-a7affdd42cab}">
+            <File Id="fil3C90204E8C9147F98C49D34850FEE58D" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\block.xsd" />
+          </Component>
+          <Component Id="cmpF30399B31BE94323965E5F370AE61D27" Guid="{44c44eca-85c6-4585-9a69-f7ba1ed9b5ea}">
+            <File Id="filE03A51D8D46F4D8A9AEC5815497A0BC2" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerCommand.xsd" />
+          </Component>
+          <Component Id="cmpEA734D5F73C1432E90C366FDB61BE1DA" Guid="{716e4c1c-0177-4787-ae22-b11af0f6fc03}">
+            <File Id="filE4B08FCC14714829A72F0F55E680C908" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\conditionSet.xsd" />
+          </Component>
+          <Component Id="cmp8623E722E9D44FC996DCC6AD0AFDA57B" Guid="{007a851e-3a5d-480e-a6f7-aa21cbe320d2}">
+            <File Id="filB2B6D6E8E84E4B3A926259A91E55588C" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManaged.xsd" />
+          </Component>
+          <Component Id="cmpD1B75039FF9C4808A85D5BFDD347E301" Guid="{6fa7f91c-520e-4e29-af18-4832a206db39}">
+            <File Id="fil368BD4AF04104CFE8CA19F76AAE3AAA9" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\endUser.xsd" />
+          </Component>
+          <Component Id="cmpB2D8BB205E49421986D61C5F50AFF4CD" Guid="{cd3e4fec-af5d-47b5-b7e4-3c14fb56d09f}">
+            <File Id="filFA9501B2158944C6A5BCAD2C9521C1E3" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\structure.xsd" />
+          </Component>
+          <Component Id="cmp3E7AA76F03A7499C96340C43F8A7F52B" Guid="{db06fe85-4079-4b5f-bae8-ccae212e3712}">
+            <File Id="fil4A26DD9AD44443698C4B87960324EDD8" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\inlineCommon.xsd" />
+          </Component>
+          <Component Id="cmp72416C747AFD4A86B9FB7D14C5C4C914" Guid="{9a0dd67a-3e69-45c3-8d4d-654b0a601a53}">
+            <File Id="filE7BA7800561B4B928AD62A395BD2FFCB" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerStructure.xsd" />
+          </Component>
+          <Component Id="cmp2B3F4044A01F4D9AB1DBBAD2FD04317A" Guid="{07b1d6ec-3356-4563-be30-8069fff75698}">
+            <File Id="fil157FF59A021947BC879674A664C521F1" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\base.xsd" />
+          </Component>
+          <Component Id="cmp16CCB478028E417BB140252B720E8AEA" Guid="{cbd3e042-208e-415b-b679-18a13cfaae0a}">
+            <File Id="filB2125658255843DC84D36632BFF950CB" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\blockSoftware.xsd" />
+          </Component>
+          <Component Id="cmp91FE8D0C1EC44675AC81705C6A5B66A6" Guid="{9b47434d-639c-4ceb-965f-ea2d5c16b63b}">
+            <File Id="fil7827126276014CC4951F85425AF95D32" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\inline.xsd" />
+          </Component>
+          <Component Id="cmpC1DC107C17E8409BBFC2CF1849675BEF" Guid="{acb5cc2d-be19-48b1-9b85-0067d2daf90f}">
+            <File Id="fil1BBF438827BA4085917473803F8E9F1D" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\ManagedDeveloperStructure.xsd" />
+          </Component>
+          <Component Id="cmpF6921505E7C9477683A779DA28A0D73F" Guid="{f653c913-3bdb-457c-9b76-39849632e9b6}">
+            <File Id="filE78A05F333B34FF08F307F915DD3E0FF" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedField.xsd" />
+          </Component>
+          <Component Id="cmpF7D3AB1CDBDA478E9DD4EE01D13F0D64" Guid="{50be42d2-099f-4cba-8734-716bf3251d03}">
+            <File Id="fil037817225EF0430AAA19406EE1BDF4FD" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\hierarchy.xsd" />
+          </Component>
+          <Component Id="cmp6637048AC3FB4E08B5EC5524D1049C0E" Guid="{6976c6db-65dc-4b23-abfe-6e9a7164073e}">
+            <File Id="filA57B719741C540239EFC2E4C5D157C43" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\Maml.xsd" />
+          </Component>
+          <Component Id="cmp6942D13F8BCA457199ADF6D24C622535" Guid="{11a3d165-b512-4ec1-bed8-8fcce088119b}">
+            <File Id="filACDC2A0DD658402F9B2627D4ADBECD1E" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedOperator.xsd" />
+          </Component>
+          <Component Id="cmpA755C122F0E54D55BBC227136068C3EF" Guid="{b8eea481-dd46-4fc3-8f98-be7706110535}">
+            <File Id="filBA2B08F4DE894AF981E1D7AE7088DE28" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\blockCommon.xsd" />
+          </Component>
+          <Component Id="cmpDF9A1285EC8A4A64BF8D7813045B2F82" Guid="{3640c0e3-4fae-47d2-b7c4-e2d58a0a2d01}">
+            <File Id="filCB10AEE906E94392B8F4BA8BC8A92C76" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\baseConditional.xsd" />
+          </Component>
+          <Component Id="cmp5375DD3BDBDE473D93DC0220CFD32C56" Guid="{0feb63c7-16fa-4642-ba37-d46b147b9150}">
+            <File Id="filE71D69AD08A34DE5B568BA0812C79426" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerCommand.rld" />
+          </Component>
+          <Component Id="cmp971F90C668FF411D81C0AC713071B122" Guid="{1f8405f1-1a73-4631-a0d8-8ab68648bd73}">
+            <File Id="fil927FBB0545374DFDBAB3A34F74126060" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedOverload.xsd" />
+          </Component>
+          <Component Id="cmp1BDAEA2C73954218ADCCF9940268D075" Guid="{1ca051c5-37e6-4597-bbe9-9b69ebac5fcd}">
+            <File Id="filECA32721B75342A281FAEFD9AE4FA38A" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerDscResource.xsd" />
+          </Component>
+          <Component Id="cmpCF148C092F4048CD811CE8815D3E8E5A" Guid="{4f06af2f-f11a-423d-b2cb-5933092f11a9}">
+            <File Id="filE183C7868A3846A2AE66479AD8C5E7A2" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\ProviderHelp.xsd" />
+          </Component>
+          <Component Id="cmp02F7C2D6E9BF46F386EF83D4CF166EC6" Guid="{2536d3ea-b0b5-41d3-88d8-e2c1fa729ece}">
+            <File Id="filB182BA7BB4CA46A58BB934DD7DF6164D" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\inlineSoftware.xsd" />
+          </Component>
+          <Component Id="cmpED253ABCC1354C58A65CD4D41F7ABB3A" Guid="{373c682d-83f4-449b-b477-06bbb9e9e2a6}">
+            <File Id="fil782EBC76048B42D5AFD0CED85A34B83E" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\developerManagedDelegate.xsd" />
+          </Component>
+          <Component Id="cmp074868368CB24A33962BC4DB7B809C4F" Guid="{beeb762f-885e-410c-afe0-c09ac6fc2519}">
+            <File Id="filFB62ECFB331547629CF9BBE87C30F498" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\Maml_HTML.xsl" />
+          </Component>
+          <Component Id="cmpFF8643F8CC97462CAC20815F6071203B" Guid="{6110b4cf-8691-4112-807c-a65ce72a436d}">
+            <File Id="fil07B5A3B273A4434D86FB441E3F008BE6" KeyPath="yes" Source="$(env.ProductSourcePath)\Schemas\PSMaml\shellExecute.xsd" />
+          </Component>
+        </Directory>
+      </Directory>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -2672,6 +2835,59 @@
       <ComponentRef Id="cmp7641086BD8244AFAAA244FAB40CE60BC" />
       <ComponentRef Id="cmp2B1B284B631547EEB86D29E84D2E9611" />
       <ComponentRef Id="cmpD495CAB0DC4146199E0475F16EFCBE66" />
+      <ComponentRef Id="cmp8A3254D57ABF4F828B08648187233EE4" />
+      <ComponentRef Id="cmpC29B22A77B6341C88E4D6CD2876F3BCF" />
+      <ComponentRef Id="cmpCBC6AAA9CB644B3C8FFE80E2339C8C62" />
+      <ComponentRef Id="cmp5BFA44F5B74B46108EBB2F57D9A07C5A" />
+      <ComponentRef Id="cmp938E195A5A3343D0B7092FC1A81A88CF" />
+      <ComponentRef Id="cmp919C208B21E5491AB8084E7EB6EFF1BF" />
+      <ComponentRef Id="cmp61A4B0CCC6F94329ADEAA1D04510D5FB" />
+      <ComponentRef Id="cmp74112210347249D1ADA863B0C1A12EC0" />
+      <ComponentRef Id="cmp7C1B3589F57247588C2F554AE79034DF" />
+      <ComponentRef Id="cmp8779DE02612345D2B990111B5F741951" />
+      <ComponentRef Id="cmp596F984C35BF43248CFC5AE259623CD6" />
+      <ComponentRef Id="cmpD7D9163B701E43CDAA5B680BFEC734C0" />
+      <ComponentRef Id="cmp3F3D5158AF2540C68C6C7B419E336405" />
+      <ComponentRef Id="cmp2AA555A528ED455E9BE4CD671131EAC8" />
+      <ComponentRef Id="cmp738AF9ECCDB14F12A8136DEDD1F619F8" />
+      <ComponentRef Id="cmp9DD54CCB1A1940C9A686F56231B0D7A0" />
+      <ComponentRef Id="cmp5B64C3BEB8614B7D8ABF9F98776BA799" />
+      <ComponentRef Id="cmp8943E1C081C443608960F88006055670" />
+      <ComponentRef Id="cmp1CB45D745B7947098A2E8CFF89692106" />
+      <ComponentRef Id="cmp341278D0E5674EB7A0AA8D692B09C2DA" />
+      <ComponentRef Id="cmp80D2B2F1503D480482AB6356D8239F1A" />
+      <ComponentRef Id="cmp702A1A95334640599D929176921C3AA5" />
+      <ComponentRef Id="cmpE69FC94442424AEAB7BF8D668BE67881" />
+      <ComponentRef Id="cmpDBEB4CA15AED41EAAB3B9999FFB49688" />
+      <ComponentRef Id="cmpA9398651278B48A98281D4B1B99C0E02" />
+      <ComponentRef Id="cmp71BD297E5534459C9FF0BD2BD5044E8A" />
+      <ComponentRef Id="cmp2748DD46812C4D7AA23B87131BCA7D28" />
+      <ComponentRef Id="cmpBEF1E51AC0E14994B91C0398A0BF9904" />
+      <ComponentRef Id="cmpF30399B31BE94323965E5F370AE61D27" />
+      <ComponentRef Id="cmpEA734D5F73C1432E90C366FDB61BE1DA" />
+      <ComponentRef Id="cmp8623E722E9D44FC996DCC6AD0AFDA57B" />
+      <ComponentRef Id="cmpD1B75039FF9C4808A85D5BFDD347E301" />
+      <ComponentRef Id="cmpB2D8BB205E49421986D61C5F50AFF4CD" />
+      <ComponentRef Id="cmp3E7AA76F03A7499C96340C43F8A7F52B" />
+      <ComponentRef Id="cmp72416C747AFD4A86B9FB7D14C5C4C914" />
+      <ComponentRef Id="cmp2B3F4044A01F4D9AB1DBBAD2FD04317A" />
+      <ComponentRef Id="cmp16CCB478028E417BB140252B720E8AEA" />
+      <ComponentRef Id="cmp91FE8D0C1EC44675AC81705C6A5B66A6" />
+      <ComponentRef Id="cmpC1DC107C17E8409BBFC2CF1849675BEF" />
+      <ComponentRef Id="cmpF6921505E7C9477683A779DA28A0D73F" />
+      <ComponentRef Id="cmpF7D3AB1CDBDA478E9DD4EE01D13F0D64" />
+      <ComponentRef Id="cmp6637048AC3FB4E08B5EC5524D1049C0E" />
+      <ComponentRef Id="cmp6942D13F8BCA457199ADF6D24C622535" />
+      <ComponentRef Id="cmpA755C122F0E54D55BBC227136068C3EF" />
+      <ComponentRef Id="cmpDF9A1285EC8A4A64BF8D7813045B2F82" />
+      <ComponentRef Id="cmp5375DD3BDBDE473D93DC0220CFD32C56" />
+      <ComponentRef Id="cmp971F90C668FF411D81C0AC713071B122" />
+      <ComponentRef Id="cmp1BDAEA2C73954218ADCCF9940268D075" />
+      <ComponentRef Id="cmpCF148C092F4048CD811CE8815D3E8E5A" />
+      <ComponentRef Id="cmp02F7C2D6E9BF46F386EF83D4CF166EC6" />
+      <ComponentRef Id="cmpED253ABCC1354C58A65CD4D41F7ABB3A" />
+      <ComponentRef Id="cmp074868368CB24A33962BC4DB7B809C4F" />
+      <ComponentRef Id="cmpFF8643F8CC97462CAC20815F6071203B" />
     </ComponentGroup>
   </Fragment>
 </Wix>
