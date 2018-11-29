@@ -4200,8 +4200,4 @@ namespace Microsoft.PowerShell.Commands
     #endregion GetProviderCommand
 
     #endregion Provider commands
-<<<<<<< HEAD
-} // namespace Microsoft.PowerShell.Commands
-=======
 }
->>>>>>> 0cc1f06be4c2f5f46852fec65549eb9260555298
