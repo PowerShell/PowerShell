@@ -388,7 +388,7 @@ Fix steps:
         Pop-Location
     }
 
-    # publish netcoreapp2.2 reference assemblies
+    # publish netcoreapp3.0 reference assemblies
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
         $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
@@ -588,7 +588,7 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp2.2")]
+        [ValidateSet("netcoreapp3.0")]
         [string]$Framework,
 
         # These are duplicated from Start-PSBuild
@@ -645,7 +645,7 @@ function New-PSOptions {
     Write-Verbose "Top project directory is $Top"
 
     if (-not $Framework) {
-        $Framework = "netcoreapp2.2"
+        $Framework = "netcoreapp3.0"
         Write-Verbose "Using framework '$Framework'"
     }
 

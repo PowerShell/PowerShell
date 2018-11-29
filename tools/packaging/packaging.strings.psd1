@@ -127,7 +127,7 @@ NuspecTemplate = @'
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework=".netcoreapp2.2"></group>
+            <group targetFramework=".netcoreapp3.0"></group>
         </dependencies>
     </metadata>
 </package>
