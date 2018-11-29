@@ -1041,8 +1041,11 @@ dir -Recurse `
                 Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
             }
 
+            # If help content is present on both scopes, expect 2 or else expect 1 completion.
+            $expectedCompletions = if ($userScopeHelp -and $allUserScopeHelp) { 2 } else { 1 }
+
             $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches | Should -HaveCount $expectedCompletions
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
         }
     }
