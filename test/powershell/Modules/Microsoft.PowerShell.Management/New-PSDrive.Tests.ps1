@@ -4,7 +4,8 @@
 Describe "Tests for New-PSDrive cmdlet." -Tag "CI","RequireAdminOnWindows" {
     Context "Validate New-PSDrive Cmdlet with -Persist switch." {
         BeforeEach {
-            $PSDriveName = "W"
+            $UsedDrives  = Get-PSDrive | Select-Object -ExpandProperty Name
+            $PSDriveName = 'D'..'Z' | Where-Object -FilterScript {$_ -notin $UsedDrives} | Get-Random
             $RemoteShare = "\\$env:COMPUTERNAME\$($env:SystemDrive.replace(':','$\'))"
         }
 
@@ -17,12 +18,12 @@ Describe "Tests for New-PSDrive cmdlet." -Tag "CI","RequireAdminOnWindows" {
         }
 
         it "Should throw exception if root is not a remote share." -Skip:(-not $IsWindows) {
-            { New-PSDrive -Root "TestDrive:\" -PSProvider FileSystem -Name $PSDriveName -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveRootNotNetworkPath'
+            { New-PSDrive -Name $PSDriveName -PSProvider FileSystem -Root "TestDrive:\" -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveRootNotNetworkPath'
         }
 
         it "Should throw exception if PSDrive is not a drive letter supported by operating system." -Skip:(-not $IsWindows) {
             $PSDriveName = 'AB'
-            { New-PSDrive -Root $RemoteShare -PSProvider FileSystem -Name $PSDriveName -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveNameNotSupportedForPersistence'
+            { New-PSDrive Name $PSDriveName -PSProvider FileSystem -Root $RemoteShare -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveNameNotSupportedForPersistence'
         }
     }
 }
