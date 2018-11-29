@@ -542,6 +542,13 @@ namespace System.Management.Automation
                 case PseudoBindingInfoType.PseudoBindingSucceed:
                     // The command is a cmdlet or script cmdlet. Binding succeeded.
                     result = GetParameterCompletionResults(partialName, pseudoBinding, parameterAst, withColon);
+
+                    // Give a registered argument completer a chance to fire if no completion result has been found so far.
+                    if (result.Count == 0)
+                    {
+                        result = CompleteCommandArgument(context);
+                    }
+
                     break;
             }
 

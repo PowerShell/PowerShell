@@ -263,6 +263,19 @@ Describe "Test completion of parameters for native commands" -Tags "CI" {
     } | Get-CompletionTestCaseData | Test-Completions
 }
 
+Describe "Test completion of parameters for script files" -Tags "CI" {
+    Register-ArgumentCompleter -CommandName ExtensibleCompletion.Tests.ps1 -ScriptBlock { 
+        [CompletionResult]::new('-Param', '-Param', [CompletionResultType]::ParameterName, '-Param')
+    }
+
+    @{
+        ExpectedResults = @(
+            @{CompletionText = "-Param"; ResultType = "ParameterName"}
+        )
+        TestInput = "$(Join-Path $PSScriptRoot 'ExtensibleCompletion.Tests.ps1') -P"
+    } | Get-CompletionTestCaseData | Test-Completions
+}
+
 Describe "Test extensible completion of using namespace" -Tags "CI" {
     @{
         ExpectedResults = @(
