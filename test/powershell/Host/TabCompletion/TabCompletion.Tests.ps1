@@ -1031,10 +1031,13 @@ dir -Recurse `
         }
 
         It 'Should complete about help topic' {
-            $aboutHelpPath = Join-Path $userHelpRoot (Get-Culture).Name
+            $aboutHelpPathUserScope = Join-Path $userHelpRoot (Get-Culture).Name
+            $aboutHelpPathAllUsersScope = Join-Path $PSHOME (Get-Culture).Name
 
             ## If help content does not exist, tab completion will not work. So update it first.
-            if (-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt"))) {
+            $userScopeHelp = Test-Path (Join-Path $aboutHelpPathUserScope "about_Splatting.help.txt")
+            $allUserScopeHelp = Test-Path (Join-Path $aboutHelpPathAllUsersScope "about_Splatting.help.txt")
+            if ((-not $userScopeHelp) -and (-not $aboutHelpPathAllUsersScope)) {
                 Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
             }
 
