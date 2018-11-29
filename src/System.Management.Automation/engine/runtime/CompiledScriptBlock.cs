@@ -188,10 +188,9 @@ namespace System.Management.Automation
         private void PerformSecurityChecks()
         {
             var scriptBlockAst = Ast as ScriptBlockAst;
-            if (scriptBlockAst == null || _isProductCode == true)
+            if (scriptBlockAst == null)
             {
                 // Checks are only needed at the top level.
-                // Skip the check for built-in scripts in PowerShell engine, such as the built-in functions.
                 return;
             }
 
@@ -200,10 +199,9 @@ namespace System.Management.Automation
 
             if (scriptFile != null &&
                 scriptFile.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase)
-                && !ForceMaliciousCodeScan)
+                && CanSkipCodeScan())
             {
-                // Skip the check for .psd1 files, unless it's being executed by 'Import-LocalizedData',
-                // in which case the 'ForceScan' property will be set to true.
+                // Skip the scan for .psd1 files if their content is essentially a safe HashtableAst.
                 return;
             }
 
@@ -227,6 +225,40 @@ namespace System.Management.Automation
             if (ScriptBlock.CheckSuspiciousContent(scriptBlockAst) != null)
             {
                 HasSuspiciousContent = true;
+            }
+
+            // A local function to check if the ScriptBlockAst is essentially a safe HashtableAst.
+            bool CanSkipCodeScan()
+            {
+                if (scriptBlockAst.BeginBlock != null || scriptBlockAst.ProcessBlock != null ||
+                    scriptBlockAst.ParamBlock != null || scriptBlockAst.DynamicParamBlock != null ||
+                    scriptBlockAst.ScriptRequirements != null || scriptBlockAst.UsingStatements.Count > 0 ||
+                    scriptBlockAst.Attributes.Count > 0)
+                {
+                    return false;
+                }
+
+                NamedBlockAst endBlock = scriptBlockAst.EndBlock;
+                if (!endBlock.Unnamed || endBlock.Traps != null || endBlock.Statements.Count != 1)
+                {
+                    return false;
+                }
+
+                PipelineAst pipelineAst = endBlock.Statements[0] as PipelineAst;
+                if (pipelineAst == null)
+                {
+                    return false;
+                }
+
+                HashtableAst hashtableAst = pipelineAst.GetPureExpression() as HashtableAst;
+                if (hashtableAst == null)
+                {
+                    return false;
+                }
+
+                // After the above steps, we know the ScriptBlockAst is essentially just a HashtableAst,
+                // now we need to check if the HashtableAst is safe.
+                return IsSafeValueVisitor.IsAstSafe(hashtableAst, GetSafeValueVisitor.SafeValueContext.Default);
             }
         }
 
@@ -282,7 +314,6 @@ namespace System.Management.Automation
         internal Guid Id { get; private set; }
         internal bool HasLogged { get; set; }
         internal bool IsFilter { get; private set; }
-        internal bool ForceMaliciousCodeScan { get; set; }
         internal bool IsProductCode
         {
             get

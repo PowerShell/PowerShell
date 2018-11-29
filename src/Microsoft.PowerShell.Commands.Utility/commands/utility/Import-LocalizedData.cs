@@ -167,7 +167,6 @@ namespace Microsoft.PowerShell.Commands
                 Context.LanguageMode = PSLanguageMode.RestrictedLanguage;
                 try
                 {
-                    scriptBlock.ScriptBlockData.ForceMaliciousCodeScan = true;
                     result = scriptBlock.InvokeReturnAsIs();
                     if (result == AutomationNull.Value)
                     {

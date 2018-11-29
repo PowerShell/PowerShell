@@ -15,6 +15,7 @@ using Microsoft.Win32;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
@@ -1911,5 +1912,51 @@ namespace System.Management.Automation.Internal
             }
             return item;
         }
+    }
+
+    /// <summary>
+    /// A readonly Hashset.
+    /// </summary>
+    internal sealed class ReadOnlyHashSet<T> : IEnumerable
+    {
+        private HashSet<T> _hashset;
+
+        /// <summary>
+        /// Constructor for the readonly Hashset.
+        /// </summary>
+        internal ReadOnlyHashSet(HashSet<T> hashset)
+        {
+            if (hashset == null)
+            {
+                throw new ArgumentNullException(nameof(hashset));
+            }
+
+            _hashset = hashset;
+        }
+
+        /// <summary>
+        /// Get the count of the Hashset.
+        /// </summary>
+        public int Count => _hashset.Count;
+
+        /// <summary>
+        /// Indicate if it's a readonly Hashset.
+        /// </summary>
+        public bool IsReadOnly => true;
+
+        /// <summary>
+        /// Check if the set contains an item.
+        /// </summary>
+        public bool Contains(T item) => _hashset.Contains(item);
+
+        /// <summary>
+        /// GetEnumerator method.
+        /// </summary>
+        public IEnumerator GetEnumerator() => _hashset.GetEnumerator();
+
+        /// <summary>
+        /// Get an empty singleton.
+        /// </summary>
+        internal static readonly ReadOnlyHashSet<T> Empty = new ReadOnlyHashSet<T>(new HashSet<T>(capacity: 0));
     }
 }

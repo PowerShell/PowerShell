@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Representation of a security descriptor.
     /// </summary>
-    public class SecurityDescriptorInfo
+    public sealed class SecurityDescriptorInfo
     {
         internal SecurityDescriptorInfo(
             string owner,
