@@ -1,9 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.Security;
-using System.Runtime.InteropServices;
+using Microsoft.PowerShell.Commands;
+using Microsoft.Win32;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -11,19 +18,11 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Numerics;
 using System.Reflection;
-using Microsoft.PowerShell.Commands;
-using Microsoft.Win32;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Threading;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
+using System.Threading;
 
 using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 
@@ -1756,7 +1755,7 @@ namespace System.Management.Automation
                     WriteVerbose(ps, string.Format(CultureInfo.CurrentCulture, ParserStrings.ImplicitRemotingPipelineBatchingException, ex.Message));
                 }
             }
-            
+
             return false;
         }
 
@@ -2024,7 +2023,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Test hook used to test implicit remoting batching.  A local runspace must be provided that has imported a 
+        /// Test hook used to test implicit remoting batching.  A local runspace must be provided that has imported a
         /// remote session, i.e., has run the Import-PSSession cmdlet.  This hook will return true if the provided commandPipeline
         /// is successfully batched and run in the remote session, and false if it is rejected for batching.
         /// </summary>
