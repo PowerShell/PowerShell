@@ -1528,10 +1528,16 @@ namespace System.Management.Automation.Remoting.Client
             }
 
 #if UNIX
-            // explicitly disallow Basic auth over HTTP on Unix.
+            // Explicitly disallow Basic auth over HTTP on Unix.
             if (connectionInfo.AuthenticationMechanism == AuthenticationMechanism.Basic && !isSSLSpecified && connectionUri.Scheme != Uri.UriSchemeHttps)
             {
                 throw new PSRemotingTransportException(PSRemotingErrorId.ConnectFailed, RemotingErrorIdStrings.BasicAuthOverHttpNotSupported);
+            }
+
+            // Allow HTTPS on Unix only if SkipCACheck and SkipCNCheck are selected, because OMI client does not support validating server certificates.
+            if (isSSLSpecified && (!connectionInfo.SkipCACheck || !connectionInfo.SkipCNCheck))
+            {
+                throw new PSRemotingTransportException(PSRemotingErrorId.ConnectSkipCheckFailed, RemotingErrorIdStrings.UnixOnlyHttpsWithoutSkipCACheckNotSupported);
             }
 #endif
 

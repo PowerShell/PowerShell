@@ -105,6 +105,10 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
   }
 
   Context "Proper errors should be delivered when bad locations are specified" {
+    It "should throw when targetting a directory." {
+      { Clear-Content -Path . -ErrorAction Stop } | Should -Throw -ErrorId "ClearDirectoryContent"
+    }
+
     It "should throw `"Cannot bind argument to parameter 'Path'`" when -Path is `$null" {
       { Clear-Content -Path $null -ErrorAction Stop } |
         Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"

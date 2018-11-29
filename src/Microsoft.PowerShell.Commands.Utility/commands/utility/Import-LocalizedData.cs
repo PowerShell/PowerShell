@@ -96,6 +96,7 @@ namespace Microsoft.PowerShell.Commands
         /// The command allowed in the data file.  If unspecified, then ConvertFrom-StringData is allowed.
         /// </summary>
         [Parameter]
+        [ValidateTrustedData]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] SupportedCommand
         {
@@ -205,6 +206,13 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         variable.Value = result;
+
+                        if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                        {
+                            // Mark untrusted values for assignments to 'Global:' variables, and 'Script:' variables in
+                            // a module scope, if it's necessary.
+                            ExecutionContext.MarkObjectAsUntrustedForVariableAssignment(variable, scope, Context.EngineSessionState);
+                        }
                     }
                 }
 

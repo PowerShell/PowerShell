@@ -89,7 +89,11 @@ namespace System.Management.Automation.Remoting
                 ExecutionContext context = localRunspace.ExecutionContext;
 
                 // This is trusted input as long as we're in FullLanguage mode
-                bool isTrustedInput = (localRunspace.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage);
+                // and if we are not in a loopback configuration mode, in which case we always force remote script commands
+                // to be parsed and evaluated on the remote session (not in the current local session).
+                RemoteRunspace remoteRunspace = _runspaceRef.Value as RemoteRunspace;
+                bool isConfiguredLoopback = (remoteRunspace != null) ? remoteRunspace.IsConfiguredLoopBack : false;
+                bool isTrustedInput = !isConfiguredLoopback && (localRunspace.ExecutionContext.LanguageMode == PSLanguageMode.FullLanguage);
 
                 // Create PowerShell from ScriptBlock.
                 ScriptBlock scriptBlock = ScriptBlock.Create(context, line);

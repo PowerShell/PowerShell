@@ -1,4 +1,26 @@
 name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - /tools/releaseBuild/**/*
+    - /.vsts-ci/spelling.yml
+pr:
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    include:
+    - '*'
+    exclude:
+    - /tools/releaseBuild/**/*
+    - /.vsts-ci/spelling.yml
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
@@ -51,9 +73,15 @@ phases:
     condition: succeededOrFailed()
 
   - powershell: |
-      git submodule update --init
-    displayName: SubModule Init
-    condition: succeededOrFailed()
+      Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination $(Build.SourcesDirectory)/src/Modules
+
+      if(-not (Test-Path "$(Build.SourcesDirectory)/src/Modules/nuget.config"))
+      {
+          throw "nuget.config is not created"
+      }
+    displayName: 'Add nuget.config for AzDevOps feed for PSGallery modules '
+    condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
 
   - powershell: |
       tools/travis.ps1 -Stage Bootstrap
@@ -78,7 +106,7 @@ phases:
 
   # Uploads any packages as an artifact
   - powershell: |
-      Get-ChildItem -Path *.rpm, *.deb, *.tar.gz, *.zip -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
+      Get-ChildItem -Path *.rpm, *.deb, *.tar.gz, TestPackage.zip -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {
         Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts]$_"
       }
     displayName: Publish Artifacts

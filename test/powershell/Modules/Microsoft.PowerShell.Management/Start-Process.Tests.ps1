@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Describe "Start-Process" -Tags @("Feature") {
+Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
         $isNanoServer = [System.Management.Automation.Platform]::IsNanoServer
@@ -113,7 +113,7 @@ Describe "Start-Process" -Tags @("Feature") {
     }
 
     It "Should start notepad.exe with ShellExecute" -Skip:(!$isFullWin) {
-        $process = Start-Process notepad -PassThru -WindowStyle Normal
+        $process = Start-Process notepad.exe -PassThru -WindowStyle Normal
         $process.Name | Should -Be "notepad"
         $process | Stop-Process
     }

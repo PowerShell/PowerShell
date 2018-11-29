@@ -476,8 +476,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ComplexWriter writer = new ComplexWriter();
                 writer.Initialize(_lo, _lo.ColumnNumber);
                 writer.WriteObject(goc.Data.groupingEntry.formatValueList);
-
-                this.LineOutput.WriteLine(string.Empty);
             }
             goc.GroupStart();
         }
@@ -493,7 +491,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             GroupOutputContext goc = (GroupOutputContext)c;
 
             goc.GroupEnd();
-            this.LineOutput.WriteLine(string.Empty);
         }
 
         /// <summary>
@@ -761,7 +758,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         static private int GetConsoleWindowWidth(int columnNumber)
         {
-            if (InternalTestHooks.SetConsoleWidthToZero) 
+            if (InternalTestHooks.SetConsoleWidthToZero)
             {
                 return DefaultConsoleWidth;
             }
@@ -1106,7 +1103,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// </summary>
             internal override void GroupStart()
             {
-                this.InnerCommand._lo.WriteLine(string.Empty);
             }
 
             /// <summary>
@@ -1194,7 +1190,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// </summary>
             internal override void GroupStart()
             {
-                this.InnerCommand._lo.WriteLine(string.Empty);
             }
 
             /// <summary>

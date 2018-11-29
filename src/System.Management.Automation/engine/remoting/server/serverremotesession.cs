@@ -1005,8 +1005,9 @@ namespace System.Management.Automation.Remoting
                 // Win10 server can support reconstruct/reconnect for all 2.x protocol versions
                 // that support reconstruct/reconnect, Protocol 2.2+
                 // Major protocol version differences (2.x -> 3.x) are not supported.
-                if ((serverProtocolVersion == RemotingConstants.ProtocolVersionWin10RTM) &&
-                    (clientProtocolVersion.Major == serverProtocolVersion.Major))
+                // A reconstruct can only be initiated by a client that understands disconnect (2.2+),
+                // so we only need to check major versions from client and this server for compatibility.
+                if (clientProtocolVersion.Major == RemotingConstants.ProtocolVersion.Major)
                 {
                     if (clientProtocolVersion.Minor == RemotingConstants.ProtocolVersionWin8RTM.Minor)
                     {

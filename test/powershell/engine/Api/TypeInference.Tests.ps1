@@ -242,6 +242,12 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be 'System.Type'
     }
 
+    It "Infers type from static member method" {
+        $res = [AstTypeInference]::InferTypeOf( { [powershell]::Create() }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Management.Automation.PowerShell'
+    }
+
     It "Infers type from integer * stringliteral" {
         $res = [AstTypeInference]::InferTypeOf( {  5 * "5" }.Ast)
         $res.Count | Should -Be 1
@@ -412,7 +418,7 @@ Describe "Type inference Tests" -tags "CI" {
     It "Infers typeof Select-Object when Parameter is ExcludeProperty" {
         $res = [AstTypeInference]::InferTypeOf( {  [io.fileinfo]::new("file")  |  Select-Object -ExcludeProperty *Time*, E* }.Ast)
         $res.Count | Should -Be 1
-        $res[0].Name | Should -Be "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LinkType:Mode:Name:Target"
+        $res[0].Name | Should -Be "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LinkType:Mode:Name:Target:VersionInfo"
         $names = $res[0].Members.Name
         $names -contains "BaseName" | Should -BeTrue
         $names -contains "Name" | Should -BeTrue

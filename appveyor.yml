@@ -17,7 +17,6 @@ nuget:
   project_feed: true
 
 install:
-  - git submodule update --init
   - ps: Import-Module .\tools\Appveyor.psm1
   - ps: Invoke-AppveyorInstall
 

@@ -232,7 +232,7 @@
     <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
   </data>
   <data name="icontainsOperatorDescription" xml:space="preserve">
-    <value>Containment operator - incase sensitive. Returns TRUE when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
+    <value>Containment operator - case insensitive. Returns TRUE when the test value (right operand) exactly matches at least one of the values in the left operand.</value>
   </data>
   <data name="ccontainsOperatorDescription" xml:space="preserve">
     <value>Containment operator - case sensitive. Returns TRUE only when the test value (right operand) exactly matches at least one of the values in the left operand.</value>

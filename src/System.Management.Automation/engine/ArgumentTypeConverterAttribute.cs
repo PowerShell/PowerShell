@@ -165,6 +165,13 @@ namespace System.Management.Automation
                 throw new ArgumentTransformationMetadataException(e.Message, e);
             }
 
+            // Track the flow of untrusted object during the conversion when it's called directly from ParameterBinderBase.
+            // When it's called from the override Transform method, the tracking is taken care of in the base type.
+            if (bindingParameters || bindingScriptCmdlet)
+            {
+                ExecutionContext.PropagateInputSource(inputData, result, engineIntrinsics.SessionState.Internal.LanguageMode);
+            }
+
             return result;
         }
 

@@ -188,7 +188,8 @@ namespace Microsoft.PowerShell
             "command",
             "settingsfile",
             "help",
-            "workingdirectory"
+            "workingdirectory",
+            "removeworkingdirectorytrailingcharacter"
         };
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
@@ -349,6 +350,16 @@ namespace Microsoft.PowerShell
             }
         }
 
+        internal bool OutputFormatSpecified
+        {
+            get
+            {
+                Dbg.Assert(_dirty, "Parse has not been called yet");
+
+                return _outputFormatSpecified;
+            }
+        }
+
         internal Serialization.DataFormat InputFormat
         {
             get
@@ -391,8 +402,24 @@ namespace Microsoft.PowerShell
 
         internal string WorkingDirectory
         {
-            get { return _workingDirectory; }
+            get
+            {
+#if !UNIX
+                if (_removeWorkingDirectoryTrailingCharacter && _workingDirectory.Length > 0)
+                {
+                    return _workingDirectory.Remove(_workingDirectory.Length - 1);
+                }
+ #endif
+                return _workingDirectory;
+            }
         }
+
+#if !UNIX
+        internal bool RemoveWorkingDirectoryTrailingCharacter
+        {
+            get { return _removeWorkingDirectoryTrailingCharacter; }
+        }
+#endif
 
         #endregion Internal properties
 
@@ -475,7 +502,7 @@ namespace Microsoft.PowerShell
             // Current user policy takes precedence.
             var consoleSessionSetting = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
 
-            return (consoleSessionSetting?.EnableConsoleSessionConfiguration == true && !string.IsNullOrEmpty(consoleSessionSetting?.ConsoleSessionConfigurationName)) ? 
+            return (consoleSessionSetting?.EnableConsoleSessionConfiguration == true && !string.IsNullOrEmpty(consoleSessionSetting?.ConsoleSessionConfigurationName)) ?
                     consoleSessionSetting.ConsoleSessionConfigurationName : string.Empty;
         }
 
@@ -493,7 +520,7 @@ namespace Microsoft.PowerShell
                 Dbg.Assert(args != null, "Argument 'args' to EarlyParseHelper should never be null");
                 return;
             }
-            
+
             bool noexitSeen = false;
             for (int i = 0; i < args.Length; ++i)
             {
@@ -587,7 +614,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(smallestUnambiguousMatch.Trim().ToLowerInvariant() == smallestUnambiguousMatch, "match should be normalized to lowercase w/ no outside whitespace");
             Dbg.Assert(match.Contains(smallestUnambiguousMatch), "sUM should be a substring of match");
 
-            return (match.Trim().ToLowerInvariant().IndexOf(switchKey, StringComparison.Ordinal) == 0 && 
+            return (match.Trim().ToLowerInvariant().IndexOf(switchKey, StringComparison.Ordinal) == 0 &&
                 switchKey.Length >= smallestUnambiguousMatch.Length);
         }
 
@@ -849,6 +876,7 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "outputformat", "o") || MatchSwitch(switchKey, "of", "o"))
                 {
                     ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
+                    _outputFormatSpecified = true;
                 }
                 else if (MatchSwitch(switchKey, "inputformat", "in") || MatchSwitch(switchKey, "if", "if"))
                 {
@@ -923,6 +951,12 @@ namespace Microsoft.PowerShell
 
                     _workingDirectory = args[i];
                 }
+#if !UNIX
+                else if (MatchSwitch(switchKey, "removeworkingdirectorytrailingcharacter", "removeworkingdirectorytrailingcharacter"))
+                {
+                    _removeWorkingDirectoryTrailingCharacter = true;
+                }
+#endif
                 else
                 {
                     // The first parameter we fail to recognize marks the beginning of the file string.
@@ -1347,11 +1381,16 @@ namespace Microsoft.PowerShell
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
         private bool _dirty;
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
+        private bool _outputFormatSpecified = false;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;
         private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
         private string _file;
         private string _executionPolicy;
         private string _workingDirectory;
+
+#if !UNIX
+        private bool _removeWorkingDirectoryTrailingCharacter = false;
+#endif
     }
 }   // namespace
 

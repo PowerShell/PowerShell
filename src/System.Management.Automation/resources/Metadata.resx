@@ -249,4 +249,7 @@
   <data name="InvalidEnumArgument" xml:space="preserve">
     <value>The Enum member '{0}' is not a valid value for the parameter '{1}'. Specify one of the following members and try again: {2}.</value>
   </data>
+  <data name="ValidateTrustedDataFailure" xml:space="preserve">
+    <value>Cannot process input. The argument "{0}" is not trusted.</value>
+  </data>
 </root>

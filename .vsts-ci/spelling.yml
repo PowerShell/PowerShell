@@ -1,4 +1,21 @@
 name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    exclude:
+    - /src/*
+
+pr:
+  branches:
+    include:
+    - master
+    - release*
+  paths:
+    exclude:
+    - /src/*
 
 resources:
 - repo: self

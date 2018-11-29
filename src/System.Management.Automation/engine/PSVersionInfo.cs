@@ -13,9 +13,22 @@ using Microsoft.Win32;
 namespace System.Management.Automation
 {
     /// <summary>
+    /// <para>
     /// Encapsulates $PSVersionTable.
+    /// </para>
+    /// <para>
+    /// Provides a simple interface to retrieve details from the PowerShell version table:
+    /// <code>
+    ///    PSVersionInfo.PSVersion;
+    /// </code>
+    /// The above statement retrieves the PowerShell version.
+    /// <code>
+    ///    PSVersionInfo.PSEdition;
+    /// </code>
+    /// The above statement retrieves the PowerShell edition.
+    /// </para>
     /// </summary>
-    internal class PSVersionInfo
+    public class PSVersionInfo
     {
         internal const string PSVersionTableName = "PSVersionTable";
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
@@ -151,7 +164,10 @@ namespace System.Management.Automation
 
         #region Programmer APIs
 
-        internal static Version PSVersion
+        /// <summary>
+        /// Gets the version of PowerShell.
+        /// </summary>
+        public static Version PSVersion
         {
             get
             {
@@ -175,7 +191,10 @@ namespace System.Management.Automation
             }
         }
 
-        internal static string PSEdition
+        /// <summary>
+        /// Gets the edition of PowerShell.
+        /// </summary>
+        public static string PSEdition
         {
             get
             {
