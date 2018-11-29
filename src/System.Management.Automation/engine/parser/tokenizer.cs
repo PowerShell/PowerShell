@@ -3810,7 +3810,8 @@ namespace System.Management.Automation.Language
                     case 'Y':
                         suffix |= NumberSuffixFlags.SignedByte;
                         break;
-                    case 'I':
+                    case 'n':
+                    case 'N':
                         suffix |= NumberSuffixFlags.BigInteger;
                         break;
                     default:
