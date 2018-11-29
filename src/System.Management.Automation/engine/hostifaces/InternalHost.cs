@@ -190,11 +190,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-#if CORECLR     // No CultureInfo.InstalledUICulture In CoreCLR. Locale cannot be changed On CSS.
-                CultureInfo ci = _externalHostRef.Value.CurrentUICulture ?? CultureInfo.CurrentUICulture;
-#else
                 CultureInfo ci = _externalHostRef.Value.CurrentUICulture ?? CultureInfo.InstalledUICulture;
-#endif
                 return ci;
             }
         }

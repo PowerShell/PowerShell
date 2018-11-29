@@ -355,7 +355,10 @@ namespace System.Management.Automation.Configuration
             fileLock.EnterReadLock();
             try
             {
-                using (var streamReader = new StreamReader(fileName))
+                // The config file can be locked by another process
+                // so we wait some milliseconds in 'WaitForFile()' for recovery before stop current process.
+                using (var readerStream = WaitForFile(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var streamReader = new StreamReader(readerStream))
                 using (var jsonReader = new JsonTextReader(streamReader))
                 {
                     var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 };
@@ -374,6 +377,29 @@ namespace System.Management.Automation.Configuration
             }
 
             return defaultValue;
+        }
+
+        private FileStream WaitForFile(string fullPath, FileMode mode, FileAccess access, FileShare share)
+        {
+            const int MaxTries = 5;
+            for (int numTries = 0; numTries < MaxTries; numTries++)
+            {
+                try
+                {
+                    return new FileStream(fullPath, mode, access, share);
+                }
+                catch (IOException)
+                {
+                    if (numTries == (MaxTries - 1))
+                    {
+                        throw;
+                    }
+
+                    Thread.Sleep(50);
+                }
+            }
+
+            throw new IOException(nameof(WaitForFile));
         }
 
         /// <summary>

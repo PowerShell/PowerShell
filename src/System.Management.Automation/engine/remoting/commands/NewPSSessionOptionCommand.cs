@@ -20,6 +20,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters (specific to PSSessionOption)
 
+#if !UNIX
         /// <summary>
         /// The MaximumRedirection parameter enables the implicit redirection functionality
         /// -1 = no limit
@@ -178,11 +179,13 @@ namespace Microsoft.PowerShell.Commands
             set { _idleTimeout = value; }
         }
         private int? _idleTimeout;
+#endif
 
         #endregion Parameters
 
         #region Parameters copied from New-WSManSessionOption
 
+#if !UNIX
         /// <summary>
         /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType,
         /// ProxyAuthenticationMechanism and ProxyCredential)is not passed to WSMan at all.
@@ -210,6 +213,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Credential]
         public PSCredential ProxyCredential { get; set; }
+#endif
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipCACheck".
@@ -240,6 +244,8 @@ namespace Microsoft.PowerShell.Commands
             set { _skipcncheck = value; }
         }
         private bool _skipcncheck;
+
+#if !UNIX
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipRevocation".
@@ -319,6 +325,8 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _includePortInSPN;
 
+#endif
+
         #endregion
 
         #region Implementation
@@ -330,11 +338,14 @@ namespace Microsoft.PowerShell.Commands
         {
             PSSessionOption result = new PSSessionOption();
             // Begin: WSMan specific options
+#if !UNIX
             result.ProxyAccessType = this.ProxyAccessType;
             result.ProxyAuthentication = this.ProxyAuthentication;
             result.ProxyCredential = this.ProxyCredential;
+#endif
             result.SkipCACheck = this.SkipCACheck;
             result.SkipCNCheck = this.SkipCNCheck;
+#if !UNIX
             result.SkipRevocationCheck = this.SkipRevocationCheck;
             if (_operationtimeout.HasValue)
             {
@@ -385,6 +396,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result.ApplicationArguments = this.ApplicationArguments;
             }
+#endif
 
             this.WriteObject(result);
         }
