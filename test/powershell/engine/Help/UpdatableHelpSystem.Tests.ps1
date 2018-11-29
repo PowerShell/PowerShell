@@ -20,7 +20,6 @@ $powershellCoreModules = @(
     "Microsoft.WsMan.Management"
     "PackageManagement"
 #    "PowershellGet"
-    "PSReadline"
 )
 
 # The file extension for the help content on the Download Center.
