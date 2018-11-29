@@ -23,7 +23,7 @@ Describe "Tests for New-PSDrive cmdlet." -Tag "CI","RequireAdminOnWindows" {
 
         it "Should throw exception if PSDrive is not a drive letter supported by operating system." -Skip:(-not $IsWindows) {
             $PSDriveName = 'AB'
-            { New-PSDrive Name $PSDriveName -PSProvider FileSystem -Root $RemoteShare -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveNameNotSupportedForPersistence'
+            { New-PSDrive -Name $PSDriveName -PSProvider FileSystem -Root $RemoteShare -Persist -ErrorAction Stop } | Should -Throw -ErrorId 'DriveNameNotSupportedForPersistence'
         }
     }
 }
