@@ -315,7 +315,7 @@ namespace System.Management.Automation
 
                 var userHomeHelpPath = HelpUtils.GetUserHomeHelpSearchPath();
 
-                Collection<String> searchPaths = new Collection<String>(){ userHomeHelpPath };
+                Collection<string> searchPaths = new Collection<string>() { userHomeHelpPath };
 
                 if (!String.IsNullOrEmpty(moduleDir))
                 {
@@ -324,7 +324,7 @@ namespace System.Management.Automation
 
                 if (!String.IsNullOrEmpty(userHomeHelpPath))
                 {
-                    searchPaths.Add(Path.Combine(userHomeHelpPath,moduleName));
+                    searchPaths.Add(Path.Combine(userHomeHelpPath, moduleName));
                 }
 
                 if (!String.IsNullOrEmpty(moduleName) && !String.IsNullOrEmpty(moduleDir))
