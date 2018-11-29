@@ -3267,17 +3267,6 @@ namespace System.Management.Automation.Language
                 SkipChar();
                 sb.Append(c);
                 c = PeekChar();
-                if (c == '_')
-                {
-                    SkipChar();
-                    c = PeekChar();
-                    if (c == '_' || !c.IsHexDigit())
-                    {
-                        // Double underscore, or a trailing underscore are not valid formats
-                        UngetChar();
-                        break;
-                    }
-                }
             }
         }
 
@@ -3285,20 +3274,8 @@ namespace System.Management.Automation.Language
         {
             int countDigits = 0;
             char c = PeekChar();
-            while (c.IsDecimalDigit() || c == '_')
+            while (c.IsDecimalDigit())
             {
-                if (c == '_')
-                {
-                    SkipChar();
-                    c = PeekChar();
-                    if (c == '_' || !c.IsDecimalDigit())
-                    {
-                        // Double underscore, or a trailing underscore are not valid formats
-                        UngetChar();
-                        break;
-                    }
-                }
-
                 countDigits += 1;
                 SkipChar();
                 sb.Append(c);
@@ -3316,17 +3293,6 @@ namespace System.Management.Automation.Language
                 SkipChar();
                 sb.Append(c);
                 c = PeekChar();
-                if (c == '_')
-                {
-                    SkipChar();
-                    c = PeekChar();
-                    if (c == '_' || !c.IsBinaryDigit())
-                    {
-                        // Double underscore, or a trailing underscore are not valid formats
-                        UngetChar();
-                        break;
-                    }
-                }
             }
         }
 
@@ -3514,12 +3480,6 @@ namespace System.Management.Automation.Language
                                 case 16:
                                     suffix |= NumberSuffixFlags.Long;
                                     break;
-                                case 24:
-                                    suffix |= NumberSuffixFlags.Decimal;
-                                    break;
-                                case 32:
-                                    suffix |= NumberSuffixFlags.BigInteger;
-                                    break;
                             }
                         }
                     }
@@ -3547,12 +3507,6 @@ namespace System.Management.Automation.Language
                             {
                                 case 64:
                                     suffix |= NumberSuffixFlags.Long;
-                                    break;
-                                case 96:
-                                    suffix |= NumberSuffixFlags.Decimal;
-                                    break;
-                                case int n when n > 96:
-                                    suffix |= NumberSuffixFlags.BigInteger;
                                     break;
                             }
                         }
@@ -3673,14 +3627,10 @@ namespace System.Management.Automation.Language
                                     return true;
                                 }
                             }
-                            else
-                            {
-                                // Fallback to bigint for binary / hex notations
-                                result = bigValue;
-                                return true;
-                            }
 
-                            break;
+                            // Hex or Binary value, too big for generic non-suffix parsing
+                            result = null;
+                            return false;
                     }
 
                     // Value cannot be contained in type specified by suffix, or invalid suffix flags.
