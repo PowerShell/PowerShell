@@ -2692,9 +2692,12 @@ function Test-FileWxs
     {
         if ($indexedAssetFiles -inotcontains $file)
         {
+            $name = Split-Path -Path $file -Leaf
+            if ($name -eq '.nupkg.metadata') {
+                break;
+            }
             $passed = $false
             $folder = Split-Path -Path $file
-            $name = Split-Path -Path $file -Leaf
             $heatNode = $heatNodesByFile[$file]
             $compGroupNode = Get-ComponentGroupNode -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
             $filesNode = Get-DirectoryNode -Node $heatNode -XmlDoc $newFilesAssetXml -XmlNsManager $xmlns
