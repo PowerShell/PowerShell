@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Prevent script injection attack by disallowing ExportModuleMemberCommand to export module members across
             // language boundaries. This will prevent injected untrusted script from exporting private trusted module functions.
-            if (Context.EngineSessionState.Module != null &&
+            if (Context.EngineSessionState.Module?.LanguageMode != null &&
                 Context.LanguageMode != Context.EngineSessionState.Module.LanguageMode)
             {
                 var se = new PSSecurityException(Modules.CannotExportMembersAccrossLanguageBoundaries);

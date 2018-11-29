@@ -1409,3 +1409,51 @@ finally
         $Global:PSDefaultParameterValues = $defaultParamValues
     }
 }
+
+Describe "Export-ModuleMember should succeed in FullLanguage mode with scriptblock created without context" -Tag 'Feature' {
+
+    BeforeAll {
+
+        $typeDef = @'
+        using System;
+        using System.Management.Automation;
+        using System.Management.Automation.Runspaces;
+
+        public class TestScriptBlockCreate
+        {
+            private ScriptBlock _scriptBlock;
+
+            public ScriptBlock CreateScriptBlock()
+            {
+                var thread = new System.Threading.Thread(ThreadProc);
+                thread.Start(null);
+                thread.Join();
+
+                return _scriptBlock;
+            }
+
+            private void ThreadProc(object state)
+            {
+                // Create script block on thread with no PowerShell context
+                _scriptBlock = ScriptBlock.Create(@"function Do-Nothing {}; Export-ModuleMember -Function Do-Nothing");
+            }
+        }
+'@
+
+        try
+        {
+            Add-Type -TypeDefinition $typeDef
+        }
+        catch { }
+    }
+
+    It "Verfies that Export-ModuleMember does not throw error with context-less scriptblock" {
+
+        $scriptBlockCreator = [TestScriptBlockCreate]::new()
+        $testScriptBlock = $scriptBlockCreator.CreateScriptBlock()
+
+        $testScriptBlock | Should -Not -BeNullOrEmpty
+
+        { New-Module -ScriptBlock $testScriptBlock -ErrorAction Stop } | Should -Not -Throw -Because "Scriptblock without execution context is allowed in Full Language"
+    }
+}
