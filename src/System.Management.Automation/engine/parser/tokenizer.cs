@@ -3612,23 +3612,22 @@ namespace System.Management.Automation.Language
                                 return true;
                             }
 
-                            if (Utils.TryCast(bigValue, out decimal dm_))
-                            {
-                                result = dm_;
-                                return true;
-                            }
-
-                            // Result is too big for anything else; fallback to double (if decimal notation)
+                            // Result is too big for anything else; fallback to decimal or double
                             if (format == NumberFormat.Decimal)
                             {
-                                if (Utils.TryCast(bigValue, out double d))
+                                if (Utils.TryCast(bigValue, out decimal dm_))
+                                {
+                                    result = dm_;
+                                    return true;
+                                }
+                                else if (Utils.TryCast(bigValue, out double d))
                                 {
                                     result = d;
                                     return true;
                                 }
                             }
 
-                            // Hex or Binary value, too big for generic non-suffix parsing
+                            // Hex or Binary value, too big for generic non-suffixed parsing
                             result = null;
                             return false;
                     }
