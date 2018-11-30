@@ -201,7 +201,7 @@ namespace System.Management.Automation
                 scriptFile.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase)
                 && CanSkipCodeScan())
             {
-                // Skip the scan for .psd1 files if their content is essentially a safe HashtableAst.
+                // Skip the scan for .psd1 files if their content is in fact a safe HashtableAst.
                 return;
             }
 
@@ -227,7 +227,7 @@ namespace System.Management.Automation
                 HasSuspiciousContent = true;
             }
 
-            // A local function to check if the ScriptBlockAst is essentially a safe HashtableAst.
+            // We can skip code scan if the ScriptBlockAst is from a .psd1 file and it's in fact a safe HashtableAst.
             bool CanSkipCodeScan()
             {
                 if (scriptBlockAst.BeginBlock != null || scriptBlockAst.ProcessBlock != null ||
@@ -256,7 +256,7 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                // After the above steps, we know the ScriptBlockAst is essentially just a HashtableAst,
+                // After the above steps, we know the ScriptBlockAst is in fact just a HashtableAst,
                 // now we need to check if the HashtableAst is safe.
                 return IsSafeValueVisitor.IsAstSafe(hashtableAst, GetSafeValueVisitor.SafeValueContext.Default);
             }

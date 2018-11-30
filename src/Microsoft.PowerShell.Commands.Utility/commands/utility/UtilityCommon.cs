@@ -68,18 +68,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// </summary>
         public static string PathDoesNotExist { get { return UtilityCommonStrings.PathDoesNotExist; } }
-         /// <summary>
+
+        /// <summary>
         /// </summary>
         public static string FileReadError { get { return UtilityCommonStrings.FileReadError; } }
-         /// <summary>
+
+        /// <summary>
         /// The resource string used to indicate 'PATH:' in the formating header.
         /// </summary>
         public static string FormatHexPathPrefix { get { return UtilityCommonStrings.FormatHexPathPrefix; } }
-         /// <summary>
+
+        /// <summary>
         /// Error message to indicate that requested algorithm is not supported on the target platform.
         /// </summary>
         public static string AlgorithmTypeNotSupported { get { return UtilityCommonStrings.AlgorithmTypeNotSupported; } }
-         /// <summary>
+
+        /// <summary>
         /// The file '{0}' could not be parsed as a PowerShell Data File.
         /// </summary>
         public static string CouldNotParseAsPowerShellDataFile { get { return UtilityCommonStrings.CouldNotParseAsPowerShellDataFile; } }
