@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Enable-ExperimentalFeature cmdlet.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Enable, "ExperimentalFeature", SupportsShouldProcess = true, HelpUri = "")]
+    [Cmdlet(VerbsLifecycle.Enable, "ExperimentalFeature", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2046964")]
     public class EnableExperimentalFeatureCommand : EnableDisableExperimentalFeatureCommandBase
     {
         /// <summary>
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Enable-ExperimentalFeature cmdlet.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Disable, "ExperimentalFeature", SupportsShouldProcess = true, HelpUri = "")]
+    [Cmdlet(VerbsLifecycle.Disable, "ExperimentalFeature", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2046963")]
     public class DisableExperimentalFeatureCommand : EnableDisableExperimentalFeatureCommandBase
     {
         /// <summary>
