@@ -52,4 +52,10 @@ Describe 'ConvertFrom-Json' -tags "CI" {
             $json | Should -BeOfType Hashtable
         }
     }
+
+    It 'Throws an ArgumentException with an incomplete array with AsHashtable switch set to <AsHashtable>' -TestCase $testCasesWithAndWithoutAsHashtableSwitch {
+        Param($AsHashtable)
+        { ConvertFrom-Json '["1",' -AsHashtable:$AsHashtable } |
+            Should -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.ConvertFromJsonCommand"
+    }
 }
