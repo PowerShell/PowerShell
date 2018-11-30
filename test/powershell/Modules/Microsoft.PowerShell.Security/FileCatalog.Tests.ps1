@@ -410,6 +410,17 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $result | Should -Be "Valid"
         }
     }
+
+    Context "Parameter validation tests" {
+        It "Parameter validation error when CatalogVersion is out of range: <version>" -TestCases @(
+            @{ version = 0 },
+            @{ version = 3 }
+        ) {
+            param ($version)
+
+            { New-FileCatalog -Path $testDataPath\UserConfigProv -CatalogFilePath $script:catalogPath -CatalogVersion $version } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.NewFileCatalogCommand"
+        }
+    }
 }
 
 } finally {

@@ -146,6 +146,7 @@ namespace Microsoft.PowerShell.Commands
         /// Catalog version
         /// </summary>
         [Parameter()]
+        [ValidateRange(1, 2)]
         public int CatalogVersion
         {
             get
