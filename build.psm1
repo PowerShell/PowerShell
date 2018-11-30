@@ -9,7 +9,7 @@ $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $script:TestModuleDirPath = Join-Path ([System.IO.Path]::GetTempPath()) 'PwshTestModules'
 $null = New-Item -Force -ItemType Directory -Path $script:TestModuleDirPath
 
-$dotnetCLIChannel = 'preview' # TODO: Change this to 'release' once .Net Core 2.2 goes RTM
+$dotnetCLIChannel = 'preview' # TODO: Change this to 'release' once .Net Core 3.0 goes RTM
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
