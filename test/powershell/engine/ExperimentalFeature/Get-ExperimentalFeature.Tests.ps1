@@ -57,7 +57,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
             $features[0].Source | Should -BeExactly $testModuleManifestPath
 
             $features[1].Name | Should -BeExactly "ExpTest.FeatureTwo"
-            $features[1].Enabled | Should -Be $false
+            $features[1].Enabled | Should -BeFalse
             $features[1].Source | Should -BeExactly $testModuleManifestPath
         }
 
