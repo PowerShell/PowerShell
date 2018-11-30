@@ -1917,14 +1917,14 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// A readonly Hashset.
     /// </summary>
-    internal sealed class ReadOnlyHashSet<T> : IEnumerable
+    internal sealed class ReadOnlyBag<T> : IEnumerable
     {
         private HashSet<T> _hashset;
 
         /// <summary>
         /// Constructor for the readonly Hashset.
         /// </summary>
-        internal ReadOnlyHashSet(HashSet<T> hashset)
+        internal ReadOnlyBag(HashSet<T> hashset)
         {
             if (hashset == null)
             {
@@ -1957,6 +1957,6 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Get an empty singleton.
         /// </summary>
-        internal static readonly ReadOnlyHashSet<T> Empty = new ReadOnlyHashSet<T>(new HashSet<T>(capacity: 0));
+        internal static readonly ReadOnlyBag<T> Empty = new ReadOnlyBag<T>(new HashSet<T>(capacity: 0));
     }
 }
