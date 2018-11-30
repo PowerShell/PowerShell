@@ -313,11 +313,18 @@ namespace System.Management.Automation
                 // and the nested module that implements the command
                 GetModulePaths(commandInfo, out moduleName, out moduleDir, out nestedModulePath);
 
-                Collection<String> searchPaths = new Collection<String>(){ HelpUtils.GetUserHomeHelpSearchPath() };
+                var userHomeHelpPath = HelpUtils.GetUserHomeHelpSearchPath();
+
+                Collection<string> searchPaths = new Collection<string>() { userHomeHelpPath };
 
                 if (!String.IsNullOrEmpty(moduleDir))
                 {
                     searchPaths.Add(moduleDir);
+                }
+
+                if (!String.IsNullOrEmpty(userHomeHelpPath) && !String.IsNullOrEmpty(moduleName))
+                {
+                    searchPaths.Add(Path.Combine(userHomeHelpPath, moduleName));
                 }
 
                 if (!String.IsNullOrEmpty(moduleName) && !String.IsNullOrEmpty(moduleDir))

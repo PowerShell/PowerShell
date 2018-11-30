@@ -385,7 +385,7 @@ Describe 'help can be found for CurrentUser Scope' -Tags 'CI' {
         Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'CurrentUser'
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Management' -Scope 'CurrentUser'
-        UpdateHelpFromLocalContentPath -ModuleName 'PSReadLine' -Scope CurrentUser -Force
+        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Archive' -Scope 'CurrentUser' -Force
         UpdateHelpFromLocalContentPath -ModuleName 'PackageManagement' -Scope CurrentUser -Force
 
         ## Delete help from global scope if it exists.
@@ -401,15 +401,15 @@ Describe 'help can be found for CurrentUser Scope' -Tags 'CI' {
             Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
         }
 
-        $psreadlineHelpFilePath = Join-Path (Get-Module PSReadLine -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.PSReadLine.dll-Help.xml'
-        if (Test-Path $psreadlineHelpFilePath) {
-            Remove-Item $psreadlineHelpFilePath -Force -ErrorAction SilentlyContinue
+        $archiveHelpFilePath = Join-Path (Get-Module Microsoft.PowerShell.Archive -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Archive-help.xml'
+        if (Test-Path $archiveHelpFilePath) {
+            Remove-Item $archiveHelpFilePath -Force -ErrorAction SilentlyContinue
         }
 
         $TestCases = @(
             @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
             @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
-            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Get-PSReadlineOption' }
+            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Compress-Archive' }
             @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
         )
     }
@@ -442,20 +442,20 @@ Describe 'help can be found for AllUsers Scope' -Tags @('Feature', 'RequireAdmin
             Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
         }
 
-        $psreadlineHelpFilePath = Join-Path (Get-Module PSReadLine -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.PSReadLine.dll-Help.xml'
-        if (Test-Path $psreadlineHelpFilePath) {
-            Remove-Item $psreadlineHelpFilePath -Force -ErrorAction SilentlyContinue
+        $archiveHelpFilePath = Join-Path (Get-Module Microsoft.PowerShell.Archive -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Archive-help.xml'
+        if (Test-Path $archiveHelpFilePath) {
+            Remove-Item $archiveHelpFilePath -Force -ErrorAction SilentlyContinue
         }
 
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'AllUsers'
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Management' -Scope 'AllUsers'
-        UpdateHelpFromLocalContentPath -ModuleName 'PSReadLine' -Scope 'AllUsers' -Force
+        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Archive' -Scope 'AllUsers' -Force
         UpdateHelpFromLocalContentPath -ModuleName 'PackageManagement' -Scope 'AllUsers' -Force
 
         $TestCases = @(
             @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
             @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
-            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Get-PSReadlineOption' }
+            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Compress-Archive' }
             @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
         )
     }
