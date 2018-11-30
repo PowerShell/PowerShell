@@ -1,7 +1,3 @@
-resources:
-- repo: self
-  clean: true
-
 jobs:
 
 - job: BuildJob
@@ -15,31 +11,37 @@ jobs:
       - DotNetFramework
   strategy:
     matrix:
-      x64-release:
+      Build (x64,release):
         BuildConfiguration: release
         BuildPlatform: any cpu
         Architecture: x64
-      x86-release:
+      Build (x86,release):
         BuildConfiguration: release
         BuildPlatform: any cpu
         Architecture: x86
-      arm-release:
+      Build (arm,release):
         BuildConfiguration: release
         BuildPlatform: any cpu
         Architecture: arm
-      arm64-release:
+      Build (arm64,release):
         BuildConfiguration: release
         BuildPlatform: any cpu
         Architecture: arm64
-      fxdependent-release:
+      Build (fxdependent,release):
         BuildConfiguration: release
         BuildPlatform: any cpu
         Architecture: fxdependent
 
   steps:
 
+  - checkout: self
+    clean: true
+    persistCredentials: true
+
   - task: PkgESSetupBuild@10
     displayName: 'Initialize build'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
       useDfs: false
       productName: PowerShellCore
@@ -153,6 +155,8 @@ jobs:
 
   - task: PkgESCodeSign@10
     displayName: 'CodeSign $(Architecture)'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
        signConfigXml: '$(Build.SourcesDirectory)\tools\releaseBuild\signing.xml'
        inPathRoot: '$(Symbols)'
@@ -169,6 +173,7 @@ jobs:
     displayName: 'Build Windows Universal - $(Architecture) Package'
     continueOnError: true
     condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
+
 
 
 - job: ComponentRegistrationJob
@@ -245,9 +250,47 @@ jobs:
       snapshotForceEnabled: true
 
 
+
+- job: CreateAzureContainerJob
+  displayName: Create Azure container and set access
+  dependsOn: BuildJob 
+  condition: succeeded()
+  pool:
+    name: Hosted VS2017
+
+  steps:
+
+  - powershell: |
+      ./tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTag)
+    displayName: 'Set ReleaseTag Variable'
+
+  - powershell: |  
+       $azureVersion = $env:ReleaseTag.ToLowerInvariant() -replace '\.', '-'
+       $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
+       Write-Host "sending " + $vstsCommandString
+       Write-Host "##$vstsCommandString"
+    displayName: 'Set ContainerName'
+
+  - task: AzureCLI@1
+    displayName: 'Create container'
+    inputs:
+      azureSubscription: '$(AzureFileCopySubscription)'
+      scriptLocation: inlineScript
+      inlineScript: |  
+       az storage container create --account-name $(StorageAccount) --account-key $(StorageAccountKey) --name $(AzureVersion) --public-access blob
+
+  - task: AzureCLI@1
+    displayName: 'Set permissions on container'
+    inputs:
+      azureSubscription: '$(AzureFileCopySubscription)'
+      scriptLocation: inlineScript
+      inlineScript: 'az storage container set-permission --account-name $(StorageAccount) --account-key $(StorageAccountKey) --name $(AzureVersion) --public-access blob'
+
+
+
 - job: PackageSigningJob
   displayName: Package signing
-  dependsOn: BuildJob 
+  dependsOn: CreateAzureContainerJob 
   condition: succeeded()
   pool:
     name: Package ES CodeHub Lab E
@@ -298,19 +341,16 @@ jobs:
       Expand-Archive -Path "$(System.ArtifactsDirectory)\results\PowerShell-$(Version)-symbols-win-x86.zip" -Destination "$(Build.StagingDirectory)\symbols\x86"
     displayName: 'Expand symbols zip - x86'
     continueOnError: true
-    condition: and(succeeded(), contains(variables['Architecture'], 'x86'))
 
   - powershell: |
       Expand-Archive -Path "$(System.ArtifactsDirectory)\results\PowerShell-$(Version)-symbols-win-x64.zip" -Destination "$(Build.StagingDirectory)\symbols\x64"
     displayName: 'Expand symbols zip - x64'
     continueOnError: true
-    condition: and(succeeded(), contains(variables['Architecture'], 'x64'))
 
   - powershell: |
       Expand-Archive -Path "$(System.ArtifactsDirectory)\results\PowerShell-$(Version)-symbols-win-fxdependent.zip" -Destination "$(Build.StagingDirectory)\symbols\fxdependent"
     displayName: 'Expand symbols zip - fxdependent'
     continueOnError: true
-    condition: and(succeeded(), contains(variables['Architecture'], 'x64'))
 
   - powershell: |
       tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi","$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi" -path "$(System.ArtifactsDirectory)\package.xml"
@@ -321,3 +361,153 @@ jobs:
     displayName: 'print signing xml'
     continueOnError: true
 
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign $(System.ArtifactsDirectory)\package.xml'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
+      outPathRoot: '$(Build.StagingDirectory)\signedPackages'
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - powershell: |
+       $packagePath = "$(Build.StagingDirectory)\signedPackages\PowerShell-$(Version)-win-x64.msi"
+       if(Test-Path -Path $packagePath)
+       {
+           Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
+       }
+    displayName: '[Create script] upload signed msi - x64'
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - task: AzureFileCopy@1
+    displayName: 'upload signed msi to Azure - x64'
+    inputs:
+      SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-$(Version)-win-x64.msi'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - powershell: |
+       $packagePath = "$(Build.StagingDirectory)\signedPackages\PowerShell-$(Version)-win-x86.msi"
+       if(Test-Path -Path $packagePath)
+       {
+           Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
+       }
+    displayName: '[create script] upload signed msi - x86'       
+    continueOnError: true
+
+  - task: AzureFileCopy@1
+    displayName: 'upload signed msi to Azure - x86'
+    inputs:
+      SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-$(Version)-win-x86.msi'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - powershell: |
+       $packagePath = "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.zip"
+       if(Test-Path -Path $packagePath)
+       {
+           Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
+       }
+    displayName: '[Create script] upload signed zip - x64'
+    continueOnError: true
+
+  - task: AzureFileCopy@1
+    displayName: 'upload signed zip to Azure - x64'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.zip'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - powershell: |
+       $packagePath = "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.zip"
+       if(Test-Path -Path $packagePath)
+       {
+           Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
+       }
+    displayName: '[create script] upload signed zip - x86'
+    continueOnError: true
+
+  - task: AzureFileCopy@1
+    displayName: 'upload signed zip to Azure - x86'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.zip'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - powershell: |
+       $packagePath = "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.zip"
+       if(Test-Path -Path $packagePath)
+       {
+           Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
+       }
+    displayName: '[create script] upload signed zip - arm'
+    continueOnError: true
+
+  - task: AzureFileCopy@1
+    displayName: 'upload signed zip to Azure - arm'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.zip'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - powershell: |
+       $packagePath = "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.zip"
+       if(Test-Path -Path $packagePath)
+       {
+           Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
+       }
+    displayName: '[create script] upload signed zip - arm64'   
+    continueOnError: true
+
+  - task: AzureFileCopy@1
+    displayName: 'upload signed zip to Azure - arm64'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.zip'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+
+  - powershell: |
+       $packagePath = "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-fxdependent.zip"
+       if(Test-Path -Path $packagePath)
+       {
+           Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
+       }
+    displayName: '[create script] upload signed zip - fxdependent'
+    continueOnError: true
+
+  - task: AzureFileCopy@1
+    displayName: 'upload signed zip to Azure - fxdependent'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-fxdependent.zip'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    continueOnError: true
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
