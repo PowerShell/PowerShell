@@ -103,7 +103,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
             $features = pwsh -noprofile -output xml -command  { "ExpTest.FeatureOne", "ExpTest.FeatureTwo" | Get-ExperimentalFeature }
             $features | Should -Not -BeNullOrEmpty
             $features[0].Name | Should -BeExactly "ExpTest.FeatureOne"
-            $features[0].Enabled | Should -Be $true
+            $features[0].Enabled | Should -BeTrue
             $features[0].Source | Should -BeExactly $testModuleManifestPath
 
             $features[1].Name | Should -BeExactly "ExpTest.FeatureTwo"
