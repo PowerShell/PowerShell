@@ -322,7 +322,7 @@ namespace System.Management.Automation
                     searchPaths.Add(moduleDir);
                 }
 
-                if (!String.IsNullOrEmpty(userHomeHelpPath))
+                if (!String.IsNullOrEmpty(userHomeHelpPath) && !String.IsNullOrEmpty(moduleName))
                 {
                     searchPaths.Add(Path.Combine(userHomeHelpPath, moduleName));
                 }
