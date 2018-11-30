@@ -54,12 +54,12 @@ namespace System.Management.Automation.Runspaces
           }"), null));
             yield return td4;
 
-#if !CORECLR
+#if !UNIX
             var td5 = new TypeData(@"System.DirectoryServices.PropertyValueCollection", true);
             td5.Members.Add("ToString",
                 new CodeMethodData("ToString", GetMethodInfo(typeof(Microsoft.PowerShell.ToStringCodeMethods), @"PropertyValueCollection")));
             yield return td5;
-#endif // !CORECLR
+#endif
 
             var td6 = new TypeData(@"System.Drawing.Printing.PrintDocument", true);
             td6.Members.Add("Name",
@@ -169,7 +169,7 @@ namespace System.Management.Automation.Runspaces
           }"), null));
             yield return td17;
 
-#if !CORECLR
+#if !UNIX
             var td18 = new TypeData(@"System.DirectoryServices.DirectoryEntry", true);
             td18.Members.Add("ConvertLargeIntegerToInt64",
                 new CodeMethodData("ConvertLargeIntegerToInt64", GetMethodInfo(typeof(Microsoft.PowerShell.AdapterCodeMethods), @"ConvertLargeIntegerToInt64")));
@@ -178,7 +178,7 @@ namespace System.Management.Automation.Runspaces
             td18.DefaultDisplayPropertySet =
                 new PropertySetData(new [] { "distinguishedName", "Path" }) { Name = "DefaultDisplayPropertySet" };
             yield return td18;
-#endif // !CORECLR
+#endif
 
             var td19 = new TypeData(@"System.IO.DirectoryInfo", true);
             td19.Members.Add("Mode",
