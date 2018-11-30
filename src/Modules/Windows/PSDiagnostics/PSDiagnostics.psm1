@@ -439,10 +439,10 @@ namespace Microsoft.PowerShell.Diagnostics
 
 if (Get-Command logman.exe -Type Application -ErrorAction SilentlyContinue)
 {
-    Export-ModuleMember Start-Trace, Stop-Trace, Enable-WSManTrace, Disable-WSManTrace, Enable-PSTrace, Disable-PSTrace, Enable-PSWSManCombinedTrace, Disable-PSWSManCombinedTrace, Get-LogProperties, Set-LogProperties
+    Export-ModuleMember Disable-PSTrace, Disable-PSWSManCombinedTrace, Disable-WSManTrace, Enable-PSTrace, Enable-PSWSManCombinedTrace, Enable-WSManTrace, Get-LogProperties, Set-LogProperties, Start-Trace, Stop-Trace
 }
 else
 {
     # Currently we only support these cmdlets as logman.exe is not available on systems like Nano and IoT
-    Export-ModuleMember Enable-PSTrace, Disable-PSTrace, Get-LogProperties, Set-LogProperties
+    Export-ModuleMember Disable-PSTrace, Enable-PSTrace, Get-LogProperties, Set-LogProperties
 }
