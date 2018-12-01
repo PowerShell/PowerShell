@@ -138,6 +138,15 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Whether to exclude transcript header.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter MinimalTranscriptHeader
+        {
+            get; set;
+        }
+
+        /// <summary>
         /// Starts the transcription
         /// </summary>
         protected override void BeginProcessing()
@@ -221,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
 
                 System.Management.Automation.Remoting.PSSenderInfo psSenderInfo =
                     this.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
-                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool());
+                Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool(), MinimalTranscriptHeader.ToBool());
 
                 // ch.StartTranscribing(effectiveFilePath, Append);
 

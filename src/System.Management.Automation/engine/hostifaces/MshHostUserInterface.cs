@@ -440,17 +440,17 @@ namespace System.Management.Automation.Host
             }
         }
 
-        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader)
+        internal void StartTranscribing(string path, System.Management.Automation.Remoting.PSSenderInfo senderInfo, bool includeInvocationHeader, bool minimalTranscriptHeader)
         {
             TranscriptionOption transcript = new TranscriptionOption();
             transcript.Path = path;
             transcript.IncludeInvocationHeader = includeInvocationHeader;
             TranscriptionData.Transcripts.Add(transcript);
 
-            LogTranscriptHeader(senderInfo, transcript);
+            LogTranscriptHeader(senderInfo, transcript, minimalTranscriptHeader);
         }
 
-        private void LogTranscriptHeader(System.Management.Automation.Remoting.PSSenderInfo senderInfo, TranscriptionOption transcript)
+        private void LogTranscriptHeader(System.Management.Automation.Remoting.PSSenderInfo senderInfo, TranscriptionOption transcript, bool minimalTranscriptHeader = false)
         {
             string username = Environment.UserDomainName + "\\" + Environment.UserName;
             string runAsUser = username;
@@ -480,21 +480,33 @@ namespace System.Management.Automation.Host
                 psConfigurationName = senderInfo.ConfigurationName;
             }
             // Transcribe the transcript header
-            string format = InternalHostUserInterfaceStrings.TranscriptPrologue;
-            string line =
-                String.Format(
-                    Globalization.CultureInfo.InvariantCulture,
-                    format,
-                    DateTime.Now,
-                    username,
-                    runAsUser,
-                    psConfigurationName,
-                    Environment.MachineName,
-                    Environment.OSVersion.VersionString,
-                    String.Join(" ", Environment.GetCommandLineArgs()),
-                    System.Diagnostics.Process.GetCurrentProcess().Id,
-                    psVersionInfo.ToString().TrimEnd()
-                    );
+            string line;
+            if (minimalTranscriptHeader)
+            {
+                line =
+                    String.Format(
+                        Globalization.CultureInfo.InvariantCulture,
+                        InternalHostUserInterfaceStrings.MinimalTranscriptPrologue,
+                        DateTime.Now
+                        );
+            }
+            else
+            {
+                line =
+                    String.Format(
+                        Globalization.CultureInfo.InvariantCulture,
+                        InternalHostUserInterfaceStrings.TranscriptPrologue,
+                        DateTime.Now,
+                        username,
+                        runAsUser,
+                        psConfigurationName,
+                        Environment.MachineName,
+                        Environment.OSVersion.VersionString,
+                        String.Join(" ", Environment.GetCommandLineArgs()),
+                        System.Diagnostics.Process.GetCurrentProcess().Id,
+                        psVersionInfo.ToString().TrimEnd()
+                        );
+            }
 
             lock (transcript.OutputToLog)
             {
