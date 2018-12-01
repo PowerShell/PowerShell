@@ -324,7 +324,7 @@ They cause problems for two reasons:
 * They are different on different platforms (`\r\n` on Windows and `\n` on Unix).
 * Even on the same system, they depends on the way how the repo was cloned.
 
-Particularly, in the default Azire DevOps CI Windows image, you will get `\n` line ends in all your files.
+Particularly, in the default Azure DevOps CI Windows image, you will get `\n` line ends in all your files.
 That causes problems, because at runtime `Get-MultiLineString` would likely produce `\r\n` line ends on windows.
 
 Some workaround could be added, but they are sub-optimal and make reading test code harder.
