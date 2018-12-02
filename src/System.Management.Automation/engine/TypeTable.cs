@@ -3201,11 +3201,10 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
+            PSMemberInfoInternalCollection<PSMemberInfo> typeMembers = null;
             if (typeData.Members.Count > 0)
             {
-                PSMemberInfoInternalCollection<PSMemberInfo> typeMembers
-                    = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
-
+                typeMembers = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
                 ProcessMembersData(errors, typeName, typeData.Members.Values, typeMembers, typeData.IsOverride);
 
                 foreach (var memberName in typeData.Members.Keys)
@@ -3216,9 +3215,10 @@ namespace System.Management.Automation.Runspaces
 
             if (typeData.StandardMembers.Count > 0 || propertySets.Count > 0)
             {
-                PSMemberInfoInternalCollection<PSMemberInfo> typeMembers
-                    = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
-
+                if (typeMembers == null)
+                {
+                    typeMembers = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
+                }
                 ProcessStandardMembers(errors, typeName, typeData.StandardMembers.Values, propertySets, typeMembers, typeData.IsOverride);
             }
 

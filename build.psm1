@@ -2193,6 +2193,7 @@ function Start-CrossGen {
         "System.IO.Pipes.dll"
         "System.Diagnostics.FileVersionInfo.dll"
         "System.Collections.Specialized.dll"
+        "Microsoft.ApplicationInsights.dll"
     )
 
     # Common PowerShell libraries to crossgen

@@ -62,6 +62,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Utility class to contain resources for the Microsoft.PowerShell.Utility module.
     /// </summary>
+    [Obsolete("This class is obsolete", true)]
     public static class UtilityResources
     {
         /// <summary>

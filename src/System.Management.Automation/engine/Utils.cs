@@ -15,6 +15,7 @@ using Microsoft.Win32;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
@@ -258,7 +259,6 @@ namespace System.Management.Automation
                     baseDirectories.Add(appBase);
                 }
 #if !UNIX
-                // Win8: 454976
                 // Now add the two variations of System32
                 baseDirectories.Add(Environment.GetFolderPath(Environment.SpecialFolder.System));
                 string systemX86 = Environment.GetFolderPath(Environment.SpecialFolder.SystemX86);
@@ -267,20 +267,6 @@ namespace System.Management.Automation
                     baseDirectories.Add(systemX86);
                 }
 #endif
-                // And built-in modules
-                string progFileDir;
-                // TODO: #1184 will resolve this work-around
-                // Side-by-side versions of PowerShell use modules from their application base, not
-                // the system installation path.
-                progFileDir = Path.Combine(appBase, "Modules");
-
-                if (!string.IsNullOrEmpty(progFileDir))
-                {
-                    baseDirectories.Add(Path.Combine(progFileDir, "PackageManagement"));
-                    baseDirectories.Add(Path.Combine(progFileDir, "PowerShellGet"));
-                    baseDirectories.Add(Path.Combine(progFileDir, "Pester"));
-                    baseDirectories.Add(Path.Combine(progFileDir, "PSReadLine"));
-                }
                 Interlocked.CompareExchange(ref s_productFolderDirectories, baseDirectories.ToArray(), null);
             }
 
@@ -1926,5 +1912,51 @@ namespace System.Management.Automation.Internal
             }
             return item;
         }
+    }
+
+    /// <summary>
+    /// A readonly Hashset.
+    /// </summary>
+    internal sealed class ReadOnlyBag<T> : IEnumerable
+    {
+        private HashSet<T> _hashset;
+
+        /// <summary>
+        /// Constructor for the readonly Hashset.
+        /// </summary>
+        internal ReadOnlyBag(HashSet<T> hashset)
+        {
+            if (hashset == null)
+            {
+                throw new ArgumentNullException(nameof(hashset));
+            }
+
+            _hashset = hashset;
+        }
+
+        /// <summary>
+        /// Get the count of the Hashset.
+        /// </summary>
+        public int Count => _hashset.Count;
+
+        /// <summary>
+        /// Indicate if it's a readonly Hashset.
+        /// </summary>
+        public bool IsReadOnly => true;
+
+        /// <summary>
+        /// Check if the set contains an item.
+        /// </summary>
+        public bool Contains(T item) => _hashset.Contains(item);
+
+        /// <summary>
+        /// GetEnumerator method.
+        /// </summary>
+        public IEnumerator GetEnumerator() => _hashset.GetEnumerator();
+
+        /// <summary>
+        /// Get an empty singleton.
+        /// </summary>
+        internal static readonly ReadOnlyBag<T> Empty = new ReadOnlyBag<T>(new HashSet<T>(capacity: 0));
     }
 }

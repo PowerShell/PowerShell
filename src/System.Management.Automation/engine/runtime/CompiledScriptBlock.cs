@@ -49,7 +49,7 @@ namespace System.Management.Automation
 
         internal CompiledScriptBlockData(string scriptText, bool isProductCode)
         {
-            this.IsProductCode = isProductCode;
+            _isProductCode = isProductCode;
             _scriptText = scriptText;
             this.Id = Guid.NewGuid();
         }
@@ -163,11 +163,6 @@ namespace System.Management.Automation
             var sw = new Stopwatch();
             sw.Start();
 #endif
-            if (!IsProductCode && SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File))
-            {
-                this.IsProductCode = true;
-            }
-
             bool etwEnabled = ParserEventSource.Log.IsEnabled();
             if (etwEnabled)
             {
@@ -199,9 +194,19 @@ namespace System.Management.Automation
                 return;
             }
 
-            // Call the AMSI API to determine if the script block has malicious content
             var scriptExtent = scriptBlockAst.Extent;
-            var amsiResult = AmsiUtils.ScanContent(scriptExtent.Text, scriptExtent.File);
+            var scriptFile = scriptExtent.File;
+
+            if (scriptFile != null &&
+                scriptFile.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase)
+                && IsScriptBlockInFactASafeHashtable())
+            {
+                // Skip the scan for .psd1 files if their content is in fact a safe HashtableAst.
+                return;
+            }
+
+            // Call the AMSI API to determine if the script block has malicious content
+            var amsiResult = AmsiUtils.ScanContent(scriptExtent.Text, scriptFile);
 
             if (amsiResult == AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
             {
@@ -220,6 +225,45 @@ namespace System.Management.Automation
             if (ScriptBlock.CheckSuspiciousContent(scriptBlockAst) != null)
             {
                 HasSuspiciousContent = true;
+            }
+
+            // A local function to check if the ScriptBlockAst is in fact a safe HashtableAst.
+            bool IsScriptBlockInFactASafeHashtable()
+            {
+                // NOTE: The code below depends on the current member structure of 'ScriptBlockAst'
+                // to determine if the ScriptBlockAst is in fact just a HashtableAst. If AST types
+                // are enhanced, such as new members added to 'ScriptBlockAst', the code here needs
+                // to be reviewed and changed accordingly.
+
+                if (scriptBlockAst.BeginBlock != null || scriptBlockAst.ProcessBlock != null ||
+                    scriptBlockAst.ParamBlock != null || scriptBlockAst.DynamicParamBlock != null ||
+                    scriptBlockAst.ScriptRequirements != null || scriptBlockAst.UsingStatements.Count > 0 ||
+                    scriptBlockAst.Attributes.Count > 0)
+                {
+                    return false;
+                }
+
+                NamedBlockAst endBlock = scriptBlockAst.EndBlock;
+                if (!endBlock.Unnamed || endBlock.Traps != null || endBlock.Statements.Count != 1)
+                {
+                    return false;
+                }
+
+                PipelineAst pipelineAst = endBlock.Statements[0] as PipelineAst;
+                if (pipelineAst == null)
+                {
+                    return false;
+                }
+
+                HashtableAst hashtableAst = pipelineAst.GetPureExpression() as HashtableAst;
+                if (hashtableAst == null)
+                {
+                    return false;
+                }
+
+                // After the above steps, we know the ScriptBlockAst is in fact just a HashtableAst,
+                // now we need to check if the HashtableAst is safe.
+                return IsSafeValueVisitor.IsAstSafe(hashtableAst, GetSafeValueVisitor.SafeValueContext.Default);
             }
         }
 
@@ -269,12 +313,23 @@ namespace System.Management.Automation
         private bool _compiledOptimized;
         private bool _compiledUnoptimized;
         private bool _hasSuspiciousContent;
+        private bool? _isProductCode;
         internal bool DebuggerHidden { get; set; }
         internal bool DebuggerStepThrough { get; set; }
         internal Guid Id { get; private set; }
         internal bool HasLogged { get; set; }
         internal bool IsFilter { get; private set; }
-        internal bool IsProductCode { get; private set; }
+        internal bool IsProductCode
+        {
+            get
+            {
+                if (_isProductCode == null)
+                {
+                    _isProductCode = SecuritySupport.IsProductBinary(((Ast)_ast).Extent.File);
+                }
+                return _isProductCode.Value;
+            }
+        }
 
         internal bool GetIsConfiguration()
         {
