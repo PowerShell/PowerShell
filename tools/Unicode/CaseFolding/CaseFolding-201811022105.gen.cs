@@ -13,7 +13,7 @@ namespace System.Management.Automation.Unicode
     /// <summary>
     /// Simple case folding methods.
     /// </summary>
-    internal static partial class SimpleCaseFolding
+    internal static partial class CaseFolding
     {
         /// <summary>
         /// Lookup a char in the 's_simpleCaseFoldingTableBMPane1' table. Get a index. Use the index to lookup target char in 's_simpleCaseFoldingTableInOut'

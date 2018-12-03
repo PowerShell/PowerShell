@@ -12,6 +12,12 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>../../../src/signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>

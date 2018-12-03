@@ -20,7 +20,7 @@ namespace System.Management.Automation.Unicode
         /// Simple case folding of the char (Utf16).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static char Fold(char ch)
+        internal static char SimpleCaseFold(char ch)
         {
             return s_simpleCaseFoldingTableBMPane1[ch];
 
@@ -30,11 +30,11 @@ namespace System.Management.Automation.Unicode
         ///  Simple case folding of the string.
         /// </summary>
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string Fold(this string source)
+        public static string SimpleCaseFold(this string source)
         {
             return string.Create(source.Length, source , (chars, sourceString) =>
             {
-                SpanFold(chars, sourceString);
+                SpanSimpleCaseFold(chars, sourceString);
             });
         }
 
@@ -42,20 +42,20 @@ namespace System.Management.Automation.Unicode
         /// For performance test only.
         /// </summary>
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FoldBase(this string source)
+        public static string SimpleCaseFoldBase(this string source)
         {
             /*
             var tmp = new char[source.Length];
             for (var i = 0; i < source.Length; i++)
             {
-                tmp[i] = Fold(source[i]);
+                tmp[i] = SimpleCaseFold(source[i]);
             }
 
             return tmp.ToString();
             */
             return string.Create(source.Length, source , (chars, sourceString) =>
             {
-                SpanFoldBase(chars, sourceString);
+                SpanSimpleCaseFoldBase(chars, sourceString);
             });
         }
 
@@ -63,20 +63,20 @@ namespace System.Management.Automation.Unicode
         ///  Simple case folding of the Span<char>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Fold(this Span<char> source)
+        public static void SimpleCaseFold(this Span<char> source)
         {
-            SpanFold(source, source);
+            SpanSimpleCaseFold(source, source);
         }
 
         /// <summary>
         ///  Simple case folding of the ReadOnlySpan<char>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Span<char> Fold(this ReadOnlySpan<char> source)
+        public static Span<char> SimpleCaseFold(this ReadOnlySpan<char> source)
         {
             Span<char> destination = new char[source.Length];
 
-            SpanFold(destination, source);
+            SpanSimpleCaseFold(destination, source);
 
             return destination;
         }
@@ -88,7 +88,7 @@ namespace System.Management.Automation.Unicode
         internal const int  HIGH_SURROGATE_RANGE = 0x3FF;
 
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-/*        private static void SpanFoldBase(Span<char> destination, ReadOnlySpan<char> source)
+/*        private static void SpanSimpleCaseFoldBase(Span<char> destination, ReadOnlySpan<char> source)
         {
             var length = source.Length;
 
@@ -146,7 +146,7 @@ namespace System.Management.Automation.Unicode
 */
 
         // For performance test only.
-        private static void SpanFoldBase(Span<char> destination, ReadOnlySpan<char> source)
+        private static void SpanSimpleCaseFoldBase(Span<char> destination, ReadOnlySpan<char> source)
         {
             ref char res = ref MemoryMarshal.GetReference(destination);
             ref char src = ref MemoryMarshal.GetReference(source);
@@ -216,7 +216,7 @@ namespace System.Management.Automation.Unicode
             }
         }
 
-        internal static void SpanFold(Span<char> destination, ReadOnlySpan<char> source)
+        internal static void SpanSimpleCaseFold(Span<char> destination, ReadOnlySpan<char> source)
         {
             Diagnostics.Assert(destination.Length >= source.Length, "Destination span length must be equal or greater then source span length.");
             ref char res = ref MemoryMarshal.GetReference(destination);
@@ -332,11 +332,11 @@ namespace System.Management.Automation.Unicode
         /// </return>
         public static int IndexOfFolded(this ReadOnlySpan<char> source, char ch)
         {
-            var foldedChar = Fold(ch);
+            var foldedChar = SimpleCaseFold(ch);
 
             for (int i = 0; i < source.Length; i++)
             {
-                if (Fold(source[i]) == foldedChar)
+                if (SimpleCaseFold(source[i]) == foldedChar)
                 {
                     return i;
                 }
@@ -346,12 +346,12 @@ namespace System.Management.Automation.Unicode
         }
 
         /// <summary>
-        /// Compare strings with simple case folding.
+        /// Compare strings using simple case folding.
         /// </summary>
         /// <return>
         /// Return -1 if strA < strB, 0 if if strA == strB, 1 if strA < strB.
         /// </return>
-        internal static int CompareFolded(this string strA, string strB)
+        internal static int CompareUsingSimpleCaseFolding(this string strA, string strB)
         {
             if (object.ReferenceEquals(strA, strB))
             {
@@ -446,14 +446,14 @@ namespace System.Management.Automation.Unicode
     /// <summary>
     /// String comparer with simple case folding.
     /// </summary>
-    public class SimpleFoldedStringComparer : IComparer, IEqualityComparer, IComparer<string>, IEqualityComparer<string>
+    public class StringComparerUsingSimpleCaseFolding : IComparer, IEqualityComparer, IComparer<string>, IEqualityComparer<string>
     {
         // Based on CoreFX StringComparer code
 
         /// <summary>
         /// Constructor implementation.
         /// </summary>
-        public SimpleFoldedStringComparer()
+        public StringComparerUsingSimpleCaseFolding()
         {
         }
 
@@ -477,7 +477,7 @@ namespace System.Management.Automation.Unicode
 
             if (x is string sa && y is string sb)
             {
-                return SimpleCaseFolding.CompareFolded(sa, sb);
+                return SimpleCaseFolding.CompareUsingSimpleCaseFolding(sa, sb);
             }
 
             if (x is IComparable ia)
@@ -543,7 +543,7 @@ namespace System.Management.Automation.Unicode
                 stackalloc char[source.Length] :
                 (borrowedArr = ArrayPool<char>.Shared.Rent(source.Length));
 
-            SimpleCaseFolding.SpanFold(span, source);
+            SimpleCaseFolding.SpanSimpleCaseFold(span, source);
 
             int hash = HashByteArray(MemoryMarshal.AsBytes(span));
 
@@ -613,7 +613,7 @@ namespace System.Management.Automation.Unicode
                 return 1;
             }
 
-            return SimpleCaseFolding.CompareFolded(x, y);
+            return SimpleCaseFolding.CompareUsingSimpleCaseFolding(x, y);
         }
 
         /// <summary>
@@ -630,7 +630,7 @@ namespace System.Management.Automation.Unicode
                 return false;
             }
 
-            return SimpleCaseFolding.CompareFolded(x, y) == 0;
+            return SimpleCaseFolding.CompareUsingSimpleCaseFolding(x, y) == 0;
         }
 
         /// <summary>

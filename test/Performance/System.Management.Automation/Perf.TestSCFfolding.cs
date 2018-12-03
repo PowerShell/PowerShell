@@ -18,9 +18,9 @@ namespace System.Management.Automation.Unicode.Tests
             // Run: dotnet run -c release --AllCategories=StringFold
             // Run: dotnet run -c release --AllCategories=StringCompareFolded
             var summary = BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
-            Console.WriteLine("CaseFolding1".Fold());
-            Console.WriteLine("ЯЯЯЯЯЯЯЯЯЯЯ1".Fold());
-            Console.WriteLine(SimpleCaseFolding.CompareFolded("CaseFolding1", "ЯЯЯЯЯЯЯЯЯЯЯ1"));
+            Console.WriteLine("CaseFolding1".SimpleCaseFold());
+            Console.WriteLine("ЯЯЯЯЯЯЯЯЯЯЯ1".SimpleCaseFold());
+            Console.WriteLine(SimpleCaseFolding.CompareUsingSimpleCaseFolding("CaseFolding1", "ЯЯЯЯЯЯЯЯЯЯЯ1"));
         }
     }
 
@@ -39,14 +39,14 @@ namespace System.Management.Automation.Unicode.Tests
         //[ArgumentsSource(nameof(Data))]
         public (string, string) TestStringFoldBase(string StrA, string StrB)
         {
-            return (StrA.FoldBase(), StrB.FoldBase());
+            return (StrA.SimpleCaseFoldBase(), StrB.SimpleCaseFoldBase());
         }
 
         [Benchmark]
         [ArgumentsSource(nameof(Data))]
         public (string, string) StringFold(string StrA, string StrB)
         {
-            return (StrA.Fold(), StrB.Fold());
+            return (StrA.SimpleCaseFold(), StrB.SimpleCaseFold());
         }
 
         public IEnumerable<object[]> Data()
