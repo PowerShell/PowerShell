@@ -6,13 +6,13 @@ The script is self contained and can be executed on any Windows system which sup
 
 ## Execution
 
-The virtual machine hosting the script has a scheduled task to start the tests at 5 am PDT. 
+The virtual machine hosting the script has a scheduled task to start the tests at 5 am PDT.
 
 The script follows the steps below:
 
-1. Download the code coverage binaries package from AppVeyor nightly builds artifacts (CodeCoverage.zip). 
-2. Download the OpenCover powershell module from AppVeyor nightly builds artifacts. (OpenCover.zip)
-3. Download the tests from AppVeyor nightly builds artifacts (tests.zip) 
+1. Download the code coverage binaries package from Azure DevOps Windows nightly builds artifacts (CodeCoverage.zip).
+2. Download the OpenCover powershell module from Azure DevOps Windows nightly builds artifacts. (OpenCover.zip)
+3. Download the tests from Azure DevOps Windows nightly builds artifacts (tests.zip)
 4. Download Coveralls.net from 'https://github.com/csMACnz/coveralls.net/releases/download/0.7.0/coveralls.net.0.7.0.nupkg'
 5. Invoke 'Install-OpenCover' to install OpenCover toolset.
 6. Invoke 'Invoke-OpenCover' to execute tests.

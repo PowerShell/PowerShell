@@ -152,9 +152,9 @@ If you have any problems building, please consult the developer [FAQ][].
 
 ### Build status of nightly builds
 
-| AppVeyor (Windows)                       | Azure CI (Linux)                               | Azure CI (macOS)                               | Code Coverage Status     | Code Factor Status       |
+| Azure CI (Windows)                       | Azure CI (Linux)                               | Azure CI (macOS)                               | Code Coverage Status     | Code Factor Status       |
 |:-----------------------------------------|:-----------------------------------------------|:-----------------------------------------------|:-------------------------|:-------------------------|
-| [![av-nightly-image][]][av-nightly-site] | [![linux-nightly-image][]][linux-nightly-site] | [![macOS-nightly-image][]][macos-nightly-site] | [![cc-image][]][cc-site] | [![cf-image][]][cf-site] |
+| [![windows-nightly-image][]][windows-nightly-site] | [![linux-nightly-image][]][linux-nightly-site] | [![macOS-nightly-image][]][macos-nightly-site] | [![cc-image][]][cc-site] | [![cf-image][]][cf-site] |
 
 [bd-linux]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/linux.md
 [bd-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/windows-core.md
@@ -171,10 +171,12 @@ If you have any problems building, please consult the developer [FAQ][].
 [az-spell-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-spelling?branchName=master
 [az-spell-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=22
 [tv-image]: https://travis-ci.org/PowerShell/PowerShell.svg?branch=master
+[windows-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build/latest?definitionId=32
 [linux-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=23
 [macos-nightly-site]: https://powershell.visualstudio.com/PowerShell/_build?definitionId=24
 [av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true
 [av-site]: https://ci.appveyor.com/project/PowerShell/powershell
+[windows-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-Windows-daily
 [linux-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-linux-daily?branchName=master
 [macOS-nightly-image]: https://powershell.visualstudio.com/PowerShell/_apis/build/status/PowerShell-CI-macos-daily?branchName=master
 [av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
