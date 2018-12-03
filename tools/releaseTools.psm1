@@ -193,16 +193,37 @@ function Get-ChangeLog
         $new_commits = $new_commits_during_last_release + $new_commits_after_last_release
     }
 
+    # Array of unlabled PRs.
     $unlabeledPRs = @()
+
+    # Array of PRs with multiple labels. The label "CL-BreakingChange" is allowed with some other "CL-*" label.
     $multipleLabelsPRs = @()
+
+    # Array of Breaking Change PRs.
     $clBreakingChange = @()
+
+    # Array of PRs with build and packaging changes.
     $clBuildPackage = @()
+
+    # Array of PRs with code cleanup changes.
     $clCodeCleanup = @()
+
+    # Array of PRs with documentation changes.
     $clDocs = @()
+
+    # Array of PRs with engine changes.
     $clEngine = @()
+
+    # Array of PRs with general cmdlet changes.
     $clGeneral = @()
+
+    # Array of PRs with test changes.
     $clTest = @()
+
+    # Array of PRs with tool changes.
     $clTools = @()
+
+    # Array of PRs tagged with 'CL-Untagged' label.
     $clUntagged = @()
 
     foreach ($commit in $new_commits) {
@@ -265,12 +286,12 @@ function Get-ChangeLog
     }
 
     if ($multipleLabelsPRs.count -gt 0) {
-        Write-Error "PRs should be tagged with multiple CL labels. PRs with multiple labels: $($multipleLabelsPRs.number -join ' ')"
+        Write-Error "PRs should not be tagged with multiple CL labels. PRs with multiple labels: $($multipleLabelsPRs.number -join ' ')"
         $shouldThrow = $true
     }
 
     if ($unlabeledPRs.count -gt 0) {
-        Write-Error "PRs should at least one CL label. PRs missing labels: $($unlabeledPRs.number -join ' ')"
+        Write-Error "PRs should have at least one CL label. PRs missing labels: $($unlabeledPRs.number -join ' ')"
         $shouldThrow = $true
     }
 
