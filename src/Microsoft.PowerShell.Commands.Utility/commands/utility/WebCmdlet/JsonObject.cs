@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 // JsonConvert.DeserializeObject does not throw an exception when an invalid Json array is passed.
-                // This issue is being tracked by https://github.com/JamesNK/Newtonsoft.Json/issues/1321.
+                // This issue is being tracked by https://github.com/JamesNK/Newtonsoft.Json/issues/1930.
                 // To work around this, we need to identify when input is a Json array, and then try to parse it via JArray.Parse().
 
                 // If input starts with '[' (ignoring white spaces).
