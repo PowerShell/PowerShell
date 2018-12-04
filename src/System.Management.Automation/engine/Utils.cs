@@ -480,7 +480,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is used to construct the profile path.
         /// </summary>
-        internal static string ProductNameForDirectory = Platform.IsInbox ? "WindowsPowerShell" : "PowerShell";
+        internal const string ProductNameForDirectory = "PowerShell";
 
         /// <summary>
         /// The subdirectory of module paths
