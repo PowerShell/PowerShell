@@ -125,7 +125,7 @@ function Start-WebListener
         }
 
         $initTimeoutSeconds  = 15
-        $appExe              = 'WebListener.exe'
+        $appExe              = 'WebListener'
         $serverPfx           = 'ServerCert.pfx'
         $serverPfxPassword   = New-RandomHexString
         $clientPfx           = 'ClientCert.pfx'
@@ -141,7 +141,14 @@ function Start-WebListener
 
         try {
             $env:ASPNETCORE_ENVIRONMENT = 'Development'
-            $webListenerProcess = Start-Process -FilePath $appExe -PassThru -ArgumentList @(
+
+            $params = @{
+                FilePath = $appExe
+                PassThru = $true
+                UseNewEnvironment = $IsLinux # start a non-keyboard input blocking process on linux.
+            }
+
+            $webListenerProcess = Start-Process @params -ArgumentList @(
                 $serverPfxPath
                 $serverPfxPassword
                 $HttpPort
