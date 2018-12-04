@@ -30,6 +30,8 @@ queue:
     ElevatedPesterTests_xUnit_Packaging:
       Purpose: ElevatedPesterTests_xUnit_Packaging
 
+timeoutInMinutes: 120
+
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
   DOTNET_CLI_TELEMETRY_OPTOUT: 1

@@ -35,6 +35,9 @@ phases:
 
   queue:
     name: Hosted Ubuntu 1604
+
+  timeoutInMinutes: 120
+
   steps:
   - powershell: |
       Get-Process

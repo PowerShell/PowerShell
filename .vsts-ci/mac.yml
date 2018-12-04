@@ -37,6 +37,9 @@ phases:
 
   queue:
     name: Hosted macOS
+
+  timeoutInMinutes: 120
+
   steps:
   - powershell: |
       Get-ChildItem -Path env:
