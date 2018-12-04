@@ -23,7 +23,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true, Position = 0, Mandatory = true)]
         [ArgumentCompleter(typeof(ExperimentalFeatureNameCompleter))]
-        [ValidateNotNullOrEmpty]
         public string[] Name { get; set; }
 
         /// <summary>
@@ -80,7 +79,6 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 PowerShellConfig.Instance.SetExperimentalFeatures(scope, feature.Name, enable);
-                cmdlet.WriteObject(feature);
             }
 
             if (!foundFeature)

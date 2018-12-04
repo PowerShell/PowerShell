@@ -224,13 +224,13 @@ namespace System.Management.Automation.Configuration
             if (setEnabled && !containsFeature)
             {
                 features.Add(featureName);
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
             }
             else if (!setEnabled && containsFeature)
             {
                 features.Remove(featureName);
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
             }
-
-            WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
         }
 
         /// <summary>
