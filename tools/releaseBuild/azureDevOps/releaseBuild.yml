@@ -1,0 +1,40 @@
+name: UnifiedPackageBuild-$(Build.BuildId)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+pr:
+  branches:
+    include:
+    - master
+    - release*
+
+
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+
+resources:
+- repo: self
+  clean: true
+jobs:
+- template: templates/linux.yml
+  parameters:
+    jobName: DEB
+    buildName: ubuntu.14.04-no-appimage
+    pool: Hosted Ubuntu 1604
+
+- template: templates/linux.yml
+  parameters:
+    jobName: RPM
+    buildName: centos.7
+    pool: Hosted Ubuntu 1604
+
+- template: templates/linux.yml
+  parameters:
+    jobName: fxdependent
+    buildName: fxdependent
+    pool: Hosted Ubuntu 1604
+
+- template: templates/mac.yml
