@@ -27,7 +27,7 @@ namespace System.Management.Automation.Unicode.Tests
     public class IntroBenchmarkBaseline
     {
         //[Benchmark]
-        [Benchmark(Baseline = true)]
+        //[Benchmark(Baseline = true)]
         [ArgumentsSource(nameof(Data))]
         public (string, string) ToLowerInvariant(string StrA, string StrB)
         {
@@ -42,11 +42,33 @@ namespace System.Management.Automation.Unicode.Tests
             return (StrA.SimpleCaseFoldBase(), StrB.SimpleCaseFoldBase());
         }
 
-        [Benchmark]
+        //[Benchmark]
         [ArgumentsSource(nameof(Data))]
         public (string, string) StringFold(string StrA, string StrB)
         {
             return (StrA.SimpleCaseFold(), StrB.SimpleCaseFold());
+        }
+
+        [Benchmark(Baseline = true)]
+        [ArgumentsSource(nameof(Data))]
+        public int CoreFXCompareOrdinal(string StrA, string StrB)
+        {
+            return String.CompareOrdinal(StrA, StrB);
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(Data))]
+        public int CoreFXCompareOrdinalIgnoreCase(string StrA, string StrB)
+        {
+            return String.Compare(StrA, StrB, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Benchmark]
+        [ArgumentsSource(nameof(Data))]
+        public int SimpleCaseFoldCompare(string StrA, string StrB)
+        {
+            var comparer = new StringComparerUsingSimpleCaseFolding();
+            return comparer.Compare(StrA, StrB);
         }
 
         public IEnumerable<object[]> Data()
