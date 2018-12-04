@@ -143,8 +143,8 @@ function Start-WebListener
             $env:ASPNETCORE_ENVIRONMENT = 'Development'
 
             $params = @{
-                FilePath = $appExe
-                PassThru = $true
+                FilePath          = $appExe
+                PassThru          = $true
                 UseNewEnvironment = $IsLinux # start a non-keyboard input blocking process on linux.
             }
 
@@ -156,9 +156,6 @@ function Start-WebListener
                 $Tls11Port
                 $TlsPort
             )
-        } catch {
-            # rethrow any exception
-            throw $_
         } finally {
             $env:ASPNETCORE_ENVIRONMENT = $oldASPEnvPreference
         }
@@ -176,7 +173,7 @@ function Start-WebListener
         do
         {
             Start-Sleep -Milliseconds $sleepMilliseconds
-            $isRunning = (Get-WebListener).Process -ne $null
+            $isRunning = (Get-WebListener).GetStatus() -eq 'Running'
             $sleepCountRemaining--
         }
         while (-not $isRunning -and $sleepCountRemaining -gt 0)
