@@ -2360,67 +2360,104 @@ namespace System.Management.Automation.Runspaces
 
         internal Exception BindRunspace(Runspace initializedRunspace, PSTraceSource runspaceInitTracer)
         {
-            // Get initial list of public commands in session.
-            HashSet<CommandInfo> publicCommands = new HashSet<CommandInfo>();
-            foreach (CommandInfo sessionCommand in initializedRunspace.ExecutionContext.SessionState.InvokeCommand.GetCommands(
-                        "*", CommandTypes.Alias | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Cmdlet, true))
+            // Get initial list of public commands from session in a lazy way.
+            // We could use Lazy<> with an initializer for the same purpose, but we can save allocations
+            // by using the local function. It avoids allocating the delegate, and it's more efficient on
+            // capturing variables from the enclosing scope by using a struct.
+            HashSet<CommandInfo> commands = null;
+            HashSet<CommandInfo> GetPublicCommands()
             {
-                if (sessionCommand.Visibility == SessionStateEntryVisibility.Public)
+                if (commands != null)
                 {
-                    publicCommands.Add(sessionCommand);
+                    return commands;
                 }
+
+                commands = new HashSet<CommandInfo>();
+                foreach (CommandInfo sessionCommand in initializedRunspace.ExecutionContext.SessionState.InvokeCommand.GetCommands(
+                            "*", CommandTypes.Alias | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Cmdlet, nameIsPattern: true))
+                {
+                    if (sessionCommand.Visibility == SessionStateEntryVisibility.Public)
+                    {
+                        commands.Add(sessionCommand);
+                    }
+                }
+                return commands;
             }
 
-            // If a user has any module with the same name as that of the core module( or nested module inside the core module)
-            // in his module path, then that will get loaded instead of the actual nested module (from the GAC - in our case)
-            // Hence, searching only from the system module path while loading the core modules
             var unresolvedCmdsToExpose = new HashSet<string>(this.UnresolvedCommandsToExpose, StringComparer.OrdinalIgnoreCase);
-            ProcessImportModule(initializedRunspace, CoreModulesToImport, ModuleIntrinsics.GetPSHomeModulePath(), publicCommands, unresolvedCmdsToExpose);
+            if (CoreModulesToImport.Count > 0 || unresolvedCmdsToExpose.Count > 0)
+            {
+                // If a user has any module with the same name as that of the core module( or nested module inside the core module)
+                // in his module path, then that will get loaded instead of the actual nested module (from the GAC - in our case)
+                // Hence, searching only from the system module path while loading the core modules
+                ProcessImportModule(initializedRunspace, CoreModulesToImport, ModuleIntrinsics.GetPSHomeModulePath(), GetPublicCommands(), unresolvedCmdsToExpose);
+            }
 
             // Win8:328748 - functions defined in global scope end up in a module
             // Since we import the core modules, EngineSessionState's module is set to the last imported module. So, if a function is defined in global scope, it ends up in that module.
             // Setting the module to null fixes that.
             initializedRunspace.ExecutionContext.EngineSessionState.Module = null;
 
-            Exception moduleImportException = ProcessImportModule(initializedRunspace, ModuleSpecificationsToImport, string.Empty, publicCommands, unresolvedCmdsToExpose);
-            if (moduleImportException != null)
+            if (ModuleSpecificationsToImport.Count > 0 || unresolvedCmdsToExpose.Count > 0)
             {
-                runspaceInitTracer.WriteLine(
-                    "Runspace open failed while loading module: First error {1}", moduleImportException);
-                return moduleImportException;
+                Exception moduleImportException = ProcessImportModule(initializedRunspace, ModuleSpecificationsToImport, string.Empty, GetPublicCommands(), unresolvedCmdsToExpose);
+                if (moduleImportException != null)
+                {
+                    runspaceInitTracer.WriteLine(
+                        "Runspace open failed while loading module: First error {1}", moduleImportException);
+                    return moduleImportException;
+                }
             }
 
             // If we still have unresolved commands after importing specified modules, then try finding associated module for
             // each unresolved command and import that module.
-            string[] foundModuleList = GetModulesForUnResolvedCommands(unresolvedCmdsToExpose, initializedRunspace.ExecutionContext);
-            if (foundModuleList.Length > 0)
+            if (unresolvedCmdsToExpose.Count > 0)
             {
-                ProcessImportModule(initializedRunspace, foundModuleList, string.Empty, publicCommands, unresolvedCmdsToExpose);
+                string[] foundModuleList = GetModulesForUnResolvedCommands(unresolvedCmdsToExpose, initializedRunspace.ExecutionContext);
+                if (foundModuleList.Length > 0)
+                {
+                    ProcessImportModule(initializedRunspace, foundModuleList, string.Empty, GetPublicCommands(), unresolvedCmdsToExpose);
+                }
             }
 
-            ProcessDynamicVariables(initializedRunspace);
-            ProcessCommandModifications(initializedRunspace);
-
-            // Process User: drive
-            Exception userDriveException = ProcessUserDrive(initializedRunspace);
-            if (userDriveException != null)
+            // Process dynamic variables if any are defined.
+            if (DynamicVariablesToDefine.Count > 0)
             {
-                runspaceInitTracer.WriteLine(
-                                    "Runspace open failed while processing user drive with error {1}", userDriveException);
+                ProcessDynamicVariables(initializedRunspace);
+            }
 
-                Exception result = PSTraceSource.NewInvalidOperationException(userDriveException, RemotingErrorIdStrings.UserDriveProcessingThrewTerminatingError, userDriveException.Message);
-                return result;
+            // Process command modifications if any are defined.
+            if (CommandModifications.Count > 0)
+            {
+                ProcessCommandModifications(initializedRunspace);
+            }
+
+            // Process the 'User:' drive if 'UserDriveEnabled' is set.
+            if (UserDriveEnabled)
+            {
+                Exception userDriveException = ProcessUserDrive(initializedRunspace);
+                if (userDriveException != null)
+                {
+                    runspaceInitTracer.WriteLine(
+                                        "Runspace open failed while processing user drive with error {1}", userDriveException);
+
+                    Exception result = PSTraceSource.NewInvalidOperationException(userDriveException, RemotingErrorIdStrings.UserDriveProcessingThrewTerminatingError, userDriveException.Message);
+                    return result;
+                }
             }
 
             // Process startup scripts
-            Exception startupScriptException = ProcessStartupScripts(initializedRunspace);
-            if (startupScriptException != null)
+            if (StartupScripts.Count > 0)
             {
-                runspaceInitTracer.WriteLine(
-                    "Runspace open failed while running startup script: First error {1}", startupScriptException);
+                Exception startupScriptException = ProcessStartupScripts(initializedRunspace);
+                if (startupScriptException != null)
+                {
+                    runspaceInitTracer.WriteLine(
+                        "Runspace open failed while running startup script: First error {1}", startupScriptException);
 
-                Exception result = PSTraceSource.NewInvalidOperationException(startupScriptException, RemotingErrorIdStrings.StartupScriptThrewTerminatingError, startupScriptException.Message);
-                return result;
+                    Exception result = PSTraceSource.NewInvalidOperationException(startupScriptException, RemotingErrorIdStrings.StartupScriptThrewTerminatingError, startupScriptException.Message);
+                    return result;
+                }
             }
 
             // Start transcribing
@@ -2639,8 +2676,6 @@ namespace System.Management.Automation.Runspaces
 
         private Exception ProcessUserDrive(Runspace initializedRunspace)
         {
-            if (!UserDriveEnabled) { return null; }
-
             Exception ex = null;
             try
             {
