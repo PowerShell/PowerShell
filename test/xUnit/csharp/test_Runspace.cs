@@ -66,7 +66,7 @@ namespace PSTests.Parallel
         [Fact]
         public void TestRunspaceWithPowerShellAndInitialSessionState()
         {
-            InitialSessionState iss = InitialSessionState.CreateDefault();
+            InitialSessionState iss = InitialSessionState.CreateDefault2();
 
             // NOTE: instantiate custom host myHost for the next line to capture stdout and stderr output
             //       in addition to just the PSObjects
