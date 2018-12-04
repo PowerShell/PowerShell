@@ -7,13 +7,18 @@ Class WebListener
     [int]$HttpsPort
     [int]$Tls11Port
     [int]$TlsPort
-    [System.Management.Automation.Job]$Job
+    [System.Diagnostics.Process]$Process
 
     WebListener () { }
 
     [String] GetStatus()
     {
-        return $This.Job.JobStateInfo.State
+        if ($This.Process.HasExited) {
+            return "Exited"
+        }
+        else {
+            return "Running"
+        }
     }
 }
 
@@ -120,11 +125,10 @@ function Start-WebListener
         }
 
         $initTimeoutSeconds  = 15
-        $appDll              = 'WebListener.dll'
+        $appExe              = 'WebListener.exe'
         $serverPfx           = 'ServerCert.pfx'
         $serverPfxPassword   = New-RandomHexString
         $clientPfx           = 'ClientCert.pfx'
-        $initCompleteMessage = 'Now listening on'
         $sleepMilliseconds   = 100
 
         $serverPfxPath = Join-Path ([System.IO.Path]::GetTempPath()) $serverPfx
@@ -133,25 +137,31 @@ function Start-WebListener
         New-ServerCertificate -CertificatePath $serverPfxPath -Password $serverPfxPassword
         New-ClientCertificate -CertificatePath $Script:ClientPfxPath -Password $Script:ClientPfxPassword
 
-        $Job = Start-Job {
-            $path = Split-Path -parent (get-command WebListener).Path -Verbose
-            Push-Location $path -Verbose
-            'appDLL: {0}' -f $using:appDll
-            'serverPfxPath: {0}' -f $using:serverPfxPath
-            'serverPfxPassword: {0}' -f $using:serverPfxPassword
-            'HttpPort: {0}' -f $using:HttpPort
-            'Https: {0}' -f $using:HttpsPort
-            'Tls11Port: {0}' -f $using:Tls11Port
-            'TlsPort: {0}' -f $using:TlsPort
+        $oldASPEnvPreference = $env:ASPNETCORE_ENVIRONMENT
+
+        try {
             $env:ASPNETCORE_ENVIRONMENT = 'Development'
-            dotnet $using:appDll $using:serverPfxPath $using:serverPfxPassword $using:HttpPort $using:HttpsPort $using:Tls11Port $using:TlsPort
+            $webListenerProcess = Start-Process -FilePath $appExe -PassThru -ArgumentList @(
+                $serverPfxPath
+                $serverPfxPassword
+                $HttpPort
+                $HttpsPort
+                $Tls11Port
+                $TlsPort
+            )
+        } catch {
+            # rethrow any exception
+            throw $_
+        } finally {
+            $env:ASPNETCORE_ENVIRONMENT = $oldASPEnvPreference
         }
+
         $Script:WebListener = [WebListener]@{
             HttpPort  = $HttpPort
             HttpsPort = $HttpsPort
             Tls11Port = $Tls11Port
             TlsPort   = $TlsPort
-            Job       = $Job
+            Process   = $webListenerProcess
         }
 
         # Count iterations of $sleepMilliseconds instead of using system time to work around possible CI VM sleep/delays
@@ -159,22 +169,14 @@ function Start-WebListener
         do
         {
             Start-Sleep -Milliseconds $sleepMilliseconds
-            $initStatus = $Job.ChildJobs[0].Output | Out-String
-            $isRunning = $initStatus -match $initCompleteMessage
+            $isRunning = (Get-WebListener).Process -ne $null
             $sleepCountRemaining--
         }
         while (-not $isRunning -and $sleepCountRemaining -gt 0)
 
         if (-not $isRunning)
         {
-            $jobErrors = $Job.ChildJobs[0].Error | Out-String
-            $jobOutput =  $Job.ChildJobs[0].Output | Out-String
-            $jobVerbose =  $Job.ChildJobs[0].Verbose | Out-String
-            $Job | Stop-Job
-            $Job | Remove-Job -Force
-            $message = 'WebListener did not start before the timeout was reached.{0}Errors:{0}{1}{0}Output:{0}{2}{0}Verbose:{0}{3}' -f
-                ([System.Environment]::NewLine), $jobErrors, $jobOutput, $jobVerbose
-            throw $message
+            throw 'WebListener did not start before the timeout was reached.'
         }
         return $Script:WebListener
     }
@@ -188,7 +190,7 @@ function Stop-WebListener
 
     process
     {
-        $Script:WebListener.job | Stop-Job -PassThru | Remove-Job
+        $Script:WebListener.Process | Stop-Process
         $Script:WebListener = $null
     }
 }
