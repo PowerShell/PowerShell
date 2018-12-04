@@ -53,20 +53,20 @@ jobs:
 
   - powershell: |
         tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTag)
-    displayName: 'Set ReleaseTag Varibale'
+    displayName: 'Set ReleaseTag Variable'
 
   - powershell: |
        Write-Verbose -Verbose "$(Architecture)"
-       
+
        if ('$(Architecture)' -eq 'fxdependent' -and '$(ReleaseTag)' -match '6.0.*')
        {
-           $vstsCommandString = "vso[task.setvariable variable=SkipFxDependent]true"    
+           $vstsCommandString = "vso[task.setvariable variable=SkipFxDependent]true"
        }
        else
        {
            $vstsCommandString = "vso[task.setvariable variable=SkipFxDependent]false"
        }
-       
+
        Write-Verbose -Message "$vstsCommandString " -Verbose
        Write-Host -Object "##$vstsCommandString"
     displayName: 'Skip FxDependent for PS v6.0.*'
@@ -74,7 +74,7 @@ jobs:
   - powershell: |
        Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
        New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination $(Build.SourcesDirectory)/src/Modules
-       
+
        if(-not (Test-Path "$(Build.SourcesDirectory)/src/Modules/nuget.config"))
        {
            throw "nuget.config is not created"
@@ -135,7 +135,7 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
 
   - powershell: |
-       if ("$env:Architecture" -eq 'fxdependent') 
+       if ("$env:Architecture" -eq 'fxdependent')
        {
            $(Build.SourcesDirectory)\tools\releaseBuild\updateSigning.ps1 -SkipPwshExe
        }
@@ -162,7 +162,7 @@ jobs:
        inPathRoot: '$(Symbols)'
        outPathRoot: '$(Symbols)\signed'
     condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'), ne(variables['SkipFxDependent'], 'true'))
-  
+
   - powershell: |
        New-Item -ItemType Directory -Path $(Symbols)\signed -Force
     displayName: 'Create empty signed folder'
@@ -174,15 +174,13 @@ jobs:
     continueOnError: true
     condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
 
-
-
 - job: ComponentRegistrationJob
   displayName: Component Registration
-  dependsOn: BuildJob 
+  dependsOn: BuildJob
   condition: succeeded()
   pool:
     name: PowerShell
-    demands: 
+    demands:
       - USERNAME -equals issblder
       - Agent.Image
   strategy:
@@ -249,11 +247,9 @@ jobs:
       sourceScanPath: '$(componentregistration)'
       snapshotForceEnabled: true
 
-
-
 - job: CreateAzureContainerJob
   displayName: Create Azure container and set access
-  dependsOn: BuildJob 
+  dependsOn: BuildJob
   condition: succeeded()
   pool:
     name: Hosted VS2017
@@ -264,7 +260,7 @@ jobs:
       ./tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTag)
     displayName: 'Set ReleaseTag Variable'
 
-  - powershell: |  
+  - powershell: |
        $azureVersion = $env:ReleaseTag.ToLowerInvariant() -replace '\.', '-'
        $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
        Write-Host "sending " + $vstsCommandString
@@ -276,7 +272,7 @@ jobs:
     inputs:
       azureSubscription: '$(AzureFileCopySubscription)'
       scriptLocation: inlineScript
-      inlineScript: |  
+      inlineScript: |
        az storage container create --account-name $(StorageAccount) --account-key $(StorageAccountKey) --name $(AzureVersion) --public-access blob
 
   - task: AzureCLI@1
@@ -286,15 +282,13 @@ jobs:
       scriptLocation: inlineScript
       inlineScript: 'az storage container set-permission --account-name $(StorageAccount) --account-key $(StorageAccountKey) --name $(AzureVersion) --public-access blob'
 
-
-
 - job: PackageSigningJob
   displayName: Package signing
-  dependsOn: CreateAzureContainerJob 
+  dependsOn: CreateAzureContainerJob
   condition: succeeded()
   pool:
     name: Package ES CodeHub Lab E
-    demands: 
+    demands:
       - Agent.Image
       - USERNAME -equals issblder
       - DotNetFramework
@@ -317,12 +311,12 @@ jobs:
        $vstsCommandString = "vso[task.setvariable variable=Version]$version"
        Write-Host "sending " + $vstsCommandString
        Write-Host "##$vstsCommandString"
-       
+
        $azureVersion = $env:ReleaseTag.ToLowerInvariant() -replace '\.', '-'
        $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
        Write-Host "sending " + $vstsCommandString
        Write-Host "##$vstsCommandString"
-       
+
     displayName: 'Set Version Variable'
     continueOnError: true
 
@@ -398,7 +392,7 @@ jobs:
        {
            Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
        }
-    displayName: '[create script] upload signed msi - x86'       
+    displayName: '[create script] upload signed msi - x86'
     continueOnError: true
 
   - task: AzureFileCopy@1
@@ -478,7 +472,7 @@ jobs:
        {
            Write-Host "##vso[artifact.upload containerfolder=signedResults;artifactname=signedResults]$packagePath"
        }
-    displayName: '[create script] upload signed zip - arm64'   
+    displayName: '[create script] upload signed zip - arm64'
     continueOnError: true
 
   - task: AzureFileCopy@1
