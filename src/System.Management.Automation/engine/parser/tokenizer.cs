@@ -3606,18 +3606,18 @@ namespace System.Management.Automation.Language
                                 return true;
                             }
 
-                            if (Utils.TryCast(bigValue, out long l_))
+                            if (Utils.TryCast(bigValue, out long lValue))
                             {
-                                result = l_;
+                                result = lValue;
                                 return true;
                             }
 
                             // Result is too big for anything else; fallback to decimal or double
                             if (format == NumberFormat.Decimal)
                             {
-                                if (Utils.TryCast(bigValue, out decimal dm_))
+                                if (Utils.TryCast(bigValue, out decimal dmValue))
                                 {
-                                    result = dm_;
+                                    result = dmValue;
                                     return true;
                                 }
                                 else if (Utils.TryCast(bigValue, out double d))
@@ -3720,66 +3720,73 @@ namespace System.Management.Automation.Language
             else
             {
                 c = PeekChar();
-                bool isHexOrBinary = firstChar == '0' && (c == 'x' || c == 'X' || c == 'b' || c == 'B');
-                if (isHexOrBinary)
+                switch (c)
                 {
-                    SkipChar();
-                    switch (c)
-                    {
-                        case 'x':
-                        case 'X':
-                            sb.Append('0'); // Prepend a 0 to the number before any numeric digits are added
-                            ScanHexDigits(sb);
-                            if (sb.Length == 0)
-                            {
-                                notNumber = true;
-                            }
+                    case 'x':
+                    case 'X':
+                        if (firstChar != '0')
+                        {
+                            goto default;
+                        }
 
-                            format = NumberFormat.Hex;
-                            break;
-                        case 'b':
-                        case 'B':
-                            ScanBinaryDigits(sb);
-                            if (sb.Length == 0)
-                            {
-                                notNumber = true;
-                            }
+                        SkipChar();
+                        sb.Append('0'); // Prepend a 0 to the number before any numeric digits are added
+                        ScanHexDigits(sb);
+                        if (sb.Length == 0)
+                        {
+                            notNumber = true;
+                        }
 
-                            format = NumberFormat.Binary;
-                            break;
-                    }
-                }
-                else
-                {
-                    sb.Append(firstChar);
-                    ScanDecimalDigits(sb);
-                    c = PeekChar();
-                    switch (c)
-                    {
-                        case '.':
-                            SkipChar();
-                            if (PeekChar() == '.')
-                            {
-                                // We just found the range operator, so unget the first dot so
-                                // we can stop scanning as a number.
-                                UngetChar();
-                            }
-                            else
-                            {
+                        format = NumberFormat.Hex;
+                        break;
+                    case 'b':
+                    case 'B':
+                        if (firstChar != '0')
+                        {
+                            goto default;
+                        }
+
+                        SkipChar();
+                        ScanBinaryDigits(sb);
+                        if (sb.Length == 0)
+                        {
+                            notNumber = true;
+                        }
+
+                        format = NumberFormat.Binary;
+                        break;
+                    default:
+                        sb.Append(firstChar);
+                        ScanDecimalDigits(sb);
+                        c = PeekChar();
+                        switch (c)
+                        {
+                            case '.':
+                                SkipChar();
+                                if (PeekChar() == '.')
+                                {
+                                    // We just found the range operator, so unget the first dot so
+                                    // we can stop scanning as a number.
+                                    UngetChar();
+                                }
+                                else
+                                {
+                                    sb.Append(c);
+                                    real = true;
+                                    ScanNumberAfterDot(sb, ref signIndex, ref notNumber);
+                                }
+
+                                break;
+                            case 'E':
+                            case 'e':
+                                SkipChar();
                                 sb.Append(c);
                                 real = true;
-                                ScanNumberAfterDot(sb, ref signIndex, ref notNumber);
-                            }
+                                ScanExponent(sb, ref signIndex, ref notNumber);
+                                break;
+                        }
 
-                            break;
-                        case 'E':
-                        case 'e':
-                            SkipChar();
-                            sb.Append(c);
-                            real = true;
-                            ScanExponent(sb, ref signIndex, ref notNumber);
-                            break;
-                    }
+                        break;
                 }
             }
 
@@ -3920,7 +3927,7 @@ namespace System.Management.Automation.Language
                 sb[0] = '-';
             }
 
-            return (ReadOnlySpan<char>)GetStringAndRelease(sb);
+            return GetStringAndRelease(sb).AsSpan();
         }
 
         #endregion Numbers
