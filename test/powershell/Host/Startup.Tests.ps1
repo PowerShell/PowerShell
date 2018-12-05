@@ -3,7 +3,7 @@
 
 Describe "Validate start of console host" -Tag CI {
     BeforeAll {
-        $expectedAssemblies = @(
+        $allowedAssemblies = @(
             'Microsoft.ApplicationInsights.dll'
             'Microsoft.Management.Infrastructure.dll'
             'Microsoft.PowerShell.Commands.Management.dll'
@@ -19,7 +19,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.Buffers.dll'
             'System.Collections.Concurrent.dll'
             'System.Collections.dll'
-            'System.Collections.Immutable.dll'
             'System.Collections.NonGeneric.dll'
             'System.Collections.Specialized.dll'
             'System.ComponentModel.dll'
@@ -59,6 +58,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Reflection.Emit.ILGeneration.dll'
             'System.Reflection.Emit.Lightweight.dll'
             'System.Reflection.Extensions.dll'
+            'System.Reflection.Metadata.dll'
             'System.Reflection.Primitives.dll'
             'System.Resources.ResourceManager.dll'
             'System.Runtime.dll'
@@ -71,7 +71,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.Runtime.Serialization.Primitives.dll'
             'System.Security.AccessControl.dll'
             'System.Security.Claims.dll'
-            'System.Security.Cryptography.Algorithms.dll'
             'System.Security.Cryptography.Encoding.dll'
             'System.Security.Cryptography.Primitives.dll'
             'System.Security.Cryptography.X509Certificates.dll'
@@ -81,7 +80,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.Text.Encoding.Extensions.dll'
             'System.Text.RegularExpressions.dll'
             'System.Threading.dll'
-            'System.Threading.AccessControl.dll'
             'System.Threading.Tasks.dll'
             'System.Threading.Tasks.Parallel.dll'
             'System.Threading.Thread.dll'
@@ -92,29 +90,27 @@ Describe "Validate start of console host" -Tag CI {
         )
 
         if ($IsWindows) {
-            $expectedAssemblies += @(
+            $allowedAssemblies += @(
                 'Microsoft.Management.Infrastructure.CimCmdlets.dll'
                 'Microsoft.PowerShell.CoreCLR.Eventing.dll'
                 'System.DirectoryServices.dll'
                 'System.Management.dll'
-                'System.Reflection.Metadata.dll'
-                'System.Security.Permissions.dll'
                 'System.Threading.Overlapped.dll'
             )
         }
         else {
-            $expectedAssemblies += @(
+            $allowedAssemblies += @(
                 'System.IO.MemoryMappedFiles.dll'
                 'System.Net.Sockets.dll'
-                'System.Reflection.Metadata.dll'            )
+            )
         }
 
-        $loadedAssemblies = pwsh -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | ? { $_.Name -notlike ""<*>"" } | % { $_.Name }'
+        $loadedAssemblies = pwsh -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | Where-Object { $_.Name -notlike ""<*>"" } | ForEach-Object { $_.Name }'
     }
 
     It "No new assemblies are loaded" {
         foreach ($assembly in $loadedAssemblies) {
-            $expectedAssemblies | Should -Contain $assembly
+            $allowedAssemblies | Should -Contain $assembly
         }
     }
 }
