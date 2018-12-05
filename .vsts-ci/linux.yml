@@ -30,8 +30,8 @@ variables:
 resources:
 - repo: self
   clean: true
-phases:
-- phase: Linux_CI
+jobs:
+- job: Linux_CI
 
   queue:
     name: Hosted Ubuntu 1604

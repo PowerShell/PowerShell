@@ -32,8 +32,8 @@ variables:
 resources:
 - repo: self
   clean: true
-phases:
-- phase: macOS_CI
+jobs:
+- job: macOS_CI
 
   queue:
     name: Hosted macOS
