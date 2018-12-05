@@ -14,9 +14,12 @@ jobs:
   - powershell: |
       tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"
     displayName: 'Calculate Release Tag'
-  - task: ShellScript@2
-    inputs:
-      scriptPath: 'tools/releaseBuild/macOS/createPowerShell.sh'
+  - powershell: |
+      # create folder
+      sudo mkdir /PowerShell
+
+      # make the current user the owner
+      sudo chown $env:USER /PowerShell
     displayName: 'Create /PowerShell'
   - powershell: |
       Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
