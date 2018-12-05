@@ -22,27 +22,22 @@ resources:
 jobs:
 - template: templates/linux.yml
   parameters:
-    jobName: DEB
-    buildName: ubuntu.14.04-no-appimage
+    buildName: deb
     pool: Hosted Ubuntu 1604
 
 - template: templates/linux.yml
   parameters:
-    jobName: RPM
-    buildName: centos.7
+    buildName: rpm
     pool: Hosted Ubuntu 1604
 
 - template: templates/linux.yml
   parameters:
-    jobName: fxdependent
     buildName: fxdependent
     pool: Hosted Ubuntu 1604
 
 - template: templates/linux.yml
   parameters:
-    jobName: Alpine
-    buildName: alpine.3
+    buildName: alpine
     pool: Hosted Ubuntu 1604
-
 
 - template: templates/mac.yml

@@ -17,7 +17,7 @@ jobs:
   - powershell: |
       Write-Verbose -Verbose "$(build)"
 
-      if ('$(build)' -in 'alpine.3', 'fxdependent' -and '$(ReleaseTagVar)' -match '6.0.*')
+      if ('$(build)' -in 'alpine', 'fxdependent' -and '$(ReleaseTagVar)' -match '6.0.*')
       {
           $vstsCommandString = "vso[task.setvariable variable=SkipBuild]true"
       }
