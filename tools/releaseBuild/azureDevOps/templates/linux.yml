@@ -1,10 +1,9 @@
 parameters:
-  jobName: 'none'
   buildName: ''
 
 jobs:
-- job: build_${{ parameters.jobName }}
-  displayName: Build ${{ parameters.jobName }}
+- job: build_${{ parameters.buildName }}
+  displayName: Build ${{ parameters.buildName }}
   condition: succeeded()
   pool: Hosted Ubuntu 1604
   variables:
@@ -50,13 +49,13 @@ jobs:
     displayName: 'Build and package'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
-- job: upload_${{ parameters.jobName }}
-  displayName: Upload ${{ parameters.jobName }}
-  dependsOn: build_${{ parameters.jobName }}
+- job: upload_${{ parameters.buildName }}
+  displayName: Upload ${{ parameters.buildName }}
+  dependsOn: build_${{ parameters.buildName }}
   condition: succeeded()
   pool: Package ES CodeHub Lab E
   variables:
-    jobName: ${{ parameters.jobName }}
+    buildName: ${{ parameters.buildName }}
   steps:
 
   - powershell: |
@@ -76,7 +75,7 @@ jobs:
       downloadType: specific
       itemPattern: '**/*.deb'
       downloadPath: '$(System.ArtifactsDirectory)\finished'
-    condition: and(eq(variables['jobName'], 'DEB'),succeeded())
+    condition: and(eq(variables['buildName'], 'DEB'),succeeded())
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download tar.gz Artifacts copy'
@@ -91,7 +90,7 @@ jobs:
       downloadType: specific
       itemPattern: '**/*.rpm'
       downloadPath: '$(System.ArtifactsDirectory)\rpm'
-    condition: and(eq(variables['jobName'], 'RPM'),succeeded())
+    condition: and(eq(variables['buildName'], 'RPM'),succeeded())
 
   - task: AzureFileCopy@1
     displayName: 'Upload to azure deb and tar.gz'
@@ -110,4 +109,4 @@ jobs:
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)-unsigned'
-    condition: and(eq(variables['jobName'], 'RPM'),succeeded())
+    condition: and(eq(variables['buildName'], 'RPM'),succeeded())
