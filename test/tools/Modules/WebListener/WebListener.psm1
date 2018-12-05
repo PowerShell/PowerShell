@@ -144,7 +144,6 @@ function Start-WebListener
             'Tls11Port: {0}' -f $using:Tls11Port
             'TlsPort: {0}' -f $using:TlsPort
             $env:ASPNETCORE_ENVIRONMENT = 'Development'
-
             & $using:appExe $using:serverPfxPath $using:serverPfxPassword $using:HttpPort $using:HttpsPort $using:Tls11Port $using:TlsPort
         }
 
@@ -169,7 +168,13 @@ function Start-WebListener
 
         if (-not $isRunning)
         {
-            throw 'WebListener did not start before the timeout was reached.'
+            $jobErrors = $Job.ChildJobs[0].Error | Out-String
+            $jobOutput =  $Job.ChildJobs[0].Output | Out-String
+            $jobVerbose =  $Job.ChildJobs[0].Verbose | Out-String
+            $Job | Stop-Job
+            $Job | Remove-Job -Force
+            $message = 'WebListener did not start before the timeout was reached.{0}Errors:{0}{1}{0}Output:{0}{2}{0}Verbose:{0}{3}' -f ([System.Environment]::NewLine), $jobErrors, $jobOutput, $jobVerbose
+            throw $message
         }
         return $Script:WebListener
     }
