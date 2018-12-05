@@ -19,6 +19,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Buffers.dll'
             'System.Collections.Concurrent.dll'
             'System.Collections.dll'
+            'System.Collections.Immutable.dll'
             'System.Collections.NonGeneric.dll'
             'System.Collections.Specialized.dll'
             'System.ComponentModel.dll'
