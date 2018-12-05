@@ -263,6 +263,7 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
     BeforeAll {
         # Ensure the local host listen on port 80
         $WebListener = Start-WebListener
+        $UnreachableAddress = "10.11.12.13"
     }
 
     It "Test connection to local host port 80" {
