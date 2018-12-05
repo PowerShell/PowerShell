@@ -2360,28 +2360,30 @@ namespace System.Management.Automation.Runspaces
 
         internal Exception BindRunspace(Runspace initializedRunspace, PSTraceSource runspaceInitTracer)
         {
-            // Get initial list of public commands from session in a lazy way.
+            // Get the initial list of public commands from session in a lazy way, so that we can defer
+            // the work until it's actually needed.
+            //
             // We could use Lazy<> with an initializer for the same purpose, but we can save allocations
             // by using the local function. It avoids allocating the delegate, and it's more efficient on
             // capturing variables from the enclosing scope by using a struct.
-            HashSet<CommandInfo> commands = null;
+            HashSet<CommandInfo> publicCommands = null;
             HashSet<CommandInfo> GetPublicCommands()
             {
-                if (commands != null)
+                if (publicCommands != null)
                 {
-                    return commands;
+                    return publicCommands;
                 }
 
-                commands = new HashSet<CommandInfo>();
+                publicCommands = new HashSet<CommandInfo>();
                 foreach (CommandInfo sessionCommand in initializedRunspace.ExecutionContext.SessionState.InvokeCommand.GetCommands(
                             "*", CommandTypes.Alias | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Cmdlet, nameIsPattern: true))
                 {
                     if (sessionCommand.Visibility == SessionStateEntryVisibility.Public)
                     {
-                        commands.Add(sessionCommand);
+                        publicCommands.Add(sessionCommand);
                     }
                 }
-                return commands;
+                return publicCommands;
             }
 
             var unresolvedCmdsToExpose = new HashSet<string>(this.UnresolvedCommandsToExpose, StringComparer.OrdinalIgnoreCase);
@@ -2390,7 +2392,7 @@ namespace System.Management.Automation.Runspaces
                 // If a user has any module with the same name as that of the core module( or nested module inside the core module)
                 // in his module path, then that will get loaded instead of the actual nested module (from the GAC - in our case)
                 // Hence, searching only from the system module path while loading the core modules
-                ProcessImportModule(initializedRunspace, CoreModulesToImport, ModuleIntrinsics.GetPSHomeModulePath(), GetPublicCommands(), unresolvedCmdsToExpose);
+                ProcessModulesToImport(initializedRunspace, CoreModulesToImport, ModuleIntrinsics.GetPSHomeModulePath(), GetPublicCommands(), unresolvedCmdsToExpose);
             }
 
             // Win8:328748 - functions defined in global scope end up in a module
@@ -2400,7 +2402,7 @@ namespace System.Management.Automation.Runspaces
 
             if (ModuleSpecificationsToImport.Count > 0 || unresolvedCmdsToExpose.Count > 0)
             {
-                Exception moduleImportException = ProcessImportModule(initializedRunspace, ModuleSpecificationsToImport, string.Empty, GetPublicCommands(), unresolvedCmdsToExpose);
+                Exception moduleImportException = ProcessModulesToImport(initializedRunspace, ModuleSpecificationsToImport, string.Empty, GetPublicCommands(), unresolvedCmdsToExpose);
                 if (moduleImportException != null)
                 {
                     runspaceInitTracer.WriteLine(
@@ -2416,7 +2418,7 @@ namespace System.Management.Automation.Runspaces
                 string[] foundModuleList = GetModulesForUnResolvedCommands(unresolvedCmdsToExpose, initializedRunspace.ExecutionContext);
                 if (foundModuleList.Length > 0)
                 {
-                    ProcessImportModule(initializedRunspace, foundModuleList, string.Empty, GetPublicCommands(), unresolvedCmdsToExpose);
+                    ProcessModulesToImport(initializedRunspace, foundModuleList, string.Empty, GetPublicCommands(), unresolvedCmdsToExpose);
                 }
             }
 
@@ -2840,7 +2842,7 @@ namespace System.Management.Automation.Runspaces
             return null;
         }
 
-        private RunspaceOpenModuleLoadException ProcessImportModule(
+        private RunspaceOpenModuleLoadException ProcessModulesToImport(
             Runspace initializedRunspace,
             IEnumerable moduleList,
             string path,
@@ -2854,7 +2856,7 @@ namespace System.Management.Automation.Runspaces
                 string moduleName = module as string;
                 if (moduleName != null)
                 {
-                    exceptionToReturn = ProcessImportModule(initializedRunspace, moduleName, null, path, publicCommands);
+                    exceptionToReturn = ProcessOneModule(initializedRunspace, moduleName, null, path, publicCommands);
                 }
                 else
                 {
@@ -2865,7 +2867,7 @@ namespace System.Management.Automation.Runspaces
                         {
                             // if only name is specified in the module spec, just try import the module
                             // ie., don't take the performance overhead of calling GetModule.
-                            exceptionToReturn = ProcessImportModule(initializedRunspace, moduleSpecification.Name, null, path, publicCommands);
+                            exceptionToReturn = ProcessOneModule(initializedRunspace, moduleSpecification.Name, null, path, publicCommands);
                         }
                         else
                         {
@@ -2873,7 +2875,7 @@ namespace System.Management.Automation.Runspaces
 
                             if (moduleInfos != null && moduleInfos.Count > 0)
                             {
-                                exceptionToReturn = ProcessImportModule(initializedRunspace, moduleSpecification.Name, moduleInfos[0], path, publicCommands);
+                                exceptionToReturn = ProcessOneModule(initializedRunspace, moduleSpecification.Name, moduleInfos[0], path, publicCommands);
                             }
                             else
                             {
@@ -3014,7 +3016,7 @@ namespace System.Management.Automation.Runspaces
         /// if <paramref name="moduleInfoToLoad"/> is null, import module using <paramref name="name"/>. Otherwise,
         /// import module using <paramref name="moduleInfoToLoad"/>
         /// </summary>
-        private RunspaceOpenModuleLoadException ProcessImportModule(Runspace initializedRunspace, string name, PSModuleInfo moduleInfoToLoad, string path, HashSet<CommandInfo> publicCommands)
+        private RunspaceOpenModuleLoadException ProcessOneModule(Runspace initializedRunspace, string name, PSModuleInfo moduleInfoToLoad, string path, HashSet<CommandInfo> publicCommands)
         {
             using (PowerShell pse = PowerShell.Create())
             {
