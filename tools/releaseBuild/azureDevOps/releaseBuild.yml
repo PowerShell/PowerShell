@@ -38,4 +38,11 @@ jobs:
     buildName: fxdependent
     pool: Hosted Ubuntu 1604
 
+- template: templates/linux.yml
+  parameters:
+    jobName: Alpine
+    buildName: alpine.3
+    pool: Hosted Ubuntu 1604
+
+
 - template: templates/mac.yml
