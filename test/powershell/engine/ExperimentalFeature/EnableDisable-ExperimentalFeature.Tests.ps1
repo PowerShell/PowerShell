@@ -55,7 +55,7 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeFalse -Because "All Experimental Features disabled when no config file"
         $feature = pwsh -noprofile -output xml -command Enable-ExperimentalFeature ExpTest.FeatureOne -Scope $scope -WarningAction SilentlyContinue
-        $feature.Enabled | Should -BeFalse -Because "The experimental feature is only enabled on a new startup"
+        $feature | Should -BeNullOrEmpty -Because "No object is output to pipeline on success"
         $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeTrue -Because "The experimental feature is now enabled"
     }
@@ -70,7 +70,7 @@ Describe "Enable-ExperimentalFeature and Disable-ExperimentalFeature tests" -tag
         $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeTrue -Because "Test config should enable ExpTest.FeatureOne"
         $feature = pwsh -noprofile -output xml -command Disable-ExperimentalFeature ExpTest.FeatureOne -Scope $scope -WarningAction SilentlyContinue
-        $feature.Enabled | Should -BeTrue -Because "The experimental feature is only disabled on a new startup"
+        $feature | Should -BeNullOrEmpty -Because "No object is output to pipeline on success"
         $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
         $feature.Enabled | Should -BeFalse -Because "The experimental feature is now disabled"
     }
