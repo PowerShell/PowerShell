@@ -531,11 +531,7 @@ function Push-Artifact
         $artifactName = $Name
     }
 
-    if($env:Appveyor)
-    {
-        Push-AppveyorArtifact $Path
-    }
-    elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
+    if ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
         # In VSTS
         Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
     }
