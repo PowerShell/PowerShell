@@ -440,26 +440,29 @@ namespace System.Management.Automation.Language
                 if (_interfaceProperties == null)
                 {
                     _interfaceProperties = new HashSet<Tuple<string, Type>>();
+                    var allInterfaces = new HashSet<Type>();
+
+                    // TypeBuilder.GetInterfaces() returns only the interfaces that was explicitly passed to its constructor.
+                    // During compilation the interface hierarchy is flattened, so we only need to resolve one level of ancestral interfaces.
                     foreach (var interfaceType in _typeBuilder.GetInterfaces())
                     {
-                        // TypeBuilder.GetInterfaces() returns only the interfaces that was explicitly passed to its constructor.
-                        // During compilation the interface hierarchy is flattened, so we only need to resolve one level of ancestral interfaces.
                         foreach (var parentInterface in interfaceType.GetInterfaces())
                         {
-                            foreach (var property in parentInterface.GetProperties())
-                            {
-                                _interfaceProperties.Add(new Tuple<string, Type>(property.Name, property.PropertyType));
-                            }
+                            allInterfaces.Add(parentInterface);
                         }
+                        allInterfaces.Add(interfaceType);
+                    }
 
+                    foreach (var interfaceType in allInterfaces)
+                    {
                         foreach (var property in interfaceType.GetProperties())
                         {
-                            _interfaceProperties.Add(new Tuple<string, Type>(property.Name, property.PropertyType));
+                            _interfaceProperties.Add(Tuple.Create(property.Name, property.PropertyType));
                         }
                     }
                 }
 
-                return _interfaceProperties.Contains(new Tuple<string, Type>(name, type));
+                return _interfaceProperties.Contains(Tuple.Create(name, type));
             }
 
             public void DefineMembers()
