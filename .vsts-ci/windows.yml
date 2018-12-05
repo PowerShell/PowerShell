@@ -29,6 +29,7 @@ queue:
       Purpose: UnelevatedPesterTests
     ElevatedPesterTests_xUnit_Packaging:
       Purpose: ElevatedPesterTests_xUnit_Packaging
+  timeoutInMinutes: 120
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
