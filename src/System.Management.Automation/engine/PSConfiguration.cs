@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -11,12 +12,19 @@ using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Configuration
 {
-    internal enum ConfigScope
+    /// <summary>
+    /// The scope of the configuration file.
+    /// </summary>
+    public enum ConfigScope
     {
-        // SystemWide configuration applies to all users.
-        SystemWide = 0,
+        /// <summary>
+        /// AllUsers configuration applies to all users.
+        /// </summary>
+        AllUsers = 0,
 
-        // CurrentUser configuration applies to the current user.
+        /// <summary>
+        /// CurrentUser configuration applies to the current user.
+        /// </summary>
         CurrentUser = 1
     }
 
@@ -140,15 +148,6 @@ namespace System.Management.Automation.Configuration
 
         internal void SetExecutionPolicy(ConfigScope scope, string shellId, string executionPolicy)
         {
-            // Defaults to system wide.
-            if (ConfigScope.CurrentUser == scope)
-            {
-                // Exceptions are not caught so that they will propagate to the
-                // host for display to the user.
-                // CreateDirectory will succeed if the directory already exists
-                // so there is no reason to check Directory.Exists().
-                Directory.CreateDirectory(perUserConfigDirectory);
-            }
             string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
             WriteValueToFile<string>(scope, valueName, executionPolicy);
         }
@@ -165,12 +164,12 @@ namespace System.Management.Automation.Configuration
         /// <returns>Whether console prompting should happen. If the value cannot be read it defaults to false.</returns>
         internal bool GetConsolePrompting()
         {
-            return ReadValueFromFile<bool>(ConfigScope.SystemWide, "ConsolePrompting");
+            return ReadValueFromFile<bool>(ConfigScope.AllUsers, "ConsolePrompting");
         }
 
         internal void SetConsolePrompting(bool shouldPrompt)
         {
-            WriteValueToFile<bool>(ConfigScope.SystemWide, "ConsolePrompting", shouldPrompt);
+            WriteValueToFile<bool>(ConfigScope.AllUsers, "ConsolePrompting", shouldPrompt);
         }
 
         /// <summary>
@@ -185,12 +184,12 @@ namespace System.Management.Automation.Configuration
         /// <returns>Boolean indicating whether Update-Help should prompt. If the value cannot be read, it defaults to false.</returns>
         internal bool GetDisablePromptToUpdateHelp()
         {
-            return ReadValueFromFile<bool>(ConfigScope.SystemWide, "DisablePromptToUpdateHelp");
+            return ReadValueFromFile<bool>(ConfigScope.AllUsers, "DisablePromptToUpdateHelp");
         }
 
         internal void SetDisablePromptToUpdateHelp(bool prompt)
         {
-            WriteValueToFile<bool>(ConfigScope.SystemWide, "DisablePromptToUpdateHelp", prompt);
+            WriteValueToFile<bool>(ConfigScope.AllUsers, "DisablePromptToUpdateHelp", prompt);
         }
 
         /// <summary>
@@ -198,7 +197,40 @@ namespace System.Management.Automation.Configuration
         /// </summary>
         internal string[] GetExperimentalFeatures()
         {
-            return ReadValueFromFile<string[]>(ConfigScope.SystemWide, "ExperimentalFeatures", Utils.EmptyArray<string>());
+            string[] features = Array.Empty<string>();
+            if (File.Exists(perUserConfigFile))
+            {
+                features = ReadValueFromFile<string[]>(ConfigScope.CurrentUser, "ExperimentalFeatures", Array.Empty<string>());
+            }
+
+            if (features.Length == 0)
+            {
+                features = ReadValueFromFile<string[]>(ConfigScope.AllUsers, "ExperimentalFeatures", Array.Empty<string>());
+            }
+
+            return features;
+        }
+
+        /// <summary>
+        /// Set the enabled list of experimental features in the config file.
+        /// </summary>
+        /// <param name="scope">The ConfigScope of the configuration file to update.</param>
+        /// <param name="featureName">The name of the experimental feature to change in the configuration.</param>
+        /// <param name="setEnabled">If true, add to configuration; otherwise, remove from configuration.</param>
+        internal void SetExperimentalFeatures(ConfigScope scope, string featureName, bool setEnabled)
+        {
+            var features = new List<string>(GetExperimentalFeatures());
+            bool containsFeature = features.Contains(featureName);
+            if (setEnabled && !containsFeature)
+            {
+                features.Add(featureName);
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+            }
+            else if (!setEnabled && containsFeature)
+            {
+                features.Remove(featureName);
+                WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
+            }
         }
 
         /// <summary>
@@ -218,7 +250,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal string GetSysLogIdentity()
         {
-            string identity = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogIdentity");
+            string identity = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogIdentity");
 
             if (string.IsNullOrEmpty(identity) ||
                 identity.Equals(LogDefaultValue, StringComparison.OrdinalIgnoreCase))
@@ -236,7 +268,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSLevel GetLogLevel()
         {
-            string levelName = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogLevel");
+            string levelName = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogLevel");
             PSLevel level;
 
             if (string.IsNullOrEmpty(levelName) ||
@@ -266,7 +298,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSChannel GetLogChannels()
         {
-            string values = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogChannels");
+            string values = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogChannels");
 
             PSChannel result = 0;
             if (!string.IsNullOrEmpty(values))
@@ -305,7 +337,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSKeyword GetLogKeywords()
         {
-            string values = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogKeywords");
+            string values = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogKeywords");
 
             PSKeyword result = 0;
             if (!string.IsNullOrEmpty(values))
@@ -516,6 +548,16 @@ namespace System.Management.Automation.Configuration
         /// <param name="value">The value to write.</param>
         private void WriteValueToFile<T>(ConfigScope scope, string key, T value)
         {
+            // Defaults to system wide.
+            if (ConfigScope.CurrentUser == scope)
+            {
+                // Exceptions are not caught so that they will propagate to the
+                // host for display to the user.
+                // CreateDirectory will succeed if the directory already exists
+                // so there is no reason to check Directory.Exists().
+                Directory.CreateDirectory(perUserConfigDirectory);
+            }
+
             UpdateValueInFile<T>(scope, key, value, true);
         }
 

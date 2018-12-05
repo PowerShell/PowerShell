@@ -11,7 +11,9 @@ $script:cmdletsToSkip = @(
     "Get-PSSessionCapability",
     "Disable-PSRemoting", # Content not available: Issue # https://github.com/PowerShell/PowerShell-Docs/issues/1790
     "Enable-PSRemoting",
-    "Get-ExperimentalFeature"
+    "Get-ExperimentalFeature",
+    "Enable-ExperimentalFeature",
+    "Disable-ExperimentalFeature"
 )
 
 function UpdateHelpFromLocalContentPath {
