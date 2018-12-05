@@ -88,13 +88,13 @@ jobs:
 
   - powershell: |
        docker container prune --force
-       docker container ls --all --format '{{ json .ID }}' | ConvertFrom-Json | %{docker container rm --force --volumes $_}
+       docker container ls --all --format '{{ json .ID }}' | ConvertFrom-Json | ForEach-Object {docker container rm --force --volumes $_}
     displayName: 'remove all containers  [Port to PSRelease]'
     continueOnError: true
     condition: and(succeeded(), ne(variables['SkipFxDependent'], 'true'))
 
   - powershell: |
-       docker image ls --format '{{ json .}}'|ConvertFrom-Json|% {
+       docker image ls --format '{{ json .}}'|ConvertFrom-Json| ForEach-Object {
            if($_.tag -eq '<none>')
            {
                $formatString = 'yyyy-MM-dd HH:mm:ss zz00'
@@ -197,12 +197,12 @@ jobs:
 
   - powershell: |
        docker container prune --force
-       docker container ls --all --format '{{ json .ID }}' | ConvertFrom-Json | %{docker container rm --force --volumes $_}
+       docker container ls --all --format '{{ json .ID }}' | ConvertFrom-Json | ForEach-Object {docker container rm --force --volumes $_}
     displayName: 'Remove all containers'
     continueOnError: true
 
   - powershell: |
-       docker image ls --format '{{ json .}}'|ConvertFrom-Json|% {
+       docker image ls --format '{{ json .}}'|ConvertFrom-Json| ForEach-Object {
            if($_.tag -eq '<none>')
            {
                $formatString = 'yyyy-MM-dd HH:mm:ss zz00'
