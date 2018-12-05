@@ -240,44 +240,9 @@ jobs:
       sourceScanPath: '$(componentregistration)'
       snapshotForceEnabled: true
 
-- job: CreateAzureContainerJob
-  displayName: Create Azure container and set access
-  dependsOn: BuildJob
-  condition: succeeded()
-  pool:
-    name: Hosted VS2017
-
-  steps:
-
-  - powershell: |
-      ./tools/releaseBuild/setReleaseTag.ps1 -ReleaseTag $(ReleaseTag)
-    displayName: 'Set ReleaseTag Variable'
-
-  - powershell: |
-       $azureVersion = $env:ReleaseTag.ToLowerInvariant() -replace '\.', '-'
-       $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
-       Write-Host "sending " + $vstsCommandString
-       Write-Host "##$vstsCommandString"
-    displayName: 'Set ContainerName'
-
-  - task: AzureCLI@1
-    displayName: 'Create container'
-    inputs:
-      azureSubscription: '$(AzureFileCopySubscription)'
-      scriptLocation: inlineScript
-      inlineScript: |
-       az storage container create --account-name $(StorageAccount) --account-key $(StorageAccountKey) --name $(AzureVersion) --public-access blob
-
-  - task: AzureCLI@1
-    displayName: 'Set permissions on container'
-    inputs:
-      azureSubscription: '$(AzureFileCopySubscription)'
-      scriptLocation: inlineScript
-      inlineScript: 'az storage container set-permission --account-name $(StorageAccount) --account-key $(StorageAccountKey) --name $(AzureVersion) --public-access blob'
-
 - job: PackageSigningJob
   displayName: Package signing
-  dependsOn: CreateAzureContainerJob
+  dependsOn: BuildJob
   condition: succeeded()
   pool:
     name: Package ES CodeHub Lab E
