@@ -206,9 +206,8 @@ namespace System.Management.Automation
 
             // Calculate number of 8-bit bytes needed to hold the input,  rounded up to next whole number.
             int outputByteCount = (digits.Length + 7) / 8;
-            int outputByteIndex = outputByteCount - 1;
-
             Span<byte> outputBytes = outputByteCount <= MaxStackAllocation ? stackalloc byte[outputByteCount] : new byte[outputByteCount];
+            int outputByteIndex = outputBytes.Length - 1;
 
             // We need to be prepared for any partial leading bytes, (e.g., 010|00000011|00101100), or cases
             // where we only have less than 8 bits to work with from the beginning.
