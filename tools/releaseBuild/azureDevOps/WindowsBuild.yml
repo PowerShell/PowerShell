@@ -5,10 +5,6 @@ jobs:
   condition: succeeded()
   pool:
     name: PowerShell
-    demands:
-      - Agent.Image
-      - USERNAME -equals issblder
-      - DotNetFramework
   strategy:
     matrix:
       Build (x64,release):
@@ -180,9 +176,6 @@ jobs:
   condition: succeeded()
   pool:
     name: PowerShell
-    demands:
-      - USERNAME -equals issblder
-      - Agent.Image
   strategy:
     matrix:
       release-anycpu:
