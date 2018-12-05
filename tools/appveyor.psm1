@@ -517,8 +517,19 @@ function Push-Artifact
     param(
         [Parameter(Mandatory)]
         [ValidateScript({Test-Path -Path $_})]
-        $Path
+        $Path,
+        [string]
+        $Name
     )
+
+    if(!$Name)
+    {
+        $artifactName = [system.io.path]::GetFileName($Path)
+    }
+    else
+    {
+        $artifactName = $Name
+    }
 
     if($env:Appveyor)
     {
@@ -526,7 +537,7 @@ function Push-Artifact
     }
     elseif ($env:TF_BUILD -and $env:BUILD_REASON -ne 'PullRequest') {
         # In VSTS
-        Write-Host "##vso[artifact.upload containerfolder=artifacts;artifactname=artifacts;]$Path"
+        Write-Host "##vso[artifact.upload containerfolder=$artifactName;artifactname=$artifactName;]$Path"
     }
 }
 
