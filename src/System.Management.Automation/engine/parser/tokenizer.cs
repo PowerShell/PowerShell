@@ -3720,73 +3720,68 @@ namespace System.Management.Automation.Language
             else
             {
                 c = PeekChar();
-                switch (c)
+                bool isHexOrBinary = firstChar == '0' && (c == 'x' || c == 'X' || c == 'b' || c == 'B');
+
+                if (isHexOrBinary)
                 {
-                    case 'x':
-                    case 'X':
-                        if (firstChar != '0')
-                        {
-                            goto default;
-                        }
+                    SkipChar();
 
-                        SkipChar();
-                        sb.Append('0'); // Prepend a 0 to the number before any numeric digits are added
-                        ScanHexDigits(sb);
-                        if (sb.Length == 0)
-                        {
-                            notNumber = true;
-                        }
+                    switch (c)
+                    {
+                        case 'x':
+                        case 'X':
+                            sb.Append('0'); // Prepend a 0 to the number before any numeric digits are added
+                            ScanHexDigits(sb);
+                            if (sb.Length == 0)
+                            {
+                                notNumber = true;
+                            }
 
-                        format = NumberFormat.Hex;
-                        break;
-                    case 'b':
-                    case 'B':
-                        if (firstChar != '0')
-                        {
-                            goto default;
-                        }
+                            format = NumberFormat.Hex;
+                            break;
+                        case 'b':
+                        case 'B':
+                            ScanBinaryDigits(sb);
+                            if (sb.Length == 0)
+                            {
+                                notNumber = true;
+                            }
 
-                        SkipChar();
-                        ScanBinaryDigits(sb);
-                        if (sb.Length == 0)
-                        {
-                            notNumber = true;
-                        }
-
-                        format = NumberFormat.Binary;
-                        break;
-                    default:
-                        sb.Append(firstChar);
-                        ScanDecimalDigits(sb);
-                        c = PeekChar();
-                        switch (c)
-                        {
-                            case '.':
-                                SkipChar();
-                                if (PeekChar() == '.')
-                                {
-                                    // We just found the range operator, so unget the first dot so
-                                    // we can stop scanning as a number.
-                                    UngetChar();
-                                }
-                                else
-                                {
-                                    sb.Append(c);
-                                    real = true;
-                                    ScanNumberAfterDot(sb, ref signIndex, ref notNumber);
-                                }
-
-                                break;
-                            case 'E':
-                            case 'e':
-                                SkipChar();
+                            format = NumberFormat.Binary;
+                            break;
+                    }
+                }
+                else
+                {
+                    sb.Append(firstChar);
+                    ScanDecimalDigits(sb);
+                    c = PeekChar();
+                    switch (c)
+                    {
+                        case '.':
+                            SkipChar();
+                            if (PeekChar() == '.')
+                            {
+                                // We just found the range operator, so unget the first dot so
+                                // we can stop scanning as a number.
+                                UngetChar();
+                            }
+                            else
+                            {
                                 sb.Append(c);
                                 real = true;
-                                ScanExponent(sb, ref signIndex, ref notNumber);
-                                break;
-                        }
+                                ScanNumberAfterDot(sb, ref signIndex, ref notNumber);
+                            }
 
-                        break;
+                            break;
+                        case 'E':
+                        case 'e':
+                            SkipChar();
+                            sb.Append(c);
+                            real = true;
+                            ScanExponent(sb, ref signIndex, ref notNumber);
+                            break;
+                    }
                 }
             }
 
