@@ -23,21 +23,17 @@ jobs:
 - template: templates/linux.yml
   parameters:
     buildName: deb
-    pool: Hosted Ubuntu 1604
 
 - template: templates/linux.yml
   parameters:
     buildName: rpm
-    pool: Hosted Ubuntu 1604
 
 - template: templates/linux.yml
   parameters:
     buildName: fxdependent
-    pool: Hosted Ubuntu 1604
 
 - template: templates/linux.yml
   parameters:
     buildName: alpine
-    pool: Hosted Ubuntu 1604
 
 - template: templates/mac.yml
