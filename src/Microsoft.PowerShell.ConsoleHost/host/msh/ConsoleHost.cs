@@ -126,8 +126,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                 profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
 #else
-                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
-                    @"\Microsoft\Windows\PowerShell";
+                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
 
                 if (!Directory.Exists(profileDir))
                 {

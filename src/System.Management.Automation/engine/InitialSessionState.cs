@@ -2651,16 +2651,16 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 // Create the User drive path directory in current user local appdata location:
-                // SystemDrive\Users\[user]\AppData\Local\Microsoft\Windows\PowerShell\DriveRoots\[UserName]
+                // SystemDrive\Users\[user]\AppData\Local\Microsoft\PowerShell\DriveRoots\[UserName]
                 // Or for virtual accounts
-                // WinDir\System32\Microsoft\Windows\PowerShell\DriveRoots\[UserName]
+                // WinDir\System32\Microsoft\PowerShell\DriveRoots\[UserName]
                 string directoryName = MakeUserNamePath();
 #if UNIX
                 string userDrivePath = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "DriveRoots", directoryName);
 #else
                 string userDrivePath = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    @"Microsoft\Windows\PowerShell\DriveRoots",
+                    @"Microsoft\PowerShell\DriveRoots",
                     directoryName);
 #endif
 
