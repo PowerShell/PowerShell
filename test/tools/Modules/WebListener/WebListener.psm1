@@ -7,18 +7,13 @@ Class WebListener
     [int]$HttpsPort
     [int]$Tls11Port
     [int]$TlsPort
-    [System.Diagnostics.Process]$Process
+    [System.Management.Automation.Job]$Job
 
     WebListener () { }
 
     [String] GetStatus()
     {
-        if ($This.Process.HasExited) {
-            return "Exited"
-        }
-        else {
-            return "Running"
-        }
+        return $This.Job.JobStateInfo.State
     }
 }
 
@@ -129,6 +124,7 @@ function Start-WebListener
         $serverPfx           = 'ServerCert.pfx'
         $serverPfxPassword   = New-RandomHexString
         $clientPfx           = 'ClientCert.pfx'
+        $initCompleteMessage = 'Now listening on'
         $sleepMilliseconds   = 100
 
         $serverPfxPath = Join-Path ([System.IO.Path]::GetTempPath()) $serverPfx
@@ -137,27 +133,19 @@ function Start-WebListener
         New-ServerCertificate -CertificatePath $serverPfxPath -Password $serverPfxPassword
         New-ClientCertificate -CertificatePath $Script:ClientPfxPath -Password $Script:ClientPfxPassword
 
-        $oldASPEnvPreference = $env:ASPNETCORE_ENVIRONMENT
-
-        try {
+        $Job = Start-Job {
+            $path = Split-Path -parent (get-command WebListener).Path -Verbose
+            Push-Location $path -Verbose
+            'appEXE: {0}' -f $using:appExe
+            'serverPfxPath: {0}' -f $using:serverPfxPath
+            'serverPfxPassword: {0}' -f $using:serverPfxPassword
+            'HttpPort: {0}' -f $using:HttpPort
+            'Https: {0}' -f $using:HttpsPort
+            'Tls11Port: {0}' -f $using:Tls11Port
+            'TlsPort: {0}' -f $using:TlsPort
             $env:ASPNETCORE_ENVIRONMENT = 'Development'
 
-            $params = @{
-                FilePath          = $appExe
-                PassThru          = $true
-                UseNewEnvironment = $IsLinux # start a non-keyboard input blocking process on linux.
-            }
-
-            $webListenerProcess = Start-Process @params -ArgumentList @(
-                $serverPfxPath
-                $serverPfxPassword
-                $HttpPort
-                $HttpsPort
-                $Tls11Port
-                $TlsPort
-            )
-        } finally {
-            $env:ASPNETCORE_ENVIRONMENT = $oldASPEnvPreference
+            & $using:appExe $using:serverPfxPath $using:serverPfxPassword $using:HttpPort $using:HttpsPort $using:Tls11Port $using:TlsPort
         }
 
         $Script:WebListener = [WebListener]@{
@@ -165,7 +153,7 @@ function Start-WebListener
             HttpsPort = $HttpsPort
             Tls11Port = $Tls11Port
             TlsPort   = $TlsPort
-            Process   = $webListenerProcess
+            Job   = $Job
         }
 
         # Count iterations of $sleepMilliseconds instead of using system time to work around possible CI VM sleep/delays
@@ -173,7 +161,8 @@ function Start-WebListener
         do
         {
             Start-Sleep -Milliseconds $sleepMilliseconds
-            $isRunning = (Get-WebListener).GetStatus() -eq 'Running'
+            $initStatus = $Job.ChildJobs[0].Output | Out-String
+            $isRunning = $initStatus -match $initCompleteMessage
             $sleepCountRemaining--
         }
         while (-not $isRunning -and $sleepCountRemaining -gt 0)
@@ -194,7 +183,7 @@ function Stop-WebListener
 
     process
     {
-        $Script:WebListener.Process | Stop-Process
+        $Script:WebListener.job | Stop-Job -PassThru | Remove-Job
         $Script:WebListener = $null
     }
 }
