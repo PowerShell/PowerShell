@@ -35,7 +35,7 @@ resources:
 jobs:
 - job: macOS_CI
 
-  queue:
+  pool:
     name: Hosted macOS
 
   timeoutInMinutes: 120

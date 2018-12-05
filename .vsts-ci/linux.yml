@@ -33,7 +33,7 @@ resources:
 jobs:
 - job: Linux_CI
 
-  queue:
+  pool:
     name: Hosted Ubuntu 1604
 
   timeoutInMinutes: 120
