@@ -5,7 +5,6 @@
   <PropertyGroup>
     <Description>PowerShell xUnit Tests</Description>
     <AssemblyName>powershell-tests</AssemblyName>
-    <GenerateProgramFile>true</GenerateProgramFile>
     <RuntimeIdentifiers>win7-x86;win7-x64;osx-x64;linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
