@@ -383,6 +383,11 @@ namespace System.Management.Automation.Unicode
                 var c1 = Unsafe.Add(ref refA, i);
                 var c2 = Unsafe.Add(ref refB, i);
 
+                if (c1 == c2)
+                {
+                    continue;
+                }
+
                 if (IsNotSurrogate(c1) && IsNotSurrogate(c2))
                 {
                     c = Unsafe.Add(ref simpleCaseFoldingTableBMPane1, c1) - Unsafe.Add(ref simpleCaseFoldingTableBMPane1, c2);
