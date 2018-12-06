@@ -90,7 +90,15 @@ Describe "Get-Variable" -Tags "CI" {
 		Get-Variable -Name var1 -ValueOnly | Should -Be 4
 
 		Remove-Variable var1
-    }
+	}
+
+	It 'Should return the same value with -ValueOnly as directly calling the variable returns' {
+		New-Variable -Name var1 -Value @(1, 2, 3)
+
+		Get-Variable -Name var1 -ValueOnly | Should -Be $var1
+
+		Remove-Variable -Name var1
+	}
 
     It "Should pipe string to the name field without the Name field being specified"{
 		New-Variable -Name var1 -Value 3
