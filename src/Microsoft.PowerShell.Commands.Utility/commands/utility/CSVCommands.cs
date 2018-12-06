@@ -28,8 +28,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets delimiter.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "DelimiterPath")]
-        [Parameter(Position = 1, ParameterSetName = "DelimiterLiteralPath")]
+        [Parameter(Position = 1, ParameterSetName = "Delimiter")]
         [ValidateNotNull]
         public char Delimiter
         {
@@ -52,8 +51,7 @@ namespace Microsoft.PowerShell.Commands
         ///<summary>
         ///Culture switch for csv conversion
         ///</summary>
-        [Parameter(ParameterSetName = "CulturePath")]
-        [Parameter(ParameterSetName = "CultureLiteralPath")]
+        [Parameter(ParameterSetName = "UseCulture")]
         public SwitchParameter UseCulture { get; set; }
 
         /// <summary>
@@ -117,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the export-csv command.
     /// </summary>
-    [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "DelimiterPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113299")]
+    [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "Delimiter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113299")]
     public sealed class ExportCsvCommand : BaseCsvWritingCommand, IDisposable
     {
         #region Command Line Parameters
@@ -1708,6 +1706,7 @@ namespace Microsoft.PowerShell.Commands
         {
             switch (ParameterSetName)
             {
+                case "Delimiter":
                 case "DelimiterPath":
                 case "DelimiterLiteralPath":
                     // if delimiter is not given, it should take , as value
