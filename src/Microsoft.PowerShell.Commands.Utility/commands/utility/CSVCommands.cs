@@ -1716,6 +1716,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     break;
+                case "UseCulture":
                 case "CulturePath":
                 case "CultureLiteralPath":
                     if (UseCulture == true)
