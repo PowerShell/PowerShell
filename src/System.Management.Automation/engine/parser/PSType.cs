@@ -450,6 +450,7 @@ namespace System.Management.Automation.Language
                         {
                             allInterfaces.Add(parentInterface);
                         }
+
                         allInterfaces.Add(interfaceType);
                     }
 
