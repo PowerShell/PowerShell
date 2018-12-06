@@ -339,7 +339,7 @@ namespace Microsoft.PowerShell.Commands
                     matchFound = true;
                     if (_valueOnly)
                     {
-                        WriteObject(matchingVariable.Value, true);
+                        WriteObject(matchingVariable.Value, enumerateCollection: true);
                     }
                     else
                     {
