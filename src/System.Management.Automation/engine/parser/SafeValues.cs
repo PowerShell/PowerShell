@@ -41,11 +41,7 @@ namespace System.Management.Automation.Language
         public static bool IsAstSafe(Ast ast, GetSafeValueVisitor.SafeValueContext safeValueContext)
         {
             IsSafeValueVisitor visitor = new IsSafeValueVisitor(safeValueContext);
-            if ((bool)ast.Accept(visitor) && visitor._visitCount < MaxVisitCount)
-            {
-                return true;
-            }
-            return false;
+            return visitor.IsAstSafe(ast);
         }
 
         internal IsSafeValueVisitor(GetSafeValueVisitor.SafeValueContext safeValueContext)
@@ -53,15 +49,27 @@ namespace System.Management.Automation.Language
             _safeValueContext = safeValueContext;
         }
 
+        internal bool IsAstSafe(Ast ast)
+        {
+            if ((bool)ast.Accept(this) && _visitCount < MaxVisitCount)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // A readonly singleton with the default SafeValueContext.
+        internal readonly static IsSafeValueVisitor Default = new IsSafeValueVisitor(GetSafeValueVisitor.SafeValueContext.Default);
+
         // This is a check of the number of visits
-        private int _visitCount = 0;
-        private const int MaxVisitCount = 5000;
+        private uint _visitCount = 0;
+        private const uint MaxVisitCount = 5000;
         private const int MaxHashtableKeyCount = 500;
 
         // Used to determine if we are being called within a GetPowerShell() context,
         // which does some additional security verification outside of the scope of
         // what we can verify.
-        private GetSafeValueVisitor.SafeValueContext _safeValueContext;
+        private readonly GetSafeValueVisitor.SafeValueContext _safeValueContext;
 
         public object VisitErrorStatement(ErrorStatementAst errorStatementAst) { return false; }
         public object VisitErrorExpression(ErrorExpressionAst errorExpressionAst) { return false; }
