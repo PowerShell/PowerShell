@@ -3431,9 +3431,9 @@ namespace System.Management.Automation.Language
 
                                     break;
                                 case NumberSuffixFlags.UnsignedLong:
-                                    if (Utils.TryCast(doubleValue.AsBigInt(), out ulong ul_))
+                                    if (Utils.TryCast(doubleValue.AsBigInt(), out ulong ulValue))
                                     {
-                                        result = ul_;
+                                        result = ulValue;
                                         return true;
                                     }
 
@@ -3453,72 +3453,72 @@ namespace System.Management.Automation.Language
                         return false;
                     }
 
-                    if (format == NumberFormat.Hex)
-                    {
-                        if (!strNum[0].IsHexDigit())
-                        {
-                            if (strNum[0] == '-')
-                            {
-                                multiplier = -multiplier;
-                            }
-
-                            // Remove leading char (expected: - or +)
-                            strNum = strNum.Slice(1);
-                        }
-
-                        // If we're expecting a sign bit, remove the leading 0 added in ScanNumberHelper
-                        if (!suffix.HasFlag(NumberSuffixFlags.Unsigned) && ((strNum.Length - 1) & 7) == 0)
-                        {
-                            strNum = strNum.Slice(1);
-                        }
-
-                        // If we have a hex literal denoting (u)int64, treat it as such
-                        if (suffix == NumberSuffixFlags.None || suffix == NumberSuffixFlags.Unsigned)
-                        {
-                            switch (strNum.Length)
-                            {
-                                case 16:
-                                    suffix |= NumberSuffixFlags.Long;
-                                    break;
-                            }
-                        }
-                    }
-
                     BigInteger bigValue;
 
-                    if (format == NumberFormat.Binary)
+                    switch (format)
                     {
-                        if (!strNum[0].IsBinaryDigit())
-                        {
-                            if (strNum[0] == '-')
+                        case NumberFormat.Hex:
+                            if (!strNum[0].IsHexDigit())
                             {
-                                multiplier = -multiplier;
+                                if (strNum[0] == '-')
+                                {
+                                    multiplier = -multiplier;
+                                }
+
+                                // Remove leading char (expected: - or +)
+                                strNum = strNum.Slice(1);
                             }
 
-                            strNum = strNum.Slice(1);
-                        }
-
-                        bigValue = Utils.ParseBinary(strNum, suffix.HasFlag(NumberSuffixFlags.Unsigned));
-
-                        // If we have a binary literal denoting (u)int64/decimal/BigInteger, treat it as such
-                        if (suffix == NumberSuffixFlags.None || suffix == NumberSuffixFlags.Unsigned)
-                        {
-                            switch (strNum.Length)
+                            // If we're expecting a sign bit, remove the leading 0 added in ScanNumberHelper
+                            if (!suffix.HasFlag(NumberSuffixFlags.Unsigned) && ((strNum.Length - 1) & 7) == 0)
                             {
-                                case 64:
-                                    suffix |= NumberSuffixFlags.Long;
-                                    break;
+                                strNum = strNum.Slice(1);
                             }
-                        }
-                    }
-                    else
-                    {
-                        style = format == NumberFormat.Hex ? NumberStyles.AllowHexSpecifier : NumberStyles.AllowLeadingSign;
-                        if (!BigInteger.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out bigValue))
-                        {
-                            result = null;
-                            return false;
-                        }
+
+                            style = NumberStyles.AllowHexSpecifier;
+                            if (!BigInteger.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out bigValue))
+                            {
+                                result = null;
+                                return false;
+                            }
+
+                            // If we have a hex literal denoting (u)int64, treat it as such, even if the value is low
+                            if (strNum.Length == 16 && (suffix == NumberSuffixFlags.None || suffix == NumberSuffixFlags.Unsigned))
+                            {
+                                suffix |= NumberSuffixFlags.Long;
+                            }
+
+                            break;
+                        case NumberFormat.Binary:
+                            if (!strNum[0].IsBinaryDigit())
+                            {
+                                if (strNum[0] == '-')
+                                {
+                                    multiplier = -multiplier;
+                                }
+
+                                // Remove leading char (expected: - or +)
+                                strNum = strNum.Slice(1);
+                            }
+
+                            bigValue = Utils.ParseBinary(strNum, suffix.HasFlag(NumberSuffixFlags.Unsigned));
+
+                            // If we have a binary literal denoting (u)int64, treat it as such
+                            if (strNum.Length == 64 && (suffix == NumberSuffixFlags.None || suffix == NumberSuffixFlags.Unsigned))
+                            {
+                                suffix |= NumberSuffixFlags.Long;
+                            }
+
+                            break;
+                        default:
+                            style = NumberStyles.AllowLeadingSign;
+                            if (!BigInteger.TryParse(strNum, style, NumberFormatInfo.InvariantInfo, out bigValue))
+                            {
+                                result = null;
+                                return false;
+                            }
+
+                            break;
                     }
 
                     // Apply multiplier before attempting casting to prevent overflow
