@@ -27,6 +27,9 @@ param(
     [switch] $Daily,
 
     [Parameter()]
+    [switch] $UseMSI,
+
+    [Parameter()]
     [switch] $DoNotOverwrite,
 
     [Parameter()]
@@ -51,8 +54,19 @@ if (-not $Destination) {
         $Destination = "${Destination}-daily"
     }
 }
-$Destination = $PSCmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
-Write-Verbose "Destination: $Destination" -Verbose
+
+# Windows PowerShell doesn't have $PSCmdlet, so we'll just use the given path as-is
+if ($PSCmdlet) {
+    $Destination = $PSCmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
+}
+
+if (-not $UseMSI) {
+    Write-Verbose "Destination: $Destination" -Verbose
+} else {
+    if (-not $IsWinEnv) {
+        throw "-UseMSI is only supported on Windows"
+    }
+}
 
 Function Remove-Destination([string] $Destination) {
     if (Test-Path -Path $Destination) {
@@ -130,7 +144,11 @@ try {
         $release = $metadata.ReleaseTag -replace '^v'
 
         $packageName = if ($IsWinEnv) {
-            "PowerShell-${release}-win-${architecture}.zip"
+            if ($UseMSI) {
+                "PowerShell-${release}-win-${architecture}.msi"
+            } else {
+                "PowerShell-${release}-win-${architecture}.zip"
+            }
         } elseif ($IsLinuxEnv) {
             "powershell-${release}-linux-${architecture}.tar.gz"
         } elseif ($IsMacOSEnv) {
@@ -141,27 +159,43 @@ try {
         Write-Verbose "About to download package from '$downloadURL'" -Verbose
 
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
+        if ($PSVersionTable.PSEdition -eq "Desktop") {
+            # On Windows PowerShell, progress can make the download significantly slower
+            $oldProgressPreference = $ProgressPreference
+            $ProgressPreference = "SilentlyContinue"
+        }
+
         Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
+        if ($PSVersionTable.PSEdition -eq "Desktop") {
+            $ProgressPreference = $oldProgressPreference
+        }
+
         $contentPath = Join-Path -Path $tempDir -ChildPath "new"
 
         New-Item -ItemType Directory -Path $contentPath > $null
         if ($IsWinEnv) {
-            Expand-Archive -Path $packagePath -DestinationPath $contentPath
+            if ($UseMSI) {
+                Start-Process $packagePath -Wait
+            } else {
+                Expand-Archive -Path $packagePath -DestinationPath $contentPath
+            }
         } else {
             tar zxf $packagePath -C $contentPath
         }
     }
-    Remove-Destination $Destination
-    if (Test-Path $Destination) {
-        Write-Verbose "Copying files" -Verbose
-        # only copy files as folders will already exist at $Destination
-        Get-ChildItem -Recurse -Path "$contentPath" -File | ForEach-Object {
-            $DestinationFilePath = Join-Path $Destination $_.fullname.replace($contentPath,"")
-            Copy-Item $_.fullname -Destination $DestinationFilePath
+    if (-not $UseMSI) {
+        Remove-Destination $Destination
+        if (Test-Path $Destination) {
+            Write-Verbose "Copying files" -Verbose
+            # only copy files as folders will already exist at $Destination
+            Get-ChildItem -Recurse -Path "$contentPath" -File | ForEach-Object {
+                $DestinationFilePath = Join-Path $Destination $_.fullname.replace($contentPath,"")
+                Copy-Item $_.fullname -Destination $DestinationFilePath
+            }
+        } else {
+            $null = New-Item -Path (Split-Path -Path $Destination -Parent) -ItemType Directory -ErrorAction SilentlyContinue
+            Move-Item -Path $contentPath -Destination $Destination
         }
-    } else {
-        $null = New-Item -Path (Split-Path -Path $Destination -Parent) -ItemType Directory -ErrorAction SilentlyContinue
-        Move-Item -Path $contentPath -Destination $Destination
     }
 
     # Edit icon to disambiguate daily builds.
@@ -180,7 +214,7 @@ try {
     ## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
     if (-not $IsWinEnv) { chmod 755 $Destination/pwsh }
 
-    if ($AddToPath) {
+    if ($AddToPath -and -not $UseMSI) {
         if ($IsWinEnv -and (-not [System.Environment]::GetEnvironmentVariable("Path", "Machine").Contains($Destination))) {
             ## Add to the Machine scope 'Path' environment variable
             $machinePath = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
@@ -227,9 +261,11 @@ try {
         }
     }
 
-    Write-Host "PowerShell Core has been installed at $Destination" -ForegroundColor Green
-    if ($Destination -eq $PSHome) {
-        Write-Host "Please restart pwsh" -ForegroundColor Magenta
+    if (-not $UseMSI) {
+        Write-Host "PowerShell Core has been installed at $Destination" -ForegroundColor Green
+        if ($Destination -eq $PSHome) {
+            Write-Host "Please restart pwsh" -ForegroundColor Magenta
+        }
     }
 } finally {
     # Restore original value
