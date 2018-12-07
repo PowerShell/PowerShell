@@ -162,9 +162,12 @@ try {
             $ProgressPreference = "SilentlyContinue"
         }
 
-        Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
-        if ($PSVersionTable.PSEdition -eq "Desktop") {
-            $ProgressPreference = $oldProgressPreference
+        try {
+            Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
+        } finally {
+            if ($PSVersionTable.PSEdition -eq "Desktop") {
+                $ProgressPreference = $oldProgressPreference
+            }
         }
 
         $contentPath = Join-Path -Path $tempDir -ChildPath "new"
