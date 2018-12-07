@@ -96,8 +96,10 @@ Describe "Get-Variable" -Tags "CI" {
 		New-Variable -Name var1 -Value @(1, 2, 3)
 
 		# If output is not enumerated, Measure-Object will only see 1 object, not 3
-		$var1 | Measure-Object | Select-Object -ExpandProperty Count | Should -Be 3
-		Get-Variable -Name var1 -ValueOnly | Mesure-Object | Select-Object -ExpandProperty Count | Should -Be 3
+        Get-Variable -Name var1 -ValueOnly |
+            Measure-Object |
+            Select-Object -ExpandProperty Count |
+			Should -Be $var1.Count
 
 		Remove-Variable -Name var1
 	}
