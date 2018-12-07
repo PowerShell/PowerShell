@@ -95,11 +95,9 @@ Describe "Get-Variable" -Tags "CI" {
 	It 'Should enumerate its output in the same way that directly calling the value does' {
 		New-Variable -Name var1 -Value @(1, 2, 3)
 
-		# If Get-Variable's output isn't enumerated, the latter value will return Object[], not Type[] { [int], [int], [int] }
-        $VariableType = $var1 | ForEach-Object -MemberName GetType
-        $GetVariableValueType = Get-Variable -Name var1 -ValueOnly | ForEach-Object -MemberName GetType
-
-        $GetVariableValueType | Should -Be $VariableType
+		# If output is not enumerated, Measure-Object will only see 1 object, not 3
+		$var1 | Measure-Object | Select-Object -ExpandProperty Count | Should -Be 3
+		Get-Variable -Name var1 -ValueOnly | Mesure-Object | Select-Object -ExpandProperty Count | Should -Be 3
 
 		Remove-Variable -Name var1
 	}
