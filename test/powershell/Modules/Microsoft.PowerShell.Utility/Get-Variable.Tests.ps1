@@ -92,10 +92,14 @@ Describe "Get-Variable" -Tags "CI" {
 		Remove-Variable var1
 	}
 
-	It 'Should return the same value with -ValueOnly as directly calling the variable returns' {
+	It 'Should enumerate its output in the same way that directly calling the value does' {
 		New-Variable -Name var1 -Value @(1, 2, 3)
 
-		Get-Variable -Name var1 -ValueOnly | Should -Be $var1
+		# If Get-Variable's output isn't enumerated, the latter value will return Object[], not Type[] { [int], [int], [int] }
+        $VariableType = $var1 | ForEach-Object -MemberName GetType
+        $GetVariableValueType = Get-Variable -Name var1 -ValueOnly | ForEach-Object -MemberName GetType
+
+        $GetVariableValueType | Should -Be $VariableType
 
 		Remove-Variable -Name var1
 	}
