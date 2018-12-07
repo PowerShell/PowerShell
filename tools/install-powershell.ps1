@@ -55,10 +55,7 @@ if (-not $Destination) {
     }
 }
 
-# Windows PowerShell doesn't have $PSCmdlet, so we'll just use the given path as-is
-if ($PSCmdlet) {
-    $Destination = $PSCmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
-}
+$Destination = $PSCmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
 
 if (-not $UseMSI) {
     Write-Verbose "Destination: $Destination" -Verbose
