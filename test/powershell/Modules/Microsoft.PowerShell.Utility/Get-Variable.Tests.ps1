@@ -92,17 +92,17 @@ Describe "Get-Variable" -Tags "CI" {
 		Remove-Variable var1
 	}
 
-	It 'Should enumerate its output in the same way that directly calling the value does' {
-		New-Variable -Name var1 -Value @(1, 2, 3)
+    It 'Should enumerate its output in the same way that directly calling the value does' {
+        New-Variable -Name var1 -Value @(1, 2, 3)
 
-		# If output is not enumerated, Measure-Object will only see 1 object, not 3
+        # If output is not enumerated, Measure-Object will only see 1 object, not 3
         Get-Variable -Name var1 -ValueOnly |
             Measure-Object |
             Select-Object -ExpandProperty Count |
-			Should -Be $var1.Count
+            Should -Be $var1.Count
 
-		Remove-Variable -Name var1
-	}
+        Remove-Variable -Name var1
+    }
 
     It "Should pipe string to the name field without the Name field being specified"{
 		New-Variable -Name var1 -Value 3
