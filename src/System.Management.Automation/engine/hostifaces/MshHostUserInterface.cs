@@ -461,57 +461,58 @@ namespace System.Management.Automation.Host
             }
 
             // Add bits from PSVersionTable
-            StringBuilder psVersionInfo = new StringBuilder();
+            StringBuilder versionInfoFooter = new StringBuilder();
             Hashtable versionInfo = PSVersionInfo.GetPSVersionTable();
             foreach (string versionKey in versionInfo.Keys)
             {
-                Object value = versionInfo[versionKey];
+                object value = versionInfo[versionKey];
 
                 if (value != null)
                 {
                     var arrayValue = value as object[];
                     string valueString = arrayValue != null ? string.Join(", ", arrayValue) : value.ToString();
-                    psVersionInfo.AppendLine(versionKey + ": " + valueString);
+                    versionInfoFooter.AppendLine(versionKey + ": " + valueString);
                 }
             }
-            string psConfigurationName = string.Empty;
+
+            string configurationName = string.Empty;
             if (senderInfo != null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
             {
-                psConfigurationName = senderInfo.ConfigurationName;
+                configurationName = senderInfo.ConfigurationName;
             }
+
             // Transcribe the transcript header
             string line;
             if (minimalTranscriptHeader)
             {
                 line =
-                    String.Format(
+                    string.Format(
                         Globalization.CultureInfo.InvariantCulture,
                         InternalHostUserInterfaceStrings.MinimalTranscriptPrologue,
-                        DateTime.Now
-                        );
+                        DateTime.Now);
             }
             else
             {
                 line =
-                    String.Format(
+                    string.Format(
                         Globalization.CultureInfo.InvariantCulture,
                         InternalHostUserInterfaceStrings.TranscriptPrologue,
                         DateTime.Now,
                         username,
                         runAsUser,
-                        psConfigurationName,
+                        configurationName,
                         Environment.MachineName,
                         Environment.OSVersion.VersionString,
-                        String.Join(" ", Environment.GetCommandLineArgs()),
+                        string.Join(" ", Environment.GetCommandLineArgs()),
                         System.Diagnostics.Process.GetCurrentProcess().Id,
-                        psVersionInfo.ToString().TrimEnd()
-                        );
+                        versionInfoFooter.ToString().TrimEnd());
             }
 
             lock (transcript.OutputToLog)
             {
                 transcript.OutputToLog.Add(line);
             }
+
             TranscribeCommandComplete(null);
         }
 

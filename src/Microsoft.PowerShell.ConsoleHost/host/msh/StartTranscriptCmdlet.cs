@@ -138,9 +138,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Whether to exclude transcript header.
+        /// Gets or sets whether to exclude transcript header.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter MinimalTranscriptHeader
         {
             get; set;
