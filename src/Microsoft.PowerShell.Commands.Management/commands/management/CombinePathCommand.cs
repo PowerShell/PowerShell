@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands
                                     pathNotFound));
                             continue;
                         }
-                    } // for each path
+                    }
                 }
                 else
                 {
@@ -213,9 +213,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // JoinPathCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

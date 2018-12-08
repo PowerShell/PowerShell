@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
                     SetSecurityDescriptor(path, sd, sections);
                 }
             }
-        } // SetSecurityDescriptor
+        }
 
         private void SetSecurityDescriptor(string path, ObjectSecurity sd, AccessControlSections sections)
         {

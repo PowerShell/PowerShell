@@ -86,6 +86,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-    } // CommitTransactionCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

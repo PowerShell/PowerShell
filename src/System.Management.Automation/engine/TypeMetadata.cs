@@ -1277,7 +1277,7 @@ namespace System.Management.Automation
                 CompiledCommandParameter parameter = new CompiledCommandParameter(parameterDefinition, processingDynamicParameters);
                 AddParameter(parameter, checkNames);
             }
-        } // ConstructCompiledParametersUsingRuntimeDefinedParameters
+        }
 
         /// <summary>
         /// Compiles the parameter using reflection against the CLR type.
@@ -1321,7 +1321,7 @@ namespace System.Management.Automation
 
                 AddParameter(field, processingDynamicParameters);
             }
-        } // ConstructCompiledParametersUsingReflection
+        }
 
         private void CheckForReservedParameter(string name)
         {
@@ -1488,7 +1488,7 @@ namespace System.Management.Automation
                     member.Name,
                     argumentException.Message);
             }
-        } // IsMemberAParameter
+        }
 
         #endregion helper methods
 
@@ -1502,6 +1502,6 @@ namespace System.Management.Automation
             new System.Collections.Concurrent.ConcurrentDictionary<string, InternalParameterMetadata>(StringComparer.Ordinal);
 
         #endregion Metadata cache
-    } // CompiledCommandParameter
+    }
 }
 

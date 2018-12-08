@@ -404,7 +404,7 @@ namespace System.Management.Automation.Internal
                         // the same pipe as the downstream cmdlet's input
                         prevcommandProcessor.CommandRuntime.ErrorOutputPipe = UpstreamPipe;
                     }
-                } // if MergeUnclaimedPreviousErrorResults
+                }
             }
             _commands.Add(commandProcessor);
 
@@ -414,7 +414,7 @@ namespace System.Management.Automation.Internal
             commandProcessor.CommandRuntime.PipelineProcessor = this;
 
             return _commands.Count;
-        } // AddCommand( CommandProcessorBase commandProcessor, int readFromCommand, bool readErrorQueue )
+        }
 
         // 2005/03/08-JonN: This is an internal API
         /// <summary>
@@ -571,7 +571,7 @@ namespace System.Management.Automation.Internal
             Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
             toRethrowInfo.Throw();
             return null; // UNREACHABLE
-        } // internal Array SynchronousExecuteEnumerate()
+        }
 
         private void DoCompleteCore(CommandProcessorBase commandRequestingUpstreamCommandsToStop)
         {
@@ -726,7 +726,7 @@ namespace System.Management.Automation.Internal
             Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
             toRethrowInfo.Throw();
             return null; // UNREACHABLE
-        } // internal Array DoComplete()
+        }
 
         /// <summary>
         /// This routine starts the stepping process. It is optional to
@@ -802,8 +802,8 @@ namespace System.Management.Automation.Internal
                     continue;
                 }
 #pragma warning restore 56500
-            } // for (int i = 0; i < _commands.Count; i++)
-        } // Stop()
+            }
+        }
 
         #endregion public_methods
 
@@ -880,7 +880,7 @@ namespace System.Management.Automation.Internal
                 DisposeCommands();
                 throw;
             }
-        } // internal Array DoStepItems
+        }
 
         /// <summary>
         /// Prepares the pipeline for execution.
@@ -1047,7 +1047,7 @@ namespace System.Management.Automation.Internal
 
                 commandProcessor.DoBegin();
             }
-        } // private void Start
+        }
 
         /// <summary>
         /// Add ExternalErrorOutput to all commands whose error
@@ -1156,7 +1156,7 @@ namespace System.Management.Automation.Internal
             // Execute the first command - In the streamlet model, Execute of the first command will
             // automatically call the downstream command incase if there are any objects in the pipe.
             firstcommandProcessor.DoExecute();
-        } // private void Inject
+        }
 
         /// <summary>
         /// Retrieve results from the pipeline.
@@ -1216,7 +1216,7 @@ namespace System.Management.Automation.Internal
             if (results == null)
                 return MshCommandRuntime.StaticEmptyArray;
             return results;
-        } // private Array RetrieveResults
+        }
 
         /// <summary>
         /// Links this pipeline to a pre-existing Pipe object. This allows nested pipes
@@ -1238,7 +1238,7 @@ namespace System.Management.Automation.Internal
 
             LastCommandProcessor.CommandRuntime.OutputPipe = pipeToUse;
             _linkedSuccessOutput = true;
-        } // private void SetResultPipe
+        }
 
         internal void LinkPipelineErrorOutput(Pipe pipeToUse)
         {
@@ -1561,5 +1561,5 @@ namespace System.Management.Automation.Internal
             PipelineComplete
         }
     }
-} // namespace System.Management.Automation
+}
 

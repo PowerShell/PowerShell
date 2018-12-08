@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 Destination,
                 Name,
                 context);
-        } // GetDynamicParameters
+        }
 
         #endregion Parameters
 
@@ -143,8 +143,8 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
-    } // CopyItemPropertyCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}

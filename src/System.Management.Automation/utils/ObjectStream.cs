@@ -989,7 +989,7 @@ namespace System.Management.Automation.Internal
                 WriteReady (this, new EventArgs ());
             }
 #endif
-        } // RaiseEvents
+        }
 
         #endregion private locking code
 
@@ -1063,7 +1063,7 @@ namespace System.Management.Automation.Internal
                     RaiseEvents();
                 }
             }
-        } // RaiseEvents
+        }
 
         #endregion internal methods
 
@@ -1164,7 +1164,7 @@ namespace System.Management.Automation.Internal
             }
 
             return results;
-        } // Read (int count)
+        }
 
         /// <summary>
         /// Blocks until the pipeline closes and reads all objects.
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation.Internal
         {
             // NTRAID#Windows Out Of Band Releases-925566-2005/12/07-JonN
             return Read(Int32.MaxValue);
-        } // ReadToEnd
+        }
 
         /// <summary>
         /// Reads objects currently in the stream, but does not block.
@@ -1252,7 +1252,7 @@ namespace System.Management.Automation.Internal
                 }
             }
             return results ?? new Collection<object>();
-        } // NonBlockingRead
+        }
 
         /// <summary>
         /// Peek the next object
@@ -1352,7 +1352,7 @@ namespace System.Management.Automation.Internal
                         continue;
                     }
                     a.Add(o);
-                } // foreach
+                }
             }
 
             int objectsWritten = 0;
@@ -1436,10 +1436,10 @@ namespace System.Management.Automation.Internal
                         RaiseEvents();
                     }
                 }
-            } // end while (count > 0)
+            }
 
             return objectsWritten;
-        } // Write (object obj, bool enumerateCollection)
+        }
 
         #endregion Write Methods
 
@@ -1517,7 +1517,7 @@ namespace System.Management.Automation.Internal
         }
 
         #endregion IDisposable
-    } // class ObjectStream
+    }
 
     /// <summary>
     /// An object stream using a PSDataCollection as the object store.
@@ -1843,7 +1843,7 @@ namespace System.Management.Automation.Internal
                     }
                     objectsToAdd.Add((T)LanguagePrimitives.ConvertTo(obj,
                         typeof(T), Globalization.CultureInfo.InvariantCulture));
-                } // foreach
+                }
             }
 
             _objects.InternalAddRange(_psInstanceId, objectsToAdd);
@@ -1954,5 +1954,5 @@ namespace System.Management.Automation.Internal
         }
         #endregion IDisposable
     }
-} // namespace System.Management.Automation
+}
 

@@ -172,7 +172,7 @@ namespace System.Management.Automation
                 // NOTE: this call will throw
                 ReportFileOpenFailure(cmdlet, resolvedPath, e);
             }
-        } // void MasterStreamOpen
+        }
 
         internal static void ReportFileOpenFailure(Cmdlet cmdlet, string filePath, Exception e)
         {

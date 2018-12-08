@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // SeekContentPosition
+        }
 
         /// <summary>
         /// Makes the call to ShouldProcess with appropriate action and target strings.
@@ -81,6 +81,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion protected members
-    } // AddContentCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

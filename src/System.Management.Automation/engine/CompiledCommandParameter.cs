@@ -563,7 +563,7 @@ namespace System.Management.Automation
         }
 
         #endregion helper methods
-    } // CompiledCommandParameter
+    }
 
     /// <summary>
     /// The types of collections that are supported as parameter types.

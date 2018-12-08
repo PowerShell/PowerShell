@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.Commands
             SkipWinRMCheck = true;
 
             base.BeginProcessing();
-        } // CoreBeginProcessing
+        }
 
         /// <summary>
         /// Create a throttle operation using NewProcessConnectionInfo
@@ -678,7 +678,7 @@ namespace Microsoft.PowerShell.Commands
                     helper.Pipeline.Input.Write(InputObject);
                 }
             }
-        } // ProcessRecord
+        }
         private bool _firstProcessRecord = true;
 
         /// <summary>
@@ -689,7 +689,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // close the input stream on all the pipelines
             CloseAllInputStreams();
-        } // EndProcessing
+        }
 
         #endregion Overrides
 
@@ -714,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CloseAllInputStreams();
             }
-        } // Dispose
+        }
 
         #endregion IDisposable Overrides
     }

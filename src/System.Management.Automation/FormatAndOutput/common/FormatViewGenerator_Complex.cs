@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     DisplayObject(PSObject.AsPSObject(val), level.NextLevel, null,
                         AddIndentationLevel(formatValueList));
                 }
-            } // for each
+            }
         }
 
         /// <summary>

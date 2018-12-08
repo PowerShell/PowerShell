@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // Path
+        }
         private string[] _names;
         private bool _nameContainsWildcard;
 
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _verbs;
-            } // get
+            }
 
             set
             {
@@ -86,8 +86,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 _verbs = value;
                 _verbPatterns = null;
-            } // set
-        } // Verb
+            }
+        }
         private string[] _verbs = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _nouns;
-            } // get
+            }
 
             set
             {
@@ -110,8 +110,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 _nouns = value;
                 _nounPatterns = null;
-            } // set
-        } // Noun
+            }
+        }
         private string[] _nouns = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _modules;
-            } // get
+            }
 
             set
             {
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
                 _modulePatterns = null;
 
                 _isModuleSpecified = true;
-            } // set
+            }
         }
         private string[] _modules = Utils.EmptyArray<string>();
         private bool _isModuleSpecified = false;
@@ -176,14 +176,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _commandType;
-            } // get
+            }
 
             set
             {
                 _commandType = value;
                 _isCommandTypeSpecified = true;
-            } // set
-        } // Noun
+            }
+        }
         private CommandTypes _commandType = CommandTypes.All;
         private bool _isCommandTypeSpecified = false;
 

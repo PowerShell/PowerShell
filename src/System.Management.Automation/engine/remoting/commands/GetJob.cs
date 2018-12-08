@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
 
             jobList.Sort((x, y) => x != null ? x.Id.CompareTo(y != null ? y.Id : 1) : -1);
             WriteObject(jobList, true);
-        } // ProcessRecord
+        }
 
         #endregion Overrides
 

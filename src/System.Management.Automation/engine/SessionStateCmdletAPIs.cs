@@ -78,7 +78,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetCmdlet
+        }
 
         /// <summary>
         /// Gets the value of the specified cmdlet from the cmdlet table.
@@ -124,7 +124,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetCmdletAtScope
+        }
 
         /// <summary>
         /// Gets an IEnumerable for the cmdlet table
@@ -161,7 +161,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetCmdletTable
+        }
 
         /// <summary>
         /// Gets an IEnumerable for the cmdlet table for a given scope
@@ -203,7 +203,7 @@ namespace System.Management.Automation
             }
 
             return result;
-        } // GetCmdletTableAtScope
+        }
 
         internal void RemoveCmdlet(string name, int index, bool force)
         {
@@ -265,7 +265,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // RemoveCmdlet
+        }
 
         /// <summary>
         /// Removes a cmdlet entry from the cmdlet table.
@@ -316,9 +316,9 @@ namespace System.Management.Automation
                     }
                 }
             }
-        } // RemoveCmdlet
+        }
 
         #endregion cmdlets
-    } // SessionStateInternal class
+    }
 }
 

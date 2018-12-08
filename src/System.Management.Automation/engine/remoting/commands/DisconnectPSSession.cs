@@ -561,5 +561,5 @@ namespace Microsoft.PowerShell.Commands
         private ObjectStream _stream = new ObjectStream();
 
         #endregion
-    } // DisconnectPSSessionCommand
+    }
 }

@@ -1714,7 +1714,7 @@ namespace System.Management.Automation
             };
             return aliasCopy;
         }
-    } // ModuleIntrinsics
+    }
 
     /// <summary>
     /// Enumeration of reasons for a failure to match a module by constraints.
@@ -1769,4 +1769,4 @@ namespace System.Management.Automation
         /// </summary>
         void OnRemove(PSModuleInfo psModuleInfo);
     }
-} // System.Management.Automation
+}

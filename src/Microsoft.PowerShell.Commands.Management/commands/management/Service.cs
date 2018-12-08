@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Internal
-    } // class ServiceBaseCommand
+    }
     #endregion ServiceBaseCommand
 
     #region MultipleServiceCommandBase
@@ -313,7 +313,7 @@ namespace Microsoft.PowerShell.Commands
             //  before being stopped.  JimTru confirms that this is OK.
             matchingServices.Sort(ServiceComparison);
             return matchingServices;
-        } // MatchingServices
+        }
 
         // sort by servicename
         private static int ServiceComparison(ServiceController x, ServiceController y)
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             return matchingServices;
-        } // MatchingServicesByServiceName
+        }
 
         /// <summary>
         /// Retrieves the list of all services matching the DisplayName,
@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             return matchingServices;
-        } // MatchingServicesByDisplayName
+        }
 
         /// <summary>
         /// Retrieves the list of all services matching the InputObject,
@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell.Commands
                 IncludeExcludeAdd(matchingServices, service, false);
             }
             return matchingServices;
-        } // MatchingServicesByInput
+        }
 
         /// <summary>
         /// Add <paramref name="service"/> to <paramref name="list"/>,
@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Internal
 
-    } // class MultipleServiceCommandBase
+    }
     #endregion MultipleServiceCommandBase
 
     #region GetServiceCommand
@@ -699,7 +699,7 @@ namespace Microsoft.PowerShell.Commands
                         Diagnostics.Assert(lastError != 0, "ErrorCode not success");
                     }
                 }
-            } // finally
+            }
             return serviceAsPSObj;
         }
     }
@@ -1263,8 +1263,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
-    } // StopServiceCommand
+        }
+    }
     #endregion StopServiceCommand
 
     #region StartServiceCommand
@@ -1295,8 +1295,8 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(serviceController);
                 }
             }
-        } // ProcessRecord
-    } // class StartServiceCommand
+        }
+    }
     #endregion StartServiceCommand
 
     #region SuspendServiceCommand
@@ -1327,8 +1327,8 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(serviceController);
                 }
             }
-        } // ProcessRecord
-    } // class SuspendServiceCommand
+        }
+    }
     #endregion SuspendServiceCommand
 
     #region ResumeServiceCommand
@@ -1359,8 +1359,8 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(serviceController);
                 }
             }
-        } // ProcessRecord
-    } // class ResumeServiceCommand
+        }
+    }
     #endregion ResumeServiceCommand
 
     #region RestartServiceCommand
@@ -1413,8 +1413,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // ProcessRecord
-    } // RestartServiceCommand
+        }
+    }
     #endregion RestartServiceCommand
 
     #region SetServiceCommand
@@ -1725,7 +1725,7 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.PermissionDenied);
                             return;
                         }
-                    } // modify startup type or display name
+                    }
 
                     NativeMethods.SERVICE_DESCRIPTIONW sd = new NativeMethods.SERVICE_DESCRIPTIONW();
                     sd.lpDescription = Description;
@@ -1860,7 +1860,7 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.PermissionDenied);
                         }
                     }
-                } // finally
+                }
             } //End try
             finally
             {
@@ -1876,7 +1876,7 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Overrides
 
-    } // class SetServiceCommand
+    }
     #endregion SetServiceCommand
 
     #region NewServiceCommand
@@ -2210,7 +2210,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         #endregion Overrides
-    } // class NewServiceCommand
+    }
     #endregion NewServiceCommand
 
     #region RemoveServiceCommand
@@ -2367,8 +2367,8 @@ namespace Microsoft.PowerShell.Commands
                             Diagnostics.Assert(lastError != 0, "ErrorCode not success");
                         }
                     }
-                } // Finally
-            } // End try
+                }
+            }
             finally
             {
                 if (objServiceShouldBeDisposed)
@@ -2378,7 +2378,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         #endregion Overrides
-    } // class RemoveServiceCommand
+    }
     #endregion RemoveServiceCommand
 
     #region ServiceCommandException
@@ -2467,7 +2467,7 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _serviceName = String.Empty;
         #endregion Properties
-    } // class ServiceCommandException
+    }
     #endregion ServiceCommandException
 
     #region NativeMethods

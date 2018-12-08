@@ -307,5 +307,5 @@ namespace System.Management.Automation
                 _errorToken = value;
             }
         }
-    } // RuntimeException
-} // System.Management.Automation
+    }
+}

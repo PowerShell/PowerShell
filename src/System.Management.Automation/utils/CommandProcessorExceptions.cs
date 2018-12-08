@@ -96,5 +96,5 @@ namespace System.Management.Automation
             base.SetErrorCategory(ErrorCategory.ResourceUnavailable);
         }
         #endregion ctor
-    } // ApplicationFailedException
-} // namespace System.Management.Automation
+    }
+}

@@ -89,14 +89,14 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return Path;
-            } // get
+            }
 
             set
             {
                 base.SuppressWildcardExpansion = true;
                 Path = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// Determines if the qualifier should be returned
@@ -418,14 +418,14 @@ namespace Microsoft.PowerShell.Commands
                             false,
                             "Only a known parameter set should be called");
                         break;
-                } // switch
+                }
 
                 if (result != null)
                 {
                     WriteObject(result);
                 }
-            } // for each path
-        } // ProcessRecord
+            }
+        }
         #endregion Command code
 
         /// <summary>
@@ -471,7 +471,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return result;
-        } // RemoveQualifier
-    } // SplitPathCommand
-} // namespace Microsoft.PowerShell.Commands
+        }
+    }
+}
 

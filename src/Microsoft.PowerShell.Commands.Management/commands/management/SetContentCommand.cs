@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
             }
-        } // BeforeOpenStreams
+        }
 
         /// <summary>
         /// Makes the call to ShouldProcess with appropriate action and target strings.
@@ -87,6 +87,6 @@ namespace Microsoft.PowerShell.Commands
             return ShouldProcess(target, action);
         }
         #endregion protected members
-    } // SetContentCommand
-} // namespace Microsoft.PowerShell.Commands
+    }
+}
 

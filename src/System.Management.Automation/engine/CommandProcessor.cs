@@ -624,7 +624,7 @@ namespace System.Management.Automation
             errorRecord.SetInvocationInfo(this.Command.MyInvocation);
 
             this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord);
-        } // WriteIgnoredInputObjectError
+        }
 
         /// <summary>
         /// Reads an object from an input pipeline and attempts to bind the parameters
