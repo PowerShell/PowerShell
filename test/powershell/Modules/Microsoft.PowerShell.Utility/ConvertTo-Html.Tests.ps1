@@ -168,5 +168,21 @@ After the object
         $returnString = $customObject | ConvertTo-HTML -Transitional | Select-Object -First 1
         $returnString | Should -Be '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
     }
+
+    It "Test ConvertTo-HTML calculated property supports 'name' kay as alias of 'label'" {
+        $returnString = ($customObject | ConvertTo-Html @{ name = 'AgeRenamed'; e = 'Age'}) -join $newLine
+        $returnString | Should -Match 'AgeRenamed'
+    }
+
+    It "Test ConvertTo-HTML calculated property supports integer 'width' entry" {
+        $returnString = ($customObject | ConvertTo-Html @{ e = 'Age'; width = 10 }) -join $newLine
+        $returnString | Should -Match '\swidth\s*=\s*(["''])10\1'
+    }
+
+    It "Test ConvertTo-HTML calculated property supports string 'width' entry" {
+        $returnString = ($customObject | ConvertTo-Html @{ e = 'Age'; width = '10' }) -join $newLine
+        $returnString | Should -Match '\swidth\s*=\s*(["''])10\1'
+    }
+
 }
 

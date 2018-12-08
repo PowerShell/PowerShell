@@ -300,9 +300,14 @@ namespace Microsoft.PowerShell.Commands
             protected override void SetEntries()
             {
                 this.hashEntries.Add(new ExpressionEntryDefinition());
-                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.LabelEntryKey, new Type[] { typeof(string) }));
+                // Accept "label" and "name" interchangeably.
+                // Note: We can't just use `new NameEntryDefinition()`, because the latter uses "name"
+                //       as the key, whereas this cmdlet expects 'label'. That is, this cmdlet's logic is reversed:
+                //       "label" is used as the primary key and "name" as a secondary name.
+                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.LabelEntryKey, new string[] { NameEntryDefinition.NameEntryKey }, new Type[] { typeof(string) }, false));
                 this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey, new Type[] { typeof(string) }));
-                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.WidthEntryKey, new Type[] { typeof(string) }));
+                // Note: We accept "width" as either string or int.
+                this.hashEntries.Add(new HashtableEntryDefinition(ConvertHTMLParameterDefinitionKeys.WidthEntryKey, new Type[] { typeof(string), typeof(int) }));
             }
         }
 
@@ -335,7 +340,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 string label = p.GetEntry(ConvertHTMLParameterDefinitionKeys.LabelEntryKey) as string;
                 string alignment = p.GetEntry(ConvertHTMLParameterDefinitionKeys.AlignmentEntryKey) as string;
-                string width = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
+                // Accept the width both as a string and as an int.
+                string width;
+                int? widthNum = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as int?;
+                width = widthNum != null ? widthNum.Value.ToString() : p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
                 PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
                 List<PSPropertyExpression> resolvedNames = ex.ResolveNames(_inputObject);
                 foreach (PSPropertyExpression resolvedName in resolvedNames)
