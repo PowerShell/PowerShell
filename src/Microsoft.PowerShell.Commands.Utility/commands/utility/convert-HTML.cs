@@ -343,12 +343,11 @@ namespace Microsoft.PowerShell.Commands
                     Hashtable ht = CreateAuxPropertyHT(label, alignment, width);
                     if (resolvedName.Script != null)
                     {
-                        // script block
+                        // The argument is a calculated property whose value is calculated by a script block.
                         ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.Script);
                     }
                     else
                     {
-                        // property name
                         ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.ToString());
                     }
                     resolvedNameProperty.Add(ht);
