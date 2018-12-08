@@ -6,10 +6,10 @@
             "type": "coreclr",
             "request": "launch",
             "justMyCode": false,
-            "stopAtEntry": false,
+            "stopAtEntry": true,
             "program": "${workspaceRoot}/debug/pwsh",
             "preLaunchTask": "Build",
-            "console": "integratedTerminal",
+            "externalConsole": true,
             "cwd": "${workspaceRoot}"
         },
         {
