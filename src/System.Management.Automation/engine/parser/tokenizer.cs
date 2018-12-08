@@ -3580,9 +3580,9 @@ namespace System.Management.Automation.Language
 
                             break;
                         case NumberSuffixFlags.UnsignedLong:
-                            if (Utils.TryCast(bigValue, out ulong ul_))
+                            if (Utils.TryCast(bigValue, out ulong ulValue))
                             {
-                                result = ul_;
+                                result = ulValue;
                                 return true;
                             }
 
